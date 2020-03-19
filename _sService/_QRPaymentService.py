@@ -337,6 +337,7 @@ def cancel_qr_global(data):
         return
     url = data['url']
     payload = data['payload']
+    payload['endpoint'] = 'cancel-payment'
     mode = data['mode']
     if mode not in ['GOPAY', 'DANA', 'SHOPEEPAY']:
         LOGGER.debug((mode, 'NO AVAIL TO REQUEST QR CANCELLATION'))

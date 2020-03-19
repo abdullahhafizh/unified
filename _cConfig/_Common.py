@@ -138,6 +138,13 @@ QR_PROD_STATE = {
     'OVO': True
 }
 
+ENDPOINT_SUCCESS_BY_HTTP_HEADER = [
+    'settlement/submit', 
+    'refund/global',
+    'cancel-payment',
+
+    ]
+
 # APIV2 Credentials For Topup
 TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
 TOPUP_TOKEN = 'ab247c99e983d0c0d0772246ccb465e8'

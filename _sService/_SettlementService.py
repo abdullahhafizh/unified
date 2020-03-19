@@ -23,7 +23,7 @@ class SettlementSignalHandler(QObject):
 ST_SIGNDLER = SettlementSignalHandler()
 LOGGER = logging.getLogger()
 BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
-TID = _ConfigParser.get_value('TERMINAL', 'tid')
+TID = _Common.TID
 SALT = '|KIOSK'
 # Hardcoded Setting for SMT -----------------------
 SMT_URL = 'https://smt.mdd.co.id:10000/c2c-api/'
@@ -79,10 +79,11 @@ def push_settlement_data(__param):
     if __sid is None:
         LOGGER.warning(('push_settlement_data :', '__sid is None'))
         return False
+    __param['mid'] = SMT_MID
+    __param['token'] = SMT_TOKEN
+    __param['tid'] = 'MDD-VM'+TID
+    __param['endpoint'] = 'settlement/submit'
     try:
-        __param['mid'] = SMT_MID
-        __param['token'] = SMT_TOKEN
-        __param['tid'] = 'MDD-VM'+TID
         status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
         # LOGGER.debug(('push_settlement_data :', str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
@@ -93,9 +94,11 @@ def push_settlement_data(__param):
             GLOBAL_SETTLEMENT = []
             return True
         else:
+            _Common.store_request_to_job(name=_Helper.whoami(), url=__url, payload=__param)
             return False
     except Exception as e:
         LOGGER.warning(('push_settlement_data :', e))
+        _Common.store_request_to_job(name=_Helper.whoami(), url=__url, payload=__param)
         return False
 
 

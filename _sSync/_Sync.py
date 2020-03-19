@@ -121,11 +121,12 @@ def do_pending_job():
                     job = json.loads(content)
                     __url = job['url']
                     __param = job['payload']
+                    __endpoint = job['payload'].get('endpoint')
                     print('pyt: do_pending_job ' + _Helper.time_string() + ' ' + p)
                     LOGGER.debug((p, __url, __param))
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
                     if status == 200:
-                        if 'refund/global' in __url or response['result'] == 'OK':
+                        if __endpoint in _Common.ENDPOINT_SUCCESS_BY_HTTP_HEADER or response['result'] == 'OK':
                             jobs_path_rename = jobs_path.replace('.request', '.done')
                             os.rename(jobs_path, jobs_path_rename)
                             print('pyt: jobs_done rename : ' + jobs_path + ' ' + jobs_path_rename)
