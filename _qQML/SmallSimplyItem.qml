@@ -30,7 +30,7 @@ Rectangle {
 
     Image{
         id: raw_image
-        width: (imageMaxMode) ? 230 : 120
+        width: (imageMaxMode) ? 200 : 120
         anchors.topMargin: (imageMaxMode) ? 10 : 15
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -40,7 +40,7 @@ Rectangle {
     }
 
     ColorOverlay {
-        visible: !modeReverse
+        visible: modeReverse
         anchors.fill: raw_image
         source: raw_image
         scale: raw_image.scale
