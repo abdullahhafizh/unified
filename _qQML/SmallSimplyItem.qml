@@ -3,9 +3,10 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: rectangle
-    property var sourceImage:"source/qr_gopay.png"
+    property var sourceImage:"source/qr_dana.png"
     property bool modeReverse: true
-    property var itemName: 'QR Gopay'
+    property bool imageMaxMode: false
+    property var itemName: 'QRIS Shopeepay'
     property bool isSelected: false
 
     width: 359
@@ -29,10 +30,9 @@ Rectangle {
 
     Image{
         id: raw_image
-        sourceSize.height: 90
-        sourceSize.width: 90
+        width: (imageMaxMode) ? 230 : 120
+        anchors.topMargin: (imageMaxMode) ? 10 : 15
         anchors.top: parent.top
-        anchors.topMargin: 25
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         source: sourceImage
@@ -40,7 +40,7 @@ Rectangle {
     }
 
     ColorOverlay {
-        visible: modeReverse
+        visible: !modeReverse
         anchors.fill: raw_image
         source: raw_image
         scale: raw_image.scale

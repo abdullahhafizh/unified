@@ -367,8 +367,8 @@ LAST_BALANCE_CHECK = None
 
 FW_BANK = {
     '0': 'MANDIRI',
-    '1': 'BRI JAVA',
-    '2': 'BRI Desfire',
+    '1': 'BRI', #BRI JAVA
+    '2': 'BRI', #BRI Desfire
     '3': 'BNI',
     '4': 'DKI',
     '5': 'BCA'
@@ -992,6 +992,9 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    if bank == 'BRI':
+        # TODO: Add Function Topup BRI Online
+        pass
 
 
 def get_card_info_tapcash():
