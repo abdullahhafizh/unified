@@ -43,26 +43,6 @@ NV = {
 }
 
 BILL_TYPE = _Common.BILL_TYPE
-
-# 1. OPEN PORT
-# http://localhost:9000/Service/GET?cmd=601&param=COM10&type=json
-# {"Result":"0","Command":"601","Parameter":"COM10","Response":"","ErrorDesc":"Sukses"}
-# 2. ACCEPT
-# http://localhost:9000/Service/GET?cmd=602&param=0&type=json
-# {"Result":"0","Command":"602","Parameter":"0","Response":"Note in escrow, amount: 2000.00  IDR","ErrorDesc":"Sukses"}
-# 3. STACK
-# http://localhost:9000/Service/GET?cmd=603&param=0&type=json
-# {"Result":"0","Command":"603","Parameter":"0","Response":"Note stacked","ErrorDesc":"Sukses"}
-# 4. RETURN
-# http://localhost:9000/Service/GET?cmd=604&param=0&type=json
-# {"Result":"0","Command":"604","Parameter":"0","Response":"Host rejected note","ErrorDesc":"Sukses"}
-# 5. DISABLE
-# http://localhost:9000/Service/GET?cmd=605&param=0&type=json
-# {"Result":"0","Command":"605","Parameter":"0","Response":"Unit disabled...","ErrorDesc":"Sukses"}
-# 6. RESET
-# http://localhost:9000/Service/GET?cmd=606&param=0&type=json
-# {"Result":"0","Command":"606","Parameter":"0","Response":"Unit reset","ErrorDesc":"Sukses"}
-
 BILL_PORT = _Common.BILL_PORT
 BILL = {}
 
@@ -107,6 +87,14 @@ def start_init_bill():
 
 
 NV_DO_RESET_ON_INIT = False
+KEY_RECEIVED = 'Received=IDR' if BILL_TYPE == 'GRG' else '000'
+CODE_JAM = '14439'
+TIMEOUT_BAD_NOTES = 'acDevReturn:|acReserve:|'
+SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
+UNKNOWN_ITEM = 'Received=CNY|Denomination=0|'
+
+DIRECT_PRICE_MODE = False
+DIRECT_PRICE_AMOUNT = 0
 
 
 def init_bill():
@@ -122,27 +110,17 @@ def init_bill():
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
-        if BILL_TYPE == 'NV' and NV_DO_RESET_ON_INIT is True:
-            param = BILL['RESET'] + '|'
-            response, result = _Command.send_request(param=param, output=None)
-            if response != 0:
-                OPEN_STATUS = False
-                _Common.BILL_ERROR = 'FAILED_RESET_BILL'
+        # if BILL_TYPE == 'NV' and NV_DO_RESET_ON_INIT is True:
+        #     param = BILL['RESET'] + '|'
+        #     response, result = _Command.send_request(param=param, output=None)
+        #     if response != 0:
+        #         OPEN_STATUS = False
+        #         _Common.BILL_ERROR = 'FAILED_RESET_BILL'
     else:
         _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
     LOGGER.info(("Starting BILL in Standby_Mode : ", str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
-
-
-KEY_RECEIVED = 'Received=IDR'
-CODE_JAM = '14439'
-TIMEOUT_BAD_NOTES = 'acDevReturn:|acReserve:|'
-SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
-UNKNOWN_ITEM = 'Received=CNY|Denomination=0|'
-
-DIRECT_PRICE_MODE = False
-DIRECT_PRICE_AMOUNT = 0
 
 
 def start_set_direct_price(price):
@@ -201,7 +179,7 @@ def simply_exec_bill(amount=None):
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
 
 
-def parse_cash_in(_result):
+def parse_notes(_result):
     if BILL_TYPE == 'GRG':
         # Received=IDR|Denomination=5000|Version=2|SerialNumber=1|Go=0
         return _result.split('|')[1].split('=')[1]
@@ -223,7 +201,8 @@ def start_receive_note():
             _response, _result = _Command.send_request(param=param, output=None)
             _Helper.dump([_response, _result])
             if _response == 0 and KEY_RECEIVED in _result:
-                cash_in = parse_cash_in(_result)
+                cash_in = parse_notes(_result)
+                _Helper.dump(cash_in)
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
                 if cash_in in SMALL_NOTES_NOT_ALLOWED:
                     sleep(.25)
