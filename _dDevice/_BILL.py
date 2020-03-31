@@ -130,7 +130,7 @@ def init_bill():
                 OPEN_STATUS = False
                 _Common.BILL_ERROR = 'FAILED_RESET_BILL'
     else:
-        _Common.BILL_ERROR = 'FAILED_INIT_BILL'
+        _Common.BILL_ERROR = 'FAILED_INIT_PORT_BILL'
     LOGGER.info(("Starting BILL in Standby_Mode : ", str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
@@ -209,6 +209,8 @@ def parse_cash_in(_result):
     elif BILL_TYPE == 'NV':
         # Note in escrow, amount: 2000.00  IDR
         return _result.split('amount: ')[1].split('.00')[0]
+    else:
+        return '0'
 
 
 def start_receive_note():
