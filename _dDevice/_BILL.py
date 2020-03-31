@@ -130,7 +130,7 @@ def init_bill():
                 OPEN_STATUS = False
                 _Common.BILL_ERROR = 'FAILED_RESET_BILL'
     else:
-        _Common.BILL_ERROR = 'FAILED_INIT_PORT_BILL'
+        _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
     LOGGER.info(("Starting BILL in Standby_Mode : ", str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
