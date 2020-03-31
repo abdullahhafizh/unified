@@ -44,7 +44,7 @@ NV = {
 
 BILL_TYPE = _Common.BILL_TYPE
 BILL = GRG if BILL_TYPE == 'GRG' else NV
-LOGGER.debug(('Bill Command Mapping', str(BILL)))
+LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
 
 # 1. OPEN PORT
 # http://localhost:9000/Service/GET?cmd=601&param=COM10&type=json
