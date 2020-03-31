@@ -20,7 +20,8 @@ TEST_MODE = _Common.TEST_MODE
 CONFIG_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'BILLDTATM_CommCfg.ini')
 EXEC_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'bill.exe')
 LOG_BILL = os.path.join(sys.path[0], 'log')
-
+BILL_TYPE = _Common.BILL_TYPE
+BILL_PORT = _Common.BILL_PORT
 
 GRG = {
     "SET": "501",
@@ -29,7 +30,12 @@ GRG = {
     "STATUS": "504",
     "STORE": "505",
     "REJECT": "506",
-    "GET_STATE": "507"
+    "GET_STATE": "507",
+    "PORT": BILL_PORT.replace('COM', ''),
+    "KEY_RECEIVED": "Received=IDR",
+    "CODE_JAM": "14439",
+    "TIMEOUT_BAD_NOTES": "acDevReturn:|acReserve:|",
+    "UNKNOWN_ITEM": "Received=CNY|Denomination=0|"
 }
 
 NV = {
@@ -39,12 +45,18 @@ NV = {
     "REJECT": "604",
     "STOP": "605",
     # "STATUS": "504",
-    "RESET": "606"
+    "RESET": "606",
+    "KEY_RECEIVED": "000",
+    "PORT": BILL_PORT,
+    # TODO Must Define Below Property
+    "CODE_JAM": None,
+    "TIMEOUT_BAD_NOTES": None,
+    "UNKNOWN_ITEM": None 
 }
 
-BILL_TYPE = _Common.BILL_TYPE
-BILL_PORT = _Common.BILL_PORT
+
 BILL = {}
+SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
 
 
 class BILLSignalHandler(QObject):
@@ -86,39 +98,25 @@ def start_init_bill():
     _Helper.get_pool().apply_async(init_bill, )
 
 
-NV_DO_RESET_ON_INIT = False
-KEY_RECEIVED = 'Received=IDR' if BILL_TYPE == 'GRG' else '000'
-CODE_JAM = '14439'
-TIMEOUT_BAD_NOTES = 'acDevReturn:|acReserve:|'
-SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
-UNKNOWN_ITEM = 'Received=CNY|Denomination=0|'
-
 DIRECT_PRICE_MODE = False
 DIRECT_PRICE_AMOUNT = 0
 
 
 def init_bill():
-    global OPEN_STATUS, BILL_PORT, BILL
+    global OPEN_STATUS, BILL
     BILL = GRG if BILL_TYPE == 'GRG' else NV
     LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
         LOGGER.debug(("init_bill port : ", BILL_PORT))
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
         return False
-    _port = BILL_PORT.replace('COM', '') if BILL_TYPE == 'GRG' else BILL_PORT
-    param = BILL["SET"] + '|' + _port
+    param = BILL["SET"] + '|' + BILL["PORT"]
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
-        # if BILL_TYPE == 'NV' and NV_DO_RESET_ON_INIT is True:
-        #     param = BILL['RESET'] + '|'
-        #     response, result = _Command.send_request(param=param, output=None)
-        #     if response != 0:
-        #         OPEN_STATUS = False
-        #         _Common.BILL_ERROR = 'FAILED_RESET_BILL'
     else:
         _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
-    LOGGER.info(("Starting BILL in Standby_Mode : ", str(OPEN_STATUS)))
+    LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
 
@@ -137,46 +135,6 @@ def set_direct_price(price):
 
 def start_bill_receive_note():
     _Helper.get_pool().apply_async(start_receive_note)
-
-
-def simply_exec_bill(amount=None):
-    global COLLECTED_CASH, CASH_HISTORY
-    if amount is None:
-        amount = DIRECT_PRICE_AMOUNT
-    try:
-        r = _Helper.time_string('%Y%m%d%H%M%S%f')
-        command = 'start /B ' + EXEC_GRG + ' input ' + str(amount) + ' ' + str(r) + ' ' + str(MAX_EXECUTION_TIME)
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-        reply = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-        LOGGER.debug(('simply_eject', 'command', command, 'output', str(reply)))
-        output = os.path.join(LOG_BILL, r+'.json')
-        attempt = 0
-        while True:
-            attempt += 1
-            if os.path.isfile(output):
-                output = open(output, 'r').readlines()
-                LOGGER.debug('output_file', output)
-                result = json.loads(output[0])
-                if len(result['money']) > 0:
-                    cash_in = str(result['money'][-1]['denom'])
-                    if COLLECTED_CASH < DIRECT_PRICE_AMOUNT:
-                        CASH_HISTORY.append(str(cash_in))
-                        COLLECTED_CASH += int(cash_in)
-                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|' + str(COLLECTED_CASH))
-                        LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
-                                                                 'COLLECTED': COLLECTED_CASH,
-                                                                 'HISTORY': CASH_HISTORY})))
-                    if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
-                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
-                        break
-            if attempt == MAX_EXECUTION_TIME:
-                LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
-                break
-            sleep(1)
-    except Exception as e:
-        LOGGER.warning(('simply_exec_bill', str(e)))
-        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
 
 
 def parse_notes(_result):
@@ -200,7 +158,7 @@ def start_receive_note():
             param = BILL["RECEIVE"] + '|'
             _response, _result = _Command.send_request(param=param, output=None)
             _Helper.dump([_response, _result])
-            if _response == 0 and KEY_RECEIVED in _result:
+            if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
                 _Helper.dump(cash_in)
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
@@ -239,13 +197,16 @@ def start_receive_note():
                 #     sleep(.25)
                 #     param = BILL["RECEIVE"] + '|'
                 #     _Command.send_request(param=param, output=None)
-            if (TIMEOUT_BAD_NOTES in _result or UNKNOWN_ITEM in _result) and BILL_TYPE == "GRG":
+            if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
                 _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                if TIMEOUT_BAD_NOTES in _result:
-                    _Command.send_request(param=BILL["STOP"]+'|', output=None)
+                _Command.send_request(param=BILL["STOP"]+'|', output=None)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                 break
-            if CODE_JAM in _result and BILL_TYPE == 'GRG':
+            if BILL["UNKNOWN_ITEM"] is not None and BILL["UNKNOWN_ITEM"] in _result:
+                _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                break
+            if BILL["CODE_JAM"] is not None and BILL["CODE_JAM"] in _result:
                 _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
                 _Common.BILL_ERROR = 'BILL_DEVICE_JAM'
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
