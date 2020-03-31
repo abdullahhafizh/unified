@@ -43,34 +43,28 @@ NV = {
 }
 
 BILL_TYPE = _Common.BILL_TYPE
-BILL = GRG if BILL_TYPE == 'GRG' else NV
-LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
 
 # 1. OPEN PORT
 # http://localhost:9000/Service/GET?cmd=601&param=COM10&type=json
 # {"Result":"0","Command":"601","Parameter":"COM10","Response":"","ErrorDesc":"Sukses"}
-
 # 2. ACCEPT
 # http://localhost:9000/Service/GET?cmd=602&param=0&type=json
 # {"Result":"0","Command":"602","Parameter":"0","Response":"Note in escrow, amount: 2000.00  IDR","ErrorDesc":"Sukses"}
-
 # 3. STACK
 # http://localhost:9000/Service/GET?cmd=603&param=0&type=json
 # {"Result":"0","Command":"603","Parameter":"0","Response":"Note stacked","ErrorDesc":"Sukses"}
-
 # 4. RETURN
 # http://localhost:9000/Service/GET?cmd=604&param=0&type=json
 # {"Result":"0","Command":"604","Parameter":"0","Response":"Host rejected note","ErrorDesc":"Sukses"}
-
 # 5. DISABLE
 # http://localhost:9000/Service/GET?cmd=605&param=0&type=json
 # {"Result":"0","Command":"605","Parameter":"0","Response":"Unit disabled...","ErrorDesc":"Sukses"}
-
 # 6. RESET
 # http://localhost:9000/Service/GET?cmd=606&param=0&type=json
 # {"Result":"0","Command":"606","Parameter":"0","Response":"Unit reset","ErrorDesc":"Sukses"}
 
 BILL_PORT = _Common.BILL_PORT
+BILL = {}
 
 
 class BILLSignalHandler(QObject):
@@ -112,8 +106,13 @@ def start_init_bill():
     _Helper.get_pool().apply_async(init_bill, )
 
 
+NV_DO_RESET_ON_INIT = False
+
+
 def init_bill():
-    global OPEN_STATUS, BILL_PORT
+    global OPEN_STATUS, BILL_PORT, BILL
+    BILL = GRG if BILL_TYPE == 'GRG' else NV
+    LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
         LOGGER.debug(("init_bill port : ", BILL_PORT))
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
@@ -123,7 +122,7 @@ def init_bill():
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
-        if BILL_TYPE == 'NV':
+        if BILL_TYPE == 'NV' and NV_DO_RESET_ON_INIT is True:
             param = BILL['RESET'] + '|'
             response, result = _Command.send_request(param=param, output=None)
             if response != 0:

@@ -1069,7 +1069,7 @@ if __name__ == '__main__':
         _KioskService.start_restart_mdd_service()
     if _Common.BILL['status'] is True:
         sleep(1)
-        print("pyt: Connecting to BILL Bill Acceptor...")
+        print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
         _BILL.init_bill()
     if _Common.MEI['status'] is True:
         sleep(1)
