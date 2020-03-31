@@ -44,7 +44,7 @@ Base{
         base.result_collect_cash.connect(get_admin_action);
         base.result_change_stock.connect(get_admin_action);
         base.result_admin_print.connect(get_admin_action);
-        base.result_init_grg.connect(get_admin_action);
+        base.result_init_bill.connect(get_admin_action);
         base.result_activation_bni.connect(get_admin_action);
         base.result_auth_qprox.connect(ka_login_status);
         base.result_mandiri_settlement.connect(get_admin_action);
@@ -63,7 +63,7 @@ Base{
         base.result_collect_cash.disconnect(get_admin_action);
         base.result_change_stock.disconnect(get_admin_action);
         base.result_admin_print.disconnect(get_admin_action);
-        base.result_init_grg.disconnect(get_admin_action);
+        base.result_init_bill.disconnect(get_admin_action);
         base.result_activation_bni.disconnect(get_admin_action);
         base.result_auth_qprox.disconnect(ka_login_status);
         base.result_mandiri_settlement.disconnect(get_admin_action);
@@ -129,11 +129,11 @@ Base{
             false_notif('Dear '+userData.first_name+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
         } else if (a=='COLLECT_CASH|DONE'){
             false_notif('Dear '+userData.first_name+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
-            _SLOT.start_init_grg();
+            _SLOT.start_init_bill();
         } else if (a=='ADMIN_PRINT|DONE'){
             false_notif('Dear '+userData.first_name+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Petugas Loket TJ');
-        } else if (a=='INIT_GRG|DONE'){
-            false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor GRG Selesai, Periksa Kembali Kondisi Aktual Mesin');
+        } else if (a=='INIT_BILL|DONE'){
+            false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor BILL Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
             false_notif('Dear '+userData.first_name+'|Sedang Memproses Perubahan Stok Pada Peladen Pusat\nSilakan Tunggu Beberapa Saat');
         } else if (a=='REFILL_ZERO|SUCCESS'){
@@ -349,20 +349,20 @@ Base{
         }
 
         AdminPanelButton{
-            id: reset_grg_button
+            id: reset_bill_button
             z: 10
-            button_text: 'reset grg'
+            button_text: 'reset bill'
             visible: !popup_loading.visible
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Reset GRG"');
+                    _SLOT.user_action_log('Admin Page "Reset BILL"');
                     if (press != '0') return;
                     press = '1';
-                    console.log('reset_grg_button is pressed..!');
+                    console.log('reset_bill_button is pressed..!');
                     popup_loading.open();
-                    _SLOT.start_init_grg();
+                    _SLOT.start_init_bill();
                 }
             }
         }

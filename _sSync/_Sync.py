@@ -9,7 +9,7 @@ from _nNetwork import _NetworkAccess
 import logging
 from _sService import _KioskService
 from _dDevice import _EDC
-from _dDevice import _GRG
+from _dDevice import _BILL
 # from _dDevice import _QPROX
 # from operator import itemgetter
 import json
@@ -489,10 +489,10 @@ def handle_tasks(tasks):
         if task['taskName'] == 'EDC_SETTLEMENT':
             result = _EDC.backend_edc_settlement()
             update_task(task, result)
-        if task['taskName'] == 'RESET_GRG':
+        if task['taskName'] in ['RESET_GRG', 'RESET_BILL']:
             if IDLE_MODE is True:
-                _GRG.start_init_grg()
-                result = 'EXECUTED_INTO_GRG'
+                _BILL.start_init_bill()
+                result = 'EXECUTED_INTO_BILL'
             else:
                 result = 'FAILED_EXECUTED_VM_ON_USED'
             update_task(task, result)

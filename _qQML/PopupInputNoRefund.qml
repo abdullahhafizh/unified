@@ -11,7 +11,7 @@ Rectangle{
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
 
-//    property var globalScreenType: '1'
+//    property var globalScreenType: '2'
 //    height: (globalScreenType=='2') ? 1024 : 1080
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
@@ -58,7 +58,7 @@ Rectangle{
 
     Rectangle{
         id: base_overlay
-        visible: withBackground
+        visible: false
         anchors.fill: parent
         color: CONF.background_color
 //        color: 'black'
@@ -68,11 +68,12 @@ Rectangle{
     Rectangle{
         id: notif_rec
         width: parent.width
-        height: parent.height
+        y: 125
+        height: parent.height - y
 //        color: CONF.frame_color
         color: colorMode
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+//        anchors.verticalCenter: parent.verticalCenter
 
         MainTitle{
             id: main_title

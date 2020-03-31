@@ -444,7 +444,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_payments', now, s);
         var device = JSON.parse(s);
-        if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
+        if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
             totalPaymentEnable += 1;
         }

@@ -30,7 +30,8 @@ EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
 EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
 MEI_PORT = get_config_value('port', 'MEI')
-GRG_PORT = get_config_value('port', 'GRG')
+BILL_PORT = get_config_value('port', 'BILL')
+BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
 CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
@@ -486,12 +487,14 @@ MEI = {
     "port": MEI_PORT,
     "status": True if MEI_PORT is not None and digit_in(MEI_PORT) is True else False
 }
-GRG = {
-    "port": GRG_PORT,
-    "status": True if GRG_PORT is not None and digit_in(GRG_PORT) is True else False
+# BILL Device Type For GRG / NV
+BILL = {
+    "port": BILL_PORT,
+    "type": BILL_TYPE,
+    "status": True if BILL_PORT is not None and digit_in(BILL_PORT) is True else False
 }
-# Handling MEI VS GRG Duplicate Port Activation
-if GRG['status'] is True:
+# Handling MEI VS BILL Duplicate Port Activation
+if BILL['status'] is True:
     MEI['status'] = False
     MEI_PORT = _ConfigParser.set_value('MEI', 'port', 'COM')
     MEI['port'] = MEI_PORT
@@ -519,7 +522,7 @@ def start_get_devices():
 
 def get_devices():
     # LOGGER.info(('[INFO] get_devices', DEVICES))
-    return {"QPROX": QPROX, "EDC": EDC, "MEI": MEI, "CD": CD, "GRG": GRG}
+    return {"QPROX": QPROX, "EDC": EDC, "MEI": MEI, "CD": CD, "BILL": BILL}
 
 
 def get_payments():
@@ -528,7 +531,7 @@ def get_payments():
         "EDC": "AVAILABLE" if (EDC["status"] is True and check_payment('card') is True) else "NOT_AVAILABLE",
         "CD": "AVAILABLE" if CD["status"] is True else "NOT_AVAILABLE",
         "MEI": "AVAILABLE" if (MEI["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
-        "GRG": "AVAILABLE" if (GRG["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
+        "BILL": "AVAILABLE" if (BILL["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
         "QR_OVO": "AVAILABLE" if check_payment('ovo') is True else "NOT_AVAILABLE",
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",

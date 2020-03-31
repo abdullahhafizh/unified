@@ -42,14 +42,14 @@ MEI = {
     "STOP": "315"
 }
 
-GRG = {
+BILL = {
     "SET": "501",
     "RECEIVE": "502",
     "STOP": "503",
     "STATUS": "504"
 }
 
-GRG_PORT = _Common.GRG_PORT
+BILL_PORT = _Common.BILL_PORT
 
 
 class MEISignalHandler(QObject):
@@ -66,9 +66,9 @@ class MEISignalHandler(QObject):
     SIGNAL_DISPENSE_VAL_MEI = pyqtSignal(str)
     SIGNAL_FLOAT_DOWN_ALL_MEI = pyqtSignal(str)
     SIGNAL_RETURN_STATUS = pyqtSignal(str)
-    SIGNAL_GRG_RECEIVE = pyqtSignal(str)
-    SIGNAL_GRG_STOP = pyqtSignal(str)
-    SIGNAL_GRG_STATUS = pyqtSignal(str)
+    SIGNAL_BILL_RECEIVE = pyqtSignal(str)
+    SIGNAL_BILL_STOP = pyqtSignal(str)
+    SIGNAL_BILL_STATUS = pyqtSignal(str)
 
 
 M_SIGNDLER = MEISignalHandler()

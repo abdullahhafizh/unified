@@ -21,7 +21,7 @@ from _sService import _UserService
 from time import sleep
 import subprocess
 from operator import itemgetter
-from _dDevice import _GRG
+from _dDevice import _BILL
 
 
 class KioskSignalHandler(QObject):
@@ -73,7 +73,7 @@ def kiosk_status():
         'tid': _Common.TID,
         # 'payment': _Common.PAYMENT_SETTING,
         'feature': _Common.FEATURE_SETTING,
-        'last_money_inserted': _ConfigParser.get_value('GRG', 'last^money^inserted')
+        'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted')
     }))
 
 
@@ -153,7 +153,7 @@ def define_device_port_setting(data):
         return
     for c in data: # QR No Need To Store in setting file
         if c['name'] == 'cash':
-            _ConfigParser.set_value('GRG', 'port', c['config'])
+            _ConfigParser.set_value('BILL', 'port', c['config'])
         if c['name'] == 'card':
             _ConfigParser.set_value('EDC', 'port', c['config'])
         if c['name'] == 'prepaid':
@@ -407,7 +407,7 @@ def machine_summary():
         'bni_active': str(_Common.BNI_ACTIVE),
         'service_ver': str(_Common.SERVICE_VERSION),
         'theme': str(_Common.THEME_NAME),
-        'last_money_inserted': _ConfigParser.get_set_value('GRG', 'last^money^inserted', 'N/A')
+        'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A')
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
     }
@@ -680,10 +680,10 @@ def start_begin_collect_cash():
 
 
 def begin_collect_cash():
-    # Add GRG Device Reset Function
-    # if _Common.GRG['status'] is True:
-    #     LOGGER.info(('begin_collect_cash', 'call init_grg'))
-    #     _GRG.init_grg()
+    # Add BILL Device Reset Function
+    # if _Common.BILL['status'] is True:
+    #     LOGGER.info(('begin_collect_cash', 'call init_bill'))
+    #     _BILL.init_bill()
     list_cash = _DAO.list_uncollected_cash()
     if len(list_cash) == 0:
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')
@@ -895,7 +895,7 @@ def store_transaction_global(param, retry=False):
                 g['trxid'] = _trxid
                 if g['payment'] == 'cash':
                     # Saving The CASH
-                    _GRG.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
+                    _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
                     # save_cash_local(g['payment_received'], 'cancel')
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
                 # Must Stop The Logic Here
@@ -919,7 +919,7 @@ def store_transaction_global(param, retry=False):
             if g['payment'] == 'cash':
                 # Saving The CASH
                 # save_cash_local(g['payment_received'])
-                _GRG.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
+                _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
 
         # _______________________________________________________________________________________________________
         _param_stock = dict()

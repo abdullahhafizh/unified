@@ -27,7 +27,7 @@ from time import sleep
 from _tTools import _CheckIn
 from _tTools import _SalePrintTool
 from _sService import _ProductService
-from _dDevice import _GRG
+from _dDevice import _BILL
 from _sService import _TopupService
 from _sService import _SettlementService
 from _sService import _UpdateAppService
@@ -332,8 +332,8 @@ class SlotHandler(QObject):
     start_sync_product_stock = pyqtSlot()(start_sync_product_stock)
 
     def start_set_direct_price(self, price):
-        _MEI.start_set_direct_price(price)
-        _GRG.start_set_direct_price(price)
+        # _MEI.start_set_direct_price(price)
+        _BILL.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
     def start_multiple_eject(self, attempt, multiply):
@@ -388,17 +388,17 @@ class SlotHandler(QObject):
         _ProductService.start_change_product_stock(port, stock)
     start_change_product_stock = pyqtSlot(str, str)(start_change_product_stock)
 
-    def start_grg_receive_note(self):
-        _GRG.start_grg_receive_note()
-    start_grg_receive_note = pyqtSlot()(start_grg_receive_note)
+    def start_bill_receive_note(self):
+        _BILL.start_bill_receive_note()
+    start_bill_receive_note = pyqtSlot()(start_bill_receive_note)
 
-    def stop_grg_receive_note(self):
-        _GRG.stop_grg_receive_note()
-    stop_grg_receive_note = pyqtSlot()(stop_grg_receive_note)
+    def stop_bill_receive_note(self):
+        _BILL.stop_bill_receive_note()
+    stop_bill_receive_note = pyqtSlot()(stop_bill_receive_note)
 
-    def start_get_status_grg(self):
-        _GRG.start_get_status_grg()
-    start_get_status_grg = pyqtSlot()(start_get_status_grg)
+    def start_get_status_bill(self):
+        _BILL.start_get_status_bill()
+    start_get_status_bill = pyqtSlot()(start_get_status_bill)
 
     def start_do_topup_bni(self, slot):
         _TopupService.start_do_topup_bni(slot)
@@ -408,9 +408,9 @@ class SlotHandler(QObject):
         _TopupService.start_define_topup_slot_bni()
     start_define_topup_slot_bni = pyqtSlot()(start_define_topup_slot_bni)
 
-    def start_init_grg(self):
-        _GRG.start_init_grg()
-    start_init_grg = pyqtSlot()(start_init_grg)
+    def start_init_bill(self):
+        _BILL.start_init_bill()
+    start_init_bill = pyqtSlot()(start_init_bill)
 
     def start_upload_device_state(self, device, state):
         _Common.start_upload_device_state(device, state)
@@ -589,7 +589,7 @@ class SlotHandler(QObject):
     start_check_init_cd = pyqtSlot(str)(start_check_init_cd)
 
     def start_log_book_cash(self, pid, amount):
-        _GRG.start_log_book_cash(pid, amount)
+        _BILL.start_log_book_cash(pid, amount)
     start_log_book_cash = pyqtSlot(str, str)(start_log_book_cash)
 
     def start_store_pending_balance(self, payload):
@@ -696,13 +696,13 @@ def s_handler():
     _UserService.US_SIGNDLER.SIGNAL_USER_LOGIN.connect(view.rootObject().result_user_login)
     _KioskService.K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.connect(view.rootObject().result_kiosk_admin_summary)
     _ProductService.PR_SIGNDLER.SIGNAL_CHANGE_STOCK.connect(view.rootObject().result_change_stock)
-    _GRG.GRG_SIGNDLER.SIGNAL_GRG_STATUS.connect(view.rootObject().result_grg_status)
-    _GRG.GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.connect(view.rootObject().result_grg_receive)
-    _GRG.GRG_SIGNDLER.SIGNAL_GRG_STOP.connect(view.rootObject().result_grg_stop)
+    _BILL.BILL_SIGNDLER.SIGNAL_BILL_STATUS.connect(view.rootObject().result_bill_status)
+    _BILL.BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.connect(view.rootObject().result_bill_receive)
+    _BILL.BILL_SIGNDLER.SIGNAL_BILL_STOP.connect(view.rootObject().result_bill_stop)
     _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.connect(view.rootObject().result_do_topup_bni)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.connect(view.rootObject().result_admin_print)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_SALE_REPRINT_GLOBAL.connect(view.rootObject().result_reprint_global)
-    _GRG.GRG_SIGNDLER.SIGNAL_GRG_INIT.connect(view.rootObject().result_init_grg)
+    _BILL.BILL_SIGNDLER.SIGNAL_BILL_INIT.connect(view.rootObject().result_init_bill)
     _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.connect(view.rootObject().result_activation_bni)
     _CD.CD_SIGNDLER.SIGNAL_CD_READINESS.connect(view.rootObject().result_cd_readiness)
     _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
@@ -1067,10 +1067,10 @@ if __name__ == '__main__':
         sleep(.5)
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
-    if _Common.GRG['status'] is True:
+    if _Common.BILL['status'] is True:
         sleep(1)
-        print("pyt: Connecting to GRG Bill Acceptor...")
-        _GRG.init_grg()
+        print("pyt: Connecting to BILL Bill Acceptor...")
+        _BILL.init_bill()
     if _Common.MEI['status'] is True:
         sleep(1)
         print("pyt: Connecting to MEI Bill Acceptor...")

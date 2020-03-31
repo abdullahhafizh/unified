@@ -393,7 +393,7 @@ def check_balance():
     if response == 0:
         bank_name = get_fw_bank(result.split('|')[2])
         card_no = result.split('|')[1].replace('#', '')
-        balance = result.split('|')[0]
+        balance = result.split('|')[0]  
         output = {
             'balance': balance,
             'card_no': card_no,
@@ -1062,3 +1062,6 @@ def send_cryptogram_tapcash(cyptogram, card_info):
         return False
 
 
+def bri_topup_online():
+    pass
+    

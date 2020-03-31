@@ -285,8 +285,8 @@ Base{
                             standard_notif_view.buttonEnabled = false;
                             reboot_button_action.enabled = true;
                         } else if (usernameInput.toLowerCase() == 'grg--res37' && passwordInput.toLowerCase() == '0ffl1n3') {
-                            false_notif('Mohon Tunggu|Mencobda Mereset GRG Dalam Beberapa Saat.');
-                            __SLOT.start_init_grg();
+                            false_notif('Mohon Tunggu|Mencobda Mereset BILL Dalam Beberapa Saat.');
+                            __SLOT.start_init_bill();
                         } else {
                             false_notif('Dear User| No Action This Time For ['+loginPurpose+']');
                         }

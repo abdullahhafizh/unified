@@ -91,7 +91,7 @@ Base{
     function get_payments(s){
         console.log('get_payments', s);
         var device = JSON.parse(s);
-        if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
+        if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
         }
         if (device.EDC == 'AVAILABLE'){

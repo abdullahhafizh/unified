@@ -77,9 +77,9 @@ Base{
         base.result_sale_print.connect(print_result);
         base.result_topup_qprox.connect(topup_result);
         base.result_store_topup.connect(store_result);
-        base.result_grg_receive.connect(grg_payment_result);
-        base.result_grg_stop.connect(grg_payment_result);
-        base.result_grg_status.connect(grg_payment_result);
+        base.result_bill_receive.connect(bill_payment_result);
+        base.result_bill_stop.connect(bill_payment_result);
+        base.result_bill_status.connect(bill_payment_result);
         base.result_get_qr.connect(qr_get_result);
         base.result_check_qr.connect(qr_check_result);
         base.result_trx_ppob.connect(ppob_trx_result);
@@ -101,9 +101,9 @@ Base{
         base.result_sale_print.disconnect(print_result);
         base.result_topup_qprox.disconnect(topup_result);
         base.result_store_topup.disconnect(store_result);
-        base.result_grg_receive.disconnect(grg_payment_result);
-        base.result_grg_stop.disconnect(grg_payment_result);
-        base.result_grg_status.disconnect(grg_payment_result);
+        base.result_bill_receive.disconnect(bill_payment_result);
+        base.result_bill_stop.disconnect(bill_payment_result);
+        base.result_bill_status.disconnect(bill_payment_result);
         base.result_get_qr.disconnect(qr_get_result);
         base.result_check_qr.disconnect(qr_check_result);
         base.result_trx_ppob.disconnect(ppob_trx_result);
@@ -359,7 +359,7 @@ Base{
     function print_failed_transaction(channel, issue){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('print_failed_transaction', now, channel, issue, receivedCash, customerPhone, JSON.stringify(details));
-        if (issue==undefined) issue = 'GRG_ERROR';
+        if (issue==undefined) issue = 'BILL_ERROR';
         if (channel=='cash'){
             details.payment_error = issue;
             details.payment_received = receivedCash.toString();
@@ -477,16 +477,16 @@ Base{
         }
     }
 
-    function grg_payment_result(r){
+    function bill_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log("grg_payment_result : ", now, r)
+        console.log("bill_payment_result : ", now, r)
         var grgFunction = r.split('|')[0]
         var grgResult = r.split('|')[1]
-        if (grgFunction == 'RECEIVE_GRG'){
+        if (grgFunction == 'RECEIVE_BILL'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 false_notif('closeWindow', 'Terjadi Kegagalan Pada Bill Acceptor');
                 if (receivedCash > 0){                    
-                    print_failed_transaction('cash', 'GRG_ERROR');
+                    print_failed_transaction('cash', 'BILL_ERROR');
                 }
                 return;
             } else if (grgResult == 'COMPLETE'){
@@ -494,7 +494,7 @@ Base{
 //                _SLOT.start_store_es_mei();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
-                _SLOT.stop_grg_receive_note();
+                _SLOT.stop_bill_receive_note();
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
@@ -503,7 +503,7 @@ Base{
 //                false_notif('Mohon Maaf|Silakan Hanya Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
 //                standard_notif_view.buttonEnabled = false;
 //                standard_notif_view._button_text = 'coba lagi';
-                modeButtonPopup = 'retrigger_grg';
+                modeButtonPopup = 'retrigger_bill';
 //                proceedText = 'COBA LAGI';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
@@ -511,7 +511,7 @@ Base{
 //                false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
 //                standard_notif_view.buttonEnabled = false;
 //                standard_notif_view._button_text = 'coba lagi';
-                modeButtonPopup = 'retrigger_grg';
+                modeButtonPopup = 'retrigger_bill';
 //                proceedText = 'COBA LAGI';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 press = '0'
@@ -520,9 +520,9 @@ Base{
                 receivedCash = parseInt(grgResult);
                 abc.counter = timer_value;
                 my_timer.restart();
-//                _SLOT.start_grg_receive_note();
+//                _SLOT.start_bill_receive_note();
             }
-        } else if (grgFunction == 'STOP_GRG'){
+        } else if (grgFunction == 'STOP_BILL'){
             if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice) {
                 if (!proceedAble){
                     details.process_error = 1;
@@ -530,12 +530,12 @@ Base{
                     _SLOT.python_dump(JSON.stringify(details))
                     return;
                 }
-                var cashResponse = JSON.parse(r.replace('STOP_GRG|SUCCESS-', ''))
+                var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
                 payment_complete();
             }
-        } else if (grgFunction == 'STATUS_GRG'){
+        } else if (grgFunction == 'STATUS_BILL'){
             if(grgResult=='ERROR') {
                 false_notif('backToMain', 'Terjadi Kegagalan Pada Bill Acceptor');
                 return;
@@ -744,7 +744,7 @@ Base{
 //            getDenom = totalPrice - adminFee;
             _SLOT.start_set_direct_price(totalPrice.toString());
 //            _SLOT.start_accept_mei();
-            _SLOT.start_grg_receive_note();
+            _SLOT.start_bill_receive_note();
             return;
         }
         if (details.payment == 'debit') {
@@ -784,7 +784,7 @@ Base{
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     if (details.payment=='cash' && !isPaid) {
-                        _SLOT.stop_grg_receive_note();
+                        _SLOT.stop_bill_receive_note();
                         if (receivedCash > 0){
                             print_failed_transaction('cash', 'PAYMENT_TIMEOUT');
     //                        _SLOT.start_return_es_mei();
@@ -816,7 +816,7 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 if (details.payment=='cash' && !isPaid) {
-                    _SLOT.stop_grg_receive_note();
+                    _SLOT.stop_bill_receive_note();
                     if (receivedCash > 0){
                         print_failed_transaction('cash', 'USER_CANCELLATION');
 //                        _SLOT.start_return_es_mei();
@@ -1322,8 +1322,8 @@ Base{
                     popup_loading.open();
                     perform_do_topup();
                 }
-                if (modeButtonPopup=='retrigger_grg') {
-                    _SLOT.start_grg_receive_note();
+                if (modeButtonPopup=='retrigger_bill') {
+                    _SLOT.start_bill_receive_note();
                 }
                 if (modeButtonPopup=='reprint') {
                     _SLOT.start_reprint_global();
@@ -1373,8 +1373,8 @@ Base{
                     if (press!='0') return;
                     press = '1'
                     switch(modeButtonPopup){
-                    case 'retrigger_grg':
-                        _SLOT.start_grg_receive_note();
+                    case 'retrigger_bill':
+                        _SLOT.start_bill_receive_note();
                         open_preload_notif();
                         break;
                     case 'do_topup':

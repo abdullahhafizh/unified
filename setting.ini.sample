@@ -64,7 +64,7 @@ mandiri^daily^settle^time = 02:00
 [MEI]
 port = COM
 
-[GRG]
+[BILL]
 port = COM2
 last^money^inserted = N/A
 

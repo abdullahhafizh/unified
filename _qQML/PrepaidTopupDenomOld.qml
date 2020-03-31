@@ -114,7 +114,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_payments', s, now);
         var device = JSON.parse(s);
-        if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
+        if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
             totalPaymentEnable += 1;
         }
@@ -838,8 +838,8 @@ Base{
                     if (press!='0') return;
                     press = '1'
                     switch(modeButtonPopup){
-                    case 'retrigger_grg':
-                        _SLOT.start_grg_receive_note();
+                    case 'retrigger_bill':
+                        _SLOT.start_bill_receive_note();
                         break;
 //                    case 'do_topup':
 //                        perform_do_topup();
