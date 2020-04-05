@@ -6,11 +6,12 @@ Rectangle {
     id: main_rectangle
     property bool modeReverse: true
     property var itemName: '100'
+    property var buttonWidth: 359
     property bool buttonActive: true
     property bool isSelected: false
     property variant imageMode: ['10', '20', '50', '100', '150', '200', '250']
 
-    width: 359
+    width: buttonWidth
     height: 183
     color: 'transparent'
     visible: true

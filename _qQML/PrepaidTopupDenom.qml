@@ -48,9 +48,14 @@ Base{
     property bool frameWithButton: false
     property var modeButtonPopup
 
+    property var tinyDenomTopup: ''
     property var smallDenomTopup: ''
     property var midDenomTopup: ''
     property var highDenomTopup: ''
+
+    //Redefine Denom Row Space and Button Denom
+    property var rowDenomSpacing: 50
+    property var buttonDenomWidth: 359
 
     property variant allowedBank: []
 
@@ -247,37 +252,53 @@ Base{
             highDenomTopup = ready.emoney[0]
             midDenomTopup = ready.emoney[1]
             smallDenomTopup = ready.emoney[2]
+            if (ready.emoney[3] != undefined) tinyDenomTopup = ready.emoney[3]
             break;
         case 'BNI':
             highDenomTopup = ready.tapcash[0]
             midDenomTopup = ready.tapcash[1]
             smallDenomTopup = ready.tapcash[2]
+            if (ready.tapcash[3] != undefined) tinyDenomTopup = ready.tapcash[3]
             break;
         case 'DKI':
             highDenomTopup = ready.jakcard[0]
             midDenomTopup = ready.jakcard[1]
             smallDenomTopup = ready.jakcard[2]
+            if (ready.jakcard[3] != undefined) tinyDenomTopup = ready.jakcard[3]
             break;
         case 'BCA':
             highDenomTopup = ready.flazz[0]
             midDenomTopup = ready.flazz[1]
             smallDenomTopup = ready.flazz[2]
+            if (ready.flazz[3] != undefined) tinyDenomTopup = ready.flazz[3]
             break;
         case 'BRI':
             highDenomTopup = ready.brizzi[0]
             midDenomTopup = ready.brizzi[1]
             smallDenomTopup = ready.brizzi[2]
+            if (ready.brizzi[3] != undefined) tinyDenomTopup = ready.brizzi[3]
             break;
         }
-
         small_denom.buttonActive = true;
         mid_denom.buttonActive = true;
         high_denom.buttonActive = true;
+        rowDenomSpacing = (globalScreenType == '1') ? 50 : 30;
+        buttonDenomWidth = 359;
+        if (tinyDenomTopup!='') {
+            tiny_denom.buttonActive = true;
+            if (globalScreenType == '1'){
+                rowDenomSpacing = 15;
+                buttonDenomWidth = 250;
+            } else {
+                rowDenomSpacing = 5;
+                buttonDenomWidth = 200;
+            }
+        }
         popup_loading.close();
     }
 
     function check_denom_topup(){
-        if (FUNC.empty(highDenomTopup) && FUNC.empty(midDenomTopup) && FUNC.empty(smallDenomTopup)){
+        if (FUNC.empty(highDenomTopup) && FUNC.empty(midDenomTopup) && FUNC.empty(smallDenomTopup) && FUNC.empty(tinyDenomTopup)){
             return false;
         }
         return true;
@@ -810,6 +831,7 @@ Base{
 //    }
 
     function release_denom_selection(id){
+        tiny_denom.do_release();
         small_denom.do_release();
         mid_denom.do_release();
         high_denom.do_release();
@@ -823,12 +845,32 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 350 : 320
-        spacing: (globalScreenType == '1') ? 50 : 30
+        spacing: rowDenomSpacing
         visible: mainVisible
+        SmallSimplyNumber{
+            id: tiny_denom
+            itemName: FUNC.insert_dot(FUNC.divide_thousand(tinyDenomTopup).toString())
+            buttonActive: false
+            buttonWidth: buttonDenomWidth
+            MouseArea{
+                anchors.fill: parent
+                enabled: parent.buttonActive
+                onClicked: {
+                    if (exceed_balance(tinyDenomTopup)) return;
+                    if (minus_sam_balance(tinyDenomTopup)) return;
+                    _SLOT.user_action_log('Choose tinyDenom "'+tinyDenomTopup+'"');;
+                    if (press!='0') return;
+                    press = '1';
+                    release_denom_selection(tiny_denom);
+                    set_selected_denom(tinyDenomTopup);
+                }
+            }
+        }
         SmallSimplyNumber{
             id: small_denom
             itemName: FUNC.insert_dot(FUNC.divide_thousand(smallDenomTopup).toString())
             buttonActive: false
+            buttonWidth: buttonDenomWidth
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
@@ -847,6 +889,7 @@ Base{
             id: mid_denom
             itemName: FUNC.insert_dot(FUNC.divide_thousand(midDenomTopup).toString())
             buttonActive: false
+            buttonWidth: buttonDenomWidth
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
@@ -865,6 +908,7 @@ Base{
             id: high_denom
             itemName: FUNC.insert_dot(FUNC.divide_thousand(highDenomTopup).toString())
             buttonActive: false
+            buttonWidth: buttonDenomWidth
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
