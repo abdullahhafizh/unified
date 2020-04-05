@@ -252,48 +252,52 @@ Base{
             highDenomTopup = ready.emoney[0]
             midDenomTopup = ready.emoney[1]
             smallDenomTopup = ready.emoney[2]
-            if (ready.emoney[3] != undefined) tinyDenomTopup = ready.emoney[3]
+            tinyDenomTopup = ready.emoney[3]
             break;
         case 'BNI':
             highDenomTopup = ready.tapcash[0]
             midDenomTopup = ready.tapcash[1]
             smallDenomTopup = ready.tapcash[2]
-            if (ready.tapcash[3] != undefined) tinyDenomTopup = ready.tapcash[3]
+            tinyDenomTopup = ready.tapcash[3]
             break;
         case 'DKI':
             highDenomTopup = ready.jakcard[0]
             midDenomTopup = ready.jakcard[1]
             smallDenomTopup = ready.jakcard[2]
-            if (ready.jakcard[3] != undefined) tinyDenomTopup = ready.jakcard[3]
+            tinyDenomTopup = ready.jakcard[3]
             break;
         case 'BCA':
             highDenomTopup = ready.flazz[0]
             midDenomTopup = ready.flazz[1]
             smallDenomTopup = ready.flazz[2]
-            if (ready.flazz[3] != undefined) tinyDenomTopup = ready.flazz[3]
+            tinyDenomTopup = ready.flazz[3]
             break;
         case 'BRI':
             highDenomTopup = ready.brizzi[0]
             midDenomTopup = ready.brizzi[1]
             smallDenomTopup = ready.brizzi[2]
-            if (ready.brizzi[3] != undefined) tinyDenomTopup = ready.brizzi[3]
+            tinyDenomTopup = ready.brizzi[3]
             break;
         }
-        small_denom.buttonActive = true;
-        mid_denom.buttonActive = true;
-        high_denom.buttonActive = true;
+        tiny_denom.buttonActive = (tinyDenomTopup!=undefined && parseInt(tinyDenomTopup) > 0);
+        small_denom.buttonActive = (smallDenomTopup!=undefined && parseInt(smallDenomTopup) > 0);
+        mid_denom.buttonActive = (midDenomTopup!=undefined && parseInt(midDenomTopup) > 0);
+        high_denom.buttonActive = (highDenomTopup!=undefined && parseInt(highDenomTopup) > 0);
+
+        // Existing Property Size Config
         rowDenomSpacing = (globalScreenType == '1') ? 50 : 30;
         buttonDenomWidth = 359;
-        if (tinyDenomTopup!='') {
-            tiny_denom.buttonActive = true;
-            if (globalScreenType == '1'){
-                rowDenomSpacing = 15;
+        // Enhancement By tinyDenom button
+        if (tiny_denom.buttonActive) {
+             if (globalScreenType == '1'){
+                rowDenomSpacing = 20;
                 buttonDenomWidth = 250;
             } else {
-                rowDenomSpacing = 5;
+                rowDenomSpacing = 10;
                 buttonDenomWidth = 200;
             }
         }
+
         popup_loading.close();
     }
 
