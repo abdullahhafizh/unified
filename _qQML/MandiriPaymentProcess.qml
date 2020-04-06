@@ -1070,7 +1070,7 @@ Base{
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
                         _SLOT.start_bill_receive_note();
-                        open_preload_notif();
+//                        open_preload_notif();
                         break;
                     case 'do_topup':
                         perform_do_topup();

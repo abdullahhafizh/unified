@@ -231,6 +231,7 @@ def start_receive_note():
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
         if 'Invalid argument' in e:
             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+            LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
             return
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
