@@ -290,11 +290,11 @@ Base{
         // Enhancement By tinyDenom button
         if (tiny_denom.buttonActive) {
              if (globalScreenType == '1'){
-                rowDenomSpacing = 20;
-                buttonDenomWidth = 250;
+                rowDenomSpacing = 35;
+                buttonDenomWidth = 300;
             } else {
-                rowDenomSpacing = 10;
-                buttonDenomWidth = 200;
+                rowDenomSpacing = 15;
+                buttonDenomWidth = 225;
             }
         }
 
