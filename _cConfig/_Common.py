@@ -135,7 +135,7 @@ QR_PROD_STATE = {
     'GOPAY': True,
     'DANA': False,
     'LINKAJA': True,
-    'SHOPEEPAY': False,
+    'SHOPEEPAY': True,
     'OVO': True
 }
 
