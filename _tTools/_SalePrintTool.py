@@ -49,7 +49,7 @@ def get_paper_size(ls=None):
 MARGIN_LEFT = 0
 SPACING = 3.5
 USED_FONT = 'Courier'
-GLOBAL_FONT_SIZE = 8
+GLOBAL_FONT_SIZE = 7.5
 RECEIPT_TITLE = 'SALE GLOBAL PRINT'
 HEADER_TEXT1 = 'ISI ULANG'
 HEADER_TEXT2 = 'MANDIRI E-MONEY'
@@ -61,9 +61,9 @@ class PDF(FPDF):
         if os.path.isfile(LOGO_PATH):
             # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
             self.image(LOGO_PATH, 25, 20, 30)
+            self.ln(SPACING*4)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
-        # self.ln(SPACING*4)
-        self.ln(SPACING*8)
+        self.ln(SPACING*4)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_Common.TID, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Common.KIOSK_NAME, 0, 1, 'C')
