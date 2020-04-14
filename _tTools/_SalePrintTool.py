@@ -60,7 +60,7 @@ class PDF(FPDF):
         # Logo
         if os.path.isfile(LOGO_PATH):
             # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
-            self.image(LOGO_PATH, 20, 3, 30)
+            self.image(LOGO_PATH, 25, 15, 30)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
         self.ln(SPACING*4)
         # self.ln(SPACING)
