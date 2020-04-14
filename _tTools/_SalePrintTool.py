@@ -60,14 +60,10 @@ class PDF(FPDF):
         # Logo
         if os.path.isfile(LOGO_PATH):
             # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
-            self.image(LOGO_PATH, 25, 15, 30)
+            self.image(LOGO_PATH, 25, 20, 30)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
-        self.ln(SPACING*4)
-        # self.ln(SPACING)
-        # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT1, 0, 0, 'C')
-        # self.ln(SPACING)
-        # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
-        self.ln(SPACING)
+        # self.ln(SPACING*4)
+        self.ln(SPACING*8)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_Common.TID, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Common.KIOSK_NAME, 0, 1, 'C')
