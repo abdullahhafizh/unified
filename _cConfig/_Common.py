@@ -133,7 +133,7 @@ QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
     'GOPAY': True,
-    'DANA': from django.utils.translation import ugettext_lazy as _,
+    'DANA': True,
     'LINKAJA': True,
     'SHOPEEPAY': True,
     'OVO': True
