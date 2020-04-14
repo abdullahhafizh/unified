@@ -47,9 +47,9 @@ def get_paper_size(ls=None):
 
 
 MARGIN_LEFT = 0
-SPACING = 4
+SPACING = 3.5
 USED_FONT = 'Courier'
-GLOBAL_FONT_SIZE = 8
+GLOBAL_FONT_SIZE = 7.5
 RECEIPT_TITLE = 'SALE GLOBAL PRINT'
 HEADER_TEXT1 = 'ISI ULANG'
 HEADER_TEXT2 = 'MANDIRI E-MONEY'
@@ -58,10 +58,11 @@ HEADER_TEXT2 = 'MANDIRI E-MONEY'
 class PDF(FPDF):
     def header(self):
         # Logo
-        self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
         if os.path.isfile(LOGO_PATH):
+            # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
             self.image(LOGO_PATH, 25, 5, 30)
-        self.ln(SPACING*4)
+        self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
+        self.ln(SPACING*3)
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT1, 0, 0, 'C')
         # self.ln(SPACING)
@@ -156,7 +157,7 @@ def start_reprint_global():
 
 LAST_TRX = None
 SMALL_SPACE = 3.5
-REGULAR_SPACE = 8
+REGULAR_SPACE = 7.5
 PADDING_LEFT = 0
 
 
@@ -465,6 +466,7 @@ def print_shop_trx(p, t, ext='.pdf'):
             pdf.ln(small_space-1)
             pdf.set_font(USED_FONT, '', regular_space-1)
             pdf.cell(0, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
+            pdf.ln(small_space-1)
             pdf.set_font(USED_FONT, '', regular_space-1)
             pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
             # failure = 'TOPUP_FAILURE'
