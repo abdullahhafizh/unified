@@ -49,7 +49,7 @@ def get_paper_size(ls=None):
 MARGIN_LEFT = 0
 SPACING = 3.5
 USED_FONT = 'Courier'
-GLOBAL_FONT_SIZE = 7.5
+GLOBAL_FONT_SIZE = 8
 RECEIPT_TITLE = 'SALE GLOBAL PRINT'
 HEADER_TEXT1 = 'ISI ULANG'
 HEADER_TEXT2 = 'MANDIRI E-MONEY'
@@ -59,8 +59,8 @@ class PDF(FPDF):
     def header(self):
         # Logo
         if os.path.isfile(LOGO_PATH):
-            # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
-            self.image(LOGO_PATH, 25, 5, 30)
+            self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
+            # self.image(LOGO_PATH, 25, 5, 30)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
         self.ln(SPACING*3)
         # self.ln(SPACING)
@@ -157,7 +157,7 @@ def start_reprint_global():
 
 LAST_TRX = None
 SMALL_SPACE = 3.5
-REGULAR_SPACE = 7.5
+REGULAR_SPACE = 8
 PADDING_LEFT = 0
 
 
@@ -456,17 +456,17 @@ def print_shop_trx(p, t, ext='.pdf'):
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, '', regular_space+2)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
-            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            pdf.cell(padding_left, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, '', regular_space-1)
-            pdf.cell(0, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+            pdf.cell(padding_left, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
             pdf.ln(small_space-1)
             pdf.set_font(USED_FONT, '', regular_space-1)
-            pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
+            pdf.cell(padding_left, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
             pdf.ln(small_space-1)
             pdf.set_font(USED_FONT, '', regular_space-1)
-            pdf.cell(0, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
-            pdf.ln(small_space-1)
+            pdf.cell(padding_left, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
+            pdf.ln(small_space)
             pdf.set_font(USED_FONT, '', regular_space-1)
             pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
             # failure = 'TOPUP_FAILURE'
@@ -487,7 +487,7 @@ def print_shop_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
-            pdf.ln(small_space*4)
+            pdf.ln(small_space*3)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
             pdf.ln(small_space)
@@ -648,7 +648,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
-            pdf.ln(small_space*4)
+            pdf.ln(small_space*3)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
             pdf.ln(small_space)
