@@ -59,8 +59,8 @@ class PDF(FPDF):
     def header(self):
         # Logo
         if os.path.isfile(LOGO_PATH):
-            self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
-            # self.image(LOGO_PATH, 25, 5, 30)
+            # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
+            self.image(LOGO_PATH, 20, 3, 50)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
         self.ln(SPACING*3)
         # self.ln(SPACING)
