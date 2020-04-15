@@ -372,8 +372,8 @@ Base{
                 lastBalance = result.last_balance;
                 // Move TRX Success Store Here
                 _SLOT.start_store_transaction_global(JSON.stringify(details))
-                _SLOT.start_store_topup_transaction(JSON.stringify(details));
-                _SLOT.start_do_mandiri_topup_settlement();
+//                _SLOT.start_store_topup_transaction(JSON.stringify(details));
+//                _SLOT.start_do_mandiri_topup_settlement();
                 validate_release_refund();
                 return;
             }

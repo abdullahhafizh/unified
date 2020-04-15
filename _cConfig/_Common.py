@@ -750,6 +750,7 @@ def upload_topup_error(__slot, __type):
 
 
 def store_upload_sam_audit(param):
+    sleep(3)
     _table_ = 'SAMAudit'
     try:
         param = {

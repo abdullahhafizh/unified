@@ -973,9 +973,12 @@ def store_transaction_global(param, retry=False):
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-    # finally:
-    #     MEI_HISTORY = ''
-    #     CARD_NO = ''
+    finally:
+        if g['shop_type'] == 'topup':
+            sleep(2)
+            store_topup_transaction(param)
+
+            
 
 
 def start_kiosk_get_topup_amount():
