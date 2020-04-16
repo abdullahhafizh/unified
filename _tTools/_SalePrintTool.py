@@ -134,6 +134,11 @@ def justifying(left, right):
     return left + (" " * (MAX_LENGTH-len(left)-len(right))) + right
 
 
+def start_direct_sale_print_global(payload):
+    _KioskService.GLOBAL_TRANSACTION_DATA = json.loads(payload)
+    _Helper.get_pool().apply_async(sale_print_global, )
+
+
 def start_sale_print_global():
     _Helper.get_pool().apply_async(sale_print_global, )
 

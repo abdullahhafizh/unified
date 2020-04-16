@@ -309,7 +309,7 @@ def global_refund_balance(payload, store_only=False):
             _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
             if not store_only:
                 PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
-        LOGGER.debug((str(payload), str(r)))
+        # LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         if not store_only:

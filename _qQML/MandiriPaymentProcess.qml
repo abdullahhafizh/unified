@@ -257,9 +257,10 @@ Base{
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         console.log('release_print', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
-        _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
-        _SLOT.python_dump(JSON.stringify(details))
-        _SLOT.start_sale_print_global();
+        _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+//        _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+//        _SLOT.python_dump(JSON.stringify(details)) -> Disabled
+//        _SLOT.start_sale_print_global(); -> Move Into Direct Store Slot
         abc.counter = 3;
         reset_default();
     }

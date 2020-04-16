@@ -975,7 +975,7 @@ def store_transaction_global(param, retry=False):
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
     finally:
         if g['shop_type'] == 'topup':
-            sleep(2)
+            sleep(3)
             store_topup_transaction(param)
 
             
@@ -1008,7 +1008,7 @@ def start_store_topup_transaction(param):
 # 'card_no': _result.split('|')[3], 'bank_id': '1', 'bank_name': 'MANDIRI', }')
 
 
-def store_topup_transaction(param):
+def store_topup_transaction(param, push=False):
     global GLOBAL_TRANSACTION_DATA
     try:
         p = json.loads(param)
@@ -1024,15 +1024,22 @@ def store_topup_transaction(param):
             'remarks': param
         }
         _DAO.insert_topup_record(_param)
-        _param['createdAt'] = _Helper.now()
-        status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/topup-records', param=_param)
-        LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
-        if status == 200 and response['id'] == _param['rid']:
+        if push is True:
+            _param['createdAt'] = _Helper.now()
+            sleep(3)
+            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/topup-records', param=_param)
+            # LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
+            if status == 200 and response['id'] == _param['rid']:
+                _param['key'] = _param['rid']
+                _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
+                K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS')
+            else:
+                K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
+        else:
             _param['key'] = _param['rid']
             _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
-            K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS')
-        else:
-            K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
+            payload['endpoint'] = 'sync/topup-records'
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.BACKEND_URL + 'sync/topup-records', payload=_param)
     except Exception as e:
         LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')

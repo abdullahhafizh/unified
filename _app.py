@@ -624,6 +624,10 @@ class SlotHandler(QObject):
         _KioskService.start_get_refunds()
     start_get_refunds = pyqtSlot()(start_get_refunds)
 
+    def start_direct_sale_print_global(self, payload):
+        _SalePrintTool.start_direct_sale_print_global(payload)
+    start_direct_sale_print_global = pyqtSlot(str)(start_direct_sale_print_global)
+
 
 
 def s_handler():
