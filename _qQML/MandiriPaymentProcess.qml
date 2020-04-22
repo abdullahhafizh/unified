@@ -341,7 +341,8 @@ Base{
         if (details.shop_type=='topup') msg = '*Isi Ulang Kartu Prabayar '+ details.provider + ' Rp. ' + FUNC.insert_dot(details.denom) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString())
         press = '0'
         if (info.payment_time != undefined) qr_payment_frame.timerDuration = parseInt(info.payment_time);
-        qr_payment_frame.open(msg);
+        var qr_payment_id = details.shop_type+details.epoch.toString();
+        qr_payment_frame.open(msg, qr_payment_id);
     }
 
     function topup_result(t){
@@ -733,7 +734,7 @@ Base{
                 mode: details.payment
             }
             _SLOT.start_get_qr_global(JSON.stringify(qrPayload));
-            _SLOT.python_dump(JSON.stringify(qrPayload));
+//            _SLOT.python_dump(JSON.stringify(qrPayload));
             popup_loading.open();
             return;
         }
@@ -1115,7 +1116,7 @@ Base{
                     _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.start_cancel_qr_global(details.shop_type+details.epoch.toString())
+                    _SLOT.start_cancel_qr_global(details.shop_type+details.epoch.toString());
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }

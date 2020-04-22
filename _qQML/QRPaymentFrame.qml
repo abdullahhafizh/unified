@@ -17,6 +17,7 @@ Base{
     property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 300
     property int waitAfterSuccess: 10
+    property var qr_payment_id
     property int showDuration: timerDuration
     property var closeMode: 'backToMain' // 'closeWindow', 'backToMain', 'backToPrev'
     visible: false
@@ -151,16 +152,15 @@ Base{
         running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
-            if (showDuration < 30){
-                textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
-            }
-            if (showDuration < 2){
+            if (showDuration < 30) textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
+            if (showDuration < 7) imageSource = 'source/smiley_down.png';
+            if (showDuration < 3){
                 textSlave = 'Waktu Pembayaran Anda Telah Habis';
-                imageSource = 'source/smiley_down.png';
                 text_timer_show.text = '0';
             }
-            if (showDuration==-2) {
+            if (showDuration==0) {
                 show_timer.stop();
+                _SLOT.start_cancel_qr_global(qr_payment_id);
                 switch(closeMode){
                 case 'backToMain':
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
@@ -176,8 +176,9 @@ Base{
     }
 
 
-    function open(msg){
+    function open(msg, trx_id){
         if (msg!=undefined) textMain = msg;
+        if (trx_id!=undefined) qr_payment_id = trx_id;
         qr_payment_frame.visible = true;
         successPayment = false;
         showDuration = timerDuration;
