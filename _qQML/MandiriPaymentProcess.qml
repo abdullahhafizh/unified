@@ -792,9 +792,11 @@ Base{
                             details.refund_number = '';
                             details.refund_amount = refundAmount.toString();
                             switch_frame('source/take_receipt.png', 'Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas', 'backToMain', true );
-                            _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
-                            _SLOT.python_dump(JSON.stringify(details))
-                            _SLOT.start_sale_print_global();
+//                            _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+//                            _SLOT.python_dump(JSON.stringify(details))
+//                            _SLOT.start_sale_print_global();
+                            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+
     //                        _SLOT.start_return_es_mei();
                         }
     //                    _SLOT.start_dis_accept_mei();
@@ -1116,7 +1118,8 @@ Base{
                     _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.start_cancel_qr_global(details.shop_type+details.epoch.toString());
+//                    _SLOT.start_cancel_qr_global('CANCEL_'+details.shop_type+details.epoch.toString());
+                    qr_payment_frame.cancel('USER_CANCEL');
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }

@@ -158,9 +158,9 @@ Base{
                 textSlave = 'Waktu Pembayaran Anda Telah Habis';
                 text_timer_show.text = '0';
             }
+            if (showDuration==1) cancel('TIMER_TIMEOUT');
             if (showDuration==0) {
                 show_timer.stop();
-                _SLOT.start_cancel_qr_global(qr_payment_id);
                 switch(closeMode){
                 case 'backToMain':
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
@@ -175,6 +175,11 @@ Base{
         }
     }
 
+
+    function cancel(event){
+        _SLOT.start_cancel_qr_global('['+event+'] '+details.shop_type+details.epoch.toString());
+        successPayment = false;
+    }
 
     function open(msg, trx_id){
         if (msg!=undefined) textMain = msg;

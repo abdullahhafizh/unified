@@ -183,7 +183,7 @@ def do_check_qr(payload, mode, serialize=True):
                     'payload'   : payload,
                     'mode'      : mode
                 }
-                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id'], str(cancel_param)))
+                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS BY CANCELLATION', mode, payload['trx_id'], str(cancel_param)))
                 cancel_qr_global(cancel_param)
                 CANCELLING_QR_FLAG = False
                 break
@@ -332,6 +332,7 @@ def start_cancel_qr_global(trx_id):
 
 
 def cancel_qr_global(data):
+    global CANCELLING_QR_FLAG
     if _Common.empty(data) is True:
         LOGGER.debug(('EMPTY DATA TO REQUEST QR CANCELLATION'))
         return
@@ -350,3 +351,5 @@ def cancel_qr_global(data):
     except Exception as e:
         LOGGER.warning((mode, str(e)))
         _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+    finally:
+        CANCELLING_QR_FLAG = False
