@@ -206,8 +206,8 @@ def do_check_qr(payload, mode, serialize=True):
             # trigger_success_qr_payment(mode, r['data'])
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
-        if attempt == 90:
-            LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*5)))
+        if attempt >= (_Common.QR_PAYMENT_TIME/5):
+            LOGGER.warning((str(payload), 'DEFAULT_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
