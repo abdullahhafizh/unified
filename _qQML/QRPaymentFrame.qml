@@ -153,12 +153,12 @@ Base{
         onTriggered: {
             showDuration -= 1;
             if (showDuration < 30) textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
-            if (showDuration < 7) imageSource = 'source/smiley_down.png';
-            if (showDuration < 3){
+            if (showDuration < 7) {
+                imageSource = 'source/smiley_down.png';
                 textSlave = 'Waktu Pembayaran Anda Telah Habis';
-                text_timer_show.text = '0';
+                cancel('TIMER_TIMEOUT');
             }
-            if (showDuration==1) cancel('TIMER_TIMEOUT');
+            if (showDuration <= 3) text_timer_show.text = '0';
             if (showDuration==0) {
                 show_timer.stop();
                 switch(closeMode){

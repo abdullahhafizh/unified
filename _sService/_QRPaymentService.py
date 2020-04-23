@@ -61,6 +61,7 @@ def start_get_qr_global(payload):
 
 
 def do_get_qr(payload, mode, serialize=True):
+    global CANCELLING_QR_FLAG
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY']:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -81,6 +82,7 @@ def do_get_qr(payload, mode, serialize=True):
     # print('pyt: ' + str(_Helper.whoami()))
     # print('pyt: ' + str(payload))
     # print('pyt: ' + mode)
+    CANCELLING_QR_FLAG = False
     try:
         url = _Common.QR_HOST+mode.lower()+'/get-qr'
         if not _Common.QR_PROD_STATE[mode]:
@@ -183,9 +185,8 @@ def do_check_qr(payload, mode, serialize=True):
                     'payload'   : payload,
                     'mode'      : mode
                 }
-                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS BY CANCELLATION', mode, payload['trx_id'], str(cancel_param)))
+                LOGGER.debug(('[BREAKING-LOOP]', 'QR_CHECK_STATUS', mode, payload['trx_id'], str(cancel_param)))
                 cancel_qr_global(cancel_param)
-                CANCELLING_QR_FLAG = False
                 break
             attempt += 1
             # _Helper.dump([success, attempt])
@@ -207,7 +208,7 @@ def do_check_qr(payload, mode, serialize=True):
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
-            LOGGER.warning((str(payload), 'DEFAULT_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
+            LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
