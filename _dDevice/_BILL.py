@@ -257,6 +257,7 @@ def stop_bill_receive_note():
 def stop_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
     IS_RECEIVING = False
+    sleep(2.5)
     try:
         param = BILL["STOP"] + '|'
         response, result = _Command.send_request(param=param, output=None)
