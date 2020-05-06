@@ -138,7 +138,6 @@ Base{
 
     }
 
-
     function reset_default(){
         proceedAble = false;
         press = '0';
@@ -913,6 +912,22 @@ Base{
         global_frame.open();
     }
 
+    function get_signal_frame(s){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_signal_frame', s, now);
+        var mode = s.split('|')[0];
+        if (mode == 'SELECT_REFUND'){
+            refundData = JSON.parse(s.split('|')[1])
+        }
+    }
+
+    function set_refund_number(n){
+       var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+       customerPhone = n;
+       details.refund_number = customerPhone;
+       console.log('customerPhone as refund_number', customerPhone, now);
+   }
+
 
     MainTitle{
         anchors.top: parent.top
@@ -1139,23 +1154,6 @@ Base{
             }
         }
     }
-
-    function get_signal_frame(s){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_signal_frame', s, now);
-        var mode = s.split('|')[0];
-        if (mode == 'SELECT_REFUND'){
-            refundData = JSON.parse(s.split('|')[1])
-        }
-    }
-
-
-   function set_refund_number(n){
-       var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-       customerPhone = n;
-       details.refund_number = customerPhone;
-       console.log('customerPhone as refund_number', customerPhone, now);
-   }
 
 
     PopupInputNoRefund{
