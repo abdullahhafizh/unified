@@ -765,7 +765,6 @@ Base{
 
     }
 
-
     Rectangle{
         id: rec_timer
         width:10
@@ -927,7 +926,6 @@ Base{
        details.refund_number = customerPhone;
        console.log('customerPhone as refund_number', customerPhone, now);
    }
-
 
     MainTitle{
         anchors.top: parent.top
@@ -1128,7 +1126,6 @@ Base{
         }
     }
 
-
     QRPaymentFrame{
         id: qr_payment_frame
         CircleButton{
@@ -1154,7 +1151,6 @@ Base{
             }
         }
     }
-
 
     PopupInputNoRefund{
         id: popup_refund
