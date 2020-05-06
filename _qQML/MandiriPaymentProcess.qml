@@ -363,6 +363,11 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )
+        }  else if (t=='C2C_CORRECTION'){
+            // Define View And Set Button Continue Mode
+            modeButtonPopup = 'c2c_correction';
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
+            return
         } else {
             var output = t.split('|')
             var topupResponse = output[0]
@@ -693,6 +698,8 @@ Base{
             _SLOT.start_top_up_bni(amount, structId);
         } else if (provider.indexOf('DKI') > -1){
             _SLOT.start_fake_update_dki(cardNo, amount);
+        } else if (provider.indexOf('BRI') > -1){
+            //TODO Bind To Slot Function Update BRI
         }
     }
 
@@ -1092,6 +1099,12 @@ Base{
                         break;
                     case 'check_balance':
                         _SLOT.start_check_balance();
+                        popup_loading.open();
+                        break;
+                    case 'c2c_correction':
+                        var amount = getDenom.toString();
+                        var structId = details.shop_type + details.epoch.toString();
+                        _SLOT.start_topup_mandiri_correction(amount, structId);
                         popup_loading.open();
                         break;
                     }

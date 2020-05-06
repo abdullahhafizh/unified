@@ -67,7 +67,7 @@ def create_sale_edc_with_struct_id(amount, trxid):
     _Helper.get_pool().apply_async(sale_edc, (amount, trxid,))
 
 
-IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
+IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 INIT_AMOUNT = '0'
 
 
@@ -443,7 +443,7 @@ TIMEOUT_CODE = '03||TO|'
 FINAL_BREAK_CODE = '02||'
 NOT_FOUND = '03||NF|'
 NEED_RETRY = '03||SR|'
-FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('TERMINAL', 'force^settlement', '0') == '1' else False
+FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('GENERAL', 'force^settlement', '0') == '1' else False
 LOOP_DELAY = 5
 
 
@@ -788,7 +788,7 @@ def standardize_param(param, trx):
 
 
 def send_edc_server(param, trx='10'):
-    edc_server = _ConfigParser.get_value('TERMINAL', 'edc^server')
+    edc_server = _ConfigParser.get_value('GENERAL', 'edc^server')
     if len(param) < 1 or edc_server is None or len(edc_server) < 1:
         LOGGER.warning('Failed to Send_Data to EDC Server')
         return False

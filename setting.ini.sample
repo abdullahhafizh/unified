@@ -1,4 +1,4 @@
-[TERMINAL]
+[GENERAL]
 backend^server = http://vm-api.mdd.co.id:11199/kiosk-api/v2/
 tid = 110322
 token = 1234567890abc
@@ -27,7 +27,7 @@ port2 = COM
 port3 = COM
 multiple^eject = 0
 
-[READER_QPROX]
+[QPROX_NFC]
 port = COM
 
 [MEI]

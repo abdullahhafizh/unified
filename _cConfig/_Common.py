@@ -24,13 +24,14 @@ def get_config_value(option='', section='TEMPORARY', digit=False):
         return str(_ConfigParser.get_value(section, option))
 
 
-BACKEND_URL = _ConfigParser.get_set_value('TERMINAL', 'backend^server', '---')
-LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
+BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', '---')
+LIVE_MODE = True if _ConfigParser.get_set_value('GENERAL', 'mode', 'live') == 'live' else False
 TEST_MODE = not LIVE_MODE
-RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
-TID = _ConfigParser.get_set_value('TERMINAL', 'tid', '---')
+RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
+TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 
-QPROX_PORT = _ConfigParser.get_set_value('READER_QPROX', 'port', 'COM')
+QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
+
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
 EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
@@ -87,11 +88,11 @@ KIOSK_SETTING = []
 KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
 PRINTER_STATUS = "NORMAL"
-PAYMENT_CANCEL = _ConfigParser.get_set_value('TERMINAL', 'payment^cancel', '1')
-EXCEED_PAYMENT = _ConfigParser.get_set_value('TERMINAL', 'exceed^payment', '0')
+PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
+EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
-PAYMENT_CONFIRM = _ConfigParser.get_set_value('TERMINAL', 'payment^confirm', '0')
-IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
+PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
+IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
@@ -99,7 +100,7 @@ if not os.path.exists(TEMP_FOLDER):
 # Temporary Update Balance Config Hardcoded (Filled With Bank Name)
 ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI']
 
-MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('TERMINAL', 'mandiri^sam^production', '0') == '1' else False
+MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 
 
 def clean_white_space(s):
@@ -582,7 +583,7 @@ def get_refunds():
             "GOPAY": "NOT_AVAILABLE",
             "DANA": "NOT_AVAILABLE",
             "SHOPEEPAY": "NOT_AVAILABLE",
-            "MIN_AMOUNT": int(_ConfigParser.get_set_value('TERMINAL', 'min^refund^amount', '2500')),
+            "MIN_AMOUNT": int(_ConfigParser.get_set_value('GENERAL', 'min^refund^amount', '2500')),
             "DETAILS": []
         }
     else: 
@@ -594,7 +595,7 @@ def get_refunds():
             "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
             "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
             "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
-            "MIN_AMOUNT": int(_ConfigParser.get_set_value('TERMINAL', 'min^refund^amount', '2500')),
+            "MIN_AMOUNT": int(_ConfigParser.get_set_value('GENERAL', 'min^refund^amount', '2500')),
             "DETAILS": REFUND_SETTING
         }
 

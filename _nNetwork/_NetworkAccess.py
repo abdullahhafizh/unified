@@ -63,8 +63,8 @@ SERVICE_NOT_RESPONDING = {
     'statusMessage': 'Service Not Responding'
 }
 
-TID = _ConfigParser.get_value('TERMINAL', 'tid')
-TOKEN = _ConfigParser.get_value('TERMINAL', 'token')
+TID = _ConfigParser.get_value('GENERAL', 'tid')
+TOKEN = _ConfigParser.get_value('GENERAL', 'token')
 DISK_SERIAL_NUMBER = ''
 LOGGER = logging.getLogger()
 GLOBAL_TIMEOUT = 60

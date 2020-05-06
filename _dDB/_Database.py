@@ -10,8 +10,8 @@ from _tTools import _Helper
 
 LOCK = threading.Lock()
 LOGGER = logging.getLogger()
-DB = _ConfigParser.get_value('TERMINAL', 'DB')
-DEBUG = True if _ConfigParser.get_set_value('TERMINAL', 'DB^DEBUG', '0') == '1' else False
+DB = _ConfigParser.get_value('GENERAL', 'DB')
+DEBUG = True if _ConfigParser.get_set_value('GENERAL', 'DB^DEBUG', '0') == '1' else False
 
 
 def row_factory(cursor, row):

@@ -932,7 +932,7 @@ def init_setting():
             qml.close()
         LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
     INITIAL_SETTING['dev_mode'] = _Common.TEST_MODE
-    INITIAL_SETTING['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
+    INITIAL_SETTING['db'] = _ConfigParser.get_value('GENERAL', 'DB')
     INITIAL_SETTING['display'] = get_screen_resolution()
     INITIAL_SETTING['devices'] = _Common.get_devices()
     INITIAL_SETTING['tid'] = _Common.TID

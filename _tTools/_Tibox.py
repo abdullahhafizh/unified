@@ -38,11 +38,11 @@ class TiboxSignalHandler(QObject):
 
 T_SIGNDLER = TiboxSignalHandler()
 LOGGER = logging.getLogger()
-TID = _ConfigParser.get_value('TERMINAL', 'tid')
-TIBOX_URL = _ConfigParser.get_value('TERMINAL', 'tibox^server')
+TID = _ConfigParser.get_value('GENERAL', 'tid')
+TIBOX_URL = _ConfigParser.get_value('GENERAL', 'tibox^server')
 HEADER = {'Content-Type': 'multipart/form-data'}
 ID = None
-BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
+BACKEND_URL = _ConfigParser.get_value('GENERAL', 'backend^server')
 PREFIX_ORIGIN = ""
 PREFIX_DESTINATION = ""
 IS_RESET = False
@@ -242,7 +242,7 @@ def parse_flight_data(text):
 
 
 DEBUG_MODE = False
-IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
+IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 
 
 def new_parse_flight_data(text):

@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
+import "config.js" as CONF
 
 Base{
     id: prepaid_topup_denom
@@ -174,6 +175,8 @@ Base{
         }
         var topup_amount = parseInt(selectedDenom) - parseInt(adminFee);
         var final_balance = parseInt(cardData.balance) + topup_amount
+        // Define Denom For C2C Mandiri - Overwrite Denom Value For Process Topup
+        if (cardData.bank_name=='MANDIRI' && CONF.c2c_mode == '1') topup_amount = parseInt(selectedDenom)
         details.qty = 1;
         details.value = selectedDenom.toString();
         details.provider = provider;

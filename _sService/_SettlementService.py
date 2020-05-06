@@ -22,7 +22,7 @@ class SettlementSignalHandler(QObject):
 
 ST_SIGNDLER = SettlementSignalHandler()
 LOGGER = logging.getLogger()
-BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
+BACKEND_URL = _ConfigParser.get_value('GENERAL', 'backend^server')
 TID = _Common.TID
 SALT = '|KIOSK'
 # Hardcoded Setting for SMT -----------------------

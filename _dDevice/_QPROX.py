@@ -564,7 +564,7 @@ def top_up_mandiri_c2c(amount, trxid='', slot=None):
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
         LOGGER.warning((slot, _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|NEED_CORRECTION')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|C2C_CORRECTION')
 
 
 '''
@@ -1063,9 +1063,9 @@ def get_topup_readiness(mode='full'):
     ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
     ___['bni'] = 'AVAILABLE' if (INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
     # TODO Change Method Of BRI Topup Activation
-    ___['bri'] = 'AVAILABLE' if _ConfigParser.get_set_value('TERMINAL', 'topup^online^bri', '0') == '1' else 'N/A'
-    ___['bca'] = 'AVAILABLE' if _ConfigParser.get_set_value('TERMINAL', 'topup^online^bca', '0') == '1' else 'N/A'
-    ___['dki'] = 'AVAILABLE' if _ConfigParser.get_set_value('TERMINAL', 'topup^online^dki', '0') == '1' else 'N/A'
+    ___['bri'] = 'AVAILABLE' if _ConfigParser.get_set_value('GENERAL', 'topup^online^bri', '0') == '1' else 'N/A'
+    ___['bca'] = 'AVAILABLE' if _ConfigParser.get_set_value('GENERAL', 'topup^online^bca', '0') == '1' else 'N/A'
+    ___['dki'] = 'AVAILABLE' if _ConfigParser.get_set_value('GENERAL', 'topup^online^dki', '0') == '1' else 'N/A'
     ___['emoney'] = _Common.TOPUP_AMOUNT_SETTING['emoney']
     ___['tapcash'] = _Common.TOPUP_AMOUNT_SETTING['tapcash']
     ___['brizzi'] = _Common.TOPUP_AMOUNT_SETTING['brizzi']

@@ -159,7 +159,7 @@ def define_device_port_setting(data):
             _ConfigParser.set_value('EDC', 'port', c['config'])
             _Common.EDC_PORT = c['config']
         if c['name'] == 'prepaid':
-            _ConfigParser.set_value('READER_QPROX', 'port', c['config'])
+            _ConfigParser.set_value('QPROX_NFC', 'port', c['config'])
             _Common.QPROX_PORT = c['config']
 
 
@@ -297,6 +297,7 @@ def get_kiosk_price_setting():
 
 
 def kiosk_price_setting():
+    # TODO Define AdminFee For Mandiri C2C Topup
     K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
         'margin': _Common.KIOSK_MARGIN,
         'adminFee': _Common.KIOSK_ADMIN,
@@ -306,7 +307,7 @@ def kiosk_price_setting():
 
 
 def development_status():
-    return True if _ConfigParser.get_value('TERMINAL', 'server') == "dev" else False
+    return _Common.TEST_MODE
 
 
 IS_DEV = _Common.TEST_MODE
