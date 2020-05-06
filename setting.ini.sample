@@ -27,8 +27,8 @@ port2 = COM
 port3 = COM
 multiple^eject = 0
 
-[QPROX]
-port = 
+[READER_QPROX]
+port = COM
 
 [MEI]
 port = COM

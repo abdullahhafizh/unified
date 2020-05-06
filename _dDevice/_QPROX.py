@@ -1062,9 +1062,10 @@ def get_topup_readiness(mode='full'):
     ___['bni_wallet_2'] = str(_Common.BNI_SAM_2_WALLET)
     ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
     ___['bni'] = 'AVAILABLE' if (INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
-    ___['bri'] = 'AVAILABLE' if _ConfigParser.get_set_value('QPROX', 'topup^online^bri', '0') == '1' else 'N/A'
-    ___['bca'] = 'AVAILABLE' if _ConfigParser.get_set_value('QPROX', 'topup^online^bca', '0') == '1' else 'N/A'
-    ___['dki'] = 'AVAILABLE' if _ConfigParser.get_set_value('QPROX', 'topup^online^dki', '0') == '1' else 'N/A'
+    # TODO Change Method Of BRI Topup Activation
+    ___['bri'] = 'AVAILABLE' if _ConfigParser.get_set_value('TERMINAL', 'topup^online^bri', '0') == '1' else 'N/A'
+    ___['bca'] = 'AVAILABLE' if _ConfigParser.get_set_value('TERMINAL', 'topup^online^bca', '0') == '1' else 'N/A'
+    ___['dki'] = 'AVAILABLE' if _ConfigParser.get_set_value('TERMINAL', 'topup^online^dki', '0') == '1' else 'N/A'
     ___['emoney'] = _Common.TOPUP_AMOUNT_SETTING['emoney']
     ___['tapcash'] = _Common.TOPUP_AMOUNT_SETTING['tapcash']
     ___['brizzi'] = _Common.TOPUP_AMOUNT_SETTING['brizzi']

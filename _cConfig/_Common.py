@@ -30,7 +30,7 @@ TEST_MODE = not LIVE_MODE
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_set_value('TERMINAL', 'tid', '---')
 
-QPROX_PORT = _ConfigParser.get_set_value('QPROX', 'port', 'COM')
+QPROX_PORT = _ConfigParser.get_set_value('READER_QPROX', 'port', 'COM')
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
 EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
@@ -333,7 +333,7 @@ BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
 BNI_SINGLE_SAM = True if _ConfigParser.get_set_value('BNI', 'single^sam', '1') == '1' else False
 # if BNI_SINGLE_SAM is True:
-#     _ConfigParser.set_value('QPROX', 'bni^active^slot', '2')
+#     _ConfigParser.set_value('BNI', 'active^slot', '2')
 BNI_ACTIVE = int(_ConfigParser.get_set_value('BNI', 'active^slot', '1'))
 BRI_WALLET = 0
 BCA_WALLET = 0

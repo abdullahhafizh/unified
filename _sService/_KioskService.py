@@ -154,10 +154,13 @@ def define_device_port_setting(data):
     for c in data: # QR No Need To Store in setting file
         if c['name'] == 'cash':
             _ConfigParser.set_value('BILL', 'port', c['config'])
+            _Common.BILL_PORT = c['config']
         if c['name'] == 'card':
             _ConfigParser.set_value('EDC', 'port', c['config'])
+            _Common.EDC_PORT = c['config']
         if c['name'] == 'prepaid':
-            _ConfigParser.set_value('QPROX', 'port', c['config'])
+            _ConfigParser.set_value('READER_QPROX', 'port', c['config'])
+            _Common.QPROX_PORT = c['config']
 
 
 def define_theme(d):
