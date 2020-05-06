@@ -36,6 +36,12 @@ def init_user_by_bid():
         SFTP_PASS = _Common.SFTP_BNI['pass']
         SFTP_PORT = _Common.SFTP_BNI['port']
         REMOTE_PATH = _Common.SFTP_BNI['path']
+    elif HOST_BID == 0: #C2C
+        SFTP_SERVER = _Common.SFTP_C2C['host']
+        SFTP_USER = _Common.SFTP_C2C['user']
+        SFTP_PASS = _Common.SFTP_C2C['pass']
+        SFTP_PORT = _Common.SFTP_C2C['port']
+        REMOTE_PATH = _Common.SFTP_C2C['path']
 
 #   TODO ADD Another Host BID
 
@@ -54,9 +60,9 @@ def init_sftp():
         SFTP = SSH.open_sftp()
         SFTP.sshclient = SSH
         # SFTP = pysftp.Connection(host=SFTP_SERVER, username=SFTP_USER, password=SFTP_PASS, cnopts=cnopts)
-        LOGGER.debug(('init_sftp', 'TRUE'))
+        LOGGER.debug(('TRUE'))
     except Exception as e:
-        LOGGER.warning(('init_sftp', str(e)))
+        LOGGER.warning((str(e)))
         if SFTP is not None:
             SFTP.close()
         SFTP = None
@@ -85,18 +91,23 @@ def send_file(filename, local_path, remote_path=None):
         else:
             _filename = filename
             _remote_path = remote_path+'/'+_filename
-        LOGGER.debug(('send_file #1', _filename, local_path, _remote_path))
+        LOGGER.debug(('#1', _filename, local_path, _remote_path))
         SFTP.put(local_path, _remote_path)
         if type(filename) == list and len(filename) > 1:
             __filename = filename[1]
             __local_path = local_path.replace('.txt', '.ok')
             __remote_path = _remote_path.replace('.txt', '.ok')
-            LOGGER.debug(('send_file #2', __filename, __local_path, __remote_path))
+            LOGGER.debug(('#2', __filename, __local_path, __remote_path))
             sleep(1)
             SFTP.put(__local_path, __remote_path)
-        result = True
+        result = {
+            "host": SFTP_SERVER,
+            "remote_path": _remote_path,
+            "local_path": local_path,
+        }
     except Exception as e:
-        LOGGER.warning(('send_file', str(e)))
+        LOGGER.warning((str(e)))
+        result = False
     finally:
         if SFTP is not None:
             SFTP.close()
@@ -112,7 +123,7 @@ def get_file(file, remote_path=None):
     result = False
     init_user_by_bid()
     if file is None:
-        LOGGER.warning(('get_file', 'File Param is Missing'))
+        LOGGER.warning(('File Param is Missing'))
         return result
     if SFTP is None:
         init_sftp()
@@ -123,11 +134,11 @@ def get_file(file, remote_path=None):
         local_file = os.path.join(LOCAL_PATH, file)
         SFTP.get(remote_file, local_file)
         if os.stat(local_file).st_size == 0:
-            LOGGER.warning(('get_file', local_file, 'size 0'))
+            LOGGER.warning((local_file, 'size 0'))
         else:
             result = True
     except Exception as e:
-        LOGGER.warning(('get_file', str(e)))
+        LOGGER.warning((str(e)))
     finally:
         if SFTP is not None:
             SFTP.close()

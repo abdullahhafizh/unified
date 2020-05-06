@@ -29,37 +29,6 @@ multiple^eject = 0
 
 [QPROX]
 port = 
-amount^topup = 500000
-mid^man = ---
-tid^man = ---
-sam^man = ---
-mid^bni = ---
-tid^bni = ---
-mc^bni = ---
-sam1^bni = ---
-sam2^bni = ---
-mid^bri = ---
-tid^bri = ---
-procode^bri = ---
-mid^bca = ---
-tid^bca = ---
-amount^minimum = 50000
-ka^pin1 = ---
-ka^pin2 = ---
-kl^pin = ---
-ka^nik = 2345
-mandiri^sam^uid^1 = ---
-mandiri^sam^uid^2 = ---
-mandiri^single^sam = 1
-mandiri^active^slot = 1
-bni^single^sam = 1
-bni^active^slot = 1
-topup^online^bri = 0
-topup^online^bca = 0
-topup^online^dki = 0
-bni^sam^1^no = ---
-bni^sam^2^no = ---
-mandiri^daily^settle^time = 02:00
 
 [MEI]
 port = COM

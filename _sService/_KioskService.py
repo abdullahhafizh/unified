@@ -167,7 +167,7 @@ def define_theme(d):
     config_js = sys.path[0] + '/_qQml/config.js'
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger
-    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
+    daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
     content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
     edc_daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
     content_js += 'var edc_settlement_schedule = "' + edc_daily_settle_time + '";' + os.linesep
@@ -208,6 +208,9 @@ def define_theme(d):
         content_js += 'var text_color = "' + _Common.COLOR_TEXT + '";' + os.linesep
         content_js += 'var frame_color = "' + d['frame_color'] + '";' + os.linesep
         content_js += 'var background_color = "' +  _Common.COLOR_BACK + '";' + os.linesep
+    # C2C Mode View config
+    c2c_mode = '1' if _Common.C2C_MODE is True else '0'
+    content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep
     # Receipt tvc_waiting_time
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
@@ -700,7 +703,8 @@ def begin_collect_cash():
         }
         _DAO.collect_cash(param)
         list_collect.append(cash['csid'])
-    post_cash_collection(list_collect, _Helper.now())
+    # Backend Updation Changed Indo Admin Access Report Endpoint
+    # post_cash_collection(list_collect, _Helper.now())
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|DONE')
 
 
@@ -975,12 +979,10 @@ def store_transaction_global(param, retry=False):
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
     finally:
         if g['shop_type'] == 'topup':
-            sleep(3)
+            sleep(1.5)
             store_topup_transaction(param)
 
             
-
-
 def start_kiosk_get_topup_amount():
     _Helper.get_pool().apply_async(kiosk_get_topup_amount)
 
@@ -1008,11 +1010,12 @@ def start_store_topup_transaction(param):
 # 'card_no': _result.split('|')[3], 'bank_id': '1', 'bank_name': 'MANDIRI', }')
 
 
-def store_topup_transaction(param, push=False):
+def store_topup_transaction(param, direct_push=False):
     global GLOBAL_TRANSACTION_DATA
     try:
         p = json.loads(param)
-        GLOBAL_TRANSACTION_DATA['topup_details'] = p['topup_details']
+        if _Helper.empty(GLOBAL_TRANSACTION_DATA['topup_details']):
+            GLOBAL_TRANSACTION_DATA['topup_details'] = p['topup_details']
         _param = {
             'rid': _Helper.get_uuid(),
             'trxid': TRX_ID_SALE,
@@ -1024,7 +1027,7 @@ def store_topup_transaction(param, push=False):
             'remarks': param
         }
         _DAO.insert_topup_record(_param)
-        if push is True:
+        if direct_push is True:
             _param['createdAt'] = _Helper.now()
             sleep(3)
             status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/topup-records', param=_param)

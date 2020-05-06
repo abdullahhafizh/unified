@@ -25,6 +25,11 @@ def get_config_value(option='', section='TEMPORARY', digit=False):
 
 
 BACKEND_URL = _ConfigParser.get_set_value('TERMINAL', 'backend^server', '---')
+LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
+TEST_MODE = not LIVE_MODE
+RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
+TID = _ConfigParser.get_set_value('TERMINAL', 'tid', '---')
+
 QPROX_PORT = _ConfigParser.get_set_value('QPROX', 'port', 'COM')
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
@@ -32,17 +37,49 @@ EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') =
 MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
+
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
 CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
+
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
-LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
-TEST_MODE = not LIVE_MODE
-RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
-TID = _ConfigParser.get_set_value('TERMINAL', 'tid', '[TERMINAL_ID]')
+
+MID_MAN = _ConfigParser.get_set_value('MANDIRI', 'mid', '---')
+TID_MAN = _ConfigParser.get_set_value('MANDIRI', 'tid', '---')
+SAM_MAN = _ConfigParser.get_set_value('MANDIRI', 'sam^pin', '---')
+MANDIRI_THRESHOLD = int(_ConfigParser.get_set_value('MANDIRI', 'amount^minimum', '50000'))
+
+
+MID_BNI = _ConfigParser.get_set_value('BNI', 'mid', '---')
+TID_BNI = _ConfigParser.get_set_value('BNI', 'tid', '---')
+MC_BNI = _ConfigParser.get_set_value('BNI', 'merried^code', '---')
+SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
+SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
+BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
+BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'))
+
+
+MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
+TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
+PROCODE_BRI = _ConfigParser.get_set_value('BRI', 'procode', '---')
+SLOT_BRI = _ConfigParser.get_set_value('BRI', 'sam^slot', '3')
+
+MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
+TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
+SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
+
+C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
+C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '0000000000000000')
+C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')
+C2C_MACTROS_INFO = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros^info', 'Must_Be_16_Chars')
+C2C_TID_NEW_APP = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid^new^app', '---')
+C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
+C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
+
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
+
 KIOSK_NAME = "---"
 KIOSK_STATUS = 'ONLINE'
 KIOSK_REAL_STATUS = 'ONLINE'
@@ -179,7 +216,6 @@ def get_service_version():
         return SERVICE_VERSION
 
 
-BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('QPROX', 'amount^topup', '500000')
 BNI_ACTIVE_WALLET = 0
 
 CD_PORT_LIST = {
@@ -201,24 +237,7 @@ TRIGGER_MANUAL_TOPUP = True
 ALLOW_DO_TOPUP = True
 EDC_SETTLEMENT_RUNNING = False
 
-MID_MAN = _ConfigParser.get_set_value('QPROX', 'mid^man', '---')
-TID_MAN = _ConfigParser.get_set_value('QPROX', 'tid^man', '---')
-SAM_MAN = _ConfigParser.get_set_value('QPROX', 'sam^man', '---')
-MID_BNI = _ConfigParser.get_set_value('QPROX', 'mid^bni', '---')
-TID_BNI = _ConfigParser.get_set_value('QPROX', 'tid^bni', '---')
-MC_BNI = _ConfigParser.get_set_value('QPROX', 'mc^bni', '---')
-SAM1_BNI = _ConfigParser.get_set_value('QPROX', 'sam1^bni', '---')
-SAM2_BNI = _ConfigParser.get_set_value('QPROX', 'sam2^bni', '---')
-MID_BRI = _ConfigParser.get_set_value('QPROX', 'mid^bri', '---')
-TID_BRI = _ConfigParser.get_set_value('QPROX', 'tid^bri', '---')
-PROCODE_BRI = _ConfigParser.get_set_value('QPROX', 'procode^bri', '---')
-MID_BCA = _ConfigParser.get_set_value('QPROX', 'mid^bca', '---')
-TID_BCA = _ConfigParser.get_set_value('QPROX', 'tid^bca', '---')
-
 SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
-
-MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '50000'))
-TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 
 LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
@@ -239,8 +258,8 @@ BANKS = [{
     "MC": MC_BNI,
     "SAM1": SAM1_BNI,
     "SAM2": SAM2_BNI,
-    "MIN_AMOUNT": MINIMUM_AMOUNT,
-    "DEFAULT_TOPUP": TOPUP_AMOUNT
+    "MIN_AMOUNT": BNI_THRESHOLD,
+    "DEFAULT_TOPUP": BNI_TOPUP_AMOUNT
 }, {
     "BANK": "BRI",
     "STATUS": True if ('---' not in MID_BRI and len(MID_BRI) > 3) else False,
@@ -272,43 +291,56 @@ SFTP_BNI = {
     'path': _ConfigParser.get_set_value('SFTP', 'bni^path', '/home/tj-kiosk/topup/bni/'),
 }
 
+SFTP_C2C = {
+    'status': C2C_MODE,
+    'host': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^host', '---'),
+    'user': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^user', '---'),
+    'pass': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^pass', '---'),
+    'port': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^port', '---'),
+    'path': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path', '---'),
+}
+
+FTP_C2C = SFTP_C2C
+
+
 FTP = {
     'status': False,
     'host': '---',
     'user': '---',
     'pass': '---',
-    'port': '21'
+    'port': '21',
+    'path': ''
 
 }
 
-KA_PIN1 = _ConfigParser.get_set_value('QPROX', 'ka^pin1', '---')
-KA_PIN2 = _ConfigParser.get_set_value('QPROX', 'ka^pin2', '---')
-KL_PIN = _ConfigParser.get_set_value('QPROX', 'kl^pin', '---')
-KA_NIK = _ConfigParser.get_set_value('QPROX', 'ka^nik', '2345')
+KA_PIN1 = _ConfigParser.get_set_value('MANDIRI', 'ka^pin1', '---')
+KA_PIN2 = _ConfigParser.get_set_value('MANDIRI', 'ka^pin2', '---')
+KL_PIN = _ConfigParser.get_set_value('MANDIRI', 'kl^pin', '---')
+KA_NIK = _ConfigParser.get_set_value('MANDIRI', 'ka^nik', '2345')
 
 MANDIRI_WALLET_1 = 0
 MANDIRI_WALLET_2 = 0
 MANDIRI_ACTIVE_WALLET = 0
-MANDIRI_NO_1 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^1', '---')
-MANDIRI_NO_2 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^2', '---')
+MANDIRI_NO_1 = _ConfigParser.get_set_value('MANDIRI', 'sam1^uid', '---')
+MANDIRI_NO_2 = _ConfigParser.get_set_value('MANDIRI', 'sam2^uid', '---')
 MANDIRI_REVERSE_SLOT_MODE = False
-MANDIRI_SINGLE_SAM = True if _ConfigParser.get_set_value('QPROX', 'mandiri^single^sam', '1') == '1' else False
+MANDIRI_SINGLE_SAM = True if _ConfigParser.get_set_value('MANDIRI', 'single^sam', '1') == '1' else False
 if MANDIRI_SINGLE_SAM is True:
-    _ConfigParser.set_value('QPROX', 'mandiri^active^slot', '1')
-MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
+    _ConfigParser.set_value('MANDIRI', 'active^slot', '1')
+MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('MANDIRI', 'active^slot', '1'))
 
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
-BNI_SINGLE_SAM = True if _ConfigParser.get_set_value('QPROX', 'bni^single^sam', '1') == '1' else False
+BNI_SINGLE_SAM = True if _ConfigParser.get_set_value('BNI', 'single^sam', '1') == '1' else False
 # if BNI_SINGLE_SAM is True:
 #     _ConfigParser.set_value('QPROX', 'bni^active^slot', '2')
-BNI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'bni^active^slot', '1'))
+BNI_ACTIVE = int(_ConfigParser.get_set_value('BNI', 'active^slot', '1'))
 BRI_WALLET = 0
 BCA_WALLET = 0
 DKI_WALLET = 0
 
-BNI_SAM_1_NO = _ConfigParser.get_set_value('QPROX', 'bni^sam^1^no', '---')
-BNI_SAM_2_NO = _ConfigParser.get_set_value('QPROX', 'bni^sam^2^no', '---')
+BNI_SAM_1_NO = _ConfigParser.get_set_value('BNI', 'sam1^no', '---')
+BNI_SAM_2_NO = _ConfigParser.get_set_value('BNI', 'sam2^no', '---')
 
 EDC_ERROR = ''
 NFC_ERROR = ''
@@ -335,7 +367,7 @@ ALLOWED_SYNC_TASK = [
     'sync_product_data',
     'sync_pending_refund',
     'sync_task',
-    'sync_settlement_data',
+    # 'sync_settlement_data', -> Disable This, Settlement Data Will be send to Kiosk Backend Not SMT Anymore
     'sync_sam_audit',
     'sync_data_transaction_failure',
     'sync_data_transaction',
@@ -454,20 +486,20 @@ def set_mandiri_uid(slot, uid):
     global MANDIRI_NO_1, MANDIRI_NO_2
     if slot == '1':
         MANDIRI_NO_1 = uid
-        _ConfigParser.set_value('QPROX', 'mandiri^sam^uid^1', uid)
+        _ConfigParser.set_value('MANDIRI', 'sam1^uid', uid)
     if slot == '2':
         MANDIRI_NO_2 = uid
-        _ConfigParser.set_value('QPROX', 'mandiri^sam^uid^2', uid)
+        _ConfigParser.set_value('MANDIRI', 'sam2^uid', uid)
 
 
 def set_bni_sam_no(slot, no):
     global BNI_SAM_1_NO, BNI_SAM_2_NO
     if slot == '1':
         BNI_SAM_1_NO = no
-        _ConfigParser.set_value('QPROX', 'bni^sam^1^no', no)
+        _ConfigParser.set_value('BNI', 'sam1^no', no)
     if slot == '2':
         BNI_SAM_2_NO = no
-        _ConfigParser.set_value('QPROX', 'bni^sam^2^no', no)
+        _ConfigParser.set_value('BNI', 'sam2^no', no)
 
 
 def digit_in(s):
@@ -794,9 +826,9 @@ def sam_to_slot(no, bank='BNI'):
 
 def save_sam_config(bank='BNI'):
     if bank == 'BNI':
-        _ConfigParser.set_value('QPROX', 'bni^active^slot', str(BNI_ACTIVE))
+        _ConfigParser.set_value('BNI', 'active^slot', str(BNI_ACTIVE))
     elif bank == 'MANDIRI':
-        _ConfigParser.set_value('QPROX', 'mandiri^active^slot', str(MANDIRI_ACTIVE))
+        _ConfigParser.set_value('MANDIRI', 'active^slot', str(MANDIRI_ACTIVE))
 
 
 def get_active_sam(bank='MANDIRI', reverse=False):
@@ -813,11 +845,7 @@ def get_active_sam(bank='MANDIRI', reverse=False):
 
 
 def empty(s):
-    if s is None:
-        return True
-    elif type(s) == int and s == 0:
-        return True
-    elif type(s) != int and len(s) == 0:
-        return True
-    else:
-        return False
+    return _Helper.empty(s)
+
+
+

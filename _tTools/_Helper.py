@@ -118,14 +118,21 @@ def get_ds(string, length=4, log=False):
     return __
 
 
-def reverse_hexdec(string):
+def full_row_reverse_hexdec(string):
     __hex1 = string[46:54]
     __hex2 = string[54:62]
     __front = string[:46]
     __back = string[62:]
-    __dec1 = int("".join(map(str.__add__, __hex1[-2::-2], __hex1[-1::-2])), 16)
-    __dec2 = int("".join(map(str.__add__, __hex2[-2::-2], __hex2[-1::-2])), 16)
+    __dec1 = reverse_hexdec(string=__hex1, mode='BIG_ENDIAN')
+    __dec2 = reverse_hexdec(string=__hex2, mode='BIG_ENDIAN')
     return str(__front) + str(__dec1).zfill(8) + str(__dec2).zfill(8) + str(__back)
+
+
+def reverse_hexdec(string, mode="BIG_ENDIAN"):
+    if mode in ['BIG_ENDIAN']:
+        return int("".join(map(str.__add__, string[-2::-2], string[-1::-2])), 16)
+    else:
+        return int(string, 16)
 
 
 def dump(s, iterate=False):
@@ -169,4 +176,17 @@ def execute_console(command):
 
 def whoami():
     return whois(1).f_code.co_name
+
+
+def empty(s):
+    if s is None:
+        return True
+    elif type(s) == bool and s is False:
+        return True
+    elif type(s) == int and s == 0:
+        return True
+    elif type(s) != int and len(s) == 0:
+        return True
+    else:
+        return False
 

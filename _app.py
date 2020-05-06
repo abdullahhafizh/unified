@@ -628,6 +628,11 @@ class SlotHandler(QObject):
         _SalePrintTool.start_direct_sale_print_global(payload)
     start_direct_sale_print_global = pyqtSlot(str)(start_direct_sale_print_global)
 
+    def start_topup_mandiri_correction(self, amount, trxid):
+        _QPROX.start_topup_mandiri_correction(amount, trxid)
+    start_topup_mandiri_correction = pyqtSlot(str, str)(start_topup_mandiri_correction)
+
+
 
 
 def s_handler():
@@ -1091,14 +1096,14 @@ if __name__ == '__main__':
         sleep(.5)
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    if _QPROX.INIT_MANDIRI is True:
+    if _QPROX.INIT_MANDIRI is True and not _Common.C2C_MODE:
         sleep(.5)
         print("pyt: Triggering Mandiri Balance Validation...")
         _SettlementService.start_validate_update_balance()
     if _QPROX.INIT_BNI is True:
-        sleep(.5)
-        print("pyt: Triggering BNI Settlement Sync...")
-        _Sync.start_sync_settlement_bni()
+        # sleep(.5)
+        # print("pyt: Triggering BNI Settlement Sync...")
+        # _Sync.start_sync_settlement_bni()
         sleep(.5)
         print("pyt: Triggering BNI Balance Validation...")
         _TopupService.start_define_topup_slot_bni()

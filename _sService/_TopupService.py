@@ -36,12 +36,12 @@ BNI_UPDATE_BALANCE_PROCESS = False
 def define_topup_slot_bni():
     while True:
         if not BNI_UPDATE_BALANCE_PROCESS:
-            if _Common.BNI_SAM_1_WALLET <= _Common.MINIMUM_AMOUNT:
-                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Common.MINIMUM_AMOUNT), str(_Common.BNI_SAM_1_WALLET)))
+            if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Common.BNI_THRESHOLD), str(_Common.BNI_SAM_1_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
                 do_topup_bni(slot=1, force=True)
-            if _Common.BNI_SINGLE_SAM is False and _Common.BNI_SAM_2_WALLET <= _Common.MINIMUM_AMOUNT:
-                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Common.MINIMUM_AMOUNT), str(_Common.BNI_SAM_2_WALLET)))
+            if _Common.BNI_SINGLE_SAM is False and _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Common.BNI_THRESHOLD), str(_Common.BNI_SAM_2_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
                 do_topup_bni(slot=2, force=True)
         sleep(5)
@@ -184,6 +184,12 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
+    if bank == 'BRI' and mode == 'TOPUP_BRIZZI':
+        # TODO: Add Handler Brizzi Pending Topup Here
+        return False
+    if bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
+        # TODO: Add Handler Mandiri Pending Topup For Deposit THere
+        return False
     else:
         LOGGER.warning(('Unknown', bank, mode))
         return False
@@ -227,6 +233,12 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
+    if bank == 'BRI' and mode == 'TOPUP_BRIZZI':
+        # TODO: Add Handler Brizzi Ubal Topup Here
+        return False
+    if bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
+        # TODO: Add Handler Mandiri UBal Topup Deposit THere
+        return False
     else:
         LOGGER.warning(('Unknown', bank, mode))
         return False

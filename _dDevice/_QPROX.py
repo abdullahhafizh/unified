@@ -57,10 +57,26 @@ QPROX = {
     "UPDATE_BALANCE_ONLINE": "019", #Update Balance Online Mandiri
     "PURSE_DATA_BNI_CONTACTLESS": "020", #Get Card Info BNI Tapcash contactless,
     "SEND_CRYPTO_CONTACTLESS": "021", #Send Cryptogram For BNI Tapcash contactless,
+    "DEBIT_NO_INIT_SINGLE_REPORT": "022",
+    "GET_LAST_TRX_REPORT": "023",
+    "UPDATE_BALANCE_BRI": "024", #BRI UBAL ONLINE
+    "CARD_HISTORY_BRI": "025", #BRIZZI CARD LOG
+    # C2C - Card To Card Mode
+    "TOPUP_C2C": "026", 
+    "INIT_C2C": "027",
+    "CORRECTION_C2C": "028",
+    "GET_FEE_C2C": "029",
+    "SET_FEE_C2C": "030",
+    "FORCE_SETTLEMENT": "031",
+    "BALANCE_C2C": "033"
+
 }
 
-# 020 GetPurseData (ambil pursedata dari kartu), tidak ada parameter
-# 021 UpdateCardCryptogram (update cryptogram ke kartu), parameter pursedata & cryptogram
+# SERVICE MISSING COMMAND =================
+# SEND APDU WITH POINTER
+# UBAL SAM C2C DEPOSIT
+# C2C GET FEE METHOD
+# C2C GET SAM DEPOSIT UID
 
 
 BNI_CARD_NO_SLOT_1 = ''
@@ -182,7 +198,10 @@ def get_card_info(slot=1, bank='BNI'):
             return output
         else:
             _Common.NFC_ERROR = 'CHECK_CARD_INFO_BNI_ERROR_SLOT_'+str(slot)
-            return False
+            return 
+    elif bank == 'MANDIRI_C2C':
+        # TODO Add Logic Handler Here
+        pass
     else:
         return False
 
@@ -230,26 +249,34 @@ def init_qprox():
         for BANK in BANKS:
             if BANK['STATUS'] is True:
                 if BANK['BANK'] == 'MANDIRI':
-                    param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
-                            '|' + BANK['MID'] + '|' + BANK['TID']
+                    if _Common.C2C_MODE is True:
+                        # TODO Add Handler Here For C2C Mode
+                        param = QPROX['INIT_C2C'] + '|' + _Common.C2C_TID_NEW_APP + \
+                                '|' + _Common.C2C_MACTROS + '|' + _Common.C2C_SAM_SLOT
+                    else:
+                        param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
+                                '|' + BANK['MID'] + '|' + BANK['TID']
                     response, result = _Command.send_request(param=param, output=None)
                     if response == 0:
                         LOGGER.info((BANK['BANK'], result))
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
-                        INIT_MANDIRI = False
-                        if _Common.active_auth_session():
+                        if _Common.C2C_MODE:
                             INIT_MANDIRI = True
-                        # Positive Assumption Last Update Bringing KA LOGIN Session
-                        if _Common.last_update_attempt():
-                            INIT_MANDIRI = True
-                            _Common.log_to_temp_config('last^auth')
-                        if _Common.MANDIRI_SINGLE_SAM:
-                            # _Common.MANDIRI_ACTIVE = 1
-                            # _Common.save_sam_config(bank='MANDIRI')
-                            ka_info_mandiri(str(_Common.MANDIRI_ACTIVE), caller='FIRST_INIT_SINGLE_SAM')
+                            c2c_balance_info()
                         else:
-                            ka_info_mandiri(str(_Common.get_active_sam(bank='MANDIRI', reverse=True)), caller='FIRST_INIT')
+                            if _Common.active_auth_session():
+                                INIT_MANDIRI = True
+                            # Positive Assumption Last Update Bringing KA LOGIN Session
+                            if _Common.last_update_attempt():
+                                INIT_MANDIRI = True
+                                _Common.log_to_temp_config('last^auth')
+                            if _Common.MANDIRI_SINGLE_SAM is True:
+                                # _Common.MANDIRI_ACTIVE = 1
+                                # _Common.save_sam_config(bank='MANDIRI')
+                                ka_info_mandiri(str(_Common.MANDIRI_ACTIVE), caller='FIRST_INIT_SINGLE_SAM')
+                            else:
+                                ka_info_mandiri(str(_Common.get_active_sam(bank='MANDIRI', reverse=True)), caller='FIRST_INIT')
                     else:
                         LOGGER.warning((BANK['BANK'], result))
                 if BANK['BANK'] == 'BNI':
@@ -311,6 +338,10 @@ def auth_ka(_slot=None, initial=True):
         LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|ERROR')
         _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
+        return
+    # Stop Process Auth If Detected as C2C
+    if _Common.C2C_MODE is True:
+        QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
         return
     __single_sam = _Common.mandiri_single_sam()
     if __single_sam is True:
@@ -423,7 +454,118 @@ def check_balance():
 
 
 def start_top_up_mandiri(amount, trxid):
-    _Helper.get_pool().apply_async(top_up_mandiri, (amount, trxid,))
+    if not _Common.C2C_MODE:
+        _Helper.get_pool().apply_async(top_up_mandiri, (amount, trxid,))
+    else:
+        _Helper.get_pool().apply_async(top_up_mandiri_c2c, (amount, trxid,))
+
+
+def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
+    if _Common.empty(report):
+        LOGGER.warning(('EMPTY REPORT'))
+        return
+    __data = report
+    if report[0] == '|' and len(report) > 196: #Trim Extra chars 4 in front, and 3 chars in end
+        __data = report.split('|')[1][4:-3] 
+    __report_deposit = __data[:102]
+    __report_emoney = __data[102:]
+    # TODO: Check If Balance is Initial or after process topup
+    __deposit_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
+    # Update Local Mandiri Wallet
+    __sam_prev_balance = _Common.MANDIRI_WALLET_1
+    _Common.MANDIRI_WALLET_1 = __deposit_balance
+    _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
+    __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
+    __emoney_prev_balance = int(__emoney_balance) - int(amount)
+    if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
+        __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
+    output = {
+        'last_balance': __emoney_balance,
+        'report_sam': __report_emoney,
+        'card_no': __report_emoney[:16],
+        'report_ka': __report_deposit,
+        'bank_id': '1',
+        'bank_name': 'MANDIRI',
+    }
+    if status == '0000':
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
+    param = {
+        'trxid': reff_no,
+        'samCardNo': __report_deposit[:16],
+        'samCardSlot': _Common.C2C_SAM_SLOT,
+        'samPrevBalance': __sam_prev_balance,
+        'samLastBalance': __deposit_balance,
+        'topupCardNo': __report_emoney[:16],
+        'topupPrevBalance': __emoney_prev_balance,
+        'topupLastBalance': __emoney_balance,
+        'status': status,
+        'remarks': __data,
+    }
+    _Common.store_upload_sam_audit(param)
+    # Update to server
+    _Common.upload_mandiri_wallet()
+    
+
+def start_topup_mandiri_correction(amount, trxid):
+    if not _Common.C2C_MODE:
+        return
+    else:
+        _Helper.get_pool().apply_async(top_up_mandiri_correction, (amount, trxid,))
+
+
+# Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
+def top_up_mandiri_correction(amount, trxid=''):
+    global INIT_MANDIRI
+    if len(INIT_LIST) == 0:
+        LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
+        return
+    param = QPROX['CORRECTION_C2C'] + '|'
+    # TODO Check Correction Result
+    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    if _response == 0 and len(_result) > 100:
+        parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
+    else:
+        LOGGER.warning((trxid, _result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        get_c2c_failure_settlement(amount, trxid)
+
+
+def get_c2c_failure_settlement(amount, trxid):
+    if len(INIT_LIST) == 0:
+        LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
+        return
+    param = QPROX['FORCE_SETTLEMENT'] + '|'
+    # TODO Check Force Settlement Result
+    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    if _response == 0 and len(_result) > 100:
+        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+    else:
+        LOGGER.warning((trxid, _result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+
+
+# TODO Modify This Function
+# Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
+def top_up_mandiri_c2c(amount, trxid='', slot=None):
+    global INIT_MANDIRI
+    if len(INIT_LIST) == 0:
+        LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
+        return
+    param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
+    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
+    if _response == 0 and len(_result) > 100:
+        parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
+    else:
+        LOGGER.warning((slot, _result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|NEED_CORRECTION')
+
 
 '''
 OUTPUT = Balance, Report SAM, Report KA, Card Number
@@ -505,7 +647,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
             _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_2
         LOGGER.info((slot, __status, str(output), _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
-        __card_uid = __report_sam.split('#')[0][:14]
+        __card_uid = __report_sam.split('#')[1][:14]
         param = {
             'trxid': trxid,
             'samCardNo': __card_uid,
@@ -538,7 +680,7 @@ OUTPUT = Report SAM, Card Number
 
 
 def get_bni_wallet_status(upload=True):
-    global BNI_TOPUP_AMOUNT
+    global BNI_DEPOSIT_BALANCE
     try:
         # First Attempt For SLOT 1
         attempt = 0
@@ -562,11 +704,11 @@ def get_bni_wallet_status(upload=True):
             sleep(1)
         if _Common.BNI_ACTIVE == 1:
             _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_1_WALLET
-            # BNI_TOPUP_AMOUNT = _Common.BNI_SAM_1_WALLET
+            # BNI_DEPOSIT_BALANCE = _Common.BNI_SAM_1_WALLET
             LOGGER.info((str(_Common.BNI_ACTIVE), str(_Common.BNI_SAM_1_WALLET)))
         if _Common.BNI_ACTIVE == 2:
             _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_2_WALLET
-            # BNI_TOPUP_AMOUNT = _Common.BNI_SAM_2_WALLET
+            # BNI_DEPOSIT_BALANCE = _Common.BNI_SAM_2_WALLET
             LOGGER.info((str(_Common.BNI_ACTIVE), str(_Common.BNI_SAM_2_WALLET)))
         if upload is True:
             # Do Upload To Server
@@ -704,11 +846,29 @@ def start_ka_info():
 '''
 OUTPUT = Limit TopUp, Main Counter, History Counter
 '''
-MANDIRI_TOPUP_AMOUNT = 0
+MANDIRI_DEPOSIT_BALANCE = 0
+
+
+def c2c_balance_info():
+    # TODO Check Result C2C Balance Here
+    param = QPROX['BALANCE_C2C'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    if response == 0 and result is not None:
+        MANDIRI_DEPOSIT_BALANCE = int(result.split('|')[0])
+        _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
+        _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
+        _Common.MANDIRI_ACTIVE = 1
+        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|' + str(result))
+    else:
+        _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
+        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
 
 
 def ka_info_mandiri(slot=None, caller=''):
-    global MANDIRI_TOPUP_AMOUNT
+    global MANDIRI_DEPOSIT_BALANCE
+    if _Common.C2C_MODE is True:
+        c2c_balance_info()
+        return
     # if len(INIT_LIST) == 0:
     #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
     #     QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
@@ -720,13 +880,13 @@ def ka_info_mandiri(slot=None, caller=''):
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.debug((caller, slot, result))
     if response == 0 and result is not None:
-        MANDIRI_TOPUP_AMOUNT = int(result.split('|')[0])
-        _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_TOPUP_AMOUNT
+        MANDIRI_DEPOSIT_BALANCE = int(result.split('|')[0])
+        _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
         if slot == '1':
-            _Common.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
+            _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
             _Common.MANDIRI_ACTIVE = 1
         elif slot == '2':
-            _Common.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
+            _Common.MANDIRI_WALLET_2 = MANDIRI_DEPOSIT_BALANCE
             _Common.MANDIRI_ACTIVE = 2
         _Common.save_sam_config(bank='MANDIRI')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
@@ -735,11 +895,11 @@ def ka_info_mandiri(slot=None, caller=''):
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 
-BNI_TOPUP_AMOUNT = 0
+BNI_DEPOSIT_BALANCE = 0
 
 
 def ka_info_bni(slot=1):
-    global BNI_TOPUP_AMOUNT
+    global BNI_DEPOSIT_BALANCE
     # if len(INIT_LIST) == 0 and init_check is True:
     #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
     #     QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
@@ -751,7 +911,7 @@ def ka_info_bni(slot=1):
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((str(slot), result))
     if response == 0 and (result is not None and result != ''):
-        # BNI_TOPUP_AMOUNT = int(result.split('|')[0])
+        # BNI_DEPOSIT_BALANCE = int(result.split('|')[0])
         if slot == 1:
             _Common.BNI_SAM_1_WALLET = int(result.split('|')[0])
             _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_1_WALLET
