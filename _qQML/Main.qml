@@ -276,12 +276,12 @@ Rectangle {
         HomePageTJ{}
     }
 
-    Component {id: mandiri_shop_card
-        MandiriShopCard{}
+    Component {id: general_shop_card
+        GeneralShopCard{}
     }
 
-    Component {id: mandiri_payment_process
-        MandiriPaymentProcess{}
+    Component {id: general_payment_process
+        GeneralPaymentProcess{}
     }
 
     Component {id: ppob_category

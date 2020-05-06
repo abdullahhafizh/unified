@@ -437,7 +437,7 @@ Base{
             details.provider = selectedProduct.category + ' ' + selectedProduct.description;
         }
         _SLOT.python_dump(JSON.stringify(details));
-        my_layer.push(mandiri_payment_process, {details: details});
+        my_layer.push(general_payment_process, {details: details});
     }
 
     function get_payments(s){

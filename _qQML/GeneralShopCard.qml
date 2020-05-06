@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 
 Base{
-    id: mandiri_shop_card
+    id: general_shop_card
     property int timer_value: 300
     property var press: '0'
     property var cart: undefined
@@ -164,7 +164,7 @@ Base{
         selectedPayment = p;
         press = '0';
 //        var get_details = get_cart_details(p);
-//        my_layer.push(mandiri_payment_process, {details: get_details});
+//        my_layer.push(general_payment_process, {details: get_details});
     }
 
     function get_status_multiple(m){
@@ -333,7 +333,7 @@ Base{
                 if (press!='0') return;
                 press = '1';
                 var get_details = get_cart_details(selectedPayment);
-                my_layer.push(mandiri_payment_process, {details: get_details});
+                my_layer.push(general_payment_process, {details: get_details});
 //                popup_loading.close();
 //                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
 //                var unit_price = parseInt(productData[productIdx].sell_price);
@@ -535,7 +535,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         visible: (productIdx > -1)
 //        visible: true
-        calledFrom: 'mandiri_shop_card'
+        calledFrom: 'general_shop_card'
         _cashEnable: cashEnable
         _cardEnable: cardEnable
         _qrOvoEnable: qrOvoEnable
@@ -759,7 +759,7 @@ Base{
 //    SelectPaymentPopupNotif{
 //        id: select_payment
 //        visible: isConfirm
-//        calledFrom: 'mandiri_shop_card'
+//        calledFrom: 'general_shop_card'
 //        _cashEnable: cashEnable
 //        _cardEnable: cardEnable
 //        _qrOvoEnable: qrOvoEnable
@@ -859,7 +859,7 @@ Base{
 
     GlobalConfirmationFrame{
         id: global_confirmation_frame
-        calledFrom: 'mandiri_shop_card'
+        calledFrom: 'general_shop_card'
 
     }
 

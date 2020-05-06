@@ -334,7 +334,7 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(mandiri_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+                    my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
