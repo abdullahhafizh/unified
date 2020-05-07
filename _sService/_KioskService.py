@@ -1004,10 +1004,12 @@ def store_transaction_global(param, retry=False):
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-    finally:
-        if g['shop_type'] == 'topup':
-            sleep(1.5)
-            store_topup_transaction(param)
+    # finally:
+    #     if g['shop_type'] == 'topup':
+    #         sleep(1.5)
+    #         store_topup_transaction(param)
+    # This Topup Record Only Store Locally To Provide Settlement Data
+    # Moved Into Each Topup Offline Transaction Function
 
             
 def start_kiosk_get_topup_amount():
@@ -1029,7 +1031,9 @@ def kiosk_get_payment_setting():
 
 
 def start_store_topup_transaction(param):
-    _Helper.get_pool().apply_async(store_topup_transaction, (param,))
+    # Moved Into Each Topup Offline Process
+    return
+    # _Helper.get_pool().apply_async(store_topup_transaction, (param,))
 
 # '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
 # "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},
@@ -1037,42 +1041,42 @@ def start_store_topup_transaction(param):
 # 'card_no': _result.split('|')[3], 'bank_id': '1', 'bank_name': 'MANDIRI', }')
 
 
-def store_topup_transaction(param, direct_push=False):
-    global GLOBAL_TRANSACTION_DATA
-    try:
-        p = json.loads(param)
-        if _Helper.empty(GLOBAL_TRANSACTION_DATA['topup_details']):
-            GLOBAL_TRANSACTION_DATA['topup_details'] = p['topup_details']
-        _param = {
-            'rid': _Helper.get_uuid(),
-            'trxid': TRX_ID_SALE,
-            'cardNo': p['topup_details']['card_no'],
-            'balance': p['topup_details']['last_balance'],
-            'reportSAM': p['topup_details']['report_sam'],
-            'reportKA': p['topup_details']['report_ka'],
-            'status': 1,
-            'remarks': param
-        }
-        _DAO.insert_topup_record(_param)
-        if direct_push is True:
-            _param['createdAt'] = _Helper.now()
-            sleep(3)
-            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/topup-records', param=_param)
-            # LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
-            if status == 200 and response['id'] == _param['rid']:
-                _param['key'] = _param['rid']
-                _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
-                K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS')
-            else:
-                K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
-        else:
-            _param['key'] = _param['rid']
-            _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
-            payload['endpoint'] = 'sync/topup-records'
-            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.BACKEND_URL + 'sync/topup-records', payload=_param)
-    except Exception as e:
-        LOGGER.warning((e))
-        K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')
+# def store_topup_transaction(param, direct_push=False):
+#     global GLOBAL_TRANSACTION_DATA
+#     try:
+#         p = json.loads(param)
+#         if _Helper.empty(GLOBAL_TRANSACTION_DATA['topup_details']):
+#             GLOBAL_TRANSACTION_DATA['topup_details'] = p['topup_details']
+#         _param = {
+#             'rid': _Helper.get_uuid(),
+#             'trxid': TRX_ID_SALE,
+#             'cardNo': p['topup_details']['card_no'],
+#             'balance': p['topup_details']['last_balance'],
+#             'reportSAM': p['topup_details']['report_sam'],
+#             'reportKA': p['topup_details']['report_ka'],
+#             'status': 1,
+#             'remarks': param
+#         }
+#         _DAO.insert_topup_record(_param)
+#         if direct_push is True:
+#             _param['createdAt'] = _Helper.now()
+#             sleep(3)
+#             status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/topup-records', param=_param)
+#             # LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
+#             if status == 200 and response['id'] == _param['rid']:
+#                 _param['key'] = _param['rid']
+#                 _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
+#                 K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS')
+#             else:
+#                 K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
+#         else:
+#             _param['key'] = _param['rid']
+#             _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
+#             payload['endpoint'] = 'sync/topup-records'
+#             _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.BACKEND_URL + 'sync/topup-records', payload=_param)
+#     except Exception as e:
+#         LOGGER.warning((e))
+#         K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')
 
 
 def reset_db_record():

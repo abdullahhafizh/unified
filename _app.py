@@ -638,7 +638,6 @@ class SlotHandler(QObject):
 
 
 
-
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
     _KioskService.K_SIGNDLER.SIGNAL_GET_GUI_VERSION.connect(view.rootObject().result_get_gui_version)
@@ -1064,9 +1063,9 @@ if __name__ == '__main__':
     sleep(.5)
     print("pyt: Syncing Transaction Failure Data...")
     _Sync.start_sync_data_transaction_failure()
-    sleep(.5)
-    print("pyt: Syncing Topup Records...")
-    _Sync.start_sync_topup_records()
+    # sleep(.5)
+    # print("pyt: Syncing Topup Records...")
+    # _Sync.start_sync_topup_records()
     sleep(.5)
     print("pyt: Syncing Topup Amount...")
     _Sync.start_sync_topup_amount()

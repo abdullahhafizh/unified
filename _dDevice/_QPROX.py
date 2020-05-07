@@ -479,6 +479,9 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         'bank_name': 'MANDIRI',
     }
     if status == '0000':
+        # Store Topup Success Record Into Local DB
+        output['c2c_mode'] = '1'
+        _Common.local_store_topup_record(output)
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
     param = {
         'trxid': reff_no,
@@ -615,6 +618,9 @@ def top_up_mandiri(amount, trxid='', slot=None):
             _Common.MANDIRI_WALLET_2 = _Common.MANDIRI_WALLET_2 - int(amount)
             _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_2
         LOGGER.info((slot, __status, str(output), _result))
+        if __status == '0000':
+            # Store Topup Success Record Into Local DB
+            _Common.local_store_topup_record(output)
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
         __card_uid = __report_sam.split('#')[1][:14]
         param = {
@@ -777,6 +783,9 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
                 'bank_name': 'BNI',
             }
             update_bni_wallet(slot, amount, __samLastBalance)
+            if __status == '0000':
+                # Store Topup Success Record Into Local DB
+                _Common.local_store_topup_record(output)
             # Add Timeout Response
             if __status == '1004' or __status == '5103' or __status == 'FFFE':
                 LOGGER.debug(('TOPUP_TIMEOUT', attempt, __status, _result))

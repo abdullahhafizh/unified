@@ -859,3 +859,21 @@ def get_active_sam(bank='MANDIRI', reverse=False):
 def empty(s):
     return _Helper.empty(s)
 
+
+def local_store_topup_record(param):
+    if _Helper.empty(param):
+        return False
+    topup_record = {
+        'rid': _Helper.get_uuid(),
+        'trxid': '',
+        'cardNo': param['card_no'],
+        'balance': param['last_balance'],
+        'reportSAM': param['report_sam'],
+        'reportKA': param['report_ka'],
+        'status': 1,
+        'remarks': json.dumps(param)
+    }
+    _DAO.insert_topup_record(topup_record)
+    topup_record['key'] = topup_record['rid']
+    _DAO.mark_sync(param=topup_record, _table='TopUpRecords', _key='rid')
+    return topup_record['rid']
