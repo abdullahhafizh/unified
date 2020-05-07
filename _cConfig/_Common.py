@@ -63,7 +63,8 @@ BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
 PROCODE_BRI = _ConfigParser.get_set_value('BRI', 'procode', '---')
-SLOT_BRI = _ConfigParser.get_set_value('BRI', 'sam^slot', '3')
+SLOT_BRI = _ConfigParser.get_set_value('BRI', 'sam^slot', '---')
+BRI_SAM_ACTIVE = digit_in(SLOT_BRI)
 
 MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')

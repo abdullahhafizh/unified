@@ -441,7 +441,7 @@ def get_topup_readiness():
     ready['bni_wallet_2'] = str(_Common.BNI_SAM_2_WALLET)
     ready['mandiri'] = 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
     ready['bni'] = 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
-    ready['bri'] = 'AVAILABLE' if ping_online_topup(mode='BRI', trigger=False) else 'N/A'
+    ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
     ready['bca'] = 'N/A'
     ready['dki'] = 'N/A'
     ready['emoney'] = _Common.TOPUP_AMOUNT_SETTING['emoney']
@@ -616,6 +616,9 @@ def topup_online(bank, cardno, amount):
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
     if bank == 'BRI':
+        if not _Common.BRI_SAM_ACTIVE:
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR_BRI_SAM_SLOT_NOT_FOUND')
+            return
         last_check = _QPROX.LAST_BALANCE_CHECK
         _param = {
             'card_no': cardno,
