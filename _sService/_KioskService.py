@@ -1123,12 +1123,21 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                             key='createdAt',
                             age_month=age_month)
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
-    paths = ['_pPDF', '_lLog', '_qQr']
+    paths = ['_pPDF', '_lLog', '_qQr', '_jJob|.done']
     LOGGER.info(('START FILES HOUSE_KEEPING', age_month, paths, expired, mode, _Helper.time_string()))
     print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
+        ext = '*.*'
+        if '|' in path:
+            path = path.split('|')[0]
+            ext = path.split('|')[1]
         work_dir = os.path.join(sys.path[0], path)
-        for f in os.listdir(work_dir):
+        files = os.listdir(work_dir)
+        if ext != '*.*':
+            files = [x for x in os.listdir(work_dir) if x.endswith(ext)]
+        if len(files) == 0:
+            continue
+        for f in files:
             file = os.path.join(work_dir, f)
             if os.path.isfile(file):
                 stat = os.stat(file)
@@ -1136,4 +1145,4 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                     os.remove(file)
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
     print('pyt: FINISH DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
-    return 'HOUSE_KEEPING_' + str(age_month) + 'SUCCESS'
+    return 'HOUSE_KEEPING_' + str(age_month) + '_SUCCESS'
