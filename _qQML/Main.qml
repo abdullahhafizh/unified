@@ -96,7 +96,7 @@ Rectangle {
     signal result_bill_status(string str)
     signal result_bill_receive(string str)
     signal result_bill_stop(string str)
-    signal result_do_topup_bni(string str)
+    signal result_do_topup_deposit_bni(string str)
     signal result_admin_print(string str)
     signal result_reprint_global(string str)
     signal result_init_bill(string str)

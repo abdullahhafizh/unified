@@ -396,9 +396,9 @@ class SlotHandler(QObject):
         _BILL.start_get_status_bill()
     start_get_status_bill = pyqtSlot()(start_get_status_bill)
 
-    def start_do_topup_bni(self, slot):
-        _TopupService.start_do_topup_bni(slot)
-    start_do_topup_bni = pyqtSlot(str)(start_do_topup_bni)
+    def start_do_topup_deposit_bni(self, slot):
+        _TopupService.start_do_topup_deposit_bni(slot)
+    start_do_topup_deposit_bni = pyqtSlot(str)(start_do_topup_deposit_bni)
 
     def start_define_topup_slot_bni(self):
         _TopupService.start_define_topup_slot_bni()
@@ -711,7 +711,7 @@ def s_handler():
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_STATUS.connect(view.rootObject().result_bill_status)
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.connect(view.rootObject().result_bill_receive)
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_STOP.connect(view.rootObject().result_bill_stop)
-    _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.connect(view.rootObject().result_do_topup_bni)
+    _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.connect(view.rootObject().result_do_topup_deposit_bni)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.connect(view.rootObject().result_admin_print)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_SALE_REPRINT_GLOBAL.connect(view.rootObject().result_reprint_global)
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_INIT.connect(view.rootObject().result_init_bill)

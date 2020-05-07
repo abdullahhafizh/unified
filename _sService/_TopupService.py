@@ -44,25 +44,25 @@ def define_topup_slot_bni():
             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
                 LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Common.BNI_THRESHOLD), str(_Common.BNI_SAM_1_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-                do_topup_bni(slot=1, force=True)
+                do_topup_deposit_bni(slot=1, force=True)
             if _Common.BNI_SINGLE_SAM is False and _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
                 LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Common.BNI_THRESHOLD), str(_Common.BNI_SAM_2_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-                do_topup_bni(slot=2, force=True)
+                do_topup_deposit_bni(slot=2, force=True)
         sleep(5)
 
 
-def start_do_topup_bni(slot):
-    _Helper.get_pool().apply_async(do_topup_bni, (int(slot),))
+def start_do_topup_deposit_bni(slot):
+    _Helper.get_pool().apply_async(do_topup_deposit_bni, (int(slot),))
 
 
 def start_do_force_topup_bni():
     slot = _Common.BNI_ACTIVE
     force = True
-    _Helper.get_pool().apply_async(do_topup_bni, (int(slot), force, ))
+    _Helper.get_pool().apply_async(do_topup_deposit_bni, (int(slot), force, ))
 
 
-def do_topup_bni(slot=1, force=False):
+def do_topup_deposit_bni(slot=1, force=False):
     global BNI_UPDATE_BALANCE_PROCESS
     try:
         if force is False and _Common.ALLOW_DO_TOPUP is False:

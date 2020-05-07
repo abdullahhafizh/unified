@@ -52,7 +52,7 @@ Base{
         base.result_process_settlement.connect(get_admin_action);
         base.result_init_online_qprox.connect(get_admin_action);
         base.result_admin_sync_stock.connect(get_admin_action);
-        base.result_do_topup_bni.connect(get_topup_bni_result)
+        base.result_do_topup_deposit_bni.connect(get_topup_bni_result)
     }
 
     Component.onDestruction:{
@@ -71,7 +71,7 @@ Base{
         base.result_process_settlement.disconnect(get_admin_action);
         base.result_init_online_qprox.disconnect(get_admin_action);
         base.result_admin_sync_stock.disconnect(get_admin_action);
-        base.result_do_topup_bni.disconnect(get_topup_bni_result)
+        base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result)
     }
 
     function do_action_signal(s){

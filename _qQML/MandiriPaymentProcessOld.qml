@@ -273,7 +273,7 @@ Base{
             if (t=='TOPUP_FAILED_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
             if (t.indexOf('TOPUP_SAM_REQUIRED')> -1) {
                 var slot_topup = t.split('|')[1]
-                _SLOT.start_do_topup_bni(slot_topup);
+                _SLOT.start_do_topup_deposit_bni(slot_topup);
                 console.log('do topup action for slot : ', now, slot_topup)
             }
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )

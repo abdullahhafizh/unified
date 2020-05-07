@@ -357,7 +357,7 @@ Base{
             if (t=='MANDIRI_SAM_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
 //                var slot_topup = t.split('|')[1]
-//                _SLOT.start_do_topup_bni(slot_topup);
+//                _SLOT.start_do_topup_deposit_bni(slot_topup);
 //                console.log('Trigger Manual Topup BNI By Failed TRX : ', now, slot_topup)
 //            }
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )

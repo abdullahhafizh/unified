@@ -89,7 +89,7 @@ Base{
         my_timer.restart();
         if (t.indexOf('TOPUP_SAM_REQUIRED')> -1){
             var slot_topup = t.split('|')[1]
-            _SLOT.start_do_topup_bni(slot_topup);
+            _SLOT.start_do_topup_deposit_bni(slot_topup);
             console.log('do topup action for slot : ', slot_topup)
         } else if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'){
             slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';

@@ -501,7 +501,7 @@ def handle_tasks(tasks):
             update_task(task, result)
         if 'DO_TOPUP_BNI_' in task['taskName']:
             _slot = int(task['taskName'][-1])
-            result = _TopupService.do_topup_bni(slot=_slot, force=True)
+            result = _TopupService.do_topup_deposit_bni(slot=_slot, force=True)
             update_task(task, result)
         if task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
             result = 'FAILED_EXECUTED_VM_ON_USED'
@@ -663,12 +663,12 @@ def get_amount(idx, listx):
 #             _QPROX.get_bni_wallet_status()
 #             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-#                 _TopupService.do_topup_bni(slot=1)
+#                 _TopupService.do_topup_deposit_bni(slot=1)
 #                 LOGGER.debug(('manual_topup_bni 1', str(_Common.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
 #                 _Common.BNI_ACTIVE = 2
 #             if _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-#                 _TopupService.do_topup_bni(slot=2)
+#                 _TopupService.do_topup_deposit_bni(slot=2)
 #                 LOGGER.debug(('manual_topup_bni 2', str(_Common.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
 #                 _Common.BNI_ACTIVE = 1
 #             _Common.save_sam_config()
@@ -687,12 +687,12 @@ def get_amount(idx, listx):
 #                 _QPROX.get_bni_wallet_status()
 #             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-#                 _TopupService.do_topup_bni(slot=1)
+#                 _TopupService.do_topup_deposit_bni(slot=1)
 #                 LOGGER.debug(('manual_topup_bni 1', str(_Common.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
 #                 _Common.BNI_ACTIVE = 2
 #             if _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-#                 _TopupService.do_topup_bni(slot=2)
+#                 _TopupService.do_topup_deposit_bni(slot=2)
 #                 LOGGER.debug(('manual_topup_bni 2', str(_Common.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
 #                 _Common.BNI_ACTIVE = 1
 #             _Common.save_sam_config()
@@ -707,7 +707,7 @@ def start_do_bni_topup_by_trx():
 def do_bni_topup_by_trx():
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-        _TopupService.do_topup_bni(slot=1)
+        _TopupService.do_topup_deposit_bni(slot=1)
         if not _Common.BNI_SINGLE_SAM:
             LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD), '1 >>> 2'))
             _Common.BNI_ACTIVE = 2
@@ -715,7 +715,7 @@ def do_bni_topup_by_trx():
             LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD)))
     elif _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-        _TopupService.do_topup_bni(slot=2)
+        _TopupService.do_topup_deposit_bni(slot=2)
         if not _Common.BNI_SINGLE_SAM:
             LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD), '2 >>> 1'))
             _Common.BNI_ACTIVE = 1
