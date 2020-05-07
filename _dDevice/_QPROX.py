@@ -780,7 +780,7 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
             # Add Timeout Response
             if __status == '1004' or __status == '5103' or __status == 'FFFE':
                 LOGGER.debug(('TOPUP_TIMEOUT', attempt, __status, _result))
-                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_TIMEOUT')
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
             else:
                 LOGGER.info((str(output)))
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
@@ -798,10 +798,10 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
             }
             _Common.store_upload_sam_audit(param)
         else:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
     else:
         LOGGER.warning(('INIT_BNI', result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         _Common.NFC_ERROR = 'TOPUP_BNI_ERROR'
 
 

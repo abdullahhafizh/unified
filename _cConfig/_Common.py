@@ -101,6 +101,7 @@ UPDATE_ONLINE_FEATURE = _ConfigParser.get_set_value('GENERAL', 'allowed^ubal^onl
 _ConfigParser.set_value('GENERAL', '#allowed^ubal^online^info1', 'fill_with_bank_name_in_uppercase_joined_with_pipeline_|_')
 _ConfigParser.set_value('GENERAL', '#allowed^ubal^online^info2', 'will_be_overwrited_from_backend_if_configured')
 ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
+ALLOWED_BANK_PENDING_ONLINE = ['BRI']
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 

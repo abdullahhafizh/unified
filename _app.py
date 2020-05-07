@@ -42,7 +42,7 @@ Powered By: PT. MultiDaya Dinamika
               -2020-
 """)
 
-# Set Frame Size Here
+# Set Default Screen Frame Size
 GLOBAL_WIDTH = 1920
 GLOBAL_HEIGHT = 1080
 
@@ -432,13 +432,13 @@ class SlotHandler(QObject):
         _TopupService.start_slave_activation_bni()
     start_slave_activation_bni = pyqtSlot()(start_slave_activation_bni)
 
-    def do_reset_pending_master(self):
-        _TopupService.do_reset_pending_master()
-    do_reset_pending_master = pyqtSlot()(do_reset_pending_master)
+    def bni_reset_update_balance_master(self):
+        _TopupService.bni_reset_update_balance_master()
+    bni_reset_update_balance_master = pyqtSlot()(bni_reset_update_balance_master)
 
-    def do_reset_pending_slave(self):
-        _TopupService.do_reset_pending_slave()
-    do_reset_pending_slave = pyqtSlot()(do_reset_pending_slave)
+    def bni_reset_update_balance_slave(self):
+        _TopupService.bni_reset_update_balance_slave()
+    bni_reset_update_balance_slave = pyqtSlot()(bni_reset_update_balance_slave)
 
     def retry_store_transaction_global(self):
         _KioskService.retry_store_transaction_global()
@@ -631,6 +631,10 @@ class SlotHandler(QObject):
     def start_check_online_topup(self, mode, payload):
         _TopupService.start_check_online_topup(mode, payload)
     start_check_online_topup = pyqtSlot(str, str)(start_check_online_topup)
+
+    def start_topup_online_bri(self, cardno, amount):
+        _TopupService.start_topup_online_bri(cardno, amount)
+    start_topup_online_bri = pyqtSlot(str, str)(start_topup_online_bri)
 
 
 

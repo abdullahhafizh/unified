@@ -66,7 +66,7 @@ def do_topup_bni(slot=1, force=False):
     global BNI_UPDATE_BALANCE_PROCESS
     try:
         if force is False and _Common.ALLOW_DO_TOPUP is False:
-            LOGGER.warning(('do_topup_bni', slot, _Common.ALLOW_DO_TOPUP))
+            LOGGER.warning((slot, _Common.ALLOW_DO_TOPUP))
             return 'TOPUP_NOT_ALLOWED'
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
@@ -104,21 +104,21 @@ def do_topup_bni(slot=1, force=False):
             _Common.upload_topup_error(slot, 'RESET')
             return 'SUCCESS_TOPUP_BNI'
     except Exception as e:
-        LOGGER.warning(('do_topup_bni', str(slot), str(e)))
+        LOGGER.warning((str(slot), str(e)))
         TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_TOPUP_BNI')
 
 
-def do_reset_pending_master():
+def bni_reset_update_balance_master():
     slot = 1
-    _Helper.get_pool().apply_async(reset_pending_balance, (slot,))
+    _Helper.get_pool().apply_async(bni_reset_update_balance, (slot,))
 
 
-def do_reset_pending_slave():
+def bni_reset_update_balance_slave():
     slot = 2
-    _Helper.get_pool().apply_async(reset_pending_balance, (slot,))
+    _Helper.get_pool().apply_async(bni_reset_update_balance, (slot,))
 
 
-def reset_pending_balance(slot=1):
+def bni_reset_update_balance(slot=1):
     try:
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
@@ -149,7 +149,7 @@ def reset_pending_balance(slot=1):
             _Common.ALLOW_DO_TOPUP = True
             return 'SUCCESS_RESET_PENDING_BNI'
     except Exception as e:
-        LOGGER.warning(('reset_pending_balance', str(slot), str(e)))
+        LOGGER.warning((str(slot), str(e)))
         return False
 
 
@@ -190,11 +190,81 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             LOGGER.warning((bank, mode, e))
             return False
     if bank == 'BRI' and mode == 'TOPUP_BRIZZI':
-        # TODO: Add Handler Brizzi Pending Topup Here
-        return False
+        try:
+            # param must be
+            # "token":"<<YOUR API-TOKEN>>",
+            # "mid":"<<YOUR MERCHANT_ID>>",
+            # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
+            # "amount":"30000",
+            # "card_no":"7546990000025583"
+            # ---> Need Card Number And Amount
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-bri/pending', param=_param)
+            LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                # {
+                #    "response":{
+                #       "code":200,
+                #       "message":"Pending Balance Success",
+                #       "latency":1.5800659656525,
+                #       "host":"192.168.2.194"
+                #    },
+                #    "data":{
+                #       "provider_id":"BRI - Brizzi",
+                #       "amount":"1",
+                #       "card_no":"6013500601505143",
+                #       "reff_no_trx":"430279",
+                #       "reff_no_topup":"202004201042571587354177",
+                #       "pending_balance":"1"
+                #    }
+                # }
+                return response['data']
+            else:
+                return False
+        except Exception as e:
+            LOGGER.warning((bank, mode, e))
+            return False
     if bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
-        # TODO: Add Handler Mandiri Pending Topup For Deposit THere
-        return False
+        try:
+            # param must be
+            # "token":"<<YOUR API-TOKEN>>",
+            # "mid":"<<YOUR MERCHANT_ID>>",
+            # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
+            # "amount":"30000",
+            # "card_no":"7546990000025583"
+            # ---> Need Card Number And Amount
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            _param['phone'] = '08129420492'
+            _param['email'] = 'vm@mdd.co.id'
+            _param['purpose'] = 'C2C Deposit Reload'
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-mandiri/pending', param=_param)
+            LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                # {
+                #    "response":{
+                #       "code":200,
+                #       "message":"Pending Payment Success",
+                #       "latency":1.80788397789,
+                #       "host":"192.168.2.194"
+                #    },
+                #    "data":{
+                #       "amount":"1510500",
+                #       "paymentId1":"6032981000001750",
+                #       "paymentId2":"",
+                #       "reff_no":"1588745903",
+                #       "trx_time":"2020-05-06 13:18:24"
+                #    }
+                # }
+                return response['data']
+            else:
+                return False
+        except Exception as e:
+            LOGGER.warning((bank, mode, e))
+            return False
     else:
         LOGGER.warning(('Unknown', bank, mode))
         return False
@@ -239,8 +309,21 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             LOGGER.warning((bank, mode, e))
             return False
     if bank == 'BRI' and mode == 'TOPUP_BRIZZI':
-        # TODO: Add Handler Brizzi Ubal Topup Here
-        return False
+        try:
+            response, result = _Command.send_request(param=_param, output=None)
+            # TODO Check Result UBAL From Reader
+            if response == 0 and len(result) > 1:
+                return {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+            else:
+                return False
+        except Exception as e:
+            LOGGER.warning(str(e))
+            return False
     if bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         # TODO: Add Handler Mandiri UBal Topup Deposit THere
         return False
@@ -307,7 +390,7 @@ def refill_zero_bni(slot=1):
         _Common.NFC_ERROR = ''
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|SUCCESS')
         sleep(2)
-        reset_pending_balance(slot=slot)
+        bni_reset_update_balance(slot=slot)
     else:
         if slot == 1:
             _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_1_BNI_ERROR'
@@ -516,4 +599,54 @@ def update_balance_online(bank):
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
 
 
+def start_topup_online_bri(cardno, amount):
+    bank = 'BRI'
+    _Helper.get_pool().apply_async(topup_online, (bank, cardno, amount,))
 
+
+def topup_online(bank, cardno, amount):
+    # LAST_BALANCE_CHECK = {
+    #     'balance': balance,
+    #     'card_no': card_no,
+    #     'bank_type': result.split('|')[2].replace('#', ''),
+    #     'bank_name': bank_name,
+    #     'able_topup': '0000',
+    # }
+    if bank is None or bank not in _Common.ALLOWED_BANK_PENDING_ONLINE:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        return
+    if bank == 'BRI':
+        last_check = _QPROX.LAST_BALANCE_CHECK
+        _param = {
+            'card_no': cardno,
+            'amount': amount
+        }
+        pending_result = pending_balance(_param, bank='BRI', mode='TOPUP_BRIZZI')
+        # pending_result = {
+                    #   "amount":"30000",
+                    #   "card_no":"7546990000025583",
+                    #   "reff_no":"20181207180324000511",
+                    #   "provider_id":"BNI_TAPCASH",
+                    #   "trx_pin":"12345"
+                    #   }
+        if not pending_result:
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+            return
+        _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI
+        update_balance_result = update_balance(_param, bank='BRI', mode='TOPUP_BRIZZI')
+        if not update_balance_result:
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+            return
+        last_balance = int(last_check['balance']) + int(amount)
+        output = {
+                    'last_balance': str(last_balance),
+                    'report_sam': 'N/A',
+                    'card_no': pending_result['card_no'],
+                    'report_ka': 'N/A',
+                    'bank_id': '3',
+                    'bank_name': 'BRI',
+            }
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    else:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+    

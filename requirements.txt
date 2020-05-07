@@ -1,0 +1,13 @@
+requests
+FPDF
+PyPDF2
+paramiko
+Pillow
+pygame
+pysftp
+pyusb
+pyserial
+VideoCapture
+pywin32
+WMI
+PyQt5
