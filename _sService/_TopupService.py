@@ -419,12 +419,12 @@ def check_update_balance_bni(card_info):
 
 
 def update_balance_online(bank):
-    if bank is None or bank not in FW_BANK.values():
+    if bank is None or bank not in _Common.ALLOWED_BANK_UBAL_ONLINE:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
         return
     if bank == 'MANDIRI':
         try:            
-            param = QPROX['UPDATE_BALANCE_ONLINE'] + '|' + _Common.TID + '|' + _Common.QR_MID + '|' + _Common.QR_TOKEN
+            param = QPROX['UPDATE_BALANCE_ONLINE_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
             response, result = _Command.send_request(param=param, output=None)
             # if _Common.TEST_MODE is True and _Common.empty(result):
             #   result = '6032111122223333|20000|198000'
@@ -447,7 +447,7 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-    if bank == 'BNI':
+    elif bank == 'BNI':
         try:
             if _QPROX.LAST_BALANCE_CHECK['able_topup'] in ERROR_TOPUP.keys():
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|INVALID_CARD')
@@ -488,8 +488,32 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-    if bank == 'BRI':
-        # TODO: Add Function Topup BRI Online
-        pass
+    elif bank == 'BRI':
+        try:
+            param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI
+            response, result = _Command.send_request(param=param, output=None)
+            # TODO Check Result UBAL Online BRI
+            if response == 0 and result is not None:
+                output = {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
+            else:
+                if MANDIRI_GENERAL_ERROR in result:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
+                elif MANDIRI_NO_PENDING in result:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
+                else:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+            LOGGER.debug((result, response))
+        except Exception as e:
+            LOGGER.warning(str(e))
+            TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    else:
+        TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+
 
 

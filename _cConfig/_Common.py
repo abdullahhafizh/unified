@@ -55,8 +55,8 @@ MANDIRI_THRESHOLD = int(_ConfigParser.get_set_value('MANDIRI', 'amount^minimum',
 MID_BNI = _ConfigParser.get_set_value('BNI', 'mid', '---')
 TID_BNI = _ConfigParser.get_set_value('BNI', 'tid', '---')
 MC_BNI = _ConfigParser.get_set_value('BNI', 'merried^code', '---')
-SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
-SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
+SLOT_SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
+SLOT_SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
 BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'))
 
@@ -97,7 +97,7 @@ if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
 
 # Temporary Update Balance Config Hardcoded (Filled With Bank Name)
-ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI']
+ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI', 'BRI']
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 
@@ -262,8 +262,8 @@ BANKS = [{
     "MID": MID_BNI,
     "TID": TID_BNI,
     "MC": MC_BNI,
-    "SAM1": SAM1_BNI,
-    "SAM2": SAM2_BNI,
+    "SAM1": SLOT_SAM1_BNI,
+    "SAM2": SLOT_SAM2_BNI,
     "MIN_AMOUNT": BNI_THRESHOLD,
     "DEFAULT_TOPUP": BNI_TOPUP_AMOUNT
 }, {

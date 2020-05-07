@@ -18,8 +18,8 @@ SAM_MAN = _Common.SAM_MAN
 MID_BNI = _Common.MID_BNI
 TID_BNI = _Common.TID_BNI
 MC_BNI = _Common.MC_BNI
-SAM1_BNI = _Common.SAM1_BNI
-SAM2_BNI = _Common.SAM2_BNI
+SLOT_SAM1_BNI = _Common.SLOT_SAM1_BNI
+SLOT_SAM2_BNI = _Common.SLOT_SAM2_BNI
 MID_BRI = _Common.MID_BRI
 TID_BRI = _Common.TID_BRI
 PROCODE_BRI = _Common.PROCODE_BRI
@@ -30,8 +30,8 @@ BANKS = _Common.BANKS
 # print(BANKS)
 
 BNI_SAM_SLOT = {
-    '1': SAM1_BNI,
-    '2': SAM2_BNI
+    '1': SLOT_SAM1_BNI,
+    '2': SLOT_SAM2_BNI
 }
 
 
@@ -54,12 +54,12 @@ QPROX = {
     "PURSE_DATA_BNI": "015", #Get Card Info For Topup Modal
     "SEND_CRYPTO": "016", #Send Cryptogram For Topup Modal
     "REFILL_ZERO": "018", #Refill Zero To Fix Error Update Balance Failure
-    "UPDATE_BALANCE_ONLINE": "019", #Update Balance Online Mandiri
+    "UPDATE_BALANCE_ONLINE_MANDIRI": "019", #Update Balance Online Mandiri
     "PURSE_DATA_BNI_CONTACTLESS": "020", #Get Card Info BNI Tapcash contactless,
     "SEND_CRYPTO_CONTACTLESS": "021", #Send Cryptogram For BNI Tapcash contactless,
     "DEBIT_NO_INIT_SINGLE_REPORT": "022",
     "GET_LAST_TRX_REPORT": "023",
-    "UPDATE_BALANCE_BRI": "024", #BRI UBAL ONLINE
+    "UPDATE_BALANCE_ONLINE_BRI": "024", #BRI UBAL ONLINE
     "CARD_HISTORY_BRI": "025", #BRIZZI CARD LOG
     # C2C - Card To Card Mode
     "TOPUP_C2C": "026", 
