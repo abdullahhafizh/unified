@@ -78,7 +78,7 @@ Base{
             abc.counter = timer_value;
             my_timer.start();
             _SLOT.start_get_payments();
-            _SLOT.get_kiosk_price_setting();
+            _SLOT.start_get_price_setting();
             mainVisible = false;
             press = '0';
             cardBalance = 0;
@@ -174,9 +174,12 @@ Base{
             bank_name: cardData.bank_name,
         }
         var topup_amount = parseInt(selectedDenom) - parseInt(adminFee);
-        var final_balance = parseInt(cardData.balance) + topup_amount
+        var final_balance = parseInt(cardData.balance) + topup_amount;
         // Define Denom For C2C Mandiri - Overwrite Denom Value For Process Topup
-        if (cardData.bank_name=='MANDIRI' && CONF.c2c_mode == '1') topup_amount = parseInt(selectedDenom)
+        if (cardData.bank_name=='MANDIRI' && CONF.c2c_mode == '1'){
+            topup_amount = parseInt(selectedDenom);
+            // Redefined AdminFee Value For Mandiri C2C Mode in Backend
+        }
         details.qty = 1;
         details.value = selectedDenom.toString();
         details.provider = provider;

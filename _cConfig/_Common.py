@@ -76,6 +76,8 @@ _ConfigParser.set_value('MANDIRI_C2C', '#mactros^info', 'must_be_16_chars')
 C2C_TID_NEW_APP = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid^new^app', '---')
 C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
 C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
+# TODO Must Be Set From Process Update Fee C2C
+C2C_ADMIN_FEE = [0, 0]
 
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()

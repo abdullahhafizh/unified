@@ -63,7 +63,7 @@ Base{
 //            console.log("selected_chart : ", selectedChart)
             console.log("selected_price : ", selectedPrice)
             _SLOT.start_get_payments();
-            _SLOT.get_kiosk_price_setting();
+            _SLOT.start_get_price_setting();
             _SLOT.start_get_admin_key();
             _SLOT.start_check_wallet('1');
 //            _SLOT.start_send_details_passenger()

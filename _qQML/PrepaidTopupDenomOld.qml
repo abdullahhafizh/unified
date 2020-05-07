@@ -68,7 +68,7 @@ Base{
             abc.counter = timer_value;
             my_timer.start();
             _SLOT.start_get_payments();
-            _SLOT.get_kiosk_price_setting();
+            _SLOT.start_get_price_setting();
             mainVisible = false;
             press = '0';
             cardBalance = 0;

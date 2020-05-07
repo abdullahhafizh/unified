@@ -49,7 +49,7 @@ Base{
             price_sort = 0
             typeTemp = ''
             valueTemp = ''
-            _SLOT.get_kiosk_price_setting()
+            _SLOT.start_get_price_setting()
             if(depart_model.count>0){
                 textPanel = qsTr("Choose Your Departure")
                 listViewTicket.model = depart_model

@@ -243,9 +243,9 @@ class SlotHandler(QObject):
         _KioskService.get_kiosk_status()
     get_kiosk_status = pyqtSlot()(get_kiosk_status)
 
-    def get_kiosk_price_setting(self):
-        _KioskService.get_kiosk_price_setting()
-    get_kiosk_price_setting = pyqtSlot()(get_kiosk_price_setting)
+    def start_get_price_setting(self):
+        _KioskService.start_get_price_setting()
+    start_get_price_setting = pyqtSlot()(start_get_price_setting)
 
     def start_restart_mdd_service(self):
         _KioskService.start_restart_mdd_service()

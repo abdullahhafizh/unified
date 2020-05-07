@@ -22,7 +22,7 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             popup_loading.open();
-            _SLOT.get_kiosk_price_setting();
+            _SLOT.start_get_price_setting();
             if (directTopup==undefined && topupData==undefined){
                 _SLOT.start_kiosk_get_topup_amount();
                 _SLOT.start_get_topup_readiness();

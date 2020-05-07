@@ -313,15 +313,17 @@ def get_metadata_link(media, data):
     return False
 
 
-def get_kiosk_price_setting():
+def start_get_price_setting():
     _Helper.get_pool().apply_async(kiosk_price_setting)
 
 
 def kiosk_price_setting():
-    # TODO Define AdminFee For Mandiri C2C Topup
+    admin_fee = _Common.KIOSK_ADMIN
+    if _Common.C2C_MODE is True:
+        admin_fee = _Common.C2C_ADMIN_FEE[0] #Assuming Index 0 as Default Fee
     K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
         'margin': _Common.KIOSK_MARGIN,
-        'adminFee': _Common.KIOSK_ADMIN,
+        'adminFee': admin_fee,
         'cancelAble': _Common.PAYMENT_CANCEL,
         'confirmAble': _Common.PAYMENT_CONFIRM
     }))
