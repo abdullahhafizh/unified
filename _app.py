@@ -167,9 +167,9 @@ class SlotHandler(QObject):
         _MEI.start_get_return_note()
     start_get_return_note = pyqtSlot()(start_get_return_note)
 
-    def start_init_qprox(self):
-        _QPROX.start_init_qprox()
-    start_init_qprox = pyqtSlot()(start_init_qprox)
+    # def start_init_qprox_config(self):
+    #     _QPROX.start_init_config()
+    # start_init_qprox_config = pyqtSlot()(start_init_qprox_config)
 
     def start_debit_qprox(self, amount):
         _QPROX.start_debit_qprox(amount)
@@ -349,7 +349,7 @@ class SlotHandler(QObject):
     start_kiosk_get_topup_amount = pyqtSlot()(start_kiosk_get_topup_amount)
 
     def start_get_topup_readiness(self):
-        _QPROX.start_get_topup_readiness()
+        _TopupService.start_get_topup_readiness()
     start_get_topup_readiness = pyqtSlot()(start_get_topup_readiness)
 
     def start_sale_print_global(self):
@@ -371,10 +371,6 @@ class SlotHandler(QObject):
     def start_store_topup_transaction(self, param):
         _KioskService.start_store_topup_transaction(param)
     start_store_topup_transaction = pyqtSlot(str)(start_store_topup_transaction)
-
-    def start_get_topup_status_instant(self):
-        _QPROX.start_get_topup_status_instant()
-    start_get_topup_status_instant = pyqtSlot()(start_get_topup_status_instant)
 
     def get_kiosk_login(self, username, password):
         _UserService.get_kiosk_login(username, password)
@@ -577,7 +573,7 @@ class SlotHandler(QObject):
     start_global_refund_balance = pyqtSlot(str)(start_global_refund_balance)
 
     def start_update_balance_online(self, bank):
-        _QPROX.start_update_balance_online(bank)
+        _TopupService.start_update_balance_online(bank)
     start_update_balance_online = pyqtSlot(str)(start_update_balance_online)
 
     def start_fake_update_dki(self, card_no, amount):
@@ -632,6 +628,10 @@ class SlotHandler(QObject):
         _QPROX.start_topup_mandiri_correction(amount, trxid)
     start_topup_mandiri_correction = pyqtSlot(str, str)(start_topup_mandiri_correction)
 
+    def start_check_online_topup(self, mode, payload):
+        _TopupService.start_check_online_topup(mode, payload)
+    start_check_online_topup = pyqtSlot(str, str)(start_check_online_topup)
+
 
 
 
@@ -662,7 +662,7 @@ def s_handler():
     _MEI.M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.connect(view.rootObject().result_dispense_val_mei)
     _MEI.M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.connect(view.rootObject().result_float_down_all_mei)
     _MEI.M_SIGNDLER.SIGNAL_RETURN_STATUS.connect(view.rootObject().result_return_status)
-    _QPROX.QP_SIGNDLER.SIGNAL_INIT_QPROX.connect(view.rootObject().result_init_qprox)
+    _QPROX.QP_SIGNDLER.SIGNAL_INIT_QPROX.connect(view.rootObject().result_init_qprox_config)
     _QPROX.QP_SIGNDLER.SIGNAL_DEBIT_QPROX.connect(view.rootObject().result_debit_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_AUTH_QPROX.connect(view.rootObject().result_auth_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_BALANCE_QPROX.connect(view.rootObject().result_balance_qprox)
@@ -698,7 +698,6 @@ def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.connect(view.rootObject().result_product_stock)
     _KioskService.K_SIGNDLER.SIGNAL_STORE_TRANSACTION.connect(view.rootObject().result_store_transaction)
     _KioskService.K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.connect(view.rootObject().result_topup_amount)
-    _QPROX.QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.connect(view.rootObject().result_topup_readiness)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.connect(view.rootObject().result_sale_print)
     _CD.CD_SIGNDLER.SIGNAL_MULTIPLE_EJECT.connect(view.rootObject().result_multiple_eject)
     _KioskService.K_SIGNDLER.SIGNAL_STORE_TOPUP.connect(view.rootObject().result_store_topup)
@@ -730,9 +729,14 @@ def s_handler():
     _ProductService.PR_SIGNDLER.SIGNAL_USE_VOUCHER.connect(view.rootObject().result_use_voucher)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.connect(view.rootObject().result_diva_balance_check)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_global_refund_balance)
-    _QPROX.QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.connect(view.rootObject().result_admin_sync_stock)
     _CD.CD_SIGNDLER.SIGNAL_CD_PORT_INIT.connect(view.rootObject().result_init_check_cd)
+    _TopupService.TP_SIGNDLER.SIGNAL_CHECK_ONLINE_TOPUP.connect(view.rootObject().result_check_online_topup)
+    _TopupService.TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.connect(view.rootObject().result_topup_readiness)
+    _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
+
+
+
 
 LOGGER = None
 
@@ -1087,26 +1091,36 @@ if __name__ == '__main__':
     if _Common.QPROX['status'] is True:
         print("pyt: Connecting Into Prepaid Reader...")
         sleep(1)
-        if _QPROX.open_qprox() is True:
+        if _QPROX.open() is True:
             print("pyt: [INFO] Init Prepaid Reader...")
-            _QPROX.init_qprox()
+            _QPROX.init_config()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
     if _Common.CD['status'] is True:
         sleep(.5)
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    if _QPROX.INIT_MANDIRI is True and not _Common.C2C_MODE:
+    if _QPROX.INIT_MANDIRI is True:
         sleep(.5)
-        print("pyt: Triggering Mandiri Balance Validation...")
-        _SettlementService.start_validate_update_balance()
+        print("pyt: Triggering Mandiri KA/C2C Deposit Balance Update Check...")
+        _SettlementService.start_validate_update_balance()    
     if _QPROX.INIT_BNI is True:
         # sleep(.5)
         # print("pyt: Triggering BNI Settlement Sync...")
         # _Sync.start_sync_settlement_bni()
         sleep(.5)
-        print("pyt: Triggering BNI Balance Validation...")
+        print("pyt: Triggering BNI Balance Update Check...")
         _TopupService.start_define_topup_slot_bni()
+    if _QPROX.INIT_BRI is True:
+        # TODO Add Special Handler For BRI Initiation
+        # sleep(.5)
+        # print("pyt: Triggering BRI Balance Validation...")
+        pass
+    if _QPROX.INIT_BCA is True:
+        # TODO Add Special Handler For BCA Initiation
+        # sleep(.5)
+        # print("pyt: Triggering BCA Balance Validation...")
+        pass
     print("pyt: Syncing Ads Content...")
     sleep(.5)
     _KioskService.start_define_ads(3)

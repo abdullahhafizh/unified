@@ -56,7 +56,7 @@ Base{
         base.result_float_down_cou_mei.connect(mei_payment_result);
         base.result_dispense_val_mei.connect(mei_payment_result);
         base.result_float_down_all_mei.connect(mei_payment_result);
-        base.result_init_qprox.connect(qprox_payment_result);
+        base.result_init_qprox_config.connect(qprox_payment_result);
         base.result_debit_qprox.connect(qprox_payment_result);
         base.result_auth_qprox.connect(qprox_payment_result);
         base.result_balance_qprox.connect(qprox_payment_result);
@@ -84,7 +84,7 @@ Base{
         base.result_float_down_cou_mei.disconnect(mei_payment_result);
         base.result_dispense_val_mei.disconnect(mei_payment_result);
         base.result_float_down_all_mei.disconnect(mei_payment_result);
-        base.result_init_qprox.disconnect(qprox_payment_result);
+        base.result_init_qprox_config.disconnect(qprox_payment_result);
         base.result_debit_qprox.disconnect(qprox_payment_result);
         base.result_auth_qprox.disconnect(qprox_payment_result);
         base.result_balance_qprox.disconnect(qprox_payment_result);

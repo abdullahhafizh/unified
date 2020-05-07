@@ -38,6 +38,7 @@ EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') =
 MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
+BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
@@ -51,7 +52,6 @@ TID_MAN = _ConfigParser.get_set_value('MANDIRI', 'tid', '---')
 SAM_MAN = _ConfigParser.get_set_value('MANDIRI', 'sam^pin', '---')
 MANDIRI_THRESHOLD = int(_ConfigParser.get_set_value('MANDIRI', 'amount^minimum', '50000'))
 
-
 MID_BNI = _ConfigParser.get_set_value('BNI', 'mid', '---')
 TID_BNI = _ConfigParser.get_set_value('BNI', 'tid', '---')
 MC_BNI = _ConfigParser.get_set_value('BNI', 'merried^code', '---')
@@ -59,7 +59,6 @@ SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
 SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
 BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'))
-
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
@@ -73,7 +72,7 @@ SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
 C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '0000000000000000')
 C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')
-C2C_MACTROS_INFO = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros^info', 'Must_Be_16_Chars')
+_ConfigParser.get_set_value('MANDIRI_C2C', '#mactros^info', 'must_be_16_chars')
 C2C_TID_NEW_APP = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid^new^app', '---')
 C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
 C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
@@ -159,6 +158,11 @@ COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
+
+CORE_HOST = QR_HOST
+CORE_TOKEN = QR_TOKEN
+CORE_MID = QR_MID
+
 STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
 QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
 QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
@@ -192,8 +196,8 @@ TOPUP_MID = '1e931ee42dc9d826ff945851782f0942'
 
 def serialize_payload(data, specification='MDD_CORE_API'):
     if specification == 'MDD_CORE_API':
-        data['token'] = QR_TOKEN
-        data['mid'] = QR_MID
+        data['token'] = CORE_TOKEN
+        data['mid'] = CORE_MID
         data['tid'] = TID
         if 'trx_id' in data.keys():
             data['trx_id'] = data['trx_id'] + '-' + TID
@@ -250,7 +254,8 @@ BANKS = [{
     "STATUS": True if ('---' not in MID_MAN and len(MID_MAN) > 3) else False,
     "MID": MID_MAN,
     "TID": TID_MAN,
-    "SAM": SAM_MAN
+    "SAM": SAM_MAN,
+    "C2C_MODE": C2C_MODE
 }, {
     "BANK": "BNI",
     "STATUS": True if ('---' not in MID_BNI and len(MID_BNI) > 3) else False,
@@ -628,7 +633,7 @@ def start_upload_device_state(device, status):
 def upload_device_state(device, status):
     if device not in ['nfc', 'mei', 'edc', 'printer', 'scanner', 'webcam', 'cd1', 'cd2', 'cd3']:
         LOGGER.warning(('device not in known_list', device, status))
-        return
+        return False
     try:
         param = {
             "device": device,
@@ -847,6 +852,4 @@ def get_active_sam(bank='MANDIRI', reverse=False):
 
 def empty(s):
     return _Helper.empty(s)
-
-
 

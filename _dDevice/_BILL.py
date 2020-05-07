@@ -55,10 +55,6 @@ NV = {
 }
 
 
-BILL = {}
-SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
-
-
 class BILLSignalHandler(QObject):
     __qualname__ = 'BILLSignalHandler'
     SIGNAL_BILL_RECEIVE = pyqtSignal(str)
@@ -68,6 +64,9 @@ class BILLSignalHandler(QObject):
 
 
 BILL_SIGNDLER = BILLSignalHandler()
+
+BILL = {}
+SMALL_NOTES_NOT_ALLOWED = _Common.BILL_RESTRICTED_NOTES.split('|')
 OPEN_STATUS = False
 CASH_HISTORY = []
 MAX_EXECUTION_TIME = 150
@@ -90,7 +89,7 @@ IniCfgFileName=BillDepositDevCfg.ini'''
         c.close()
     command = EXEC_GRG + ' init'
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-    LOGGER.debug(('bill_init in when rewrite_config_init', 'command', command, 'output', str(process)))
+    LOGGER.debug(('command', command, 'output', str(process)))
 
 
 def start_init_bill():
@@ -107,7 +106,7 @@ def init_bill():
     BILL = GRG if BILL_TYPE == 'GRG' else NV
     LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
-        LOGGER.debug(("init_bill port : ", BILL_PORT))
+        LOGGER.warning(("port", BILL_PORT))
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
         return False
     param = BILL["SET"] + '|' + BILL["PORT"]

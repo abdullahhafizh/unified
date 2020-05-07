@@ -50,7 +50,7 @@ Rectangle {
     signal result_dispense_val_mei(string str)
     signal result_float_down_all_mei(string str)
     signal result_return_status(string str)
-    signal result_init_qprox(string str)
+    signal result_init_qprox_config(string str)
     signal result_debit_qprox(string str)
     signal result_auth_qprox(string str)
     signal result_balance_qprox(string str)
@@ -122,6 +122,7 @@ Rectangle {
     signal result_admin_sync_stock(string str)
     signal result_init_check_cd(string str)
     signal result_get_refund(string str)
+    signal result_check_online_topup(string str)
 
 
     //==================================================================================================//

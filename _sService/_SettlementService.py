@@ -679,7 +679,27 @@ def mandiri_create_rq1(content):
 
 
 def start_validate_update_balance():
-    _Helper.get_pool().apply_async(validate_update_balance)
+    if not _Common.C2C_MODE:
+        _Helper.get_pool().apply_async(validate_update_balance)
+    else:
+        _Helper.get_pool().apply_async(validate_update_balance_c2c)
+
+
+def validate_update_balance_c2c():
+    # FYI: Not Used For Now, Finding Better Way To Handle Backgorund Service Update Balance
+    while True:
+        sync_time = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'daily^sync^time', '3600'))
+        current_time = _Helper.now() / 1000
+        if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
+            do_settlement_for(bank='MANDIRI_C2C', force=True)
+            # TODO Define What other actions after settlement, Manual Pending Balance?
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
+            LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+            break
+        next_run_time = current_time + sync_time
+        LOGGER.debug(('MANDIRI_C2C_DEPOSIT_UPDATE_BALANCE NEXT RUN', _Helper.convert_epoch(t=next_run_time)))
+        sleep(sync_time)
 
 
 def validate_update_balance():
@@ -692,12 +712,8 @@ def validate_update_balance():
             last_update_with_tolerance = (_Common.LAST_UPDATE/1000) + 84600
             if current_time >= last_update_with_tolerance:
                 LOGGER.info(('DETECTED_EXPIRED_LIMIT_UPDATE', last_update_with_tolerance, current_time))
-                # TODO Check Result Settlement Here
-                if not _Common.C2C_MODE:
-                    _Common.MANDIRI_ACTIVE_WALLET = 0
-                    do_settlement_for(bank='MANDIRI', force=True)
-                else:
-                    do_settlement_for(bank='MANDIRI_C2C', force=True)
+                _Common.MANDIRI_ACTIVE_WALLET = 0
+                do_settlement_for(bank='MANDIRI', force=True)
                 ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))

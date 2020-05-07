@@ -8,11 +8,16 @@ from _cConfig import _Common
 from _tTools import _Helper
 from time import sleep
 from _cCommand import _Command
+import json
 
 
 class TopupSignalHandler(QObject):
     __qualname__ = 'TopupSignalHandler'
     SIGNAL_DO_TOPUP_BNI = pyqtSignal(str)
+    SIGNAL_CHECK_ONLINE_TOPUP = pyqtSignal(str)
+    SIGNAL_GET_TOPUP_READINESS = pyqtSignal(str)
+    SIGNAL_UPDATE_BALANCE_ONLINE = pyqtSignal(str)
+
 
 
 TP_SIGNDLER = TopupSignalHandler()
@@ -309,5 +314,182 @@ def refill_zero_bni(slot=1):
         if slot == 2:
             _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_2_BNI_ERROR'
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO_ERROR')
+
+
+def start_check_online_topup(mode, payload):
+    _Helper.get_pool().apply_async(ping_online_topup, (mode, payload,))
+
+
+def ping_online_topup(mode, payload=None, trigger=True):
+    if mode == 'BRI':
+        if payload == None:
+            payload = {
+                # TODO Check This Sample Card No For Checking BRI Host
+                'card_no': '6013500100006619'
+            }
+        else:
+            payload = json.loads(payload)
+        param = _Common.serialize_payload(payload)
+        status, response = _NetworkAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check', param)
+        LOGGER.info((response, str(param)))
+        if status == 200 and response['response']['code'] == 200:
+            if trigger is True:
+                TP_SIGNDLER.SIGNAL_CHECK_ONLINE_TOPUP.emit('ONLINE_TOPUP|'+mode+'|AVAILABLE')
+            return True
+        else:
+            if trigger is True:
+                TP_SIGNDLER.SIGNAL_CHECK_ONLINE_TOPUP.emit('ONLINE_TOPUP|'+mode+'|N/A')
+            return False
+    else:
+        if trigger is True:
+            TP_SIGNDLER.SIGNAL_CHECK_ONLINE_TOPUP.emit('ONLINE_TOPUP|'+mode+'|N/A')
+        return False
+
+
+def start_get_topup_readiness():
+    _Helper.get_pool().apply_async(get_topup_readiness)
+
+
+def get_topup_readiness():
+    ready = dict()
+    ready['balance_mandiri'] = str(_Common.MANDIRI_ACTIVE_WALLET)
+    ready['balance_bni'] = str(_Common.BNI_ACTIVE_WALLET)
+    ready['bni_wallet_1'] = str(_Common.BNI_SAM_1_WALLET)
+    ready['bni_wallet_2'] = str(_Common.BNI_SAM_2_WALLET)
+    ready['mandiri'] = 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
+    ready['bni'] = 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
+    ready['bri'] = 'AVAILABLE' if ping_online_topup(mode='BRI', trigger=False) else 'N/A'
+    ready['bca'] = 'N/A'
+    ready['dki'] = 'N/A'
+    ready['emoney'] = _Common.TOPUP_AMOUNT_SETTING['emoney']
+    ready['tapcash'] = _Common.TOPUP_AMOUNT_SETTING['tapcash']
+    ready['brizzi'] = _Common.TOPUP_AMOUNT_SETTING['brizzi']
+    ready['flazz'] = _Common.TOPUP_AMOUNT_SETTING['flazz']
+    ready['jakcard'] = _Common.TOPUP_AMOUNT_SETTING['jakcard']
+    LOGGER.info(('TOPUP_READINESS', str(ready)))
+    TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
+
+
+def start_update_balance_online(bank):
+    _Helper.get_pool().apply_async(update_balance_online, (bank,))
+
+
+MANDIRI_GENERAL_ERROR = '51000'
+MANDIRI_NO_PENDING = '51003'
+FW_BANK = _QPROX.FW_BANK
+QPROX = _QPROX.QPROX
+ERROR_TOPUP = _QPROX.ERROR_TOPUP
+
+
+def check_update_balance_bni(card_info):
+    if card_info is None:
+        return False
+    try:
+        param = {
+            'token': _Common.TOPUP_TOKEN,
+            'mid': _Common.TOPUP_MID,
+            'tid': _Common.TID,
+            'reff_no': _Helper.time_string(f='%Y%m%d%H%M%S'),
+            'card_info': card_info,
+            'card_no': card_info[4:20]
+        }
+        status, response = _NetworkAccess.post_to_url(url=_Common.TOPUP_URL + 'v1/topup-bni/update', param=param)
+        LOGGER.debug((str(param), str(status), str(response)))
+        if status == 200 and response['response']['code'] == 200:
+            # {
+                # "response":{
+                #   "code":200,
+                #   "message":"Update Balance Success",
+                #   "latency":1.4313230514526
+                # },
+                # "data":{
+                #   "amount":"30000",
+                #   "auth_id":"164094",
+                #   "dataToCard":"06015F902D04C57100000000000000001C54522709845B42F240343E96F11041"
+                # }
+            # }
+            return response['data']
+        elif response['response']['code'] == 400 and 'No Pending Balance' in response['response']['message']:
+            return 'NO_PENDING_BALANCE'
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+
+
+def update_balance_online(bank):
+    if bank is None or bank not in FW_BANK.values():
+        TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
+        return
+    if bank == 'MANDIRI':
+        try:            
+            param = QPROX['UPDATE_BALANCE_ONLINE'] + '|' + _Common.TID + '|' + _Common.QR_MID + '|' + _Common.QR_TOKEN
+            response, result = _Command.send_request(param=param, output=None)
+            # if _Common.TEST_MODE is True and _Common.empty(result):
+            #   result = '6032111122223333|20000|198000'
+            if response == 0 and result is not None:
+                output = {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
+            else:
+                if MANDIRI_GENERAL_ERROR in result:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
+                elif MANDIRI_NO_PENDING in result:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
+                else:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+            LOGGER.debug((result, response))
+        except Exception as e:
+            LOGGER.warning(str(e))
+            TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    if bank == 'BNI':
+        try:
+            if _QPROX.LAST_BALANCE_CHECK['able_topup'] in ERROR_TOPUP.keys():
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|INVALID_CARD')
+                return
+            # Do Action List :
+            # - Get Purse Data Tapcash
+            card_info = _QPROX.get_card_info_tapcash()
+            if card_info is False:
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                return
+            # - Request Update Balance BNI
+            crypto_data = check_update_balance_bni(card_info)
+            if crypto_data is False:
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
+                return
+            if crypto_data == 'NO_PENDING_BALANCE':
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
+                return
+            attempt = 0
+            while True:
+                attempt+=1
+                send_crypto_tapcash = _QPROX.send_cryptogram_tapcash(crypto_data['dataToCard'], card_info)
+                _Helper.dump(send_crypto_tapcash)
+                if send_crypto_tapcash is True:
+                # - Send Output as Mandiri Specification            
+                    output = {
+                        'bank': bank,
+                        'card_no': card_info[4:20],
+                        'topup_amount': str(crypto_data['amount']),
+                        'last_balance': '0', #TODO: replace "last_balance"
+                    }
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
+                    break
+                if attempt >= 3:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                    break
+                sleep(1)
+        except Exception as e:
+            LOGGER.warning(str(e))
+            TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    if bank == 'BRI':
+        # TODO: Add Function Topup BRI Online
+        pass
 
 

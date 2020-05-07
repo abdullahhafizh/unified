@@ -94,9 +94,7 @@ class QSignalHandler(QObject):
     SIGNAL_ONLINE_INFO_QPROX = pyqtSignal(str)
     SIGNAL_INIT_ONLINE_QPROX = pyqtSignal(str)
     SIGNAL_STOP_QPROX = pyqtSignal(str)
-    SIGNAL_GET_TOPUP_READINESS = pyqtSignal(str)
     SIGNAL_REFILL_ZERO = pyqtSignal(str)
-    SIGNAL_UPDATE_BALANCE_ONLINE = pyqtSignal(str)
 
 
 QP_SIGNDLER = QSignalHandler()
@@ -206,7 +204,7 @@ def get_card_info(slot=1, bank='BNI'):
         return False
 
 
-def open_qprox():
+def open():
     global OPEN_STATUS
     if QPROX_PORT is None:
         LOGGER.debug(("port : ", QPROX_PORT))
@@ -232,14 +230,16 @@ def disconnect_qprox():
 INIT_STATUS = False
 INIT_MANDIRI = False
 INIT_BNI = False
+INIT_BRI = False
+INIT_BCA = False
 INIT_LIST = []
 
 
-def start_init_qprox():
-    _Helper.get_pool().apply_async(init_qprox)
+def start_init_config():
+    _Helper.get_pool().apply_async(init_config)
 
 
-def init_qprox():
+def init_config():
     global INIT_STATUS, INIT_LIST, INIT_BNI, INIT_MANDIRI
     if OPEN_STATUS is not True:
         LOGGER.warning(('OPEN STATUS', str(OPEN_STATUS)))
@@ -326,12 +326,6 @@ def start_auth_ka():
     _Helper.get_pool().apply_async(auth_ka)
 
 
-'''
-Port, Slot, PIN SAM, Institution, Terminal, PIN KA, PIN KL,
-COM1, 01, 0123456789abcdef, 00010002, 20010203, 20010203
-'''
-
-
 def auth_ka(_slot=None, initial=True):
     global INIT_MANDIRI
     if len(INIT_LIST) == 0:
@@ -391,9 +385,6 @@ def start_check_balance():
     _Helper.get_pool().apply_async(check_balance)
 
 
-'''
-OUTPUT = Balance
-'''
 LAST_BALANCE_CHECK = None
 
 FW_BANK = {
@@ -515,12 +506,6 @@ def start_topup_mandiri_correction(amount, trxid):
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
-    global INIT_MANDIRI
-    if len(INIT_LIST) == 0:
-        LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-        _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-        return
     param = QPROX['CORRECTION_C2C'] + '|'
     # TODO Check Correction Result
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
@@ -533,11 +518,6 @@ def top_up_mandiri_correction(amount, trxid=''):
 
 
 def get_c2c_failure_settlement(amount, trxid):
-    if len(INIT_LIST) == 0:
-        LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-        _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-        return
     param = QPROX['FORCE_SETTLEMENT'] + '|'
     # TODO Check Force Settlement Result
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
@@ -551,12 +531,6 @@ def get_c2c_failure_settlement(amount, trxid):
 # TODO Modify This Function
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_c2c(amount, trxid='', slot=None):
-    global INIT_MANDIRI
-    if len(INIT_LIST) == 0:
-        LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-        _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-        return
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
@@ -565,11 +539,6 @@ def top_up_mandiri_c2c(amount, trxid='', slot=None):
     else:
         LOGGER.warning((slot, _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|C2C_CORRECTION')
-
-
-'''
-OUTPUT = Balance, Report SAM, Report KA, Card Number
-'''
 
 
 def top_up_mandiri(amount, trxid='', slot=None):
@@ -673,10 +642,6 @@ def top_up_mandiri(amount, trxid='', slot=None):
 def start_top_up_bni(amount, trxid):
     # get_bni_wallet_status()
     _Helper.get_pool().apply_async(top_up_bni, (amount, trxid,))
-
-'''
-OUTPUT = Report SAM, Card Number
-'''
 
 
 def get_bni_wallet_status(upload=True):
@@ -843,9 +808,7 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
 def start_ka_info():
     _Helper.get_pool().apply_async(ka_info_mandiri)
 
-'''
-OUTPUT = Limit TopUp, Main Counter, History Counter
-'''
+
 MANDIRI_DEPOSIT_BALANCE = 0
 
 
@@ -869,11 +832,6 @@ def ka_info_mandiri(slot=None, caller=''):
     if _Common.C2C_MODE is True:
         c2c_balance_info()
         return
-    # if len(INIT_LIST) == 0:
-    #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
-    #     QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
-    #     _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-    #     return
     if slot is None:
         slot = str(_Common.MANDIRI_ACTIVE)
     param = QPROX['KA_INFO'] + '|' + slot + '|'
@@ -900,11 +858,6 @@ BNI_DEPOSIT_BALANCE = 0
 
 def ka_info_bni(slot=1):
     global BNI_DEPOSIT_BALANCE
-    # if len(INIT_LIST) == 0 and init_check is True:
-    #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
-    #     QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
-    #     _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-    #     return
     # Slot defined as sequence
     _slot = slot - 1
     param = QPROX['KA_INFO_BNI'] + '|' + str(_slot)
@@ -924,37 +877,9 @@ def ka_info_bni(slot=1):
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 
-# def start_master_activation_bni():
-#     slot = 1
-#     _Tools.get_pool().apply_async(refill_zero_bni, (slot,))
-#
-#
-# def start_slave_activation_bni():
-#     slot = 2
-#     _Tools.get_pool().apply_async(refill_zero_bni, (slot,))
-#
-#
-# def refill_zero_bni(slot=1):
-#     _slot = slot - 1
-#     param = QPROX['REFILL_ZERO'] + '|' + str(_slot) + '|' + TID_BNI
-#     response, result = _Command.send_request(param=param, output=None)
-#     if response == 0:
-#         _Common.NFC_ERROR = ''
-#         QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|SUCCESS')
-#     else:
-#         if slot == 1:
-#             _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_1_BNI_ERROR'
-#         if slot == 2:
-#             _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_2_BNI_ERROR'
-#         QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO_ERROR')
-
-
 def start_create_online_info():
     _Helper.get_pool().apply_async(create_online_info)
 
-'''
-OUTPUT = 0001000120010277010108201713140108201713142094.RQ1
-'''
 
 PREV_RQ1_DATA = None
 PREV_RQ1_SLOT = None
@@ -962,11 +887,6 @@ PREV_RQ1_SLOT = None
 
 def create_online_info(slot=None):
     global PREV_RQ1_DATA, PREV_RQ1_SLOT
-    # if len(INIT_LIST) == 0:
-    #     LOGGER.warning(('create_online_info', 'INIT_LIST', str(INIT_LIST)))
-    #     QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
-    #     _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-    #     return
     if slot is None:
         slot = str(_Common.MANDIRI_ACTIVE)
     param = QPROX['CREATE_ONLINE_INFO'] + '|' + slot + '|'
@@ -992,11 +912,6 @@ def start_init_online():
 
 
 def init_online(rsp=None, slot=None):
-    # if len(INIT_LIST) == 0:
-    #     LOGGER.warning(('init_online', 'INIT_LIST', str(INIT_LIST)))
-    #     QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|ERROR')
-    #     _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
-    #     return
     if rsp is None:
         LOGGER.warning(("[FAILED]", rsp, slot))
         return
@@ -1045,119 +960,6 @@ def do_update_limit_mandiri(rsp):
         sleep(15)
 
 
-def start_get_topup_readiness():
-    _Helper.get_pool().apply_async(get_topup_readiness)
-
-
-def start_get_topup_status_instant():
-    mode = 'get_instant'
-    _Helper.get_pool().apply_async(get_topup_readiness, (mode,))
-
-
-def get_topup_readiness(mode='full'):
-    ___ = dict()
-    ___['balance_mandiri'] = str(_Common.MANDIRI_ACTIVE_WALLET)
-    ___['balance_bni'] = str(_Common.BNI_ACTIVE_WALLET)
-    ___['bni_wallet_1'] = str(_Common.BNI_SAM_1_WALLET)
-    ___['bni_wallet_2'] = str(_Common.BNI_SAM_2_WALLET)
-    ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
-    ___['bni'] = 'AVAILABLE' if (INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
-    # TODO Change Method Of BRI Topup Activation
-    ___['bri'] = 'AVAILABLE' if _ConfigParser.get_set_value('GENERAL', 'topup^online^bri', '0') == '1' else 'N/A'
-    ___['bca'] = 'AVAILABLE' if _ConfigParser.get_set_value('GENERAL', 'topup^online^bca', '0') == '1' else 'N/A'
-    ___['dki'] = 'AVAILABLE' if _ConfigParser.get_set_value('GENERAL', 'topup^online^dki', '0') == '1' else 'N/A'
-    ___['emoney'] = _Common.TOPUP_AMOUNT_SETTING['emoney']
-    ___['tapcash'] = _Common.TOPUP_AMOUNT_SETTING['tapcash']
-    ___['brizzi'] = _Common.TOPUP_AMOUNT_SETTING['brizzi']
-    ___['flazz'] = _Common.TOPUP_AMOUNT_SETTING['flazz']
-    ___['jakcard'] = _Common.TOPUP_AMOUNT_SETTING['jakcard']
-    LOGGER.info((str(___), str(mode)))
-    QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(___))
-
-
-def start_update_balance_online(bank):
-    _Helper.get_pool().apply_async(update_balance_online, (bank,))
-
-
-MANDIRI_GENERAL_ERROR = '51000'
-MANDIRI_NO_PENDING = '51003'
-
-
-def update_balance_online(bank):
-    if bank is None or bank not in FW_BANK.values():
-         QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
-         return
-    if bank == 'MANDIRI':
-        try:            
-            param = QPROX['UPDATE_BALANCE_ONLINE'] + '|' + _Common.TID + '|' + _Common.QR_MID + '|' + _Common.QR_TOKEN
-            response, result = _Command.send_request(param=param, output=None)
-            # if _Common.TEST_MODE is True and _Common.empty(result):
-            #   result = '6032111122223333|20000|198000'
-            if response == 0 and result is not None:
-                output = {
-                    'bank': bank,
-                    'card_no': result.split('|')[0],
-                    'topup_amount': result.split('|')[1],
-                    'last_balance': result.split('|')[2],
-                }
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
-            else:
-                if MANDIRI_GENERAL_ERROR in result:
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
-                elif MANDIRI_NO_PENDING in result:
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
-                else:
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-            LOGGER.debug((result, response))
-        except Exception as e:
-            LOGGER.warning(str(e))
-            QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-    if bank == 'BNI':
-        try:
-            if LAST_BALANCE_CHECK['able_topup'] in ERROR_TOPUP.keys():
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|INVALID_CARD')
-                return
-            # Do Action List :
-            # - Get Purse Data Tapcash
-            card_info = get_card_info_tapcash()
-            if card_info is False:
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-                return
-            # - Request Update Balance BNI
-            crypto_data = request_update_balance_bni(card_info)
-            if crypto_data is False:
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
-                return
-            if crypto_data == 'NO_PENDING_BALANCE':
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
-                return
-            attempt = 0
-            while True:
-                attempt+=1
-                send_crypto_tapcash = send_cryptogram_tapcash(crypto_data['dataToCard'], card_info)
-                _Helper.dump(send_crypto_tapcash)
-                if send_crypto_tapcash is True:
-                # - Send Output as Mandiri Specification            
-                    output = {
-                        'bank': bank,
-                        'card_no': card_info[4:20],
-                        'topup_amount': str(crypto_data['amount']),
-                        'last_balance': '0', #TODO: replace "last_balance"
-                    }
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
-                    break
-                if attempt >= 3:
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-                    break
-                sleep(1)
-        except Exception as e:
-            LOGGER.warning(str(e))
-            QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-    if bank == 'BRI':
-        # TODO: Add Function Topup BRI Online
-        pass
-
-
 def get_card_info_tapcash():
     # PURSE_DATA_BNI_CONTACTLESS
     # {"Result":"0","Command":"020","Parameter":"0","Response":"000175461700003074850000000001232195AEEADE4A080F4B00285DDCD9B4BA924B00000000010013B288889999040000962F210F4088889999040000962F210F4000000000000000000000ACD44750B49BC46B63D15DC8579D3280","ErrorDesc":"Sukses"}
@@ -1166,43 +968,6 @@ def get_card_info_tapcash():
         response, result = _Command.send_request(param=param, output=None)
         if response == 0 and result is not None:
             return result
-        else:
-            return False
-    except Exception as e:
-        LOGGER.warning(str(e))
-        return False
-
-
-def request_update_balance_bni(card_info):
-    if card_info is None:
-        return False
-    try:
-        param = {
-            'token': _Common.TOPUP_TOKEN,
-            'mid': _Common.TOPUP_MID,
-            'tid': _Common.TID,
-            'reff_no': _Helper.time_string(f='%Y%m%d%H%M%S'),
-            'card_info': card_info,
-            'card_no': card_info[4:20]
-        }
-        status, response = _NetworkAccess.post_to_url(url=_Common.TOPUP_URL + 'v1/topup-bni/update', param=param)
-        LOGGER.debug((str(param), str(status), str(response)))
-        if status == 200 and response['response']['code'] == 200:
-            # {
-                # "response":{
-                #   "code":200,
-                #   "message":"Update Balance Success",
-                #   "latency":1.4313230514526
-                # },
-                # "data":{
-                #   "amount":"30000",
-                #   "auth_id":"164094",
-                #   "dataToCard":"06015F902D04C57100000000000000001C54522709845B42F240343E96F11041"
-                # }
-            # }
-            return response['data']
-        elif response['response']['code'] == 400 and 'No Pending Balance' in response['response']['message']:
-            return 'NO_PENDING_BALANCE'
         else:
             return False
     except Exception as e:
@@ -1222,7 +987,4 @@ def send_cryptogram_tapcash(cyptogram, card_info):
         LOGGER.warning(str(e))
         return False
 
-
-def bri_topup_online():
-    pass
     
