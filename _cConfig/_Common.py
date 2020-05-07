@@ -72,7 +72,7 @@ SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
 C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '0000000000000000')
 C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')
-_ConfigParser.get_set_value('MANDIRI_C2C', '#mactros^info', 'must_be_16_chars')
+_ConfigParser.set_value('MANDIRI_C2C', '#mactros^info', 'must_be_16_chars')
 C2C_TID_NEW_APP = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid^new^app', '---')
 C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
 C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
@@ -96,8 +96,11 @@ TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
 
-# Temporary Update Balance Config Hardcoded (Filled With Bank Name)
-ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI', 'BRI']
+# Handling Update Balance Online From Defined Bank Name
+UPDATE_ONLINE_FEATURE = _ConfigParser.get_set_value('GENERAL', 'allowed^ubal^online', 'MANDIRI|BNI|BRI')
+_ConfigParser.set_value('GENERAL', '#allowed^ubal^online^info1', 'fill_with_bank_name_in_uppercase_joined_with_pipeline_|_')
+_ConfigParser.set_value('GENERAL', '#allowed^ubal^online^info2', 'will_be_overwrited_from_backend_if_configured')
+ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 

@@ -106,10 +106,10 @@ def update_kiosk_status(s=400, r=None):
                 _Common.PAYMENT_SETTING = r['data']['payment']
                 define_device_port_setting(_Common.PAYMENT_SETTING)
                 _Common.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
-                _Common.THEME_SETTING = r['data']['theme']
-                define_theme(_Common.THEME_SETTING)
                 _Common.FEATURE_SETTING = r['data']['feature']
                 define_feature(_Common.FEATURE_SETTING)
+                _Common.THEME_SETTING = r['data']['theme']
+                define_theme(_Common.THEME_SETTING)
                 _Common.ADS_SETTING = r['data']['ads']
                 _Common.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
                 # TODO: Check New Refund Data Setting
@@ -137,6 +137,27 @@ def define_feature(d):
         _Common.log_to_temp_config('search^trx', str(d['search_trx']))
     if 'whatsapp_voucher' in d.keys():
         _Common.log_to_temp_config('wa^voucher', str(d['whatsapp_voucher']))
+    for k in d.keys():
+        if 'ubal_online' in k:
+            _Common.log_to_temp_config(k.replace('_', '^'), '0')
+            if not _Helper.empty(_Common.ALLOWED_BANK_UBAL_ONLINE):
+                _Common.ALLOWED_BANK_UBAL_ONLINE = []
+    if 'ubal_online_mandiri' in d.keys() and d['ubal_online_mandiri'] == 1:
+        _Common.log_to_temp_config('ubal^online^mandiri', '1')
+        _Common.ALLOWED_BANK_UBAL_ONLINE.append('MANDIRI')
+    if 'ubal_online_bni' in d.keys() and d['ubal_online_bni'] == 1:
+        _Common.log_to_temp_config('ubal^online^bni', '1')
+        _Common.ALLOWED_BANK_UBAL_ONLINE.append('BNI')
+    if 'ubal_online_bri' in d.keys() and d['ubal_online_bri'] == 1:
+        _Common.log_to_temp_config('ubal^online^bri', '1')
+        _Common.ALLOWED_BANK_UBAL_ONLINE.append('BRI')
+    if 'ubal_online_bca' in d.keys() and d['ubal_online_bca'] == 1:
+        _Common.log_to_temp_config('ubal^online^bca', '1')
+        _Common.ALLOWED_BANK_UBAL_ONLINE.append('BCA')
+    if 'ubal_online_dki' in d.keys() and d['ubal_online_dki'] == 1:
+        _Common.log_to_temp_config('ubal^online^dki', '1')
+        _Common.ALLOWED_BANK_UBAL_ONLINE.append('DKI')
+    _ConfigParser.set_value('GENERAL', 'allowed^ubal^online', '|'.join(_Common.ALLOWED_BANK_UBAL_ONLINE))
 
 
 def define_device_port_setting(data):

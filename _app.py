@@ -1005,27 +1005,30 @@ def check_git_status(log=False):
 
 
 if __name__ == '__main__':
+    print("pyt: Initiating Config...")
     config_log()
     run_script({'/_setOnStartUp.bat'})
-    update_module({})
-    install_font()
-    check_git_status()
+    # update_module({})
+    # install_font()
+    # check_git_status()
     init_setting()
-    disable_screensaver()
+    check_db(INITIAL_SETTING['db'])
+    # disable_screensaver()
     if _Common.LIVE_MODE:
         kill_explorer()
-    check_db(INITIAL_SETTING['db'])
+    print("pyt: Checking Auth to Server...")
+    _Sync.start_check_connection(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
+    print("pyt: Setting Up Function(s)/Method(s)...")
+    SLOT_HANDLER = SlotHandler()
+    app = QGuiApplication(sys.argv)
+    print("pyt: Setting Up View...")
     if os.name == 'nt':
         path = '_qQML/'
     else:
         path = sys.path[0] + '/_qQML/'
-    SLOT_HANDLER = SlotHandler()
-    app = QGuiApplication(sys.argv)
     view = QQuickView()
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
-    print("pyt: Checking Auth to Server...")
-    _Sync.start_check_connection(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
