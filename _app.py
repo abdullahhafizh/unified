@@ -636,6 +636,17 @@ class SlotHandler(QObject):
         _TopupService.start_topup_online_bri(cardno, amount)
     start_topup_online_bri = pyqtSlot(str, str)(start_topup_online_bri)
 
+    def start_do_c2c_update_fee(self):
+        _TopupService.start_do_c2c_update_fee()
+    start_do_c2c_update_fee = pyqtSlot()(start_do_c2c_update_fee)
+
+    def start_do_topup_c2c_deposit(self):
+        _TopupService.start_do_topup_c2c_deposit()
+    start_do_topup_c2c_deposit = pyqtSlot()(start_do_topup_c2c_deposit)
+
+    def start_get_card_history(self, bank):
+        _QPROX.start_get_card_history(bank)
+    start_get_card_history = pyqtSlot()(start_get_card_history)
 
 
 def s_handler():
@@ -737,6 +748,7 @@ def s_handler():
     _TopupService.TP_SIGNDLER.SIGNAL_CHECK_ONLINE_TOPUP.connect(view.rootObject().result_check_online_topup)
     _TopupService.TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.connect(view.rootObject().result_topup_readiness)
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
+    _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
 
 
 
@@ -1010,7 +1022,7 @@ def check_git_status(log=False):
 if __name__ == '__main__':
     print("pyt: Initiating Config...")
     config_log()
-    run_script({'/_setOnStartUp.bat'})
+    # run_script({'/_setOnStartUp.bat'})
     # update_module({})
     # install_font()
     # check_git_status()

@@ -24,6 +24,15 @@ def get_config_value(option='', section='TEMPORARY', digit=False):
         return str(_ConfigParser.get_value(section, option))
 
 
+def digit_in(s):
+    return any(i.isdigit() for i in s)
+
+
+def clean_white_space(s):
+    return re.sub(r'\s+', '', s)
+
+
+
 BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', '---')
 LIVE_MODE = True if _ConfigParser.get_set_value('GENERAL', 'mode', 'live') == 'live' else False
 TEST_MODE = not LIVE_MODE
@@ -64,7 +73,7 @@ MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
 PROCODE_BRI = _ConfigParser.get_set_value('BRI', 'procode', '---')
 SLOT_BRI = _ConfigParser.get_set_value('BRI', 'sam^slot', '---')
-BRI_SAM_ACTIVE = digit_in(SLOT_BRI)
+BRI_SAM_ACTIVE = digit_in(SLOT_BRI) and len(SLOT_BRI) == 1
 
 MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
@@ -73,12 +82,27 @@ SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
 C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '0000000000000000')
 C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')
-_ConfigParser.set_value('MANDIRI_C2C', '#mactros^info', 'must_be_16_chars')
-C2C_TID_NEW_APP = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid^new^app', '---')
+C2C_TID = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid', '---')
+C2C_SAM_PIN = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^pin', '---')
 C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
 C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
 # TODO Must Be Set From Process Update Fee C2C
 C2C_ADMIN_FEE = [0, 0]
+
+# GENERATE INFO
+_ConfigParser.set_value('INFO', '1', 'Please Delete Old Option [TERMINAL] If Still Exist')
+_ConfigParser.set_value('INFO', '2', 'Please Delete Old Option [QPROX] If Still Exist')
+_ConfigParser.set_value('INFO', '3', 'Please Delete Old Option [TEMPORARY] If Still Exist')
+_ConfigParser.set_value('INFO', '4', '[GENERAL]-allowed^ubal^online -> Define Default Bank Which Allowed Update Balance Online')
+_ConfigParser.set_value('INFO', '5', '[GENERAL]-mode -> Define Application Repository Mode live or develop')
+_ConfigParser.set_value('INFO', '6', '[GENERAL]-mandiri^sam^production -> When Using Develop Mode For Testing, But Keep Using Mandiri KA Deposit Production')
+_ConfigParser.set_value('INFO', '7', '[BILL]-type -> Define Type Of Bill Acceptor Which is used NV or GRG')
+_ConfigParser.set_value('INFO', '8', '[BILL]-not^allowed^denom -> Define Not Allowed Notes/Denom')
+_ConfigParser.set_value('INFO', '9', '[MANDIRI]-daily^settle^time -> Define Specific Time For Mandiri Deposit KA Auto Settlement')
+_ConfigParser.set_value('INFO', '10', '[MANDIRI_C2C]-mactros -> TID+MID Purchase Padded with 0, Total Must Be 16 Chars')
+_ConfigParser.set_value('INFO', '11', '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File')
+_ConfigParser.set_value('INFO', '12', '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File')
+_ConfigParser.set_value('INFO', '13', '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File')
 
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
@@ -101,16 +125,13 @@ if not os.path.exists(TEMP_FOLDER):
 
 # Handling Update Balance Online From Defined Bank Name
 UPDATE_ONLINE_FEATURE = _ConfigParser.get_set_value('GENERAL', 'allowed^ubal^online', 'MANDIRI|BNI|BRI')
-_ConfigParser.set_value('GENERAL', '#allowed^ubal^online^info1', 'fill_with_bank_name_in_uppercase_joined_with_pipeline_|_')
-_ConfigParser.set_value('GENERAL', '#allowed^ubal^online^info2', 'will_be_overwrited_from_backend_if_configured')
 ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
-ALLOWED_BANK_PENDING_ONLINE = ['BRI']
+
+# Hardcoded Config For Bank Feature
+ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI']
+ALLOWED_BANK_CHECK_CARD_LOG = ['BRI']
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
-
-
-def clean_white_space(s):
-    return re.sub(r'\s+', '', s)
 
 
 def init_temp_data():
@@ -256,13 +277,22 @@ LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
 LAST_GET_PPOB = int(_ConfigParser.get_set_value('TEMPORARY', 'last^get^ppob', '0'))
 
 
+def mandiri_sam_status():
+    if not C2C_MODE:
+        if '---' not in MID_MAN and len(MID_MAN) > 3:
+            return True
+        else:
+            return False
+    else:
+        return C2C_MODE
+
+
 BANKS = [{
     "BANK": "MANDIRI",
-    "STATUS": True if ('---' not in MID_MAN and len(MID_MAN) > 3) else False,
-    "MID": MID_MAN,
-    "TID": TID_MAN,
-    "SAM": SAM_MAN,
-    "C2C_MODE": C2C_MODE
+    "STATUS": mandiri_sam_status(),
+    "MID": C2C_MID if C2C_MODE is True else MID_MAN,
+    "TID": C2C_TID if C2C_MODE is True else TID_MAN,
+    "SAM": C2C_SAM_PIN if C2C_MODE is True else SAM_MAN,
 }, {
     "BANK": "BNI",
     "STATUS": True if ('---' not in MID_BNI and len(MID_BNI) > 3) else False,
@@ -304,13 +334,18 @@ SFTP_BNI = {
     'path': _ConfigParser.get_set_value('SFTP', 'bni^path', '/home/tj-kiosk/topup/bni/'),
 }
 
+
+C2C_PATH = _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path', '/home/tbuser/tb/')
 SFTP_C2C = {
     'status': C2C_MODE,
-    'host': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^host', '---'),
-    'user': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^user', '---'),
-    'pass': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^pass', '---'),
-    'port': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^port', '---'),
-    'path': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path', '---'),
+    'host': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^host', '103.28.14.188'),
+    'user': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^user', 'tbuser'),
+    'pass': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^pass', 'tbuser*123'),
+    'port': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^port', '22222'),
+    'path': C2C_PATH,
+    'path_settlement': C2C_PATH + _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path^settlement', 'settlement_tb_dev'),
+    'path_fee': C2C_PATH + _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path^fee', 'fee_tb_dev'),
+    'path_fee_response': C2C_PATH + _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path^resp^fee', 'resp_fee_tb_dev'),
 }
 
 FTP_C2C = SFTP_C2C
@@ -513,10 +548,6 @@ def set_bni_sam_no(slot, no):
     if slot == '2':
         BNI_SAM_2_NO = no
         _ConfigParser.set_value('BNI', 'sam2^no', no)
-
-
-def digit_in(s):
-    return any(i.isdigit() for i in s)
 
 
 QPROX = {

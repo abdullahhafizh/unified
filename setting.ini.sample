@@ -13,8 +13,6 @@ exceed^payment = 0
 mandiri^sam^production = 0
 db^debug = 0
 allowed^ubal^online = 
-#allowed^ubal^online^info1 = fill_with_bank_name_in_uppercase_joined_with_pipeline_|_
-#allowed^ubal^online^info2 = will_be_overwrited_from_backend_if_configured
 
 [PRINTER]
 port = COM
@@ -128,5 +126,11 @@ c2c^user = ---
 c2c^pass = ---
 c2c^port = ---
 c2c^path = ---
-#mactros^info = must_be_16_chars
+
+[INFO]
+1 = Please Delete Old Option TERMINAL
+2 = Please Delete Old Option QPROX
+3 = Please Delete Old Option TEMPORARY
+4 = MANDIRI_C2C Mactros -> Must Be 16 Chars
+5 = GENERAL allowed^ubal^online -> Define Default Bank Which Allowed Update Balance Online
 

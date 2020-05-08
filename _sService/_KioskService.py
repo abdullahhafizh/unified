@@ -1129,8 +1129,9 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     for path in paths:
         ext = '*.*'
         if '|' in path:
-            path = path.split('|')[0]
-            ext = path.split('|')[1]
+            el = path.split('|')
+            path = el[0]
+            ext = el[1]
         work_dir = os.path.join(sys.path[0], path)
         files = os.listdir(work_dir)
         if ext != '*.*':

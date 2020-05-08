@@ -68,7 +68,8 @@ QPROX = {
     "GET_FEE_C2C": "029",
     "SET_FEE_C2C": "030",
     "FORCE_SETTLEMENT": "031",
-    "BALANCE_C2C": "033"
+    "BALANCE_C2C": "033",
+    "UPDATE_BALANCE_C2C_MANDIRI": "XXX", #Update Balance Online Mandiri For C2C
 
 }
 
@@ -77,6 +78,12 @@ QPROX = {
 # UBAL SAM C2C DEPOSIT
 # C2C GET FEE METHOD
 # C2C GET SAM DEPOSIT UID
+# C2C GET SAM CARD NO
+# DEFINE OLD VS NEW APPLET
+# AMOUNT TOPUP C2C + FORCE SETTLEMENT AMOUNT
+# C2C UPLOAD CREDENTIAL
+# TECH DOC SETTLEMENT FEE INTO  UI
+# 
 
 
 BNI_CARD_NO_SLOT_1 = ''
@@ -95,6 +102,7 @@ class QSignalHandler(QObject):
     SIGNAL_INIT_ONLINE_QPROX = pyqtSignal(str)
     SIGNAL_STOP_QPROX = pyqtSignal(str)
     SIGNAL_REFILL_ZERO = pyqtSignal(str)
+    SIGNAL_CARD_HISTORY = pyqtSignal(str)
 
 
 QP_SIGNDLER = QSignalHandler()
@@ -249,21 +257,23 @@ def init_config():
         for BANK in BANKS:
             if BANK['STATUS'] is True:
                 if BANK['BANK'] == 'MANDIRI':
-                    if _Common.C2C_MODE is True:
-                        # TODO Add Handler Here For C2C Mode
-                        param = QPROX['INIT_C2C'] + '|' + _Common.C2C_TID_NEW_APP + \
-                                '|' + _Common.C2C_MACTROS + '|' + _Common.C2C_SAM_SLOT
-                    else:
-                        param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
+                    param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
                                 '|' + BANK['MID'] + '|' + BANK['TID']
                     response, result = _Command.send_request(param=param, output=None)
                     if response == 0:
                         LOGGER.info((BANK['BANK'], result))
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
-                        if _Common.C2C_MODE:
-                            INIT_MANDIRI = True
-                            c2c_balance_info()
+                        if _Common.C2C_MODE is True:
+                            _param = QPROX['INIT_C2C'] + '|' + _Common.C2C_TID + \
+                                '|' + _Common.C2C_MACTROS + '|' + _Common.C2C_SAM_SLOT
+                            _response, _result = _Command.send_request(param=_param, output=None)
+                            # {"Result":"0000","Command":"027","Parameter":"51040188|5104010000750000|1","Response":"","ErrorDesc":"Sukses"}
+                            if _response == 0:
+                                INIT_MANDIRI = True
+                                c2c_balance_info()
+                            else:
+                                LOGGER.warning(('FAILED_INIT_C2C_CONFIG', _response, _result))
                         else:
                             if _Common.active_auth_session():
                                 INIT_MANDIRI = True
@@ -416,12 +426,14 @@ def check_balance():
         bank_name = get_fw_bank(result.split('|')[2])
         card_no = result.split('|')[1].replace('#', '')
         balance = result.split('|')[0]  
+        able_check_log = '1' if bank_name in _Common.ALLOWED_BANK_CHECK_CARD_LOG else '0'
         output = {
             'balance': balance,
             'card_no': card_no,
             'bank_type': result.split('|')[2].replace('#', ''),
             'bank_name': bank_name,
             # 'able_topup': result.split('|')[3].replace('#', ''),
+            'able_check_log': able_check_log,
             'able_topup': '0000', #Force Allowed Topup For All Non BNI
         }
         # Special Handling For BNI Tapcash
@@ -997,3 +1009,55 @@ def send_cryptogram_tapcash(cyptogram, card_info):
         return False
 
     
+def get_c2c_settlement_fee():
+    # TODO Set Fuction Get Fee C2C Here, Must Return Array String
+    return False
+
+
+def set_c2c_settlement_fee(file):
+    # TODO Set Action To Conduct Settlement Fee
+    return False
+
+
+def start_get_card_history(bank):
+    _Helper.get_pool().apply_async(get_card_history, (bank,))
+
+
+def get_card_history(bank):
+    # TODO Finalise This Function For BRI
+    if _Helper.empty(bank) is True or bank not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
+        LOGGER.warning((bank, 'NOT_ALLOWED_GET_CARD_HISTORY', str(_Common.ALLOWED_BANK_CHECK_CARD_LOG)))
+        return 
+    if bank == 'BRI':
+        if not _Common.BRI_SAM_ACTIVE:
+            QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
+            return        
+        param = QPROX['CARD_HISTORY_BRI'] + '|' + _Common.SLOT_BRI + '|'
+        try:
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                # Sample Sukses History BRI
+                # {"Result":"0000","Command":"025","Parameter":"3","Response":"504F535245414452|706F737265616472|070420|114840|EF|1|60020|60021#504F535245414452|706F737265616472|090420|113008|EF|1|60021|60022#504F535245414452|706F737265616472|090420|141527|EF|1|60022|60023#504F535245414452|706F737265616472|090420|141715|EF|1000|60023|61023#504F535245414452|706F737265616472|090420|145545|EF|1|61023|61024#504F535245414452|706F737265616472|090420|150157|EF|1|61024|61025#504F535245414452|706F737265616472|090420|165457|EF|2|61025|61027#504F535245414452|706F737265616472|090420|165524|EF|1|61027|61028#504F535245414452|706F737265616472|090420|165631|EF|1|61028|61029#0123456789123456|3330303432303230|300420|141108|EB|1|61029|61028#504F535245414452|706F737265616472|080520|123106|EF|1002|61028|62030#","ErrorDesc":"Sukses"}
+                output = parse_card_history(bank, result)
+                if not output:
+                    QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
+                else:
+                    QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
+            else:
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
+        except Exception as e:
+            LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
+    else:
+        QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|ERROR')
+        return
+
+
+def parse_card_history(bank, raw):
+    if bank is None or _Helper.empty(raw) is True:
+        return False
+    if bank == 'BRI':
+        # TODO Finalise This Function
+        return []
+    else:
+        return False

@@ -12,6 +12,7 @@ from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _nNetwork import _SFTPAccess, _FTPAccess
 from _dDevice import _QPROX, _EDC
+from _sService import _TopupService
 from time import sleep
 
 
@@ -39,6 +40,8 @@ HEADER = {
     'Content-Type': 'application/json',
 }
 FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles')
+C2C_FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles', 'C2C')
+C2C_SETT_FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles', 'C2C', 'Fee')
 
 BID = _Common.BID
 GLOBAL_SETTLEMENT = []
@@ -392,7 +395,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
         try:
             # LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
-                output_path = FILE_PATH
+                output_path = C2C_FILE_PATH
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA <> "N/A" AND cardNo LIKE "6%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0 and force is False:
@@ -458,10 +461,43 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
         except Exception as e:
             LOGGER.warning((bank, mode, str(e)))
             return False
-        pass
     elif bank == 'MANDIRI' and mode == 'FEE_C2C':
-        # Todo Add Handler Topup C2C Settlement Fee
-        return False
+        try:
+            # LOGGER.info(('Create Settlement File', bank, mode))
+            if output_path is None:
+                output_path = C2C_SETT_FILE_PATH
+            c2c_fees = _QPROX.c2c_settlement_fee() # Must Return Array String
+            if not c2c_fees:
+                LOGGER.warning(('Failed To Fetch Settlement Fee', bank, mode))
+                return False
+            _filecontent = ''
+            for c in c2c_fees:
+                if c == c2c_fees[-1]:
+                    _filecontent += (c + chr(3))
+                else:
+                    _filecontent += (c + chr(3) + os.linesep)
+            _ds = _Helper.get_ds(_Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M%S')))
+            _filename = _Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M%S')) + _ds + '.txt'
+            LOGGER.info(('Create Settlement', bank, mode, _filename))
+            _file_created = os.path.join(output_path, _filename)
+            with open(_file_created, 'w+') as f:
+                f.write(_filecontent)
+                f.close()
+            _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
+            with open(_file_created_ok, 'w+') as f_ok:
+                f_ok.write('')
+                f_ok.close()
+            _result = {
+                'path_file': _file_created,
+                'filename': _filename,
+                'bank': bank,
+                'usage': 'Settlement Fee',
+                'remarks': _filecontent,
+            }
+            return _result
+        except Exception as e:
+            LOGGER.warning((bank, mode, str(e)))
+            return False
     else:
         LOGGER.warning(('Unknown bank/mode', bank, mode))
         return False
@@ -554,12 +590,13 @@ def do_settlement_for(bank='BNI', force=False):
         # if _SFTPAccess.SFTP is None:
         #     LOGGER.warning(('do_settlement_for', bank, 'failed cannot init SFTP'))
         #     return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
         _param_sett = create_settlement_file(bank=bank, mode='TOPUP', force=force)
         if _param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
         _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                     local_path=_param_sett['path_file'],
                                                     remote_path=_Common.SFTP_MANDIRI['path']+'/Sett_Macin_DEV')
@@ -571,12 +608,12 @@ def do_settlement_for(bank='BNI', force=False):
         _param_sett['local_path'] = _push_file_sett['local_path']
         _param_sett['remarks'] = _push_file_sett['remarks']
         async_push_settlement_data(_param_sett)
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_KA_SETTLEMENT')
         _param_ka = create_settlement_file(bank=bank, mode='KA', force=force)
         if _param_ka is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_KA_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_KA_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_KA_SETTLEMENT')
         _param_ka_ok = _param_ka['filename'].replace('.TXT', '.OK')
         _push_file_kalog = upload_settlement_file(filename=[_param_ka['filename'], _param_ka_ok],
                                                 local_path=_param_ka['path_file'],
@@ -589,41 +626,39 @@ def do_settlement_for(bank='BNI', force=False):
         _param_ka['local_path'] = _push_file_kalog['local_path']
         _param_ka['remarks'] = _push_file_kalog['remarks']
         async_push_settlement_data(_param_ka)
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_KA_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GENERATE_RQ1_SETTLEMENT')
         _rq1 = _QPROX.create_online_info()
         if _rq1 is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_GENERATE_RQ1_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GENERATE_RQ1_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_RQ1_SETTLEMENT')
         _file_rq1 = mandiri_create_rq1(content=_rq1)
         if _file_rq1 is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_RQ1_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_RQ1_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_RQ1_SETTLEMENT')
         _push_rq1 = upload_settlement_file(filename=_file_rq1['filename'],
                                             local_path=_file_rq1['path_file'],
                                             remote_path=_Common.SFTP_MANDIRI['path']+'/UpdateRequestIn_DEV')
         if _push_rq1 is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_RQ1_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_RQ1_SETTLEMENT')
-        sleep(1)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|WAITING_RSP_UPDATE')
         _QPROX.do_update_limit_mandiri(_file_rq1['rsp'])
         # _QPROX.auth_ka(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
         # Move To QPROX Module
     elif bank == 'MANDIRI_C2C':
-        _FTPAccess.HOST_BID = 0
+        _SFTPAccess.HOST_BID = 0
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
         _param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C', force=force)
         if _param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
         _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                     local_path=_param_sett['path_file'],
-                                                    remote_path=_Common.FTP_C2C['path']+'/Sett_Macin_DEV',
-                                                    protocol='FTP')
+                                                    remote_path=_Common.SFTP_C2C['path_settlement'])
         if _push_file_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
             return
@@ -632,30 +667,35 @@ def do_settlement_for(bank='BNI', force=False):
         _param_sett['local_path'] = _push_file_sett['local_path']
         _param_sett['remarks'] = _push_file_sett['remarks']
         async_push_settlement_data(_param_sett)
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
-        # TODO Check Whether Need UBAL
-        return True
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
+        return _TopupService.do_topup_c2c_deposit()
     elif bank == 'MANDIRI_C2C_FEE':
-        # TODO Handle C2C Settlement Here
-        _FTPAccess.HOST_BID = 0
+        _SFTPAccess.HOST_BID = 0
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FEE_SETTLEMENT')
         _param_sett = create_settlement_file(bank='MANDIRI', mode='FEE_C2C', force=force)
         if _param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FEE_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FEE_SETTLEMENT')
-        _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
-        _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FEE_SETTLEMENT')
+        _push_file_sett = upload_settlement_file(filename=_param_sett['filename'],
                                                     local_path=_param_sett['path_file'],
-                                                    remote_path=_Common.FTP_C2C['path']+'/Sett_Macin_DEV',
-                                                    protocol='FTP')
+                                                    remote_path=_Common.SFTP_C2C['path_fee'])
         if _push_file_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FEE_SETTLEMENT')
             return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FEE_SETTLEMENT')
-        # TODO Add Handler Set Fee Into SAM
-        return True
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GET_C2C_FEE_SETTLEMENT')
+        return _QPROX.set_c2c_settlement_fee(_param_sett['filename'])
     else:
         return
+
+
+# Call Ad-Hoc C2C Fee Settlement
+def start_do_c2c_update_fee():
+    _Helper.get_pool().apply_async(do_c2c_update_fee,)
+
+
+def do_c2c_update_fee():
+    return do_settlement_for(bank='MANDIRI_C2C_FEE')
 
 
 def mandiri_create_rq1(content):

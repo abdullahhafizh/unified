@@ -2,6 +2,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
+import "config.js" as CONF
+
 
 Base{
     id: admin_page
@@ -370,17 +372,22 @@ Base{
         AdminPanelButton{
             id: ka_login_button
             z: 10
-            button_text: 'ka login'
+            button_text: (CONF.c2c_mode=='1') ? 'update\nc2c fee' : 'ka login'
             visible: !popup_loading.visible
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "KA Login"');
                     if (press != '0') return;
                     press = '1';
                     popup_loading.open();
-                    _SLOT.start_auth_ka();
+                    if (CONF.c2c_mode=='1'){
+                        _SLOT.user_action_log('Admin Page "Update C2C Fee"');
+                        _SLOT.start_do_c2c_update_fee();
+                    } else {
+                        _SLOT.user_action_log('Admin Page "KA Login"');
+                        _SLOT.start_auth_ka();
+                    }
                 }
             }
         }
@@ -388,18 +395,25 @@ Base{
         AdminPanelButton{
             id: mandiri_settlement_button
             z: 10
-            button_text: 'settle\nmanual'
+            button_text: (CONF.c2c_mode=='1') ? 'topup c2c\ndeposit' : 'settle\nmanual'
             visible: !popup_loading.visible
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Settlement Manual Mandiri"');
                     if (press != '0') return;
                     press = '1';
                     console.log('mandiri_settlement_button is pressed..!');
                     popup_loading.open();
-                    _SLOT.start_reset_mandiri_settlement();
+                    if (CONF.c2c_mode=='1'){
+                        console.log('topup_deposit_c2c mode is ON..!');
+                        _SLOT.user_action_log('Admin Page "Topup C2C Deposit Mandiri"');
+                        _SLOT.start_do_topup_c2c_deposit();
+                    } else {
+                        _SLOT.user_action_log('Admin Page "Settlement Manual Mandiri"');
+                        _SLOT.start_reset_mandiri_settlement();
+                    }
+
                 }
             }
         }

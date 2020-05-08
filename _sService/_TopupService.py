@@ -26,8 +26,14 @@ LOGGER = logging.getLogger()
 TOPUP_URL = _Common.TOPUP_URL
 TOPUP_TOKEN = _Common.TOPUP_TOKEN
 TOPUP_MID = _Common.TOPUP_MID
-# TOPUP_TID = '0123456789abcdefghijkl' -> Change Using Terminal ID
 TOPUP_TID = _Common.TID
+
+MANDIRI_GENERAL_ERROR = '51000'
+MANDIRI_NO_PENDING = '51003'
+BRI_NO_PENDING = 'ZERO BALANCE'
+FW_BANK = _QPROX.FW_BANK
+QPROX = _QPROX.QPROX
+ERROR_TOPUP = _QPROX.ERROR_TOPUP
 # ==========================================================
 
 
@@ -189,7 +195,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
-    if bank == 'BRI' and mode == 'TOPUP_BRIZZI':
+    if bank == 'BRI' and mode == 'TOPUP':
         try:
             # param must be
             # "token":"<<YOUR API-TOKEN>>",
@@ -308,11 +314,12 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
-    if bank == 'BRI' and mode == 'TOPUP_BRIZZI':
+    if bank == 'BRI' and mode == 'TOPUP':
         try:
             response, result = _Command.send_request(param=_param, output=None)
-            # TODO Check Result UBAL From Reader
-            if response == 0 and len(result) > 1:
+            # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
+            # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+            if response == 0 and '|' in result:
                 return {
                     'bank': bank,
                     'card_no': result.split('|')[0],
@@ -434,34 +441,28 @@ def start_get_topup_readiness():
 
 
 def get_topup_readiness():
-    ready = dict()
-    ready['balance_mandiri'] = str(_Common.MANDIRI_ACTIVE_WALLET)
-    ready['balance_bni'] = str(_Common.BNI_ACTIVE_WALLET)
-    ready['bni_wallet_1'] = str(_Common.BNI_SAM_1_WALLET)
-    ready['bni_wallet_2'] = str(_Common.BNI_SAM_2_WALLET)
-    ready['mandiri'] = 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
-    ready['bni'] = 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
-    ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
-    ready['bca'] = 'N/A'
-    ready['dki'] = 'N/A'
-    ready['emoney'] = _Common.TOPUP_AMOUNT_SETTING['emoney']
-    ready['tapcash'] = _Common.TOPUP_AMOUNT_SETTING['tapcash']
-    ready['brizzi'] = _Common.TOPUP_AMOUNT_SETTING['brizzi']
-    ready['flazz'] = _Common.TOPUP_AMOUNT_SETTING['flazz']
-    ready['jakcard'] = _Common.TOPUP_AMOUNT_SETTING['jakcard']
-    LOGGER.info(('TOPUP_READINESS', str(ready)))
+    ready = {
+        'balance_mandiri': str(_Common.MANDIRI_ACTIVE_WALLET),
+        'balance_bni': str(_Common.BNI_ACTIVE_WALLET),
+        'bni_wallet_1': str(_Common.BNI_SAM_1_WALLET),
+        'bni_wallet_2': str(_Common.BNI_SAM_2_WALLET),
+        'mandiri': 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A',
+        'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A',
+        'bri': 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A',
+        'bca': 'N/A',
+        'dki': 'N/A',
+        'emoney': _Common.TOPUP_AMOUNT_SETTING['emoney'],
+        'tapcash': _Common.TOPUP_AMOUNT_SETTING['tapcash'],
+        'brizzi': _Common.TOPUP_AMOUNT_SETTING['brizzi'],
+        'flazz': _Common.TOPUP_AMOUNT_SETTING['flazz'],
+        'jakcard': _Common.TOPUP_AMOUNT_SETTING['jakcard'],
+    }
+    LOGGER.info((str(ready)))
     TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
 
 
 def start_update_balance_online(bank):
     _Helper.get_pool().apply_async(update_balance_online, (bank,))
-
-
-MANDIRI_GENERAL_ERROR = '51000'
-MANDIRI_NO_PENDING = '51003'
-FW_BANK = _QPROX.FW_BANK
-QPROX = _QPROX.QPROX
-ERROR_TOPUP = _QPROX.ERROR_TOPUP
 
 
 def check_update_balance_bni(card_info):
@@ -575,8 +576,7 @@ def update_balance_online(bank):
         try:
             param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI
             response, result = _Command.send_request(param=param, output=None)
-            # TODO Check Result UBAL Online BRI
-            if response == 0 and result is not None:
+            if response == 0 and '|' in result:
                 output = {
                     'bank': bank,
                     'card_no': result.split('|')[0],
@@ -585,9 +585,7 @@ def update_balance_online(bank):
                 }
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
-                if MANDIRI_GENERAL_ERROR in result:
-                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
-                elif MANDIRI_NO_PENDING in result:
+                if BRI_NO_PENDING in result:
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
@@ -595,6 +593,26 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    elif bank == 'MANDIRI_C2C_DEPOSIT':
+        try:        
+            # TODO Check Command For C2C Update Balance    
+            param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
+            response, result = _Command.send_request(param=param, output=None)
+            # if _Common.TEST_MODE is True and _Common.empty(result):
+            #   result = '6032111122223333|20000|198000'
+            if response == 0 and result is not None:
+                output = {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+                return output
+            else:
+                return False
+        except Exception as e:
+            LOGGER.warning(str(e))
+            return False
     else:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
 
@@ -619,12 +637,12 @@ def topup_online(bank, cardno, amount):
         if not _Common.BRI_SAM_ACTIVE:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR_BRI_SAM_SLOT_NOT_FOUND')
             return
-        last_check = _QPROX.LAST_BALANCE_CHECK
+        # last_check = _QPROX.LAST_BALANCE_CHECK
         _param = {
             'card_no': cardno,
             'amount': amount
         }
-        pending_result = pending_balance(_param, bank='BRI', mode='TOPUP_BRIZZI')
+        pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
         # pending_result = {
                     #   "amount":"30000",
                     #   "card_no":"7546990000025583",
@@ -636,15 +654,20 @@ def topup_online(bank, cardno, amount):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
             return
         _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI
-        update_balance_result = update_balance(_param, bank='BRI', mode='TOPUP_BRIZZI')
-        if not update_balance_result:
+        update_result = update_balance(_param, bank='BRI', mode='TOPUP')
+        if not update_result:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
             return
-        last_balance = int(last_check['balance']) + int(amount)
+        # {
+        #        'bank': bank,
+        #        'card_no': result.split('|')[0],
+        #        'topup_amount': result.split('|')[1],
+        #        'last_balance': result.split('|')[2],
+        #     }
         output = {
-                    'last_balance': str(last_balance),
+                    'last_balance': update_result['last_balance'],
                     'report_sam': 'N/A',
-                    'card_no': pending_result['card_no'],
+                    'card_no': update_result['card_no'],
                     'report_ka': 'N/A',
                     'bank_id': '3',
                     'bank_name': 'BRI',
@@ -653,3 +676,21 @@ def topup_online(bank, cardno, amount):
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
     
+
+def start_do_topup_c2c_deposit():
+    _Helper.get_pool().apply_async(do_topup_c2c_deposit,)
+
+
+def do_topup_c2c_deposit():
+    # TODO Finalise This Topup Deposit C2C
+    param = {
+        'card_no': '',
+        'amount': ''
+    }
+    pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
+    if not pending_result:
+        return False
+    update_balance = update_balance_online('MANDIRI_C2C_DEPOSIT')
+    return update_balance
+
+

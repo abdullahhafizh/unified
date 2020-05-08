@@ -25,6 +25,9 @@ Base{
     property bool brizziAvailable: false
     property bool flazzAvailable: false
     property bool jakcardAvailable: false
+
+    property bool buttonCardHistory: false
+    property var bigButtonPadding: 150
     property var actionMode: 'check_balance'
     property variant allowedBank: []
     property variant allowedUpdateBalanceOnline: CONF.bank_ubal_online
@@ -46,6 +49,8 @@ Base{
             imageSource = undefined;
             ableTopupCode = undefined;
             actionMode = 'check_balance';
+            buttonCardHistory = false;
+            bigButtonPadding = 150;
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -57,6 +62,7 @@ Base{
         base.result_topup_readiness.connect(topup_readiness);
 //        base.result_topup_amount.connect(get_topup_amount);
         base.result_update_balance_online.connect(update_balance_online_result);
+        base.result_card_log_history.connect(card_history_result);
     }
 
     Component.onDestruction:{
@@ -64,6 +70,14 @@ Base{
         base.result_topup_readiness.disconnect(topup_readiness);
 //        base.result_topup_amount.disconnect(get_topup_amount);
         base.result_update_balance_online.disconnect(update_balance_online_result);
+        base.result_card_log_history.disconnect(card_history_result);
+    }
+
+    function card_history_result(h){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log("card_history_result : ", now, h);
+        press = '0';
+
     }
 
     function update_balance_online_result(u){
@@ -71,6 +85,7 @@ Base{
         console.log("update_balance_online_result : ", now, u);
         var func = u.split('|')[0]
         var result = u.split('|')[1]
+        press = '0';
         popup_loading.close();
         if (['INVALID_CARD'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Kartu Prabayar Anda Tidak Aktif/Tidak Valid', 'closeWindow', false )
@@ -184,6 +199,10 @@ Base{
         bankType = info.bank_type;
         bankName = info.bank_name;
         ableTopupCode = info.able_topup;
+        if (info.able_check_log == '1'){
+            buttonCardHistory = true;
+            if (globalScreenType == '1') bigButtonPadding = 220;
+        }
         var cardNo__ = FUNC.insert_space_four(cardNo)
         content_card_no.text = cardNo__.substring(0, cardNo__.length-3);
     }
@@ -210,6 +229,11 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 abc.counter -= 1
+                if (tvc_loading.counter%2==0){
+                    card_history_button.modeReverse = true;
+                } else {
+                    card_history_button.modeReverse = false;
+                }
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -238,18 +262,43 @@ Base{
 
     CircleButtonBig{
         id: update_online_button
+        anchors.horizontalCenterOffset: (!buttonCardHistory) ? 0 : -bigButtonPadding
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'UPDATE SALDO'
+        button_text: 'UPDATE\nSALDO'
         modeReverse: true
         visible: !popup_loading.visible && !preload_check_card.visible && (allowedUpdateBalanceOnline.indexOf(bankName) > -1)
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "UPDATE SALDO ONLINE" for Bank '+bankName);
+                if (press!='0') return;
+                press = '1'
+                _SLOT.user_action_log('Press "UPDATE SALDO" for Bank '+bankName);
                 actionMode = 'update_balance_online';
                 preload_check_card.open();
+            }
+        }
+    }
+
+    CircleButtonBig{
+        id: card_history_button
+        anchors.horizontalCenterOffset: bigButtonPadding
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        anchors.horizontalCenter: parent.horizontalCenter
+        button_text: 'LOG\nKARTU'
+        modeReverse: true
+        visible: buttonCardHistory
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                if (press!='0') return;
+                press = '1'
+                _SLOT.user_action_log('Press "LOG KARTU" for Bank '+bankName);
+                console.log('History Transaction Button is Pressed..!');
+                popup_loading.open();
+                _SLOT.start_get_card_history(bankName);
             }
         }
     }
@@ -313,6 +362,7 @@ Base{
             }
         }
     }
+
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
