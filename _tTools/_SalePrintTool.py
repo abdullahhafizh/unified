@@ -1042,9 +1042,9 @@ def print_card_history(payload):
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
-        pdf.ln(1.5)
+        pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'NO | TIME | TRX | AMOUNT | BALANCE', 0, 0, 'L')
+        pdf.cell(padding_left, 0, ' NO | TIME | TRX | AMOUNT | BALANCE', 0, 0, 'L')
         pdf.ln(1.5)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
@@ -1060,21 +1060,22 @@ def print_card_history(payload):
         for log in _Common.LAST_CARD_LOG_HISTORY:
             no += 1
             content_row = ' | '.join([
-                str(no),
+                str(no).zfill(2),
                 log['date'], 
-                log['type'] + ' ' + clean_number(log['amount']), 
+                log['type'],
+                clean_number(log['amount']), 
                 clean_number(log['last_balance']), 
                 ])
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, '', line_size-1.5)
             pdf.cell(padding_left, 0, content_row, 0, 0, 'L')
-            pdf.ln(1.5)
+            pdf.ln(2)
             pdf.set_font(USED_FONT, '', line_size-1.5)
-            pdf.cell(padding_left, 0, (4*' ')+log['time'], 0, 0, 'L')
+            pdf.cell(padding_left, 0, (5*' ')+log['time'], 0, 0, 'L')
         #==================================== 
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'Saldo Akhir : ' + clean_number(payload['last_balance']), 0, 0, 'L')
