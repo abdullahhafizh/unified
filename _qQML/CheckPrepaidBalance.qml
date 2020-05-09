@@ -77,8 +77,19 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log("card_history_result : ", now, h);
         press = '0';
-        // Finalise This Into Layer View Of Card History
-
+        popup_loading.close();
+        var result = h.split('|')[1];
+        if (result.indexOf('ERROR') > -1){
+            switch_frame('source/smiley_down.png', 'Gagal Mendapatkan Log Kartu', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            return;
+        }
+        var histories = JSON.parse(result)
+        my_layer.push(card_prepaid_history, {
+                          histories: histories,
+                          cardNo: cardNo,
+                          balance:balance,
+                          bankName: bankName
+                      });
     }
 
     function update_balance_online_result(u){

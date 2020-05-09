@@ -1050,12 +1050,13 @@ def start_get_card_history(bank):
 
 
 def get_card_history(bank):
-    # TODO Finalise This Function For BRI
     if _Helper.empty(bank) is True or bank not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
         LOGGER.warning((bank, 'NOT_ALLOWED_GET_CARD_HISTORY', str(_Common.ALLOWED_BANK_CHECK_CARD_LOG)))
+        QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|ERROR')
         return 
     if bank == 'BRI':
         if not _Common.BRI_SAM_ACTIVE:
+            LOGGER.warning((bank, 'SAM_NOT_ACTIVE', str(_Common.BRI_SAM_ACTIVE)))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
             return        
         param = QPROX['CARD_HISTORY_BRI'] + '|' + _Common.SLOT_BRI + '|'
@@ -1066,6 +1067,7 @@ def get_card_history(bank):
             if response == 0 and '|' in result:
                 # Sample Sukses History BRI
                 output = parse_card_history(bank, result)
+                _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')

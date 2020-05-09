@@ -176,7 +176,7 @@ Base{
         var topup_amount = parseInt(selectedDenom) - parseInt(adminFee);
         var final_balance = parseInt(cardData.balance) + topup_amount;
         // Define Denom For C2C Mandiri - Overwrite Denom Value For Process Topup
-        if (cardData.bank_name=='MANDIRI' && CONF.c2c_mode == '1'){
+        if (cardData.bank_name=='MANDIRI' && CONF.c2c_mode == 1){
             topup_amount = parseInt(selectedDenom);
             // Redefined AdminFee Value For Mandiri C2C Mode in Backend
         }

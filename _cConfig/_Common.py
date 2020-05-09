@@ -605,11 +605,11 @@ FW_BANK = {
 }
 
 BRI_LOG_LEGEND = {
-    'EB': 'Purchase', # Payment
-    'EC': 'Top Up', # Topup Online
-    'EF': 'Deposit Activate', # Aktivasi Deposit
-    'ED': 'Void',
-    '5F': 'Reactivate', #Reaktivasi
+    'EB': 'PURCHASE', # Payment
+    'EC': 'TOPUP', # Topup Online
+    'EF': 'DEPOSIT', # Aktivasi Deposit
+    'ED': 'VOID',
+    '5F': 'REACTIVATE', #Reaktivasi
     'BE': 'No More Logs',
     'AF': 'Found Next Log' 
 }
@@ -932,3 +932,6 @@ def local_store_topup_record(param):
     topup_record['key'] = topup_record['rid']
     _DAO.mark_sync(param=topup_record, _table='TopUpRecords', _key='rid')
     return topup_record['rid']
+
+
+LAST_CARD_LOG_HISTORY = []

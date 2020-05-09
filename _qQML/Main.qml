@@ -298,6 +298,10 @@ Rectangle {
         GlobalInputNumber{}
     }
 
+    Component {id: card_prepaid_history
+        CardPrepaidHistory{}
+    }
+
 //    Component {id: global_confirm_frame
 //        GlobalConfirmationFrame
 //    }

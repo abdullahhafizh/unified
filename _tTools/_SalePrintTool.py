@@ -1002,3 +1002,16 @@ def mark_sync_collected_data(s):
         return True
     else:
         return False
+
+
+def start_print_card_history(payload):
+    _Helper.get_pool().apply_async(print_card_history, (payload,))
+
+
+def print_card_history(payload):
+    if _Helper.empty(_Common.LAST_CARD_LOG_HISTORY):
+        return
+    # Payload Must Contain Card Number, Bank Name, Balance
+    payload = json.loads(payload)
+    LOGGER.info((_Common.LAST_CARD_LOG_HISTORY, payload))
+    # Finalise This Print Function

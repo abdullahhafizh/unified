@@ -648,6 +648,10 @@ class SlotHandler(QObject):
         _QPROX.start_get_card_history(bank)
     start_get_card_history = pyqtSlot(str)(start_get_card_history)
 
+    def start_print_card_history(self, payload):
+        _SalePrintTool.start_print_card_history(payload)
+    start_print_card_history = pyqtSlot(str)(start_print_card_history)
+
 
 
 def s_handler():
