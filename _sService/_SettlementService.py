@@ -668,7 +668,16 @@ def do_settlement_for(bank='BNI', force=False):
         _param_sett['remarks'] = _push_file_sett['remarks']
         async_push_settlement_data(_param_sett)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
-        return _TopupService.do_topup_c2c_deposit()
+        topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
+                                            _Common.C2C_DEPOSIT_NO, 
+                                            _Common.C2C_TOPUP_AMOUNT
+                                            )
+        if not topup_result:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
+        # Update Deposit Balance Value in Memory
+        _Common.MANDIRI_ACTIVE_WALLET = int(topup_result['last_balance'])
+        _Common.MANDIRI_WALLET_1 = int(topup_result['last_balance'])
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
     elif bank == 'MANDIRI_C2C_FEE':
         _SFTPAccess.HOST_BID = 0
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FEE_SETTLEMENT')

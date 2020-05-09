@@ -86,6 +86,8 @@ C2C_TID = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid', '---')
 C2C_SAM_PIN = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^pin', '---')
 C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
 C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
+C2C_TOPUP_AMOUNT = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '100000')
+C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '6032000000000000')
 # TODO Must Be Set From Process Update Fee C2C
 C2C_ADMIN_FEE = [0, 0]
 
@@ -103,6 +105,7 @@ _ConfigParser.set_value('INFO', '10', '[MANDIRI_C2C]-mactros -> TID+MID Purchase
 _ConfigParser.set_value('INFO', '11', '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File')
 _ConfigParser.set_value('INFO', '12', '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File')
 _ConfigParser.set_value('INFO', '13', '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File')
+_ConfigParser.set_value('INFO', '14', '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File')
 
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
@@ -128,7 +131,7 @@ UPDATE_ONLINE_FEATURE = _ConfigParser.get_set_value('GENERAL', 'allowed^ubal^onl
 ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 
 # Hardcoded Config For Bank Feature
-ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI']
+ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT']
 ALLOWED_BANK_CHECK_CARD_LOG = ['BRI']
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
@@ -420,7 +423,8 @@ ALLOWED_SYNC_TASK = [
     'sync_data_transaction_failure',
     'sync_data_transaction',
     'sync_topup_records',
-    'sync_machine_status'
+    'sync_machine_status',
+    # 'validate_update_balance_c2c'
 
 ]
 
@@ -590,6 +594,17 @@ CD_READINESS = {
 }
 
 SMT_CONFIG = dict()
+
+
+BRI_LOG_LEGEND = {
+    'EB': 'Purchase', # Payment
+    'EC': 'Top Up', # Topup Online
+    'EF': 'Deposit Activate', # Aktivasi Deposit
+    'ED': 'Void',
+    '5F': 'Reactivate', #Reaktivasi
+    'BE': 'No More Logs',
+    'AF': 'Found Next Log' 
+}
 
 
 def start_get_devices():

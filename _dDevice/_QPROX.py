@@ -9,6 +9,8 @@ from _tTools import _Helper
 from time import sleep
 import json
 from _nNetwork import _NetworkAccess
+from datetime import datetime
+
 
 LOGGER = logging.getLogger()
 QPROX_PORT = _Common.QPROX_PORT
@@ -420,6 +422,18 @@ def get_fw_bank(key):
 def check_balance():
     global LAST_BALANCE_CHECK
     param = QPROX['BALANCE'] + '|'
+    # Start Force Testing Mode For BRI ==========================
+    bri_test = {
+            'balance': '123000',
+            'card_no': '60131111222333',
+            'bank_type': '2',
+            'bank_name': 'BRI',
+            'able_check_log': '1',
+            'able_topup': '0000', #Force Allowed Topup For All Non BNI
+        }
+    QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(bri_test))
+    return
+    # End Force Testing Mode For BRI ==========================
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
     if response == 0:
@@ -834,11 +848,12 @@ MANDIRI_DEPOSIT_BALANCE = 0
 
 
 def c2c_balance_info():
-    # TODO Check Result C2C Balance Here
+    # TODO Check Result C2C Balance Here, Add C2C_DEPOSIT Number
     param = QPROX['BALANCE_C2C'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if response == 0 and result is not None:
         MANDIRI_DEPOSIT_BALANCE = int(result.split('|')[0])
+        _Common.C2C_DEPOSIT_NO = ''
         _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_ACTIVE = 1
@@ -1034,15 +1049,13 @@ def get_card_history(bank):
             return        
         param = QPROX['CARD_HISTORY_BRI'] + '|' + _Common.SLOT_BRI + '|'
         try:
-            response, result = _Command.send_request(param=param, output=None)
+            # response, result = _Command.send_request(param=param, output=None)
+            result = '504F535245414452|706F737265616472|070420|114840|EF|1|60020|60021#504F535245414452|706F737265616472|090420|113008|EF|1|60021|60022#504F535245414452|706F737265616472|090420|141527|EF|1|60022|60023#504F535245414452|706F737265616472|090420|141715|EF|1000|60023|61023#504F535245414452|706F737265616472|090420|145545|EF|1|61023|61024#504F535245414452|706F737265616472|090420|150157|EF|1|61024|61025#504F535245414452|706F737265616472|090420|165457|EF|2|61025|61027#504F535245414452|706F737265616472|090420|165524|EF|1|61027|61028#504F535245414452|706F737265616472|090420|165631|EF|1|61028|61029#504F535245414452|706F737265616472|080520|123106|EF|1002|61028|62030#'
+            response = 0
             if response == 0 and '|' in result:
                 # Sample Sukses History BRI
-                # {"Result":"0000","Command":"025","Parameter":"3","Response":"504F535245414452|706F737265616472|070420|114840|EF|1|60020|60021#504F535245414452|706F737265616472|090420|113008|EF|1|60021|60022#504F535245414452|706F737265616472|090420|141527|EF|1|60022|60023#504F535245414452|706F737265616472|090420|141715|EF|1000|60023|61023#504F535245414452|706F737265616472|090420|145545|EF|1|61023|61024#504F535245414452|706F737265616472|090420|150157|EF|1|61024|61025#504F535245414452|706F737265616472|090420|165457|EF|2|61025|61027#504F535245414452|706F737265616472|090420|165524|EF|1|61027|61028#504F535245414452|706F737265616472|090420|165631|EF|1|61028|61029#0123456789123456|3330303432303230|300420|141108|EB|1|61029|61028#504F535245414452|706F737265616472|080520|123106|EF|1002|61028|62030#","ErrorDesc":"Sukses"}
                 output = parse_card_history(bank, result)
-                if not output:
-                    QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
-                else:
-                    QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
         except Exception as e:
@@ -1054,10 +1067,32 @@ def get_card_history(bank):
 
 
 def parse_card_history(bank, raw):
+    card_history = []
     if bank is None or _Helper.empty(raw) is True:
-        return False
+        return card_history
     if bank == 'BRI':
-        # TODO Finalise This Function
-        return []
+        histories = raw.split('#')
+        for history in histories:
+            # MID Padded 0 | TID Padded 3 | Date | Time | Trx Type | Amount | Prev Balance | Last Balance
+            # 0123456789123456|3330303432303230|300420|141108|EB|1|61029|61028#
+            history = history.replace(' ', '')
+            if _Helper.empty(history) is True:
+                continue
+            row = history.split('|')
+            card_history.append({
+                'date': datetime.strptime(row[2], '%m%d%y').strftime('%Y-%m-%d'),
+                'time': ':'.join(_Helper.strtolist(row[3])),
+                'type': _Common.BRI_LOG_LEGEND.get(row[4], ''),
+                'amount': row[5],
+                'prev_balance': row[6],
+                'last_balance': row[7]
+            })
+        return card_history
+    elif bank == 'MANDIRI':
+        # TODO Finalise Mandiri Log Parse
+        return card_history
+    elif bank == 'BNI':
+        # TODO Finalise BNI Log Parse
+        return card_history
     else:
-        return False
+        return card_history

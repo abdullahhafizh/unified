@@ -195,7 +195,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
-    if bank == 'BRI' and mode == 'TOPUP':
+    elif bank == 'BRI' and mode == 'TOPUP':
         try:
             # param must be
             # "token":"<<YOUR API-TOKEN>>",
@@ -232,7 +232,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
-    if bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
+    elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         try:
             # param must be
             # "token":"<<YOUR API-TOKEN>>",
@@ -246,7 +246,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['tid'] = TOPUP_TID
             _param['phone'] = '08129420492'
             _param['email'] = 'vm@mdd.co.id'
-            _param['purpose'] = 'C2C Deposit Reload'
+            _param['purpose'] = mode
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-mandiri/pending', param=_param)
             LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
@@ -314,7 +314,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
-    if bank == 'BRI' and mode == 'TOPUP':
+    elif bank == 'BRI' and mode == 'TOPUP':
         try:
             response, result = _Command.send_request(param=_param, output=None)
             # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
@@ -331,9 +331,25 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning(str(e))
             return False
-    if bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
-        # TODO: Add Handler Mandiri UBal Topup Deposit THere
-        return False
+    elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
+        try:        
+            # TODO Check Command For C2C Update Balance    
+            response, result = _Command.send_request(param=_param, output=None)
+            # if _Common.TEST_MODE is True and _Common.empty(result):
+            #   result = '6032111122223333|20000|198000'
+            if response == 0 and result is not None:
+                output = {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+                return output
+            else:
+                return False
+        except Exception as e:
+            LOGGER.warning(str(e))
+            return False
     else:
         LOGGER.warning(('Unknown', bank, mode))
         return False
@@ -593,26 +609,6 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-    elif bank == 'MANDIRI_C2C_DEPOSIT':
-        try:        
-            # TODO Check Command For C2C Update Balance    
-            param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
-            response, result = _Command.send_request(param=param, output=None)
-            # if _Common.TEST_MODE is True and _Common.empty(result):
-            #   result = '6032111122223333|20000|198000'
-            if response == 0 and result is not None:
-                output = {
-                    'bank': bank,
-                    'card_no': result.split('|')[0],
-                    'topup_amount': result.split('|')[1],
-                    'last_balance': result.split('|')[2],
-                }
-                return output
-            else:
-                return False
-        except Exception as e:
-            LOGGER.warning(str(e))
-            return False
     else:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
 
@@ -673,24 +669,38 @@ def topup_online(bank, cardno, amount):
                     'bank_name': 'BRI',
             }
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    elif bank == 'MANDIRI_C2C_DEPOSIT':
+        param = {
+            'card_no': cardno,
+            'amount': amount
+        }
+        pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
+        if not pending_result:
+            return False
+        # TODO Check Actual Command UPDATE_BALANCE_C2C_MANDIRI and its result
+        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
+        update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
+        if not update_result:
+            return False
+        output = {
+                    'last_balance': update_result['last_balance'],
+                    'report_sam': 'N/A',
+                    'card_no': update_result['card_no'],
+                    'report_ka': 'N/A',
+                    'bank_id': '1',
+                    'bank_name': 'MANDIRI',
+            }
+        return output        
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
     
 
 def start_do_topup_c2c_deposit():
-    _Helper.get_pool().apply_async(do_topup_c2c_deposit,)
+    bank = 'MANDIRI_C2C_DEPOSIT'
+    cardno = _Common.C2C_DEPOSIT_NO
+    amount = _Common.C2C_TOPUP_AMOUNT
+    _Helper.get_pool().apply_async(topup_online, (bank, cardno, amount, ))
 
 
-def do_topup_c2c_deposit():
-    # TODO Finalise This Topup Deposit C2C
-    param = {
-        'card_no': '',
-        'amount': ''
-    }
-    pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
-    if not pending_result:
-        return False
-    update_balance = update_balance_online('MANDIRI_C2C_DEPOSIT')
-    return update_balance
 
 

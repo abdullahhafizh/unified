@@ -229,11 +229,12 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 abc.counter -= 1
-                if (tvc_loading.counter%2==0){
-                    card_history_button.modeReverse = true;
-                } else {
-                    card_history_button.modeReverse = false;
-                }
+//                Disable Card Log Button Blinking
+//                if (tvc_loading.counter%2==0){
+//                    card_history_button.modeReverse = true;
+//                } else {
+//                    card_history_button.modeReverse = false;
+//                }
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))

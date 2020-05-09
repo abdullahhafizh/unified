@@ -11,6 +11,7 @@ import binascii
 from _nNetwork import _NetworkAccess
 import subprocess
 from sys import _getframe as whois
+import re
 # import inspect
 
 LOGGER = logging.getLogger()
@@ -190,3 +191,8 @@ def empty(s):
     else:
         return False
 
+def strtolist(string=None, length=2):
+    if string is None:
+        return []
+    n = '.' * length
+    return re.findall(n, string)
