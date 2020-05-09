@@ -646,7 +646,8 @@ class SlotHandler(QObject):
 
     def start_get_card_history(self, bank):
         _QPROX.start_get_card_history(bank)
-    start_get_card_history = pyqtSlot()(start_get_card_history)
+    start_get_card_history = pyqtSlot(str)(start_get_card_history)
+
 
 
 def s_handler():
@@ -749,7 +750,6 @@ def s_handler():
     _TopupService.TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.connect(view.rootObject().result_topup_readiness)
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
-
 
 
 

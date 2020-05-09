@@ -10,6 +10,7 @@ from time import sleep
 import json
 from _nNetwork import _NetworkAccess
 from datetime import datetime
+import random
 
 
 LOGGER = logging.getLogger()
@@ -398,46 +399,56 @@ def start_check_balance():
 
 
 LAST_BALANCE_CHECK = None
+FW_BANK = _Common.FW_BANK
 
-FW_BANK = {
-    '0': 'MANDIRI',
-    '1': 'BRI', #BRI JAVA
-    '2': 'BRI', #BRI Desfire
-    '3': 'BNI',
-    '4': 'DKI',
-    '5': 'BCA'
-}
-
-
-def get_fw_bank(key):
-    bank = ''
-    try:
-        bank = FW_BANK[key]
-    except IndexError:
-        bank = 'UNKNOWN'
-    finally:
-        return bank
+DUMMY_BALANCE_CHECK_BALANCE = [
+        {
+            'balance': '999999',
+            'card_no': '60321111222333',
+            'bank_type': '1',
+            'bank_name': 'MANDIRI',
+            'able_check_log': '0',
+            'able_topup': '0000',
+        },
+        {
+            'balance': '999999',
+            'card_no': '75461111222333',
+            'bank_type': '2',
+            'bank_name': 'BNI',
+            'able_check_log': '0',
+            'able_topup': '0000',
+        },
+        {
+            'balance': '999999',
+            'card_no': '60131111222333',
+            'bank_type': '3',
+            'bank_name': 'BRI',
+            'able_check_log': '1',
+            'able_topup': '0000',
+        },
+        {
+            'balance': '999999',
+            'card_no': '10451111222333',
+            'bank_type': '4',
+            'bank_name': 'BCA',
+            'able_check_log': '0',
+            'able_topup': '0000',
+        },
+]
 
 
 def check_balance():
     global LAST_BALANCE_CHECK
     param = QPROX['BALANCE'] + '|'
-    # Start Force Testing Mode For BRI ==========================
-    bri_test = {
-            'balance': '123000',
-            'card_no': '60131111222333',
-            'bank_type': '2',
-            'bank_name': 'BRI',
-            'able_check_log': '1',
-            'able_topup': '0000', #Force Allowed Topup For All Non BNI
-        }
-    QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(bri_test))
+    # Start Force Testing Mode ==========================
+    dummy_output = random.choice(DUMMY_BALANCE_CHECK_BALANCE)
+    QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(dummy_output))
     return
-    # End Force Testing Mode For BRI ==========================
+    # End Force Testing Mode ==========================
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
     if response == 0:
-        bank_name = get_fw_bank(result.split('|')[2])
+        bank_name = FW_BANK.get(result.split('|')[2], 'N/A')
         card_no = result.split('|')[1].replace('#', '')
         balance = result.split('|')[0]  
         able_check_log = '1' if bank_name in _Common.ALLOWED_BANK_CHECK_CARD_LOG else '0'

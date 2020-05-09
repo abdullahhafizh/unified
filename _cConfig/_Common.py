@@ -595,6 +595,14 @@ CD_READINESS = {
 
 SMT_CONFIG = dict()
 
+FW_BANK = {
+    '0': 'MANDIRI',
+    '1': 'BRI', #BRI JAVA
+    '2': 'BRI', #BRI Desfire
+    '3': 'BNI',
+    '4': 'DKI',
+    '5': 'BCA'
+}
 
 BRI_LOG_LEGEND = {
     'EB': 'Purchase', # Payment

@@ -77,6 +77,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log("card_history_result : ", now, h);
         press = '0';
+        // Finalise This Into Layer View Of Card History
 
     }
 
@@ -273,8 +274,6 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                if (press!='0') return;
-                press = '1'
                 _SLOT.user_action_log('Press "UPDATE SALDO" for Bank '+bankName);
                 actionMode = 'update_balance_online';
                 preload_check_card.open();
@@ -294,12 +293,9 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                if (press!='0') return;
-                press = '1'
                 _SLOT.user_action_log('Press "LOG KARTU" for Bank '+bankName);
-                console.log('History Transaction Button is Pressed..!');
-                popup_loading.open();
-                _SLOT.start_get_card_history(bankName);
+                actionMode = 'get_card_log_history';
+                preload_check_card.open();
             }
         }
     }
@@ -681,6 +677,9 @@ Base{
                         break;
                     case 'update_balance_online':
                         _SLOT.start_update_balance_online(bankName);
+                        break;
+                    case 'get_card_log_history':
+                        _SLOT.start_get_card_history(bankName);
                         break;
                     }
                     preload_check_card.close();
