@@ -250,7 +250,7 @@ def generate_edc_receipt_old(trx):
         pdf_file = get_path(file_name+'.pdf')
         pdf.output(pdf_file, 'F')
         _Common.LAST_EDC_TRX_RECEIPT = pdf_file
-        LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
+        LOGGER.debug((file_name))
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
@@ -327,7 +327,7 @@ def generate_edc_receipt(trx):
         pdf_file = get_path(file_name+'.pdf')
         pdf.output(pdf_file, 'F')
         _Common.LAST_EDC_TRX_RECEIPT = pdf_file
-        LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
+        LOGGER.debug((file_name))
     except Exception as e:
         LOGGER.warning(str(e))
     finally:

@@ -82,22 +82,26 @@ class PDF(FPDF):
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 
 
+GENERAL_TITLE = 'COLLECTION REPORT'
+USE_FOOTER = False
+
 class GeneralPDF(FPDF):
     def header(self):
         self.set_font(USED_FONT, '', 7)
         self.ln(3*3)
-        self.cell(MARGIN_LEFT, 7, 'COLLECTION REPORT', 0, 0, 'C')
+        self.cell(MARGIN_LEFT, 7, GENERAL_TITLE, 0, 0, 'C')
         self.ln(3)
         self.cell(MARGIN_LEFT, 7, 'VM ID : '+_Common.TID, 0, 0, 'C')
         self.ln(3)
         self.cell(MARGIN_LEFT, 7, 'VM Name : '+_Common.KIOSK_NAME, 0, 1, 'C')
 
     def footer(self):
-        self.set_font(USED_FONT, '', 7)
-        self.set_y(-20)
-        self.cell(MARGIN_LEFT, 7, '(TTD Korlap)   (TTD Teknisi MDD)', 0, 0, 'C')
-        self.ln(3)
-        self.cell(MARGIN_LEFT, 7, '--Internal Use Only--', 0, 0, 'C')
+        if USE_FOOTER is True:
+            self.set_font(USED_FONT, '', 7)
+            self.set_y(-20)
+            self.cell(MARGIN_LEFT, 7, '(TTD Korlap)   (TTD Teknisi MDD)', 0, 0, 'C')
+            self.ln(3)
+            self.cell(MARGIN_LEFT, 7, '--Internal Use Only--', 0, 0, 'C')
 
 
 def load_strings(param):
@@ -349,7 +353,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf sale_print_global : ', file_name))
+        LOGGER.debug((file_name))
         # Print-out to printer
         print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
@@ -498,7 +502,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf sale_print_global : ', file_name))
+        LOGGER.debug((file_name))
         # Print-out to printer
         print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
@@ -659,7 +663,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf sale_print_global : ', file_name))
+        LOGGER.debug((file_name))
         # Print-out to printer
         print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
@@ -839,7 +843,6 @@ def save_receipt_local(__id, __data, __type):
 def start_admin_print_global(struct_id):
     _Helper.get_pool().apply_async(admin_print_global, (struct_id,))
 
-# TODO: Enhance Admin Printout Details
 def admin_print_global(struct_id, ext='.pdf'):
     pdf = None
     # Init Variables
@@ -965,7 +968,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf admin_print_global : ', file_name))
+        LOGGER.debug((file_name))
         # Print-out to printer
         for i in range(print_copy):
             print_ = _Printer.do_printout(pdf_file)
@@ -1009,9 +1012,82 @@ def start_print_card_history(payload):
 
 
 def print_card_history(payload):
+    global GENERAL_TITLE, USE_FOOTER
     if _Helper.empty(_Common.LAST_CARD_LOG_HISTORY):
         return
     # Payload Must Contain Card Number, Bank Name, Balance
     payload = json.loads(payload)
-    LOGGER.info((_Common.LAST_CARD_LOG_HISTORY, payload))
-    # Finalise This Print Function
+    pdf = None
+    # Init Variables
+    tiny_space = 3.5
+    line_size = 7
+    padding_left = 0
+    print_copy = 1
+    ext = '.pdf'
+    try:
+        GENERAL_TITLE = payload['bank_name'] + ' CARD LOG HISTORY'
+        USE_FOOTER = False
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        pdf = GeneralPDF('P', 'mm', (80, 140))
+        pdf.add_page()
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-CARDLOG-'+payload['bank_name']+'-'+payload['card_no']
+        # Layouting
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
+                datetime.strftime(datetime.now(), '%H:%M:%S'), 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'No. Kartu : ' + payload['card_no'], 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
+        pdf.ln(1.5)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'NO | TIME | TRX | AMOUNT | BALANCE', 0, 0, 'L')
+        pdf.ln(1.5)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
+        #==================================== 
+        # Looping Log Here
+        # 'date': datetime.strptime(row[2], '%m%d%y').strftime('%Y-%m-%d'),
+        # 'time': ':'.join(_Helper.strtolist(row[3])),
+        # 'type': _Common.BRI_LOG_LEGEND.get(row[4], ''),
+        # 'amount': row[5],
+        # 'prev_balance': row[6],
+        # 'last_balance': row[7]
+        no = 0
+        for log in _Common.LAST_CARD_LOG_HISTORY:
+            no += 1
+            content_row = ' | '.join([
+                str(no),
+                log['date'], 
+                log['type'] + ' ' + clean_number(log['amount']), 
+                clean_number(log['last_balance']), 
+                ])
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, '', line_size-1.5)
+            pdf.cell(padding_left, 0, content_row, 0, 0, 'L')
+            pdf.ln(1.5)
+            pdf.set_font(USED_FONT, '', line_size-1.5)
+            pdf.cell(padding_left, 0, (4*' ')+log['time'], 0, 0, 'L')
+        #==================================== 
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'Saldo Akhir : ' + clean_number(payload['last_balance']), 0, 0, 'L')
+        pdf_file = get_path(file_name+ext)
+        pdf.output(pdf_file, 'F')
+        LOGGER.debug((file_name))
+        # Print-out to printer
+        for i in range(print_copy):
+            print_ = _Printer.do_printout(pdf_file)
+            # LOGGER.debug(("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_))))
+            print("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_)))
+            if '[ERROR]' in print_:
+                break
+            sleep(1)
+    except Exception as e:
+        LOGGER.warning(str(e))

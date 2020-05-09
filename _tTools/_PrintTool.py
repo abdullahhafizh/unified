@@ -116,7 +116,7 @@ def print_global(input_text='\r\n', use_for='EDC_SETTLEMENT', ext='.pdf'):
             pdf.ln(4)
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf print_global : ', file_name))
+        LOGGER.debug((file_name))
         # Print-out to printer
         print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))

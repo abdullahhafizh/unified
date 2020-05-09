@@ -373,7 +373,7 @@ def generate(use_case, store_receipt=True, receipt_text=template_test()):
         GLOBAL_PDF_FILE = pdf_file
         GLOBAL_FILENAME = file_name
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf generate : ', file_name))
+        LOGGER.debug((file_name))
         PDF_SIGNDLER.SIGNAL_START_GENERATE.emit('GENERATE|'+file_name)
         # Logging Receipt Data
         if store_receipt is True:
@@ -451,7 +451,7 @@ def reprint(new_status):
             pdf.ln(4)
         pdf_file = get_path(file_name+EXT)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf reprint : ', file_name))
+        LOGGER.debug((file_name))
         # PDF_SIGNDLER.SIGNAL_REPRINT.emit('REPRINT|'+file_name)
         # Logging Receipt Data
         _trial_ = 0
@@ -532,7 +532,7 @@ def print_global(input_text='\r\n', use_for='EDC_SETTLEMENT'):
             pdf.ln(3)
         pdf_file = get_path(file_name+EXT)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug(('pdf print_global : ', file_name))
+        LOGGER.debug((file_name))
         # Print-out to printer
         print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
