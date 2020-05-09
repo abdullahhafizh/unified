@@ -1092,3 +1092,5 @@ def print_card_history(payload):
             sleep(1)
     except Exception as e:
         LOGGER.warning(str(e))
+    finally:
+        _Common.LAST_CARD_LOG_HISTORY = []
