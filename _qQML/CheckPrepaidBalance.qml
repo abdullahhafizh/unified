@@ -8,7 +8,7 @@ import "config.js" as CONF
 Base{
     id: check_prepaid_balance
 
-//            property var globalScreenType: '2'
+//            property var globalScreenType: '1'
 //            height: (globalScreenType=='2') ? 1024 : 1080
 //            width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 300
@@ -27,7 +27,7 @@ Base{
     property bool jakcardAvailable: false
 
     property bool buttonCardHistory: false
-    property var bigButtonPadding: 150
+    property var bigButtonPadding: 100
     property var actionMode: 'check_balance'
     property variant allowedBank: []
     property variant allowedUpdateBalanceOnline: CONF.bank_ubal_online
@@ -213,7 +213,7 @@ Base{
         ableTopupCode = info.able_topup;
         if (info.able_check_log == '1'){
             buttonCardHistory = true;
-            if (globalScreenType == '1') bigButtonPadding = 220;
+            if (globalScreenType == '1') bigButtonPadding = 200;
         }
         var cardNo__ = FUNC.insert_space_four(cardNo)
         content_card_no.text = cardNo__.substring(0, cardNo__.length-3);
@@ -273,43 +273,45 @@ Base{
         }
     }
 
-    CircleButtonBig{
-        id: update_online_button
-        anchors.horizontalCenterOffset: (!buttonCardHistory) ? 0 : -bigButtonPadding
+    Row{
+        id: rows_extra_feature_button
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
-        anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'UPDATE\nSALDO'
-        modeReverse: true
-        visible: !popup_loading.visible && !preload_check_card.visible && (allowedUpdateBalanceOnline.indexOf(bankName) > -1)
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Press "UPDATE SALDO" for Bank '+bankName);
-                actionMode = 'update_balance_online';
-                preload_check_card.open();
+        spacing: bigButtonPadding
+
+        CircleButtonBig{
+            id: update_online_button
+            button_text: 'UPDATE\nSALDO'
+            modeReverse: true
+            visible: !popup_loading.visible && !preload_check_card.visible && (allowedUpdateBalanceOnline.indexOf(bankName) > -1)
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "UPDATE SALDO" for Bank '+bankName);
+                    actionMode = 'update_balance_online';
+                    preload_check_card.open();
+                }
             }
         }
+
+        CircleButtonBig{
+            id: card_history_button
+            button_text: 'LOG\nKARTU'
+            modeReverse: true
+            visible: buttonCardHistory
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LOG KARTU" for Bank '+bankName);
+                    actionMode = 'get_card_log_history';
+                    preload_check_card.open();
+                }
+            }
+        }
+
     }
 
-    CircleButtonBig{
-        id: card_history_button
-        anchors.horizontalCenterOffset: bigButtonPadding
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
-        anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'LOG\nKARTU'
-        modeReverse: true
-        visible: buttonCardHistory
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Press "LOG KARTU" for Bank '+bankName);
-                actionMode = 'get_card_log_history';
-                preload_check_card.open();
-            }
-        }
-    }
 
     CircleButton{
         id: next_button

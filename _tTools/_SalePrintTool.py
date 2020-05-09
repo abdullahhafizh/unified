@@ -82,7 +82,7 @@ class PDF(FPDF):
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 
 
-GENERAL_TITLE = 'COLLECTION REPORT'
+GENERAL_TITLE = 'VM COLLECTION REPORT'
 USE_FOOTER = False
 
 class GeneralPDF(FPDF):
@@ -844,6 +844,7 @@ def start_admin_print_global(struct_id):
     _Helper.get_pool().apply_async(admin_print_global, (struct_id,))
 
 def admin_print_global(struct_id, ext='.pdf'):
+    global GENERAL_TITLE
     pdf = None
     # Init Variables
     tiny_space = 3
@@ -856,6 +857,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         user = _UserService.USER['username']
     try:
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        GENERAL_TITLE = 'VM COLLECTION REPORT'
         pdf = GeneralPDF('P', 'mm', (80, 140))
         s = get_admin_data()
         if s is False:
@@ -1025,7 +1027,7 @@ def print_card_history(payload):
     print_copy = 1
     ext = '.pdf'
     try:
-        GENERAL_TITLE = payload['bank_name'] + ' CARD LOG HISTORY'
+        GENERAL_TITLE = 'PREPAID CARD LOG HISTORY'
         USE_FOOTER = False
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
         pdf = GeneralPDF('P', 'mm', (80, 140))
@@ -1038,7 +1040,10 @@ def print_card_history(payload):
                 datetime.strftime(datetime.now(), '%H:%M:%S'), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'No. Kartu : ' + payload['card_no'], 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'No Kartu : ' + payload['card_no'], 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'Penerbit : Bank ' + payload['bank_name'], 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')

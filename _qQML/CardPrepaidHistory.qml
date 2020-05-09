@@ -96,6 +96,7 @@ Base{
         }
     }
 
+
     CircleButton{
         id:back_button
         anchors.left: parent.left
