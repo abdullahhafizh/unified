@@ -36,7 +36,7 @@ def check_user_offline_hash(user, password):
 
 
 def get_kiosk_login(username, password):
-    _Helper.get_pool().apply_async(kiosk_login, (username, password,))
+    _Helper.get_thread().apply_async(kiosk_login, (username, password,))
 
 
 def kiosk_login(username, password):

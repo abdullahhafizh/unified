@@ -71,7 +71,7 @@ def create_session():
 
 
 def start_set_plan(param):
-    _Helper.get_pool().apply_async(set_plan, (param,))
+    _Helper.get_thread().apply_async(set_plan, (param,))
 
 
 DEPART_DATE = None
@@ -148,7 +148,7 @@ def set_plan(param):
 
 
 def start_create_schedule():
-    _Helper.get_pool().apply_async(create_schedule)
+    _Helper.get_thread().apply_async(create_schedule)
 
 
 SCHEDULE_SEND_FLAG = True
@@ -391,7 +391,7 @@ JT-503?17:15 - 18:20?737-900ER?-?10:30 - 11:40?
 
 
 def start_sort_flight_data(key, method):
-    _Helper.get_pool().apply_async(sort_flight_data, (key, method,))
+    _Helper.get_thread().apply_async(sort_flight_data, (key, method,))
 
 
 def sort_flight_data(key, method):
@@ -435,7 +435,7 @@ def start_create_chart(param):
     check_value = ID + '||' + param
     if check_value not in CREATE_CHART:
         print('pyt: start_create_chart', str(time.time()*1000), check_value)
-        _Helper.get_pool().apply_async(create_chart, (param,))
+        _Helper.get_thread().apply_async(create_chart, (param,))
         CREATE_CHART.append(check_value)
 
 
@@ -538,7 +538,7 @@ def start_post_person(param):
     global PERSON_DATA
     check_person = ID + '||' + param
     if check_person not in PERSON_DATA:
-        _Helper.get_pool().apply_async(post_person, (param,))
+        _Helper.get_thread().apply_async(post_person, (param,))
         PERSON_DATA.append(check_person)
 
 
@@ -623,7 +623,7 @@ def init_passenger():
 
 
 def start_create_booking():
-    _Helper.get_pool().apply_async(create_booking)
+    _Helper.get_thread().apply_async(create_booking)
 
 
 def create_booking():
@@ -770,7 +770,7 @@ TXT_BOOKING_STATUS = 'WAITING'
 
 
 def start_create_payment(payment):
-    _Helper.get_pool().apply_async(create_payment, (payment,))
+    _Helper.get_thread().apply_async(create_payment, (payment,))
 
 
 def create_payment(payment):
@@ -836,7 +836,7 @@ def tibox_terminal():
 
 
 def start_create_print():
-    _Helper.get_pool().apply_async(create_print)
+    _Helper.get_thread().apply_async(create_print)
 
 
 PRINT_FILE = ""
@@ -880,7 +880,7 @@ def generate_file_print(r):
 
 
 def start_clear_person():
-    _Helper.get_pool().apply_async(clear_person)
+    _Helper.get_thread().apply_async(clear_person)
 
 
 def clear_person():
@@ -905,7 +905,7 @@ def start_confirm_schedule():
     global CONFIRM_SCHEDULE
     check_confirm = ID + '||' + TID
     if check_confirm not in CONFIRM_SCHEDULE:
-        _Helper.get_pool().apply_async(confirm_schedule)
+        _Helper.get_thread().apply_async(confirm_schedule)
         CONFIRM_SCHEDULE.append(check_confirm)
 
 
@@ -935,7 +935,7 @@ MARGIN = '0'
 
 
 def set_rounded_fare(amount):
-    _Helper.get_pool().apply_async(rounded_fare, (amount,))
+    _Helper.get_thread().apply_async(rounded_fare, (amount,))
 
 
 def rounded_fare(amount):
@@ -945,7 +945,7 @@ def rounded_fare(amount):
 
 
 def start_get_airport_name(prefix1, prefix2):
-    _Helper.get_pool().apply_async(get_airport_name, (prefix1, prefix2,))
+    _Helper.get_thread().apply_async(get_airport_name, (prefix1, prefix2,))
 
 
 AIRPORT_DEPART = ''
@@ -973,7 +973,7 @@ def get_airport_name(prefix1, prefix2):
 
 
 def start_send_details_passenger():
-    _Helper.get_pool().apply_async(send_details_passenger)
+    _Helper.get_thread().apply_async(send_details_passenger)
 
 
 def send_details_passenger():

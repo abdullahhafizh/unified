@@ -26,7 +26,7 @@ SETTING_PARAM = []
 
 
 def start_check_connection(url, param):
-    _Helper.get_pool().apply_async(check_connection, (url, param,))
+    _Helper.get_thread().apply_async(check_connection, (url, param,))
 
 
 def check_connection(url, param):
@@ -56,11 +56,11 @@ def check_connection(url, param):
 
 
 def start_idle_mode():
-    _Helper.get_pool().apply_async(change_idle_mode, ('START',))
+    _Helper.get_thread().apply_async(change_idle_mode, ('START',))
 
 
 def stop_idle_mode():
-    _Helper.get_pool().apply_async(change_idle_mode, ('STOP',))
+    _Helper.get_thread().apply_async(change_idle_mode, ('STOP',))
 
 
 def change_idle_mode(s):
@@ -76,7 +76,7 @@ IDLE_MODE = True
 
 
 def start_sync_machine_status():
-    _Helper.get_pool().apply_async(sync_machine_status)
+    _Helper.get_thread().apply_async(sync_machine_status)
 
 
 def sync_machine_status():
@@ -102,7 +102,7 @@ def sync_machine_status():
 
 
 def start_do_pending_job():
-    _Helper.get_pool().apply_async(do_pending_job)
+    _Helper.get_thread().apply_async(do_pending_job)
 
 
 def do_pending_job():
@@ -138,11 +138,11 @@ def do_pending_job():
 
 
 def start_kiosk_sync():
-    _Helper.get_pool().apply_async(kiosk_sync)
+    _Helper.get_thread().apply_async(kiosk_sync)
 
 
 def start_kiosk_data_sync():
-    _Helper.get_pool().apply_async(kiosk_data_sync)
+    _Helper.get_thread().apply_async(kiosk_data_sync)
 
 
 def kiosk_data_sync():
@@ -157,7 +157,7 @@ def kiosk_data_sync():
 
 
 def start_kiosk_topup_sync():
-    _Helper.get_pool().apply_async(kiosk_topup_sync)
+    _Helper.get_thread().apply_async(kiosk_topup_sync)
 
 
 def kiosk_topup_sync():
@@ -193,7 +193,7 @@ def kiosk_sync():
     sync_sam_audit()
 
 def start_sync_topup_records():
-    _Helper.get_pool().apply_async(sync_topup_records)
+    _Helper.get_thread().apply_async(sync_topup_records)
 
 
 def sync_topup_records():
@@ -224,7 +224,7 @@ def sync_topup_records():
 
 
 def start_sync_data_transaction():
-    _Helper.get_pool().apply_async(sync_data_transaction)
+    _Helper.get_thread().apply_async(sync_data_transaction)
 
 
 def sync_data_transaction():
@@ -255,7 +255,7 @@ def sync_data_transaction():
 
 
 def start_sync_data_transaction_failure():
-    _Helper.get_pool().apply_async(sync_data_transaction_failure)
+    _Helper.get_thread().apply_async(sync_data_transaction_failure)
 
 
 def sync_data_transaction_failure():
@@ -285,7 +285,7 @@ def sync_data_transaction_failure():
 
 
 def start_sync_product_data():
-    _Helper.get_pool().apply_async(sync_product_data)
+    _Helper.get_thread().apply_async(sync_product_data)
 
 
 def sync_product_data():
@@ -315,7 +315,7 @@ def sync_product_data():
 
 
 def start_sync_sam_audit():
-    _Helper.get_pool().apply_async(sync_sam_audit)
+    _Helper.get_thread().apply_async(sync_sam_audit)
 
 
 def sync_sam_audit():
@@ -346,7 +346,7 @@ def sync_sam_audit():
 
 def start_sync_settlement_bni():
     bank = 'BNI'
-    _Helper.get_pool().apply_async(sync_settlement_data, (bank,))
+    _Helper.get_thread().apply_async(sync_settlement_data, (bank,))
 
 
 def sync_settlement_data(bank):
@@ -390,7 +390,7 @@ def sync_settlement_data(bank):
 
 
 def start_sync_task():
-    _Helper.get_pool().apply_async(sync_task)
+    _Helper.get_thread().apply_async(sync_task)
 
 
 def sync_task():
@@ -416,7 +416,7 @@ def sync_task():
 
 
 def start_sync_pending_refund():
-    _Helper.get_pool().apply_async(sync_pending_refund)
+    _Helper.get_thread().apply_async(sync_pending_refund)
 
 
 def sync_pending_refund():
@@ -558,7 +558,7 @@ def update_task(task, result='TRIGGERED_TO_SYSTEM'):
 
 
 def start_sync_product_stock():
-    _Helper.get_pool().apply_async(sync_product_stock)
+    _Helper.get_thread().apply_async(sync_product_stock)
 
 
 def sync_product_stock():
@@ -591,7 +591,7 @@ def sync_product_stock():
 
 
 def start_sync_topup_amount():
-    _Helper.get_pool().apply_async(sync_topup_amount)
+    _Helper.get_thread().apply_async(sync_topup_amount)
 
 
 def sync_topup_amount():
@@ -654,7 +654,7 @@ def get_amount(idx, listx):
 
 
 # def start_automate_topup_bni():
-#     _Tools.get_pool().apply_async(automate_topup_bni)
+#     _Tools.get_thread().apply_async(automate_topup_bni)
 #
 #
 # def automate_topup_bni():
@@ -676,7 +676,7 @@ def get_amount(idx, listx):
 
 
 # def start_manual_trigger_topup_bni():
-#     _Tools.get_pool().apply_async(manual_trigger_topup_bni)
+#     _Tools.get_thread().apply_async(manual_trigger_topup_bni)
 #
 #
 # def manual_trigger_topup_bni():
@@ -700,7 +700,7 @@ def get_amount(idx, listx):
 
 
 def start_do_bni_topup_by_trx():
-    _Helper.get_pool().apply_async(do_bni_topup_by_trx)
+    _Helper.get_thread().apply_async(do_bni_topup_by_trx)
 
 
 # TODO Add This Trigger In Every Topup BNI Trx

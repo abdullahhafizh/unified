@@ -514,7 +514,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
 
 def start_do_bni_topup_settlement():
     bank = 'BNI'
-    _Helper.get_pool().apply_async(do_settlement_for, (bank,))
+    _Helper.get_thread().apply_async(do_settlement_for, (bank,))
 
 
 def start_do_mandiri_topup_settlement():
@@ -524,7 +524,7 @@ def start_do_mandiri_topup_settlement():
             _Common.MANDIRI_ACTIVE_WALLET = 0
         else:
             bank = 'MANDIRI_C2C'
-        _Helper.get_pool().apply_async(do_settlement_for, (bank,))
+        _Helper.get_thread().apply_async(do_settlement_for, (bank,))
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
     else:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|NO_REQUIRED')
@@ -537,7 +537,7 @@ def start_reset_mandiri_settlement():
     else:
         bank = 'MANDIRI_C2C'
     force = True
-    _Helper.get_pool().apply_async(do_settlement_for, (bank, force,))
+    _Helper.get_thread().apply_async(do_settlement_for, (bank, force,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
@@ -548,12 +548,12 @@ def start_dummy_mandiri_topup_settlement():
     else:
         bank = 'MANDIRI_C2C'    
     force = True
-    _Helper.get_pool().apply_async(do_settlement_for, (bank, force,))
+    _Helper.get_thread().apply_async(do_settlement_for, (bank, force,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
 def async_push_settlement_data(param):
-    _Helper.get_pool().apply_async(push_settlement_data, (param,))
+    _Helper.get_thread().apply_async(push_settlement_data, (param,))
 
 
 def do_settlement_for(bank='BNI', force=False):
@@ -697,7 +697,7 @@ def do_settlement_for(bank='BNI', force=False):
 
 # Call Ad-Hoc C2C Fee Settlement
 def start_do_c2c_update_fee():
-    _Helper.get_pool().apply_async(do_c2c_update_fee,)
+    _Helper.get_thread().apply_async(do_c2c_update_fee,)
 
 
 def do_c2c_update_fee():
@@ -726,9 +726,9 @@ def mandiri_create_rq1(content):
 
 def start_validate_update_balance():
     if not _Common.C2C_MODE:
-        _Helper.get_pool().apply_async(validate_update_balance)
+        _Helper.get_thread().apply_async(validate_update_balance)
     else:
-        _Helper.get_pool().apply_async(validate_update_balance_c2c)
+        _Helper.get_thread().apply_async(validate_update_balance_c2c)
 
 
 def validate_update_balance_c2c():
@@ -779,7 +779,7 @@ def start_trigger_mandiri_sam_update():
         return
     sleep(_Helper.get_random_num(.7, 2.9))
     if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
-        _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
+        _Helper.get_thread().apply_async(trigger_mandiri_sam_update)
     else:
         print("pyt: Failed MANDIRI_SAM_UPDATE_BALANCE, Already Triggered Previously")
 
@@ -815,7 +815,7 @@ def start_trigger_edc_settlement():
     sleep(_Helper.get_random_num(.7, 2.9))
     if not _Common.EDC_SETTLEMENT_RUNNING:
         _Common.EDC_SETTLEMENT_RUNNING = True
-        _Helper.get_pool().apply_async(trigger_edc_settlement)
+        _Helper.get_thread().apply_async(trigger_edc_settlement)
     else:
         print("pyt: Failed EDC_SETTLEMENT_SCHEDULE, Already Triggered Previously")
 

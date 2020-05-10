@@ -34,7 +34,7 @@ FLIGHT_NO = None
 
 
 def start_check_booking_code(param):
-    _Helper.get_pool().apply_async(check_booking_code, (param,))
+    _Helper.get_thread().apply_async(check_booking_code, (param,))
 
 
 def check_booking_code(param=None):
@@ -218,7 +218,7 @@ def get_status_seat(s):
 
 
 def start_get_boarding_pass(param):
-    _Helper.get_pool().apply_async(get_boarding_pass, (param,))
+    _Helper.get_thread().apply_async(get_boarding_pass, (param,))
 
 
 BOARDING_FILE = None

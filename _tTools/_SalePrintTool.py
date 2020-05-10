@@ -140,11 +140,11 @@ def justifying(left, right):
 
 def start_direct_sale_print_global(payload):
     _KioskService.GLOBAL_TRANSACTION_DATA = json.loads(payload)
-    _Helper.get_pool().apply_async(sale_print_global, )
+    _Helper.get_thread().apply_async(sale_print_global, )
 
 
 def start_sale_print_global():
-    _Helper.get_pool().apply_async(sale_print_global, )
+    _Helper.get_thread().apply_async(sale_print_global, )
 
     # '{"date":"Thursday, March 07, 2019","epoch":1551970698740,"payment":"cash","shop_type":"shop","time":"9:58:18 PM",
     # "qty":4,"value":"3000","provider":"Kartu Prabayar","raw":{"init_price":500,"syncFlag":1,"createdAt":1551856851000,
@@ -157,7 +157,7 @@ def start_sale_print_global():
 
 
 def start_reprint_global():
-    _Helper.get_pool().apply_async(sale_reprint_global, )
+    _Helper.get_thread().apply_async(sale_reprint_global, )
 
 
 LAST_TRX = None
@@ -841,7 +841,7 @@ def save_receipt_local(__id, __data, __type):
 
 
 def start_admin_print_global(struct_id):
-    _Helper.get_pool().apply_async(admin_print_global, (struct_id,))
+    _Helper.get_thread().apply_async(admin_print_global, (struct_id,))
 
 def admin_print_global(struct_id, ext='.pdf'):
     global GENERAL_TITLE
@@ -1010,7 +1010,7 @@ def mark_sync_collected_data(s):
 
 
 def start_print_card_history(payload):
-    _Helper.get_pool().apply_async(print_card_history, (payload,))
+    _Helper.get_thread().apply_async(print_card_history, (payload,))
 
 
 def print_card_history(payload):

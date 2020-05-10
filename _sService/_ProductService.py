@@ -27,7 +27,7 @@ LAST_UPDATED_STOCK = []
 
 
 def start_change_product_stock(port, stock):
-    _Helper.get_pool().apply_async(change_product_stock, (port, stock,))
+    _Helper.get_thread().apply_async(change_product_stock, (port, stock,))
 
 
 def change_product_stock(port, stock):
@@ -79,7 +79,7 @@ def kiosk_get_product_stock():
 
 
 def start_check_voucher(voucher):
-    _Helper.get_pool().apply_async(check_voucher, (voucher,))
+    _Helper.get_thread().apply_async(check_voucher, (voucher,))
 
 
 def check_voucher(voucher):
@@ -117,7 +117,7 @@ def check_voucher(voucher):
 
 
 def start_use_voucher(voucher, reff_no):
-    _Helper.get_pool().apply_async(use_voucher, (voucher, reff_no,))
+    _Helper.get_thread().apply_async(use_voucher, (voucher, reff_no,))
 
 
 def use_voucher(voucher, reff_no):

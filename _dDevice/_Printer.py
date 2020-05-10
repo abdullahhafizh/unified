@@ -54,7 +54,7 @@ def print_file(file):
 
 
 def start_default_print(path):
-    _Helper.get_pool().apply_async(default_print, (path,))
+    _Helper.get_thread().apply_async(default_print, (path,))
 
 
 def default_print(path):

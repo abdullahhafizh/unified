@@ -106,7 +106,7 @@ def init_mei():
 
 
 def start_mei_standby_mode():
-    _Helper.get_pool().apply_async(mei_standby_mode)
+    _Helper.get_thread().apply_async(mei_standby_mode)
 
 
 def mei_standby_mode():
@@ -116,7 +116,7 @@ def mei_standby_mode():
 
 
 def start_disconnect_mei():
-    _Helper.get_pool().apply_async(disconnect_mei)
+    _Helper.get_thread().apply_async(disconnect_mei)
 
 
 EXIT_KEY1 = 'COMPLETE'
@@ -180,7 +180,7 @@ def log_book_cash():
 
 
 def start_accept_mei():
-    _Helper.get_pool().apply_async(accept_mei)
+    _Helper.get_thread().apply_async(accept_mei)
 
 
 def accept_mei(mode=None):
@@ -307,7 +307,7 @@ DIRECT_PRICE_AMOUNT = 0
 
 
 def start_set_direct_price(price):
-    _Helper.get_pool().apply_async(set_direct_price, (price,))
+    _Helper.get_thread().apply_async(set_direct_price, (price,))
 
 
 def set_direct_price(price):
@@ -456,7 +456,7 @@ def handling_cash55():
 
 
 def start_dis_accept_mei():
-    _Helper.get_pool().apply_async(dis_accept_mei)
+    _Helper.get_thread().apply_async(dis_accept_mei)
 
 
 def dis_accept_mei():
@@ -489,7 +489,7 @@ def dis_accept_mei():
 
 
 def start_stack_mei():
-    _Helper.get_pool().apply_async(stack_mei)
+    _Helper.get_thread().apply_async(stack_mei)
 
 
 def stack_mei(file_output=_Command.MO_REPORT):
@@ -549,7 +549,7 @@ def handling_stack_cash(res):
 
 
 def start_return_mei():
-    _Helper.get_pool().apply_async(return_mei)
+    _Helper.get_thread().apply_async(return_mei)
 
 
 def return_mei(file_output=_Command.MO_REPORT):
@@ -573,7 +573,7 @@ def return_mei(file_output=_Command.MO_REPORT):
 
 
 def start_store_es_mei():
-    _Helper.get_pool().apply_async(store_es_mei)
+    _Helper.get_thread().apply_async(store_es_mei)
 
 
 GRAB_KEY_STORE = 'STACKED_CUSTOMER_TO_ESCROW_STORAGE'
@@ -675,7 +675,7 @@ IS_RETURNED = False
 
 
 def start_return_es_mei():
-    _Helper.get_pool().apply_async(return_es_mei)
+    _Helper.get_thread().apply_async(return_es_mei)
 
 
 def return_es_mei():
@@ -740,7 +740,7 @@ def handling_return_es():
 
 
 def start_dispense_cou_mei():
-    _Helper.get_pool().apply_async(dispense_cou_mei)
+    _Helper.get_thread().apply_async(dispense_cou_mei)
 
 
 def dispense_cou_mei():
@@ -765,7 +765,7 @@ def dispense_cou_mei():
 
 
 def start_float_down_cou_mei():
-    _Helper.get_pool().apply_async(float_down_cou_mei)
+    _Helper.get_thread().apply_async(float_down_cou_mei)
 
 
 def float_down_cou_mei():
@@ -790,7 +790,7 @@ def float_down_cou_mei():
 
 
 def start_dispense_val_mei(amount):
-    _Helper.get_pool().apply_async(dispense_val_mei, (amount,))
+    _Helper.get_thread().apply_async(dispense_val_mei, (amount,))
 
 
 def dispense_val_mei(amount):
@@ -815,7 +815,7 @@ def dispense_val_mei(amount):
 
 
 def start_float_down_all_mei():
-    _Helper.get_pool().apply_async(float_down_all_mei)
+    _Helper.get_thread().apply_async(float_down_all_mei)
 
 
 def float_down_all_mei():
@@ -840,7 +840,7 @@ def float_down_all_mei():
 
 
 def start_get_return_note():
-    _Helper.get_pool().apply_async(get_return_note)
+    _Helper.get_thread().apply_async(get_return_note)
 
 
 def get_return_note():
@@ -877,7 +877,7 @@ def get_total_cash():
 
 
 def start_mei_create_payment(payment):
-    _Helper.get_pool().apply_async(mei_create_payment, (payment,))
+    _Helper.get_thread().apply_async(mei_create_payment, (payment,))
 
 
 def mei_create_payment(payment):

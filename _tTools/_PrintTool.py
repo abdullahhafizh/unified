@@ -95,7 +95,7 @@ def chunk_text(text, lenght=24, delimiter="\r\n"):
 
 
 def start_print_global(input_text, use_for):
-    _Helper.get_pool().apply_async(print_global, (input_text, use_for,))
+    _Helper.get_thread().apply_async(print_global, (input_text, use_for,))
 
 
 def print_global(input_text='\r\n', use_for='EDC_SETTLEMENT', ext='.pdf'):

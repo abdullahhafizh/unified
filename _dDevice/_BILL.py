@@ -94,7 +94,7 @@ IniCfgFileName=BillDepositDevCfg.ini'''
 
 def start_init_bill():
     sleep(1)
-    _Helper.get_pool().apply_async(init_bill, )
+    _Helper.get_thread().apply_async(init_bill, )
 
 
 DIRECT_PRICE_MODE = False
@@ -121,7 +121,7 @@ def init_bill():
 
 
 def start_set_direct_price(price):
-    _Helper.get_pool().apply_async(set_direct_price, (price,))
+    _Helper.get_thread().apply_async(set_direct_price, (price,))
 
 
 def set_direct_price(price):
@@ -133,7 +133,7 @@ def set_direct_price(price):
 
 
 def start_bill_receive_note():
-    _Helper.get_pool().apply_async(start_receive_note)
+    _Helper.get_thread().apply_async(start_receive_note)
 
 
 def parse_notes(_result):
@@ -250,7 +250,7 @@ def is_exceed_payment(target, value_in, current_value):
 def stop_bill_receive_note():
     # log_book_cash('', get_collected_cash())
     sleep(1)
-    _Helper.get_pool().apply_async(stop_receive_note)
+    _Helper.get_thread().apply_async(stop_receive_note)
 
 
 def stop_receive_note():
@@ -278,7 +278,7 @@ def stop_receive_note():
 
 
 def start_get_status_bill():
-    _Helper.get_pool().apply_async(get_status_bill)
+    _Helper.get_thread().apply_async(get_status_bill)
 
 
 def get_status_bill():
@@ -298,7 +298,7 @@ def get_status_bill():
 
 
 def start_log_book_cash(pid, amount):
-    _Helper.get_pool().apply_async(log_book_cash, (pid, amount,))
+    _Helper.get_thread().apply_async(log_book_cash, (pid, amount,))
 
 
 def log_book_cash(pid, amount, mode='normal'):

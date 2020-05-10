@@ -60,11 +60,11 @@ def init_edc_with_handle():
 
 
 def create_sale_edc(amount):
-    _Helper.get_pool().apply_async(sale_edc, (amount,))
+    _Helper.get_thread().apply_async(sale_edc, (amount,))
 
 
 def create_sale_edc_with_struct_id(amount, trxid):
-    _Helper.get_pool().apply_async(sale_edc, (amount, trxid,))
+    _Helper.get_thread().apply_async(sale_edc, (amount, trxid,))
 
 
 IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
@@ -289,7 +289,7 @@ def handling_card(amount, trxid=None):
 
 
 def start_disconnect_edc():
-    _Helper.get_pool().apply_async(disconnect_edc)
+    _Helper.get_thread().apply_async(disconnect_edc)
 
 
 def disconnect_edc():
@@ -333,7 +333,7 @@ def store_settlement():
 
 def start_edc_settlement():
     LOGGER.info("[START] define_edc_settlement")
-    _Helper.get_pool().apply_async(define_edc_settlement)
+    _Helper.get_thread().apply_async(define_edc_settlement)
 
 
 def backend_edc_settlement():
@@ -569,7 +569,7 @@ def card_type_settle():
 
 
 def start_get_settlement():
-    _Helper.get_pool().apply_async(get_settlement_data)
+    _Helper.get_thread().apply_async(get_settlement_data)
 
 
 def get_settlement_data():
@@ -701,7 +701,7 @@ def upload_edc_settlement_data(param):
 
 
 def start_void_data():
-    _Helper.get_pool().apply_async(void_settlement_data)
+    _Helper.get_thread().apply_async(void_settlement_data)
 
 
 def void_settlement_data():
@@ -738,7 +738,7 @@ DUMMY_EDC_RESPONSE = {
 
 
 def start_dummy_edc_receipt():
-    _Helper.get_pool().apply_async(_EDCTool.generate_edc_receipt, (DUMMY_EDC_RESPONSE,))
+    _Helper.get_thread().apply_async(_EDCTool.generate_edc_receipt, (DUMMY_EDC_RESPONSE,))
 
 
 def standardize_param(param, trx):

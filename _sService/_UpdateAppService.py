@@ -43,7 +43,7 @@ def pull(origin='master'):
 
 
 def start_do_update():
-    _Helper.get_pool().apply_async(do_update)
+    _Helper.get_thread().apply_async(do_update)
 
 
 ORIGIN = 'develop'

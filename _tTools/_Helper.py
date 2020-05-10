@@ -14,12 +14,15 @@ from sys import _getframe as whois
 import re
 # import inspect
 
+# Hardcoded Maximum Thread at a time
+MAX_THREAD = 16
+
 LOGGER = logging.getLogger()
-POOL = ThreadPool(16)
+THREADS = ThreadPool(MAX_THREAD)
 
 
-def get_pool():
-    return POOL
+def get_thread():
+    return THREADS
     
 
 def get_global_port(device_name, default_baud_rate, default_port, default_timeout=1):

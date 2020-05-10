@@ -229,7 +229,7 @@ def open():
 
 
 def start_disconnect_qprox():
-    _Helper.get_pool().apply_async(disconnect_qprox)
+    _Helper.get_thread().apply_async(disconnect_qprox)
 
 
 def disconnect_qprox():
@@ -247,7 +247,7 @@ INIT_LIST = []
 
 
 def start_init_config():
-    _Helper.get_pool().apply_async(init_config)
+    _Helper.get_thread().apply_async(init_config)
 
 
 def init_config():
@@ -314,7 +314,7 @@ def init_config():
 
 
 def start_debit_qprox(amount):
-    _Helper.get_pool().apply_async(debit_qprox, (amount,))
+    _Helper.get_thread().apply_async(debit_qprox, (amount,))
 
 
 def debit_qprox(amount):
@@ -336,7 +336,7 @@ def debit_qprox(amount):
 
 def start_auth_ka():
     print('pyt: Waiting Login Card To Be Put Into Reader...')
-    _Helper.get_pool().apply_async(auth_ka)
+    _Helper.get_thread().apply_async(auth_ka)
 
 
 def auth_ka(_slot=None, initial=True):
@@ -395,7 +395,7 @@ def auth_ka(_slot=None, initial=True):
 
 
 def start_check_balance():
-    _Helper.get_pool().apply_async(check_balance)
+    _Helper.get_thread().apply_async(check_balance)
 
 
 LAST_BALANCE_CHECK = None
@@ -484,9 +484,9 @@ def check_balance():
 
 def start_top_up_mandiri(amount, trxid):
     if not _Common.C2C_MODE:
-        _Helper.get_pool().apply_async(top_up_mandiri, (amount, trxid,))
+        _Helper.get_thread().apply_async(top_up_mandiri, (amount, trxid,))
     else:
-        _Helper.get_pool().apply_async(top_up_mandiri_c2c, (amount, trxid,))
+        _Helper.get_thread().apply_async(top_up_mandiri_c2c, (amount, trxid,))
 
 
 def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
@@ -545,7 +545,7 @@ def start_topup_mandiri_correction(amount, trxid):
     if not _Common.C2C_MODE:
         return
     else:
-        _Helper.get_pool().apply_async(top_up_mandiri_correction, (amount, trxid,))
+        _Helper.get_thread().apply_async(top_up_mandiri_correction, (amount, trxid,))
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
@@ -688,7 +688,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
 
 def start_top_up_bni(amount, trxid):
     # get_bni_wallet_status()
-    _Helper.get_pool().apply_async(top_up_bni, (amount, trxid,))
+    _Helper.get_thread().apply_async(top_up_bni, (amount, trxid,))
 
 
 def get_bni_wallet_status(upload=True):
@@ -747,7 +747,7 @@ def update_bni_wallet(slot, amount, last_balance=None):
 
 def start_fake_update_dki(card_no, amount):
     bank = 'DKI'
-    _Helper.get_pool().apply_async(fake_update_balance, (bank, card_no, amount,))
+    _Helper.get_thread().apply_async(fake_update_balance, (bank, card_no, amount,))
 
 
 def fake_update_balance(bank, card_no, amount):
@@ -771,7 +771,7 @@ def fake_update_balance(bank, card_no, amount):
 
 def start_topup_up_bni_with_attempt(amount, trxid, attempt):
     slot = None
-    _Helper.get_pool().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
+    _Helper.get_thread().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
 
 
 def top_up_bni(amount, trxid, slot=None, attempt=None):
@@ -856,7 +856,7 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
 
 
 def start_ka_info():
-    _Helper.get_pool().apply_async(ka_info_mandiri)
+    _Helper.get_thread().apply_async(ka_info_mandiri)
 
 
 MANDIRI_DEPOSIT_BALANCE = 0
@@ -929,7 +929,7 @@ def ka_info_bni(slot=1):
 
 
 def start_create_online_info():
-    _Helper.get_pool().apply_async(create_online_info)
+    _Helper.get_thread().apply_async(create_online_info)
 
 
 PREV_RQ1_DATA = None
@@ -959,7 +959,7 @@ def create_online_info(slot=None):
 
 
 def start_init_online():
-    _Helper.get_pool().apply_async(init_online)
+    _Helper.get_thread().apply_async(init_online)
 
 
 def init_online(rsp=None, slot=None):
@@ -1050,7 +1050,7 @@ def set_c2c_settlement_fee(file):
 
 
 def start_get_card_history(bank):
-    _Helper.get_pool().apply_async(get_card_history, (bank,))
+    _Helper.get_thread().apply_async(get_card_history, (bank,))
 
 
 def get_card_history(bank):

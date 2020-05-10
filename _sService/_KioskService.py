@@ -55,7 +55,7 @@ LOGGER = logging.getLogger()
 
 
 def get_kiosk_status():
-    _Helper.get_pool().apply_async(kiosk_status)
+    _Helper.get_thread().apply_async(kiosk_status)
 
 
 def kiosk_status():
@@ -255,7 +255,7 @@ def define_theme(d):
 
 def start_define_ads(wait_for=5):
     sleep(wait_for)
-    _Helper.get_pool().apply_async(define_ads, (_Common.ADS_SETTING, ))
+    _Helper.get_thread().apply_async(define_ads, (_Common.ADS_SETTING, ))
 
 
 def define_ads(a):
@@ -314,7 +314,7 @@ def get_metadata_link(media, data):
 
 
 def start_get_price_setting():
-    _Helper.get_pool().apply_async(kiosk_price_setting)
+    _Helper.get_thread().apply_async(kiosk_price_setting)
 
 
 def kiosk_price_setting():
@@ -353,7 +353,7 @@ def force_rename(file1, file2):
 
 
 def get_gui_version():
-    _Helper.get_pool().apply_async(gui_version)
+    _Helper.get_thread().apply_async(gui_version)
 
 
 def gui_version():
@@ -361,7 +361,7 @@ def gui_version():
 
 
 def get_kiosk_name():
-    _Helper.get_pool().apply_async(kiosk_name)
+    _Helper.get_thread().apply_async(kiosk_name)
 
 
 def kiosk_name():
@@ -384,7 +384,7 @@ LAST_SYNC = 'OFFLINE'
 
 
 def kiosk_get_machine_summary():
-    _Helper.get_pool().apply_async(get_machine_summary)
+    _Helper.get_thread().apply_async(get_machine_summary)
 
 # SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0
 
@@ -541,7 +541,7 @@ def execute_command(command):
 
 
 def post_gui_version():
-    _Helper.get_pool().apply_async(gui_info)
+    _Helper.get_thread().apply_async(gui_info)
 
 
 def gui_info():
@@ -554,7 +554,7 @@ def gui_info():
 
 
 def get_file_list(dir_):
-    _Helper.get_pool().apply_async(file_list, (dir_,))
+    _Helper.get_thread().apply_async(file_list, (dir_,))
 
 
 def file_list(dir_):
@@ -597,7 +597,7 @@ def post_tvc_list(list_):
 
 
 def post_tvc_log(media):
-    _Helper.get_pool().apply_async(update_tvc_log, (media,))
+    _Helper.get_thread().apply_async(update_tvc_log, (media,))
 
 
 def update_tvc_log(media):
@@ -655,7 +655,7 @@ def send_tvc_log(media, count, media_code=None):
 
 
 def start_get_payments():
-    _Helper.get_pool().apply_async(get_payments)
+    _Helper.get_thread().apply_async(get_payments)
 
 
 def get_payments():
@@ -663,7 +663,7 @@ def get_payments():
 
 
 def start_get_refunds():
-    _Helper.get_pool().apply_async(get_refunds)
+    _Helper.get_thread().apply_async(get_refunds)
 
 
 def get_refunds():
@@ -676,7 +676,7 @@ FIRST_RUN_FLAG = True
 def start_restart_mdd_service():
     global FIRST_RUN_FLAG
     if FIRST_RUN_FLAG is True:
-        _Helper.get_pool().apply_async(restart_mdd_service)
+        _Helper.get_thread().apply_async(restart_mdd_service)
         FIRST_RUN_FLAG = False
 
 
@@ -689,7 +689,7 @@ def restart_mdd_service():
 
 
 def start_get_cash_data():
-    _Helper.get_pool().apply_async(list_uncollected_cash)
+    _Helper.get_thread().apply_async(list_uncollected_cash)
 
 
 def list_uncollected_cash():
@@ -706,7 +706,7 @@ def list_uncollected_cash():
 
 
 def start_begin_collect_cash():
-    _Helper.get_pool().apply_async(begin_collect_cash)
+    _Helper.get_thread().apply_async(begin_collect_cash)
 
 
 def begin_collect_cash():
@@ -756,7 +756,7 @@ def post_cash_collection(l, t):
 
 
 def start_adjust_table(p):
-    _Helper.get_pool().apply_async(adjust_table, (p,))
+    _Helper.get_thread().apply_async(adjust_table, (p,))
 
 
 def adjust_table(p, t='Receipts'):
@@ -772,7 +772,7 @@ def adjust_table(p, t='Receipts'):
 
 
 def start_alter_table(a):
-    _Helper.get_pool().apply_async(alter_table, (a,))
+    _Helper.get_thread().apply_async(alter_table, (a,))
 
 
 def alter_table(a):
@@ -783,7 +783,7 @@ def alter_table(a):
 
 
 def start_direct_alter_table(s):
-    _Helper.get_pool().apply_async(direct_alter_table, (s,))
+    _Helper.get_thread().apply_async(direct_alter_table, (s,))
 
 
 def direct_alter_table(scripts):
@@ -804,7 +804,7 @@ TID = _Common.TID
 
 
 def start_get_admin_key():
-    _Helper.get_pool().apply_async(get_admin_key)
+    _Helper.get_thread().apply_async(get_admin_key)
 
 
 def get_admin_key():
@@ -813,7 +813,7 @@ def get_admin_key():
 
 
 def start_check_wallet(amount):
-    _Helper.get_pool().apply_async(check_wallet, (amount,))
+    _Helper.get_thread().apply_async(check_wallet, (amount,))
 
 
 def check_wallet(amount):
@@ -831,7 +831,7 @@ def check_wallet(amount):
 
 
 def kiosk_get_product_stock():
-    _Helper.get_pool().apply_async(get_product_stock, )
+    _Helper.get_thread().apply_async(get_product_stock, )
 
 
 def get_product_stock():
@@ -858,7 +858,7 @@ def get_product_stock():
 
 
 def start_store_transaction_global(param):
-    _Helper.get_pool().apply_async(store_transaction_global, (param,))
+    _Helper.get_thread().apply_async(store_transaction_global, (param,))
 
 
 GLOBAL_TRANSACTION_DATA = None
@@ -897,11 +897,11 @@ PID_STOCK_SALE = ''
 def retry_store_transaction_global():
     _param = json.dumps(GLOBAL_TRANSACTION_DATA)
     _retry = True
-    _Helper.get_pool().apply_async(store_transaction_global, (_param, _retry,))
+    _Helper.get_thread().apply_async(store_transaction_global, (_param, _retry,))
 
 
 def start_direct_store_transaction_data(payload):
-    _Helper.get_pool().apply_async(direct_store_transaction_data, (payload,))
+    _Helper.get_thread().apply_async(direct_store_transaction_data, (payload,))
 
 
 def direct_store_transaction_data(payload):
@@ -1013,7 +1013,7 @@ def store_transaction_global(param, retry=False):
 
             
 def start_kiosk_get_topup_amount():
-    _Helper.get_pool().apply_async(kiosk_get_topup_amount)
+    _Helper.get_thread().apply_async(kiosk_get_topup_amount)
 
 
 def kiosk_get_topup_amount():
@@ -1022,7 +1022,7 @@ def kiosk_get_topup_amount():
 
 
 def start_kiosk_get_payment_setting():
-    _Helper.get_pool().apply_async(kiosk_get_payment_setting)
+    _Helper.get_thread().apply_async(kiosk_get_payment_setting)
 
 
 def kiosk_get_payment_setting():
@@ -1033,7 +1033,7 @@ def kiosk_get_payment_setting():
 def start_store_topup_transaction(param):
     # Moved Into Each Topup Offline Process
     return
-    # _Helper.get_pool().apply_async(store_topup_transaction, (param,))
+    # _Helper.get_thread().apply_async(store_topup_transaction, (param,))
 
 # '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
 # "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},

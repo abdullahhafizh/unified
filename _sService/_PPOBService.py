@@ -28,12 +28,12 @@ LOGGER = logging.getLogger()
 
 
 def start_get_ppob_product():
-    _Helper.get_pool().apply_async(get_ppob_product)
+    _Helper.get_thread().apply_async(get_ppob_product)
 
 
 def start_init_ppob_product():
     signal = False
-    _Helper.get_pool().apply_async(get_ppob_product, (signal,))
+    _Helper.get_thread().apply_async(get_ppob_product, (signal,))
 
 
 def get_ppob_product(signal=True):
@@ -73,7 +73,7 @@ def store_image_item(products):
 
 
 def start_check_ppob_product(msisdn, product_id):
-    _Helper.get_pool().apply_async(check_ppob_product, (msisdn, product_id,))
+    _Helper.get_thread().apply_async(check_ppob_product, (msisdn, product_id,))
 
 
 def check_ppob_product(msisdn='', product_id=''):
@@ -140,12 +140,12 @@ def extract_customer_name(key, message):
 
 def start_do_pay_ppob(payload):
     mode = 'PAY'
-    _Helper.get_pool().apply_async(do_trx_ppob, (payload, mode,))
+    _Helper.get_thread().apply_async(do_trx_ppob, (payload, mode,))
 
 
 def start_do_topup_ppob(payload):
     mode = 'TOPUP'
-    _Helper.get_pool().apply_async(do_trx_ppob, (payload, mode,))
+    _Helper.get_thread().apply_async(do_trx_ppob, (payload, mode,))
 
 
 def do_trx_ppob(payload, mode='PAY'):
@@ -197,7 +197,7 @@ def do_trx_ppob(payload, mode='PAY'):
 
 
 def start_check_trx_online(reff_no):
-    _Helper.get_pool().apply_async(do_check_trx, (reff_no,))
+    _Helper.get_thread().apply_async(do_check_trx, (reff_no,))
 
 
 def do_check_trx(reff_no):
@@ -222,7 +222,7 @@ def do_check_trx(reff_no):
 
 
 def start_check_diva_balance(username):
-    _Helper.get_pool().apply_async(check_diva_balance, (username,))
+    _Helper.get_thread().apply_async(check_diva_balance, (username,))
 
 
 def check_diva_balance(username):
@@ -247,7 +247,7 @@ def check_diva_balance(username):
 
 
 def start_global_refund_balance(payload):
-    _Helper.get_pool().apply_async(global_refund_balance, (payload,))
+    _Helper.get_thread().apply_async(global_refund_balance, (payload,))
 
 
 LAST_TRANSFER_REFF_NO = ''
@@ -255,7 +255,7 @@ LAST_TRANSFER_REFF_NO = ''
 
 def start_store_pending_balance(payload):
     store_only = True
-    _Helper.get_pool().apply_async(global_refund_balance, (payload, store_only,))
+    _Helper.get_thread().apply_async(global_refund_balance, (payload, store_only,))
 
 
 def global_refund_balance(payload, store_only=False):

@@ -495,7 +495,7 @@ def update_receipt_count():
 
 
 def start_reset_receipt_count(count):
-    _Helper.get_pool().apply_async(reset_receipt_count, (count,))
+    _Helper.get_thread().apply_async(reset_receipt_count, (count,))
 
 
 def reset_receipt_count(count):
@@ -616,7 +616,7 @@ BRI_LOG_LEGEND = {
 
 
 def start_get_devices():
-    _Helper.get_pool().apply_async(get_devices)
+    _Helper.get_thread().apply_async(get_devices)
 
 
 def get_devices():
@@ -688,7 +688,7 @@ def check_payment(name='ovo'):
 
 
 def start_upload_device_state(device, status):
-    _Helper.get_pool().apply_async(upload_device_state, (device, status,))
+    _Helper.get_thread().apply_async(upload_device_state, (device, status,))
 
 
 def upload_device_state(device, status):
@@ -712,7 +712,7 @@ def upload_device_state(device, status):
 
 
 def start_upload_mandiri_wallet():
-    _Helper.get_pool().apply_async(upload_mandiri_wallet)
+    _Helper.get_thread().apply_async(upload_mandiri_wallet)
 
 
 def upload_mandiri_wallet():
@@ -739,7 +739,7 @@ def upload_mandiri_wallet():
 
 
 def start_upload_bni_wallet():
-    _Helper.get_pool().apply_async(upload_bni_wallet)
+    _Helper.get_thread().apply_async(upload_bni_wallet)
 
 
 def upload_bni_wallet():
@@ -766,7 +766,7 @@ def upload_bni_wallet():
 
 
 # def start_upload_failed_trx():
-#     _Tools.get_pool().apply_async(store_upload_failed_trx)
+#     _Tools.get_thread().apply_async(store_upload_failed_trx)
 
 
 def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_method='', remarks=''):
@@ -800,7 +800,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
 
 
 # def start_upload_admin_access(aid, username, cash_collection, edc_settlement, card_adjustment, remarks):
-#     _Tools.get_pool().apply_async(upload_admin_access, (aid, username, cash_collection, edc_settlement,
+#     _Tools.get_thread().apply_async(upload_admin_access, (aid, username, cash_collection, edc_settlement,
 #                                                         card_adjustment, remarks,))
 
 
@@ -827,7 +827,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
 
 
 def start_upload_topup_error(__slot, __type):
-    _Helper.get_pool().apply_async(upload_topup_error, (__slot, __type,))
+    _Helper.get_thread().apply_async(upload_topup_error, (__slot, __type,))
 
 
 def upload_topup_error(__slot, __type):

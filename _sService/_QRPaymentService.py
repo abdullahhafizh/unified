@@ -30,22 +30,22 @@ def serialize_payload(data, specification='MDD_CORE_API'):
 
 def start_get_qr_gopay(payload):
     mode = 'GOPAY'
-    _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
 def start_get_qr_ovo(payload):
     mode = 'OVO'
-    _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
 def start_get_qr_dana(payload):
     mode = 'DANA'
-    _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
 def start_get_qr_linkaja(payload):
     mode = 'LINKAJA'
-    _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
 def start_get_qr_global(payload):
@@ -57,7 +57,7 @@ def start_get_qr_global(payload):
         return
     mode = payload['mode'].upper()
     payload = json.dumps(payload)
-    _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
 def do_get_qr(payload, mode, serialize=True):
@@ -133,27 +133,27 @@ def handle_check_process(param, mode):
 
 def start_do_check_gopay_qr(payload):
     mode = 'GOPAY'
-    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 def start_do_check_dana_qr(payload):
     mode = 'DANA'
-    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 def start_do_check_shopee_qr(payload):
     mode = 'SHOPEEPAY'
-    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 def start_do_check_ovo_qr(payload):
     mode = 'OVO'
-    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 def start_do_check_linkaja_qr(payload):
     mode = 'LINKAJA'
-    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 
@@ -249,7 +249,7 @@ def check_payment_result(result, mode):
 def start_do_pay_ovo_qr(payload):
     mode = 'OVO'
     sleep(5)
-    _Helper.get_pool().apply_async(do_pay_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_pay_qr, (payload, mode,))
 
 
 def do_pay_qr(payload, mode, serialize=True):
@@ -293,7 +293,7 @@ def handle_confirm_process(payload, mode):
 
 def start_confirm_ovo_qr(payload):
     mode = 'OVO'
-    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 def do_confirm_qr(payload, mode, serialize=True):
@@ -329,7 +329,7 @@ def start_cancel_qr_global(trx_id):
     if not CANCELLING_QR_FLAG:
         CANCELLING_QR_FLAG = True
         LOGGER.info((trx_id, 'CANCELLING_QR_PAYMENT'))
-    # _Helper.get_pool().apply_async(cancel_qr_Common, (trx_id, ) )
+    # _Helper.get_thread().apply_async(cancel_qr_Common, (trx_id, ) )
 
 
 def cancel_qr_global(data):

@@ -38,7 +38,7 @@ ERROR_TOPUP = _QPROX.ERROR_TOPUP
 
 
 def start_define_topup_slot_bni():
-    _Helper.get_pool().apply_async(define_topup_slot_bni)
+    _Helper.get_thread().apply_async(define_topup_slot_bni)
 
 
 BNI_UPDATE_BALANCE_PROCESS = False
@@ -59,13 +59,13 @@ def define_topup_slot_bni():
 
 
 def start_do_topup_deposit_bni(slot):
-    _Helper.get_pool().apply_async(do_topup_deposit_bni, (int(slot),))
+    _Helper.get_thread().apply_async(do_topup_deposit_bni, (int(slot),))
 
 
 def start_do_force_topup_bni():
     slot = _Common.BNI_ACTIVE
     force = True
-    _Helper.get_pool().apply_async(do_topup_deposit_bni, (int(slot), force, ))
+    _Helper.get_thread().apply_async(do_topup_deposit_bni, (int(slot), force, ))
 
 
 def do_topup_deposit_bni(slot=1, force=False):
@@ -116,12 +116,12 @@ def do_topup_deposit_bni(slot=1, force=False):
 
 def bni_reset_update_balance_master():
     slot = 1
-    _Helper.get_pool().apply_async(bni_reset_update_balance, (slot,))
+    _Helper.get_thread().apply_async(bni_reset_update_balance, (slot,))
 
 
 def bni_reset_update_balance_slave():
     slot = 2
-    _Helper.get_pool().apply_async(bni_reset_update_balance, (slot,))
+    _Helper.get_thread().apply_async(bni_reset_update_balance, (slot,))
 
 
 def bni_reset_update_balance(slot=1):
@@ -397,12 +397,12 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
 
 def start_master_activation_bni():
     slot = 1
-    _Helper.get_pool().apply_async(refill_zero_bni, (slot,))
+    _Helper.get_thread().apply_async(refill_zero_bni, (slot,))
 
 
 def start_slave_activation_bni():
     slot = 2
-    _Helper.get_pool().apply_async(refill_zero_bni, (slot,))
+    _Helper.get_thread().apply_async(refill_zero_bni, (slot,))
 
 
 def refill_zero_bni(slot=1):
@@ -423,7 +423,7 @@ def refill_zero_bni(slot=1):
 
 
 def start_check_online_topup(mode, payload):
-    _Helper.get_pool().apply_async(ping_online_topup, (mode, payload,))
+    _Helper.get_thread().apply_async(ping_online_topup, (mode, payload,))
 
 
 def ping_online_topup(mode, payload=None, trigger=True):
@@ -453,7 +453,7 @@ def ping_online_topup(mode, payload=None, trigger=True):
 
 
 def start_get_topup_readiness():
-    _Helper.get_pool().apply_async(get_topup_readiness)
+    _Helper.get_thread().apply_async(get_topup_readiness)
 
 
 def get_topup_readiness():
@@ -478,7 +478,7 @@ def get_topup_readiness():
 
 
 def start_update_balance_online(bank):
-    _Helper.get_pool().apply_async(update_balance_online, (bank,))
+    _Helper.get_thread().apply_async(update_balance_online, (bank,))
 
 
 def check_update_balance_bni(card_info):
@@ -615,7 +615,7 @@ def update_balance_online(bank):
 
 def start_topup_online_bri(cardno, amount):
     bank = 'BRI'
-    _Helper.get_pool().apply_async(topup_online, (bank, cardno, amount,))
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount,))
 
 
 def topup_online(bank, cardno, amount):
@@ -710,7 +710,7 @@ def topup_online(bank, cardno, amount):
                 'status': 'REFILL_SUCCESS',
                 'remarks': output,
             }
-        _Helper.get_pool().apply_async(_Common.store_upload_sam_audit, (param,))     
+        _Helper.get_thread().apply_async(_Common.store_upload_sam_audit, (param,))     
         return output        
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
@@ -720,7 +720,7 @@ def start_do_topup_c2c_deposit():
     bank = 'MANDIRI_C2C_DEPOSIT'
     cardno = _Common.C2C_DEPOSIT_NO
     amount = _Common.C2C_TOPUP_AMOUNT
-    _Helper.get_pool().apply_async(topup_online, (bank, cardno, amount, ))
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, ))
 
 
 
