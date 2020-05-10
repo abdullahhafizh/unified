@@ -677,12 +677,16 @@ def topup_online(bank, cardno, amount):
         pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not pending_result:
             return False
+        # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
+        prev_balance = _Common.MANDIRI_ACTIVE_WALLET
+        _Common.MANDIRI_ACTIVE_WALLET = 0
         # TODO Check Actual Command UPDATE_BALANCE_C2C_MANDIRI and its result
         _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
         update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not update_result:
             return False
         output = {
+                    'prev_balance': prev_balance,
                     'last_balance': update_result['last_balance'],
                     'report_sam': 'N/A',
                     'card_no': update_result['card_no'],
@@ -690,6 +694,23 @@ def topup_online(bank, cardno, amount):
                     'bank_id': '1',
                     'bank_name': 'MANDIRI',
             }
+        # Do Update Deposit Balance Value in Memory
+        _Common.MANDIRI_ACTIVE_WALLET = int(update_result['last_balance'])
+        _Common.MANDIRI_WALLET_1 = int(update_result['last_balance'])
+        # Do Upload SAM Refill Status Into BE Asyncronous
+        param = {
+                'trxid': 'REFILL_SAM',
+                'samCardNo': _Common.C2C_DEPOSIT_NO,
+                'samCardSlot': _Common.C2C_SAM_SLOT,
+                'samPrevBalance': output['prev_balance'],
+                'samLastBalance': output['last_balance'],
+                'topupCardNo': '',
+                'topupPrevBalance': output['prev_balance'],
+                'topupLastBalance': output['last_balance'],
+                'status': 'REFILL_SUCCESS',
+                'remarks': output,
+            }
+        _Helper.get_pool().apply_async(_Common.store_upload_sam_audit, (param,))     
         return output        
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')

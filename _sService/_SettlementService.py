@@ -674,9 +674,6 @@ def do_settlement_for(bank='BNI', force=False):
                                             )
         if not topup_result:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
-        # Update Deposit Balance Value in Memory
-        _Common.MANDIRI_ACTIVE_WALLET = int(topup_result['last_balance'])
-        _Common.MANDIRI_WALLET_1 = int(topup_result['last_balance'])
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
     elif bank == 'MANDIRI_C2C_FEE':
         _SFTPAccess.HOST_BID = 0

@@ -521,9 +521,12 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         output['c2c_mode'] = '1'
         _Common.local_store_topup_record(output)
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
+    # Ensure The C2C_DEPOSIT_NO same with Report
+    if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
+        _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
     param = {
         'trxid': reff_no,
-        'samCardNo': __report_deposit[:16],
+        'samCardNo': _Common.C2C_DEPOSIT_NO,
         'samCardSlot': _Common.C2C_SAM_SLOT,
         'samPrevBalance': __sam_prev_balance,
         'samLastBalance': __deposit_balance,
