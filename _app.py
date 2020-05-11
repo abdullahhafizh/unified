@@ -1029,7 +1029,6 @@ if __name__ == '__main__':
     # run_script({'/_setOnStartUp.bat'})
     # update_module({})
     # install_font()
-    # check_git_status()
     init_setting()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()
