@@ -92,21 +92,28 @@ C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '603200
 C2C_ADMIN_FEE = [0, 0]
 
 # GENERATE INFO
-_ConfigParser.set_value('INFO', '1', 'Please Delete Old Option [TERMINAL] If Still Exist')
-_ConfigParser.set_value('INFO', '2', 'Please Delete Old Option [QPROX] If Still Exist')
-_ConfigParser.set_value('INFO', '3', 'Please Delete Old Option [TEMPORARY] If Still Exist')
-_ConfigParser.set_value('INFO', '4', 'Please Delete Old Option [GRG] If Still Exist')
-_ConfigParser.set_value('INFO', '5', '[GENERAL]-allowed^ubal^online -> Define Default Bank Which Allowed Update Balance Online')
-_ConfigParser.set_value('INFO', '6', '[GENERAL]-mode -> Define Application Repository Mode live or develop')
-_ConfigParser.set_value('INFO', '7', '[GENERAL]-mandiri^sam^production -> When Using Develop Mode For Testing, But Keep Using Mandiri KA Deposit Production')
-_ConfigParser.set_value('INFO', '8', '[BILL]-type -> Define Type Of Bill Acceptor Which is used NV or GRG')
-_ConfigParser.set_value('INFO', '9', '[BILL]-not^allowed^denom -> Define Not Allowed Notes/Denom')
-_ConfigParser.set_value('INFO', '10', '[MANDIRI]-daily^settle^time -> Define Specific Time For Mandiri Deposit KA Auto Settlement')
-_ConfigParser.set_value('INFO', '11', '[MANDIRI_C2C]-mactros -> TID+MID Purchase Padded with 0, Total Must Be 16 Chars')
-_ConfigParser.set_value('INFO', '12', '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File')
-_ConfigParser.set_value('INFO', '13', '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File')
-_ConfigParser.set_value('INFO', '14', '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File')
-_ConfigParser.set_value('INFO', '15', '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File')
+INFOS = [
+    'Please Remove [TERMINAL] Option If Still Exist',
+    'Please Remove [QPROX] Option If Still Exist'
+    'Please Remove [TEMPORARY] Option If Still Exist',
+    'Please Remove [GRG] Option If Still Exist',
+    '[GENERAL]-allowed^ubal^online -> Define Default Bank Which Allowed Update Balance Online',
+    '[GENERAL]-mode -> Define Application Repository Mode live or develop',
+    '[GENERAL]-mandiri^sam^production -> When Using Develop Mode For Testing, But Keep Using Mandiri KA Deposit Production',
+    '[BILL]-type -> Define Type Of Bill Acceptor Which is used NV or GRG',
+    '[BILL]-not^allowed^denom -> Define Not Allowed Notes/Denom',
+    '[MANDIRI]-daily^settle^time -> Define Specific Time For Mandiri Deposit KA Auto Settlement',
+    '[BRI]-procode -> The Merchant Agreement Code, For Purchase Settlement Purpose',
+    '[MANDIRI_C2C]-mactros -> TID+MID Purchase Padded with 0, Total Must Be 16 Chars',
+    '[MANDIRI_C2C]-amount^topup -> Nominal Topup Amount For C2C Deposit (Set Maximum to 90% of Card Max. Limit)',
+    '[MANDIRI_C2C]-minimum^amount -> Deposit Treshold To Do Auto-Settlement/Reload Balance',
+    '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File',
+    '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File',
+    '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File',
+] 
+
+for i in range(len(INFOS)):
+    _ConfigParser.set_value('INFO', str(i+1), INFOS[i])
 
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
