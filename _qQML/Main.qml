@@ -250,9 +250,9 @@ Rectangle {
         LoadingView{}
     }
 
-    Component {id: global_web_view
-        GlobalWebView{}
-    }
+    // Component {id: global_web_view
+    //     GlobalWebView{}
+    // }
 
     Component {id: faq_ina
         FAQPageINA{}
