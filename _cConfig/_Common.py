@@ -220,11 +220,6 @@ ENDPOINT_SUCCESS_BY_HTTP_HEADER = [
 
     ]
 
-# APIV2 Credentials For Topup   
-TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
-TOPUP_TOKEN = 'ab247c99e983d0c0d0772246ccb465e8'
-TOPUP_MID = '1e931ee42dc9d826ff945851782f0942'
-
 
 def serialize_payload(data, specification='MDD_CORE_API'):
     if specification == 'MDD_CORE_API':

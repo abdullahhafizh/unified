@@ -23,9 +23,9 @@ class TopupSignalHandler(QObject):
 TP_SIGNDLER = TopupSignalHandler()
 LOGGER = logging.getLogger()
 
-TOPUP_URL = _Common.TOPUP_URL
-TOPUP_TOKEN = _Common.TOPUP_TOKEN
-TOPUP_MID = _Common.TOPUP_MID
+TOPUP_URL = _Common.CORE_HOST
+TOPUP_TOKEN = _Common.CORE_TOKEN
+TOPUP_MID = _Common.CORE_MID
 TOPUP_TID = _Common.TID
 
 MANDIRI_GENERAL_ERROR = '51000'
@@ -172,7 +172,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-bni/pending', param=_param)
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/pending', param=_param)
             LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -207,7 +207,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-bri/pending', param=_param)
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
             LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -247,7 +247,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['phone'] = '08129420492'
             _param['email'] = 'vm@mdd.co.id'
             _param['purpose'] = mode
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-mandiri/pending', param=_param)
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
             LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -292,7 +292,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-bni/update', param=_param)
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=_param)
             LOGGER.debug(('update_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -370,7 +370,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'v1/topup-bni/reversal', param=_param)
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/reversal', param=_param)
             LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -493,7 +493,7 @@ def check_update_balance_bni(card_info):
             'card_info': card_info,
             'card_no': card_info[4:20]
         }
-        status, response = _NetworkAccess.post_to_url(url=_Common.TOPUP_URL + 'v1/topup-bni/update', param=param)
+        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             # {
