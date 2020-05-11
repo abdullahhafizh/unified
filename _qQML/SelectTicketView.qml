@@ -100,7 +100,6 @@ Base{
     }
 
     function price_setting(s){
-        // TODO check below function
         console.log("price_setting : ", JSON.stringify(s))
         var _s = JSON.parse(s)
         defaultMargin = parseInt(_s.margin)

@@ -213,13 +213,11 @@ Base{
 //            payment_view.visible = false;
 //            failed_payment_view.open();
 //            clear_payment_session();
-//            // TODO Change to Confirm View
 //            abort_payment('VEDALEON_PAYMENT_FAIL');
 //        }
     }
 
     function price_setting(s){
-        // TODO check below function
         console.log("price_setting : ", JSON.stringify(s));
         var _s = JSON.parse(s);
         defaultMargin = parseInt(_s.margin);
@@ -580,7 +578,6 @@ Base{
     function init_data_global(p){
         console.log(p)
         if(p==undefined||p=="") return
-        //TODO Parsing Product Data
         var info = JSON.parse(p)
         text_info_1.text = qsTr("Total Amount :\n") + FUNC.insert_dot(amount)
         text_info_2.text = qsTr("Payment : ") + useMode
@@ -590,7 +587,6 @@ Base{
     function init_data_ticket(dep, ret){
         console.log(dep, ret)
 //        if(q==undefined||q=="") return
-        //TODO Parsing Product Data
 //        totalAmount = (parseInt(priceDepart) + parseInt(priceReturn)).toString()
 //        var info = JSON.parse(q)
 //        ticket_info_1.text = "Total Amount :\n" + FUNC.insert_dot(amount)

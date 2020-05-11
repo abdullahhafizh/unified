@@ -112,7 +112,6 @@ def update_kiosk_status(s=400, r=None):
                 define_theme(_Common.THEME_SETTING)
                 _Common.ADS_SETTING = r['data']['ads']
                 _Common.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
-                # TODO: Check New Refund Data Setting
                 if 'refund' in r['data'].keys():
                     _Common.REFUND_SETTING = r['data']['refund']
                     _Common.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))

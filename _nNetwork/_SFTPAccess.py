@@ -43,7 +43,7 @@ def init_user_by_bid():
         SFTP_PORT = _Common.SFTP_C2C['port']
         REMOTE_PATH = _Common.SFTP_C2C['path']
 
-#   TODO ADD Another Host BID
+#  ADD Another Host BID
 
 
 def init_sftp():

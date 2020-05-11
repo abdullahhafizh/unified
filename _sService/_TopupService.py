@@ -577,7 +577,7 @@ def update_balance_online(bank):
                         'bank': bank,
                         'card_no': card_info[4:20],
                         'topup_amount': str(crypto_data['amount']),
-                        'last_balance': '0', #TODO: replace "last_balance"
+                        'last_balance': '0',
                     }
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
                     break

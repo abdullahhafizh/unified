@@ -544,7 +544,7 @@ def handle_tasks(tasks):
             _Common.log_to_temp_config('last^get^ppob', '0')
             update_task(task, result)
 
-    # TODO Add Another TaskType
+    # Add Another TaskType
 
 
 def update_task(task, result='TRIGGERED_TO_SYSTEM'):
@@ -703,7 +703,6 @@ def start_do_bni_topup_by_trx():
     _Helper.get_thread().apply_async(do_bni_topup_by_trx)
 
 
-# TODO Add This Trigger In Every Topup BNI Trx
 def do_bni_topup_by_trx():
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')

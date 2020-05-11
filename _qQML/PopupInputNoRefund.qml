@@ -147,7 +147,6 @@ Rectangle{
             anchors.verticalCenterOffset: 50
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            //TODO: Assign this into conditional view
             visible: !manualMethod.isSelected
             property int count:0
 

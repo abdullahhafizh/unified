@@ -326,7 +326,6 @@ def debit_qprox(amount):
     param = QPROX['DEBIT'] + '|' + str(amount)
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((result))
-    # TODO check result
     if response == 0 and result is not None:
         QP_SIGNDLER.SIGNAL_DEBIT_QPROX.emit('DEBIT|' + str(result))
     else:
@@ -572,7 +571,6 @@ def get_c2c_failure_settlement(amount, trxid):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
 
-# TODO Modify This Function
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_c2c(amount, trxid='', slot=None):
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom

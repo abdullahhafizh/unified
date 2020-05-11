@@ -605,7 +605,6 @@ Base{
 //            enabled: parent.clickAble
 //            onClicked: {
 //                _SLOT.start_check_wallet(totalPaid);
-//                // TODO Call Slot Function
 //                popup_login.close();
 //            }
 //        }

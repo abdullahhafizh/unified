@@ -503,7 +503,6 @@ Base{
                 if (details.payment=='cash' && !isPaid) {
                     _SLOT.stop_bill_receive_note();
                     if (receivedCash > 0){
-                        //TODO Print Failed Receipt
                         print_failed_transaction('cash');
 //                        _SLOT.start_return_es_mei();
                     }

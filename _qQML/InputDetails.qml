@@ -152,7 +152,6 @@ Base{
                 "transitDetails": "(Transit) " + d.f_trans_flight_point + " - " + d.f_trans_flight_no + " - " + d.f_trans_flight_time,
                 "bookingCode": param.booking_code, "price": priceDepart, "terminal_depart": param.terminal_depart}
             var flightDetailsReturn = undefined;
-            //TODO Finalise This Parsing
             if (returnDate!=undefined){
                 var r = JSON.parse(selectedPrice[1])
                 var flightNoreturn = r.f_no;

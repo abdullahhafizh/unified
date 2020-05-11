@@ -75,7 +75,6 @@ Base{
             notif_view.open();
             return;
         }
-        //TODO Handle Boarding Pass Result
         my_layer.push(checkin_success);
     }
 
