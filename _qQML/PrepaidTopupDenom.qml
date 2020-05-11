@@ -509,10 +509,14 @@ Base{
         var topup_amount = parseInt(denom) - parseInt(adminFee);
         switch(cardData.bank_name){
             case 'MANDIRI':
+                if (CONF.c2c_mode==1) topup_amount = parseInt(denom);
                 sam_balance = parseInt(mandiriTopupWallet);
                 break;
             case 'BNI':
                 sam_balance = parseInt(bniTopupWallet);
+                break;
+            case 'BRI':
+                sam_balance = parseInt(denom);
                 break;
         }
         if (topup_amount > sam_balance){

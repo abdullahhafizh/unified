@@ -524,7 +524,7 @@ def update_balance_online(bank):
         return
     if bank == 'MANDIRI':
         try:            
-            param = QPROX['UPDATE_BALANCE_ONLINE_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
+            param = QPROX['UPDATE_BALANCE_ONLINE_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
             response, result = _Command.send_request(param=param, output=None)
             # if _Common.TEST_MODE is True and _Common.empty(result):
             #   result = '6032111122223333|20000|198000'
@@ -590,7 +590,7 @@ def update_balance_online(bank):
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
     elif bank == 'BRI':
         try:
-            param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI
+            param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|'
             response, result = _Command.send_request(param=param, output=None)
             if response == 0 and '|' in result:
                 output = {
@@ -649,7 +649,7 @@ def topup_online(bank, cardno, amount):
         if not pending_result:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
             return
-        _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI
+        _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|'
         update_result = update_balance(_param, bank='BRI', mode='TOPUP')
         if not update_result:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
@@ -681,7 +681,7 @@ def topup_online(bank, cardno, amount):
         prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         _Common.MANDIRI_ACTIVE_WALLET = 0
         # TODO Check Actual Command UPDATE_BALANCE_C2C_MANDIRI and its result
-        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN
+        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
         update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not update_result:
             return False
