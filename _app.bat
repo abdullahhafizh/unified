@@ -1,7 +1,4 @@
-@echo
-
-echo 'Get Application Update...'
+@echo off
 git pull
-echo 'Call Application...'
 python _app.py
 
