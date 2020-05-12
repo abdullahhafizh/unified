@@ -970,22 +970,18 @@ def admin_print_global(struct_id, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
-        LOGGER.debug((file_name))
         # Print-out to printer
         for i in range(print_copy):
-            print_ = _Printer.do_printout(pdf_file)
-            # LOGGER.debug(("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_))))
-            print("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_)))
-            if '[ERROR]' in print_:
-                break
+            print_result = _Printer.do_printout(pdf_file)
+            LOGGER.debug((file_name, i+1, print_result))
             sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
-        # Send To Backend
-        _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
     except Exception as e:
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
+        # Send To Backend
+        _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
         mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         _ProductService.LAST_UPDATED_STOCK = []
