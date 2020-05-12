@@ -73,6 +73,7 @@ QPROX = {
     "FORCE_SETTLEMENT": "031",
     "BALANCE_C2C": "033",
     "UPDATE_BALANCE_C2C_MANDIRI": "XXX", #Update Balance Online Mandiri For C2C
+    "RAW_APDU": "034", #Update Balance Online Mandiri For C2C
 
 }
 
