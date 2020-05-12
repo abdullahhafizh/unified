@@ -123,16 +123,23 @@ def do_pending_job():
                     __param = job['payload']
                     __endpoint = job['payload'].get('endpoint')
                     LOGGER.debug((p, __url, __param))
+                    jobs_path_process = jobs_path.replace('.request', '.process')
+                    os.rename(jobs_path, jobs_path_process)
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
                     print('pyt: [DEBUG] JOB RESULT' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
+                    success = False
                     if status == 200:
                         if __endpoint in _Common.ENDPOINT_SUCCESS_BY_HTTP_HEADER or response['result'] == 'OK':
-                            jobs_path_rename = jobs_path.replace('.request', '.done')
-                            os.rename(jobs_path, jobs_path_rename)
-                            print('pyt: [DEBUG] JOB IS DONE' + ' '.join([p, jobs_path, jobs_path_rename]))
-                            LOGGER.debug((jobs_path, jobs_path_rename))
+                            jobs_path_done = jobs_path_process.replace('.request', '.done')
+                            os.rename(jobs_path_process, jobs_path_done)
+                            LOGGER.debug((jobs_path_process, jobs_path_done))
+                            success = True
                     else:
                         LOGGER.warning((p, status, response))
+                    if not success:
+                        # Revert Back To OPEN .request
+                        jobs_path_reopen = jobs_path_process.replace('.process', '.request')
+                        os.rename(jobs_path_process, jobs_path_reopen)
                     continue
             except Exception as e:
                 LOGGER.warning(e)
