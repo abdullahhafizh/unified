@@ -108,8 +108,8 @@ def start_do_pending_job():
 def do_pending_job():
     while True:
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
-        print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
-        LOGGER.info(('count', len(pending_jobs)))
+        # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
+        # LOGGER.info(('count', len(pending_jobs)))
         if len(pending_jobs) > 0:
             try:
                 for p in pending_jobs:
@@ -122,7 +122,7 @@ def do_pending_job():
                     __url = job['url']
                     __param = job['payload']
                     __endpoint = job['payload'].get('endpoint')
-                    print('pyt: do_pending_job ' + _Helper.time_string() + ' ' + p)
+                    print('pyt: [INFO] do_pending_job ' + _Helper.time_string() + ' ' + p)
                     LOGGER.debug((p, __url, __param))
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
                     if status == 200:
@@ -131,7 +131,10 @@ def do_pending_job():
                             os.rename(jobs_path, jobs_path_rename)
                             print('pyt: jobs_done rename : ' + jobs_path + ' ' + jobs_path_rename)
                             LOGGER.debug((jobs_path, jobs_path_rename))
-                        continue
+                    else:
+                        LOGGER.warning((p, status, response))
+                        print('pyt: [ERROR] do_pending_job ' + str(response) + ' ' + p)
+                    continue
             except Exception as e:
                 LOGGER.warning(e)
         sleep(5.55)
