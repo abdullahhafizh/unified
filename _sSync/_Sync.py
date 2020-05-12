@@ -122,9 +122,9 @@ def do_pending_job():
                     __url = job['url']
                     __param = job['payload']
                     __endpoint = job['payload'].get('endpoint')
-                    print('pyt: [INFO] do_pending_job ' + _Helper.time_string() + ' ' + p)
                     LOGGER.debug((p, __url, __param))
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+                    print('pyt: [DEBUG]' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
                     if status == 200:
                         if __endpoint in _Common.ENDPOINT_SUCCESS_BY_HTTP_HEADER or response['result'] == 'OK':
                             jobs_path_rename = jobs_path.replace('.request', '.done')
@@ -133,7 +133,6 @@ def do_pending_job():
                             LOGGER.debug((jobs_path, jobs_path_rename))
                     else:
                         LOGGER.warning((p, status, response))
-                        print('pyt: [ERROR] do_pending_job ' + str(response) + ' ' + p)
                     continue
             except Exception as e:
                 LOGGER.warning(e)
