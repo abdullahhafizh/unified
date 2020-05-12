@@ -430,8 +430,8 @@ def ping_online_topup(mode, payload=None, trigger=True):
     if mode == 'BRI':
         if payload == None:
             payload = {
-                # TODO Check This Sample Card No For Checking BRI Host
-                'card_no': '6013500100006619'
+                'card_no': '6013500100006619',
+                'auto_number': '1'
             }
         else:
             payload = json.loads(payload)
@@ -486,9 +486,9 @@ def check_update_balance_bni(card_info):
         return False
     try:
         param = {
-            'token': _Common.TOPUP_TOKEN,
-            'mid': _Common.TOPUP_MID,
-            'tid': _Common.TID,
+            'token': TOPUP_TOKEN,
+            'mid': TOPUP_MID,
+            'tid': TOPUP_TID,
             'reff_no': _Helper.time_string(f='%Y%m%d%H%M%S'),
             'card_info': card_info,
             'card_no': card_info[4:20]

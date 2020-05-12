@@ -105,7 +105,7 @@ INFOS = [
     '[MANDIRI]-daily^settle^time -> Define Specific Time For Mandiri Deposit KA Auto Settlement',
     '[BRI]-procode -> The Merchant Agreement Code, For Purchase Settlement Purpose',
     '[MANDIRI_C2C]-mactros -> TID+MID Purchase Padded with 0, Total Must Be 16 Chars',
-    '[MANDIRI_C2C]-amount^topup -> Nominal Topup Amount For C2C Deposit. Set Maximum to 90 Procentage of Card Max. Limit',
+    '[MANDIRI_C2C]-amount^topup -> Nominal Topup Amount For C2C Deposit. Set Maximum to 90 Procentagep of Card Max. Limit',
     '[MANDIRI_C2C]-minimum^amount -> Deposit Treshold To Do Auto-Settlement/Reload Balance',
     '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File',
     '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File',
