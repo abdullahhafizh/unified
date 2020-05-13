@@ -819,7 +819,7 @@ Base{
             height: 90
             onClicked: {
                 popup_loading.open();
-                _SLOT.start_auth_ka();
+                _SLOT.start_auth_ka_mandiri();
                 parent.visible = false;
             }
         }

@@ -99,7 +99,7 @@ def do_topup_deposit_bni(slot=1, force=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_UPDATE_BALANCE_BNI')
             _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_UPDATE_BALANCE_BNI'
-        _send_crypto = _QPROX.send_cryptogram(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
+        _send_crypto = _QPROX.bni_crypto_deposit(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
             _Common.upload_topup_error(slot, 'ADD')
@@ -146,7 +146,7 @@ def bni_reset_update_balance(slot=1):
         if _result_ubal is False:
             _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_UPDATE_BALANCE_BNI'
-        _send_crypto = _QPROX.send_cryptogram(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
+        _send_crypto = _QPROX.bni_crypto_deposit(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
             _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
@@ -569,7 +569,7 @@ def update_balance_online(bank):
             attempt = 0
             while True:
                 attempt+=1
-                send_crypto_tapcash = _QPROX.send_cryptogram_tapcash(crypto_data['dataToCard'], card_info)
+                send_crypto_tapcash = _QPROX.bni_crypto_tapcash(crypto_data['dataToCard'], card_info)
                 _Helper.dump(send_crypto_tapcash)
                 if send_crypto_tapcash is True:
                 # - Send Output as Mandiri Specification            

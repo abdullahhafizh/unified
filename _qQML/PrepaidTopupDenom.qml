@@ -977,7 +977,7 @@ Base{
                 _SLOT.user_action_log('Press Notif Button "Check Balance"');
                 console.log('alternative button is pressed..!')
                 popup_loading.open();
-                _SLOT.start_check_balance();
+                _SLOT.start_check_card_balance();
                 parent.visible = false;
                 parent.buttonEnabled = true;
             }
@@ -1061,7 +1061,7 @@ Base{
                         _SLOT.start_reprint_global();
                         break;
                     case 'check_balance':
-                        _SLOT.start_check_balance();
+                        _SLOT.start_check_card_balance();
                         break;
                     }
                     popup_loading.open();
@@ -1106,7 +1106,7 @@ Base{
                     if (press!='0') return;
                     press = '1'
                     popup_loading.open();
-                    _SLOT.start_check_balance();
+                    _SLOT.start_check_card_balance();
                 }
             }
         }

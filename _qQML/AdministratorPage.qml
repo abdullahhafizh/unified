@@ -52,7 +52,7 @@ Base{
         base.result_mandiri_settlement.connect(get_admin_action);
         base.result_update_app.connect(get_admin_action);
         base.result_process_settlement.connect(get_admin_action);
-        base.result_init_online_qprox.connect(get_admin_action);
+        base.result_init_online_mandiri.connect(get_admin_action);
         base.result_admin_sync_stock.connect(get_admin_action);
         base.result_do_topup_deposit_bni.connect(get_topup_bni_result)
     }
@@ -71,7 +71,7 @@ Base{
         base.result_mandiri_settlement.disconnect(get_admin_action);
         base.result_update_app.disconnect(get_admin_action);
         base.result_process_settlement.disconnect(get_admin_action);
-        base.result_init_online_qprox.disconnect(get_admin_action);
+        base.result_init_online_mandiri.disconnect(get_admin_action);
         base.result_admin_sync_stock.disconnect(get_admin_action);
         base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result)
     }
@@ -386,7 +386,7 @@ Base{
                         _SLOT.start_do_c2c_update_fee();
                     } else {
                         _SLOT.user_action_log('Admin Page "KA Login"');
-                        _SLOT.start_auth_ka();
+                        _SLOT.start_auth_ka_mandiri();
                     }
                 }
             }

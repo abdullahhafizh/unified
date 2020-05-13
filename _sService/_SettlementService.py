@@ -583,7 +583,7 @@ def do_settlement_for(bank='BNI', force=False):
         if _Helper.is_online(source='mandiri_settlement') is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTERNET_CONNECTION')
             return
-        # _QPROX.auth_ka(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
+        # _QPROX.auth_ka_mandiri(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()
         # _SFTPAccess.init_sftp()
@@ -627,7 +627,7 @@ def do_settlement_for(bank='BNI', force=False):
         _param_ka['remarks'] = _push_file_kalog['remarks']
         async_push_settlement_data(_param_ka)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GENERATE_RQ1_SETTLEMENT')
-        _rq1 = _QPROX.create_online_info()
+        _rq1 = _QPROX.create_online_info_mandiri()
         if _rq1 is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_GENERATE_RQ1_SETTLEMENT')
             return
@@ -645,7 +645,7 @@ def do_settlement_for(bank='BNI', force=False):
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|WAITING_RSP_UPDATE')
         _QPROX.do_update_limit_mandiri(_file_rq1['rsp'])
-        # _QPROX.auth_ka(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
+        # _QPROX.auth_ka_mandiri(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
         # Move To QPROX Module
     elif bank == 'MANDIRI_C2C':
         _SFTPAccess.HOST_BID = 0

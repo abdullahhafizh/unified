@@ -175,29 +175,29 @@ class SlotHandler(QObject):
         _QPROX.start_debit_qprox(amount)
     start_debit_qprox = pyqtSlot(str)(start_debit_qprox)
 
-    def start_auth_ka(self):
-        _QPROX.start_auth_ka()
-    start_auth_ka = pyqtSlot()(start_auth_ka)
+    def start_auth_ka_mandiri(self):
+        _QPROX.start_auth_ka_mandiri()
+    start_auth_ka_mandiri = pyqtSlot()(start_auth_ka_mandiri)
 
-    def start_check_balance(self):
-        _QPROX.start_check_balance()
+    def start_check_card_balance(self):
+        _QPROX.start_check_card_balance()
     start_check_balance = pyqtSlot()(start_check_balance)
 
-    def start_top_up_mandiri(self, amount, trxid):
-        _QPROX.start_top_up_mandiri(amount, trxid)
+    def start_topup_offline_mandiri(self, amount, trxid):
+        _QPROX.start_topup_offline_mandiri(amount, trxid)
     start_top_up_mandiri = pyqtSlot(str, str)(start_top_up_mandiri)
 
     def start_ka_info(self):
         _QPROX.start_ka_info()
     start_ka_info = pyqtSlot()(start_ka_info)
 
-    def start_create_online_info(self):
-        _QPROX.start_create_online_info()
-    start_create_online_info = pyqtSlot()(start_create_online_info)
+    def start_create_online_info_mandiri(self):
+        _QPROX.start_create_online_info_mandiri()
+    start_create_online_info_mandiri = pyqtSlot()(start_create_online_info_mandiri)
 
-    def start_init_online(self):
-        _QPROX.start_init_online()
-    start_init_online = pyqtSlot()(start_init_online)
+    def start_init_online_mandiri(self):
+        _QPROX.start_init_online_mandiri()
+    start_init_online_mandiri = pyqtSlot()(start_init_online_mandiri)
 
     def set_rounded_fare(self, amount):
         _Tibox.set_rounded_fare(amount=amount)
@@ -356,9 +356,9 @@ class SlotHandler(QObject):
         _SalePrintTool.start_sale_print_global()
     start_sale_print_global = pyqtSlot()(start_sale_print_global)
 
-    def start_top_up_bni(self, amount, trxid):
-        _QPROX.start_top_up_bni(amount, trxid)
-    start_top_up_bni = pyqtSlot(str, str)(start_top_up_bni)
+    def start_topup_offline_bni(self, amount, trxid):
+        _QPROX.start_topup_offline_bni(amount, trxid)
+    start_topup_offline_bni = pyqtSlot(str, str)(start_topup_offline_bni)
 
     def start_get_multiple_eject_status(self):
         _CD.start_get_multiple_eject_status()
@@ -688,7 +688,7 @@ def s_handler():
     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.connect(view.rootObject().result_topup_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.connect(view.rootObject().result_ka_info_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.connect(view.rootObject().result_online_info_qprox)
-    _QPROX.QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.connect(view.rootObject().result_init_online_qprox)
+    _QPROX.QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.connect(view.rootObject().result_init_online_mandiri)
     _QPROX.QP_SIGNDLER.SIGNAL_STOP_QPROX.connect(view.rootObject().result_stop_qprox)
     _Tibox.T_SIGNDLER.SIGNAL_GET_AIRPORT_NAME.connect(view.rootObject().result_airport_name)
     _TicketTool.PDF_SIGNDLER.SIGNAL_START_GENERATE.connect(view.rootObject().result_generate_pdf)

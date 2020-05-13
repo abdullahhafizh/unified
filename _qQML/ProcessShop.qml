@@ -409,9 +409,9 @@ Base{
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
-            _SLOT.start_top_up_mandiri(amount);
+            _SLOT.start_topup_offline_mandiri(amount);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
-            _SLOT.start_top_up_bni(amount, structId);
+            _SLOT.start_topup_offline_bni(amount, structId);
         }
     }
 
@@ -893,7 +893,7 @@ Base{
             onClicked: {
                 if (modeButtonPopup=='check_balance'){
                     popup_loading.open();
-                    _SLOT.start_check_balance();
+                    _SLOT.start_check_card_balance();
                 }
                 if (modeButtonPopup=='do_topup'){
                     popup_loading.open();

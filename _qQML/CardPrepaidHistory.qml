@@ -277,7 +277,7 @@ Base{
             onClicked: {
                 console.log('alternative button is pressed..!')
                 popup_loading.open();
-                _SLOT.start_check_balance();
+                _SLOT.start_check_card_balance();
                 parent.visible = false;
                 parent.buttonEnabled = true;
             }
@@ -330,7 +330,7 @@ Base{
                     popup_loading.open();
                     switch(actionMode){
                     case 'check_balance':
-                        _SLOT.start_check_balance();
+                        _SLOT.start_check_card_balance();
                         break;
                     case 'update_balance_online':
                         _SLOT.start_update_balance_online(bankName);

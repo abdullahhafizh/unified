@@ -124,7 +124,7 @@ ERROR_TOPUP = {
     '6969': 'CARD_NOT_MATCH'
 }
 
-def send_cryptogram(card_info, cyptogram, slot=1, bank='BNI'):
+def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
     if bank == 'BNI':
         #Getting Previous samBalance
         samPrevBalance = _Common.BNI_SAM_1_WALLET if slot == 1 else _Common.BNI_SAM_2_WALLET
@@ -334,12 +334,12 @@ def debit_qprox(amount):
         QP_SIGNDLER.SIGNAL_DEBIT_QPROX.emit('DEBIT|' + 'ERROR')
 
 
-def start_auth_ka():
+def start_auth_ka_mandiri():
     print('pyt: Waiting Login Card To Be Put Into Reader...')
-    _Helper.get_thread().apply_async(auth_ka)
+    _Helper.get_thread().apply_async(auth_ka_mandiri)
 
 
-def auth_ka(_slot=None, initial=True):
+def auth_ka_mandiri(_slot=None, initial=True):
     global INIT_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
@@ -394,8 +394,8 @@ def auth_ka(_slot=None, initial=True):
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|'+str(result))
 
 
-def start_check_balance():
-    _Helper.get_thread().apply_async(check_balance)
+def start_check_card_balance():
+    _Helper.get_thread().apply_async(check_card_balance)
 
 
 LAST_BALANCE_CHECK = None
@@ -437,7 +437,7 @@ DUMMY_BALANCE_CHECK_BALANCE = [
 ]
 
 
-def check_balance():
+def check_card_balance():
     global LAST_BALANCE_CHECK
     param = QPROX['BALANCE'] + '|'
     # Start Force Testing Mode ==========================
@@ -482,11 +482,11 @@ def check_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
 
 
-def start_top_up_mandiri(amount, trxid):
+def start_topup_offline_mandiri(amount, trxid):
     if not _Common.C2C_MODE:
-        _Helper.get_thread().apply_async(top_up_mandiri, (amount, trxid,))
+        _Helper.get_thread().apply_async(topup_offline_mandiri, (amount, trxid,))
     else:
-        _Helper.get_thread().apply_async(top_up_mandiri_c2c, (amount, trxid,))
+        _Helper.get_thread().apply_async(topup_offline_mandiri_c2c, (amount, trxid,))
 
 
 def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
@@ -573,7 +573,7 @@ def get_c2c_failure_settlement(amount, trxid):
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
-def top_up_mandiri_c2c(amount, trxid='', slot=None):
+def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
@@ -584,7 +584,7 @@ def top_up_mandiri_c2c(amount, trxid='', slot=None):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|C2C_CORRECTION')
 
 
-def top_up_mandiri(amount, trxid='', slot=None):
+def topup_offline_mandiri(amount, trxid='', slot=None):
     global INIT_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
@@ -685,9 +685,9 @@ def top_up_mandiri(amount, trxid='', slot=None):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
 
-def start_top_up_bni(amount, trxid):
+def start_topup_offline_bni(amount, trxid):
     # get_bni_wallet_status()
-    _Helper.get_thread().apply_async(top_up_bni, (amount, trxid,))
+    _Helper.get_thread().apply_async(topup_offline_bni, (amount, trxid,))
 
 
 def get_bni_wallet_status(upload=True):
@@ -770,10 +770,10 @@ def fake_update_balance(bank, card_no, amount):
 
 def start_topup_up_bni_with_attempt(amount, trxid, attempt):
     slot = None
-    _Helper.get_thread().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
+    _Helper.get_thread().apply_async(topup_offline_bni, (amount, trxid, slot, attempt,))
 
 
-def top_up_bni(amount, trxid, slot=None, attempt=None):
+def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     _slot = 1
     if slot is None:
         slot = _Common.BNI_ACTIVE
@@ -785,13 +785,13 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
     param = QPROX['INIT_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((attempt, amount, trxid, slot, result))
-    # print('pyt: top_up_bni > init_bni : ', result)
+    # print('pyt: topup_offline_bni > init_bni : ', result)
     if response == 0 and '12292' not in result:
         # Update : Add slot after value
         _param = QPROX['TOPUP_BNI'] + '|' + str(amount) + '|' + str(_slot)
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT, wait_for=2)
         LOGGER.debug((attempt, amount, trxid, slot, _result))
-        # print('pyt: top_up_bni > init_bni > update_bni : ', _result)
+        # print('pyt: topup_offline_bni > init_bni > update_bni : ', _result)
         __remarks = ''
         if _response == 0 and '|' in _result:
             _result = _result.replace('#', '')
@@ -927,15 +927,15 @@ def ka_info_bni(slot=1):
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 
-def start_create_online_info():
-    _Helper.get_thread().apply_async(create_online_info)
+def start_create_online_info_mandiri():
+    _Helper.get_thread().apply_async(create_online_info_mandiri)
 
 
 PREV_RQ1_DATA = None
 PREV_RQ1_SLOT = None
 
 
-def create_online_info(slot=None):
+def create_online_info_mandiri(slot=None):
     global PREV_RQ1_DATA, PREV_RQ1_SLOT
     if slot is None:
         slot = str(_Common.MANDIRI_ACTIVE)
@@ -957,11 +957,11 @@ def create_online_info(slot=None):
         return False
 
 
-def start_init_online():
-    _Helper.get_thread().apply_async(init_online)
+def start_init_online_mandiri():
+    _Helper.get_thread().apply_async(init_online_mandiri)
 
 
-def init_online(rsp=None, slot=None):
+def init_online_mandiri(rsp=None, slot=None):
     if rsp is None:
         LOGGER.warning(("[FAILED]", rsp, slot))
         return
@@ -998,14 +998,14 @@ def do_update_limit_mandiri(rsp):
             __content_rq1 = _res['content'].split('#')[0]
             if PREV_RQ1_DATA == __content_rq1:
                 __content_rsp = _res['content'].split('#')[1]
-                init_online(__content_rsp, PREV_RQ1_SLOT)
+                init_online_mandiri(__content_rsp, PREV_RQ1_SLOT)
                 LOGGER.info(('RQ1 MATCH', PREV_RQ1_SLOT, PREV_RQ1_DATA, __content_rq1, __content_rsp))
                 break
             else:
                 LOGGER.warning(('[DETECTED] RQ1 NOT MATCH', PREV_RQ1_DATA, __content_rq1))
             if not _Common.mandiri_single_sam():
                 # Switch To The Other Slot
-                auth_ka(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=True), initial=False)
+                auth_ka_mandiri(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=True), initial=False)
             break
         sleep(15)
 
@@ -1025,7 +1025,7 @@ def get_card_info_tapcash():
         return False
 
 
-def send_cryptogram_tapcash(cyptogram, card_info):
+def bni_crypto_tapcash(cyptogram, card_info):
     if cyptogram is None or card_info is None:
         return False
     try:

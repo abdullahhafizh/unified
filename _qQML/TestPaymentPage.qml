@@ -63,7 +63,7 @@ Base{
         base.result_topup_qprox.connect(qprox_payment_result);
         base.result_ka_info_qprox.connect(qprox_payment_result);
         base.result_online_info_qprox.connect(qprox_payment_result);
-        base.result_init_online_qprox.connect(qprox_payment_result);
+        base.result_init_online_mandiri.connect(qprox_payment_result);
         base.result_stop_qprox.connect(qprox_payment_result);
         base.result_general.connect(handle_general)
         releaseButton.connect(free_button);
@@ -91,7 +91,7 @@ Base{
         base.result_topup_qprox.disconnect(qprox_payment_result);
         base.result_ka_info_qprox.disconnect(qprox_payment_result);
         base.result_online_info_qprox.disconnect(qprox_payment_result);
-        base.result_init_online_qprox.disconnect(qprox_payment_result);
+        base.result_init_online_mandiri.disconnect(qprox_payment_result);
         base.result_stop_qprox.disconnect(qprox_payment_result);
         base.result_general.disconnect(handle_general)
         releaseButton.disconnect(free_button);

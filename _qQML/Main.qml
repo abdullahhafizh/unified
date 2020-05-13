@@ -57,7 +57,7 @@ Rectangle {
     signal result_topup_qprox(string str)
     signal result_ka_info_qprox(string str)
     signal result_online_info_qprox(string str)
-    signal result_init_online_qprox(string str)
+    signal result_init_online_mandiri(string str)
     signal result_stop_qprox(string str)
     signal result_airport_name(string str)
     signal result_generate_pdf(string str)
