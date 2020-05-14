@@ -494,8 +494,21 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         LOGGER.warning(('EMPTY REPORT'))
         return
     __data = report
-    if report[0] == '|' and len(report) > 196: #Trim Extra chars 4 in front, and 3 chars in end
-        __data = report.split('|')[1][4:-3] 
+    if report[0] == '|' and len(report) > 196: 
+        #Trim Extra chars 4 in front, and 3 chars in end For Old Applet
+        r = report.split('|')
+        if report[:5] == '|6308':
+            # |6308603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D3490D
+            # 603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D
+            # 603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D34
+            __data = r[1][4:-3] 
+            __applet_type = 'OLD_APPLET'
+        elif report[:5] == '|0860':
+            # |08603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB3
+            # 603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B
+            # 603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB
+            __data = r[1][2:-1] 
+            __applet_type = 'NEW_APPLET'
     __report_deposit = __data[:102]
     __report_emoney = __data[102:]
     # TODO: Check If Balance is Initial or after process topup
@@ -510,6 +523,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
     output = {
         'last_balance': __emoney_balance,
+        'applet_type': __applet_type,
         'report_sam': __report_emoney,
         'card_no': __report_emoney[:16],
         'report_ka': __report_deposit,
@@ -862,12 +876,15 @@ MANDIRI_DEPOSIT_BALANCE = 0
 
 
 def c2c_balance_info():
-    # TODO Check Result C2C Balance Here, Add C2C_DEPOSIT Number
     param = QPROX['BALANCE_C2C'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    if response == 0 and result is not None:
-        MANDIRI_DEPOSIT_BALANCE = int(result.split('|')[0])
-        _Common.C2C_DEPOSIT_NO = ''
+    if response == 0 and '|' in result:
+        # 24000|CF8703D6|603298180000003627070120138508320065030106000000000003DB727BDF078EEDD1518ABD6FC1A678B42C4346DA84117374E4C96A17022003224070FFFF
+        res = result.split('|')
+        MANDIRI_DEPOSIT_BALANCE = int(res[0])
+        _Common.C2C_DEPOSIT_UID = res[1]
+        _Common.log_to_temp_config('c2c^card^uid', res[1])
+        _Common.C2C_DEPOSIT_NO = res[2][:16]
         _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_ACTIVE = 1

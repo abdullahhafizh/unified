@@ -88,6 +88,7 @@ C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
 C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
 C2C_TOPUP_AMOUNT = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '100000')
 C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '6032000000000000')
+C2C_DEPOSIT_UID = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^uid', '---')
 # TODO Must Be Set From Process Update Fee C2C
 C2C_ADMIN_FEE = [0, 0]
 
