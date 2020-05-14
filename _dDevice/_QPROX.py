@@ -490,8 +490,9 @@ def start_topup_offline_mandiri(amount, trxid):
 
 
 def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
-    if _Common.empty(report):
-        LOGGER.warning(('EMPTY REPORT'))
+    if _Common.empty(report) or len(report) < 100:
+        LOGGER.warning(('EMPTY/MISSMATCH REPORT LENGTH'))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
     __data = report
     if report[0] == '|' and len(report) > 196: 
