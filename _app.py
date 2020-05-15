@@ -185,7 +185,7 @@ class SlotHandler(QObject):
 
     def start_topup_offline_mandiri(self, amount, trxid):
         _QPROX.start_topup_offline_mandiri(amount, trxid)
-    start_top_up_mandiri = pyqtSlot(str, str)(start_top_up_mandiri)
+    start_topup_offline_mandiri = pyqtSlot(str, str)(start_topup_offline_mandiri)
 
     def start_ka_info(self):
         _QPROX.start_ka_info()
