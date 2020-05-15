@@ -181,7 +181,7 @@ class SlotHandler(QObject):
 
     def start_check_card_balance(self):
         _QPROX.start_check_card_balance()
-    start_check_balance = pyqtSlot()(start_check_balance)
+    start_check_card_balance = pyqtSlot()(start_check_card_balance)
 
     def start_topup_offline_mandiri(self, amount, trxid):
         _QPROX.start_topup_offline_mandiri(amount, trxid)
