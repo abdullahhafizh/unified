@@ -784,7 +784,7 @@ def fake_update_balance(bank, card_no, amount):
         return
 
 
-def start_topup_up_bni_with_attempt(amount, trxid, attempt):
+def start_topup_offline_bni_with_attempt(amount, trxid, attempt):
     slot = None
     _Helper.get_thread().apply_async(topup_offline_bni, (amount, trxid, slot, attempt,))
 
@@ -1116,7 +1116,7 @@ def parse_card_history(bank, raw):
                 continue
             row = history.split('|')
             card_history.append({
-                'date': datetime.strptime(row[2], '%m%d%y').strftime('%Y-%m-%d'),
+                'date': datetime.strptime(row[2], '%d%m%y').strftime('%Y-%m-%d'),
                 'time': ':'.join(_Helper.strtolist(row[3])),
                 'type': _Common.BRI_LOG_LEGEND.get(row[4], ''),
                 'amount': row[5],
