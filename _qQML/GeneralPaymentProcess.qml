@@ -696,6 +696,7 @@ Base{
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
+            if (CONF.c2c_mode == 1) amount = details.value;
             _SLOT.start_topup_offline_mandiri(amount, structId);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
             _SLOT.start_topup_offline_bni(amount, structId);
