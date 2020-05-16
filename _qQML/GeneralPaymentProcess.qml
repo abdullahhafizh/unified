@@ -352,6 +352,9 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
+        // Trigger C2C Deposit Update Balance Check
+        if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
+        //========
         if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
             if (t=='MANDIRI_SAM_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();

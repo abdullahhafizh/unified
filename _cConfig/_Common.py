@@ -282,6 +282,7 @@ SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
 LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
 LAST_GET_PPOB = int(_ConfigParser.get_set_value('TEMPORARY', 'last^get^ppob', '0'))
+LAST_C2C_SET_FEE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^c2c^set^fee', '0'))
 
 
 def mandiri_sam_status():
@@ -471,14 +472,20 @@ def log_to_file(content='', path='', filename='', default_ext='.request'):
         file_logging.close()
 
 
+# LAST_C2C_SET_FEE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^c2c^set^fee', '0'))
+
+
 def log_to_temp_config(section='last^auth', content=''):
-    global LAST_AUTH, LAST_UPDATE
+    global LAST_AUTH, LAST_UPDATE, LAST_C2C_SET_FEE
     __timestamp = _Helper.now()
     if section == 'last^auth':
         LAST_AUTH = __timestamp
         content = str(__timestamp)
     elif section == 'last^update':
         LAST_UPDATE = __timestamp
+        content = str(__timestamp)
+    elif section == 'last^c2c^set^fee':
+        LAST_C2C_SET_FEE = __timestamp
         content = str(__timestamp)
     else:
         content = str(content)

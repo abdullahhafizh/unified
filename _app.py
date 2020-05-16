@@ -652,6 +652,10 @@ class SlotHandler(QObject):
         _SalePrintTool.start_print_card_history(payload)
     start_print_card_history = pyqtSlot(str)(start_print_card_history)
 
+    def start_check_c2c_deposit(self):
+        _SettlementService.start_check_c2c_deposit()
+    start_check_c2c_deposit = pyqtSlot()(start_check_c2c_deposit)
+
 
 
 def s_handler():

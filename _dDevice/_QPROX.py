@@ -72,8 +72,8 @@ QPROX = {
     "SET_FEE_C2C": "030",
     "FORCE_SETTLEMENT": "031",
     "BALANCE_C2C": "033",
-    "UPDATE_BALANCE_C2C_MANDIRI": "XXX", #Update Balance Online Mandiri For C2C
-    "RAW_APDU": "034", #Update Balance Online Mandiri For C2C
+    "UPDATE_BALANCE_C2C_MANDIRI": "035", #Update Balance Online Mandiri For C2C SAM Slot, TID, MID, Token
+    "RAW_APDU": "034", #Send Raw APDU TO Target (255-SAM, 1/2/3/4-Slot)
 
 }
 
@@ -494,38 +494,41 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         LOGGER.warning(('EMPTY/MISSMATCH REPORT LENGTH'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
+    if '|' not in report:
+        LOGGER.warning(('INVALID RESPONSE, MISSING PIPELINE'))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        return
     __data = report
-    if report[0] == '|' and len(report) > 196: 
-        r = report.split('|')
-        if report[:5] == '|6308':
-            #Trim Extra chars 4 in front, and 3 chars in end For Old Applet
+    r = report.split('|')
+    if len(report) > 196: 
+        if r[1][:4] == '6308':
+            #Trim Extra chars 4 in front, and get 196
             # |6308603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D3490D
             # 603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D
             # 603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D34
-            __data = r[1][4:-3] 
-            __applet_type = 'OLD_APPLET'
-        elif report[:5] == '|0860':
-            #Trim Extra chars 2 in front, and 1 char in end For Old Applet
+            __data = r[1][4:200] 
+        elif r[1][:4] == '0860':
+            #Trim Extra chars 2 in front, and get 196
             # |08603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB3
             # 603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B
             # 603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB
-            __data = r[1][2:-1] 
-            __applet_type = 'NEW_APPLET'
+            __data = r[1][2:198] 
     __report_deposit = __data[:102]
     __report_emoney = __data[102:]
     # TODO: Check If Balance is Initial or after process topup
     __deposit_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
     # Update Local Mandiri Wallet
-    __sam_prev_balance = _Common.MANDIRI_WALLET_1
+    __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
     _Common.MANDIRI_WALLET_1 = __deposit_balance
     _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
     __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
+    if not _Helper.empty(r[0].strip()):
+        __emoney_balance = r[0].strip()
     __emoney_prev_balance = int(__emoney_balance) - int(amount)
     if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
         __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
     output = {
         'last_balance': __emoney_balance,
-        'applet_type': __applet_type,
         'report_sam': __report_emoney,
         'card_no': __report_emoney[:16],
         'report_ka': __report_deposit,
@@ -1058,13 +1061,60 @@ def bni_crypto_tapcash(cyptogram, card_info):
 
     
 def get_c2c_settlement_fee():
-    # TODO Set Fuction Get Fee C2C Here, Must Return Array String
-    return False
+    # Must Return Array String or False
+    output = []
+    try:
+        for applet_type in range(_Common.C2C_ADMIN_FEE):
+            param = QPROX['GET_FEE_C2C'] + '|' + str(applet_type) + '|'
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+            LOGGER.debug((applet_type, str(response), str(result)))
+            # 0D706E8693EA7B160520115936DC050000831E61CB55C30FC36938ED
+            if response == 0 and len(result) > 50:
+                clean_result = result.strip().replace(' ', '')
+                output.append(clean_result)
+            else:
+                return False
+        return output
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
 
 
 def set_c2c_settlement_fee(file):
-    # TODO Set Action To Conduct Settlement Fee
-    return False
+    attempt = 0
+    _url = 'http://'+_Common.SFTP_C2C['host']+'/bridge-service/filecheck.php?content=1&no_correction=1'
+    _param = {
+        'ext': '.txt',
+        'file_path':_Common.SFTP_C2C['path_fee_response']+'/'+file
+    }
+    if ('_DEV', '_dev') in _param['file_path']:
+        if _Common.LIVE_MODE is True or _Common.TEST_MODE is True:
+            _param['file_path'] = _param['file_path'].replace('_DEV', '')
+            _param['file_path'] = _param['file_path'].replace('_dev', '')
+    while True:
+        attempt += 1
+        response, result = _NetworkAccess.post_to_url(_url, _param)
+        LOGGER.debug((attempt, file, response, result))
+        if response == 200 and result['status'] == 0 and result['file'] is True:
+            new_c2c_fees = result['content'].split('#')[0]
+            if len(new_c2c_fees) != 2:
+                continue
+            result_fee = []
+            for applet_type in range(_Common.C2C_ADMIN_FEE):
+                param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(new_c2c_fees[applet_type]) + '|'
+                response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+                LOGGER.debug((applet_type, str(response), str(result)))
+                # Check Validation of Success Inject Fee
+                if response == 0 and result != '6700':
+                    result_fee.append(True)
+                else:
+                    result_fee.append(False)
+            if result_fee == [True, True]:
+                _Common.log_to_temp_config('last^c2c^set^fee')
+                LOGGER.info(('SUCCESS UPDATE FEE FOR BOTH APPLET'))
+                return True
+                break
+        sleep(15)
 
 
 def start_get_card_history(bank):
@@ -1088,7 +1138,6 @@ def get_card_history(bank):
             else:
                 response, result = _Command.send_request(param=param, output=None)
             if response == 0 and '|' in result:
-                # Sample Sukses History BRI
                 output = parse_card_history(bank, result)
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))

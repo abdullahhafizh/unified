@@ -143,11 +143,11 @@ Base{
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
             var r = a.split('|')[1]
             if (r.indexOf('FAILED') > -1){
-                false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Settlement Mandiri!\nKode Error ['+r+']');
+                false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Proses Settlement!\nKode Error ['+r+']');
             } else if (r=='SUCCESS') {
-                false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']', true);
+                false_notif('Dear '+userData.first_name+'|Status Proses Settlement...\n['+r+']', true);
             } else {
-                false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
+                false_notif('Dear '+userData.first_name+'|Status Proses Settlement...\n['+r+']');
                 if (r!='WAITING_RSP_UPDATE') return;
             }
         } else if (a.indexOf('APP_UPDATE') > -1){

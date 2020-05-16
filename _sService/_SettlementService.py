@@ -466,16 +466,16 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             # LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
                 output_path = C2C_SETT_FILE_PATH
-            c2c_fees = _QPROX.c2c_settlement_fee() # Must Return Array String
+            c2c_fees = _QPROX.get_c2c_settlement_fee()
             if not c2c_fees:
                 LOGGER.warning(('Failed To Fetch Settlement Fee', bank, mode))
                 return False
             _filecontent = ''
             for c in c2c_fees:
-                if c == c2c_fees[-1]:
-                    _filecontent += (c + chr(3))
-                else:
+                if c == c2c_fees[0]:
                     _filecontent += (c + chr(3) + os.linesep)
+                else:
+                    _filecontent += (c + chr(3))
             _ds = _Helper.get_ds(_Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M%S')))
             _filename = _Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M%S')) + _ds + '.txt'
             LOGGER.info(('Create Settlement', bank, mode, _filename))
@@ -690,7 +690,12 @@ def do_settlement_for(bank='BNI', force=False):
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FEE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GET_C2C_FEE_SETTLEMENT')
-        return _QPROX.set_c2c_settlement_fee(_param_sett['filename'])
+        _result_update_fee = _QPROX.set_c2c_settlement_fee(_param_sett['filename'])
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPDATE_C2C_FEE_SETTLEMENT')
+        if _result_update_fee is True:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SUCCESS_SET_C2C_FEE')
+        else:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_SET_C2C_FEE')
     else:
         return
 
@@ -745,6 +750,22 @@ def validate_update_balance_c2c():
         next_run_time = current_time + sync_time
         LOGGER.debug(('MANDIRI_C2C_DEPOSIT_UPDATE_BALANCE NEXT RUN', _Helper.convert_epoch(t=next_run_time)))
         sleep(sync_time)
+
+
+def start_check_c2c_deposit():
+    if not _Common.C2C_MODE:
+        return
+    _Helper.get_thread().apply_async(start_check_c2c_deposit)
+
+
+def start_check_c2c_deposit():
+    # FYI: Triggered After Success Transaction
+    if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
+        LOGGER.debug(('DO C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        do_settlement_for(bank='MANDIRI_C2C', force=True)
+    else:
+        LOGGER.debug(('IGNORE C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
 
 
 def validate_update_balance():

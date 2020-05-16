@@ -681,7 +681,7 @@ def topup_online(bank, cardno, amount):
         prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         _Common.MANDIRI_ACTIVE_WALLET = 0
         # TODO Check Actual Command UPDATE_BALANCE_C2C_MANDIRI and its result
-        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
+        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_SAM_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
         update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not update_result:
             return False
