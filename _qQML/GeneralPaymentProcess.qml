@@ -695,7 +695,9 @@ Base{
         var provider = details.provider;
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
+        // Only Open Mandiri Denom For Bin-Range 6032 Only
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
+            //Re-define topup amount for C2C Mode
             if (CONF.c2c_mode == 1) amount = details.value;
             _SLOT.start_topup_offline_mandiri(amount, structId);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
