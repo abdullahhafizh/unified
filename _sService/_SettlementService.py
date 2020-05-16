@@ -754,20 +754,19 @@ def validate_update_balance_c2c():
 
 
 def start_check_c2c_deposit():
-    if not _Common.C2C_MODE:
-        return
-    _Helper.get_thread().apply_async(start_check_c2c_deposit)
+    if _Common.C2C_MODE:
+        _Helper.get_thread().apply_async(start_check_c2c_deposit)
+    else:
+        print("pyt: Failed CHECH_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
 
 
 def start_check_c2c_deposit():
     # FYI: Triggered After Success Transaction
+    LOGGER.info(('CHECK C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
-        LOGGER.debug(('DO C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         do_settlement_for(bank='MANDIRI_C2C', force=True)
-    else:
-        LOGGER.debug(('IGNORE C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
-
+        
 
 def validate_update_balance():
     while True:

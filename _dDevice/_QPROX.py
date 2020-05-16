@@ -498,66 +498,71 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         LOGGER.warning(('INVALID RESPONSE, MISSING PIPELINE'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
-    __data = report
-    r = report.split('|')
-    if len(report) > 196: 
-        if r[1][:4] == '6308':
-            #Trim Extra chars 4 in front, and get 196
-            # |6308603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D3490D
-            # 603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D
-            # 603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D34
-            __data = r[1][4:200] 
-        elif r[1][:4] == '0860':
-            #Trim Extra chars 2 in front, and get 196
-            # |08603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB3
-            # 603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B
-            # 603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB
-            __data = r[1][2:198] 
-    __report_deposit = __data[:102]
-    __report_emoney = __data[102:]
-    # TODO: Check If Balance is Initial or after process topup
-    __deposit_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
-    # Update Local Mandiri Wallet
-    __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
-    _Common.MANDIRI_WALLET_1 = __deposit_balance
-    _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
-    __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
-    if not _Helper.empty(r[0].strip()):
-        __emoney_balance = r[0].strip()
-    __emoney_prev_balance = int(__emoney_balance) - int(amount)
-    if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
-        __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
-    output = {
-        'last_balance': __emoney_balance,
-        'report_sam': __report_emoney,
-        'card_no': __report_emoney[:16],
-        'report_ka': __report_deposit,
-        'bank_id': '1',
-        'bank_name': 'MANDIRI',
-    }
-    if status == '0000':
-        # Store Topup Success Record Into Local DB
-        output['c2c_mode'] = '1'
-        _Common.local_store_topup_record(output)
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
-    # Ensure The C2C_DEPOSIT_NO same with Report
-    if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
-        _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
-    param = {
-        'trxid': reff_no,
-        'samCardNo': _Common.C2C_DEPOSIT_NO,
-        'samCardSlot': _Common.C2C_SAM_SLOT,
-        'samPrevBalance': __sam_prev_balance,
-        'samLastBalance': __deposit_balance,
-        'topupCardNo': __report_emoney[:16],
-        'topupPrevBalance': __emoney_prev_balance,
-        'topupLastBalance': __emoney_balance,
-        'status': status,
-        'remarks': __data,
-    }
-    _Common.store_upload_sam_audit(param)
-    # Update to server
-    _Common.upload_mandiri_wallet()
+    try:
+        __data = report
+        r = report.split('|')
+        if len(report) > 196: 
+            if r[1][:4] == '6308':
+                #Trim Extra chars 4 in front, and get 196
+                # |6308603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D3490D
+                # 603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D
+                # 603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D34
+                __data = r[1][4:200] 
+            elif r[1][:4] == '0860':
+                #Trim Extra chars 2 in front, and get 196
+                # |08603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB3
+                # 603298180000003600030D706E8693EA7B510401880120B80B0000803E0000140520120659000000096C0F03DC050000FBA77B
+                # 603298407586934100750D706E8693EA7B051040180110DC050000CA3E0100140520120659000000090009831C09FB
+                __data = r[1][2:198] 
+        __report_deposit = __data[:102]
+        __report_emoney = __data[102:]
+        # TODO: Check If Balance is Initial or after process topup
+        __deposit_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
+        # Update Local Mandiri Wallet
+        __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
+        _Common.MANDIRI_WALLET_1 = __deposit_balance
+        _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
+        __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
+        if not _Helper.empty(r[0].strip()):
+            __emoney_balance = r[0].strip()
+        __emoney_prev_balance = int(__emoney_balance) - int(amount)
+        if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
+            __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
+        output = {
+            'last_balance': __emoney_balance,
+            'report_sam': __report_emoney,
+            'card_no': __report_emoney[:16],
+            'report_ka': __report_deposit,
+            'bank_id': '1',
+            'bank_name': 'MANDIRI',
+        }
+        if status == '0000':
+            # Store Topup Success Record Into Local DB
+            output['c2c_mode'] = '1'
+            _Common.local_store_topup_record(output)
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
+        # Ensure The C2C_DEPOSIT_NO same with Report
+        if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
+            _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
+        param = {
+            'trxid': reff_no,
+            'samCardNo': _Common.C2C_DEPOSIT_NO,
+            'samCardSlot': _Common.C2C_SAM_SLOT,
+            'samPrevBalance': __sam_prev_balance,
+            'samLastBalance': __deposit_balance,
+            'topupCardNo': __report_emoney[:16],
+            'topupPrevBalance': __emoney_prev_balance,
+            'topupLastBalance': __emoney_balance,
+            'status': status,
+            'remarks': __data,
+        }
+        _Common.store_upload_sam_audit(param)
+        # Update to server
+        _Common.upload_mandiri_wallet()
+    except Exception as e:
+        LOGGER.warning((e, report, reff_no, amount, status))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+
     
 
 def start_topup_mandiri_correction(amount, trxid):
