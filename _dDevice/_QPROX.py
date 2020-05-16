@@ -567,9 +567,12 @@ def start_topup_mandiri_correction(amount, trxid):
         _Helper.get_thread().apply_async(top_up_mandiri_correction, (amount, trxid,))
 
 
+LAST_C2C_APP_TYPE = '0'
+
+
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
-    param = QPROX['CORRECTION_C2C'] + '|'
+    param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
     # TODO Check Correction Result
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
@@ -581,7 +584,7 @@ def top_up_mandiri_correction(amount, trxid=''):
 
 
 def get_c2c_failure_settlement(amount, trxid):
-    param = QPROX['FORCE_SETTLEMENT'] + '|'
+    param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
     # TODO Check Force Settlement Result
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
@@ -593,8 +596,10 @@ def get_c2c_failure_settlement(amount, trxid):
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
+    global LAST_C2C_APP_TYPE
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    # TODO Define Applet Type From Error Code Given
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)

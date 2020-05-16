@@ -741,6 +741,7 @@ def validate_update_balance_c2c():
     while True:
         sync_time = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'daily^sync^time', '3600'))
         current_time = _Helper.now() / 1000
+        LOGGER.debug(('MANDIRI_C2C_DEPOSIT_UPDATE_BALANCE', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
         if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
             do_settlement_for(bank='MANDIRI_C2C', force=True)
