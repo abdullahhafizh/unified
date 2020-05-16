@@ -112,6 +112,7 @@ INFOS = [
     '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File',
     '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File',
     '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File',
+    '[MANDIRI_C2C]-sam^slot ->  Mandiri SAM Actual Slot in Reader',
     '[MANDIRI_C2C]-deposit^slot ->  C2C Deposit Actual Slot in Reader',
 ] 
 
