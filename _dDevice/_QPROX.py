@@ -72,7 +72,7 @@ QPROX = {
     "SET_FEE_C2C": "030",
     "FORCE_SETTLEMENT": "031",
     "BALANCE_C2C": "033",
-    "UPDATE_BALANCE_C2C_MANDIRI": "035", #Update Balance Online Mandiri For C2C SAM Slot, TID, MID, Token
+    "UPDATE_BALANCE_C2C_MANDIRI": "035", #Update Balance Online Mandiri For C2C Deposit Slot, TID, MID, Token
     "RAW_APDU": "034", #Send Raw APDU TO Target (255-SAM, 1/2/3/4-Slot)
 
 }

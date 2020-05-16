@@ -89,6 +89,7 @@ C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '--
 C2C_TOPUP_AMOUNT = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '100000')
 C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '6032000000000000')
 C2C_DEPOSIT_UID = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^uid', '---')
+C2C_DEPOSIT_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^slot', '---')
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
 
@@ -111,6 +112,7 @@ INFOS = [
     '[MANDIRI_C2C]-c2c^path^settlement -> Define Host Path To Put Settlement File',
     '[MANDIRI_C2C]-c2c^path^fee -> Define Host Path To Put Settlement Fee File',
     '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File',
+    '[MANDIRI_C2C]-deposit^slot ->  C2C Deposit Actual Slot in Reader',
 ] 
 
 for i in range(len(INFOS)):
