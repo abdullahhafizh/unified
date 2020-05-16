@@ -543,6 +543,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             output['c2c_mode'] = '1'
             _Common.local_store_topup_record(output)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
+        elif status == 'FAILED':
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
