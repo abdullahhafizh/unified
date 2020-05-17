@@ -611,6 +611,7 @@ SMT_CONFIG = dict()
 
 FW_BANK = {
     '0': 'MANDIRI',
+    '8': 'MANDIRI', #New Applet Mandiri
     '1': 'BRI', #BRI JAVA
     '2': 'BRI', #BRI Desfire
     '3': 'BNI',

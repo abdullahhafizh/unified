@@ -449,14 +449,17 @@ def check_card_balance():
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
     if response == 0:
-        bank_name = FW_BANK.get(result.split('|')[2], 'N/A')
+        bank_type = result.split('|')[2].replace('#', '')
+        bank_name = FW_BANK.get(bank_type, 'N/A')
         card_no = result.split('|')[1].replace('#', '')
+        if bank_type == '8':
+            bank_type = '0'
         balance = result.split('|')[0]  
         able_check_log = '1' if bank_name in _Common.ALLOWED_BANK_CHECK_CARD_LOG else '0'
         output = {
             'balance': balance,
             'card_no': card_no,
-            'bank_type': result.split('|')[2].replace('#', ''),
+            'bank_type': bank_type,
             'bank_name': bank_name,
             # 'able_topup': result.split('|')[3].replace('#', ''),
             'able_check_log': able_check_log,
