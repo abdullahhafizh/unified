@@ -1103,10 +1103,7 @@ def set_c2c_settlement_fee(file):
         'ext': '.txt',
         'file_path':_Common.SFTP_C2C['path_fee_response']+'/'+file
     }
-    if ('_DEV', '_dev') in _param['file_path']:
-        if _Common.LIVE_MODE is True or _Common.TEST_MODE is True:
-            _param['file_path'] = _param['file_path'].replace('_DEV', '')
-            _param['file_path'] = _param['file_path'].replace('_dev', '')
+    LOGGER.debug((attempt, file, _url, _param))
     while True:
         attempt += 1
         response, result = _NetworkAccess.post_to_url(_url, _param)
