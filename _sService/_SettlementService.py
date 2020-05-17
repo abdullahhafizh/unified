@@ -702,11 +702,8 @@ def do_settlement_for(bank='BNI', force=False):
 
 # Call Ad-Hoc C2C Fee Settlement
 def start_do_c2c_update_fee():
-    _Helper.get_thread().apply_async(do_c2c_update_fee,)
-
-
-def do_c2c_update_fee():
-    return do_settlement_for(bank='MANDIRI_C2C_FEE')
+    bank = 'MANDIRI_C2C_FEE'
+    _Helper.get_thread().apply_async(do_settlement_for, (bank, ))
 
 
 def mandiri_create_rq1(content):
@@ -766,7 +763,7 @@ def start_check_c2c_deposit():
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         do_settlement_for(bank='MANDIRI_C2C', force=True)
-        
+
 
 def validate_update_balance():
     while True:
