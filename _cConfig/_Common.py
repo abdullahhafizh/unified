@@ -84,12 +84,12 @@ C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '00000000000
 C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')
 C2C_TID = _ConfigParser.get_set_value('MANDIRI_C2C', 'tid', '---')
 C2C_SAM_PIN = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^pin', '---')
-C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '---')
-C2C_THRESHOLD = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '---')
+C2C_SAM_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'sam^slot', '1')
+C2C_THRESHOLD = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '1000'))
 C2C_TOPUP_AMOUNT = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '100000')
 C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '6032000000000000')
 C2C_DEPOSIT_UID = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^uid', '---')
-C2C_DEPOSIT_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^slot', '---')
+C2C_DEPOSIT_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^slot', '2')
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
 
