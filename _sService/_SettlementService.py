@@ -40,8 +40,15 @@ HEADER = {
     'Content-Type': 'application/json',
 }
 FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles')
+if not os.path.exists(FILE_PATH):
+    os.makedirs(FILE_PATH)
 C2C_FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles', 'C2C')
+if not os.path.exists(C2C_FILE_PATH):
+    os.makedirs(C2C_FILE_PATH)
 C2C_SETT_FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles', 'C2C', 'Fee')
+if not os.path.exists(C2C_SETT_FILE_PATH):
+    os.makedirs(C2C_SETT_FILE_PATH)
+
 
 BID = _Common.BID
 GLOBAL_SETTLEMENT = []
