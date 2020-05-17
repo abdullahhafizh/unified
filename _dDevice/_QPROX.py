@@ -1080,7 +1080,7 @@ def get_c2c_settlement_fee():
     # Must Return Array String or False
     output = []
     try:
-        for applet_type in range(_Common.C2C_ADMIN_FEE):
+        for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
             param = QPROX['GET_FEE_C2C'] + '|' + str(applet_type) + '|'
             response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             LOGGER.debug((applet_type, str(response), str(result)))
@@ -1116,7 +1116,7 @@ def set_c2c_settlement_fee(file):
             if len(new_c2c_fees) != 2:
                 continue
             result_fee = []
-            for applet_type in range(_Common.C2C_ADMIN_FEE):
+            for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
                 param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(new_c2c_fees[applet_type]) + '|'
                 response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
                 LOGGER.debug((applet_type, str(response), str(result)))
