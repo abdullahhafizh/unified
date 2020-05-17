@@ -1029,8 +1029,6 @@ Base{
                        button_text: 'update'
                        width: 80
                        height: 40
-                       anchors.right: _total_stock_103.right
-                       anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
