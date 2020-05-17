@@ -703,8 +703,7 @@ def do_settlement_for(bank='BNI', force=False):
 # Call Ad-Hoc C2C Fee Settlement
 def start_do_c2c_update_fee():
     bank = 'MANDIRI_C2C_FEE'
-    force = false
-    _Helper.get_thread().apply_async(do_settlement_for, (bank, force, ))
+    _Helper.get_thread().apply_async(do_settlement_for, (bank, ))
 
 
 def mandiri_create_rq1(content):
