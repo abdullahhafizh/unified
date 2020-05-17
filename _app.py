@@ -637,7 +637,7 @@ class SlotHandler(QObject):
     start_topup_online_bri = pyqtSlot(str, str)(start_topup_online_bri)
 
     def start_do_c2c_update_fee(self):
-        _TopupService.start_do_c2c_update_fee()
+        _SettlementService.start_do_c2c_update_fee()
     start_do_c2c_update_fee = pyqtSlot()(start_do_c2c_update_fee)
 
     def start_do_topup_c2c_deposit(self):
