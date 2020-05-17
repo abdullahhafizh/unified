@@ -126,7 +126,7 @@ def push_settlement_data(__param):
     """
     __url = _Common.BACKEND_URL + 'settlement/sync-record'
     if __param is None:
-        LOGGER.warning(('push_settlement_data :', 'Missing __param'))
+        LOGGER.warning(('Missing __param'))
         return False
     # {
     #     "sid": _Helper.get_uuid(),
@@ -521,7 +521,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
 
 def start_do_bni_topup_settlement():
     bank = 'BNI'
-    _Helper.get_thread().apply_async(do_settlement_for, (bank,))
+    _Helper.get_thread().apply_async(do_settlement, (bank,))
 
 
 def start_do_mandiri_topup_settlement():
@@ -531,7 +531,7 @@ def start_do_mandiri_topup_settlement():
             _Common.MANDIRI_ACTIVE_WALLET = 0
         else:
             bank = 'MANDIRI_C2C'
-        _Helper.get_thread().apply_async(do_settlement_for, (bank,))
+        _Helper.get_thread().apply_async(do_settlement, (bank,))
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
     else:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|NO_REQUIRED')
@@ -544,7 +544,7 @@ def start_reset_mandiri_settlement():
     else:
         bank = 'MANDIRI_C2C'
     force = True
-    _Helper.get_thread().apply_async(do_settlement_for, (bank, force,))
+    _Helper.get_thread().apply_async(do_settlement, (bank, force,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
@@ -555,7 +555,7 @@ def start_dummy_mandiri_topup_settlement():
     else:
         bank = 'MANDIRI_C2C'    
     force = True
-    _Helper.get_thread().apply_async(do_settlement_for, (bank, force,))
+    _Helper.get_thread().apply_async(do_settlement, (bank, force,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
@@ -563,7 +563,7 @@ def async_push_settlement_data(param):
     _Helper.get_thread().apply_async(push_settlement_data, (param,))
 
 
-def do_settlement_for(bank='BNI', force=False):
+def do_settlement(bank='BNI', force=False):
     if bank == 'BNI':
         _SFTPAccess.HOST_BID = 2
         if _Helper.is_online(source='bni_settlement') is False:
@@ -572,7 +572,7 @@ def do_settlement_for(bank='BNI', force=False):
         #     _SFTPAccess.close_sftp()
         # _SFTPAccess.init_sftp()
         # if _SFTPAccess.SFTP is None:
-        #     LOGGER.warning(('do_settlement_for', bank, 'failed cannot init SFTP'))
+        #     LOGGER.warning(('do_settlement', bank, 'failed cannot init SFTP'))
         #     return
         _param = create_settlement_file(bank=bank)
         if _param is False:
@@ -595,7 +595,7 @@ def do_settlement_for(bank='BNI', force=False):
         #     _SFTPAccess.close_sftp()
         # _SFTPAccess.init_sftp()
         # if _SFTPAccess.SFTP is None:
-        #     LOGGER.warning(('do_settlement_for', bank, 'failed cannot init SFTP'))
+        #     LOGGER.warning(('do_settlement', bank, 'failed cannot init SFTP'))
         #     return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
         _param_sett = create_settlement_file(bank=bank, mode='TOPUP', force=force)
@@ -722,7 +722,7 @@ def do_settlement_for(bank='BNI', force=False):
 # Call Ad-Hoc C2C Fee Settlement
 def start_do_c2c_update_fee():
     bank = 'MANDIRI_C2C_FEE'
-    _Helper.get_thread().apply_async(do_settlement_for, (bank, ))
+    _Helper.get_thread().apply_async(do_settlement, (bank, ))
 
 
 def mandiri_create_rq1(content):
@@ -760,7 +760,7 @@ def validate_update_balance_c2c():
         LOGGER.debug(('MANDIRI_C2C_DEPOSIT_UPDATE_BALANCE', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
         if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
-            do_settlement_for(bank='MANDIRI_C2C', force=True)
+            do_settlement(bank='MANDIRI_C2C', force=True)
         if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
             break
@@ -781,7 +781,7 @@ def start_check_c2c_deposit():
     LOGGER.info(('CHECK C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
-        do_settlement_for(bank='MANDIRI_C2C', force=True)
+        do_settlement(bank='MANDIRI_C2C', force=True)
 
 
 def validate_update_balance():
@@ -795,7 +795,7 @@ def validate_update_balance():
             if current_time >= last_update_with_tolerance:
                 LOGGER.info(('DETECTED_EXPIRED_LIMIT_UPDATE', last_update_with_tolerance, current_time))
                 _Common.MANDIRI_ACTIVE_WALLET = 0
-                do_settlement_for(bank='MANDIRI', force=True)
+                do_settlement(bank='MANDIRI', force=True)
                 ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
@@ -838,7 +838,7 @@ def trigger_mandiri_sam_update():
         MANDIRI_UPDATE_SCHEDULE_RUNNING = True
         LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
         _Common.MANDIRI_ACTIVE_WALLET = 0
-        do_settlement_for(bank='MANDIRI', force=True)
+        do_settlement(bank='MANDIRI', force=True)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         MANDIRI_UPDATE_SCHEDULE_RUNNING = False
     else:
