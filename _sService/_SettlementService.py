@@ -139,7 +139,7 @@ def push_settlement_data(__param):
     # }
     __sid = store_local_settlement(__param)
     if __sid is None:
-        LOGGER.warning(('push_settlement_data :', '__sid is None'))
+        LOGGER.warning(('__sid is None'))
         return False
     __param['endpoint'] = 'settlement/sync-record'
     try:
@@ -157,7 +157,7 @@ def push_settlement_data(__param):
             _Common.store_request_to_job(name=_Helper.whoami(), url=__url, payload=__param)
             return False
     except Exception as e:
-        LOGGER.warning(('push_settlement_data :', e))
+        LOGGER.warning((e))
         _Common.store_request_to_job(name=_Helper.whoami(), url=__url, payload=__param)
         return False
 
@@ -614,7 +614,11 @@ def do_settlement_for(bank='BNI', force=False):
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']
         _param_sett['remarks'] = _push_file_sett['remarks']
-        async_push_settlement_data(_param_sett)
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
+        # async_push_settlement_data(_param_sett)
+        send_settlement_data = push_settlement_data(_param_sett)
+        if not send_settlement_data:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_KA_SETTLEMENT')
         _param_ka = create_settlement_file(bank=bank, mode='KA', force=force)
         if _param_ka is False:
@@ -632,7 +636,11 @@ def do_settlement_for(bank='BNI', force=False):
         _param_ka['remote_path'] = _push_file_kalog['remote_path']
         _param_ka['local_path'] = _push_file_kalog['local_path']
         _param_ka['remarks'] = _push_file_kalog['remarks']
-        async_push_settlement_data(_param_ka)
+        # async_push_settlement_data(_param_ka)
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
+        send_settlement_data = push_settlement_data(_param_ka)
+        if not send_settlement_data:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GENERATE_RQ1_SETTLEMENT')
         _rq1 = _QPROX.create_online_info_mandiri()
         if _rq1 is False:
@@ -673,7 +681,11 @@ def do_settlement_for(bank='BNI', force=False):
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']
         _param_sett['remarks'] = _push_file_sett['remarks']
-        async_push_settlement_data(_param_sett)
+        # async_push_settlement_data(_param_sett)
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
+        send_settlement_data = push_settlement_data(_param_sett)
+        if not send_settlement_data:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
         topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
                                             _Common.C2C_DEPOSIT_NO, 
