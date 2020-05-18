@@ -498,9 +498,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
     if '|' not in report:
-        LOGGER.warning(('INVALID RESPONSE, MISSING PIPELINE'))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-        return
+        report = '0|'+report
     # 603298180000003600030D706E8693EA7B051040100120D0070000007D0000160520174428270F0000BA0F03DC050000992DA3603298608319158400030D706E8693EA7B510401880110F40100003A5D0100160520174428270F0000C4030361F63B
     try:
         r = report.split('|')
@@ -527,7 +525,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         _Common.MANDIRI_WALLET_1 = __deposit_balance
         _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
         __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
-        if not _Helper.empty(r[0].strip()):
+        if not _Helper.empty(r[0].strip()) or r[0] != '0':
             __emoney_balance = r[0].strip()
         __emoney_prev_balance = int(__emoney_balance) - int(amount)
         if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
