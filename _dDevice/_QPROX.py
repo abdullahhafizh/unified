@@ -615,8 +615,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
-        LOGGER.warning((slot, _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|C2C_CORRECTION')
+        LOGGER.warning((_result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):
