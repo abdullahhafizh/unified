@@ -711,7 +711,7 @@ def topup_online(bank, cardno, amount):
                 'status': 'REFILL_SUCCESS',
                 'remarks': output,
             }
-        _Helper.get_thread().apply_async(_Common.store_upload_sam_audit, (param,))     
+        _Common.store_upload_sam_audit(param)     
         return output        
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
