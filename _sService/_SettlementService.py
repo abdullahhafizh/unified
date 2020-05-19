@@ -69,7 +69,7 @@ def store_local_settlement(__param):
         return param['sid']
     except Exception as e:
         LOGGER.warning(str(e))
-        return None
+        return False
 
 
 def push_settlement_data_smt(__param):
@@ -112,7 +112,7 @@ def push_settlement_data_smt(__param):
         return False
 
 
-def push_settlement_data(__param):
+def push_settlement_data(__param=None):
     global GLOBAL_SETTLEMENT
     """
     "filename": "HVOUYVUYVUYVUIVLIUV.txt",
@@ -138,13 +138,13 @@ def push_settlement_data(__param):
     #     "row": __param['row']
     # }
     __sid = store_local_settlement(__param)
-    if __sid is None:
+    if not __sid:
         LOGGER.warning(('__sid is None'))
         return False
     __param['endpoint'] = 'settlement/sync-record'
     try:
         status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
-        # LOGGER.debug(('push_settlement_data :', str(status), str(response)))
+        LOGGER.debug((str(status), str(response)))
         if status == 200 and response['result'] == 'OK':
             _DAO.update_settlement({'sid': __sid, 'status': 'TOPUP_PREPAID|CLOSED'})
             if not _Common.empty(GLOBAL_SETTLEMENT):

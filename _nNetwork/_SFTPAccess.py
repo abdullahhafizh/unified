@@ -60,7 +60,7 @@ def init_sftp():
         SFTP = SSH.open_sftp()
         SFTP.sshclient = SSH
         # SFTP = pysftp.Connection(host=SFTP_SERVER, username=SFTP_USER, password=SFTP_PASS, cnopts=cnopts)
-        LOGGER.debug(('TRUE'))
+        LOGGER.debug(('TRUE', HOST_BID, SFTP_SERVER, SFTP_PORT))
     except Exception as e:
         LOGGER.warning((str(e)))
         if SFTP is not None:
@@ -79,7 +79,7 @@ def send_file(filename, local_path, remote_path=None):
         init_sftp()
     if remote_path is None:
         remote_path = REMOTE_PATH
-    if '_DEV' in remote_path:
+    if not _Common.C2C_MODE:
         if _Common.LIVE_MODE is True:
             remote_path = remote_path.replace('_DEV', '')
         if 'TopUpOffline' in remote_path and _Common.MANDIRI_FORCE_PRODUCTION_SAM is True:
