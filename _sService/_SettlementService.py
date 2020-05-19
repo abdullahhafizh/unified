@@ -83,11 +83,11 @@ def push_settlement_data_smt(__param):
     """
     __url = SMT_URL + 'settlement/submit'
     if __param is None:
-        LOGGER.warning(('push_settlement_data :', 'Missing __param'))
+        LOGGER.warning(('[FAILED] Missing __param'))
         return False
     __sid = store_local_settlement(__param)
-    if __sid is None:
-        LOGGER.warning(('push_settlement_data :', '__sid is None'))
+    if not __sid:
+        LOGGER.warning(('[FAILED] Store Local Settlement Data'))
         return False
     __param['mid'] = SMT_MID
     __param['token'] = SMT_TOKEN
@@ -126,7 +126,7 @@ def push_settlement_data(__param=None):
     """
     __url = _Common.BACKEND_URL + 'settlement/sync-record'
     if __param is None:
-        LOGGER.warning(('Missing __param'))
+        LOGGER.warning(('[FAILED] Missing __param'))
         return False
     # {
     #     "sid": _Helper.get_uuid(),
