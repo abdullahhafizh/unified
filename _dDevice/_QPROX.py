@@ -617,7 +617,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 LAST_C2C_APP_TYPE = '1'
             else:
                 LAST_C2C_APP_TYPE = '0'
-        LOGGER.warning((_result))
+        LOGGER.warning(('result', _result, 'applet_type', LAST_C2C_APP_TYPE, 'TOPUP_C2C_CORRECTION'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
 
 
