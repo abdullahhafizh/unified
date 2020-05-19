@@ -365,8 +365,11 @@ Base{
         cardBalance = parseInt(last_balance);
         press = '0';
         shopType = 'topup';
-        //Set Provider Based On Bank Name
-        if (bank_name=='MANDIRI') provider = 'e-Money Mandiri';
+        //Set Provider Based On Bank Name And Maximum Prepaid Balance
+        if (bank_name=='MANDIRI'){
+            provider = 'e-Money Mandiri';
+            maxBalance = 2000000;
+        }
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
         if (bank_name=='BCA') provider = 'Flazz BCA';
