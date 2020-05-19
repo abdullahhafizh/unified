@@ -583,8 +583,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _param['host'] = _push['host']
         _param['remote_path'] = _push['remote_path']
         _param['local_path'] = _push['local_path']
-        _param['remarks'] = _param['remarks']
-        async_push_settlement_data(_param)
+        push_settlement_data(_param)
     elif bank == 'MANDIRI':
         _SFTPAccess.HOST_BID = 1
         if _Helper.is_online(source='mandiri_settlement') is False:
@@ -613,7 +612,6 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _param_sett['host'] = _push_file_sett['host']
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']
-        _param_sett['remarks'] = _push_file_sett['remarks']
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
         # async_push_settlement_data(_param_sett)
         send_settlement_data = push_settlement_data(_param_sett)
@@ -635,7 +633,6 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _param_ka['host'] = _push_file_kalog['host']
         _param_ka['remote_path'] = _push_file_kalog['remote_path']
         _param_ka['local_path'] = _push_file_kalog['local_path']
-        _param_ka['remarks'] = _push_file_kalog['remarks']
         # async_push_settlement_data(_param_ka)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
         send_settlement_data = push_settlement_data(_param_ka)
@@ -670,7 +667,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
-        _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
+        _file_ok = _param_sett['filename'].replace('.txt', '.ok')
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                     local_path=_param_sett['path_file'],
                                                     remote_path=_Common.SFTP_C2C['path_settlement'])
@@ -680,7 +677,6 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _param_sett['host'] = _push_file_sett['host']
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']
-        _param_sett['remarks'] = _push_file_sett['remarks']
         # async_push_settlement_data(_param_sett)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
         send_settlement_data = push_settlement_data(_param_sett)
