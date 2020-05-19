@@ -608,11 +608,15 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     global LAST_C2C_APP_TYPE
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    # TODO Define Applet Type From Error Code Given
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
+        if len(_result) == 2:
+            if _result == '83':
+                LAST_C2C_APP_TYPE = '1'
+            else:
+                LAST_C2C_APP_TYPE = '0'
         LOGGER.warning((_result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
 

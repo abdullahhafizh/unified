@@ -333,16 +333,16 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             return False
     elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         try:        
-            # TODO Check Command For C2C Update Balance    
             response, result = _Command.send_request(param=_param, output=None)
             # if _Common.TEST_MODE is True and _Common.empty(result):
             #   result = '6032111122223333|20000|198000'
+            r = result.split('|')
             if response == 0 and result is not None:
                 output = {
                     'bank': bank,
-                    'card_no': result.split('|')[0],
-                    'topup_amount': result.split('|')[1],
-                    'last_balance': result.split('|')[2],
+                    'card_no': r[0],
+                    'topup_amount': r[1],
+                    'last_balance': r[2],
                 }
                 return output
             else:
@@ -680,11 +680,12 @@ def topup_online(bank, cardno, amount):
         # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
         prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         _Common.MANDIRI_ACTIVE_WALLET = 0
-        # TODO Check Actual Command UPDATE_BALANCE_C2C_MANDIRI and its result
         _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
         update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not update_result:
             return False
+        if update_result['last_balance'] == update_result['topup_amount']:
+            update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
         output = {
                     'prev_balance': prev_balance,
                     'last_balance': update_result['last_balance'],
