@@ -139,7 +139,7 @@ def push_settlement_data(__param=None):
     # }
     __sid = store_local_settlement(__param)
     if not __sid:
-        LOGGER.warning(('__sid is None'))
+        LOGGER.warning(('[FAILED] Store Local Settlement Data'))
         return False
     __param['endpoint'] = 'settlement/sync-record'
     try:
