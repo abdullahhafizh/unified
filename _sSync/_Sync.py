@@ -89,7 +89,7 @@ def sync_machine_status():
                 __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
                 print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
-                _NetworkAccess.post_to_url(url=__url, param=__param)
+                _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
             else:
                 LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
         except Exception as e:
@@ -98,7 +98,7 @@ def sync_machine_status():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(25.5)
+        sleep(33.3)
 
 
 def start_do_pending_job():
@@ -138,7 +138,7 @@ def do_pending_job():
                     continue
             except Exception as e:
                 LOGGER.warning(e)
-        sleep(5.55)
+        sleep(15.15)
 
 
 def start_kiosk_sync():

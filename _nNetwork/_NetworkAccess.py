@@ -130,11 +130,11 @@ def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
         if 'http://apiv2.mdd.co.id:10107' in url or 'http://apidev.mdd.co.id:28194' in url:
-            if custom_timeout is None:
-                custom_timeout = 180
-            r = requests.post(url, headers=header, json=param, timeout=custom_timeout)
+            __timeout = 180 if custom_timeout is None else custom_timeout
+            r = requests.post(url, headers=header, json=param, timeout=__timeout)
         else:
-            r = requests.post(url, headers=header, json=param, timeout=GLOBAL_TIMEOUT)
+            __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
+            r = requests.post(url, headers=header, json=param, timeout=__timeout)
     except requests.exceptions.Timeout as t:
         LOGGER.warning((url, TIMEOUT, t))
         return -13, TIMEOUT

@@ -769,12 +769,12 @@ def start_check_c2c_deposit():
     if _Common.C2C_MODE:
         _Helper.get_thread().apply_async(start_check_c2c_deposit)
     else:
-        print("pyt: Failed CHECH_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
+        print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
 
 
 def start_check_c2c_deposit():
     # FYI: Triggered After Success Transaction
-    LOGGER.info(('CHECK C2C SETTLEMENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
+    LOGGER.info(('CHECK_C2C_TOPUP_DEPOSIT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
@@ -805,20 +805,22 @@ MANDIRI_UPDATE_SCHEDULE_RUNNING = False
 
 
 def start_trigger_mandiri_sam_update():
+    if _Common.C2C_MODE is True:
+        print("pyt: [IGNORED] MANDIRI_SAM_KA_UPDATE_BALANCE, C2C Mode Is ON")
+        return
     if not _QPROX.INIT_MANDIRI:
-        LOGGER.warning(('FAILED MANDIRI_SAM_UPDATE_BALANCE', 'INIT_MANDIRI', _QPROX.INIT_MANDIRI))
-        print("pyt: Failed MANDIRI_SAM_UPDATE_BALANCE, Mandiri SAM Not Init Yet")
+        LOGGER.warning(('[FAILED] MANDIRI_SAM_UPDATE_BALANCE', 'INIT_MANDIRI', _QPROX.INIT_MANDIRI))
+        print("pyt: [FAILED] MANDIRI_SAM_UPDATE_BALANCE, Mandiri SAM Not Init Yet")
         return
     sleep(_Helper.get_random_num(.7, 2.9))
     if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
         _Helper.get_thread().apply_async(trigger_mandiri_sam_update)
     else:
-        print("pyt: Failed MANDIRI_SAM_UPDATE_BALANCE, Already Triggered Previously")
+        print("pyt: [FAILED] MANDIRI_SAM_UPDATE_BALANCE, Already Triggered Previously")
 
 
 def trigger_mandiri_sam_update():
     global MANDIRI_UPDATE_SCHEDULE_RUNNING
-
     # When This Function is Triggered, It will be forced update the SAM Balance And Ignore
     # Last Update Timestamp on TEMPORARY 
     daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
@@ -849,7 +851,7 @@ def start_trigger_edc_settlement():
         _Common.EDC_SETTLEMENT_RUNNING = True
         _Helper.get_thread().apply_async(trigger_edc_settlement)
     else:
-        print("pyt: Failed EDC_SETTLEMENT_SCHEDULE, Already Triggered Previously")
+        print("pyt: [FAILED] EDC_SETTLEMENT_SCHEDULE, Already Triggered Previously")
 
 
 def trigger_edc_settlement():
