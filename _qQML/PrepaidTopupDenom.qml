@@ -497,6 +497,10 @@ Base{
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Akan Melebihi Limit', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
             return true;
+        } else if (parseInt(denom) >= adminFee) {
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf Biaya Admin Melebihi/Sama Dengan Nominal', 'Silakan Pilih Denom Yang Lebih Besar', 'closeWindow', false )
+            return true;
         } else {
             return false;
         }
