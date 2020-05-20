@@ -433,7 +433,10 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             with open(_file_created, 'w+') as f:
                 __all_lines = _filecontent.split('|')
                 for line in __all_lines:
-                    f.write(line)
+                    if line != __all_lines[-1]:
+                        f.write(line+os.linesep)
+                    else:
+                        f.write(line)
                 f.close()
             _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
             with open(_file_created_ok, 'w+') as f_ok:
