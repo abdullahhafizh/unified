@@ -494,10 +494,12 @@ Base{
 
     function exceed_balance(denom){
         if ((parseInt(cardData.balance) + parseInt(denom)) > maxBalance){
+            console.log('[VALIDATE] BALANCE AFTER TOPUP VS MAX_BALANCE', (parseInt(cardData.balance) + parseInt(denom)), maxBalance);
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Akan Melebihi Limit', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
             return true;
-        } else if (parseInt(denom) >= adminFee) {
+        } else if (parseInt(denom) <= adminFee) {
+            console.log('[VALIDATE] DENOM VS ADMINFEE', denom, adminFee);
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Biaya Admin Melebihi/Sama Dengan Nominal', 'Silakan Pilih Denom Yang Lebih Besar', 'closeWindow', false )
             return true;
@@ -521,6 +523,7 @@ Base{
                 sam_balance = parseInt(denom);
                 break;
         }
+        console.log('[VALIDATE] DEPOSIT BALANCE VS DENOM', sam_balance, topup_amount);
         if (topup_amount > sam_balance){
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Mesin Tidak Mencukupi', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
