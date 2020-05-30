@@ -945,7 +945,7 @@ def do_payment(trx_id, amount):
         elif status == 200 or response['response']['code'] == 200:
             return True, response['response']['data']
         elif status == 201 or response['response']['code'] == 201:
-            result = False, None
+            result = False
             attempt = 0
             while not result:
                 attempt += 1
