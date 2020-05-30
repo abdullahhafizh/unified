@@ -84,50 +84,53 @@ def sale_edc_mobile(amount, trxid=None):
         if IS_PIR is True:
             amount = str(int(int(amount)/1000))
         result, sale_data = do_payment(trxid, amount)
-        if result is True and sale_data['status'] == "SUCCESS":
-            # SALE SUCCCESS RESPONSE EDC MOBILE-ANDROID
-            # {"amount":"1000",
-            # "approval_code":"200",
-            # "bank_mid":"000100012000015",
-            # "bank_reff_no":"134726",
-            # "bank_tid":"000000100005",
-            # "batch_no":"000001",
-            # "card_expiry":"4912",
-            # "card_pan":"6019001688048267",
-            # "card_type":"DEBIT",
-            # "entry_mode":"SWIPE",
-            # "reff_no":"TST-00789",
-            # "status":"SUCCESS",
-            # "trace_no":"000008",
-            # "trx_date":"2019\/03\/04",
-            # "trx_time":"13:43:16",
-            # "trx_type":"SALE"}
-            EDC_PAYMENT_RESULT['raw'] = sale_data
-            EDC_PAYMENT_RESULT['card_type'] = sale_data['card_type']
-            if _Common.EDC_DEBIT_ONLY is True:
-                EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
-            EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
-            EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
-            if IS_PIR is True:
-                EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
-            EDC_PAYMENT_RESULT['res_code'] = sale_data['trace_no']
-            EDC_PAYMENT_RESULT['inv_no'] = sale_data['reff_no']
-            EDC_PAYMENT_RESULT['card_no'] = sale_data['card_pan']
-            _KioskService.CARD_NO = sale_data['card_pan']
-            EDC_PAYMENT_RESULT['exp_date'] = sale_data['card_expiry']
-            EDC_PAYMENT_RESULT['trans_date'] = sale_data['trx_date']
-            EDC_PAYMENT_RESULT['app_code'] = sale_data['approval_code']
-            EDC_PAYMENT_RESULT['tid'] = sale_data['bank_tid']
-            EDC_PAYMENT_RESULT['mid'] = sale_data['bank_mid']
-            EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
-            EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
-            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
-            _KioskService.python_dump(EDC_PAYMENT_RESULT)
-            try:
-                _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
-            except Exception as e:
-                LOGGER.warning(str(e))
-            store_settlement()
+        if result is True:
+            if sale_data['status'] == "SUCCESS":
+                # SALE SUCCCESS RESPONSE EDC MOBILE-ANDROID
+                # {"amount":"1000",
+                # "approval_code":"200",
+                # "bank_mid":"000100012000015",
+                # "bank_reff_no":"134726",
+                # "bank_tid":"000000100005",
+                # "batch_no":"000001",
+                # "card_expiry":"4912",
+                # "card_pan":"6019001688048267",
+                # "card_type":"DEBIT",
+                # "entry_mode":"SWIPE",
+                # "reff_no":"TST-00789",
+                # "status":"SUCCESS",
+                # "trace_no":"000008",
+                # "trx_date":"2019\/03\/04",
+                # "trx_time":"13:43:16",
+                # "trx_type":"SALE"}
+                EDC_PAYMENT_RESULT['raw'] = sale_data
+                EDC_PAYMENT_RESULT['card_type'] = sale_data['card_type']
+                if _Common.EDC_DEBIT_ONLY is True:
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
+                EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
+                EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
+                if IS_PIR is True:
+                    EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
+                EDC_PAYMENT_RESULT['res_code'] = sale_data['trace_no']
+                EDC_PAYMENT_RESULT['inv_no'] = sale_data['reff_no']
+                EDC_PAYMENT_RESULT['card_no'] = sale_data['card_pan']
+                _KioskService.CARD_NO = sale_data['card_pan']
+                EDC_PAYMENT_RESULT['exp_date'] = sale_data['card_expiry']
+                EDC_PAYMENT_RESULT['trans_date'] = sale_data['trx_date']
+                EDC_PAYMENT_RESULT['app_code'] = sale_data['approval_code']
+                EDC_PAYMENT_RESULT['tid'] = sale_data['bank_tid']
+                EDC_PAYMENT_RESULT['mid'] = sale_data['bank_mid']
+                EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
+                EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
+                E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
+                _KioskService.python_dump(EDC_PAYMENT_RESULT)
+                try:
+                    _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
+                except Exception as e:
+                    LOGGER.warning(str(e))
+                store_settlement()
+            else:
+                print('pyt: SALE_EDC_MOBILE - ' + str(sale_data))
         else:
             _Common.EDC_ERROR = 'SALE_ERROR'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
