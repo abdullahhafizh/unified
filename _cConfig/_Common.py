@@ -43,7 +43,11 @@ QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
 
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
+EDC_SERIAL_NO = _ConfigParser.get_set_value('EDC', 'serial^no', ('0'*16))
+EDC_MOBILE_DURATION = int(_ConfigParser.get_set_value('EDC', 'payment^duration', '180'))
+EDC_MOBILE_DIRECT_MODE = _ConfigParser.get_set_value('EDC', 'payment^mode', '1')
 EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
+
 MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
@@ -114,6 +118,8 @@ INFOS = [
     '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File',
     '[MANDIRI_C2C]-sam^slot ->  Mandiri SAM Actual Slot in Reader',
     '[MANDIRI_C2C]-deposit^slot ->  C2C Deposit Actual Slot in Reader',
+    '[EDC]-type -> Define EDC Type UPT-IUR/MOBILE-ANDROID',
+    '[EDC]-serial^no -> Define Serial No of Mobile Android EDC',
 ] 
 
 for i in range(len(INFOS)):
@@ -205,6 +211,7 @@ QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce
 CORE_HOST = QR_HOST
 CORE_TOKEN = QR_TOKEN
 CORE_MID = QR_MID
+EDC_ECR_URL = 'https://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
 
 STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
 QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
@@ -420,6 +427,7 @@ CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^tex
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
+EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
 LAST_EDC_TRX_RECEIPT = None
 
 ALLOWED_SYNC_TASK = [
@@ -573,9 +581,24 @@ QPROX = {
     "status": True if QPROX_PORT is not None and digit_in(QPROX_PORT) is True else False,
     # "bank_config": BANKS
 }
+
+def get_edc_availability():
+    if EDC_ANDROID_MODE is True:
+        if EDC_SERIAL_NO == ('0'*16):
+            return False
+        return True
+    elif EDC_PORT is not None and digit_in(EDC_PORT):
+        return True
+    else:
+        return False
+
+
 EDC = {
     "port": EDC_PORT,
-    "status": True if EDC_PORT is not None and digit_in(EDC_PORT) is True else False
+    "type": EDC_TYPE,
+    "sn": EDC_SERIAL_NO,
+    "mobile": EDC_ANDROID_MODE,
+    "status": get_edc_availability()
 }
 MEI = {
     "port": MEI_PORT,
@@ -640,6 +663,7 @@ def get_devices():
 
 
 def get_payments():
+    # EDC : Still Need To Enable EDC From Backend Dashboard
     return {
         "QPROX": "AVAILABLE" if QPROX["status"] is True else "NOT_AVAILABLE",
         "EDC": "AVAILABLE" if (EDC["status"] is True and check_payment('card') is True) else "NOT_AVAILABLE",
@@ -651,6 +675,7 @@ def get_payments():
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
+        "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
     }
 
 
@@ -950,3 +975,15 @@ def local_store_topup_record(param):
 
 
 LAST_CARD_LOG_HISTORY = []
+
+# header = {
+#         'Accept': '*/*',
+#         'Accept-Encoding': 'gzip, deflate',
+#         'Connection': 'close',
+#         'Content-Type': 'application/json',
+#         'tid': TID,
+#         'token': TOKEN,
+#         'unique': DISK_SERIAL_NUMBER,
+#         'User-Agent': 'MDD Vending Machine ID ['+TID+']'
+#     }
+

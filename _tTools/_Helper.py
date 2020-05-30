@@ -12,6 +12,8 @@ from _nNetwork import _NetworkAccess
 import subprocess
 from sys import _getframe as whois
 import re
+import hmac
+import hashlib 
 # import inspect
 
 # Hardcoded Maximum Thread at a time
@@ -42,6 +44,10 @@ def get_global_port(device_name, default_baud_rate, default_port, default_timeou
 
 def now():
     return int(time.time()) * 1000
+
+
+def epoch():
+    return int(time.time())
 
 
 def today():
@@ -199,3 +205,9 @@ def strtolist(string=None, length=2):
         return []
     n = '.' * length
     return re.findall(n, string)
+
+
+def hash_sha256_signature(key, message):
+    byte_key = binascii.unhexlify(key)
+    message = message.encode()
+    return hmac.new(byte_key, message, hashlib.sha256).hexdigest().upper()

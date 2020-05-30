@@ -64,11 +64,77 @@ def create_sale_edc(amount):
 
 
 def create_sale_edc_with_struct_id(amount, trxid):
-    _Helper.get_thread().apply_async(sale_edc, (amount, trxid,))
+    if _Common.EDC['mobile'] is True:
+        _Helper.get_thread().apply_async(sale_edc_mobile, (amount, trxid,))
+    else:
+        _Helper.get_thread().apply_async(sale_edc, (amount, trxid,))
 
 
 IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 INIT_AMOUNT = '0'
+
+
+def sale_edc_mobile(amount, trxid=None):
+    global OPEN_STATUS, INIT_AMOUNT, EDC_PAYMENT_RESULT
+    try:
+        # _Command.clear_content_of(_Command.MI_GUI, 'PRE_SALE|'+str(amount))
+        # _Command.clear_content_of(_Command.MO_REPORT, 'PRE_SALE|'+str(amount))
+        amount = amount.replace('.00', '')
+        INIT_AMOUNT = amount
+        if IS_PIR is True:
+            amount = str(int(int(amount)/1000))
+        result, sale_data = do_payment(trxid, amount)
+        if result is True and sale_data['status'] == "SUCCESS":
+            # SALE SUCCCESS RESPONSE EDC MOBILE-ANDROID
+            # {"amount":"1000",
+            # "approval_code":"200",
+            # "bank_mid":"000100012000015",
+            # "bank_reff_no":"134726",
+            # "bank_tid":"000000100005",
+            # "batch_no":"000001",
+            # "card_expiry":"4912",
+            # "card_pan":"6019001688048267",
+            # "card_type":"DEBIT",
+            # "entry_mode":"SWIPE",
+            # "reff_no":"TST-00789",
+            # "status":"SUCCESS",
+            # "trace_no":"000008",
+            # "trx_date":"2019\/03\/04",
+            # "trx_time":"13:43:16",
+            # "trx_type":"SALE"}
+            EDC_PAYMENT_RESULT['raw'] = sale_data
+            EDC_PAYMENT_RESULT['card_type'] = sale_data['card_type']
+            if _Common.EDC_DEBIT_ONLY is True:
+                EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
+            EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
+            EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
+            if IS_PIR is True:
+                EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
+            EDC_PAYMENT_RESULT['res_code'] = sale_data['trace_no']
+            EDC_PAYMENT_RESULT['inv_no'] = sale_data['reff_no']
+            EDC_PAYMENT_RESULT['card_no'] = sale_data['card_pan']
+            _KioskService.CARD_NO = sale_data['card_pan']
+            EDC_PAYMENT_RESULT['exp_date'] = sale_data['card_expiry']
+            EDC_PAYMENT_RESULT['trans_date'] = sale_data['trx_date']
+            EDC_PAYMENT_RESULT['app_code'] = sale_data['approval_code']
+            EDC_PAYMENT_RESULT['tid'] = sale_data['bank_tid']
+            EDC_PAYMENT_RESULT['mid'] = sale_data['bank_mid']
+            EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
+            EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
+            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
+            _KioskService.python_dump(EDC_PAYMENT_RESULT)
+            try:
+                _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
+            except Exception as e:
+                LOGGER.warning(str(e))
+            store_settlement()
+        else:
+            _Common.EDC_ERROR = 'SALE_ERROR'
+            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+    except Exception as e:
+        _Common.EDC_ERROR = 'SALE_ERROR'
+        E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+        LOGGER.warning(str(e))
 
 
 def sale_edc(amount, trxid=None):
@@ -347,6 +413,9 @@ def backend_edc_settlement():
         LOGGER.warning(("define_edc_settlement [DATA, COUNT, TYPE]", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
                         str(settlement_method)))
         return 'TRX_NOT_FOUND'
+    elif _Common.EDC['mobile'] is True:
+        edc_mobile_settlement()
+        return 'TRIGGERED_MOBILE_ANDROID_SETTLEMENT'
     elif settlement_method[0] == 'DEBIT CARD':
         edc_settlement()
         return 'TRIGGERED_FOR_DEBIT'
@@ -366,6 +435,8 @@ def define_edc_settlement():
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
         LOGGER.warning(("NO EDC SETTLEMENT DETECTED", str(len(SETTLEMENT_TYPE_COUNT))))
         return
+    elif _Common.EDC['mobile'] is True:
+        edc_mobile_settlement()
     elif get_settlement[0] == 'DEBIT CARD':
         edc_settlement()
     elif get_settlement[0] == 'CREDIT CARD':
@@ -373,6 +444,23 @@ def define_edc_settlement():
 
 
 EDC_TESTING_MODE = False
+
+
+def edc_mobile_settlement():
+    try:
+        result, settlement_data = do_settlement()
+        if result is True:
+            E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|SUCCESS')
+            LOGGER.info((str(settlement_data), result))
+            mark_settlement_data(printout=False, mode='DEBIT')
+        else:
+            _Common.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
+            LOGGER.warning(("RESPONSE :", str(settlement_data), result))
+    except Exception as e:
+        _Common.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
+        E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
+        LOGGER.warning(str(e))
+
 
 
 def edc_settlement():
@@ -595,7 +683,7 @@ def get_settlement_data():
         LOGGER.warning(str(e))
 
 
-def mark_settlement_data(printout=True, mode='DEBIT CARD'):
+def mark_settlement_data(printout=True, mode='DEBIT'):
     global SETTLEMENTS_DATA, SETTLEMENTS_TXT, SETTLEMENT_PARAM
     # SETTLEMENTS_DATA = _DAO.check_settlement()
     if len(SETTLEMENTS_DATA) == 0 or SETTLEMENTS_DATA is None:
@@ -661,7 +749,6 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
     # Print Settlement Receipt
     if printout is True:
         _PrintTool.print_global(input_text=SETTLEMENTS_TXT, use_for='EDC_SETTLEMENT')
-
     # Post Update Settlement Old - DISABLED
     # post_mark_settlement(list_settlement, _Helper.now())
     # sleep(1)
@@ -803,5 +890,158 @@ def send_edc_server(param, trx='10'):
         return False
 
 
+def start_binding_edc():
+    if not _Common.EDC_ANDROID_MODE:
+        LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False
+    if _Common.EDC_SERIAL_NO == ('0'*16):
+        LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
+        return False
+    param = {
+        'mid': _Common.CORE_MID,
+        'token': _Common.CORE_TOKEN,
+        'tid': _Common.TID,
+        'sn': _Common.EDC_SERIAL_NO,
+        'duration': _Common.EDC_MOBILE_DURATION,
+        'direct_response': _Common.EDC_MOBILE_DIRECT_MODE
+    }
+    try:
+        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/start-binding', param)
+        LOGGER.debug((status, response))
+        if status == 200 or response['response']['code'] == 200:
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
 
 
+def do_payment(trx_id, amount):
+    if not _Common.EDC_ANDROID_MODE:
+        LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False, None
+    if _Helper.empty(trx_id) or _Helper.empty(amount):
+        LOGGER.warning(('[FAILED]', 'Missing Mandatory Param To Trigger EDC Payment'))
+        return False, None
+    if _Common.EDC_SERIAL_NO == ('0'*16):
+        LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
+        return False, None
+    param = {
+        'mid': _Common.CORE_MID,
+        'token': _Common.CORE_TOKEN,
+        'tid': _Common.TID,
+        'sn': _Common.EDC_SERIAL_NO,
+        'reff_no': trx_id.upper(),
+        'amount': amount
+    }
+    try:
+        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/do-payment', param)
+        LOGGER.debug((status, response))
+        if status == 200 or response['response']['code'] == 200:
+            return True, response['response']['data']
+        if status == 201 or response['response']['code'] == 201:
+            result = False, None
+            attempt = 0
+            while not result:
+                attempt += 1
+                result, data = check_payment(trx_id)
+                if result is True:
+                    return True, data
+                    break
+                if (attempt*5) >= _Common.EDC_MOBILE_DURATION:
+                    return False, None
+                    break
+                sleep(5)
+        else:
+            return False, None
+    except Exception as e:
+        LOGGER.warning((e))
+        return False, None
+
+
+
+def do_void(trx_id):
+    if not _Common.EDC_ANDROID_MODE:
+        LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False
+    if _Helper.empty(trx_id):
+        LOGGER.warning(('[FAILED]', 'Missing Mandatory Param To Trigger EDC VOID'))
+        return False
+    if _Common.EDC_SERIAL_NO == ('0'*16):
+        LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
+        return False
+    param = {
+        'mid': _Common.CORE_MID,
+        'token': _Common.CORE_TOKEN,
+        'tid': _Common.TID,
+        'sn': _Common.EDC_SERIAL_NO,
+        'reff_no': trx_id,
+    }
+    try:
+        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/do-void', param)
+        LOGGER.debug((status, response))
+        if status == 200 or response['response']['code'] == 200:
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
+
+
+def check_payment(trx_id):
+    if not _Common.EDC_ANDROID_MODE:
+        LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False, None
+    if _Helper.empty(trx_id):
+        LOGGER.warning(('[FAILED]', 'Missing Mandatory Param To Check Payment'))
+        return False, None
+    if _Common.EDC_SERIAL_NO == ('0'*16):
+        LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
+        return False, None
+    param = {
+        'mid': _Common.CORE_MID,
+        'token': _Common.CORE_TOKEN,
+        'tid': _Common.TID,
+        'sn': _Common.EDC_SERIAL_NO,
+        'reff_no': trx_id,
+    }
+    try:
+        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/status-payment', param)
+        LOGGER.debug((status, response))
+        if status == 200 or response['response']['code'] == 200:
+            if response['response']['data']['status'] != "WAITING":
+                return True, response['response']['data']
+            else:
+                return False, None
+        else:
+            return False, None
+    except Exception as e:
+        LOGGER.warning((e))
+        return False, None
+
+
+def do_settlement():
+    if not _Common.EDC_ANDROID_MODE:
+        LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False, None
+    if _Common.EDC_SERIAL_NO == ('0'*16):
+        LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
+        return False, None
+    param = {
+        'mid': _Common.CORE_MID,
+        'token': _Common.CORE_TOKEN,
+        'tid': _Common.TID,
+        'sn': _Common.EDC_SERIAL_NO,
+    }
+    try:
+        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/do-settlement', param)
+        LOGGER.debug((status, response))
+        if status == 200 or response['response']['code'] == 200:
+            return True, response['response']['data']
+        else:
+            return False, None
+    except Exception as e:
+        LOGGER.warning((e))
+        return False, None
