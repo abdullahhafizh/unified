@@ -942,7 +942,7 @@ def do_payment(trx_id, amount):
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
             return True, response['response']['data']
-        if status == 201 or response['response']['code'] == 201:
+        elif status == 201 or response['response']['code'] == 201:
             result = False, None
             attempt = 0
             while not result:
