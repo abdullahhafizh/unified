@@ -83,7 +83,7 @@ def sale_edc_mobile(amount, trxid=None):
         INIT_AMOUNT = amount
         if IS_PIR is True:
             amount = str(int(int(amount)/1000))
-        result, sale_data = do_payment(trxid, amount)
+        result, sale_data = edc_mobile_do_payment(trxid, amount)
         if result is True:
             if sale_data['status'] == "SUCCESS":
                 # SALE SUCCCESS RESPONSE EDC MOBILE-ANDROID
@@ -453,7 +453,7 @@ EDC_TESTING_MODE = False
 
 def edc_mobile_settlement():
     try:
-        result, settlement_data = do_settlement()
+        result, settlement_data = edc_mobile_do_settlement()
         if result is True:
             E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|SUCCESS')
             LOGGER.info((str(settlement_data), result))
@@ -894,7 +894,7 @@ def send_edc_server(param, trx='10'):
         return False
 
 
-def start_binding_edc():
+def edc_mobile_start_binding_edc():
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False
@@ -921,7 +921,7 @@ def start_binding_edc():
         return False
 
 
-def do_payment(trx_id, amount):
+def edc_mobile_do_payment(trx_id, amount):
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False, None
@@ -954,7 +954,7 @@ def do_payment(trx_id, amount):
             attempt = 0
             while not result:
                 attempt += 1
-                result, data = check_payment(trx_id)
+                result, data = edc_mobile_check_payment(trx_id)
                 if result is True:
                     return True, data
                     break
@@ -969,8 +969,7 @@ def do_payment(trx_id, amount):
         return False, None
 
 
-
-def do_void(trx_id):
+def edc_mobile_do_void(trx_id):
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False
@@ -999,7 +998,7 @@ def do_void(trx_id):
         return False
 
 
-def check_payment(trx_id):
+def edc_mobile_check_payment(trx_id):
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False, None
@@ -1031,7 +1030,7 @@ def check_payment(trx_id):
         return False, None
 
 
-def do_settlement():
+def edc_mobile_do_settlement():
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False, None

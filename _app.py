@@ -1149,7 +1149,7 @@ if __name__ == '__main__':
     if _Common.EDC['mobile'] is True:
         sleep(.5)
         print("pyt: [INFO] Re/Binding VM Machine Into EDC...")
-        _EDC.start_binding_edc()
+        _EDC.edc_mobile_start_binding_edc()
     print("pyt: Syncing Ads Content...")
     sleep(.5)
     _KioskService.start_define_ads(3)
