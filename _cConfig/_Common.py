@@ -45,7 +45,7 @@ EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
 EDC_SERIAL_NO = _ConfigParser.get_set_value('EDC', 'serial^no', ('0'*16))
 EDC_MOBILE_DURATION = int(_ConfigParser.get_set_value('EDC', 'payment^duration', '180'))
-EDC_MOBILE_DIRECT_MODE = _ConfigParser.get_set_value('EDC', 'payment^mode', '1')
+EDC_MOBILE_DIRECT_MODE = _ConfigParser.get_set_value('EDC', 'payment^direct^mode', '1')
 EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
 
 MEI_PORT = get_config_value('port', 'MEI')

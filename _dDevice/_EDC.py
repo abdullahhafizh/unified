@@ -462,7 +462,6 @@ def edc_mobile_settlement():
         LOGGER.warning(str(e))
 
 
-
 def edc_settlement():
     global OPEN_STATUS
     param = EDC['SETTLE_DEBIT'] + '|'
@@ -531,7 +530,7 @@ TIMEOUT_CODE = '03||TO|'
 FINAL_BREAK_CODE = '02||'
 NOT_FOUND = '03||NF|'
 NEED_RETRY = '03||SR|'
-FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('GENERAL', 'force^settlement', '0') == '1' else False
+FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('EDC', 'force^settlement', '0') == '1' else False
 LOOP_DELAY = 5
 
 
