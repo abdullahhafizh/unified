@@ -940,7 +940,9 @@ def do_payment(trx_id, amount):
     try:
         status, response = _NetworkAccess.post_to_url(url=_Common.EDC_ECR_URL + '/do-payment', param=param, custom_timeout=timeout)
         LOGGER.debug((status, response))
-        if status == 200 or response['response']['code'] == 200:
+        if status == 504:
+            return False, None
+        elif status == 200 or response['response']['code'] == 200:
             return True, response['response']['data']
         elif status == 201 or response['response']['code'] == 201:
             result = False, None
