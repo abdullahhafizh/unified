@@ -131,6 +131,8 @@ def sale_edc_mobile(amount, trxid=None):
                 store_settlement()
             else:
                 print('pyt: SALE_EDC_MOBILE - ' + str(sale_data))
+                _Common.EDC_ERROR = 'SALE_ERROR'
+                E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
         else:
             _Common.EDC_ERROR = 'SALE_ERROR'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
