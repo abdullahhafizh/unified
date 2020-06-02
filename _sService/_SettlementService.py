@@ -430,11 +430,11 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             _trailer = _Common.C2C_MID + str(x).zfill(8)
             _filecontent += _trailer
             _file_created = os.path.join(output_path, _filename)
-            with open(_file_created, 'w+') as f:
+            with open(file=_file_created, mode='w+') as f:
                 __all_lines = _filecontent.split('|')
                 for line in __all_lines:
                     if line != __all_lines[-1]:
-                        f.write(line+os.linesep)
+                        f.write(line+'\n')
                     else:
                         f.write(line)
                 f.close()
