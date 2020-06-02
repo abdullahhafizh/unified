@@ -427,7 +427,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             _header = 'PREPAID' + str(x + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                     _Common.C2C_MID + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
             _filecontent = _header + _filecontent
-            _trailer = _Common.C2C_MID + str(x).zfill(8)
+            _trailer = _Common.C2C_MID + str(x).zfill(8) + chr(3)
             _filecontent += _trailer
             _file_created = os.path.join(output_path, _filename)
             with open(file=_file_created, mode='w+') as f:
