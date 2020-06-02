@@ -7,6 +7,8 @@ import socket
 import time
 import os
 import shutil
+import urllib3
+urllib3.disable_warnings()
 
 
 def is_online_old(host="8.8.8.8", port=53, timeout=3, source=''):
@@ -129,11 +131,13 @@ def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
         s = requests.session()
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
+        __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
         if 'http://apiv2.mdd.co.id:10107' in url or 'http://apidev.mdd.co.id:28194' in url:
             __timeout = 180 if custom_timeout is None else custom_timeout
             r = requests.post(url, headers=header, json=param, timeout=__timeout)
+        elif 'https' in url and _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '0':
+            r = requests.post(url, headers=header, json=param, timeout=__timeout, verify=False)
         else:
-            __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
             r = requests.post(url, headers=header, json=param, timeout=__timeout)
     except requests.exceptions.Timeout as t:
         LOGGER.warning((url, TIMEOUT, t))
