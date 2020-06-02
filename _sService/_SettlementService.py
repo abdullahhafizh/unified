@@ -412,9 +412,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             __seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, '1').zfill(2)
             __timestamp = datetime.now().strftime('%d%m%Y%H%M')
             MANDIRI_LAST_TIMESTAMP = __timestamp
-            __raw = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:12] + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
+            __raw = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
             __ds = _Helper.get_ds(__raw, 4, True)
-            _filename = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:12] + __seq + (__timestamp * 2) + __ds + '.txt'
+            _filename = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + __ds + '.txt'
             MANDIRI_LAST_FILENAME = _filename
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
             _filecontent = ''
