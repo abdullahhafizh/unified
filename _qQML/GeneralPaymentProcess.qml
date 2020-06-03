@@ -466,7 +466,7 @@ Base{
         }
         
         var pid = details.shop_type + details.epoch.toString();
-        if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
+        // if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
         isPaid = true;
         back_button.visible = false;
         abc.counter = timer_value;

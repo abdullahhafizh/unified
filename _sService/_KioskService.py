@@ -436,7 +436,8 @@ def machine_summary():
         'bni_active': str(_Common.BNI_ACTIVE),
         'service_ver': str(_Common.SERVICE_VERSION),
         'theme': str(_Common.THEME_NAME),
-        'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A')
+        'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A'),
+        'current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
     }
@@ -923,9 +924,9 @@ def store_transaction_global(param, retry=False):
                     PID_SALE = g['raw']['pid']
                 g['pid'] = __pid
                 g['trxid'] = _trxid
-                if g['payment'] == 'cash':
+                # if g['payment'] == 'cash':
                     # Saving The CASH
-                    _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
+                    # _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
                     # save_cash_local(g['payment_received'], 'cancel')
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
                 # Must Stop The Logic Here
@@ -946,10 +947,10 @@ def store_transaction_global(param, retry=False):
                 _param['key'] = _param['pid']
                 _DAO.mark_sync(param=_param, _table='Product', _key='pid')
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_PRODUCT-'+_param['pid'])
-            if g['payment'] == 'cash':
+            # if g['payment'] == 'cash':
                 # Saving The CASH
                 # save_cash_local(g['payment_received'])
-                _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
+                # _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
 
         # _______________________________________________________________________________________________________
         _param_stock = dict()

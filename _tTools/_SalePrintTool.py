@@ -8,7 +8,7 @@ import json
 from datetime import datetime
 from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
-from _dDevice import _Printer
+from _dDevice import _Printer, _BILL
 from _sService import _KioskService
 from _cConfig import _Common
 from _sService import _UserService
@@ -370,6 +370,8 @@ def print_topup_trx(p, t, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
         failure = 'USER_CANCELLATION'
+        if p['payment'].upper() == 'CASH':
+            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
         if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
             if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
                 failure = 'TOPUP_FAILURE'
@@ -519,6 +521,8 @@ def print_shop_trx(p, t, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
         failure = 'USER_CANCELLATION'
+        if p['payment'].upper() == 'CASH':
+            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
         if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
             if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
                 failure = 'TOPUP_FAILURE'
@@ -673,6 +677,8 @@ def print_ppob_trx(p, t, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
         # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        if p['payment'].upper() == 'CASH':
+            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
         if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
             print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
