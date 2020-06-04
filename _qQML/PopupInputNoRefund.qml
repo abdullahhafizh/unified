@@ -199,7 +199,7 @@ Rectangle{
 
         RefundSelectionButton{
             id: manualMethod
-            buttonName: 'TUNAI'
+            buttonName: 'CASH'
             imageSource: 'source/manual_cash.png'
             colorMode: 'darkgreen'
             channelCode: 'MANUAL'
