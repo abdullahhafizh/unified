@@ -697,6 +697,7 @@ def get_refunds():
         return {
             "MANUAL": "AVAILABLE" if check_refund('manual') is True else "NOT_AVAILABLE",
             "DIVA": "AVAILABLE" if check_refund('diva') is True else "NOT_AVAILABLE",
+            "CS": "AVAILABLE" if check_refund('customer-service') is True else "NOT_AVAILABLE",
             "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",
             "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
             "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
@@ -707,7 +708,7 @@ def get_refunds():
         }
 
 
-FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA"]
+FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA", "CUSTOMER-SERVICE"]
 
 
 def check_refund(name='ovo'):

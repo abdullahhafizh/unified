@@ -41,6 +41,7 @@ Rectangle{
     property var refundAmount: 0
 
     property bool manualEnable: false
+    property bool customerServiceEnable: false
     property bool divaEnable: false
     property bool linkajaEnable: false
     property bool danaEnable: false
@@ -198,8 +199,8 @@ Rectangle{
 
         RefundSelectionButton{
             id: manualMethod
-            buttonName: 'OPERATOR'
-            imageSource: 'source/manual_logo.png'
+            buttonName: 'TUNAI'
+            imageSource: 'source/manual_cash.png'
             colorMode: 'darkgreen'
             channelCode: 'MANUAL'
             visible: manualEnable
@@ -207,6 +208,21 @@ Rectangle{
                 anchors.fill: parent
                 onClicked: {
                     switch_to_active(manualMethod);
+                }
+            }
+        }
+
+        RefundSelectionButton{
+            id: customerServiceMethod
+            buttonName: 'OPERATOR'
+            imageSource: 'source/manual_cs.png'
+            colorMode: '#808080'
+            channelCode: 'CUSTOMER-SERVICE'
+            visible: customerServiceEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(customerServiceMethod);
                 }
             }
         }
@@ -359,6 +375,7 @@ Rectangle{
 
     function reset_all_channel(){
         manualMethod.release();
+        customerServiceMethod.release();
         divaMethod.release();
         linkajaMethod.release();
         danaMethod.release();
