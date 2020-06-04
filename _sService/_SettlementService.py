@@ -483,11 +483,11 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             _filecontent = ''
             for c in c2c_fees:
                 if c == c2c_fees[0]:
-                    _filecontent += (c + chr(3) + os.linesep)
+                    _filecontent += (c + chr(3) + '\n')
                 else:
                     _filecontent += (c + chr(3))
-            _ds = _Helper.get_ds(_Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M%S')))
-            _filename = _Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M%S')) + _ds + '.txt'
+            _ds = _Helper.get_ds(_Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M')))
+            _filename = _Common.C2C_MID + _Common.C2C_MACTROS[:4] + (2 * _Helper.time_string(f='%d%m%Y%H%M')) + _ds + '.txt'
             LOGGER.info(('Create Settlement', bank, mode, _filename))
             _file_created = os.path.join(output_path, _filename)
             with open(_file_created, 'w+') as f:
