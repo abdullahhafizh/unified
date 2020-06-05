@@ -448,7 +448,7 @@ def check_card_balance():
     # End Force Testing Mode ==========================
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
-    if response == 0:
+    if response == 0 and '|' in result:
         bank_type = result.split('|')[2].replace('#', '')
         bank_name = FW_BANK.get(bank_type, 'N/A')
         card_no = result.split('|')[1].replace('#', '')
@@ -582,7 +582,19 @@ LAST_C2C_APP_TYPE = '0'
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
     param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
-    # TODO Check Correction Result
+    # Check Correction Result
+    # Add Check Card Number First Before Correction
+    response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((param, result))
+    # check_card_no = LAST_BALANCE_CHECK['card_no']
+    check_card_no = '0'
+    if response == 0 and '|' in result:
+        check_card_no = result.split('|')[1].replace('#', '')
+    if LAST_BALANCE_CHECK['card_no'] != check_card_no:
+        LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        get_c2c_failure_settlement(amount, trxid)
+        return
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
@@ -590,6 +602,15 @@ def top_up_mandiri_correction(amount, trxid=''):
         LOGGER.warning((trxid, _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         get_c2c_failure_settlement(amount, trxid)
+
+
+
+def start_mandiri_c2c_force_settlement(amount, trxid):
+    if not _Common.C2C_MODE:
+            return
+    else:
+        _Helper.get_thread().apply_async(get_c2c_failure_settlement, (amount, trxid,))
+
 
 
 def get_c2c_failure_settlement(amount, trxid):

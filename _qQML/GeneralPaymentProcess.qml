@@ -370,6 +370,9 @@ Base{
         }  else if (t=='TOPUP_C2C_CORRECTION'){
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
+            var amount = getDenom.toString();
+            var structId = details.shop_type + details.epoch.toString();
+            global_frame.specialHandler = modeButtonPopup+'|'+amount+'|'+structId;
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
             return
         } else {

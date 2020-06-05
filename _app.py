@@ -657,6 +657,11 @@ class SlotHandler(QObject):
     start_check_c2c_deposit = pyqtSlot()(start_check_c2c_deposit)
 
 
+    def start_mandiri_c2c_force_settlement(self, amount, trxid):
+        _QPROX.start_mandiri_c2c_force_settlement(amount, trxid)
+    start_mandiri_c2c_force_settlement = pyqtSlot(str, str)(start_mandiri_c2c_force_settlement)
+
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

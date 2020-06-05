@@ -18,6 +18,7 @@ Base{
     property int timerDuration: 5
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
+    property var specialHandler
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -157,6 +158,14 @@ Base{
         running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
+            if (showDuration==5 && specialHandler.indexOf('c2c_correction') > -1){
+                var amount = specialHandler.split('|')[1];
+                var structId = specialHandler.split('|')[2];
+                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                console.log('C2C Auto Force Settlement By Timeout', now, amount, structId);
+                _SLOT.start_mandiri_c2c_force_settlement(amount, structId)
+                close();
+            }
             if (showDuration==0) {
                 show_timer.stop();
                 switch(closeMode){
