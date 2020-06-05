@@ -208,6 +208,8 @@ Base{
         }
         press = '0';
         popup_refund.open(messase_case_refund, refundAmount);
+        // Set Waiting Time To IDLE
+//        my_timer.stop();
         console.log('validate_release_refund', now, refundMode, refundAmount, messase_case_refund);
 
     }
@@ -373,6 +375,7 @@ Base{
             var amount = getDenom.toString();
             var structId = details.shop_type + details.epoch.toString();
             global_frame.specialHandler = modeButtonPopup+'|'+amount+'|'+structId;
+            console.log('c2c_special_handler', modeButtonPopup+'|'+amount+'|'+structId);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
             return
         } else {
@@ -806,19 +809,24 @@ Base{
                     if (details.payment=='cash' && !isPaid) {
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
-                        if (receivedCash > 0){
-                            details.refund_status = 'AVAILABLE';
-                            details.refund_number = '';
-                            details.refund_amount = refundAmount.toString();
-                            switch_frame('source/take_receipt.png', 'Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas', 'backToMain', true );
-//                            _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
-//                            _SLOT.python_dump(JSON.stringify(details))
-//                            _SLOT.start_sale_print_global();
-                            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-
-    //                        _SLOT.start_return_es_mei();
+                    }
+                    if (receivedCash > 0){
+                        if (popup_refund.visible) popup_refund.close();
+                        details.refund_status = 'AVAILABLE';
+                        details.refund_number = '';
+                        details.refund_amount = refundAmount.toString();
+                        var refundPayload = {
+                            amount: details.refund_amount,
+                            customer: 'NO_PHONE_NUMBER',
+                            reff_no: details.shop_type + details.epoch.toString(),
+                            remarks: details,
+                            channel: 'MANUAL',
+                            mode: 'not_having_phone_no_for_refund',
+                            payment: details.payment
                         }
-    //                    _SLOT.start_dis_accept_mei();
+                        _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
+                        console.log('start_store_pending_balance caused by timeout', now, JSON.stringify(refundPayload));
+                        release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                     }
                 }
                 if(abc.counter == 0){

@@ -192,5 +192,6 @@ Base{
     function close(){
         globalFrame.visible = false;
         show_timer.stop();
+        specialHandler = undefined;
     }
 }

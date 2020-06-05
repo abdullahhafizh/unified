@@ -207,6 +207,10 @@ def strtolist(string=None, length=2):
     return re.findall(n, string)
 
 
+def compare_time(time_int = 22):
+    return True if (time.gmtime() + 7) > time_int else False
+
+
 def hash_sha256_signature(key, message):
     byte_key = binascii.unhexlify(key)
     message = message.encode()

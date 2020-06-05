@@ -362,6 +362,11 @@ Rectangle{
             channel_desc.visible = false;
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = true;
             break;
+        case 'CUSTOMER-SERVICE':
+            mainTitle = channelDescription;
+            mainTitleMode = 'normal';
+            if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;
+            break;
         default:
             mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda';
             mainTitleMode = 'normal';
