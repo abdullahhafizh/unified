@@ -126,7 +126,13 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_refund_result', now, r);
         var refund = JSON.parse(r);
-        if (refund.MANUAL == 'AVAILABLE') popup_refund.manualEnable = true;
+        if (refund.MANUAL == 'AVAILABLE'){
+            var now_hour =  parseInt(Qt.formatDateTime(new Date(), "HH"));
+            var over_night = CONF.over_night;
+            if (now_hour < over_night){
+                popup_refund.manualEnable = true;
+            }
+        }
         if (refund.CS == 'AVAILABLE') popup_refund.customerServiceEnable = true;
         if (refund.DIVA == 'AVAILABLE') popup_refund.divaEnable = true;
         if (refund.LINKAJA == 'AVAILABLE') popup_refund.linkajaEnable = true;

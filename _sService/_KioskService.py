@@ -237,6 +237,8 @@ def define_theme(d):
     # General QR config
     general_qr = '1' if _Common.GENERAL_QR is True else '0'
     content_js += 'var general_qr = ' +  general_qr + ';' + os.linesep
+    # Over night
+    content_js += 'var over_night = ' +  str(_Common.OVER_NIGHT) + ';' + os.linesep
     # Receipt tvc_waiting_time
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))

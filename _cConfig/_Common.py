@@ -698,7 +698,7 @@ def get_refunds():
         }
     else: 
         return {
-            "MANUAL": "AVAILABLE" if (check_refund('manual') is True and _Helper.compare_time(OVER_NIGHT) is True) else "NOT_AVAILABLE",
+            "MANUAL": "AVAILABLE" if check_refund('manual') is True else "NOT_AVAILABLE",
             "DIVA": "AVAILABLE" if check_refund('diva') is True else "NOT_AVAILABLE",
             "CS": "AVAILABLE" if check_refund('customer-service') is True else "NOT_AVAILABLE",
             "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",

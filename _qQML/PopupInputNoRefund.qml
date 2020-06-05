@@ -366,6 +366,7 @@ Rectangle{
             mainTitle = channelDescription;
             mainTitleMode = 'normal';
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;
+            reset_counter();
             break;
         default:
             mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda';
