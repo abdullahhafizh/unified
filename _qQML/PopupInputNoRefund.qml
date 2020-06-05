@@ -392,7 +392,7 @@ Rectangle{
     function open(msg, amount){
         if (msg!=undefined) caseTitle = msg;
         if (amount!=undefined) refundAmount = parseInt(amount);
-        switch_to_active(manualMethod);
+        switch_to_active(customerServiceMethod);
         popup_refund.visible = true;
         reset_counter();
     }
