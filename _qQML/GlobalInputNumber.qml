@@ -434,7 +434,8 @@ Base{
             details.value = selectedProduct.rs_price.toString();
             details.admin_fee = '0';
             details.msisdn = textInput;
-            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
+//            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
+            details.provider = selectedProduct.description;
         }
         _SLOT.python_dump(JSON.stringify(details));
         my_layer.push(general_payment_process, {details: details});

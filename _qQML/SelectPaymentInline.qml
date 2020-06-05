@@ -122,7 +122,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_ovo.png"
-            itemName: "QR OVO"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' :"QR OVO"
             modeReverse: true
             visible: _qrOvoEnable
             MouseArea{
@@ -157,7 +157,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_linkaja.png"
-            itemName: "QRIS LinkAja"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS LinkAja"
             modeReverse: true
             visible: _qrLinkAjaEnable
             MouseArea{
@@ -192,7 +192,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_gopay.png"
-            itemName: "QRIS Gopay"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Gopay"
             modeReverse: true
             visible: _qrGopayEnable
             MouseArea{
@@ -227,7 +227,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_dana.png"
-            itemName: "QRIS Dana"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Dana"
             modeReverse: true
             visible: _qrDanaEnable
             MouseArea{
@@ -262,7 +262,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_shopeepay.png"
-            itemName: "QRIS ShopeePay"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
             imageMaxMode: true
             modeReverse: true
             visible: _qrShopeeEnable

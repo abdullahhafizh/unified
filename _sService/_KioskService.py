@@ -234,6 +234,9 @@ def define_theme(d):
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep
+    # General QR config
+    general_qr = '1' if _Common.GENERAL_QR is True else '0'
+    content_js += 'var general_qr = ' +  general_qr + ';' + os.linesep
     # Receipt tvc_waiting_time
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))

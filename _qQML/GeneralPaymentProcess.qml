@@ -331,8 +331,8 @@ Base{
         }
         popup_loading.close();
         var info = JSON.parse(result);
-        var qrMode = mode.toLowerCase();
-        qr_payment_frame.modeQR = qrMode;
+        var qrMode = mode.toUpperCase();
+        qr_payment_frame.modeQR = (CONF.general_qr == '1') ? 'QR Wallet Anda' : qrMode;
         qr_payment_frame.imageSource = info.qr;
 //        if (qrMode=='ovo') _SLOT.start_do_pay_ovo_qr(JSON.stringify(qrPayload));
 //        if (qrMode=='gopay') _SLOT.start_do_check_gopay_qr(JSON.stringify(qrPayload));

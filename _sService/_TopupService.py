@@ -175,20 +175,29 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/pending', param=_param)
             LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
-                # {
-                # "response":{
-                #   "code":200,
-                #   "message":"Pending Balance Success",
-                #   "latency":2.2753360271454
-                # },
-                # "data":{
-                #   "amount":"30000",
-                #   "card_no":"7546990000025583",
-                #   "reff_no":"20181207180324000511",
-                #   "provider_id":"BNI_TAPCASH",
-                #   "trx_pin":"12345"
-                #   }
-                # }
+            #    {
+            #    "response":{
+            #       "code":200,
+            #       "message":"Pending Balance Success",
+            #       "latency":0.43425321578979,
+            #       "host":"172.31.254.247"
+            #    },
+            #    "data":{
+            #       "provider":"BRI-Brizzi",
+            #       "amount":"8500",
+            #       "card_no":"6013500601505143",
+            #       "reff_no_trx":"439206",
+            #       "reff_no_topup":"202006051651181591350678",
+            #       "pending_balance":"25500",
+            #       "trx_time":"2020-06-05 16:51:19",
+            #       "suspect_status":false,
+            #       "paymentId1":"N\/A",
+            #       "paymentId2":"N\/A",
+            #       "reff_no":"N\/A",
+            #       "open_pending":"N\/A",
+            #       "prev_amount":"N\/A"
+            #    }
+            # }
                 return response['data']
             else:
                 return False
@@ -653,6 +662,9 @@ def topup_online(bank, cardno, amount):
         update_result = update_balance(_param, bank='BRI', mode='TOPUP')
         if not update_result:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+            # Add Refund BRI
+            if _Common.BRI_AUTO_REFUND is True:
+                refund_bri_pending(pending_result)
             return
         # {
         #        'bank': bank,
@@ -724,5 +736,27 @@ def start_do_topup_c2c_deposit():
     _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, ))
 
 
+def refund_bri_pending(data):
+    if _Helper.empty(data):
+        return False
+    LOGGER.info((str(data)))
+    try:
+        param = {
+            'token': TOPUP_TOKEN,
+            'mid': TOPUP_MID,
+            'tid': TOPUP_TID,
+            'reff_no_host': data['reff_no_trx'],
+            'card_no': data['card_no']
+        }
+        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bri/refund', param=param)
+        LOGGER.debug((str(param), str(status), str(response)))
+        if status == 200 and response['response']['code'] == 200:
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+    
 
 

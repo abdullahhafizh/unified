@@ -17,6 +17,7 @@ Rectangle{
     property bool _qrDanaEnable: false
     property bool _qrGopayEnable: false
     property bool _qrLinkAjaEnable: false
+    property bool _qrShopeeEnable: false
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -151,7 +152,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/qr_ovo.png"
-            text_: qsTr("QR OVO")
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR OVO")
             text2_: qsTr("QR OVO")
             visible: _qrOvoEnable
             MouseArea{
@@ -184,7 +185,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/qr_linkaja.png"
-            text_: qsTr("QR LinkAja")
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR LinkAja")
             text2_: qsTr("QR LinkAja")
             visible: _qrLinkAjaEnable
             MouseArea{
@@ -217,7 +218,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/qr_gopay.png"
-            text_: qsTr("QR Gopay")
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Gopay")
             text2_: qsTr("QR Gopay")
             visible: _qrGopayEnable
             MouseArea{
@@ -250,7 +251,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/qr_dana.png"
-            text_: qsTr("QR Dana")
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Dana")
             text2_: qsTr("QR Dana")
             visible: _qrDanaEnable
             MouseArea{
@@ -277,6 +278,41 @@ Rectangle{
                 }
             }
         }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_shopeepay.png"
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR ShopeePay")
+            text2_: qsTr("QR Shopee")
+            visible: _qrShopeeEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
+                    var payment = 'shopeepay';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+
     }
 
     CircleButton{

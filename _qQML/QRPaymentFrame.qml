@@ -8,7 +8,7 @@ Base{
     id: qr_payment_frame
     isBoxNameActive: false
     property var modeQR: "linkaja"
-    property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR.toUpperCase()
+    property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR
     property var textSlave: 'Menunggu Pembayaran...'
     property var imageSource: "source/sand-clock-animated-2.gif"
     property bool successPayment: false

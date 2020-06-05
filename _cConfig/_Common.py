@@ -77,6 +77,7 @@ MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
 PROCODE_BRI = _ConfigParser.get_set_value('BRI', 'procode', '---')
 SLOT_BRI = _ConfigParser.get_set_value('BRI', 'sam^slot', '---')
+BRI_AUTO_REFUND = True if _ConfigParser.get_set_value('BRI', 'auto^refund', '1') == '1' else False
 BRI_SAM_ACTIVE = digit_in(SLOT_BRI) and len(SLOT_BRI) == 1
 
 MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
@@ -208,6 +209,7 @@ COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
+GENERAL_QR = True if _ConfigParser.get_set_value('QR', 'general^qr', '1') == '1' else False
 
 CORE_HOST = QR_HOST
 CORE_TOKEN = QR_TOKEN
