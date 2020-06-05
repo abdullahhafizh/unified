@@ -29,6 +29,7 @@ Rectangle{
     property int minCountInput: 9
     property int maxCountInput: 15
     property var numberInput: ""
+    property var showDuration: ""
     property var pattern: '08'
 
     property string caseTitle: ""
@@ -187,6 +188,29 @@ Rectangle{
             }
         }
 
+    }
+
+    AnimatedImage  {
+        width: 100
+        height: 100
+        anchors.right: parent.right
+        anchors.rightMargin: 25
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        scale: 1
+        source: 'source/blue_gradient_circle_loading.gif'
+        fillMode: Image.PreserveAspectFit
+        Text{
+            id: text_timer_show
+            anchors.fill: parent
+            text: showDuration
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            font.pixelSize: 25
+            color: 'yellow'
+            verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+        }
     }
 
     Column{

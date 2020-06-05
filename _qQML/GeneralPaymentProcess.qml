@@ -128,7 +128,7 @@ Base{
         var refund = JSON.parse(r);
         if (refund.MANUAL == 'AVAILABLE'){
             var now_hour =  parseInt(Qt.formatDateTime(new Date(), "HH"));
-            var over_night = CONF.over_night;
+            var over_night = parseInt(CONF.over_night);
             if (now_hour < over_night){
                 popup_refund.manualEnable = true;
             }
@@ -168,8 +168,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var messase_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
-        abc.counter = timer_value/2;
-        my_timer.restart();
+        abc.counter = 300;
+//        my_timer.restart();
         if (error==undefined){
             // Success Transaction
             var exceed = validate_cash_refundable();
@@ -811,29 +811,28 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if (abc.counter == 5){
+                if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
+                if (abc.counter == 5 && receivedCash > 0){
+                    proceedAble = false;
                     if (details.payment=='cash' && !isPaid) {
-                        proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
-                    if (receivedCash > 0){
-                        if (popup_refund.visible) popup_refund.close();
-                        details.refund_status = 'AVAILABLE';
-                        details.refund_number = '';
-                        details.refund_amount = refundAmount.toString();
-                        var refundPayload = {
-                            amount: details.refund_amount,
-                            customer: 'NO_PHONE_NUMBER',
-                            reff_no: details.shop_type + details.epoch.toString(),
-                            remarks: details,
-                            channel: 'MANUAL',
-                            mode: 'not_having_phone_no_for_refund',
-                            payment: details.payment
-                        }
-                        _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
-                        console.log('start_store_pending_balance caused by timeout', now, JSON.stringify(refundPayload));
-                        release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
+                    if (popup_refund.visible) popup_refund.close();
+                    details.refund_status = 'AVAILABLE';
+                    details.refund_number = '';
+                    details.refund_amount = refundAmount.toString();
+                    var refundPayload = {
+                        amount: details.refund_amount,
+                        customer: 'NO_PHONE_NUMBER',
+                        reff_no: details.shop_type + details.epoch.toString(),
+                        remarks: details,
+                        channel: 'MANUAL',
+                        mode: 'not_having_phone_no_for_refund',
+                        payment: details.payment
                     }
+                    _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
+                    console.log('start_store_pending_balance caused by timeout', now, JSON.stringify(refundPayload));
+                    release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
                 if(abc.counter == 0){
                     my_timer.stop();
