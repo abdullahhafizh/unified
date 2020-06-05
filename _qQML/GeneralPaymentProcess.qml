@@ -360,7 +360,7 @@ Base{
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 60;
-        my_timer.restart();
+//        my_timer.restart();
         // Trigger C2C Deposit Update Balance Check
         if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
         //========
@@ -445,8 +445,8 @@ Base{
         global_frame.close();
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
-        abc.counter = 30;
-        my_timer.restart();
+        abc.counter = 60;
+//        my_timer.restart();
         if (r=='EJECT|PARTIAL'){
             press = '0';
             attemptCD -= 1;
@@ -482,8 +482,8 @@ Base{
         // if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
         isPaid = true;
         back_button.visible = false;
-        abc.counter = timer_value;
-        my_timer.restart();
+        abc.counter = 600;
+//        my_timer.restart();
         switch(details.shop_type){
             case 'shop':
                 attemptCD = details.qty;
@@ -549,8 +549,8 @@ Base{
             } else {
                 global_frame.close();
                 receivedCash = parseInt(grgResult);
-                abc.counter = timer_value;
-                my_timer.restart();
+                abc.counter = 600;
+//                my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
         } else if (grgFunction == 'STOP_BILL'){
