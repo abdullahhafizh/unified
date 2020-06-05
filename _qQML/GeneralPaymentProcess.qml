@@ -483,6 +483,9 @@ Base{
                 var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
+                // Force Disable All Cancel Button
+                back_button.visible = false;
+                cancel_button_global.visible = false;
                 perform_do_topup();
                 break;
             case 'ppob':
