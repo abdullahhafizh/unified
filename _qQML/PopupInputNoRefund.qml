@@ -195,8 +195,8 @@ Rectangle{
         height: 100
         anchors.right: parent.right
         anchors.rightMargin: 25
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 25
+        anchors.top: parent.bottom
+        anchors.topMargin: 25
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'
         fillMode: Image.PreserveAspectFit

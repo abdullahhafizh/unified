@@ -150,6 +150,28 @@ Base{
         }
     }
 
+    AnimatedImage  {
+        width: 100
+        height: 100
+        anchors.right: parent.right
+        anchors.rightMargin: 25
+        anchors.top: parent.bottom
+        anchors.topMargin: 25
+        scale: 1
+        source: 'source/blue_gradient_circle_loading.gif'
+        fillMode: Image.PreserveAspectFit
+        Text{
+            id: text_timer_show
+            anchors.fill: parent
+            text: showDuration
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            font.pixelSize: 25
+            color: 'yellow'
+            verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+        }
+    }
 
     Timer {
         id: show_timer
@@ -165,6 +187,7 @@ Base{
                 console.log('C2C Auto Force Settlement By Timeout', now, amount, structId);
                 _SLOT.start_mandiri_c2c_force_settlement(amount, structId)
                 close();
+                return;
             }
             if (showDuration==0) {
                 show_timer.stop();
