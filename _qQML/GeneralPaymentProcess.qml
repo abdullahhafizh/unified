@@ -831,7 +831,7 @@ Base{
                         payment: details.payment
                     }
                     _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
-                    console.log('start_store_pending_balance caused by timeout', now, JSON.stringify(refundPayload));
+                    console.log('start_store_pending_balance caused by timeout', JSON.stringify(refundPayload));
                     release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
                 if(abc.counter == 0){
