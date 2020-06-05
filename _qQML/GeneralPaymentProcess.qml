@@ -359,7 +359,7 @@ Base{
         global_frame.close();
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
-        abc.counter = 30;
+        abc.counter = 60;
         my_timer.restart();
         // Trigger C2C Deposit Update Balance Check
         if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
