@@ -544,6 +544,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             _Common.local_store_topup_record(output)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
+            # Renew C2C Deposit Balance Info
             c2c_balance_info()
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
         # Ensure The C2C_DEPOSIT_NO same with Report
@@ -853,6 +854,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # print('pyt: topup_offline_bni > init_bni > update_bni : ', _result)
         __remarks = ''
         if _response == 0 and '|' in _result:
+            # Add Recheck Deposit Balance
+            ka_info_bni(slot=_Common.BNI_ACTIVE)
             _result = _result.replace('#', '')
             __data = _result.split('|')
             __status = __data[0]
@@ -869,6 +872,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             if __status in ERROR_TOPUP.keys():
                 __remarks = ERROR_TOPUP[__status]
             __samLastBalance = __data[3].lstrip('0')
+            if __samLastBalance != str(_Common.BNI_ACTIVE_WALLET):
+                LOGGER.info(('BNI_DEPOSIT_LAST_BALANCE_REPORT_NOT_MATCH', __samLastBalance, str(_Common.BNI_ACTIVE_WALLET)))
+                __samLastBalance = str(_Common.BNI_ACTIVE_WALLET)
             __report_sam = __data[5]
             if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
                 # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))

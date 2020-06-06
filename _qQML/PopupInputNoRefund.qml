@@ -240,7 +240,7 @@ Rectangle{
             id: customerServiceMethod
             buttonName: 'OPERATOR'
             imageSource: 'source/manual_cs.png'
-            colorMode: '#808080'
+            colorMode: 'orange'
             channelCode: 'CUSTOMER-SERVICE'
             visible: customerServiceEnable
             MouseArea{

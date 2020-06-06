@@ -16,15 +16,14 @@ Base{
     property var press: '0'
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
-    property bool isPaid: false
-    property int receivedCash: 0
+    property bool successTransaction: false
+    property int receivedPayment: 0
     property var lastBalance: '999000'
     property var cardNo: '6024123443211234'
     property var totalPrice: 0
     property var getDenom: 0
     property var adminFee: 0
-    property var modeButtonPopup;
-    property bool topupSuccess: false
+    property var modeButtonPopup
     property int reprintAttempt: 0
     property var uniqueCode: ''
 
@@ -79,7 +78,7 @@ Base{
         base.result_stack_mei.connect(mei_payment_result);
         base.result_return_mei.connect(mei_payment_result);
         base.result_store_es_mei.connect(mei_payment_result);
-        base.result_cd_move.connect(card_eject_result);
+        base.result_cd_move.connect(shop_card_result);
         base.result_store_transaction.connect(store_result);
         base.result_sale_print.connect(print_result);
         base.result_topup_qprox.connect(topup_result);
@@ -104,7 +103,7 @@ Base{
         base.result_stack_mei.disconnect(mei_payment_result);
         base.result_return_mei.disconnect(mei_payment_result);
         base.result_store_es_mei.disconnect(mei_payment_result);
-        base.result_cd_move.disconnect(card_eject_result);
+        base.result_cd_move.disconnect(shop_card_result);
         base.result_store_transaction.disconnect(store_result);
         base.result_sale_print.disconnect(print_result);
         base.result_topup_qprox.disconnect(topup_result);
@@ -152,9 +151,8 @@ Base{
         customerPhone = '';
         notifTitle = '';
         notifMessage = ''
-        receivedCash = 0;
-        isPaid = false;
-        topupSuccess = false;
+        receivedPayment = 0;
+        successTransaction = false;
         reprintAttempt = 0;
         qrPayload = undefined;
         attemptCD = 0;
@@ -162,6 +160,7 @@ Base{
         centerOnlyButton = false;
         refundAmount = 0;
         refundMode = '';
+        modeButtonPopup = undefined;
     }
 
     function validate_release_refund(error){
@@ -188,28 +187,28 @@ Base{
         case 'user_cancellation':
             // Doing Nothing In Cancellation Not Cash
             if (details.payment != 'cash') return;
-            refundAmount = receivedCash;
+            refundAmount = receivedPayment;
             details.process_error = error;
-            details.payment_received = receivedCash.toString();
+            details.payment_received = receivedPayment.toString();
             messase_case_refund = 'Terjadi Pembatalan Transaksi, ';
             if (error=='user_payment_timeout') messase_case_refund = 'Waktu Transaksi Habis, ';
             break;
         case 'cash_device_error':
-            if (receivedCash == 0) {
+            if (receivedPayment == 0) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
                 return;
             }
             details.payment_error = error;
-            details.payment_received = receivedCash.toString();
-            refundAmount = receivedCash;
+            details.payment_received = receivedPayment.toString();
+            refundAmount = receivedPayment;
             messase_case_refund = 'Terjadi Kesalahan Mesin,';
             break;
         case 'ppob_error':
         case 'card_eject_error':
         case 'topup_prepaid_error':
             refundAmount = totalPrice;
-            if (details.payment=='cash') refundAmount = receivedCash;
+            if (details.payment=='cash') refundAmount = receivedPayment;
             break;
         }
         press = '0';
@@ -286,13 +285,14 @@ Base{
             return;
         }
         var info = JSON.parse(result);
+        successTransaction = true;
         details.ppob_details = info;
         validate_release_refund();
     }
 
     function validate_cash_refundable(){
-        if (details.payment == 'cash' && receivedCash > totalPrice){
-            return parseInt(receivedCash - totalPrice);
+        if (details.payment == 'cash' && receivedPayment > totalPrice){
+            return parseInt(receivedPayment - totalPrice);
         }
         return false;
     }
@@ -359,7 +359,7 @@ Base{
         global_frame.close();
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
-        abc.counter = 60;
+        abc.counter = 61;
 //        my_timer.restart();
         // Trigger C2C Deposit Update Balance Check
         if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
@@ -378,10 +378,7 @@ Base{
         }  else if (t=='TOPUP_C2C_CORRECTION'){
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
-            var amount = getDenom.toString();
-            var structId = details.shop_type + details.epoch.toString();
-            global_frame.specialHandler = modeButtonPopup+'|'+amount+'|'+structId;
-            console.log('c2c_special_handler', modeButtonPopup+'|'+amount+'|'+structId);
+            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
             return
         } else {
@@ -389,7 +386,7 @@ Base{
             var topupResponse = output[0]
             var result = JSON.parse(output[1]);
             if (topupResponse=='0000'){
-                topupSuccess = true;
+                successTransaction = true;
                 details.topup_details = result;
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
@@ -405,7 +402,6 @@ Base{
         details.process_error = 1;
         validate_release_refund('topup_prepaid_error');
         // Check Manual Update SAM Saldo Here
-        // if (topupSuccess) _SLOT.start_manual_topup_bni();
     }
 
     function print_result(p){
@@ -424,14 +420,14 @@ Base{
 
     function print_failed_transaction(channelPayment, issue){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('print_failed_transaction', now, channelPayment, issue, receivedCash, customerPhone, JSON.stringify(details));
+        console.log('print_failed_transaction', now, channelPayment, issue, receivedPayment, customerPhone, JSON.stringify(details));
         if (issue==undefined) issue = 'BILL_ERROR';
         if (channelPayment=='cash'){
             details.payment_error = issue;
-            details.payment_received = receivedCash.toString();
+            details.payment_received = receivedPayment.toString();
             if (customerPhone!=''){
 //                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
-                var refund_amount = receivedCash.toString();
+                var refund_amount = receivedPayment.toString();
                 release_print_with_refund(refund_amount, 'Terjadi Kesalahan/Pembatalan', 'Silakan Ambil Struk Sebagai Bukti');
             } else {
                 release_print();
@@ -439,9 +435,9 @@ Base{
         }
     }
 
-    function card_eject_result(r){
+    function shop_card_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('card_eject_result', now, r);
+        console.log('shop_card_result', now, r);
         global_frame.close();
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
@@ -462,6 +458,7 @@ Base{
         }
         if (r == 'EJECT|SUCCESS') {
             // Move TRX Success Store Here
+            successTransaction = true;
             _SLOT.start_store_transaction_global(JSON.stringify(details))
             validate_release_refund();
             return;
@@ -477,10 +474,10 @@ Base{
             console.log('payment_complete mode', mode)
 //            details.notes = mode + ' - ' + new Date().getTime().toString();
         }
-        
+        //Overwrite receivedPayment into totalPrice for non-cash transaction
+        if (details.payment != 'cash') receivedPayment = totalPrice;
         var pid = details.shop_type + details.epoch.toString();
-        // if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
-        isPaid = true;
+        // if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedPayment.toString());
         back_button.visible = false;
         abc.counter = 600;
 //        my_timer.restart();
@@ -521,7 +518,7 @@ Base{
 
     function bill_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log("bill_payment_result : ", now, r, receivedCash, totalPrice, proceedAble);
+        console.log("bill_payment_result : ", now, r, receivedPayment, totalPrice, proceedAble);
         var grgFunction = r.split('|')[0]
         var grgResult = r.split('|')[1]
         if (grgFunction == 'RECEIVE_BILL'){
@@ -548,17 +545,19 @@ Base{
                 return;
             } else {
                 global_frame.close();
-                receivedCash = parseInt(grgResult);
+                receivedPayment = parseInt(grgResult);
                 abc.counter = 600;
 //                my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
         } else if (grgFunction == 'STOP_BILL'){
-            if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice){
-                console.log("bill_payment_result STOP_SUCCESS : ", now, receivedCash, totalPrice, proceedAble);
+            if(grgResult.indexOf('SUCCESS') > -1 && receivedPayment >= totalPrice){
+                console.log("bill_payment_result STOP_SUCCESS : ", now, receivedPayment, totalPrice, proceedAble);
                 var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
+                // Overwrite receivedPayment from STOP_BILL result
+                receivedPayment = parseInt(cashResponse.total);
                 if (proceedAble) payment_complete('grg');
             }
         } else if (grgFunction == 'STATUS_BILL'){
@@ -577,7 +576,7 @@ Base{
         if (meiFunction == 'STACK'){
             if (meiResult == "ERROR"||meiResult == "REJECTED"||meiResult == "OSERROR"){
 //                false_notif();
-                if (receivedCash > 0){
+                if (receivedPayment > 0){
                     _SLOT.start_return_es_mei();
                 }
             } if (meiResult == 'COMPLETE'){
@@ -589,7 +588,7 @@ Base{
                 popup_loading.open();
 //                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else {
-                receivedCash = parseInt(meiResult);
+                receivedPayment = parseInt(meiResult);
             }
         } else if (meiFunction == 'STORE_ES'){
             if(meiResult.indexOf('SUCCESS') > -1) {
@@ -812,15 +811,25 @@ Base{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
-                if (abc.counter == 5 && receivedCash > 0){
+                if (abc.counter == 30 && modeButtonPopup == 'c2c_correction' && !global_frame.visible){
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    var amount = getDenom.toString();
+                    var structId = details.shop_type + details.epoch.toString();
+                    console.log('C2C Auto Force Settlement By Timeout', now, amount, structId);
+                    _SLOT.start_mandiri_c2c_force_settlement(amount, structId)
+                    modeButtonPopup = undefined;
+                    popup_loading.open();
+                    return;
+                }
+                if (abc.counter == 5 && receivedPayment > 0 && !successTransaction){
                     proceedAble = false;
-                    if (details.payment=='cash' && !isPaid) {
+                    if (details.payment=='cash') {
                         _SLOT.stop_bill_receive_note();
                     }
                     if (popup_refund.visible) popup_refund.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
-                    details.refund_amount = refundAmount.toString();
+                    details.refund_amount = receivedPayment.toString();
                     var refundPayload = {
                         amount: details.refund_amount,
                         customer: 'NO_PHONE_NUMBER',
@@ -859,10 +868,10 @@ Base{
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
-                if (details.payment=='cash' && !isPaid) {
+                if (details.payment=='cash') {
                     proceedAble = false;
                     _SLOT.stop_bill_receive_note();
-                    if (receivedCash > 0){
+                    if (receivedPayment > 0){
                         validate_release_refund('user_cancellation');
                         return;
 //                        print_failed_transaction('cash', 'USER_CANCELLATION');
@@ -993,7 +1002,7 @@ Base{
         TextDetailRow{
             id: row4
             labelName: (details.payment=='cash') ? 'Uang Masuk' : 'Jumlah'
-            labelContent: (details.payment=='cash') ? 'Rp ' + FUNC.insert_dot(receivedCash.toString()) : details.qty
+            labelContent: (details.payment=='cash') ? 'Rp ' + FUNC.insert_dot(receivedPayment.toString()) : details.qty
         }
 
         TextDetailRow{
@@ -1081,10 +1090,10 @@ Base{
                     _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (press != '0') return;
                     press = '1';
-                    if (details.payment=='cash' && !isPaid) {
+                    if (details.payment=='cash') {
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
-                        if (receivedCash > 0){
+                        if (receivedPayment > 0){
                             validate_release_refund('user_cancellation');
                             return;
     //                        print_failed_transaction('cash', 'USER_CANCELLATION');
