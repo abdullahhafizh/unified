@@ -168,7 +168,7 @@ Base{
         var messase_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
         abc.counter = 300;
-//        my_timer.restart();
+        my_timer.restart();
         if (error==undefined){
             // Success Transaction
             var exceed = validate_cash_refundable();
@@ -360,7 +360,7 @@ Base{
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 61;
-//        my_timer.restart();
+        my_timer.restart();
         // Trigger C2C Deposit Update Balance Check
         if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
         //========
@@ -442,7 +442,7 @@ Base{
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 60;
-//        my_timer.restart();
+        my_timer.restart();
         if (r=='EJECT|PARTIAL'){
             press = '0';
             attemptCD -= 1;
@@ -480,7 +480,7 @@ Base{
         // if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedPayment.toString());
         back_button.visible = false;
         abc.counter = 600;
-//        my_timer.restart();
+        my_timer.restart();
         switch(details.shop_type){
             case 'shop':
                 attemptCD = details.qty;
@@ -547,7 +547,7 @@ Base{
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
                 abc.counter = 600;
-//                my_timer.restart();
+                my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
         } else if (grgFunction == 'STOP_BILL'){
@@ -811,6 +811,7 @@ Base{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
+//                if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction' && !global_frame.visible){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();

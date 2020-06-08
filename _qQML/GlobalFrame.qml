@@ -205,7 +205,6 @@ Base{
         }
     }
 
-
     function open(){
         globalFrame.visible = true;
         showDuration = timerDuration;
