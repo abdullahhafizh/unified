@@ -1251,13 +1251,11 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
-//                    _SLOT.user_action_log('Press "SETUJU" in Input Refund Number');
                     if (refundData==undefined){
                         console.log('MISSING REFUND_DATA', refundData);
                         return;
-                    } else {
-                        console.log('REFUND_DATA', JSON.stringify(refundData))
                     }
+                    console.log('REFUND_DATA', JSON.stringify(refundData));
                     refundChannel = refundData.name;
                     refundAmount = refundData.total;
                     details.refund_channel = refundChannel;
@@ -1281,8 +1279,7 @@ Base{
                         release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                         return;
                     }
-                    // If Not Manual Method
-                    // set_refund_number(popup_refund.numberInput);
+                    // If Not MANUAL(Cash) Or OPERATOR (Customer-Service) Method
                     customerPhone = popup_refund.numberInput;
                     details.refund_number = customerPhone;
                     _SLOT.user_action_log('Press "LANJUT" Input Number ' + customerPhone + ' For Refund Channel ' + refundChannel);
