@@ -16,7 +16,7 @@ Base{
     property bool withTimer: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 5
-    property int showDuration: timerDuration
+    property int showDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
     property var specialHandler
     visible: false
@@ -180,15 +180,6 @@ Base{
         running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
-//            if (showDuration==5 && specialHandler.indexOf('c2c_correction') > -1){
-//                var amount = specialHandler.split('|')[1];
-//                var structId = specialHandler.split('|')[2];
-//                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-//                console.log('C2C Auto Force Settlement By Timeout', now, amount, structId);
-//                _SLOT.start_mandiri_c2c_force_settlement(amount, structId)
-//                close();
-//                return;
-//            }
             if (showDuration==0) {
                 show_timer.stop();
                 switch(closeMode){
@@ -206,6 +197,7 @@ Base{
     }
 
     function open(){
+        console.log('global_frame', textMain, imageSource, timerDuration, closeMode, withTimer);
         globalFrame.visible = true;
         showDuration = timerDuration;
         show_timer.start();
