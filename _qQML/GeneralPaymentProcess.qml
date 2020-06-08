@@ -375,7 +375,7 @@ Base{
         }  else if (t=='TOPUP_C2C_CORRECTION'){
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
-            console.log('c2c_special_handler', modeButtonPopup);
+//            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
             return
         } else {
@@ -921,13 +921,18 @@ Base{
         global_frame.timerDuration = 5;
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
-            var timer = closeMode.split('|')[1];
-            global_frame.timerDuration = parseInt(timer);
+            var frame_timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(frame_timer);
+            global_frame.closeMode = closeMode;
+        }
+        if (closeMode == 'closeWindow|30'){
+            global_frame.closeMode = 'closeWindow';
+            global_frame.timerDuration = 30;
+            global_frame.withTimer = true;
         }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
-        global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
         global_frame.withTimer = true;
         global_frame.open();
@@ -939,14 +944,19 @@ Base{
         global_frame.withTimer = false;
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
-            var timer = closeMode.split('|')[1];
-            global_frame.timerDuration = parseInt(timer);
+            var frame_timer = closeMode.split('|')[1];
+            global_frame.closeMode = closeMode;
+            global_frame.timerDuration = parseInt(frame_timer);
+            global_frame.withTimer = true;
+        }
+        if (closeMode == 'closeWindow|30'){
+            global_frame.closeMode = 'closeWindow';
+            global_frame.timerDuration = 30;
             global_frame.withTimer = true;
         }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
-        global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
         global_frame.open();
     }

@@ -174,14 +174,14 @@ Base{
     }
 
     Timer {
-        id: show_timer
+        id: global_frame_timer
         interval: 1000
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
             if (showDuration==0) {
-                show_timer.stop();
+                global_frame_timer.stop();
                 switch(closeMode){
                 case 'backToMain':
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
@@ -200,12 +200,12 @@ Base{
         console.log('open_frame', textMain, textSlave, imageSource, timerDuration, closeMode, withTimer);
         globalFrame.visible = true;
         showDuration = timerDuration;
-        if (withTimer) show_timer.restart();
+        if (withTimer) global_frame_timer.restart();
     }
 
     function close(){
         globalFrame.visible = false;
-        if (withTimer) show_timer.stop();
+        if (withTimer) global_frame_timer.stop();
         specialHandler = undefined;
     }
 }
