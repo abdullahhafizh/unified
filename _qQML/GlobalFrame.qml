@@ -197,7 +197,7 @@ Base{
     }
 
     function open(){
-        console.log('global_frame', textMain, textSlave, imageSource, timerDuration, closeMode, withTimer);
+        console.log('open_frame', textMain, textSlave, imageSource, timerDuration, closeMode, withTimer);
         globalFrame.visible = true;
         showDuration = timerDuration;
         if (withTimer) show_timer.restart();
