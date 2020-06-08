@@ -636,7 +636,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
-        if '"83"' in _result:
+        if '83' in _result:
             LAST_C2C_APP_TYPE = '1'
         else:
             LAST_C2C_APP_TYPE = '0'
