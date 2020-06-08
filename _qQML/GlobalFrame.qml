@@ -200,12 +200,12 @@ Base{
         console.log('global_frame', textMain, textSlave, imageSource, timerDuration, closeMode, withTimer);
         globalFrame.visible = true;
         showDuration = timerDuration;
-        show_timer.start();
+        if (withTimer) show_timer.restart();
     }
 
     function close(){
         globalFrame.visible = false;
-        show_timer.stop();
+        if (withTimer) show_timer.stop();
         specialHandler = undefined;
     }
 }
