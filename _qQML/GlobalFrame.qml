@@ -153,10 +153,9 @@ Base{
     AnimatedImage  {
         width: 100
         height: 100
-        anchors.right: parent.right
-        anchors.rightMargin: 25
-        anchors.top: parent.bottom
-        anchors.topMargin: 25
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'
         fillMode: Image.PreserveAspectFit
