@@ -1131,7 +1131,7 @@ def set_c2c_settlement_fee(file):
     _url = 'http://'+_Common.SFTP_C2C['host']+'/bridge-service/filecheck.php?content=1&no_correction=1'
     _param = {
         'ext': '.txt',
-        'file_path':_Common.SFTP_C2C['path_fee_response']+'/'+file
+        'file_path': '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee_response'] + '/' + file
     }
     LOGGER.debug((attempt, file, _url, _param))
     while True:

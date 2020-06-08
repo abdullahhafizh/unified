@@ -357,7 +357,7 @@ SFTP_BNI = {
 }
 
 
-C2C_PATH = _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path', '/home/tbuser/tb/')
+C2C_PATH = _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^path', '/tb/')
 SFTP_C2C = {
     'status': C2C_MODE,
     'host': _ConfigParser.get_set_value('MANDIRI_C2C', 'c2c^host', '103.28.14.188'),
