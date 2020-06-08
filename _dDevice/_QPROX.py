@@ -1154,7 +1154,7 @@ def set_c2c_settlement_fee(file):
                     result_fee.append(False)
             if result_fee == [True, True]:
                 _Common.log_to_temp_config('last^c2c^set^fee')
-                LOGGER.info(('SUCCESS UPDATE FEE FOR BOTH APPLET'))
+                LOGGER.info(('SUCCESS_UPDATE_ADMIN_FEE_C2C'))
                 return True
                 break
         sleep(15)
