@@ -918,6 +918,7 @@ Base{
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = false;
         press = '0';
+        global_frame.timerDuration = 5;
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
             var timer = closeMode.split('|')[1];
