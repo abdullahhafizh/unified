@@ -243,19 +243,17 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             return False
     elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         try:
-            # param must be
             # "token":"<<YOUR API-TOKEN>>",
             # "mid":"<<YOUR MERCHANT_ID>>",
             # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
             # "amount":"30000",
             # "card_no":"7546990000025583"
-            # ---> Need Card Number And Amount
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             _param['phone'] = '08129420492'
             _param['email'] = 'vm@mdd.co.id'
-            _param['purpose'] = mode
+            _param['purpose'] = 'TOPUP_DEPOSIT_C2C'
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
             LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
