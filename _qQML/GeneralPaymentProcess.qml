@@ -807,7 +807,6 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if (global_frame.visible) global_frame.showDuration = (abc.counter-30).toString();
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();
