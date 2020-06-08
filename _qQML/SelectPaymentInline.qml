@@ -17,6 +17,7 @@ Rectangle{
     property bool _qrGopayEnable: false
     property bool _qrLinkAjaEnable: false
     property bool _qrShopeeEnable: false
+    property bool _qrJakoneEnable: false
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -292,6 +293,42 @@ Rectangle{
             }
         }
 
+        SmallSimplyItem {
+            id: button_jakone
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/qr_jakone.png"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS JakOne"
+            imageMaxMode: true
+            modeReverse: true
+            visible: _qrJakoneEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "JAKONE" Payment Method');
+                    var payment = 'jakone';
+                    do_release_all_set_active(button_jakone);
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
     }
 
 
@@ -303,6 +340,7 @@ Rectangle{
         button_gopay.do_release();
         button_dana.do_release();
         button_shopeepay.do_release();
+        button_jakone.do_release();
         id.set_active();
     }
 

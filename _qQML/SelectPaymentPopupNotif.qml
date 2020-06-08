@@ -18,6 +18,7 @@ Rectangle{
     property bool _qrGopayEnable: false
     property bool _qrLinkAjaEnable: false
     property bool _qrShopeeEnable: false
+    property bool _qrJakoneEnable: false
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -292,6 +293,39 @@ Rectangle{
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
                     var payment = 'shopeepay';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_jakone.png"
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
+            text2_: qsTr("QR JakOne")
+            visible: _qrJakoneEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "JAKONE" Payment Method');
+                    var payment = 'jakone';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
