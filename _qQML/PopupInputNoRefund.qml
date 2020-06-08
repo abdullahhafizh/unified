@@ -430,7 +430,6 @@ Rectangle{
         virtual_numpad.count = 0;
     }
 
-
     function check_availability(){
 //        console.log('numberInput', numberInput, canProceed);
         if (numberInput.substring(0, 2)==pattern && numberInput.length > minCountInput) {

@@ -1260,7 +1260,7 @@ Base{
                     refundAmount = refundData.total;
                     details.refund_channel = refundChannel;
                     details.refund_details = refundData;
-                    if (['MANUAL', 'OPERATOR'].indexOf(refundChannel) > -1){
+                    if (['CASH'].indexOf(refundChannel) > -1){
                         popup_refund.close();
                         details.refund_status = 'AVAILABLE';
                         details.refund_number = '';
@@ -1279,7 +1279,7 @@ Base{
                         release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                         return;
                     }
-                    // If Not MANUAL(Cash) Or OPERATOR (Customer-Service) Method
+                    // If Not MANUAL(Cash)
                     customerPhone = popup_refund.numberInput;
                     details.refund_number = customerPhone;
                     _SLOT.user_action_log('Press "LANJUT" Input Number ' + customerPhone + ' For Refund Channel ' + refundChannel);
