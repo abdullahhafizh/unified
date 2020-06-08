@@ -159,7 +159,7 @@ Base{
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'
         fillMode: Image.PreserveAspectFit
-        visible: parent.visible && withTimer
+        visible: withTimer && timerDuration > 5
         Text{
             id: text_timer_show
             anchors.fill: parent
