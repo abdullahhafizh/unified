@@ -1256,11 +1256,11 @@ Base{
                         return;
                     }
                     console.log('REFUND_DATA', JSON.stringify(refundData));
-                    refundChannel = refundData.name;
+                    refundChannel = refundData.code;
                     refundAmount = refundData.total;
                     details.refund_channel = refundChannel;
                     details.refund_details = refundData;
-                    if (['CASH'].indexOf(refundChannel) > -1){
+                    if (['MANUAL'].indexOf(refundChannel) > -1){
                         popup_refund.close();
                         details.refund_status = 'AVAILABLE';
                         details.refund_number = '';
@@ -1270,7 +1270,7 @@ Base{
                             customer: 'NO_PHONE_NUMBER',
                             reff_no: details.shop_type + details.epoch.toString(),
                             remarks: details,
-                            channel: 'MANUAL',
+                            channel: refundChannel,
                             mode: 'not_having_phone_no_for_refund',
                             payment: details.payment
                         }
