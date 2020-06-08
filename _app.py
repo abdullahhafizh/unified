@@ -588,9 +588,9 @@ class SlotHandler(QObject):
         _BILL.start_log_book_cash(pid, amount)
     start_log_book_cash = pyqtSlot(str, str)(start_log_book_cash)
 
-    def start_store_pending_balance(self, payload):
-        _PPOBService.start_store_pending_balance(payload)
-    start_store_pending_balance = pyqtSlot(str)(start_store_pending_balance)
+    def start_trigger_global_refund(self, payload):
+        _PPOBService.start_trigger_global_refund(payload)
+    start_trigger_global_refund = pyqtSlot(str)(start_trigger_global_refund)
 
     def start_do_force_topup_bni(self):
         _TopupService.start_do_force_topup_bni()

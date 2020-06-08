@@ -537,11 +537,12 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'report_ka': __report_deposit,
             'bank_id': '1',
             'bank_name': 'MANDIRI',
+            'c2c_mode': '1'
         }
+        # Store Ouput Record Into Local DB
+        _Common.local_store_topup_record(output)
         if status == '0000':
-            # Store Topup Success Record Into Local DB
-            output['c2c_mode'] = '1'
-            _Common.local_store_topup_record(output)
+            # Emit Topup Success Record Into Local DB
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
             # Renew C2C Deposit Balance Info

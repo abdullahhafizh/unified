@@ -92,6 +92,7 @@ Rectangle{
             id: channel_desc
             color: CONF.text_color
             text: channelDescription
+            visible: false //Disable This Channel Desc First Load
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 100
             anchors.horizontalCenter: parent.horizontalCenter
@@ -310,7 +311,6 @@ Rectangle{
             }
         }
 
-
         RefundSelectionButton{
             id: gopayMethod
             buttonName: 'GOPAY'
@@ -325,7 +325,6 @@ Rectangle{
                 }
             }
         }
-
 
         RefundSelectionButton{
             id: shopeeMethod
@@ -382,7 +381,6 @@ Rectangle{
         case 'MANUAL':
             mainTitle = channelDescription;
             mainTitleMode = 'center';
-            channel_desc.visible = false;
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = true;
             break;
         case 'CUSTOMER-SERVICE':

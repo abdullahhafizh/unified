@@ -253,7 +253,7 @@ def start_global_refund_balance(payload):
 LAST_TRANSFER_REFF_NO = ''
 
 
-def start_store_pending_balance(payload):
+def start_trigger_global_refund(payload):
     store_only = True
     _Helper.get_thread().apply_async(global_refund_balance, (payload, store_only,))
 

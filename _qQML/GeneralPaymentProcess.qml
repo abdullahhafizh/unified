@@ -807,27 +807,29 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
-//                if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
-                if (abc.counter == 30 && modeButtonPopup == 'c2c_correction' && !global_frame.visible){
+                if (global_frame.visible) global_frame.showDuration = (abc.counter-30).toString();
+                if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();
                     var structId = details.shop_type + details.epoch.toString();
+                    details.timeout_case = 'c2c_correction'
                     console.log('C2C Auto Force Settlement By Timeout', now, amount, structId);
                     _SLOT.start_mandiri_c2c_force_settlement(amount, structId)
                     modeButtonPopup = undefined;
                     popup_loading.open();
                     return;
                 }
-                if (abc.counter == 5 && receivedPayment > 0 && !successTransaction){
-                    proceedAble = false;
+                if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
+//                if (abc.counter == 7 && receivedPayment > 0 && !successTransaction){
+                if (abc.counter == 7 && receivedPayment > 0){
                     if (details.payment=='cash') {
+                        proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
-                    if (popup_refund.visible) popup_refund.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = receivedPayment.toString();
+                    details.timeout_case = 'refund_insert_number'
                     var refundPayload = {
                         amount: details.refund_amount,
                         customer: 'NO_PHONE_NUMBER',
@@ -837,11 +839,12 @@ Base{
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }
-                    _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
-                    console.log('start_store_pending_balance caused by timeout', JSON.stringify(refundPayload));
+                    _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+                    if (popup_refund.visible) popup_refund.close();
+                    console.log('start_trigger_global_refund caused by timeout', JSON.stringify(refundPayload));
                     release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
-                if(abc.counter == 0){
+                if (abc.counter == 0){
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
@@ -1222,8 +1225,8 @@ Base{
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }
-                    _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
-                    console.log('start_store_pending_balance', now, JSON.stringify(refundPayload));
+                    _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+                    console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
                     release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
             }
@@ -1270,8 +1273,8 @@ Base{
                             mode: 'not_having_phone_no_for_refund',
                             payment: details.payment
                         }
-                        _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
-                        console.log('start_store_pending_balance', now, JSON.stringify(refundPayload));
+                        _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+                        console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
                         release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                         return;
                     }
