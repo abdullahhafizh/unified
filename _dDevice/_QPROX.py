@@ -636,11 +636,10 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
-        if len(_result) == 2:
-            if _result == '83':
-                LAST_C2C_APP_TYPE = '1'
-            else:
-                LAST_C2C_APP_TYPE = '0'
+        if '"83"' in _result:
+            LAST_C2C_APP_TYPE = '1'
+        else:
+            LAST_C2C_APP_TYPE = '0'
         LOGGER.warning(('result', _result, 'applet_type', LAST_C2C_APP_TYPE, 'TOPUP_C2C_CORRECTION'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
 
