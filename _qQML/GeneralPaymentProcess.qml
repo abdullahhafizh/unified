@@ -928,7 +928,6 @@ Base{
         if (closeMode == 'closeWindow|30'){
             global_frame.closeMode = 'closeWindow';
             global_frame.timerDuration = 30;
-            global_frame.withTimer = true;
         }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
