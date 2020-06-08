@@ -16,7 +16,7 @@ Base{
     property bool withTimer: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 5
-    property int showDuration
+    property int showDuration: 0
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
     property var specialHandler
     visible: false
@@ -159,7 +159,7 @@ Base{
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'
         fillMode: Image.PreserveAspectFit
-        visible: withTimer
+        visible: withTimer && showDuration > 0
         Text{
             id: text_timer_show
             anchors.fill: parent
@@ -197,7 +197,7 @@ Base{
     }
 
     function open(){
-        console.log('global_frame', textMain, imageSource, timerDuration, closeMode, withTimer);
+        console.log('global_frame', textMain, textSlave, imageSource, timerDuration, closeMode, withTimer);
         globalFrame.visible = true;
         showDuration = timerDuration;
         show_timer.start();
