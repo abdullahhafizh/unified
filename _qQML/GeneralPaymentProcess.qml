@@ -812,7 +812,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();
                     var structId = details.shop_type + details.epoch.toString();
-                    details.timeout_case = 'c2c_correction'
+                    details.timeout_case = 'c2c_correction_timeout'
                     console.log('C2C Auto Force Settlement By Timeout', now, amount, structId);
                     _SLOT.start_mandiri_c2c_force_settlement(amount, structId)
                     modeButtonPopup = undefined;
@@ -821,6 +821,7 @@ Base{
                 }
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
 //                if (abc.counter == 7 && receivedPayment > 0 && !successTransaction){
+                // Assumming Only Un-Process Transaction Reach Here
                 if (abc.counter == 7 && receivedPayment > 0){
                     if (details.payment=='cash') {
                         proceedAble = false;
@@ -829,7 +830,7 @@ Base{
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = receivedPayment.toString();
-                    details.timeout_case = 'refund_insert_number'
+                    details.timeout_case = 'insert_refund_number_timeout'
                     var refundPayload = {
                         amount: details.refund_amount,
                         customer: 'NO_PHONE_NUMBER',
