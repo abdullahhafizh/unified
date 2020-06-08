@@ -827,6 +827,8 @@ Base{
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
+                    refundChannel = 'MANUAL';
+                    details.refund_channel = refundChannel;
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = receivedPayment.toString();
@@ -836,7 +838,7 @@ Base{
                         customer: 'NO_PHONE_NUMBER',
                         reff_no: details.shop_type + details.epoch.toString(),
                         remarks: details,
-                        channel: 'MANUAL',
+                        channel: refundChannel,
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }
