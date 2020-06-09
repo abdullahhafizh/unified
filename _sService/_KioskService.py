@@ -924,8 +924,8 @@ def store_transaction_global(param, retry=False):
         # _______________________________________________________________________________________________________
         if retry is False:
             _trxid = TRX_ID_SALE = _Helper.get_uuid()
-            # If TRX Failure/Payment Error Detected
-            if 'payment_error' in g.keys():
+            # If TRX Failure/Payment/Process Error Detected
+            if 'payment_error' in g.keys() or 'process_error' in g.keys():
                 if g['shop_type'] == 'shop':
                     PID_SALE = g['raw']['pid']
                 g['pid'] = __pid
