@@ -688,11 +688,13 @@ def get_refunds():
         return {
             "MANUAL": "AVAILABLE",
             "DIVA": "AVAILABLE",
+            "CS": "AVAILABLE",
             "LINKAJA": "NOT_AVAILABLE",
             "OVO": "NOT_AVAILABLE",
             "GOPAY": "NOT_AVAILABLE",
             "DANA": "NOT_AVAILABLE",
             "SHOPEEPAY": "NOT_AVAILABLE",
+            "JAKONE": "NOT_AVAILABLE",
             "MIN_AMOUNT": int(_ConfigParser.get_set_value('GENERAL', 'min^refund^amount', '2500')),
             "DETAILS": []
         }
@@ -706,6 +708,7 @@ def get_refunds():
             "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
             "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
             "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
+            "JAKONE": "AVAILABLE" if check_refund('jakone') is True else "NOT_AVAILABLE",
             "MIN_AMOUNT": int(_ConfigParser.get_set_value('GENERAL', 'min^refund^amount', '2500')),
             "DETAILS": REFUND_SETTING
         }
