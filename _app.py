@@ -1070,7 +1070,7 @@ if __name__ == '__main__':
     print("pyt: Table Adjustment...")
     _KioskService.direct_alter_table([
         "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
-        "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
+        "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
         ])
     sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
