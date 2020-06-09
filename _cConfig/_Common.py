@@ -995,7 +995,7 @@ LAST_CARD_LOG_HISTORY = []
 #         'User-Agent': 'MDD Vending Machine ID ['+TID+']'
 #     }
 
-
+# Translate product provider property into Bank ID to those who contains bank name
 def get_bid(provider=''):
     if 'mandiri' in provider.lower():
         return 1
