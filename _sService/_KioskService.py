@@ -921,6 +921,9 @@ def store_transaction_global(param, retry=False):
     try:
         __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
         __bid = _Common.get_bid(g['provider'])
+        # Overwrite bid value for shop transaction
+        if g['shop_type'] == 'shop':
+            __bid = g['raw'].get('bid', 0)
         # _______________________________________________________________________________________________________
         if retry is False:
             _trxid = TRX_ID_SALE = _Helper.get_uuid()
