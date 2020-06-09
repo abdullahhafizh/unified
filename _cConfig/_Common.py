@@ -995,3 +995,23 @@ LAST_CARD_LOG_HISTORY = []
 #         'User-Agent': 'MDD Vending Machine ID ['+TID+']'
 #     }
 
+
+def get_bid(provider=''):
+    if 'mandiri' in provider.lower():
+        return 1
+    elif 'bni' in provider.lower():
+        return 2
+    elif 'bri' in provider.lower():
+        return 3
+    elif 'bca' in provider.lower():
+        return 4
+    elif 'dki' in provider.lower():
+        return 5
+    elif 'mega' in provider.lower():
+        return 6
+    elif 'nobu' in provider.lower():
+        return 7
+    elif 'btn' in provider.lower():
+        return 8
+    else:
+        return 0

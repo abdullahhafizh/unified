@@ -920,6 +920,7 @@ def store_transaction_global(param, retry=False):
     LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
     try:
         __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
+        __bid = _Common.get_bid(g['provider'])
         # _______________________________________________________________________________________________________
         if retry is False:
             _trxid = TRX_ID_SALE = _Helper.get_uuid()
@@ -939,6 +940,7 @@ def store_transaction_global(param, retry=False):
             _total_price = int(g['value']) * int(g['qty'])
             _param = {
                 'pid': __pid,
+                'bid': __bid,
                 'name': g['provider'],
                 'price': _total_price,
                 'details': param,

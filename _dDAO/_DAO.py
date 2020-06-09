@@ -158,6 +158,7 @@ def insert_product(param):
     :param param:
     pid             VARCHAR(100) PRIMARY KEY NOT NULL,
     name            VARCHAR(150)             NOT NULL,
+    bid             INT             NOT NULL,
     price           BIGINT,
     details         TEXT,
     status          INT,
@@ -165,8 +166,8 @@ def insert_product(param):
     '''
     param["createdAt"] = _Helper.now()
     param["syncFlag"] = 0
-    sql = "INSERT INTO Product (pid, name, price, details, status, createdAt, syncFlag) VALUES " \
-          "(:pid, :name, :price, :details, :status, :createdAt, :syncFlag)"
+    sql = "INSERT INTO Product (pid, bid, name, price, details, status, createdAt, syncFlag) VALUES " \
+          "(:pid, :bid, :name, :price, :details, :status, :createdAt, :syncFlag)"
     return _Database.insert_update(sql=sql, parameter=param)
 
 
@@ -223,6 +224,7 @@ def insert_product_stock(param):
     '''
   stid            VARCHAR(100) PRIMARY KEY NOT NULL,
   pid             VARCHAR(100)             NOT NULL,
+  bid             INT          DEFAULT 1,
   tid             VARCHAR(100),
   name            VARCHAR(255),
   init_price      INT,
@@ -236,8 +238,8 @@ def insert_product_stock(param):
     '''
     param["createdAt"] = _Helper.now()
     param["syncFlag"] = 1
-    sql = "INSERT INTO ProductStock (stid, pid, tid, name, init_price, sell_price, remarks, stock, status, " \
-          "createdAt, syncFlag) VALUES (:stid, :pid, :tid, :name, :init_price, :sell_price, :remarks, :stock, " \
+    sql = "INSERT INTO ProductStock (stid, pid, bid, tid, name, init_price, sell_price, remarks, stock, status, " \
+          "createdAt, syncFlag) VALUES (:stid, :pid, :bid, :tid, :name, :init_price, :sell_price, :remarks, :stock, " \
           ":status, :createdAt, :syncFlag) "
     return _Database.insert_update(sql=sql, parameter=param, log=False)
 
