@@ -1019,7 +1019,7 @@ def edc_mobile_check_payment(trx_id):
         status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/status-payment', param)
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
-            if response['response']['data']['status'] != "WAITING":
+            if response['data']['status'] != "WAITING":
                 return True, response['response']['data']
             else:
                 return False, None
