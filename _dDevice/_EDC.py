@@ -1020,7 +1020,7 @@ def edc_mobile_check_payment(trx_id):
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
             if response['data']['status'] != "WAITING":
-                return True, response['response']['data']
+                return True, response['data']
             else:
                 return False, None
         else:
