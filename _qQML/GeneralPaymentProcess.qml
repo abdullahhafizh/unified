@@ -876,7 +876,7 @@ Base{
                     proceedAble = false;
                     _SLOT.stop_bill_receive_note();
                     if (receivedPayment > 0){
-                        console.log('[CANCELLATION] User Payment Detected..!')
+                        console.log('[CANCELLATION] User Payment', receivedPayment)
                         validate_release_refund('user_cancellation');
                         return;
 //                        print_failed_transaction('cash', 'USER_CANCELLATION');
@@ -1110,7 +1110,7 @@ Base{
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                         if (receivedPayment > 0){
-                            console.log('[CANCELLATION] User Payment Detected..!')
+                            console.log('[CANCELLATION] User Payment', receivedPayment)
                             validate_release_refund('user_cancellation');
                             return;
     //                        print_failed_transaction('cash', 'USER_CANCELLATION');
