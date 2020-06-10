@@ -872,9 +872,11 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 if (details.payment=='cash') {
+                    console.log('[CANCELLATION] Cash Method Payment Detected..!')
                     proceedAble = false;
                     _SLOT.stop_bill_receive_note();
                     if (receivedPayment > 0){
+                        console.log('[CANCELLATION] User Payment Detected..!')
                         validate_release_refund('user_cancellation');
                         return;
 //                        print_failed_transaction('cash', 'USER_CANCELLATION');
@@ -1104,9 +1106,11 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     if (details.payment=='cash') {
+                        console.log('[CANCELLATION] Cash Method Payment Detected..!')
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                         if (receivedPayment > 0){
+                            console.log('[CANCELLATION] User Payment Detected..!')
                             validate_release_refund('user_cancellation');
                             return;
     //                        print_failed_transaction('cash', 'USER_CANCELLATION');
