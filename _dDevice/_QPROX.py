@@ -1128,7 +1128,10 @@ def get_c2c_settlement_fee():
 
 def set_c2c_settlement_fee(file):
     attempt = 0
-    _url = 'http://'+_Common.SFTP_C2C['host']+'/bridge-service/filecheck.php?content=1&no_correction=1'
+    host_check = _Common.SFTP_C2C['host']
+    if _Common.SFTP_C2C['port'] != '22':
+        host_check = _Common.SFTP_C2C['host'] + ':18080'
+    _url = 'http://'+host_check+'/bridge-service/filecheck.php?content=1&no_correction=1'
     _param = {
         'ext': '.txt',
         'file_path': '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee_response'] + '/' + file
