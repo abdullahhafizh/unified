@@ -103,10 +103,10 @@ def sale_edc_mobile(amount, trxid=None):
                 # "trx_date":"2019\/03\/04",
                 # "trx_time":"13:43:16",
                 # "trx_type":"SALE"}
-                EDC_PAYMENT_RESULT['raw'] = sale_data
+                EDC_PAYMENT_RESULT['raw'] = json.dumps(sale_data)
                 EDC_PAYMENT_RESULT['card_type'] = sale_data['card_type']
                 if _Common.EDC_DEBIT_ONLY is True:
-                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
                 EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
                 if IS_PIR is True:
@@ -116,7 +116,9 @@ def sale_edc_mobile(amount, trxid=None):
                 EDC_PAYMENT_RESULT['card_no'] = sale_data['card_pan']
                 _KioskService.CARD_NO = sale_data['card_pan']
                 EDC_PAYMENT_RESULT['exp_date'] = sale_data['card_expiry']
-                EDC_PAYMENT_RESULT['trans_date'] = sale_data['trx_date']
+                # EDC_PAYMENT_RESULT['trans_date'] = sale_data['trx_date'] if not _Helper.empty(sale_data['trx_date']) else _Helper.time_string(f='%Y%m%d%H%M%S')
+                #Force Overwrite trans_date -> Transaction Time Stamp
+                EDC_PAYMENT_RESULT['trans_date'] = _Helper.time_string(f='%Y%m%d%H%M%S')
                 EDC_PAYMENT_RESULT['app_code'] = sale_data['approval_code']
                 EDC_PAYMENT_RESULT['tid'] = sale_data['bank_tid']
                 EDC_PAYMENT_RESULT['mid'] = sale_data['bank_mid']
@@ -183,7 +185,7 @@ def sale_edc(amount, trxid=None):
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
                 if _Common.EDC_DEBIT_ONLY is True:
-                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
@@ -296,7 +298,7 @@ def handling_card(amount, trxid=None):
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
                 if _Common.EDC_DEBIT_ONLY is True:
-                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
@@ -392,7 +394,9 @@ def store_settlement():
             "sid": _Helper.get_uuid(),
             "tid": EDC_PAYMENT_RESULT['tid'] + '|' + EDC_PAYMENT_RESULT['mid'],
             "bid": EDC_PAYMENT_RESULT['inv_no'] + '|' + EDC_PAYMENT_RESULT['card_no'],
-            "filename": EDC_PAYMENT_RESULT['raw'],
+            "filename": "",
+            "trx_type": EDC_PAYMENT_RESULT['card_type'],
+            "remarks": EDC_PAYMENT_RESULT['raw'],
             "status": "EDC|OPEN",
             "amount": EDC_PAYMENT_RESULT['amount'],
             "row": 1
@@ -421,10 +425,10 @@ def backend_edc_settlement():
     elif _Common.EDC['mobile'] is True:
         edc_mobile_settlement()
         return 'TRIGGERED_MOBILE_ANDROID_SETTLEMENT'
-    elif settlement_method[0] == 'DEBIT CARD':
+    elif settlement_method[0] == 'DEBIT':
         edc_settlement()
         return 'TRIGGERED_FOR_DEBIT'
-    elif settlement_method[0] == 'CREDIT CARD':
+    elif settlement_method[0] == 'CREDIT':
         edc_settlement_credit()
         return 'TRIGGERED_FOR_CREDIT'
 
@@ -442,9 +446,9 @@ def define_edc_settlement():
         return
     elif _Common.EDC['mobile'] is True:
         edc_mobile_settlement()
-    elif get_settlement[0] == 'DEBIT CARD':
+    elif get_settlement[0] == 'DEBIT':
         edc_settlement()
-    elif get_settlement[0] == 'CREDIT CARD':
+    elif get_settlement[0] == 'CREDIT':
         edc_settlement_credit()
 
 
@@ -633,11 +637,12 @@ def card_type_count():
         SETTLEMENT_TYPE_COUNT = 1
     else:
         for settle in SETTLEMENTS_DATA:
-            card_no = settle['filename'].split('|')[6]
-            card_type = _EDCTool.get_type(card_no)
-            if card_type == 'CREDIT CARD':
+            # card_no = settle['filename'].split('|')[6]
+            # card_type = _EDCTool.get_type(card_no)
+            card_type = 'DEBIT' if 'DEBIT' in settle['trx_type'] else 'CREDIT'
+            if card_type == 'CREDIT':
                 SETTLEMENT_CREDIT.append(settle)
-            if card_type == 'DEBIT CARD':
+            if card_type == 'DEBIT':
                 SETTLEMENT_DEBIT.append(settle)
             if card_type not in type_count:
                 type_count.append(card_type)
@@ -650,11 +655,12 @@ def card_type_settle():
     if SETTLEMENTS_DATA is None:
         return type_count
     if _Common.EDC_DEBIT_ONLY is True:
-        type_count.append('DEBIT CARD')
+        type_count.append('DEBIT')
     else:
         for settle in SETTLEMENTS_DATA:
-            card_no = settle['filename'].split('|')[6]
-            card_type = _EDCTool.get_type(card_no)
+            # card_no = settle['filename'].split('|')[6]
+            # card_type = _EDCTool.get_type(card_no)
+            card_type = 'DEBIT' if 'DEBIT' in settle['trx_type'] else 'CREDIT'
             if card_type not in type_count:
                 type_count.append(card_type)
     return type_count

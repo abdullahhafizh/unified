@@ -198,12 +198,18 @@ def insert_settlement(param):
 	`filename`	VARCHAR(255),
 	`status` VARCHAR,
 	`amount`	BIGINT,
+	`trx_type`	VARCHAR(100),
+	`remarks`	TEXT,
 	`row`	BIGINT,
     :return:
     '''
     param["createdAt"] = _Helper.now()
-    sql = "INSERT INTO Settlement (sid, tid, bid, filename, status, amount, row, createdAt) VALUES (:sid, :tid, :bid, " \
-          ":filename, :status, :amount, :row, :createdAt)"
+    if _Helper.empty(param["remarks"]):
+        param["remarks"] = ""
+    if _Helper.empty(param["trx_type"]):
+        param["trx_type"] = ""
+    sql = "INSERT INTO Settlement (sid, tid, bid, filename, status, amount, trx_type, remarks, row, createdAt) VALUES (:sid, :tid, :bid, " \
+          ":filename, :status, :amount, :trx_type, :remarks, :row, :createdAt)"
     return _Database.insert_update(sql=sql, parameter=param)
 
 

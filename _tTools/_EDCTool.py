@@ -274,6 +274,7 @@ def generate_edc_receipt(trx):
     padding_left = 0
 
     try:
+        # trans_date must have format = 20161003125804
         time_text = datetime.strptime(trx['trans_date'], '%Y%m%d%H%M%S').strftime('%H:%M:%S')
         date_text = datetime.strptime(trx['trans_date'], '%Y%m%d%H%M%S').strftime('%d %b %Y')
         date_now = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')

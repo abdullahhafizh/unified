@@ -1071,6 +1071,8 @@ if __name__ == '__main__':
     _KioskService.direct_alter_table([
         "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
         "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
+        "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
+        "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
         ])
     sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")

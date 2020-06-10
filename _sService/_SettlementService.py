@@ -61,6 +61,8 @@ def store_local_settlement(__param):
             "tid": TID,
             "bid": BID[__param['bank']],
             "filename": __param['filename'],
+            "remarks": json.dumps(__param),
+            "trx_type": "PREPAID",
             "status": 'TOPUP_PREPAID|OPEN',
             "amount": __param['amount'],
             "row": __param['row']
