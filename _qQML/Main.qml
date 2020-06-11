@@ -124,6 +124,7 @@ Rectangle {
     signal result_get_refund(string str)
     signal result_check_online_topup(string str)
     signal result_card_log_history(string str)
+    signal result_do_online_topup(string str)
 
 
     //==================================================================================================//

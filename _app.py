@@ -760,6 +760,7 @@ def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.connect(view.rootObject().result_admin_sync_stock)
     _CD.CD_SIGNDLER.SIGNAL_CD_PORT_INIT.connect(view.rootObject().result_init_check_cd)
     _TopupService.TP_SIGNDLER.SIGNAL_CHECK_ONLINE_TOPUP.connect(view.rootObject().result_check_online_topup)
+    _TopupService.TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.connect(view.rootObject().result_do_online_topup)
     _TopupService.TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.connect(view.rootObject().result_topup_readiness)
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)

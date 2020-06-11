@@ -54,6 +54,7 @@ Base{
         base.result_process_settlement.connect(get_admin_action);
         base.result_init_online_mandiri.connect(get_admin_action);
         base.result_admin_sync_stock.connect(get_admin_action);
+        base.result_do_online_topup.connect(get_admin_action);
         base.result_do_topup_deposit_bni.connect(get_topup_bni_result)
     }
 
@@ -73,6 +74,7 @@ Base{
         base.result_process_settlement.disconnect(get_admin_action);
         base.result_init_online_mandiri.disconnect(get_admin_action);
         base.result_admin_sync_stock.disconnect(get_admin_action);
+        base.result_do_online_topup.disconnect(get_admin_action);
         base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result)
     }
 
@@ -175,6 +177,9 @@ Base{
             var s = a.split('|')[1]
             false_notif('Dear '+userData.first_name+'|Status Proses Sync Product Stock..\n['+s+']');
 
+        } else if (a.indexOf('TOPUP_ONLINE_DEPOSIT') > -1){
+            var topup_result = a.split('|')[1]
+            false_notif('Dear '+userData.first_name+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
         } else {
             false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+a);
         }

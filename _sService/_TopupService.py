@@ -15,6 +15,7 @@ class TopupSignalHandler(QObject):
     __qualname__ = 'TopupSignalHandler'
     SIGNAL_DO_TOPUP_BNI = pyqtSignal(str)
     SIGNAL_CHECK_ONLINE_TOPUP = pyqtSignal(str)
+    SIGNAL_DO_ONLINE_TOPUP = pyqtSignal(str)
     SIGNAL_GET_TOPUP_READINESS = pyqtSignal(str)
     SIGNAL_UPDATE_BALANCE_ONLINE = pyqtSignal(str)
 
@@ -687,6 +688,7 @@ def topup_online(bank, cardno, amount):
         }
         pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not pending_result:
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|PENDING_ERROR')
             return False
         # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
         prev_balance = _Common.MANDIRI_ACTIVE_WALLET
@@ -694,6 +696,7 @@ def topup_online(bank, cardno, amount):
         _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
         update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
         if not update_result:
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
             return False
         if update_result['last_balance'] == update_result['topup_amount']:
             update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
@@ -722,7 +725,8 @@ def topup_online(bank, cardno, amount):
                 'status': 'REFILL_SUCCESS',
                 'remarks': output,
             }
-        _Common.store_upload_sam_audit(param)     
+        _Common.store_upload_sam_audit(param)   
+        TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
         return output        
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
