@@ -275,6 +275,13 @@ def stop_receive_note():
         _Common.BILL_ERROR = 'FAILED_STOP_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
         LOGGER.warning(e)
+    finally:
+        if BILL_TYPE == 'NV':
+            param = BILL["SET"] + '|'
+            _response, _result = _Command.send_request(param=param, output=None)
+            if _response != 0:
+                _Common.BILL_ERROR = 'FAILED_RESET_BILL_NV'
+                LOGGER.warning(('FAILED_RESET_BILL_NV|ERROR'))
 
 
 def start_get_status_bill():
