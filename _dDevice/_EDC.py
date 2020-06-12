@@ -1055,8 +1055,10 @@ def edc_mobile_do_settlement():
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
             return True, response['data']
+        elif status in [-1, -13]: #To Handle No Internet Issue or Timeout
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.EDC_ECR_URL + '/do-settlement', payload=param)
+            return False, None
         else:
-            # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.EDC_ECR_URL + '/do-settlement', payload=param)
             return False, None
     except Exception as e:
         LOGGER.warning((e))
