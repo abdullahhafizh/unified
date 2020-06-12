@@ -417,7 +417,7 @@ def backend_edc_settlement():
     SETTLEMENT_TYPE_COUNT = card_type_count()
     settlement_method = card_type_settle()
     LOGGER.debug(("define_edc_settlement [DATA, COUNT, TYPE]", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
-                 str(settlement_method)))
+                str(settlement_method)))
     if SETTLEMENT_TYPE_COUNT == 0:
         LOGGER.warning(("define_edc_settlement [DATA, COUNT, TYPE]", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
                         str(settlement_method)))
@@ -439,7 +439,7 @@ def define_edc_settlement():
     SETTLEMENT_TYPE_COUNT = card_type_count()
     get_settlement = card_type_settle()
     LOGGER.debug(("DATA, COUNT, TYPE", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
-                 str(get_settlement)))
+                str(get_settlement)))
     if SETTLEMENT_TYPE_COUNT == 0:
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
         LOGGER.warning(("NO EDC SETTLEMENT DETECTED", str(len(SETTLEMENT_TYPE_COUNT))))
@@ -1056,7 +1056,7 @@ def edc_mobile_do_settlement():
         if status == 200 or response['response']['code'] == 200:
             return True, response['data']
         else:
-            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.EDC_ECR_URL + '/do-settlement', payload=param)
+            # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.EDC_ECR_URL + '/do-settlement', payload=param)
             return False, None
     except Exception as e:
         LOGGER.warning((e))

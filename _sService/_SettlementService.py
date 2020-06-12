@@ -863,6 +863,7 @@ def trigger_edc_settlement():
     daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
     LOGGER.info(('TRIGGERED_BY_TIME_SETUP', 'EDC_SETTLEMENT_SCHEDULE', _Helper.time_string('%H:%M'), daily_settle_time))
     _EDC.define_edc_settlement()
+    sleep(60)
     _Common.EDC_SETTLEMENT_RUNNING = False
 
 

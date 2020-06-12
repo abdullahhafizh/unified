@@ -274,7 +274,7 @@ Base{
         console.log('ppob_trx_result', now, p);
         popup_loading.close();
         var result = p.split('|')[1]
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.close();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1;
             validate_release_refund('ppob_error');
@@ -355,7 +355,7 @@ Base{
         console.log('topup_result', now, t);
         global_frame.close();
         popup_loading.close();
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 60;
         my_timer.restart();
         // Trigger C2C Deposit Update Balance Check
@@ -437,7 +437,7 @@ Base{
         console.log('shop_card_result', now, r);
         global_frame.close();
         popup_loading.close();
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 60;
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){
@@ -747,9 +747,9 @@ Base{
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1){
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
-            var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
+            var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
             open_preload_notif_qr(msg, 'source/phone_qr.png');
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;

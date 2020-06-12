@@ -152,7 +152,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/qr_ovo.png"
+            img_: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_jakone.png"
             text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR OVO")
             text2_: qsTr("QR OVO")
             visible: _qrOvoEnable
@@ -185,7 +185,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/qr_linkaja.png"
+            img_: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_jakone.png"
             text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR LinkAja")
             text2_: qsTr("QR LinkAja")
             visible: _qrLinkAjaEnable
@@ -218,7 +218,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/qr_gopay.png"
+            img_: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_jakone.png"
             text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Gopay")
             text2_: qsTr("QR Gopay")
             visible: _qrGopayEnable
@@ -251,7 +251,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/qr_dana.png"
+            img_: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_jakone.png"
             text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Dana")
             text2_: qsTr("QR Dana")
             visible: _qrDanaEnable
@@ -284,7 +284,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/qr_shopeepay.png"
+            img_: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_jakone.png"
             text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR ShopeePay")
             text2_: qsTr("QR Shopee")
             visible: _qrShopeeEnable
@@ -317,7 +317,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/qr_jakone.png"
+            img_: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_jakone.png"
             text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
             text2_: qsTr("QR JakOne")
             visible: _qrJakoneEnable

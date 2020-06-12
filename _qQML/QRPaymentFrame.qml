@@ -70,11 +70,65 @@ Base{
 
     }
 
-    AnimatedImage  {
-        width: 200
-        height: 200
+    Text{
+        text: 'Dapat Dibayar Dengan : '
+        font.pixelSize: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: 225
+        wrapMode: Text.WordWrap
+        horizontalAlignment: Text.AlignHCenter
+        width: parent.width
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.bold: false
+        color: CONF.text_color
+        verticalAlignment: Text.AlignVCenter
+        font.family:"Ubuntu"
+    }
+
+    Row{
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 125
+        anchors.horizontalCenter: parent.horizontalCenter
+        scale: 1
+        spacing: 10
+        Image{
+            scale: 0.65
+            source: "source/ovo_logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            scale: 0.9
+            source: "source/linkaja_logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            scale: 1
+            source: "source/gopay_logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            scale: 0.9
+            source: "source/dana_logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            scale: 1
+            source: "source/shopeepay_logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            scale: 0.9
+            source: "source/jakone_logo.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
+    }
+
+    AnimatedImage  {
+        width: 100
+        height: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
         scale: 1
         anchors.horizontalCenter: parent.horizontalCenter
         source: 'source/blue_gradient_circle_loading.gif'
@@ -86,7 +140,7 @@ Base{
             text: showDuration
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 40
+            font.pixelSize: 20
             color: 'yellow'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
