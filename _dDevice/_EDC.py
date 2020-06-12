@@ -459,14 +459,15 @@ def edc_mobile_settlement():
     try:
         result, settlement_data = edc_mobile_do_settlement()
         if result is True:
-            E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|SUCCESS')
+            E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|SUCCESS_TRIGGERED_TO_HOST')
             LOGGER.info((str(settlement_data), result))
             mark_settlement_data(printout=False, mode='DEBIT')
         else:
-            _Common.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
+            _Common.EDC_ERROR = 'EDC_MOBILE_SETTLEMENT_FAILED'
+            E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
             LOGGER.warning(("RESPONSE :", str(settlement_data), result))
     except Exception as e:
-        _Common.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
+        _Common.EDC_ERROR = 'EDC_MOBILE_SETTLEMENT_FAILED'
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
         LOGGER.warning(str(e))
 
@@ -1053,8 +1054,9 @@ def edc_mobile_do_settlement():
         status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/do-settlement', param)
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
-            return True, response['response']['data']
+            return True, response['data']
         else:
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.EDC_ECR_URL + '/do-settlement', payload=param)
             return False, None
     except Exception as e:
         LOGGER.warning((e))

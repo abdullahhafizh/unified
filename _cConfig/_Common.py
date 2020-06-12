@@ -239,7 +239,7 @@ ENDPOINT_SUCCESS_BY_HTTP_HEADER = [
     'settlement/submit', 
     'refund/global',
     'cancel-payment',
-
+    'do-settlement',
     ]
 
 

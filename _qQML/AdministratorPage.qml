@@ -168,7 +168,7 @@ Base{
             return;
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
             var e = a.split('|')[1]
-            if (e=='PROCESSED') {
+            if (e == 'PROCESSED' || e == 'SUCCESS_TRIGGERED_TO_HOST') {
                 false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+e+']', true);
             } else {
                 false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+e+']');
@@ -1161,8 +1161,6 @@ Base{
         }
 
     }
-
-
 
 
 
