@@ -264,7 +264,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
-            imageMaxMode: true
+            imageMaxMode: (CONF.general_qr=='1') ? false : true
             modeReverse: true
             visible: _qrShopeeEnable
             MouseArea{
@@ -300,7 +300,6 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS JakOne"
-            imageMaxMode: true
             modeReverse: true
             visible: _qrJakoneEnable
             MouseArea{

@@ -3,10 +3,10 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: rectangle
-    property var sourceImage:"source/qr_shopeepay.png"
+    property var sourceImage:"source/phone_qr.png"
     property bool modeReverse: true
     property bool imageMaxMode: false
-    property var itemName: 'QRIS Shopeepay'
+    property var itemName: 'QRIS Payment'
     property bool isSelected: false
 
     width: 359
@@ -31,7 +31,7 @@ Rectangle {
     Image{
         id: raw_image
         width: (imageMaxMode) ? 200 : 120
-        anchors.topMargin: (imageMaxMode) ? 25 : 15
+        anchors.topMargin: (imageMaxMode) ? 25 : 10
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
