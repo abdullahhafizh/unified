@@ -33,10 +33,10 @@ def clean_white_space(s):
 
 
 LIVE_MODE = True if _ConfigParser.get_set_value('GENERAL', 'mode', 'live') == 'live' else False
+BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/')
 TEST_MODE = not LIVE_MODE
 if LIVE_MODE is True:
-    _ConfigParser.set_value('GENERAL', 'backend^server', 'http://vm-service.mdd.co.id:471/kiosk-api/v2/')
-BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://vm-service.mdd.co.id:471/kiosk-api/v2/')
+    BACKEND_URL = 'http://vm-service.mdd.co.id:471/kiosk-api/v2/'
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
