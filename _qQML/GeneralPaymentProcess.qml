@@ -821,30 +821,43 @@ Base{
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
 //                if (abc.counter == 7 && receivedPayment > 0 && !successTransaction){
                 // Assumming Only In-Completed Transaction Reach Here
-                if (abc.counter == 7 && receivedPayment > 0){
+                if (abc.counter == 7){
+                    if (details.payment=='debit') {
+                        console.log('[TIMEOUT] Debit Method Payment Detected..!')
+                        refundChannel = 'NONE';
+                        details.refund_channel = refundChannel;
+                        details.refund_status = 'N/A';
+                        details.refund_number = '';
+                        details.refund_amount = '0'
+                        details.timeout_case = 'user_payment_timeout'
+                        release_print();
+                        return;
+                    }
                     if (details.payment=='cash') {
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
-                    refundChannel = 'MANUAL';
-                    details.refund_channel = refundChannel;
-                    details.refund_status = 'AVAILABLE';
-                    details.refund_number = '';
-                    details.refund_amount = receivedPayment.toString();
-                    details.timeout_case = 'insert_refund_number_timeout'
-                    var refundPayload = {
-                        amount: details.refund_amount,
-                        customer: 'NO_PHONE_NUMBER',
-                        reff_no: details.shop_type + details.epoch.toString(),
-                        remarks: details,
-                        channel: refundChannel,
-                        mode: 'not_having_phone_no_for_refund',
-                        payment: details.payment
+                    if (receivedPayment > 0){
+                        refundChannel = 'MANUAL';
+                        details.refund_channel = refundChannel;
+                        details.refund_status = 'AVAILABLE';
+                        details.refund_number = '';
+                        details.refund_amount = receivedPayment.toString();
+                        details.timeout_case = 'insert_refund_number_timeout'
+                        var refundPayload = {
+                            amount: details.refund_amount,
+                            customer: 'NO_PHONE_NUMBER',
+                            reff_no: details.shop_type + details.epoch.toString(),
+                            remarks: details,
+                            channel: refundChannel,
+                            mode: 'not_having_phone_no_for_refund',
+                            payment: details.payment
+                        }
+                        _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+                        if (popup_refund.visible) popup_refund.close();
+                        console.log('start_trigger_global_refund caused by timeout', JSON.stringify(refundPayload));
+                        release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                     }
-                    _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
-                    if (popup_refund.visible) popup_refund.close();
-                    console.log('start_trigger_global_refund caused by timeout', JSON.stringify(refundPayload));
-                    release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
                 if (abc.counter == 0){
                     my_timer.stop();
@@ -879,10 +892,18 @@ Base{
                         console.log('[CANCELLATION] User Payment', receivedPayment)
                         validate_release_refund('user_cancellation');
                         return;
-//                        print_failed_transaction('cash', 'USER_CANCELLATION');
-//                        _SLOT.start_return_es_mei();
                     }
-//                    _SLOT.start_dis_accept_mei();
+                }
+                if (details.payment=='debit') {
+                    console.log('[CANCELLATION] Debit Method Payment Detected..!')
+                    refundChannel = 'NONE';
+                    details.refund_channel = refundChannel;
+                    details.refund_status = 'N/A';
+                    details.refund_number = '';
+                    details.refund_amount = '0'
+                    details.timeout_case = 'user_cancellation'
+                    release_print();
+                    return;
                 }
                 my_timer.stop();
                 my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
