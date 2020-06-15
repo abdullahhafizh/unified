@@ -828,8 +828,10 @@ Base{
                         details.refund_channel = refundChannel;
                         details.refund_status = 'N/A';
                         details.refund_number = '';
-                        details.refund_amount = '0'
-                        details.timeout_case = 'user_payment_timeout'
+                        details.refund_amount = '0';
+                        details.timeout_case = 'user_payment_timeout';
+                        details.process_error = 'user_cancellation';
+                        details.payment_received = '0';
                         release_print();
                         return;
                     }
@@ -902,6 +904,8 @@ Base{
                     details.refund_number = '';
                     details.refund_amount = '0'
                     details.timeout_case = 'user_cancellation'
+                    details.process_error = 'user_cancellation';
+                    details.payment_received = '0';
                     release_print();
                     return;
                 }
