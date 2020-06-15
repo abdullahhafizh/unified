@@ -235,11 +235,15 @@ QR_PROD_STATE = {
     'OVO': True
 }
 
-ENDPOINT_SUCCESS_BY_HTTP_HEADER = [
+ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'settlement/submit', 
     'refund/global',
     'cancel-payment',
     'do-settlement',
+    ]
+
+ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER = [
+    'cancel-payment',
     ]
 
 

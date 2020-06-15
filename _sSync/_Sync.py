@@ -127,10 +127,14 @@ def do_pending_job():
                     os.rename(jobs_path, jobs_path_process)
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
                     print('pyt: [DEBUG] ' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
-                    if status == 200 and (__endpoint in _Common.ENDPOINT_SUCCESS_BY_HTTP_HEADER or response['result'] == 'OK'):
+                    if status == 200 and (__endpoint in _Common.ENDPOINT_SUCCESS_BY_200_HTTP_HEADER or response['result'] == 'OK'):
                         jobs_path_done = jobs_path_process.replace('.process', '.done')
                         os.rename(jobs_path_process, jobs_path_done)
                         LOGGER.debug((jobs_path_process, jobs_path_done))
+                    elif status == 400 and __endpoint in _Common.ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER:
+                        jobs_path_done = jobs_path_process.replace('.process', '.done')
+                        os.rename(jobs_path_process, jobs_path_done)
+                        LOGGER.debug(('Force Success', str(_Common.ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER), jobs_path_process, jobs_path_done))
                     else:
                         LOGGER.warning((p, status, response))
                         jobs_path_reopen = jobs_path_process.replace('.process', '.request')
