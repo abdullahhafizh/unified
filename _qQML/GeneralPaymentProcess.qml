@@ -830,7 +830,7 @@ Base{
                         details.refund_number = '';
                         details.refund_amount = '0';
                         details.timeout_case = 'user_payment_timeout';
-                        details.process_error = 'user_cancellation';
+                        details.process_error = 'user_payment_timeout';
                         details.payment_received = '0';
                         release_print();
                         return;
