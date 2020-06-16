@@ -83,6 +83,7 @@ Base{
         color: CONF.text_color
         verticalAlignment: Text.AlignVCenter
         font.family:"Ubuntu"
+        visible: (CONF.general_qr=='1')
     }
 
     Row{
@@ -91,6 +92,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         spacing: 10
+        visible: (CONF.general_qr=='1')
         Image{
             scale: 0.65
             source: "source/ovo_logo.png"
