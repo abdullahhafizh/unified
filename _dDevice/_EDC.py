@@ -926,9 +926,10 @@ def edc_mobile_start_binding_edc():
             if status == 200 or response['response']['code'] == 200:
                 EDC_MOBILE_BINDING_STATUS = True
                 print('pyt: [INFO] EDC Binding Request Success to ' + str(_Common.EDC_SERIAL_NO))
-                break
-            print('pyt: [WARNING] EDC Binding Request Failed, Retrying...')
-            sleep(3)
+                return True
+            else:
+                print('pyt: [WARNING] EDC Binding Request Failed, Retrying...')
+                sleep(3)
     except Exception as e:
         print('pyt: [WARNING] EDC Binding Request Error!')
         LOGGER.warning((e))
