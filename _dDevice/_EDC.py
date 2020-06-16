@@ -900,8 +900,11 @@ def send_edc_server(param, trx='10'):
         LOGGER.warning(("send_edc_server : ", e))
         return False
 
+EDC_MOBILE_BINDING_STATUS = False
+
 
 def edc_mobile_start_binding_edc():
+    global EDC_MOBILE_BINDING_STATUS
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False
@@ -917,13 +920,17 @@ def edc_mobile_start_binding_edc():
         'direct_response': _Common.EDC_MOBILE_DIRECT_MODE
     }
     try:
-        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/start-binding', param)
-        LOGGER.debug((status, response))
-        if status == 200 or response['response']['code'] == 200:
-            return True
-        else:
-            return False
+        while not EDC_MOBILE_BINDING_STATUS:
+            status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/start-binding', param)
+            LOGGER.debug((status, response))
+            if status == 200 or response['response']['code'] == 200:
+                EDC_MOBILE_BINDING_STATUS = True
+                print('pyt: [INFO] EDC Binding Request Success to ' + str(_Common.EDC_SERIAL_NO))
+                break
+            print('pyt: [WARNING] EDC Binding Request Failed, Retrying...')
+            sleep(3)
     except Exception as e:
+        print('pyt: [WARNING] EDC Binding Request Error!')
         LOGGER.warning((e))
         return False
 
@@ -931,6 +938,9 @@ def edc_mobile_start_binding_edc():
 def edc_mobile_do_payment(trx_id, amount):
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False, None
+    if not EDC_MOBILE_BINDING_STATUS:
+        LOGGER.warning(('[FAILED]', 'EDC Binding Failure with ' + _Common.EDC_SERIAL_NO))
         return False, None
     if _Helper.empty(trx_id) or _Helper.empty(amount):
         LOGGER.warning(('[FAILED]', 'Missing Mandatory Param To Trigger EDC Payment'))
@@ -980,6 +990,9 @@ def edc_mobile_do_void(trx_id):
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
         return False
+    if not EDC_MOBILE_BINDING_STATUS:
+        LOGGER.warning(('[FAILED]', 'EDC Binding Failure with ' + _Common.EDC_SERIAL_NO))
+        return False
     if _Helper.empty(trx_id):
         LOGGER.warning(('[FAILED]', 'Missing Mandatory Param To Trigger EDC VOID'))
         return False
@@ -1008,6 +1021,9 @@ def edc_mobile_do_void(trx_id):
 def edc_mobile_check_payment(trx_id):
     if not _Common.EDC_ANDROID_MODE:
         LOGGER.warning(('[FAILED]', 'Machine Not Use EDC ANDROID'))
+        return False, None
+    if not EDC_MOBILE_BINDING_STATUS:
+        LOGGER.warning(('[FAILED]', 'EDC Binding Failure with ' + _Common.EDC_SERIAL_NO))
         return False, None
     if _Helper.empty(trx_id):
         LOGGER.warning(('[FAILED]', 'Missing Mandatory Param To Check Payment'))
@@ -1043,6 +1059,9 @@ def edc_mobile_do_settlement():
         return False, None
     if _Common.EDC_SERIAL_NO == ('0'*16):
         LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
+        return False, None
+    if not EDC_MOBILE_BINDING_STATUS:
+        LOGGER.warning(('[FAILED]', 'EDC Binding Failure with ' + _Common.EDC_SERIAL_NO))
         return False, None
     param = {
         'mid': _Common.CORE_MID,
