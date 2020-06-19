@@ -265,7 +265,7 @@ Base{
         console.log('release_print', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
-            if (CONF.general_qr=='1') details.payment = 'QR PAYMENT';
+            if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         _SLOT.start_direct_sale_print_global(JSON.stringify(details));
         abc.counter = 3;
