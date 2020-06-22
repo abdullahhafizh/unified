@@ -761,7 +761,9 @@ def validate_update_balance_c2c():
         LOGGER.debug(('MANDIRI_C2C_DEPOSIT_UPDATE_BALANCE', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
         if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
-            do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
+            # do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
+            # Set Mandiri C2C Force Settlement Delivery to FALSE 
+            do_prepaid_settlement(bank='MANDIRI_C2C', force=False)
         if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
             break
@@ -782,7 +784,9 @@ def start_check_c2c_deposit():
     LOGGER.info(('CHECK_C2C_TOPUP_DEPOSIT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
-        do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
+        # do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
+        # Set Mandiri C2C Force Settlement Delivery to FALSE 
+        do_prepaid_settlement(bank='MANDIRI_C2C', force=False)
 
 
 def validate_update_balance():
