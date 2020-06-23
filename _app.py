@@ -524,6 +524,14 @@ class SlotHandler(QObject):
         _QRPaymentService.start_get_qr_linkaja(payload)
     start_get_qr_linkaja = pyqtSlot(str)(start_get_qr_linkaja)
 
+    def start_get_qr_jakone(self, payload):
+        _QRPaymentService.start_get_qr_jakone(payload)
+    start_get_qr_jakone = pyqtSlot(str)(start_get_qr_jakone)
+
+    def start_do_check_jakone_qr(self, payload):
+        _QRPaymentService.start_do_check_jakone_qr(payload)
+    start_do_check_jakone_qr = pyqtSlot(str)(start_do_check_jakone_qr)
+
     def start_do_check_gopay_qr(self, payload):
         _QRPaymentService.start_do_check_gopay_qr(payload)
     start_do_check_gopay_qr = pyqtSlot(str)(start_do_check_gopay_qr)

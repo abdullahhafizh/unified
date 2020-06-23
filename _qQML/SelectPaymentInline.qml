@@ -122,7 +122,7 @@ Rectangle{
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
+            sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' :"QR OVO"
             modeReverse: true
             visible: _qrOvoEnable
@@ -157,7 +157,7 @@ Rectangle{
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
+            sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS LinkAja"
             modeReverse: true
             visible: _qrLinkAjaEnable
@@ -192,7 +192,7 @@ Rectangle{
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
+            sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Gopay"
             modeReverse: true
             visible: _qrGopayEnable
@@ -227,7 +227,7 @@ Rectangle{
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
+            sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Dana"
             modeReverse: true
             visible: _qrDanaEnable
@@ -262,7 +262,7 @@ Rectangle{
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
+            sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
             imageMaxMode: (CONF.general_qr=='1') ? false : true
             modeReverse: true
@@ -298,7 +298,7 @@ Rectangle{
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: (CONF.general_qr=='1') ? "source/phone_qr.png" : "source/qr_shopeepay.png"
+            sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS JakOne"
             modeReverse: true
             visible: _qrJakoneEnable

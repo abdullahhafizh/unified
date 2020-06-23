@@ -48,6 +48,11 @@ def start_get_qr_linkaja(payload):
     _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
+def start_get_qr_jakone(payload):
+    mode = 'JAKONE'
+    _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
+
+
 def start_get_qr_global(payload):
     payload = json.loads(payload)
     mode = 'N/A'
@@ -63,7 +68,7 @@ def start_get_qr_global(payload):
 def do_get_qr(payload, mode, serialize=True):
     global CANCELLING_QR_FLAG
     payload = json.loads(payload)
-    # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY']:
+    # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
     #     QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
     #     return
@@ -75,7 +80,7 @@ def do_get_qr(payload, mode, serialize=True):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
-    if  mode in ['DANA', 'SHOPEEPAY']:
+    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE']:
         payload['reff_no'] = payload['trx_id']
     if serialize is True:
         param = serialize_payload(payload)
@@ -97,7 +102,7 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_DIRECT_PAY:
                 r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY']:
+            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
             LOGGER.debug((str(param), str(r)))
@@ -129,6 +134,11 @@ def handle_check_process(param, mode):
         sleep(5)
         do_pay_qr(param, mode)
     LOGGER.debug((str(param), mode))
+
+
+def start_do_check_jakone_qr(payload):
+    mode = 'JAKONE'
+    _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
 def start_do_check_gopay_qr(payload):
@@ -241,7 +251,7 @@ def check_payment_result(result, mode):
         return True
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY'] and result['status'] == 'SUCCESS':
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE'] and result['status'] == 'SUCCESS':
         return True
     return False
 
