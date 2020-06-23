@@ -229,7 +229,7 @@ QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE']
 QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
-    'JAKONE': False,
+    'JAKONE': True,
     'GOPAY': True,
     'DANA': True,
     'LINKAJA': True,
