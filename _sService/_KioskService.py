@@ -104,18 +104,23 @@ def update_kiosk_status(s=400, r=None):
                 _Common.KIOSK_MARGIN = int(_Common.KIOSK_SETTING['defaultMargin'])
                 _Common.KIOSK_ADMIN = int(_Common.KIOSK_SETTING['defaultAdmin'])
                 _Common.PAYMENT_SETTING = r['data']['payment']
+                print("pyt: Syncing Payment Setting...")
                 define_device_port_setting(_Common.PAYMENT_SETTING)
                 _Common.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
                 _Common.FEATURE_SETTING = r['data']['feature']
+                print("pyt: Syncing Feature Setting...")
                 define_feature(_Common.FEATURE_SETTING)
                 _Common.THEME_SETTING = r['data']['theme']
+                print("pyt: Syncing Theme Setting...")
                 define_theme(_Common.THEME_SETTING)
                 _Common.ADS_SETTING = r['data']['ads']
                 _Common.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
                 if 'refund' in r['data'].keys():
+                    print("pyt: Syncing Refund Setting...")
                     _Common.REFUND_SETTING = r['data']['refund']
                     _Common.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
                 _Common.KIOSK_STATUS = 'ONLINE'
+                print("pyt: Syncing Kiosk Information...")
                 _DAO.flush_table('Terminal')
                 # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
                 _DAO.update_kiosk_data(_Common.KIOSK_SETTING)

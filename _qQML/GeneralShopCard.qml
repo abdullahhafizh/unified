@@ -26,6 +26,7 @@ Base{
     property bool qrGopayEnable: false
     property bool qrLinkajaEnable: false
     property bool qrShopeeEnable: false
+    property bool qrJakoneEnable: false
 
     property var cdReadiness: undefined
     property var totalPaymentEnable: 0
@@ -153,6 +154,10 @@ Base{
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
             qrShopeeEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_JAKONE == 'AVAILABLE') {
+            qrJakoneEnable = true;
             totalPaymentEnable += 1;
         }
 
@@ -543,6 +548,7 @@ Base{
         _qrGopayEnable: qrGopayEnable
         _qrLinkAjaEnable: qrLinkajaEnable
         _qrShopeeEnable: qrShopeeEnable
+        _qrJakoneEnable: qrJakoneEnable
         totalEnable: totalPaymentEnable
     }
 
