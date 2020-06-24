@@ -482,6 +482,7 @@ def get_topup_readiness():
         'flazz': _Common.TOPUP_AMOUNT_SETTING['flazz'],
         'jakcard': _Common.TOPUP_AMOUNT_SETTING['jakcard'],
     }
+    # Assuming always check card balance first before check topup readiness validation
     if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BRI':
         ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
     LOGGER.info((str(ready)))
