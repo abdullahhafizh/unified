@@ -1068,7 +1068,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'SILAKAN MASUKKAN UANG ANDA PADA BILL ACCEPTOR, PASTIKAN GUNAKAN LEMBAR UANG YANG BAIK'
+        title_text: 'SILAKAN MASUKKAN UANG ANDA PADA BILL ACCEPTOR\nPASTIKAN GUNAKAN LEMBAR UANG YANG BAIK'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
         boxColor: CONF.frame_color
 
