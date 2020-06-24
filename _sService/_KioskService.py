@@ -993,7 +993,7 @@ def store_transaction_global(param, retry=False):
             'tid': TID,
             'mid': '',
             'pid': __pid,
-            'tpid': '',
+            'tpid': PID_STOCK_SALE if g['shop_type'] == 'shop' else __bid,
             'sale': __total_price,
             'amount': __total_price,
             'cardNo': g['payment_details'].get('card_no', ''),
