@@ -84,7 +84,7 @@ Rectangle{
             anchors.topMargin: mainTitleMode=="normal" ? 45 : 375
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: caseTitle + mainTitle
-            size_: (popup_refund.width==1920) ? 50 : 35
+            size_: (popup_refund.width==1920) ? 40 : 30
             color_: CONF.text_color
         }
 

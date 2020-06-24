@@ -180,7 +180,7 @@ Base{
             // If Cash Exceed Payment Detected
             refundMode = 'payment_cash_exceed';
             refundAmount = exceed;
-            messase_case_refund = 'Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], ';
+            messase_case_refund = 'Transaksi Sukses, Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], ';
         }
         switch(error){
         case 'user_payment_timeout':
