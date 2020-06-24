@@ -924,7 +924,7 @@ Base{
 
     function open_preload_notif(msg, img){
         press = '0';
-        if (msg==undefined) msg = 'Siapkan Uang Anda, Tunggu Hingga Bill Acceptor Ready';
+        if (msg==undefined) msg = 'Siapkan Uang Anda, Tunggu Hingga Bill Acceptor Siap';
         if (img==undefined) img = 'source/insert_money.png';
         switch_frame(img, msg, 'Lembar Uang Yang Diterima', 'closeWindow', false )
         return;
