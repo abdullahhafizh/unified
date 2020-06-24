@@ -261,6 +261,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         popup_loading.close();
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
+        if (successTransaction) title = 'Transaksi Berhasil';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         console.log('release_print', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
