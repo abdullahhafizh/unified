@@ -431,7 +431,7 @@ CD3_ERROR = ''
 RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
 RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '1800'))
 if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
-    PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+    PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
@@ -523,7 +523,7 @@ def update_receipt_count():
     RECEIPT_PRINT_COUNT = RECEIPT_PRINT_COUNT + 1
     log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
     if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
-        PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+        PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
 
 
 def start_reset_receipt_count(count):
@@ -535,7 +535,7 @@ def reset_receipt_count(count):
     RECEIPT_PRINT_COUNT = int(count)
     log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
     if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
-        PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+        PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
     else:
         PRINTER_ERROR = ''
 
