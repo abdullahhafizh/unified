@@ -924,7 +924,7 @@ Base{
 
     function open_preload_notif(msg, img){
         press = '0';
-        if (msg==undefined) msg = 'Masukkan Uang Anda Pada Bill Acceptor';
+        if (msg==undefined) msg = 'Siapkan Uang Anda, Tunggu Hingga Bill Acceptor Ready';
         if (img==undefined) img = 'source/insert_money.png';
         switch_frame(img, msg, 'Lembar Uang Yang Diterima', 'closeWindow', false )
         return;
@@ -1061,14 +1061,14 @@ Base{
         id: notice_no_change
         width: 1200
         height: 120
-        visible: false
+        visible: (details.payment == 'cash' && !global_frame.visible)
         radius: 50
         fontSize: 30
         border.width: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'JIKA TERJADI GAGAL/BATAL TRANSAKSI\nPENGEMBALIAN DANA DIALIHKAN KE AKUN ANDA ' + customerPhone+ ' (Powered By DUWIT)'
+        title_text: 'SILAKAN MASUKKAN UANG ANDA PADA BILL ACCEPTOR, PASTIKAN GUNAKAN LEMBAR UANG YANG BAIK'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
         boxColor: CONF.frame_color
 

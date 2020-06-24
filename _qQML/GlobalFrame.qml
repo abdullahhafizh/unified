@@ -25,6 +25,13 @@ Base{
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
     }
 
+    Rectangle{
+        id: overlay_background
+        anchors.fill: parent
+        color: 'black'
+        opacity: .3
+    }
+
     Column{
         id: column
         width: parent.width - 100
