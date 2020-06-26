@@ -40,9 +40,15 @@ if LIVE_MODE is True:
     os.system('git checkout master')
 if TEST_MODE is True:
     os.system('git checkout develop')
+
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
+TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
+
+# Initiate Network Header
+# HEADER = get_header()
+_NetworkAccess.HEADER = _NetworkAccess.get_header(TID, TERMINAL_TOKEN)
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
 

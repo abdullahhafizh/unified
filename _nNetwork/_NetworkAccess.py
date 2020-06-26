@@ -65,28 +65,26 @@ SERVICE_NOT_RESPONDING = {
     'statusMessage': 'Service Not Responding'
 }
 
-TID = _ConfigParser.get_value('GENERAL', 'tid')
-TOKEN = _ConfigParser.get_value('GENERAL', 'token')
 DISK_SERIAL_NUMBER = ''
 LOGGER = logging.getLogger()
 GLOBAL_TIMEOUT = 60
 
 
-def get_header():
+def get_header(tid='', token=''):
     header = {
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate',
         'Connection': 'close',
         'Content-Type': 'application/json',
-        'tid': TID,
-        'token': TOKEN,
+        'tid': tid,
+        'token': token,
         'unique': DISK_SERIAL_NUMBER,
-        'User-Agent': 'MDD Vending Machine ID ['+TID+']'
+        'User-Agent': 'MDD Vending Machine ID ['+tid+']'
     }
     return header
 
 
-HEADER = get_header()
+HEADER = None
 
 
 def get_from_url(url, param=None, header=None, log=True, first_load=False):
