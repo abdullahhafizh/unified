@@ -37,6 +37,9 @@ BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://v
 TEST_MODE = not LIVE_MODE
 if LIVE_MODE is True:
     BACKEND_URL = 'http://vm-service.mdd.co.id:471/kiosk-api/v2/'
+    os.system('git checkout master')
+if TEST_MODE is True:
+    os.system('git checkout develop')
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
