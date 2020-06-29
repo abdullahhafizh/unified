@@ -562,6 +562,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'topupLastBalance': __emoney_balance,
             'status': status,
             'remarks': __data,
+            'c2c_mode': '1'
         }
         _Common.store_upload_sam_audit(param)
         # Update to server
