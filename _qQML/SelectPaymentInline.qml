@@ -264,7 +264,6 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
-            imageMaxMode: (CONF.general_qr=='1') ? false : true
             modeReverse: true
             visible: _qrShopeeEnable
             MouseArea{
