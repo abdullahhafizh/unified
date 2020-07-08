@@ -411,7 +411,8 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0001'
-            __seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, '1').zfill(2)
+            # __seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, '1').zfill(2)
+            __seq = '01'
             __timestamp = datetime.now().strftime('%d%m%Y%H%M')
             MANDIRI_LAST_TIMESTAMP = __timestamp
             __raw = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
