@@ -160,6 +160,15 @@ def start_reprint_global():
     _Helper.get_thread().apply_async(sale_reprint_global, )
 
 
+
+def validate_refund_fee(channel):
+    fee = _Common.check_refund_fee(channel)
+    if fee > 0:
+        return True, str(fee)
+    else:
+        return False, str(0)
+
+
 LAST_TRX = None
 SMALL_SPACE = 3.5
 REGULAR_SPACE = 8
@@ -243,6 +252,11 @@ def print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'TOTAL BAYAR: Rp. ' + clean_number(p['value']), 0, 0, 'L')
+                if 'other_channel_topup' in p['topup_details'].keys():
+                    if int(p['topup_details']['other_channel_topup']) > 0:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, '', regular_space)
+                        pdf.cell(padding_left, 0, 'PENDING SALDO: Rp. ' + clean_number(str(p['topup_details']['other_channel_topup'])), 0, 0, 'L')
                 # pdf.ln(small_space)
                 # pdf.set_font(USED_FONT, '', regular_space)
                 # pdf.cell(padding_left, 0, 'UANG MASUK : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
@@ -275,6 +289,11 @@ def print_topup_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, '', regular_space)
+                        pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
                 # pdf.ln(small_space*2)
                 # pdf.set_font(USED_FONT, '', regular_space-1)
                 # pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
@@ -313,6 +332,11 @@ def print_topup_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, '', regular_space)
+                        pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space-1)
                 pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -343,6 +367,11 @@ def print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
             pdf.ln(small_space*4)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -455,6 +484,11 @@ def print_shop_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
                 # price_unit = str(int(int(p['value'])/p['qty']))
                 # sub_total = p['value']
                 # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
@@ -494,6 +528,11 @@ def print_shop_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
             pdf.ln(small_space*3)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -624,14 +663,19 @@ def print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 pdf.ln(small_space)
-                pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'METODE REFUND: ' + p['refund_channel'], 0, 0, 'L')
+                pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, '', regular_space+2)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
@@ -657,6 +701,11 @@ def print_ppob_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
             pdf.ln(small_space*3)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')

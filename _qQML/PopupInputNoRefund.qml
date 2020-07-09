@@ -392,7 +392,7 @@ Rectangle{
         default:
             mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda';
             mainTitleMode = 'normal';
-//            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
+            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;
             reset_counter();
             break;

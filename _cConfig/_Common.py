@@ -741,6 +741,17 @@ def check_refund(name='ovo'):
     return False
 
 
+def check_refund_fee(name='ovo'):
+    fee = 0
+    for x in range(len(REFUND_SETTING)):
+        if REFUND_SETTING[x]['name'].lower() == name.lower():
+            fee = int(REFUND_SETTING[x]['admin_fee'])
+            if REFUND_SETTING[x]['admin_fee'] != REFUND_SETTING[x]['custom_admin_fee']:
+                fee = int(REFUND_SETTING[x]['custom_admin_fee'])
+            break
+    return fee
+
+
 def check_payment(name='ovo'):
     if len(PAYMENT_SETTING) == 0 or empty(PAYMENT_SETTING) is True:
         return False

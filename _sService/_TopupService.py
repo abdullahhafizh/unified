@@ -675,8 +675,13 @@ def topup_online(bank, cardno, amount):
         #        'topup_amount': result.split('|')[1],
         #        'last_balance': result.split('|')[2],
         #     }
+        other_channel_topup = str(0)
+        if str(amount) != str(update_result['topup_amount']):
+            other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
         output = {
                     'last_balance': update_result['last_balance'],
+                    'topup_amount': update_result['topup_amount'],
+                    'other_channel_topup': other_channel_topup,
                     'report_sam': 'N/A',
                     'card_no': update_result['card_no'],
                     'report_ka': 'N/A',

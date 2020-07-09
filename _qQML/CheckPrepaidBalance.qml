@@ -115,7 +115,7 @@ Base{
             return;
         }
         if (['NO_PENDING_BALANCE'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Update Saldo Gagal', 'Kartu Anda Tidak Memiliki Pending Balance', 'closeWindow', true )
+            switch_frame('source/smiley_down.png', 'Update Saldo Gagal', 'Kartu Anda Tidak Memiliki Saldo Pending', 'closeWindow', true )
             press = '0';
             return;
         }
