@@ -253,6 +253,9 @@ def print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'TOTAL BAYAR: Rp. ' + clean_number(p['value']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['topup_details']['bank_name'], 0, 0, 'L')
                 if 'other_channel_topup' in p['topup_details'].keys():
                     if int(p['topup_details']['other_channel_topup']) > 0:
                         pdf.ln(small_space)
@@ -264,9 +267,6 @@ def print_topup_trx(p, t, ext='.pdf'):
                 # pdf.ln(small_space)
                 # pdf.set_font(USED_FONT, '', regular_space)
                 # pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
-                pdf.ln(small_space)
-                pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['topup_details']['bank_name'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NO. KARTU  : ' + p['topup_details']['card_no'], 0, 0, 'L')
