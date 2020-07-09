@@ -163,6 +163,7 @@ def start_reprint_global():
 
 def validate_refund_fee(channel):
     fee = _Common.check_refund_fee(channel)
+    LOGGER.debug(('Refund Fee Check', fee))
     if fee > 0:
         return True, str(fee)
     else:
