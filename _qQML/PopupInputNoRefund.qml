@@ -348,6 +348,7 @@ Rectangle{
 //        _SLOT.user_action_log('Choose "'+ id.channelCode+'" as Refund Channel');
         reset_all_channel();
         id.setActive();
+        var refundFeeText = '';
         if (availableRefund.length > 0){
             for (var i=0;i < availableRefund.length;i++){
                 if (availableRefund[i].status == '1'){
@@ -355,6 +356,7 @@ Rectangle{
                         id.channelFee = availableRefund[i].admin_fee;
                         if (parseInt(availableRefund[i].custom_admin_fee) > 0) id.channelFee = availableRefund[i].custom_admin_fee;
                         channelDescription = availableRefund[i].description;
+                        if (parseInt(id.channelFee) > 0) refundFeeText = ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
                         if (availableRefund[i].due_time != "0") channelDescription += ' Waktu Proses ' + availableRefund[i].due_time;
                     }
                 }
@@ -389,15 +391,8 @@ Rectangle{
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;
             reset_counter();
             break;
-        case 'LINKAJA':
-            mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda';
-            mainTitleMode = 'normal';
-            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
-            if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;
-            reset_counter();
-            break;
         default:
-            mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda';
+            mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda' + refundFeeText;
             mainTitleMode = 'normal';
 //            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;

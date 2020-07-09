@@ -746,9 +746,9 @@ def check_refund_fee(name='ovo'):
     for x in range(len(REFUND_SETTING)):
         if REFUND_SETTING[x]['name'].lower() == name.lower():
             fee = int(REFUND_SETTING[x]['admin_fee'])
-            if REFUND_SETTING[x]['admin_fee'] != REFUND_SETTING[x]['custom_admin_fee']:
+            if int(REFUND_SETTING[x]['custom_admin_fee']) > 0:
                 fee = int(REFUND_SETTING[x]['custom_admin_fee'])
-            return fee
+            break
     return fee
 
 
