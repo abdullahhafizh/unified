@@ -105,7 +105,7 @@ Base{
             return;
         }
         if (['UNKNOWN_BANK', 'ERROR'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow', false )
+            switch_frame('source/smiley_down.png', 'Terjadi Kegagalan Update Saldo', 'Atau Kartu Anda Tidak Memiliki Saldo Pending', 'closeWindow', false )
             press = '0';
             return;
         }
