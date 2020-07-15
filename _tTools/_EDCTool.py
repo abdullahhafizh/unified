@@ -147,7 +147,7 @@ def justifying(left, right):
 
 MARGIN_LEFT = 0
 HEADER_FONT_SIZE = 8
-SPACING = 3
+SPACING = 2.5
 DEFAULT_FONT_SIZE = 6
 
 
@@ -176,7 +176,7 @@ class PDF(FPDF):
         self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'I AGREE TO PAY ABOVE TOTAL AMOUNT', 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'ACCORDING TO CARD ISSUER AGREEMENT', 0, 0, 'C')
-        self.ln(SPACING*2)
+        self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
 
 

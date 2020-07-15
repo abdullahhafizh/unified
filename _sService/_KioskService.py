@@ -1157,7 +1157,8 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
             file = os.path.join(work_dir, f)
             if os.path.isfile(file):
                 stat = os.stat(file)
-                if stat.st_ctime < expired:
+                if stat.st_ctime < expired and not file.endswith('.log'):
+                    LOGGER.debug(('Removing', file, stat.st_ctime, expired))
                     os.remove(file)
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
     print('pyt: FINISH DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
