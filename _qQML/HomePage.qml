@@ -262,8 +262,8 @@ Base{
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
-            text_: qsTr("Cek Saldo")
-            text2_: qsTr("Balance Check")
+            text_: qsTr("Cek/Update Saldo")
+            text2_: qsTr("Check/Update Balance")
             modeReverse: false
             visible: false
 //            mode3d: 'gray'

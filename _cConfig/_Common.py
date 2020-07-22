@@ -407,6 +407,9 @@ MANDIRI_WALLET_1 = 0
 MANDIRI_WALLET_2 = 0
 MANDIRI_ACTIVE_WALLET = 0
 MANDIRI_NO_1 = _ConfigParser.get_set_value('MANDIRI', 'sam1^uid', '---')
+# Add assumption MANDIRI_NO_1 is C2C_DEPOSIT_NO When C2C_MODE is ON
+if C2C_MODE is True:
+    MANDIRI_NO_1 = C2C_DEPOSIT_NO
 MANDIRI_NO_2 = _ConfigParser.get_set_value('MANDIRI', 'sam2^uid', '---')
 MANDIRI_REVERSE_SLOT_MODE = False
 MANDIRI_SINGLE_SAM = True if _ConfigParser.get_set_value('MANDIRI', 'single^sam', '1') == '1' else False
@@ -801,6 +804,9 @@ def upload_mandiri_wallet():
             "card_no_1": MANDIRI_NO_1,
             "card_no_2": MANDIRI_NO_2
         }
+        if C2C_MODE is True:
+            param['card_no_1'] = C2C_DEPOSIT_NO
+            param['wallet_1'] = MANDIRI_ACTIVE_WALLET
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':

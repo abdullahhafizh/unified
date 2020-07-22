@@ -56,7 +56,7 @@ def define_topup_slot_bni():
                 LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Common.BNI_THRESHOLD), str(_Common.BNI_SAM_2_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
                 do_topup_deposit_bni(slot=2, force=True)
-        sleep(5)
+        sleep(30)
 
 
 def start_do_topup_deposit_bni(slot):
@@ -72,6 +72,10 @@ def start_do_force_topup_bni():
 def do_topup_deposit_bni(slot=1, force=False):
     global BNI_UPDATE_BALANCE_PROCESS
     try:
+        _QPROX.ka_info_bni(slot=_Common.BNI_ACTIVE)
+        if _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD:
+            LOGGER.warning((slot, _Common.BNI_ACTIVE_WALLET, _Common.BNI_THRESHOLD))
+            return 'DEPOSIT_STILL_SUFFICIENT'
         if force is False and _Common.ALLOW_DO_TOPUP is False:
             LOGGER.warning((slot, _Common.ALLOW_DO_TOPUP))
             return 'TOPUP_NOT_ALLOWED'
