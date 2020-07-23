@@ -1047,3 +1047,15 @@ def get_bid(provider=''):
         return 8
     else:
         return 0
+
+
+
+REFUND_LEGEND = {
+    'DIVA': 'WHATSAPP',
+    'OPERATOR': 'CUSTOMER SERVICE',
+    'LA': 'LINKAJA'
+}
+
+
+def serialize_refund(refund):
+    return REFUND_LEGEND.get(refund, refund)
