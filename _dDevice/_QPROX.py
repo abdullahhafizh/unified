@@ -552,6 +552,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
             _Common.MANDIRI_NO_1 = _Common.C2C_DEPOSIT_NO
+        _Common.log_to_temp_config('c2c^card^no', __report_deposit[:16])
         param = {
             'trxid': reff_no,
             'samCardNo': _Common.C2C_DEPOSIT_NO,
