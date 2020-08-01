@@ -192,7 +192,10 @@ def load_from_temp_data(temp, mode='text'):
     temp_path = os.path.join(TEMP_FOLDER, temp)
     if not os.path.exists(temp_path):
         with open(temp_path, 'w+') as t:
-            t.write('{}')
+            if mode == 'json':
+                t.write('{}')
+            else:
+                t.write(' ')
             t.close()
     content = open(temp_path, 'r').read().strip()
     if len(clean_white_space(content)) == 0:
@@ -734,6 +737,12 @@ def get_refunds():
 
 FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA", "CUSTOMER-SERVICE"]
 
+MANDIRI_CARD_BLOCKED_LIST = load_from_temp_data('mandiri_card_blocked_list', 'text').split('\n')
+MANDIRI_CHECK_CARD_BLOCKED = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked', '0') == '1' else False
+MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked^url', '---')
+
+DAILY_SYNC_SUMMARY_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^sync^summary^time', '23:55')
+
 
 def check_refund(name='ovo'):
     if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING) is True:
@@ -1048,6 +1057,26 @@ def get_bid(provider=''):
     else:
         return 0
 
+
+def get_bank_name(provider=''):
+    if 'mandiri' in provider.lower():
+        return 'mandiri'
+    elif 'bni' in provider.lower():
+        return 'bni'
+    elif 'bri' in provider.lower():
+        return 'bri'
+    elif 'bca' in provider.lower():
+        return 'bca'
+    elif 'dki' in provider.lower():
+        return 'dki'
+    elif 'mega' in provider.lower():
+        return 'mega'
+    elif 'nobu' in provider.lower():
+        return 'nobu'
+    elif 'btn' in provider.lower():
+        return 'btn'
+    else:
+        return ''
 
 
 REFUND_LEGEND = {

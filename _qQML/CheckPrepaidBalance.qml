@@ -25,6 +25,9 @@ Base{
     property bool brizziAvailable: false
     property bool flazzAvailable: false
     property bool jakcardAvailable: false
+    property bool autoTrigger: true
+
+    property int durationCheckCard: 5
 
     property bool buttonCardHistory: false
     property var bigButtonPadding: 100
@@ -50,6 +53,7 @@ Base{
             ableTopupCode = undefined;
             actionMode = 'check_balance';
             buttonCardHistory = false;
+            autoTrigger = true;
             bigButtonPadding = 150;
         }
         if(Stack.status==Stack.Deactivating){
@@ -181,12 +185,7 @@ Base{
             bankType = undefined;
             switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
             return;
-//            false_notif('Mohon Maaf|Gagal Mendapatkan Saldo, Pastikan Kartu Prabayar Anda Sudah Ditempelkan Pada Reader');
-//            image_prepaid_card.source = "source/card_tj_original.png";
-//            imageSource = "source/card_tj_original.png";
-//            notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. 0, -";
         }
-//        else {
 //            if (bankName == 'MANDIRI'){
 //                image_prepaid_card.source = "source/mandiri_emoney_card.png";
 //                imageSource = "source/mandiri_emoney_card.png";
@@ -204,7 +203,6 @@ Base{
 //                imageSource = "source/card_tj_original.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            }
-//        }
         var info = JSON.parse(result);
         balance = info.balance.toString();
         cardNo = info.card_no;
@@ -247,6 +245,10 @@ Base{
 //                } else {
 //                    card_history_button.modeReverse = false;
 //                }
+//                Auto Detect Card In 5 Seconds
+                if (abc.counter == timer_value - durationCheckCard){
+                    if (autoTrigger) _SLOT.start_check_card_balance();
+                }
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -339,6 +341,10 @@ Base{
                         switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, 'sedang tidak dapat digunakan saat ini', 'backToMain', false );
                         return;
                     }
+                    if (ableTopupCode !="0000"){
+                        switch_frame('source/smiley_down.png', 'Mohon Maaf, Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
+                        return;
+                    }
                     var _cardData = {
                         'balance': balance,
                         'card_no': cardNo,
@@ -348,23 +354,6 @@ Base{
                         'notifSaldo': ''
                     }
                     my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData, allowedBank: allowedBank});
-//                    if (ableTopupCode=='0000'){
-////                    } else if (ableTopupCode=='1008'){
-////                        press = 0;
-////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
-////                        switch_frame('source/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
-////                        return;
-////                    }  else if (ableTopupCode=='5106'){
-////                        press = 0;
-////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
-////                        switch_frame('source/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
-////                        return;
-//                    } else {
-//                        press = 0;
-////                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain');
-//                        switch_frame('source/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
-//                        return;
-//                    }
                 } else {
                     switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, 'tidak tersedia saat ini', 'backToMain', false );
                     return;
@@ -686,6 +675,7 @@ Base{
                     popup_loading.open();
                     switch(actionMode){
                     case 'check_balance':
+                        autoTrigger = false;
                         _SLOT.start_check_card_balance();
                         break;
                     case 'update_balance_online':

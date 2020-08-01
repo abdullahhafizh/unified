@@ -789,7 +789,7 @@ def alter_table(a):
     try:
         _DAO.adjust_table(a)
     except Exception as e:
-        LOGGER.debug(('FAILED', str(e)))
+        LOGGER.warning(('FAILED', str(e)))
 
 
 def start_direct_alter_table(s):
@@ -919,11 +919,33 @@ def direct_store_transaction_data(payload):
     GLOBAL_TRANSACTION_DATA = json.loads(payload)
 
 
+# Must Updated Below
+# <bank>_topup_freq                            BIGINT DEFAULT 0,
+# <bank>_shop_freq                             BIGINT DEFAULT 0,
+# <bank>_transaction_count                     BIGINT DEFAULT 0,
+# <bank>_transaction_amount                    BIGINT DEFAULT 0,
+# <bank>_card_trx_count                        BIGINT DEFAULT 0,
+# <bank>_card_trx_amount                       BIGINT DEFAULT 0,
+
+def update_summary_report(data):
+    if _Helper.empty(data) is True:
+        return False
+    _DAO.create_today_report()
+    bank = _Common.get_bank_name(data.get('provider', ''))
+    if data['shop_type'] == 'shop':
+        _DAO.update_today_summary_multikeys([bank+'_shop_freq', bank+'_card_trx_count'], 1)
+        _DAO.update_today_summary(bank+'_card_trx_amount', int(data.get('value', 0)))  
+    elif data['shop_type'] == 'topup':
+        _DAO.update_today_summary_multikeys([bank+'_topup_freq', bank+'_transaction_count'], 1)
+        _DAO.update_today_summary(bank+'_transaction_amount', int(data.get('value', 0)))  
+
+
 def store_transaction_global(param, retry=False):
     global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
     g = GLOBAL_TRANSACTION_DATA = json.loads(param)
     LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
     try:
+        update_summary_report(g)
         __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
         __bid = _Common.get_bid(g['provider'])
         # Overwrite bid value for shop transaction

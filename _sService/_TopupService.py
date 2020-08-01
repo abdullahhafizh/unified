@@ -4,6 +4,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _nNetwork import _NetworkAccess
 from _dDevice import _QPROX
+from _dDAO import _DAO
 from _cConfig import _Common
 from _tTools import _Helper
 from time import sleep
@@ -737,6 +738,14 @@ def topup_online(bank, cardno, amount):
                 'status': 'REFILL_SUCCESS',
                 'remarks': output,
             }
+        # Update Audit Summary
+        # mandiri_deposit_refill_count              BIGINT DEFAULT 0,
+        # mandiri_deposit_refill_amount             BIGINT DEFAULT 0,
+        # mandiri_deposit_last_balance              BIGINT DEFAULT 0,
+        _DAO.create_today_report()
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(amount))
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))
         _Common.store_upload_sam_audit(param)   
         TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
         return output        
@@ -774,4 +783,24 @@ def refund_bri_pending(data):
         return False
     
 
-
+def get_mandiri_card_blocked_list():
+    if not _Common.MANDIRI_CHECK_CARD_BLOCKED or _Common.MANDIRI_CARD_BLOCKED_URL != '---':
+        LOGGER.debug(('MANDIRI_CARD_BLOCKED_LIST DISABLED'))
+        _Common.MANDIRI_CARD_BLOCKED_LIST = []
+        return False
+    try:
+        status, response = _NetworkAccess.get_from_url(url=_Common.MANDIRI_CARD_BLOCKED_URL)
+        if status == 200 and response['response']['code'] == 200:
+            if not _Helper.empty(response['data']['blocked']):
+                content = ''
+                for data in response['data']['blocked']:
+                    content += data + '\n'
+                _Common.store_to_temp_data('mandiri_card_blocked_list', content)
+                _Common.MANDIRI_CARD_BLOCKED_LIST = response['data']
+                LOGGER.info(('MANDIRI_CARD_BLOCKED_LIST UPDATED'))
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False

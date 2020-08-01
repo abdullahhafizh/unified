@@ -510,11 +510,90 @@ def insert_pending_refund(param):
 
 def update_pending_refund(param):
     '''
-      trxid          VARCHAR(100),
-      remarks        TEXT,
+    trxid          VARCHAR(100),
+    remarks        TEXT,
     :param param:
     :return:
     '''
     param["updatedAt"] = _Helper.now()
     sql = " UPDATE PendingRefund SET isSuccess=1, updatedAt=:updatedAt, remarks=:remarks  WHERE trxid=:trxid "
     return _Database.insert_update(sql=sql, parameter=param) 
+
+
+def update_daily_summary(param):
+    """
+    param must contains :
+    key
+    value
+    report_date
+    """
+    sql = " UPDATE DailySummary SET :key = (:key + :value)  WHERE report_date = :report_date "
+    return _Database.insert_update(sql=sql, parameter=param) 
+
+
+def update_today_summary(key, value):
+    today = _Helper.time_string(f='%Y-%m-%d')
+    return update_summary_by_date(key, value, today)
+
+
+def update_summary_by_date(key, value, date):
+    param = {
+        'report_date': date,
+        'key': key,
+        'value': value
+    }
+    return update_daily_summary(param)
+
+
+def create_today_report(tid):
+    param = {
+        'report_date': _Helper.time_string(f='%Y-%m-%d'),
+        'tid': tid
+    }
+    sql = " INSERT INTO DailySummary (tid, report_date) SELECT :tid, :report_date WHERE NOT EXISTS ( SELECT * FROM DailySummary WHERE tid = :tid AND report_date = :report_date ) "
+    return _Database.insert_update(sql=sql, parameter=param)
+
+
+def update_today_summary_multikeys(keys=[], value=0):
+    return update_summary_multikeys(keys=keys, value=value)
+
+
+def update_summary_multikeys(keys=[], value=0, report_date=None):
+    if report_date is None:
+        report_date = _Helper.time_string(f='%Y-%m-%d')
+    param = {
+        'report_date': report_date
+    }
+    sql = " UPDATE DailySummary SET "
+    for key in keys:
+        if key == keys[0]:
+            sql += ' '.join([key, '=', key, '+', str(value)])
+        else:
+            sql += ' '.join([',', key, '=', key, '+', str(value)])
+    sql += " WHERE report_date = :report_date "
+    return _Database.insert_update(sql=sql, parameter=param)
+
+
+def get_today_report(tid):
+    param = {
+        'tid': tid,
+        'report_date': _Helper.time_string(f='%Y-%m-%d')
+    }
+    sql = " SELECT * FROM DailySummary WHERE tid = :tid AND report_date = :report_date AND synced_at IS NULL  "
+    result = _Database.get_query(sql=sql, parameter=param)
+    if len(result) > 0:
+        result = result[0]
+    return result
+
+
+def mark_today_report(tid):
+    param = {
+        'tid': tid,
+        'report_date': _Helper.time_string(f='%Y-%m-%d'),
+        'synced_at': _Helper.time_string()        
+    }
+    sql = " UPDATE DailySummary SET synced_at = :synced_at WHERE tid =:tid AND report_date = :report_date "
+    result = _Database.get_query(sql=sql, parameter=param)
+    if len(result) > 0:
+        result = result[0]
+    return result

@@ -1084,6 +1084,8 @@ if __name__ == '__main__':
         "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
         ])
     sleep(1)
+    _KioskService.alter_table('_DailySummary.sql')
+    sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
     _KioskService.house_keeping(age_month=3)
     sleep(1)
@@ -1148,6 +1150,7 @@ if __name__ == '__main__':
         sleep(2)
         print("pyt: Triggering Mandiri KA/C2C Deposit Balance Update Check...")
         _SettlementService.start_validate_update_balance()    
+        _TopupService.get_mandiri_card_blocked_list()
     if _QPROX.INIT_BNI is True:
         # sleep(.5)
         # print("pyt: Triggering BNI Settlement Sync...")

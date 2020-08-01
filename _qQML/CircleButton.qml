@@ -2,15 +2,18 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 
 Rectangle{
-    width:120
-    height:120
-    color:"transparent"
+    id: base_rectangle
     property bool modeReverse: false
     property string button_text: 'ISI SALDO\nOFFLINE'
     property real globalOpacity: .50
     property int fontSize: 30
     property bool blinkingMode: false
     property var forceColorButton: 'transparent'
+    property int baseSize: 120
+    width:baseSize
+    height:baseSize
+    color:"transparent"
+
 
     Rectangle{
         anchors.fill: parent
@@ -66,7 +69,9 @@ Rectangle{
             abc.counter += 1;
             if (abc.counter%2==0) {
                 modeReverse = true;
+                baseSize = 130;
             } else {
+                baseSize = 120;
                 modeReverse = false;
             }
         }

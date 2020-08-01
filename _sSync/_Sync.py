@@ -10,7 +10,7 @@ import logging
 from _sService import _KioskService
 from _dDevice import _EDC
 from _dDevice import _BILL
-# from _dDevice import _QPROX
+from _dDevice import _QPROX
 # from operator import itemgetter
 import json
 from _sService import _UserService
@@ -36,23 +36,44 @@ def check_connection(url, param):
     while True:
         modulus += 1
         try:
-            status, response = _NetworkAccess.get_from_url(url=url, first_load=True)
+            status, response = _NetworkAccess.get_from_url(url=url, force=True)
             if status == 200:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
                 _Common.KIOSK_STATUS = 'ONLINE'
+                _KioskService.LAST_SYNC = _Helper.time_string()
             else:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
                 _Common.KIOSK_STATUS = 'OFFLINE'
-            _KioskService.LAST_SYNC = _Helper.time_string()
             if modulus == 1:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
                 s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                 _KioskService.update_kiosk_status(s, r)
-                # start_sync_machine_status()
+                _DAO.create_today_report(_Common.TID)
+            if _Common.DAILY_SYNC_SUMMARY_TIME in _Helper.time_string():
+                send_daily_summary()
                 # _KioskService.kiosk_status()
         except Exception as e:
             LOGGER.debug(e)            
-        sleep(61.7)
+        sleep(59.9)
+
+
+def send_daily_summary():
+    _QPROX.ka_info_mandiri()
+    sleep(1)
+    _QPROX.ka_info_bni()
+    sleep(1)
+    payload = _DAO.get_today_report(_Common.TID)
+    # Move Into Each Daily Summary
+    # payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
+    # payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET
+    url = _Common.BACKEND_URL + 'sync/daily-summary'
+    if len(payload) > 0:
+        _DAO.mark_today_report(_Common.TID)
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        print('pyt: send_daily_summary ' + _Helper.time_string())
+        if s != 200 or r.get('result') != 'OK':
+            payload['endpoint'] = 'sync/daily-summary'
+            _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
 
 
 def start_idle_mode():

@@ -341,24 +341,11 @@ Base{
                 bank_name: info.bank_name,
             }
             //Define Data Card, Amount Button, Topup Availability
+            if (ableTopupCode !="0000"){
+                switch_frame('source/smiley_down.png', 'Mohon Maaf, Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
+                return;
+            }
             parse_cardData(cardData);
-//            if (allowedBank.indexOf(bankName) > -1){
-//                if (ableTopupCode=='0000'){
-////                } else if (ableTopupCode=='1008'){
-////                    back_button.z = 999
-////                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat', 'coba lagi');
-////                } else if (ableTopupCode=='5106'){
-////                    back_button.z = 999
-////                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
-//                } else {
-////                    back_button.z = 999
-//                    switch_frame('source/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
-//                    return;
-//                }
-//            } else {
-//                switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
-//                return;
-//            }
         }
     }
 

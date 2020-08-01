@@ -6,6 +6,7 @@ from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
 from _tTools import _Helper
+from _dDAO import _DAO
 from time import sleep
 import json
 from _nNetwork import _NetworkAccess
@@ -164,6 +165,15 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
                 'status': 'REFILL_SUCCESS',
                 'remarks': result,
             }
+            bni_topup_amount = int(samLastBalance) - int(samPrevBalance)
+            # Update Audit Summary
+            # bni_deposit_refill_count              BIGINT DEFAULT 0,
+            # bni_deposit_refill_amount             BIGINT DEFAULT 0,
+            # bni_deposit_last_balance              BIGINT DEFAULT 0,
+            _DAO.create_today_report()
+            _DAO.update_today_summary_multikeys(['bni_deposit_refill_count'], 1)
+            _DAO.update_today_summary_multikeys(['bni_deposit_refill_amount'], int(bni_topup_amount))
+            _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(samLastBalance))
             _Common.store_upload_sam_audit(param)
             sleep(3)
             #Upload To Server
@@ -466,7 +476,10 @@ def check_card_balance():
             'able_topup': '0000', #Force Allowed Topup For All Non BNI
         }
         # Special Handling For BNI Tapcash
-        if bank_name == 'BNI':
+        if bank_name == 'MANDIRI':
+            if card_no in _Common.MANDIRI_CARD_BLOCKED_LIST:
+                output['able_topup'] = '1004'
+        elif bank_name == 'BNI':
             output['able_topup'] = result.split('|')[3].replace('#', '')
             # Drop Balance Check If Not Available For Topup
             if output['able_topup'] in ERROR_TOPUP.keys():
@@ -633,6 +646,10 @@ def get_c2c_failure_settlement(amount, trxid):
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     global LAST_C2C_APP_TYPE
+    if LAST_BALANCE_CHECK['card_no'] in _Common.MANDIRI_CARD_BLOCKED_LIST:
+        LOGGER.warning(('Card No: ', LAST_BALANCE_CHECK['card_no'], 'Found in Mandiri Card Blocked Data'))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        return
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
@@ -969,6 +986,8 @@ def ka_info_mandiri(slot=None, caller=''):
             _Common.MANDIRI_WALLET_2 = MANDIRI_DEPOSIT_BALANCE
             _Common.MANDIRI_ACTIVE = 2
         _Common.save_sam_config(bank='MANDIRI')
+        _DAO.create_today_report()
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(_Common.MANDIRI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Common.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
@@ -986,13 +1005,15 @@ def ka_info_bni(slot=1):
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((str(slot), result))
     if response == 0 and (result is not None and result != ''):
-        # BNI_DEPOSIT_BALANCE = int(result.split('|')[0])
+        BNI_DEPOSIT_BALANCE = int(result.split('|')[0])
         if slot == 1:
-            _Common.BNI_SAM_1_WALLET = int(result.split('|')[0])
+            _Common.BNI_SAM_1_WALLET = BNI_DEPOSIT_BALANCE
             _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_1_WALLET
         if slot == 2:
-            _Common.BNI_SAM_2_WALLET = int(result.split('|')[0])
+            _Common.BNI_SAM_2_WALLET = BNI_DEPOSIT_BALANCE
             _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_2_WALLET
+        _DAO.create_today_report()
+        _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(_Common.BNI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
