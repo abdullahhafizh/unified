@@ -185,6 +185,8 @@ def start_receive_note():
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                # Handling Slow Response of BILL When Storing Notes
+                sleep(_Common.BILL_STORE_DELAY)
                 LOGGER.info(('Cash Status:', json.dumps({
                     'ADD': cash_in,
                     'COLLECTED': COLLECTED_CASH,
