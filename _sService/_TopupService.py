@@ -742,7 +742,7 @@ def topup_online(bank, cardno, amount):
         # mandiri_deposit_refill_count              BIGINT DEFAULT 0,
         # mandiri_deposit_refill_amount             BIGINT DEFAULT 0,
         # mandiri_deposit_last_balance              BIGINT DEFAULT 0,
-        _DAO.create_today_report()
+        _DAO.create_today_report(_Common.TID)
         _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
         _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(amount))
         _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))

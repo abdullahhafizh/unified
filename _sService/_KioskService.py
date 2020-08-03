@@ -930,7 +930,7 @@ def direct_store_transaction_data(payload):
 def update_summary_report(data):
     if _Helper.empty(data) is True:
         return False
-    _DAO.create_today_report()
+    _DAO.create_today_report(_Common.TID)
     bank = _Common.get_bank_name(data.get('provider', ''))
     if data['shop_type'] == 'shop':
         _DAO.update_today_summary_multikeys([bank+'_shop_freq', bank+'_card_trx_count'], 1)

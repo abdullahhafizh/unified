@@ -170,7 +170,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             # bni_deposit_refill_count              BIGINT DEFAULT 0,
             # bni_deposit_refill_amount             BIGINT DEFAULT 0,
             # bni_deposit_last_balance              BIGINT DEFAULT 0,
-            _DAO.create_today_report()
+            _DAO.create_today_report(_Common.TID)
             _DAO.update_today_summary_multikeys(['bni_deposit_refill_count'], 1)
             _DAO.update_today_summary_multikeys(['bni_deposit_refill_amount'], int(bni_topup_amount))
             _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(samLastBalance))
@@ -479,6 +479,7 @@ def check_card_balance():
         if bank_name == 'MANDIRI':
             if card_no in _Common.MANDIRI_CARD_BLOCKED_LIST:
                 output['able_topup'] = '1004'
+            LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
         elif bank_name == 'BNI':
             output['able_topup'] = result.split('|')[3].replace('#', '')
             # Drop Balance Check If Not Available For Topup
@@ -986,7 +987,7 @@ def ka_info_mandiri(slot=None, caller=''):
             _Common.MANDIRI_WALLET_2 = MANDIRI_DEPOSIT_BALANCE
             _Common.MANDIRI_ACTIVE = 2
         _Common.save_sam_config(bank='MANDIRI')
-        _DAO.create_today_report()
+        _DAO.create_today_report(_Common.TID)
         _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(_Common.MANDIRI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
@@ -1012,7 +1013,7 @@ def ka_info_bni(slot=1):
         if slot == 2:
             _Common.BNI_SAM_2_WALLET = BNI_DEPOSIT_BALANCE
             _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_2_WALLET
-        _DAO.create_today_report()
+        _DAO.create_today_report(_Common.TID)
         _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(_Common.BNI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:

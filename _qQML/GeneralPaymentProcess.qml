@@ -121,6 +121,40 @@ Base{
 
     }
 
+
+    function setAvailRefundOnly(channel){
+        popup_refund.customerServiceEnable = false;
+        popup_refund.divaEnable = false;
+        popup_refund.linkajaEnable = false;
+        popup_refund.ovoEnable = false;
+        popup_refund.gopayEnable = false;
+        popup_refund.shopeepayEnable = false;
+        popup_refund.danaEnable = false;
+        switch(channel){
+        case 'CS_ONLY':
+            popup_refund.customerServiceEnable = true;
+            break;
+        case 'WHATSAPP_ONLY':
+            popup_refund.divaEnable = true;
+            break;
+        case 'LINKAJA_ONLY':
+            popup_refund.linkajaEnable = true;
+            break;
+        case 'OVO_ONLY':
+            popup_refund.ovoEnable = true;
+            break;
+        case 'GOPAY_ONLY':
+            popup_refund.gopayEnable = true;
+            break;
+        case 'SHOPEE_ONLY':
+            popup_refund.shopeepayEnable = true;
+            break;
+        case 'DANA_ONLY':
+            popup_refund.danaEnable = true;
+            break;
+        }
+    }
+
     function get_refund_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_refund_result', now, r);
@@ -141,7 +175,6 @@ Base{
         if (refund.DANA == 'AVAILABLE') popup_refund.danaEnable = true;
         if (refund.DETAILS.length > 0) popup_refund.availableRefund = refund.DETAILS;
         if (refund.MIN_AMOUNT != undefined && parseInt(refund.MIN_AMOUNT) > 0) popup_refund.minRefundAmount = parseInt(refund.MIN_AMOUNT);
-
     }
 
     function reset_default(){
@@ -165,7 +198,7 @@ Base{
 
     function validate_release_refund(error){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        var messase_case_refund = 'Terjadi Kegagalan Transaksi, ';
+        var message_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
         abc.counter = 300;
         my_timer.restart();
@@ -180,7 +213,7 @@ Base{
             // If Cash Exceed Payment Detected
             refundMode = 'payment_cash_exceed';
             refundAmount = exceed;
-            messase_case_refund = 'Transaksi Sukses, Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], ';
+            message_case_refund = 'Transaksi Sukses, Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], ';
         }
         switch(error){
         case 'user_payment_timeout':
@@ -190,8 +223,15 @@ Base{
             refundAmount = receivedPayment;
             details.process_error = error;
             details.payment_received = receivedPayment.toString();
-            messase_case_refund = 'Terjadi Pembatalan Transaksi, ';
-            if (error=='user_payment_timeout') messase_case_refund = 'Waktu Transaksi Habis, ';
+            message_case_refund = 'Terjadi Pembatalan Transaksi, ';
+            if (error=='user_payment_timeout') message_case_refund = 'Waktu Transaksi Habis, ';
+            break;
+        case 'user_cancellation_debit':
+            // Doing Nothing In Cancellation Not Cash
+            refundAmount = receivedPayment;
+            details.process_error = error;
+            details.payment_received = receivedPayment.toString();
+            message_case_refund = 'Terjadi Pembatalan Transaksi, ';
             break;
         case 'cash_device_error':
             if (receivedPayment == 0) {
@@ -202,7 +242,7 @@ Base{
             details.payment_error = error;
             details.payment_received = receivedPayment.toString();
             refundAmount = receivedPayment;
-            messase_case_refund = 'Terjadi Kesalahan Mesin,';
+            message_case_refund = 'Terjadi Kesalahan Mesin,';
             break;
         case 'ppob_error':
         case 'card_eject_error':
@@ -212,10 +252,10 @@ Base{
             break;
         }
         press = '0';
-        popup_refund.open(messase_case_refund, refundAmount);
+        popup_refund.open(message_case_refund, refundAmount);
         // Set Waiting Time To IDLE
 //        my_timer.stop();
-        console.log('validate_release_refund', now, refundMode, refundAmount, messase_case_refund);
+        console.log('validate_release_refund', now, refundMode, refundAmount, message_case_refund);
 
     }
 
@@ -905,15 +945,18 @@ Base{
                 }
                 if (details.payment=='debit') {
                     console.log('[CANCELLATION] Debit Method Payment Detected..!')
-                    refundChannel = 'NONE';
-                    details.refund_channel = refundChannel;
-                    details.refund_status = 'N/A';
-                    details.refund_number = '';
-                    details.refund_amount = '0'
-                    details.timeout_case = 'user_cancellation'
-                    details.process_error = 'user_cancellation';
-                    details.payment_received = '0';
-                    release_print();
+//                    refundChannel = 'NONE';
+//                    details.refund_channel = refundChannel;
+//                    details.refund_status = 'N/A';
+//                    details.refund_number = '';
+//                    details.refund_amount = '0'
+//                    details.timeout_case = 'user_cancellation'
+//                    details.process_error = 'user_cancellation';
+//                    details.payment_received = '0';
+//                    release_print();
+//                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
+                    setAvailRefundOnly('CS_ONLY');
+                    validate_release_refund('user_cancellation_debit');
                     return;
                 }
                 my_timer.stop();
@@ -1149,6 +1192,12 @@ Base{
     //                        _SLOT.start_return_es_mei();
                         }
     //                    _SLOT.start_dis_accept_mei();
+                    }
+                    if (details.payment == 'debit'){
+                        console.log('[CANCELLATION] User Payment Debit', receivedPayment);
+                        setAvailRefundOnly('CS_ONLY');
+                        validate_release_refund('user_cancellation_debit');
+                        return;
                     }
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
