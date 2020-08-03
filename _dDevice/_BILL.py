@@ -162,14 +162,14 @@ def start_receive_note():
                 _Helper.dump(cash_in)
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
                 if cash_in in SMALL_NOTES_NOT_ALLOWED:
-                    sleep(.25)
+                    sleep(1.5)
                     param = BILL["REJECT"] + '|'
                     _Command.send_request(param=param, output=None)
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                     break
                 if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
-                    sleep(.25)
+                    sleep(1.5)
                     param = BILL["REJECT"] + '|'
                     _Command.send_request(param=param, output=None)
                     LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
@@ -216,7 +216,7 @@ def start_receive_note():
                                                                      'TARGET': DIRECT_PRICE_AMOUNT})))
                 # Call API To Force Update Into Server
                 _Common.upload_device_state('mei', _Common.BILL_ERROR)
-                sleep(1)
+                sleep(1.5)
                 init_bill()
                 break
             if attempt == MAX_EXECUTION_TIME:
