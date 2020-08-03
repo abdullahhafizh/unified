@@ -177,6 +177,7 @@ Base{
         console.log('get_balance', now, text);
         press = '0';
         popup_loading.close();
+        preload_check_card.close();
         standard_notif_view.buttonEnabled = true;
         var result = text.split('|')[1];
         if (result == 'ERROR'){
