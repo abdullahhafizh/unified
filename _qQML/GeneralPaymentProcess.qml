@@ -784,6 +784,8 @@ Base{
 //            totalPrice = getDenom + adminFee;
             var structId = details.shop_type + details.epoch.toString();
             _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
+            //Disable general back button for EDC Debit Payment
+            back_button.visible = false;
             return;
         }
 
@@ -1127,7 +1129,7 @@ Base{
             button_text: 'BATAL'
             modeReverse: true
             z:99
-            visible: frameWithButton
+            visible: frameWithButton && (details.payment != 'debit')
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
