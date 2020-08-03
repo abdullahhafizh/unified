@@ -342,7 +342,7 @@ Base{
             }
             //Define Data Card, Amount Button, Topup Availability
             if (ableTopupCode !="0000"){
-                switch_frame('source/smiley_down.png', 'Mohon Maaf, Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
                 return;
             }
             parse_cardData(cardData);
