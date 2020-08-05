@@ -7,7 +7,7 @@ Rectangle{
     property string button_text: 'ISI SALDO\nOFFLINE'
     property real globalOpacity: .50
     property int fontSize: 30
-    property bool blinkingMode: true
+    property bool blinkingMode: false
     property var forceColorButton: 'transparent'
     property int baseSize: 120
     width:baseSize
