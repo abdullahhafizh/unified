@@ -258,7 +258,7 @@ def stop_bill_receive_note():
 def stop_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
     IS_RECEIVING = False
-    sleep(2.5)
+    sleep(_Common.BILL_STORE_DELAY)
     try:
         param = BILL["STOP"] + '|'
         response, result = _Command.send_request(param=param, output=None)
@@ -270,7 +270,7 @@ def stop_receive_note():
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
-            LOGGER.warning(('stop_receive_note', str(response), str(result)))
+            LOGGER.warning((str(response), str(result)))
         COLLECTED_CASH = 0
         CASH_HISTORY = []
     except Exception as e:
@@ -294,7 +294,7 @@ def get_status_bill():
     try:
         param = BILL["STATUS"] + '|'
         response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-        LOGGER.debug(('get_status_bill', str(response), str(result)))
+        LOGGER.debug((str(response), str(result)))
         if response == 0 and result is not None:
             BILL_SIGNDLER.SIGNAL_BILL_STATUS.emit('STATUS_BILL|'+result)
         else:

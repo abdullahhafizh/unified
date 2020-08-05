@@ -63,6 +63,11 @@ def send_daily_summary():
     _QPROX.ka_info_bni()
     sleep(1)
     payload = _DAO.get_today_report(_Common.TID)
+    payload['last_stock_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    payload['last_stock_slot_1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
+    payload['last_stock_slot_2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
+    payload['last_stock_slot_3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
+    payload['last_stock_slot_4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
     # Move Into Each Daily Summary
     # payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
     # payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET

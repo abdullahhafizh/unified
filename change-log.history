@@ -1,3 +1,10 @@
+11.8.B-GLOBAL:
+- Daily Summary With Cash Status & Last Slot Stock,
+- Set Mandiri Card Blacklist URL,
+- Enable Delay in Storing Cash From Setting Parameter,
+- Add Input Refund No Confirmation,
+- ...
+
 11.8.A-GLOBAL:
 - Add Feature Mandiri Check Card Blocked List (Backend Not Ready),
 - Blinking Color & Size For Lanjut Button,

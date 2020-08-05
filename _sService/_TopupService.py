@@ -784,19 +784,19 @@ def refund_bri_pending(data):
     
 
 def get_mandiri_card_blocked_list():
-    if not _Common.MANDIRI_CHECK_CARD_BLOCKED or _Common.MANDIRI_CARD_BLOCKED_URL != '---':
+    if not _Common.MANDIRI_CHECK_CARD_BLOCKED or _Common.MANDIRI_CARD_BLOCKED_URL == '---':
         LOGGER.debug(('MANDIRI_CARD_BLOCKED_LIST DISABLED'))
         _Common.MANDIRI_CARD_BLOCKED_LIST = []
         return False
     try:
         status, response = _NetworkAccess.get_from_url(url=_Common.MANDIRI_CARD_BLOCKED_URL)
         if status == 200 and response['response']['code'] == 200:
-            if not _Helper.empty(response['data']['blocked']):
+            if not _Helper.empty(response['data']['blacklist']):
                 content = ''
-                for data in response['data']['blocked']:
+                for data in response['data']['blacklist']:
                     content += data + '\n'
                 _Common.store_to_temp_data('mandiri_card_blocked_list', content)
-                _Common.MANDIRI_CARD_BLOCKED_LIST = response['data']
+                _Common.MANDIRI_CARD_BLOCKED_LIST = response['data']['blacklist']
                 LOGGER.info(('MANDIRI_CARD_BLOCKED_LIST UPDATED'))
             return True
         else:

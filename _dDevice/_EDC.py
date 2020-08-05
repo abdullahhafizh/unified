@@ -966,7 +966,7 @@ def edc_mobile_do_payment(trx_id, amount):
         if status == 504:
             return False, None
         elif status == 200 or response['response']['code'] == 200:
-            return True, response['response']['data']
+            return True, response['data']
         elif status == 201 or response['response']['code'] == 201:
             result = False
             attempt = 0

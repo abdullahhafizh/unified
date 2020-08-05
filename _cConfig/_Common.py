@@ -730,7 +730,7 @@ def get_refunds():
             "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
             "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
             "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
-            "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
+            "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE", 
             "JAKONE": "AVAILABLE" if check_refund('jakone') is True else "NOT_AVAILABLE",
             "MIN_AMOUNT": int(_ConfigParser.get_set_value('GENERAL', 'min^refund^amount', '2500')),
             "DETAILS": REFUND_SETTING
@@ -741,7 +741,9 @@ FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA", "CUSTOMER-SERVICE"]
 
 MANDIRI_CARD_BLOCKED_LIST = load_from_temp_data('mandiri_card_blocked_list', 'text').split('\n')
 MANDIRI_CHECK_CARD_BLOCKED = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked', '0') == '1' else False
-MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked^url', '---')
+MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
+if '---' in MANDIRI_CARD_BLOCKED_URL:
+    _ConfigParser.set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
 
 DAILY_SYNC_SUMMARY_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^sync^summary^time', '23:55')
 

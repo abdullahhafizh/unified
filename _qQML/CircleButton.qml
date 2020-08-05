@@ -7,7 +7,7 @@ Rectangle{
     property string button_text: 'ISI SALDO\nOFFLINE'
     property real globalOpacity: .50
     property int fontSize: 30
-    property bool blinkingMode: false
+    property bool blinkingMode: true
     property var forceColorButton: 'transparent'
     property int baseSize: 120
     width:baseSize
@@ -16,6 +16,7 @@ Rectangle{
 
 
     Rectangle{
+        id: normalBox
         anchors.fill: parent
         color: (button_text=='BATAL') ? 'red' : 'white'
         opacity: (button_text=='BATAL') ? 1 : globalOpacity
@@ -24,6 +25,7 @@ Rectangle{
     }
 
     Rectangle{
+        id: modeNormalBox
         anchors.fill: parent
         color: forceColorButton
         radius: width/2
@@ -31,10 +33,23 @@ Rectangle{
     }
 
     Rectangle{
+        id: modeReverseBox
         visible: blinkingMode
         anchors.fill: parent
         color: (modeReverse) ? 'green' : 'white'
         radius: width/2
+    }
+
+    Rectangle{
+        id: extraBox
+        visible: false
+        width: 170
+        height: 170
+        color: (modeReverse) ? 'white' : 'black'
+        opacity: .8
+        radius: width/2
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 
     Text {
@@ -69,10 +84,10 @@ Rectangle{
             abc.counter += 1;
             if (abc.counter%2==0) {
                 modeReverse = true;
-                baseSize = 130;
+                extraBox.visible = false;
             } else {
-                baseSize = 120;
                 modeReverse = false;
+                if (blinkingMode) extraBox.visible = true;
             }
         }
     }

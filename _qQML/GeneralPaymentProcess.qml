@@ -45,6 +45,9 @@ Base{
     property var notifTitle: ''
     property var notifMessage: ''
 
+    //Handling Refund Confirmation
+    property bool useRefundConfirmation: true
+
     signal framingSignal(string str)
 
     idx_bg: 0
@@ -1373,6 +1376,12 @@ Base{
                         release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                         return;
                     }
+                    if (useRefundConfirmation) {
+                        popup_confirm.phoneNumber = popup_refund.numberInput;
+                        popup_confirm.channelName = refundData.name;
+                        popup_confirm.open()
+                        return;
+                    }
                     // If Not MANUAL(Cash)
                     customerPhone = popup_refund.numberInput;
                     details.refund_number = customerPhone;
@@ -1389,6 +1398,101 @@ Base{
                         break;
                     }
                      popup_refund.close();
+                    // proceedAble = true;
+                    // define_first_process();
+                }
+            }
+        }
+    }
+
+    PopupConfirmation{
+        id: popup_confirm
+        calledFrom: 'general_payment_process'
+//        handleButtonVisibility: next_button_input_number
+//        externalSetValue: refundData
+//        visible: true
+        z: 999
+
+        CircleButton{
+            id: cancel_button_confirmation
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'GANTI'
+            modeReverse: true
+            visible: parent.visible
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                    _SLOT.user_action_log('Press "GANTI" in Refund Confirmation');
+                    popup_confirm.close();
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_confirmation
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'SETUJU'
+            modeReverse: true
+            blinkingMode: true
+            visible: parent.visible
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                    if (press != '0') return;
+                    press = '1';
+                    if (refundData==undefined){
+                        console.log('MISSING REFUND_DATA', refundData);
+                        return;
+                    }
+                    console.log('REFUND_DATA', JSON.stringify(refundData));
+                    refundChannel = refundData.code;
+                    refundAmount = refundData.total;
+                    details.refund_channel = refundChannel;
+                    details.refund_details = refundData;
+//                    if (['MANUAL'].indexOf(refundChannel) > -1){
+//                        popup_refund.close();
+//                        details.refund_status = 'AVAILABLE';
+//                        details.refund_number = '';
+//                        details.refund_amount = refundAmount.toString();
+//                        var refundPayload = {
+//                            amount: details.refund_amount,
+//                            customer: 'NO_PHONE_NUMBER',
+//                            reff_no: details.shop_type + details.epoch.toString(),
+//                            remarks: details,
+//                            channel: refundChannel,
+//                            mode: 'not_having_phone_no_for_refund',
+//                            payment: details.payment
+//                        }
+//                        _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+//                        console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
+//                        release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
+//                        return;
+//                    }
+                    // If Not MANUAL(Cash)
+                    customerPhone = popup_refund.numberInput;
+                    details.refund_number = customerPhone;
+                    _SLOT.user_action_log('Press "SETUJU" In Refund Confirmation For ' + customerPhone + ' With Refund Channel ' + refundChannel);
+                    switch(refundMode){
+                    case 'payment_cash_exceed':
+                        release_print_with_refund(refundAmount.toString());
+                        break;
+                    case 'user_cancellation':
+                        release_print_with_refund(refundAmount.toString(), 'Terjadi Pembatalan Transaksi', 'Silakan Ambil Struk Sebagai Bukti');
+                        break;
+                    default:
+                        release_print_with_refund(refundAmount.toString(), 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
+                        break;
+                    }
+                    popup_refund.close();
+                    popup_confirm.close();
                     // proceedAble = true;
                     // define_first_process();
                 }
