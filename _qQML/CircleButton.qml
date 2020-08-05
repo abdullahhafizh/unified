@@ -43,10 +43,9 @@ Rectangle{
     Rectangle{
         id: extraBox
         visible: false
-        width: 170
-        height: 170
-        color: (modeReverse) ? 'white' : 'black'
-        opacity: .8
+        width: 165
+        height: 165
+        color: modeReverseBox.color
         radius: width/2
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter

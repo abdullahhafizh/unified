@@ -1427,6 +1427,7 @@ Base{
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     _SLOT.user_action_log('Press "GANTI" in Refund Confirmation');
+                    press = '0';
                     popup_confirm.close();
                 }
             }
