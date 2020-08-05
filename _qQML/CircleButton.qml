@@ -14,7 +14,6 @@ Rectangle{
     height:baseSize
     color:"transparent"
 
-
     Rectangle{
         id: normalBox
         anchors.fill: parent
@@ -23,6 +22,18 @@ Rectangle{
         radius: width/2
         visible: (!blinkingMode && forceColorButton == 'transparent')
     }
+
+    Rectangle{
+        id: extraBox
+        visible: false
+        width: 165
+        height: 165
+        color: normalBox.color
+        radius: width/2
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
 
     Rectangle{
         id: modeNormalBox
@@ -34,22 +45,12 @@ Rectangle{
 
     Rectangle{
         id: modeReverseBox
-        visible: blinkingMode
+        visible: (blinkingMode && button_text!='BATAL')
         anchors.fill: parent
         color: (modeReverse) ? 'green' : 'white'
         radius: width/2
     }
 
-    Rectangle{
-        id: extraBox
-        visible: false
-        width: 165
-        height: 165
-        color: modeReverseBox.color
-        radius: width/2
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-    }
 
     Text {
         anchors.fill: parent

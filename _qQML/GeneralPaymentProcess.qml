@@ -869,6 +869,7 @@ Base{
                     return;
                 }
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
+                if (popup_confirm.visible) popup_confirm.showDuration = abc.counter.toString();
 //                if (abc.counter == 7 && receivedPayment > 0 && !successTransaction){
                 // Assumming Only In-Completed Transaction Reach Here
                 if (abc.counter == 7){
@@ -1377,6 +1378,7 @@ Base{
                         return;
                     }
                     if (useRefundConfirmation) {
+                        press = '0';
                         popup_confirm.phoneNumber = popup_refund.numberInput;
                         popup_confirm.channelName = refundData.name;
                         popup_confirm.open()
