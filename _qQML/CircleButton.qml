@@ -36,7 +36,7 @@ Rectangle{
 
 
     Rectangle{
-        id: modeNormalBox
+        id: modeNormalColorBox
         anchors.fill: parent
         color: forceColorButton
         radius: width/2
