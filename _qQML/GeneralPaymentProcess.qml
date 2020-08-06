@@ -568,6 +568,8 @@ Base{
         console.log("bill_payment_result : ", now, r, receivedPayment, totalPrice, proceedAble);
         var grgFunction = r.split('|')[0]
         var grgResult = r.split('|')[1]
+        modeButtonPopup = undefined;
+        global_frame.modeAction = "";
         if (grgFunction == 'RECEIVE_BILL'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -1062,6 +1064,7 @@ Base{
             case 'RETRIGGER_BILL':
                 if (details.payment=='cash') _SLOT.start_bill_receive_note();
                 modeButtonPopup = undefined;
+                global_frame.modeAction = "";
                 break;
             }
         }

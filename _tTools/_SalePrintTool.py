@@ -956,12 +956,11 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'TOPUP', 0, 0, 'L')
         pdf.ln(tiny_space)
-        if not _Common.BANKS[0]['STATUS']:
-            pdf.set_font(USED_FONT, '', line_size)
-            qty_t10k = s['trx_top10k']
-            total_t10k = str(int(qty_t10k) * 10000)
-            pdf.cell(padding_left, 0,
-                     '- 10K : '+str(qty_t10k)+' x 10.000 = Rp. '+clean_number(total_t10k), 0, 0, 'L')
+        # if not _Common.BANKS[0]['STATUS']:
+        pdf.set_font(USED_FONT, '', line_size)
+        qty_t10k = s['trx_top10k']
+        total_t10k = str(int(qty_t10k) * 10000)
+        pdf.cell(padding_left, 0, '- 10K : '+str(qty_t10k)+' x 10.000 = Rp. '+clean_number(total_t10k), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         qty_t20k = s['trx_top20k']
@@ -980,13 +979,13 @@ def admin_print_global(struct_id, ext='.pdf'):
         total_t100k = str(int(qty_t100k) * 100000)
         pdf.cell(padding_left, 0,
                  '- 100K : '+str(qty_t100k)+' x 100.000 = Rp. '+clean_number(total_t100k), 0, 0, 'L')
-        if _Common.BANKS[0]['STATUS']:
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, '', line_size)
-            qty_t200k = s['trx_top200k']
-            total_t200k = str(int(qty_t200k) * 200000)
-            pdf.cell(padding_left, 0,
-                     '- 200K : '+str(qty_t200k)+' x 200.000 = Rp. '+clean_number(total_t200k), 0, 0, 'L')
+        # if not _Common.BANKS[0]['STATUS']:
+        #     pdf.ln(tiny_space)
+        #     pdf.set_font(USED_FONT, '', line_size)
+        #     qty_t200k = s['trx_top200k']
+        #     total_t200k = str(int(qty_t200k) * 200000)
+        #     pdf.cell(padding_left, 0,
+        #              '- 200K : '+str(qty_t200k)+' x 200.000 = Rp. '+clean_number(total_t200k), 0, 0, 'L')
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'CARD UPDATE', 0, 0, 'L') 
