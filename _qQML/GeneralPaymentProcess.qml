@@ -230,6 +230,7 @@ Base{
             if (error=='user_payment_timeout') message_case_refund = 'Waktu Transaksi Habis, ';
             break;
         case 'user_cancellation_debit':
+        case 'user_payment_timeout_debit':
             // Doing Nothing In Cancellation Not Cash
             refundAmount = receivedPayment;
             details.process_error = error;
@@ -875,15 +876,17 @@ Base{
                 if (abc.counter == 7){
                     if (details.payment=='debit') {
                         console.log('[TIMEOUT] Debit Method Payment Detected..!')
-                        refundChannel = 'NONE';
-                        details.refund_channel = refundChannel;
-                        details.refund_status = 'N/A';
-                        details.refund_number = '';
-                        details.refund_amount = '0';
-                        details.timeout_case = 'user_payment_timeout';
-                        details.process_error = 'user_payment_timeout';
-                        details.payment_received = '0';
-                        release_print();
+//                        refundChannel = 'NONE';
+//                        details.refund_channel = refundChannel;
+//                        details.refund_status = 'N/A';
+//                        details.refund_number = '';
+//                        details.refund_amount = '0';
+//                        details.timeout_case = 'user_payment_timeout';
+//                        details.process_error = 'user_payment_timeout';
+//                        details.payment_received = '0';
+//                        release_print();
+                        setAvailRefundOnly('CS_ONLY');
+                        validate_release_refund('user_payment_timeout_debit');
                         return;
                     }
                     if (details.payment=='cash') {
@@ -1000,6 +1003,8 @@ Base{
         frameWithButton = false;
         press = '0';
         global_frame.timerDuration = 5;
+        global_frame.modeAction = "";
+        if (modeButtonPopup == 'retrigger_bill') global_frame.modeAction = "RETRIGGER_BILL";
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
             var frame_timer = closeMode.split('|')[1];
@@ -1022,6 +1027,8 @@ Base{
         frameWithButton = true;
         press = '0';
         global_frame.withTimer = false;
+        global_frame.modeAction = "";
+        if (modeButtonPopup == 'retrigger_bill') global_frame.modeAction = "RETRIGGER_BILL";
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
             var frame_timer = closeMode.split('|')[1];
@@ -1047,10 +1054,10 @@ Base{
         var mode = s.split('|')[0];
         if (mode == 'SELECT_REFUND'){
             refundData = JSON.parse(s.split('|')[1])
-        } else if (mode == 'ANOTHER_ACTION'){
+        } else if (mode == 'CALLBACK_ACTION'){
             var action = s.split('|')[1];
             switch(action){
-            case 'RETRIGGER_GRG':
+            case 'RETRIGGER_BILL':
                 _SLOT.start_bill_receive_note();
                 break;
             }

@@ -21,6 +21,7 @@ Base{
     property int showDuration: 0
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
     property var specialHandler
+    property var modeAction: ""
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -220,7 +221,7 @@ Base{
         if (calledFrom != undefined){
             switch(calledFrom){
             case 'general_payment_process':
-                general_payment_process.framingSignal('ANOTHER_ACTION|RETRIGGER_GRG');
+                general_payment_process.framingSignal('CALLBACK_ACTION|'+modeAction);
                 break;
             }
         }
