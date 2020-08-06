@@ -261,10 +261,10 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
             #     ___output = ___resp.get('Result')
             return 0, ___output
         else:
-            _Common.xlog([___param, ___stat, ___resp])
+            _Common.xlog([___cmd, ___resp])
             return -1, json.dumps(___resp)
     else:
-        _Common.xlog([___param, ___stat, ___resp])
+        _Common.xlog([___cmd, ___resp])
         return -1, json.dumps(___resp)
 
 
