@@ -660,7 +660,8 @@ Base{
         popup_loading.close();
         if (['ERROR'].indexOf(edcResult) > -1){
             next_button_global.visible = false;
-            switch_frame_with_button('source/insert_card_dc.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain|5', true );
+            switch_frame_with_button('source/insert_card_dc.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'closeWindow|10', true );
+            abc.counter = 8;
             return;
         }
         if (edcResult=='SUCCESS') {
