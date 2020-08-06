@@ -1095,8 +1095,13 @@ def serialize_refund(refund):
     return REFUND_LEGEND.get(refund, refund)
 
 
+class KioskError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
 def exception_logger(e):
-    capture_exception(Exception(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+    capture_exception(KioskError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
 
 
 def xlog(e):
