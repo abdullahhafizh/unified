@@ -1060,7 +1060,8 @@ Base{
             var action = s.split('|')[1];
             switch(action){
             case 'RETRIGGER_BILL':
-                _SLOT.start_bill_receive_note();
+                if (details.payment=='cash') _SLOT.start_bill_receive_note();
+                modeButtonPopup = undefined;
                 break;
             }
         }
