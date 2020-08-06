@@ -1,5 +1,8 @@
 11.8.C-GLOBAL:
 - Add Online Debug to Sentry,
+- Change Debit Payment Method To Asyncronous,
+- Fix Cash Timeout Case,
+- Fix Cash Refund Channel,
 - ...
 
 11.8.B-GLOBAL:

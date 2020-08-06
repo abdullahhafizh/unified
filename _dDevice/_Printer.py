@@ -74,6 +74,7 @@ def default_print(path):
     except Exception as e:
         _Common.PRINTER_ERROR = 'FAILED_TO_EXECUTE_DEFAULT_PRINT'
         LOGGER.warning(('[ERROR] default print : ', e))
+        _Common.online_logger(['Printer', PDF_FILE], 'device')
         return '[ERROR] {}'.format(str(e))
 
 
@@ -96,6 +97,7 @@ def do_printout(path):
     except Exception as e:
         _Common.PRINTER_ERROR = 'FAILED_TO_EXECUTE_do_printout'
         LOGGER.warning(('[ERROR] default print : ', e))
+        _Common.online_logger(['Printer', PDF_FILE], 'device')
         return '[ERROR] {}'.format(str(e))
 
 

@@ -1095,19 +1095,43 @@ def serialize_refund(refund):
     return REFUND_LEGEND.get(refund, refund)
 
 
-class KioskError(Exception):
+class KioskServiceErrorResponse(Exception):
     def __init__(self, message):
         super().__init__(message)
 
 
-def exception_logger(e):
-    capture_exception(KioskError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+class KioskGeneralError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
 
 
-def xlog(e):
+class KioskConnectionError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
+class KioskDeviceError(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
+
+def exception_logger(e='', mode='service'):
+    if mode == 'service':
+        capture_exception(KioskServiceErrorResponse(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+    elif mode == 'connection':
+        capture_exception(KioskConnectionError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+    elif mode == 'device':
+        capture_exception(KioskDeviceError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+    else:
+        capture_exception(KioskGeneralError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+
+
+def online_logger(e, mode='general'):
     if type(e) == list:
         m = []
         for element in e:
             m.append(str(element))
         e = "-".join(m)
-    exception_logger(e)
+    if type(e) != str:
+        e = str(e)
+    exception_logger(e, mode)
