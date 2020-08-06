@@ -9,6 +9,8 @@ Base{
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
 
+    property var calledFrom
+
     property var textMain: 'Masukkan Kartu Debit dan PIN Anda Pada EDC'
     property var textSlave: 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar'
     property var imageSource: "source/insert_card_dc.png"
@@ -208,12 +210,20 @@ Base{
         console.log('open_frame', textMain, textSlave, imageSource, timerDuration, closeMode, withTimer);
         globalFrame.visible = true;
         showDuration = timerDuration;
-        if (withTimer) global_frame_timer.restart();
+        if (withTimer) global_frame_timer.start();
     }
 
     function close(){
         globalFrame.visible = false;
         if (withTimer) global_frame_timer.stop();
         specialHandler = undefined;
+        if (calledFrom != undefined){
+            switch(calledFrom){
+            case 'general_payment_process':
+                general_payment_process.framingSignal('ANOTHER_ACTION|RETRIGGER_GRG');
+                break;
+            }
+        }
     }
+
 }

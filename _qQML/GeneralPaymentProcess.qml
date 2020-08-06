@@ -659,7 +659,7 @@ Base{
         popup_loading.close();
         if (['ERROR'].indexOf(edcResult) > -1){
             next_button_global.visible = false;
-            switch_frame_with_button('source/insert_card_dc.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain', true );
+            switch_frame_with_button('source/insert_card_dc.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain|5', true );
             return;
         }
         if (edcResult=='SUCCESS') {
@@ -1047,6 +1047,13 @@ Base{
         var mode = s.split('|')[0];
         if (mode == 'SELECT_REFUND'){
             refundData = JSON.parse(s.split('|')[1])
+        } else if (mode == 'ANOTHER_ACTION'){
+            var action = s.split('|')[1];
+            switch(action){
+            case 'RETRIGGER_GRG':
+                _SLOT.start_bill_receive_note();
+                break;
+            }
         }
     }
 
@@ -1167,6 +1174,8 @@ Base{
 
     GlobalFrame{
         id: global_frame
+        calledFrom: 'general_payment_process'
+
         CircleButton{
             id: cancel_button_global
             anchors.left: parent.left

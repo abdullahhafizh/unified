@@ -34,7 +34,7 @@ from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
 import json
-
+import sentry_sdk
 
 print("""
     Kiosk Ver: """ + _Common.VERSION + """
@@ -794,6 +794,10 @@ def safely_shutdown(mode):
 
 def config_log():
     global LOGGER
+    # Sentry Initiation
+    sentry_sdk.init("https://5a3cd3a37b564a569a62a57092116f07@o420845.ingest.sentry.io/5379440",
+                    max_breadcrumbs=50,
+                    debug=True,)
     try:
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')

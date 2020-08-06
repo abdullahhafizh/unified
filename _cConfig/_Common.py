@@ -10,6 +10,7 @@ import os
 import sys
 import json
 import re
+from sentry_sdk import capture_exception
 
 
 LOGGER = logging.getLogger()
@@ -1092,3 +1093,16 @@ REFUND_LEGEND = {
 
 def serialize_refund(refund):
     return REFUND_LEGEND.get(refund, refund)
+
+
+def exception_logger(e):
+    capture_exception(Exception(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+
+
+def xlog(e):
+    if type(e) == list:
+        m = []
+        for element in e:
+            m.append(str(element))
+        e = "-".join(m)
+    exception_logger(e)
