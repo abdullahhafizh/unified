@@ -126,6 +126,7 @@ Base{
 
 
     function setAvailRefundOnly(channel){
+        popup_refund.manualEnable = false;
         popup_refund.customerServiceEnable = false;
         popup_refund.divaEnable = false;
         popup_refund.linkajaEnable = false;
