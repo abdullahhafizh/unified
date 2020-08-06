@@ -1115,15 +1115,20 @@ class KioskDeviceError(Exception):
         super().__init__(message)
 
 
+def serialize_error_message(m):
+    return " | ".join([TID, KIOSK_NAME, _Helper.time_string(), m])
+
+
 def exception_logger(e='', mode='service'):
+    e = serialize_error_message(e)
     if mode == 'service':
-        capture_exception(KioskServiceErrorResponse(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+        capture_exception(KioskServiceErrorResponse(e))
     elif mode == 'connection':
-        capture_exception(KioskConnectionError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+        capture_exception(KioskConnectionError(e))
     elif mode == 'device':
-        capture_exception(KioskDeviceError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+        capture_exception(KioskDeviceError(e))
     else:
-        capture_exception(KioskGeneralError(" | ".join([TID, KIOSK_NAME, _Helper.time_string(), e])))
+        capture_exception(KioskGeneralError(e))
 
 
 def online_logger(e, mode='general'):

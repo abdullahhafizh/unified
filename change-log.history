@@ -3,6 +3,7 @@
 - Change Debit Payment Method To Asyncronous,
 - Fix Cash Timeout Case,
 - Fix Cash Refund Channel,
+- Fix Denom Collection Report Print,
 - ...
 
 11.8.B-GLOBAL:
