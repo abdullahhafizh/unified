@@ -1,1 +1,0 @@
-var size = { "width": 1440, "height": 834};
