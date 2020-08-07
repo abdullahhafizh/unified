@@ -1,4 +1,4 @@
 @echo off
-start _update.bat
+start /b /w _update.bat
 python _app.py
 
