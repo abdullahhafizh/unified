@@ -795,7 +795,7 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
-    sentry_sdk.init("https://5a3cd3a37b564a569a62a57092116f07@o420845.ingest.sentry.io/5379440",
+    sentry_sdk.init("https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
                     max_breadcrumbs=30,
                     debug=True,)
     try:
