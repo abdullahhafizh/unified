@@ -200,7 +200,8 @@ def start_receive_note():
                 #     _Command.send_request(param=param, output=None)
             if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
                 _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                _Command.send_request(param=BILL["STOP"]+'|', output=None)
+                # _Command.send_request(param=BILL["STOP"]+'|', output=None)
+                _Command.send_request(param=BILL["REJECT"] + '|', output=None)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                 break
             if BILL["UNKNOWN_ITEM"] is not None and BILL["UNKNOWN_ITEM"] in _result:
