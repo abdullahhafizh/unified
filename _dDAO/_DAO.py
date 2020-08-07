@@ -527,8 +527,8 @@ def update_daily_summary(param):
     value
     report_date
     """
-    sql = " UPDATE DailySummary SET {key} = {key} + {value}  WHERE report_date = {report_date} ".format(key = param['key'], value = param['value'], report_date = param['report_date'])
-    return _Database.insert_update(sql=sql, parameter={}) 
+    sql = " UPDATE DailySummary SET {key} = {key} + {value}  WHERE report_date = :report_date ".format(key = param['key'], value = param['value'])
+    return _Database.insert_update(sql=sql, parameter=param) 
 
 
 def update_today_summary(key, value):
