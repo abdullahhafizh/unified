@@ -213,7 +213,7 @@ Base{
             showDuration -= 1;
             if (showDuration < 30) textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
             if (showDuration <= 7) {
-                if (showDuration == 7) cancel('TIMER_TIMEOUT');
+//                if (showDuration == 7) cancel('TIMER_TIMEOUT');
                 imageSource = 'source/smiley_down.png';
                 textSlave = 'Waktu Pembayaran Anda Telah Habis';
             }

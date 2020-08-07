@@ -230,6 +230,15 @@ Base{
             message_case_refund = 'Terjadi Pembatalan Transaksi, ';
             if (error=='user_payment_timeout') message_case_refund = 'Waktu Transaksi Habis, ';
             break;
+        case 'user_cancellation_qr':
+        case 'user_payment_timeout_qr':
+            // Doing Nothing In Cancellation Not Cash
+            refundAmount = receivedPayment;
+            details.process_error = error;
+            details.payment_received = receivedPayment.toString();
+            message_case_refund = 'Terjadi Pembatalan/Kegagalan Transaksi, ';
+            if (error=='user_payment_timeout_qr') message_case_refund = 'Waktu Transaksi Habis, ';
+            break;
         case 'user_cancellation_debit':
         case 'user_payment_timeout_debit':
             // Doing Nothing In Cancellation Not Cash
@@ -356,7 +365,7 @@ Base{
         if (['TIMEOUT'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
             setAvailRefundOnly('CS_ONLY');
-            validate_release_refund('user_payment_timeout');
+            validate_release_refund('user_payment_timeout_qr');
             return;
         }
         if (result=='SUCCESS'){
@@ -1074,7 +1083,7 @@ Base{
                 break;
             case 'PRINT_QR_TIMEOUT_RECEIPT':
                 setAvailRefundOnly('CS_ONLY');
-                validate_release_refund('user_payment_timeout');
+                validate_release_refund('user_payment_timeout_qr');
                 break;
             }
         }
