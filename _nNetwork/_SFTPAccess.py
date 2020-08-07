@@ -63,6 +63,7 @@ def init_sftp():
         LOGGER.debug(('TRUE', HOST_BID, SFTP_SERVER, SFTP_PORT))
     except Exception as e:
         LOGGER.warning((str(e)))
+        _Common.online_logger(e, 'connection')
         if SFTP is not None:
             SFTP.close()
         SFTP = None
@@ -107,6 +108,7 @@ def send_file(filename, local_path, remote_path=None):
         }
     except Exception as e:
         LOGGER.warning((str(e)))
+        _Common.online_logger([filename, local_path, remote_path], 'connection')
         result = False
     finally:
         if SFTP is not None:
@@ -139,6 +141,7 @@ def get_file(file, remote_path=None):
             result = True
     except Exception as e:
         LOGGER.warning((str(e)))
+        _Common.online_logger([file, remote_path], 'connection')
     finally:
         if SFTP is not None:
             SFTP.close()

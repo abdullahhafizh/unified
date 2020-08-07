@@ -180,10 +180,12 @@ def get_response_settlement(filename, remote_path, protocol='SFTP'):
 
 MANDIRI_LAST_TIMESTAMP = ''
 MANDIRI_LAST_FILENAME = ''
+LAST_MANDIRI_C2C_SETTLEMENT_DATA = _Common.load_from_temp_data('last-mandiri-c2c-settlement', 'json')
+LAST_BNI_SETTLEMENT_DATA = _Common.load_from_temp_data('last-bni-settlement', 'json')
 
 
 def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=False):
-    global GLOBAL_SETTLEMENT, MANDIRI_LAST_TIMESTAMP, MANDIRI_LAST_FILENAME
+    global GLOBAL_SETTLEMENT, MANDIRI_LAST_TIMESTAMP, MANDIRI_LAST_FILENAME, LAST_MANDIRI_C2C_SETTLEMENT_DATA, LAST_BNI_SETTLEMENT_DATA
     if bank == 'BNI' and mode == 'TOPUP':
         try:
             LOGGER.info(('Create Settlement File', bank, mode))
@@ -192,6 +194,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA="N/A" AND cardNo LIKE "7546%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0:
+                if not _Helper.empty(LAST_BNI_SETTLEMENT_DATA):
+                    LOGGER.info(('Use Previous BNI Settlement', bank, mode, str(LAST_BNI_SETTLEMENT_DATA)))
+                    return LAST_BNI_SETTLEMENT_DATA
                 LOGGER.warning(('No Data For Settlement', str(settlements)))
                 return False
             _filename = 'TOPMDD_'+_Common.MID_BNI + _Common.TID_BNI + datetime.now().strftime('%Y%m%d%H%M%S')+'.TXT'
@@ -260,6 +265,8 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             for settle in GLOBAL_SETTLEMENT:
                 settle['key'] = settle['rid']
                 _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
+            LAST_BNI_SETTLEMENT_DATA = _result
+            _Common.store_to_temp_data('last-bni-settlement', json.dumps(LAST_BNI_SETTLEMENT_DATA))
             return _result
         except Exception as e:
             LOGGER.warning((bank, mode, str(e)))
@@ -408,6 +415,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA <> "N/A" AND cardNo LIKE "6%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0 and force is False:
+                if not _Helper.empty(LAST_MANDIRI_C2C_SETTLEMENT_DATA):
+                    LOGGER.info(('Use Previous Mandiri C2C Settlement', bank, mode, str(LAST_MANDIRI_C2C_SETTLEMENT_DATA)))
+                    return LAST_MANDIRI_C2C_SETTLEMENT_DATA
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0001'
@@ -470,6 +480,8 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             if __new_seq == 100:
                 __new_seq = 1
             _ConfigParser.set_value_temp('TEMPORARY', _Common.C2C_MACTROS, str(__new_seq))
+            LAST_MANDIRI_C2C_SETTLEMENT_DATA = _result
+            _Common.store_to_temp_data('last-mandiri-c2c-settlement', json.dumps(LAST_MANDIRI_C2C_SETTLEMENT_DATA))
             return _result
         except Exception as e:
             LOGGER.warning((bank, mode, str(e)))
@@ -583,7 +595,11 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _param = create_settlement_file(bank=bank)
         if _param is False:
             return
-        _push = upload_settlement_file(_param['filename'], _param['path_file'])
+        while True:
+            _push = upload_settlement_file(_param['filename'], _param['path_file'])
+            if _push is not False:
+                break
+            sleep(3)
         if _push is False:
             return
         _param['host'] = _push['host']
@@ -674,12 +690,16 @@ def do_prepaid_settlement(bank='BNI', force=False):
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
         _file_ok = _param_sett['filename'].replace('.txt', '.ok')
-        _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
-                                                    local_path=_param_sett['path_file'],
-                                                    remote_path=_Common.SFTP_C2C['path_settlement'])
-        if _push_file_sett is False:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
-            return
+        while True:
+            _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
+                                                        local_path=_param_sett['path_file'],
+                                                        remote_path=_Common.SFTP_C2C['path_settlement'])
+            if _push_file_sett is not False:
+                break
+            sleep(3)
+        # if _push_file_sett is False:
+        #     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
+        #     return
         _param_sett['host'] = _push_file_sett['host']
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']

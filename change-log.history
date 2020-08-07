@@ -4,6 +4,10 @@
 - Fix Cash Timeout Case,
 - Fix Cash Refund Channel,
 - Fix Denom Collection Report Print,
+- Auto Retry Last Mandiri Settlement,
+- Auto Retry Last BNI Settlement,
+- Debit Timeout With Receipt,
+- QR Timeout With Receipt,
 - ...
 
 11.8.B-GLOBAL:

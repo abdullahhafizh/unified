@@ -200,6 +200,7 @@ def empty(s):
     else:
         return False
 
+
 def strtolist(string=None, length=2):
     if string is None:
         return []

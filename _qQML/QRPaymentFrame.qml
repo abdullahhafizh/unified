@@ -19,7 +19,10 @@ Base{
     property int waitAfterSuccess: 10
     property var qr_payment_id
     property int showDuration: timerDuration
-    property var closeMode: 'backToMain' // 'closeWindow', 'backToMain', 'backToPrev'
+    property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
+
+    property var calledFrom
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -247,12 +250,20 @@ Base{
     }
 
     function close(){
+        if (!successPayment && calledFrom!=undefined) {
+            switch(calledFrom){
+            case 'general_payment_process':
+                general_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
+                break;
+            }
+        }
         qr_payment_frame.visible = false;
         successPayment = false;
         show_timer.stop();
     }
 
     function success(waitTime){
+        closeMode = 'backToMain' // 'closeWindow', 'backToMain', 'backToPrev'
         if (waitTime==undefined) waitTime = waitAfterSuccess;
         successPayment = true;
         delay(waitTime*1000, function(){

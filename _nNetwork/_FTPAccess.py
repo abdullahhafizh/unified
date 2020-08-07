@@ -42,6 +42,7 @@ def init_ftp():
         FTP = ftplib.FTP(FTP_SERVER, FTP_USER, FTP_PASS)
         LOGGER.debug(('init_ftp', 'TRUE'))
     except Exception as e:
+        _Common.online_logger(e, 'connection')
         LOGGER.warning(('init_ftp', str(e)))
         if FTP is not None:
             FTP.quit()
@@ -68,6 +69,7 @@ def send_file(local_path, remote_path=None):
         }
     except Exception as e:
         LOGGER.warning((str(e)))
+        _Common.online_logger([local_path, remote_path], 'connection')
         return False
     finally:
         if FTP is not None:
@@ -114,6 +116,7 @@ def get_file(file, remote_path=None):
             sleep(DELAY_TIME)
     except Exception as e:
         LOGGER.warning((str(e)))
+        _Common.online_logger([file, remote_path], 'connection')
         return False
     finally:
         if FTP is not None:

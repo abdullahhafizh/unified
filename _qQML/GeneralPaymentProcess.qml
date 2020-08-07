@@ -236,7 +236,7 @@ Base{
             refundAmount = receivedPayment;
             details.process_error = error;
             details.payment_received = receivedPayment.toString();
-            message_case_refund = 'Terjadi Pembatalan Transaksi, ';
+            message_case_refund = 'Terjadi Pembatalan/Kegagalan Transaksi, ';
             break;
         case 'cash_device_error':
             if (receivedPayment == 0) {
@@ -353,6 +353,12 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
             return;
         }
+        if (['TIMEOUT'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            setAvailRefundOnly('CS_ONLY');
+            validate_release_refund('user_payment_timeout');
+            return;
+        }
         if (result=='SUCCESS'){
             var info = JSON.parse(r.split('|')[3]);
             now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -380,7 +386,7 @@ Base{
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Waktu Proses Pembuatan QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Waktu Proses Pembuatan QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|5', true )
             return;
         }
         popup_loading.close();
@@ -1066,6 +1072,10 @@ Base{
                 modeButtonPopup = undefined;
                 global_frame.modeAction = "";
                 break;
+            case 'PRINT_QR_TIMEOUT_RECEIPT':
+                setAvailRefundOnly('CS_ONLY');
+                validate_release_refund('user_payment_timeout');
+                break;
             }
         }
     }
@@ -1288,6 +1298,8 @@ Base{
 
     QRPaymentFrame{
         id: qr_payment_frame
+        calledFrom: 'general_payment_process'
+
         CircleButton{
             id: cancel_button_qr
             anchors.left: parent.left
