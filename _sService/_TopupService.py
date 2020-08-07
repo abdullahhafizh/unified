@@ -76,9 +76,11 @@ def do_topup_deposit_bni(slot=1, force=False):
         _QPROX.ka_info_bni(slot=_Common.BNI_ACTIVE)
         if _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD:
             LOGGER.warning((slot, _Common.BNI_ACTIVE_WALLET, _Common.BNI_THRESHOLD))
+            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_DEPOSIT_STILL_SUFFICIENT')
             return 'DEPOSIT_STILL_SUFFICIENT'
         if force is False and _Common.ALLOW_DO_TOPUP is False:
             LOGGER.warning((slot, _Common.ALLOW_DO_TOPUP))
+            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_TOPUP_NOT_ALLOWED')
             return 'TOPUP_NOT_ALLOWED'
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
