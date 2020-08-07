@@ -222,11 +222,7 @@ def start_receive_note():
                 break
             if attempt == MAX_EXECUTION_TIME:
                 LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
-                if _Common.BILL_TYPE == 'NV':
-                    _Command.send_request(param=BILL["STOP"]+'|', output=None)
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
-                else:
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                 break
             if IS_RECEIVING is False:
                 LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
