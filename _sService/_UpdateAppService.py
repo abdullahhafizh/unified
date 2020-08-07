@@ -61,7 +61,7 @@ def checkout_branch_by_app_env():
 def pull_branch():
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|PULLING_BRANCH_'+ORIGIN.upper())
     # command = 'git pull -f origin '+ORIGIN
-    command = 'start _update.bat'
+    command = 'start \b \w _update.bat'
     return _Helper.execute_console(command)
 
 
