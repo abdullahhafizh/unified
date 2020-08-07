@@ -251,7 +251,7 @@ Base{
             if (receivedPayment == 0) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
-                abc.counter = 1;
+                abc.counter = 5;
                 return;
             }
             details.payment_error = error;
