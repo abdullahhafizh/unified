@@ -69,7 +69,7 @@ BILL = {}
 SMALL_NOTES_NOT_ALLOWED = _Common.BILL_RESTRICTED_NOTES.split('|')
 OPEN_STATUS = False
 CASH_HISTORY = []
-MAX_EXECUTION_TIME = 150
+MAX_EXECUTION_TIME = 90
 IS_RECEIVING = False
 
 
@@ -222,7 +222,7 @@ def start_receive_note():
                 break
             if attempt == MAX_EXECUTION_TIME:
                 LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                 break
             if IS_RECEIVING is False:
                 LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
