@@ -571,7 +571,7 @@ def update_summary_multikeys(keys=[], value=0, report_date=None):
         else:
             sql += ' '.join([',', key, '=', key, '+', str(value)])
     sql += " WHERE report_date = :report_date "
-    return _Database.insert_update(sql=sql, parameter=param)
+    return _Database.insert_update(sql=sql, parameter=param, log=True)
 
 
 def get_today_report(tid):
