@@ -153,6 +153,10 @@ def start_receive_note():
         attempt = 0
         IS_RECEIVING = True
         while True:
+            # Handle NV IS_RECEIVING Flagging
+            if _Common.BILL_TYPE == 'NV' and IS_RECEIVING is False:
+                LOGGER.warning(('[BREAK] start_receive_note for BILL_TYPE NV', str(IS_RECEIVING)))
+                break
             attempt += 1
             param = BILL["RECEIVE"] + '|'
             _response, _result = _Command.send_request(param=param, output=None)
@@ -255,7 +259,7 @@ def is_exceed_payment(target, value_in, current_value):
 
 def stop_bill_receive_note():
     # log_book_cash('', get_collected_cash())
-    sleep(1)
+    # sleep(1)
     _Helper.get_thread().apply_async(stop_receive_note)
 
 
@@ -281,6 +285,8 @@ def stop_receive_note():
         _Common.BILL_ERROR = 'FAILED_STOP_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
         LOGGER.warning(e)
+    # finally:
+        # IS_RECEIVING = True
     # finally:
     #     if BILL_TYPE == 'NV':
     #         param = BILL["SET"] + '|'
