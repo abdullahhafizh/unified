@@ -64,7 +64,7 @@ MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
-BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '3'))
+BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')

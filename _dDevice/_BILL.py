@@ -35,7 +35,9 @@ GRG = {
     "KEY_RECEIVED": "Received=IDR",
     "CODE_JAM": "14439",
     "TIMEOUT_BAD_NOTES": "acDevReturn:|acReserve:|",
-    "UNKNOWN_ITEM": "Received=CNY|Denomination=0|"
+    "UNKNOWN_ITEM": "Received=CNY|Denomination=0|",
+    "LOOP_DELAY": 1,
+    "KEY_STORED": None
 }
 
 NV = {
@@ -51,7 +53,9 @@ NV = {
     # TODO Must Define Below Property
     "CODE_JAM": None,
     "TIMEOUT_BAD_NOTES": None,
-    "UNKNOWN_ITEM": None 
+    "UNKNOWN_ITEM": None ,
+    "LOOP_DELAY": 2,
+    "KEY_STORED": 'Note Stacked'
 }
 
 
@@ -184,13 +188,20 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 # Call Store Function Here
+                while True:
+                    _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                    if _Helper.empty(BILL["KEY_STORED"]):
+                        break
+                    elif BILL["KEY_STORED"] in _result_store:
+                        break
+                    else:
+                        # sleep(1)
+                        # Handling Slow Response of BILL When Storing Notes
+                        sleep(_Common.BILL_STORE_DELAY)
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
-                _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                # Handling Slow Response of BILL When Storing Notes
-                sleep(_Common.BILL_STORE_DELAY)
                 LOGGER.info(('Cash Status:', json.dumps({
                     'ADD': cash_in,
                     'COLLECTED': COLLECTED_CASH,
@@ -232,10 +243,7 @@ def start_receive_note():
                 LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                 break
-            if _Common.BILL_TYPE == 'NV':
-                sleep(2)
-            else:
-                sleep(1)
+            sleep(BILL["LOOP_DELAY"])
     except Exception as e:
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
         if 'Invalid argument' in e:
