@@ -198,7 +198,7 @@ def start_receive_note():
                     else:
                         sleep(1)
                 if BILL_TYPE != 'GRG':
-                    # Handling Slow Response of BILL When Storing Notes
+                    # Handling Slow Response of GRG When Storing Notes
                     sleep(_Common.BILL_STORE_DELAY)
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
