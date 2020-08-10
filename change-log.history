@@ -1,3 +1,7 @@
+11.8.D-GLOBAL:
+- Enhance NV Storing Method,
+- ...
+
 11.8.C-GLOBAL:
 - Add Online Debug to Sentry,
 - Change Debit Payment Method To Asyncronous,
