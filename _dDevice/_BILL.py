@@ -190,10 +190,10 @@ def start_receive_note():
                 # Call Store Function Here
                 while True:
                     _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                    LOGGER.debug((BILL["KEY_STORED"], _, _result_store))
+                    # LOGGER.debug((BILL["KEY_STORED"], _, _result_store))
                     if _Helper.empty(BILL["KEY_STORED"]):
                         break
-                    elif BILL["KEY_STORED"] in _result_store:
+                    elif BILL["KEY_STORED"].lower() in _result_store.lower():
                         break
                     else:
                         sleep(1)
