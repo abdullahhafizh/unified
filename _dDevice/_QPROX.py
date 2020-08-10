@@ -181,6 +181,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             _Common.TRIGGER_MANUAL_TOPUP = True
             return output
         else:
+            _Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
             _Common.NFC_ERROR = 'SEND_CRYPTO_BNI_ERROR_SLOT_'+str(slot)
             return False
     else:

@@ -919,22 +919,7 @@ def check_path(new):
 
 
 def set_tvc_player(command):
-    if command == "":
-        return
-    elif command == "STOP":
-        os.system(sys.path[0] + '/_pPlayer/stop.bat')
-        print('pyt: Execute Command --> /_pPlayer/stop.bat')
-    elif command == "START":
-        if not process_exist("TVCPlayer.scr"):
-            print('pyt: Execute Command --> /_pPlayer/start.bat')
-            os.system(sys.path[0] + '/_pPlayer/start.bat')
-            while True:
-                sleep(60)
-                print('pyt: Auto Execute Command --> /_pPlayer/stop.bat')
-                os.system(sys.path[0] + '/_pPlayer/stop.bat')
-                # sleep(3000)
-        else:
-            pass
+    pass
 
 
 def set_ext_keyboard(command):
@@ -1081,13 +1066,13 @@ if __name__ == '__main__':
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
     print("pyt: Table Adjustment...")
-    _KioskService.direct_alter_table([
-        "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
-        "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
-        "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
-        "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
-        ])
-    sleep(1)
+    # _KioskService.direct_alter_table([
+    #     "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
+    #     "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
+    #     "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
+    #     "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
+    #     ])
+    # sleep(1)
     _KioskService.alter_table('_DailySummary.sql')
     sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
