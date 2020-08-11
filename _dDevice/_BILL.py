@@ -37,7 +37,10 @@ GRG = {
     "TIMEOUT_BAD_NOTES": "acDevReturn:|acReserve:|",
     "UNKNOWN_ITEM": "Received=CNY|Denomination=0|",
     "LOOP_DELAY": 1,
-    "KEY_STORED": None
+    "KEY_STORED": None,
+    "KEY_STORED_1": None,
+    "MAX_STORE_LOOP": None
+
 }
 
 NV = {
@@ -55,7 +58,10 @@ NV = {
     "TIMEOUT_BAD_NOTES": None,
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
-    "KEY_STORED": 'Note Stacked'
+    "KEY_STORED": 'Note Stacked',
+    "KEY_STORED_1": 'Stacking note',
+    "MAX_STORE_LOOP": 10
+
 }
 
 
@@ -188,13 +194,22 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 # Call Store Function Here
+                store_attempt = 0;
                 while True:
+                    store_attempt += 1
                     _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
                     # LOGGER.debug((BILL["KEY_STORED"], _, _result_store))
                     if _Helper.empty(BILL["KEY_STORED"]):
                         break
                     elif BILL["KEY_STORED"].lower() in _result_store.lower():
                         break
+                    elif BILL["KEY_STORED_1"].lower() in _result_store.lower():
+                        break
+                    elif _Helper.empty(BILL["MAX_STORE_LOOP"]) is False:
+                        if store_attempt >= BILL["MAX_STORE_LOOP"]:
+                            break
+                    elif IS_RECEIVING is False:
+                        break 
                     else:
                         sleep(1)
                 if BILL_TYPE != 'GRG':
