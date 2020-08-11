@@ -166,7 +166,7 @@ ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 
 # Hardcoded Config For Bank Feature
 ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT']
-ALLOWED_BANK_CHECK_CARD_LOG = ['BRI']
+ALLOWED_BANK_CHECK_CARD_LOG = ['BRI', 'MANDIRI', 'BNI']
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 
@@ -678,6 +678,22 @@ BRI_LOG_LEGEND = {
     '5F': 'REACTIVATE', #Reaktivasi
     'BE': 'No More Logs',
     'AF': 'Found Next Log' 
+}
+
+MANDIRI_LOG_LEGEND = {
+    '1200': 'PURCHASE',
+    '1500': 'TOPUP',
+    '1000': 'TOPUP',
+    '1100': 'TOPUP',
+}
+# Actual From Mandiri
+# 0100 -> TOPUP
+# 0110 -> TOPUP
+# 0150 -> TOPUP
+# 0120 -> SALE
+
+BNI_LOG_LEGEND = {
+    '01': 'PURCHASE',
 }
 
 

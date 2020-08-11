@@ -75,8 +75,36 @@ QPROX = {
     "BALANCE_C2C": "033",
     "UPDATE_BALANCE_C2C_MANDIRI": "035", #Update Balance Online Mandiri For C2C Deposit Slot, TID, MID, Token
     "RAW_APDU": "034", #Send Raw APDU TO Target (255-SAM, 1/2/3/4-Slot)
+    "CARD_HISTORY_MANDIRI": "039", #MANDIRI CARD LOG
+    "CARD_HISTORY_BNI": "040", #BNI CARD LOG
 
 }
+
+
+# MANDIRI OLD = NO | DATE | TID | COUNTER | TYPE | AMOUNT | BALANCE
+# 0|200520153716|29040100|1295|1500|37450|166139
+# #1|230220142147|01234567|1290|1200|1|128693
+# #2|230220142532|01234567|1291|1200|1|128692
+# #3|230220144318|01234567|1292|1200|1|128691
+# #4|230220145239|01234567|1293|1200|1|128690
+# #5|230220145302|01234567|1294|1200|1|128689
+# #6|200520153716|29040100|1295|1500|37450|166139
+# #7|230220135302|01234567|1286|1200|1|128697
+# #8|230220135617|01234567|1287|1200|1|128696
+# #9|230220141850|01234567|1288|1200|1|128695
+# #10|230220142110|01234567|1289|1200|1|128694
+# MANDIRI NEW = NO | DATE | TID | COUNTER | TYPE | AMOUNT | BALANCE 
+# 0|050320003056|29010100|238|1000|20|189613
+# #1|061219134951|20010200|11|1200|1|189570
+# #2|171219111857|29010100|497|1000|1|189574
+# #3|171219233451|29010100|526|1000|1|189579
+# #4|290120000235|29010100|869|1000|1|189592
+# BNI =  NO | TIPE | AMOUNT |DATE
+# 0|01|1|20200205230607
+# #1|01|1|20200203012345
+# #2|01|1|20200203012244
+# #3|01|1|20200203012150
+# #4|01|1|20200203011458
 
 # SERVICE MISSING COMMAND =================
 # SEND APDU WITH POINTER
@@ -1219,6 +1247,32 @@ def get_card_history(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
+    elif bank == 'MANDIRI':    
+        param = QPROX['CARD_HISTORY_MANDIRI'] + '|'
+        try:
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                output = parse_card_history(bank, result)
+                _Common.LAST_CARD_LOG_HISTORY = output
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
+            else:
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|MANDIRI_ERROR')
+        except Exception as e:
+            LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|MANDIRI_ERROR')
+    elif bank == 'BNI':   
+        param = QPROX['CARD_HISTORY_BNI'] + '|'
+        try:
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                output = parse_card_history(bank, result)
+                _Common.LAST_CARD_LOG_HISTORY = output
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
+            else:
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BNI_ERROR')
+        except Exception as e:
+            LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BNI_ERROR')
     else:
         QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|ERROR')
         return
@@ -1247,10 +1301,42 @@ def parse_card_history(bank, raw):
             })
         return card_history
     elif bank == 'MANDIRI':
-        # TODO Finalise Mandiri Log Parse
+        # NO | DATE | TID | COUNTER | TYPE | AMOUNT | BALANCE
+        # 0|200520153716|29040100|1295|1500|37450|166139#1|230220142147|01234567|1290|1200|1|128693#2|230220142532|01234567|1291|1200|1|128692#3|230220144318|01234567|1292|1200|1|128691\#4|230220145239|01234567|1293|1200|1|128690
+        # #5|230220145302|01234567|1294|1200|1|128689#6|200520153716|29040100|1295|1500|37450|166139#7|230220135302|01234567|1286|1200|1|128697
+        # #8|230220135617|01234567|1287|1200|1|128696#9|230220141850|01234567|1288|1200|1|128695#10|230220142110|01234567|1289|1200|1|128694
+        histories = raw.split('#')
+        for history in histories:
+            history = history.replace(' ', '')
+            if _Helper.empty(history) is True:
+                continue
+            row = history.split('|')
+            card_history.append({
+                'date': datetime.strptime(row[1][:6], '%y%m%d').strftime('%Y-%m-%d'),
+                'time': ':'.join(_Helper.strtolist(row[1][6:])),
+                'type': _Common.MANDIRI_LOG_LEGEND.get(row[4], ''),
+                'amount': row[5],
+                'prev_balance': str(int(row[6])-1),
+                'last_balance': row[6]
+            })
         return card_history
     elif bank == 'BNI':
-        # TODO Finalise BNI Log Parse
+        # BNI =  NO | TIPE | AMOUNT |DATE
+        # 0|01|1|20200205230607#1|01|1|20200203012345#2|01|1|20200203012244#3|01|1|20200203012150#4|01|1|20200203011458
+        histories = raw.split('#')
+        for history in histories:
+            history = history.replace(' ', '')
+            if _Helper.empty(history) is True:
+                continue
+            row = history.split('|')
+            card_history.append({
+                'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d'),
+                'time': ':'.join(_Helper.strtolist(row[3][8:])),
+                'type': _Common.BNI_LOG_LEGEND.get(row[1], ''),
+                'amount': row[2],
+                'prev_balance': '',
+                'last_balance': ''
+            })
         return card_history
     else:
         return card_history
