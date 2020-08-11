@@ -70,6 +70,18 @@ CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
 CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
 
+CD_PORT1_TYPE = _ConfigParser.get_set_value('CD', 'port1^type', 'OLD')
+CD_PORT2_TYPE = _ConfigParser.get_set_value('CD', 'port2^type', 'OLD')
+CD_PORT3_TYPE = _ConfigParser.get_set_value('CD', 'port3^type', 'OLD')
+
+CD_NEW_TYPE = {
+    CD_PORT1: True if CD_PORT1_TYPE == 'NEW' else False,
+    CD_PORT2: True if CD_PORT2_TYPE == 'NEW' else False,
+    CD_PORT3: True if CD_PORT3_TYPE == 'NEW' else False
+}
+
+LOGGER.info((CD_NEW_TYPE))
+
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 

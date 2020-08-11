@@ -107,7 +107,32 @@ def get_multiple_eject_status():
 
 
 def start_multiple_eject(attempt, multiply):
-    _Helper.get_thread().apply_async(simply_eject, (attempt, multiply,))
+    port = CD_PORT_LIST.get(attempt)
+    if _Common.CD_NEW_TYPE.get(port, False) is True:
+        _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
+    else:
+        _Helper.get_thread().apply_async(simply_eject, (attempt, multiply,))
+
+
+
+def new_cd_eject(port, attempt):
+    try:
+        command = CD_EXEC + " hold " + port
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+        output = output[0].split(";")
+        response = json.loads(output[0])
+        LOGGER.debug((command, 'output', output, 'response', response))
+        if response.get('ec') is not None:
+            if response['ec'] > -1:
+                CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+            else:
+                set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'new_cd_eject')
+        else:
+            set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'new_cd_eject')
+    except Exception as e:
+        set_false_output(attempt, str(e)+'|'+attempt, 'new_cd_eject')
+
 
 
 def simply_eject(attempt, multiply):
@@ -131,7 +156,7 @@ def simply_eject(attempt, multiply):
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
         response = json.loads(output[0])
-        LOGGER.debug(('simply_eject', command, 'output', output, 'response', response))
+        LOGGER.debug((command, 'output', output, 'response', response))
         if response.get('ec') is not None:
             if response['ec'] > -1:
                 # Force Reply Success in TESTING MODE
@@ -293,10 +318,16 @@ def kiosk_get_cd_readiness():
 
 def get_cd_readiness():
     if _Common.digit_in(_Common.CD_PORT1) is True:
-        _Common.CD_READINESS['port1'] = 'AVAILABLE' if init_cd(_Common.CD_PORT1) is True else 'N/A'
+        _Common.CD_READINESS['port1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1) is True else 'N/A'
     if _Common.digit_in(_Common.CD_PORT2) is True:
-        _Common.CD_READINESS['port2'] = 'AVAILABLE' if init_cd(_Common.CD_PORT2) is True else 'N/A'
+        _Common.CD_READINESS['port2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2) is True else 'N/A'
     if _Common.digit_in(_Common.CD_PORT3) is True:
-        _Common.CD_READINESS['port3'] = 'AVAILABLE' if init_cd(_Common.CD_PORT3) is True else 'N/A'
+        _Common.CD_READINESS['port3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3) is True else 'N/A'
     CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Common.CD_READINESS))
     LOGGER.debug(('get_cd_readiness', json.dumps(_Common.CD_READINESS)))
+
+
+def check_init_cd(port):
+    if _Common.CD_NEW_TYPE.get(port, False) is True:
+        return True
+    return init_cd(port)
