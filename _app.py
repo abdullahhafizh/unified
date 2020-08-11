@@ -796,7 +796,7 @@ def config_log():
     global LOGGER
     # Sentry Initiation
     sentry_sdk.init("https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-                    max_breadcrumbs=30,
+                    max_breadcrumbs=10,
                     debug=True,)
     try:
         if not os.path.exists(sys.path[0] + '/_lLog/'):
