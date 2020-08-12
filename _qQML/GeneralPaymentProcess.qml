@@ -612,14 +612,15 @@ Base{
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
+                return;
             } else if (grgResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){
-                    _SLOT.stop_bill_receive_note();
-                    waitAndExitFor(10);
+                    modeButtonPopup = 'retrigger_bill';
+                    switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
                 } else {
-                    modeButtonPopup = 'retrigger_bill';
-                    switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                    _SLOT.stop_bill_receive_note();
+                    waitAndExitFor(10);
                     return;
                 }
             } else if (grgResult == 'EXCEED'){
