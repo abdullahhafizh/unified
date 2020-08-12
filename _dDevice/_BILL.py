@@ -205,13 +205,13 @@ def start_receive_note():
                         break
                     elif BILL["KEY_STORED"].lower() in _result_store.lower():
                         break
-                    elif BILL["KEY_STORED_1"].lower() in _result_store.lower():
-                        break
+                    # elif BILL["KEY_STORED_1"].lower() in _result_store.lower():
+                    #     break
                     elif _Helper.empty(BILL["MAX_STORE_LOOP"]) is False:
                         if store_attempt >= BILL["MAX_STORE_LOOP"]:
                             break
-                    elif IS_RECEIVING is False:
-                        break 
+                    # elif IS_RECEIVING is False:
+                    #     break 
                     else:
                         sleep(1)
                 # Handling Slow Response of GRG When Storing Notes - Disabled
