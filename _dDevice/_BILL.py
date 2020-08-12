@@ -163,8 +163,8 @@ def start_receive_note():
         IS_RECEIVING = True
         while True:
             # Handle NV IS_RECEIVING Flagging
-            if _Common.BILL_TYPE == 'NV' and IS_RECEIVING is False:
-                LOGGER.warning(('[BREAK] start_receive_note for BILL_TYPE NV', str(IS_RECEIVING)))
+            if IS_RECEIVING is False:
+                LOGGER.warning(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
                 break
             attempt += 1
             param = BILL["RECEIVE"] + '|'
@@ -245,10 +245,10 @@ def start_receive_note():
                 LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                 break
-            if IS_RECEIVING is False:
-                LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
-                break
+            # if IS_RECEIVING is False:
+            #     LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
+            #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
+            #     break
             sleep(BILL["LOOP_DELAY"])
     except Exception as e:
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
@@ -280,7 +280,7 @@ def stop_bill_receive_note():
 def stop_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
     IS_RECEIVING = False
-    sleep(_Common.BILL_STORE_DELAY)
+    # sleep(_Common.BILL_STORE_DELAY)
     try:
         param = BILL["STOP"] + '|'
         response, result = _Command.send_request(param=param, output=None)
