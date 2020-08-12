@@ -38,7 +38,7 @@ GRG = {
     "UNKNOWN_ITEM": "Received=CNY|Denomination=0|",
     "LOOP_DELAY": 1,
     "KEY_STORED": None,
-
+    "MAX_STORE_ATTEMPT": None,
 }
 
 NV = {
@@ -57,6 +57,8 @@ NV = {
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
     "KEY_STORED": 'Note stacked',
+    "MAX_STORE_ATTEMPT": 10,
+
 }
 
 
@@ -200,16 +202,13 @@ def start_receive_note():
                     'HISTORY': CASH_HISTORY})))
                 # Handling NV Strange Response - Manual Trigger For 3 Times
                 _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                if not _Helper.empty(BILL["KEY_STORED"]):
-                    if BILL["KEY_STORED"].lower() not in _result_store.lower():
-                        sleep(_Common.BILL_STORE_DELAY)
-                        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                    if BILL["KEY_STORED"].lower() not in _result_store.lower():
-                        sleep(_Common.BILL_STORE_DELAY)
-                        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                    if BILL["KEY_STORED"].lower() not in _result_store.lower():
-                        sleep(_Common.BILL_STORE_DELAY)
-                        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
+                    for attempt in range(BILL["MAX_STORE_ATTEMPT"]):
+                        if BILL["KEY_STORED"].lower() in _result_store.lower():
+                            continue
+                        else:
+                            sleep(_Common.BILL_STORE_DELAY)
+                            _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
