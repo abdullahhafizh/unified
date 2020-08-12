@@ -250,7 +250,7 @@ Base{
         }
 
         if (allowedBank.indexOf(cardData.bank_name) == -1){
-            switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+cardData.bank_name, 'sedang tidak dapat digunakan saat ini', 'backToMain', false );
+            switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+cardData.bank_name, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
             return;
         }
 

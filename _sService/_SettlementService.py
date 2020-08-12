@@ -595,13 +595,15 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _param = create_settlement_file(bank=bank)
         if _param is False:
             return
-        while True:
-            _push = upload_settlement_file(_param['filename'], _param['path_file'])
-            if _push is not False:
-                break
-            sleep(3)
-        if _push is False:
-            return
+        _push = upload_settlement_file(_param['filename'], _param['path_file'])
+        if _push['success'] is False:
+            reupload = {
+                'bank': bank, 
+                'filename': _param['filename'],
+                'path_file': _param['path_file'],
+            }
+            _param['reupload'] = reupload
+            _Common.store_upload_to_job(name=_Helper.whoami(), host=bank, data=reupload)
         _param['host'] = _push['host']
         _param['remote_path'] = _push['remote_path']
         _param['local_path'] = _push['local_path']
@@ -628,7 +630,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                     local_path=_param_sett['path_file'],
                                                     remote_path=_Common.SFTP_MANDIRI['path']+'/Sett_Macin_DEV')
-        if _push_file_sett is False:
+        if _push_file_sett['success'] is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
             return
         _param_sett['host'] = _push_file_sett['host']
@@ -649,7 +651,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _push_file_kalog = upload_settlement_file(filename=[_param_ka['filename'], _param_ka_ok],
                                                 local_path=_param_ka['path_file'],
                                                 remote_path=_Common.SFTP_MANDIRI['path']+'/Kalog_Macin_DEV')
-        if _push_file_kalog is False:
+        if _push_file_kalog['success'] is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_KA_SETTLEMENT')
             return
         _param_ka['host'] = _push_file_kalog['host']
@@ -690,16 +692,18 @@ def do_prepaid_settlement(bank='BNI', force=False):
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
         _file_ok = _param_sett['filename'].replace('.txt', '.ok')
-        while True:
-            _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
+        _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                         local_path=_param_sett['path_file'],
                                                         remote_path=_Common.SFTP_C2C['path_settlement'])
-            if _push_file_sett is not False:
-                break
-            sleep(3)
-        # if _push_file_sett is False:
-        #     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
-        #     return
+        if _push_file_sett['success'] is False:
+            reupload = {
+                'bank': bank, 
+                'filename': [_param_sett['filename'], _file_ok],
+                'local_path':  _param_sett['path_file'],
+                'remote_path':  _Common.SFTP_C2C['path_settlement'],
+            }
+            _param_sett['reupload'] = reupload
+            _Common.store_upload_to_job(name=_Helper.whoami(), host=bank, data=reupload)
         _param_sett['host'] = _push_file_sett['host']
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']
@@ -727,7 +731,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
         _push_file_sett = upload_settlement_file(filename=_param_sett['filename'],
                                                     local_path=_param_sett['path_file'],
                                                     remote_path=_Common.SFTP_C2C['path_fee'])
-        if _push_file_sett is False:
+        if _push_file_sett['success'] is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FEE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GET_C2C_FEE_SETTLEMENT')

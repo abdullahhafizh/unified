@@ -339,7 +339,7 @@ Base{
                             (bankName=='BRI' && !brizziAvailable) ||
                             (bankName=='DKI' && !jakcardAvailable) ||
                             (bankName=='BCA' && !flazzAvailable)){
-                        switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, 'sedang tidak dapat digunakan saat ini', 'backToMain', false );
+                        switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, ' sedang tidak dapat digunakan saat ini', 'backToMain', false );
                         return;
                     }
                     if (ableTopupCode !="0000"){
@@ -356,7 +356,7 @@ Base{
                     }
                     my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData, allowedBank: allowedBank});
                 } else {
-                    switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, 'tidak tersedia saat ini', 'backToMain', false );
+                    switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
                     return;
                 }
             }

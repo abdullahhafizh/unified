@@ -5,7 +5,7 @@ from _tTools import _Helper
 from _dDAO import _DAO
 from time import sleep
 from _cConfig import _ConfigParser, _Common
-from _nNetwork import _NetworkAccess
+from _nNetwork import _NetworkAccess, _SFTPAccess, _FTPAccess
 import logging
 from _sService import _KioskService
 from _dDevice import _EDC
@@ -51,6 +51,11 @@ def check_connection(url, param):
                 _DAO.create_today_report(_Common.TID)
             if _Common.DAILY_SYNC_SUMMARY_TIME in _Helper.time_string():
                 send_daily_summary()
+            # Add Daily Reboot Time Local Setting
+            if _Common.DAILY_REBOOT_TIME in _Helper.time_string():
+                LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
+                sleep(30)
+                _KioskService.execute_command('shutdown -r -f -t 0')
                 # _KioskService.kiosk_status()
         except Exception as e:
             LOGGER.debug(e)            
@@ -127,11 +132,11 @@ def sync_machine_status():
         sleep(33.3)
 
 
-def start_do_pending_job():
-    _Helper.get_thread().apply_async(do_pending_job)
+def start_do_pending_request_job():
+    _Helper.get_thread().apply_async(do_pending_request_job)
 
 
-def do_pending_job():
+def do_pending_request_job():
     while True:
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
@@ -169,6 +174,64 @@ def do_pending_job():
             except Exception as e:
                 LOGGER.warning(e)
         sleep(15.15)
+
+
+
+def start_do_pending_upload_job():
+    _Helper.get_thread().apply_async(do_pending_upload_job)
+
+
+def do_pending_upload_job():
+    while True:
+        pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.upload')]
+        # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
+        # LOGGER.info(('count', len(pending_jobs)))
+        if len(pending_jobs) > 0:
+            try:
+                for p in pending_jobs:
+                    jobs_path = os.path.join(_Common.JOB_PATH, p)
+                    content = open(jobs_path, 'r').read().strip()
+                    if len(_Common.clean_white_space(content)) == 0:
+                        os.remove(jobs_path)
+                        continue
+                    job = json.loads(content)
+                    host = job['host']
+                    data = job['data']
+                    # BNI Data
+                    # reupload = {
+                    #     'bank': bank, 
+                    #     'filename': _param['filename'],
+                    #     'path_file': _param['path_file'],
+                    # }
+                    # Mandiri Data
+                    # reupload = {
+                    #     'bank': bank, 
+                    #     'filename': [_param_sett['filename'], _file_ok],
+                    #     'local_path':  _param_sett['path_file'],
+                    #     'remote_path':  _Common.SFTP_C2C['path_settlement'],
+                    # }
+                    jobs_path_process = jobs_path.replace('.upload', '.process_upload')
+                    os.rename(jobs_path, jobs_path_process)
+                    if host == 'BNI':
+                        result = _SFTPAccess.send_file(data['filename'], local_path=data['path_file'], remote_path=None)
+                    elif host == 'MANDIRI_C2C':
+                        result = _SFTPAccess.send_file(data['filename'], local_path=data['local_path'], remote_path=data['remote_path'])
+                    else:
+                        result = False
+                    LOGGER.debug((p, host, data, result))
+                    if result['success'] == True:
+                        jobs_path_done = jobs_path_process.replace('.process_upload', '.done')
+                        os.rename(jobs_path_process, jobs_path_done)
+                        LOGGER.debug((jobs_path_process, jobs_path_done))
+                    else:
+                        jobs_path_reopen = jobs_path_process.replace('.process_upload', '.upload')
+                        os.rename(jobs_path_process, jobs_path_reopen)
+                    continue
+            except Exception as e:
+                LOGGER.warning(e)
+        sleep(25.25)
+
+
 
 
 def start_kiosk_sync():

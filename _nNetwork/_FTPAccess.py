@@ -50,7 +50,7 @@ def init_ftp():
 
 def send_file(local_path, remote_path=None):
     global FTP
-    result = False
+    result["success"] = False
     if remote_path is None:
         remote_path = REMOTE_PATH
     if FTP is None:
@@ -63,6 +63,7 @@ def send_file(local_path, remote_path=None):
         local_file.close()
         LOGGER.debug((file_name, local_path, remote_path))
         result = {
+            "success": True,
             "host": FTP_SERVER,
             "remote_path": remote_path,
             "local_path": local_path,
@@ -70,7 +71,12 @@ def send_file(local_path, remote_path=None):
     except Exception as e:
         LOGGER.warning((str(e)))
         _Common.online_logger([local_path, remote_path], 'connection')
-        return False
+        result = {
+            "success": False,
+            "host": FTP_SERVER,
+            "remote_path": remote_path,
+            "local_path": local_path,
+        }
     finally:
         if FTP is not None:
             FTP.quit()

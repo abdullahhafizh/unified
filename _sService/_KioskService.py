@@ -1188,3 +1188,20 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
     print('pyt: FINISH DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
     return 'HOUSE_KEEPING_' + str(age_month) + '_SUCCESS'
+
+
+def reset_open_job():
+    open_request_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.process')]
+    if (len(open_request_jobs) > 0):
+        LOGGER.info(('Reset Open Request Job', open_request_jobs))
+        for request_job in open_request_jobs:
+            old_file_request = os.path.join(_Common.JOB_PATH, request_job)
+            new_file_request = old_file_request.replace('.process', '.request')
+            os.rename(old_file_request, new_file_request)
+    open_upload_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.process_upload')]
+    if (len(open_upload_jobs) > 0):
+        LOGGER.info(('Reset Open Upload Job', open_upload_jobs))
+        for upload_job in open_upload_jobs:
+            old_file_upload = os.path.join(_Common.JOB_PATH, upload_job)
+            new_file_upload = old_file_upload.replace('.process_upload', '.upload')
+            os.rename(old_file_upload, new_file_upload)

@@ -504,6 +504,21 @@ def store_request_to_job(name='', url='', payload=''):
     log_to_file(content=log, path=JOB_PATH, filename=filename)
 
 
+
+def store_upload_to_job(name='', host='', data=''):
+    if empty(name) is True or empty(host) is True or empty(data) is True:
+        print('pyt: Missing Parameter in Logging Upload..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
+        return
+    filename = _Helper.time_string(f='%Y%m%d%H%M%S___') + name
+    log = {
+        'host'      : host,
+        'data'      : data
+    }
+    LOGGER.debug((filename, str(log)))
+    print('pyt: Logging Upload..! ' + _Helper.time_string() + ' : ' + filename)
+    log_to_file(content=log, path=JOB_PATH, filename=filename, default_ext='.upload')
+
+
 def log_to_file(content='', path='', filename='', default_ext='.request'):
     if empty(content) is True or empty(filename) is True:
         print('pyt: Missing Parameter in Logging File..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
@@ -706,6 +721,7 @@ MANDIRI_LOG_LEGEND = {
 
 BNI_LOG_LEGEND = {
     '01': 'PURCHASE',
+    '06': 'TOPUP',
 }
 
 
@@ -775,6 +791,7 @@ if '---' in MANDIRI_CARD_BLOCKED_URL:
     _ConfigParser.set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
 
 DAILY_SYNC_SUMMARY_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^sync^summary^time', '23:55')
+DAILY_REBOOT_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^reboot^time', '02:30')
 
 
 def check_refund(name='ovo'):

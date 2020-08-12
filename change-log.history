@@ -1,3 +1,17 @@
+11.8.F-GLOBAL:
+- Add Mandiri Card Log History,
+- Add BNI Card Log History,
+- Add Reset Failed Open Job,
+- Store Failed Upload Task To Job,
+- Add Reboot Setting to local (setting.ini) Default 02:30,
+- Enhance Failed Settlement FS Upload,
+- Add Capability Handling For New CD Device,
+- ...
+
+11.8.E-GLOBAL:
+- Add NV Storing Key Event,
+- ...
+
 11.8.D-GLOBAL:
 - Enhance NV Storing Method,
 - ...

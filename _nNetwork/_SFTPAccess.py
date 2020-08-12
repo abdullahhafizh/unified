@@ -74,7 +74,7 @@ def init_sftp():
 
 def send_file(filename, local_path, remote_path=None):
     global SFTP, SSH
-    result = False
+    result["success"] = False
     init_user_by_bid()
     if SFTP is None:
         init_sftp()
@@ -102,6 +102,7 @@ def send_file(filename, local_path, remote_path=None):
             sleep(1)
             SFTP.put(__local_path, __remote_path)
         result = {
+            "success": True,
             "host": SFTP_SERVER,
             "remote_path": _remote_path,
             "local_path": local_path,
@@ -109,7 +110,12 @@ def send_file(filename, local_path, remote_path=None):
     except Exception as e:
         LOGGER.warning((str(e)))
         _Common.online_logger([filename, local_path, remote_path], 'connection')
-        result = False
+        result = {
+            "success": False,
+            "host": SFTP_SERVER,
+            "remote_path": _remote_path,
+            "local_path": local_path,
+        }
     finally:
         if SFTP is not None:
             SFTP.close()
