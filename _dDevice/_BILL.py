@@ -200,6 +200,8 @@ def start_receive_note():
                     'ADD': cash_in,
                     'COLLECTED': COLLECTED_CASH,
                     'HISTORY': CASH_HISTORY})))
+                # Signal Emit To Update View Cash Status
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 # Handling NV Strange Response - Manual Trigger For 3 Times
                 _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
                 if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
@@ -209,7 +211,6 @@ def start_receive_note():
                         else:
                             sleep(_Common.BILL_STORE_DELAY)
                             _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
