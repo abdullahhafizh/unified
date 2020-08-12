@@ -258,6 +258,18 @@ Base{
             refundAmount = receivedPayment;
             message_case_refund = 'Terjadi Kesalahan Mesin,';
             break;
+        case 'cash_device_timeout':
+            if (receivedPayment == 0) {
+                press = '0';
+                switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain', false);
+                abc.counter = 5;
+                return;
+            }
+            details.payment_error = error;
+            details.payment_received = receivedPayment.toString();
+            refundAmount = receivedPayment;
+            message_case_refund = 'Waktu Pembayaran Habis,';
+            break;
         case 'ppob_error':
         case 'card_eject_error':
         case 'topup_prepaid_error':
@@ -587,7 +599,7 @@ Base{
         global_frame.modeAction = "";
         back_button.visible = true;
         if (grgFunction == 'RECEIVE_BILL'){
-            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED' || grgResult == 'SERVICE_TIMEOUT'){
+            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
                 validate_release_refund('cash_device_error');
                 return;
@@ -600,6 +612,10 @@ Base{
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
+            } else if (grgResult == 'SERVICE_TIMEOUT'){
+                _SLOT.stop_bill_receive_note();
+                waitAndExitFor(10);
+                return;
             } else if (grgResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
                 cancel_button_global.visible = false;
