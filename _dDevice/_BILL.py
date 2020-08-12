@@ -192,6 +192,8 @@ def start_receive_note():
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
+                _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                sleep(_Common.BILL_STORE_DELAY)
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
@@ -202,14 +204,14 @@ def start_receive_note():
                 # Signal Emit To Update View Cash Status
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 # Handling NV Strange Response
-                _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
-                    for attempt in range(BILL["MAX_STORE_ATTEMPT"]):
-                        if BILL["KEY_STORED"].lower() in _result_store.lower():
-                            continue
-                        else:
-                            _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                            sleep(_Common.BILL_STORE_DELAY)
+                # _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                # if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
+                #     for attempt in range(BILL["MAX_STORE_ATTEMPT"]):
+                #         if BILL["KEY_STORED"].lower() in _result_store.lower():
+                #             continue
+                #         else:
+                #             _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                #             sleep(_Common.BILL_STORE_DELAY)
                 if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
