@@ -38,8 +38,6 @@ GRG = {
     "UNKNOWN_ITEM": "Received=CNY|Denomination=0|",
     "LOOP_DELAY": 1,
     "KEY_STORED": None,
-    "KEY_STORED_1": None,
-    "MAX_STORE_LOOP": None
 
 }
 
@@ -58,10 +56,7 @@ NV = {
     "TIMEOUT_BAD_NOTES": None,
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
-    "KEY_STORED": 'Note Stacked',
-    "KEY_STORED_1": 'Stacking note',
-    "MAX_STORE_LOOP": 10
-
+    "KEY_STORED": 'Note stacked',
 }
 
 
@@ -196,35 +191,26 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 # Call Store Function Here
-                store_attempt = 0;
-                while True:
-                    store_attempt += 1
-                    _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                    # LOGGER.debug((BILL["KEY_STORED"], _, _result_store))
-                    if _Helper.empty(BILL["KEY_STORED"]):
-                        break
-                    elif BILL["KEY_STORED"].lower() in _result_store.lower():
-                        break
-                    # elif BILL["KEY_STORED_1"].lower() in _result_store.lower():
-                    #     break
-                    elif _Helper.empty(BILL["MAX_STORE_LOOP"]) is False:
-                        if store_attempt >= BILL["MAX_STORE_LOOP"]:
-                            break
-                    # elif IS_RECEIVING is False:
-                    #     break 
-                    else:
-                        sleep(1)
-                # Handling Slow Response of GRG When Storing Notes - Disabled
-                # if BILL_TYPE == 'GRG':
-                    # sleep(_Common.BILL_STORE_DELAY)
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 LOGGER.info(('Cash Status:', json.dumps({
                     'ADD': cash_in,
                     'COLLECTED': COLLECTED_CASH,
                     'HISTORY': CASH_HISTORY})))
+                # Handling NV Strange Response - Manual Trigger For 3 Times
+                _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                if not _Helper.empty(BILL["KEY_STORED"]):
+                    if BILL["KEY_STORED"].lower() not in _result_store.lower():
+                        sleep(_Common.BILL_STORE_DELAY)
+                        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                    if BILL["KEY_STORED"].lower() not in _result_store.lower():
+                        sleep(_Common.BILL_STORE_DELAY)
+                        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                    if BILL["KEY_STORED"].lower() not in _result_store.lower():
+                        sleep(_Common.BILL_STORE_DELAY)
+                        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
                 if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
