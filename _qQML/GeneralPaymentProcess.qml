@@ -587,7 +587,7 @@ Base{
         global_frame.modeAction = "";
         back_button.visible = true;
         if (grgFunction == 'RECEIVE_BILL'){
-            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
+            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED' || grgResult == 'SERVICE_TIMEOUT'){
                 details.process_error = 1;
                 validate_release_refund('cash_device_error');
                 return;
@@ -600,11 +600,6 @@ Base{
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
-            } else if (grgResult == 'SERVICE_TIMEOUT'){
-                modeButtonPopup = 'retrigger_bill';
-                cancel_button_global.visible = false;
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
-                return;
             } else if (grgResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
                 cancel_button_global.visible = false;
