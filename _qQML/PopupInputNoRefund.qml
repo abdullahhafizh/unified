@@ -159,7 +159,6 @@ Rectangle{
             }
 
             function functionIn(str){
-                check_availability();
                 if(str == "Back"){
                     count--
                     numberInput = numberInput.substring(0,numberInput.length-1);
@@ -168,6 +167,7 @@ Rectangle{
                     count = 0;
                     numberInput = "";
                 }
+                check_availability();
             }
 
             function typeIn(str){
