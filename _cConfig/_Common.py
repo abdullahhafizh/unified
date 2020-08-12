@@ -722,6 +722,7 @@ MANDIRI_LOG_LEGEND = {
 BNI_LOG_LEGEND = {
     '01': 'PURCHASE',
     '06': 'TOPUP',
+    '04': 'DIRECT TOPUP'
 }
 
 

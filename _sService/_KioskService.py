@@ -1147,7 +1147,10 @@ def reset_db_record():
 
 
 def user_action_log(log):
-    LOGGER.info(('[USER_ACTION]', str(log)))
+    if '[Homepage]' in log:
+        LOGGER.info(('[STANDBY IN HOMEPAGE]'))
+    else:
+        LOGGER.info(('[USER_ACTION]', str(log)))
 
 
 def python_dump(log):

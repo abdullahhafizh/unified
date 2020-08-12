@@ -45,6 +45,7 @@ Base{
             productCount2 = 0;
             productCount3 = 0;
             popup_loading.close();
+            _SLOT.user_action_log('[Homepage] Standby Mode');
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
