@@ -124,7 +124,6 @@ Base{
 
     }
 
-
     function setAvailRefundOnly(channel){
         popup_refund.manualEnable = false;
         popup_refund.customerServiceEnable = false;
@@ -968,6 +967,9 @@ Base{
                         console.log('[CANCELLATION] User Payment', receivedPayment)
                         validate_release_refund('user_cancellation');
                         return;
+                    } else {
+                        waitAndExitFor(10);
+                        return;
                     }
                 }
                 if (details.payment=='debit') {
@@ -994,6 +996,28 @@ Base{
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
+
+    Timer {
+        id: timer_delay
+    }
+
+    function delay(duration, callback) {
+        timer_delay.interval = duration;
+        timer_delay.repeat = false;
+        timer_delay.triggered.connect(callback);
+        timer_delay.start();
+    }
+
+    function waitAndExitFor(second){
+        back_button.visible = false;
+        popup_loading.open();
+        delay(second*1000, function(){
+            popup_loading.close();
+            my_timer.stop();
+            my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+        });
+    }
+
 
     function open_preload_notif(msg, img){
         press = '0';
