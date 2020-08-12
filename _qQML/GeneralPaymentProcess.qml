@@ -627,6 +627,7 @@ Base{
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
+                back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
                 abc.counter = 600;
