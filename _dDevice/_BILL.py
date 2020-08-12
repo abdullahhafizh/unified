@@ -170,6 +170,9 @@ def start_receive_note():
             param = BILL["RECEIVE"] + '|'
             _response, _result = _Command.send_request(param=param, output=None)
             _Helper.dump([_response, _result])
+            if _response == -1:
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
+                break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
                 _Helper.dump(cash_in)

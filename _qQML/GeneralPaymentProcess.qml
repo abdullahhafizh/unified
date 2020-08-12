@@ -585,6 +585,7 @@ Base{
         var grgResult = r.split('|')[1]
         modeButtonPopup = undefined;
         global_frame.modeAction = "";
+        back_button.visible = true;
         if (grgFunction == 'RECEIVE_BILL'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -599,6 +600,10 @@ Base{
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
+            } else if (grgResult == 'SERVICE_TIMEOUT'){
+                modeButtonPopup = 'retrigger_bill';
+                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                return;
             } else if (grgResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
@@ -832,6 +837,7 @@ Base{
             return;
         }
         if (details.payment == 'cash') {
+            back_button.visible = false;
             open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
