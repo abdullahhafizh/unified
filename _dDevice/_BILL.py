@@ -143,6 +143,8 @@ def set_direct_price(price):
 
 
 def start_bill_receive_note():
+    # Add Billing Initiation En Every Note Receive
+    init_bill()
     _Helper.get_thread().apply_async(start_receive_note)
 
 
