@@ -597,7 +597,7 @@ Base{
         var grgResult = r.split('|')[1]
         modeButtonPopup = undefined;
         global_frame.modeAction = "";
-        back_button.visible = true;
+        press = '0';
         if (grgFunction == 'RECEIVE_BILL'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -615,6 +615,7 @@ Base{
                 return;
             } else if (grgResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){
+                    back_button.visible = false;
                     modeButtonPopup = 'retrigger_bill';
                     switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
@@ -1035,7 +1036,6 @@ Base{
     }
 
     function waitAndExitFor(second){
-        back_button.visible = false;
         popup_loading.open();
         popup_loading.textMain = 'Harap Tunggu Sebentar';
         popup_loading.textSlave = 'Menutup Sesi Bayar Anda';

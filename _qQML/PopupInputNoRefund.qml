@@ -159,6 +159,7 @@ Rectangle{
             }
 
             function functionIn(str){
+                check_availability();
                 if(str == "Back"){
                     count--
                     numberInput = numberInput.substring(0,numberInput.length-1);
@@ -434,9 +435,11 @@ Rectangle{
 
     function check_availability(){
 //        console.log('numberInput', numberInput, canProceed);
-        if (numberInput.substring(0, 2)==pattern && numberInput.length > minCountInput) {
-            if (handleButtonVisibility!=undefined){
+        if (handleButtonVisibility!=undefined){
+            if (numberInput.substring(0, 2)==pattern && numberInput.length > minCountInput && numberInput.length < maxCountInput) {
                 handleButtonVisibility.visible = true;
+            } else {
+                handleButtonVisibility.visible = false;
             }
         }
     }
