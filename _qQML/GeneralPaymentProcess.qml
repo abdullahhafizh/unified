@@ -613,17 +613,21 @@ Base{
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
             } else if (grgResult == 'SERVICE_TIMEOUT'){
-                _SLOT.stop_bill_receive_note();
-                waitAndExitFor(10);
-                return;
+                if (receivedPayment > 0){
+                    _SLOT.stop_bill_receive_note();
+                    waitAndExitFor(10);
+                    return;
+                } else {
+                    modeButtonPopup = 'retrigger_bill';
+                    switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                    return;
+                }
             } else if (grgResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
-                cancel_button_global.visible = false;
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (grgResult == 'BAD_NOTES'){
                 modeButtonPopup = 'retrigger_bill';
-                cancel_button_global.visible = false;
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
@@ -1032,6 +1036,10 @@ Base{
     function waitAndExitFor(second){
         back_button.visible = false;
         popup_loading.open();
+        popup_loading.textMain = 'Harap Tunggu Sebentar';
+        popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
+        back_button.visible = false;
+        cancel_button_global.visible = false;
         delay(second*1000, function(){
             popup_loading.close();
             my_timer.stop();
