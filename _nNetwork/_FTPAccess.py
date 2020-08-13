@@ -50,6 +50,7 @@ def init_ftp():
 
 def send_file(local_path, remote_path=None):
     global FTP
+    result = {}
     result["success"] = False
     if remote_path is None:
         remote_path = REMOTE_PATH

@@ -74,6 +74,7 @@ def init_sftp():
 
 def send_file(filename, local_path, remote_path=None):
     global SFTP, SSH
+    result = {}
     result["success"] = False
     init_user_by_bid()
     if SFTP is None:
