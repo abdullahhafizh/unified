@@ -1604,6 +1604,7 @@ Base{
                     }
                     popup_refund.close();
                     popup_confirm.close();
+                    hide_all_cancel_button();
                     // proceedAble = true;
                     // define_first_process();
                 }
