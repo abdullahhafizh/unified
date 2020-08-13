@@ -323,16 +323,23 @@ Base{
         release_print(notifTitle, notifMessage);
     }
 
+    function hide_all_cancel_button(){
+        cancel_button_global.visible = false;
+        back_button.visible = false;
+        cancel_button_input_number.visible = false;
+        cancel_button_confirmation.visible = false;
+        cancel_button_qr.visible = false;
+    }
+
     function release_print(title, msg){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         popup_loading.close();
-        cancel_button_global.visible = false;
-        back_button.visible = false;
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (successTransaction) title = 'Transaksi Berhasil';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         console.log('release_print', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
+        hide_all_cancel_button();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
