@@ -1479,6 +1479,7 @@ Base{
                         press = '0';
                         popup_confirm.phoneNumber = popup_refund.numberInput;
                         popup_confirm.channelName = refundData.name;
+                        if (refundData.name == 'C S') popup_confirm.channelName = 'Customer Service';
                         popup_confirm.open()
                         return;
                     }
