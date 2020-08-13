@@ -196,7 +196,6 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                sleep(_Common.BILL_STORE_DELAY)
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
@@ -252,7 +251,7 @@ def start_receive_note():
             #     LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
             #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
             #     break
-            sleep(BILL["LOOP_DELAY"])
+            sleep(_Common.BILL_STORE_DELAY)
     except Exception as e:
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
         if 'Invalid argument' in e:

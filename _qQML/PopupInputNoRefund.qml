@@ -239,7 +239,7 @@ Rectangle{
 
         RefundSelectionButton{
             id: customerServiceMethod
-            buttonName: 'OPERATOR'
+            buttonName: 'CUSTOMER-SERVICE'
             imageSource: 'source/manual_cs.png'
             colorMode: 'orange'
             channelCode: 'CUSTOMER-SERVICE'
@@ -417,7 +417,7 @@ Rectangle{
     function open(msg, amount){
         if (msg!=undefined) caseTitle = msg;
         if (amount!=undefined) refundAmount = parseInt(amount);
-        switch_to_active(customerServiceMethod);
+        switch_to_active(divaMethod);
         popup_refund.visible = true;
         reset_counter();
     }
