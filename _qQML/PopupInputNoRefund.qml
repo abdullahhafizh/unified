@@ -239,7 +239,7 @@ Rectangle{
 
         RefundSelectionButton{
             id: customerServiceMethod
-            buttonName: 'CUSTOMER-SERVICE'
+            buttonName: 'C S'
             imageSource: 'source/manual_cs.png'
             colorMode: 'orange'
             channelCode: 'CUSTOMER-SERVICE'
