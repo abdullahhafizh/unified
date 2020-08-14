@@ -18,7 +18,6 @@ if not os.path.exists(sys.path[0] + '/_rRemoteFiles/'):
     os.makedirs(sys.path[0] + '/_rRemoteFiles/')
 
 SFTP = None
-SSH = None
 HOST_BID = 1
 
 
@@ -47,18 +46,12 @@ def init_user_by_bid():
 
 
 def init_sftp():
-    global SFTP, SSH
+    global SFTP
     try:
-        # __transport = paramiko.Transport((SFTP_SERVER, int(SFTP_PORT)))
-        # __transport.connect(username=SFTP_USER, password=SFTP_PASS)
-        # SFTP = paramiko.SFTPClient.from_transport(__transport)
+        __transport = paramiko.Transport((SFTP_SERVER, int(SFTP_PORT)))
+        __transport.connect(username=SFTP_USER, password=SFTP_PASS)
+        SFTP = paramiko.SFTPClient.from_transport(__transport)
         # Init User SFTP
-        # init_user_by_bid()
-        SSH = paramiko.SSHClient()
-        SSH.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        SSH.connect(SFTP_SERVER, SFTP_PORT, SFTP_USER, SFTP_PASS)
-        SFTP = SSH.open_sftp()
-        SFTP.sshclient = SSH
         # SFTP = pysftp.Connection(host=SFTP_SERVER, username=SFTP_USER, password=SFTP_PASS, cnopts=cnopts)
         LOGGER.debug(('TRUE', HOST_BID, SFTP_SERVER, SFTP_PORT))
     except Exception as e:
@@ -67,13 +60,10 @@ def init_sftp():
         if SFTP is not None:
             SFTP.close()
         SFTP = None
-        if SSH is not None:
-            SSH.close()
-        SSH = None
 
 
 def send_file(filename, local_path, remote_path=None):
-    global SFTP, SSH
+    global SFTP
     result = {}
     result["success"] = False
     init_user_by_bid()
@@ -121,14 +111,11 @@ def send_file(filename, local_path, remote_path=None):
         if SFTP is not None:
             SFTP.close()
         SFTP = None
-        if SSH is not None:
-            SSH.close()
-        SSH = None
         return result
 
 
 def get_file(file, remote_path=None):
-    global SFTP, SSH
+    global SFTP
     result = False
     init_user_by_bid()
     if file is None:
@@ -153,17 +140,11 @@ def get_file(file, remote_path=None):
         if SFTP is not None:
             SFTP.close()
         SFTP = None
-        if SSH is not None:
-            SSH.close()
-        SSH = None
         return result
 
 
 def close_sftp():
-    global SFTP, SSH
+    global SFTP
     if SFTP is not None:
         SFTP.close()
         SFTP = None
-    if SSH is not None:
-        SSH.close()
-        SSH = None
