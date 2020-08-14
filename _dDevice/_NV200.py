@@ -1,12 +1,13 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
 import threading
+from _cConfig._Common import BILL_PORT
 from eSSP.constants import Status
 from eSSP import eSSP  # Import the library
 from time import sleep
 
 #  Create a new object ( Validator Object ) and initialize it ( In debug mode, so it will print debug infos )
-validator = eSSP(com_port="/dev/ttyUSB0", ssp_address="0", nv11=False, debug=True)
+validator = eSSP(com_port=BILL_PORT, ssp_address="0", nv11=False, debug=True)
 
 
 def event_loop():
