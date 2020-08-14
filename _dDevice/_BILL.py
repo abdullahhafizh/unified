@@ -195,25 +195,25 @@ def start_receive_note():
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
-                store_cash_into_cashbox()
-                CASH_HISTORY.append(str(cash_in))
-                COLLECTED_CASH += int(cash_in)
-                _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
-                LOGGER.info(('Cash Status:', json.dumps({
-                    'ADD': cash_in,
-                    'COLLECTED': COLLECTED_CASH,
-                    'HISTORY': CASH_HISTORY})))
-                # Signal Emit To Update View Cash Status
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
-                # Handling NV Strange Response
-                # _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                # if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
-                #     for attempt in range(BILL["MAX_STORE_ATTEMPT"]):
-                #         if BILL["KEY_STORED"].lower() in _result_store.lower():
-                #             continue
-                #         else:
-                #             _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                #             sleep(_Common.BILL_STORE_DELAY)
+                if store_cash_into_cashbox() is True:
+                    CASH_HISTORY.append(str(cash_in))
+                    COLLECTED_CASH += int(cash_in)
+                    _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
+                    LOGGER.info(('Cash Status:', json.dumps({
+                        'ADD': cash_in,
+                        'COLLECTED': COLLECTED_CASH,
+                        'HISTORY': CASH_HISTORY})))
+                    # Signal Emit To Update View Cash Status
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
+                    # Handling NV Strange Response
+                    # _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                    # if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
+                    #     for attempt in range(BILL["MAX_STORE_ATTEMPT"]):
+                    #         if BILL["KEY_STORED"].lower() in _result_store.lower():
+                    #             continue
+                    #         else:
+                    #             _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                    #             sleep(_Common.BILL_STORE_DELAY)
                 if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
@@ -272,9 +272,12 @@ def store_cash_into_cashbox():
         _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
         LOGGER.info((str(attempt), str(_result_store)))
         if _ == 0:
-            break
+            if _Helper.empty(BILL['KEY_STORED']):
+                return True
+            if BILL['KEY_STORED'] in _result_store:
+                return True
         if attempt == max_attempt:
-            break
+            return False
 
 
 def is_exceed_payment(target, value_in, current_value):
