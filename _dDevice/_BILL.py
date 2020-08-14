@@ -195,7 +195,7 @@ def start_receive_note():
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
-                _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+                store_cash_into_cashbox()
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
@@ -236,8 +236,8 @@ def start_receive_note():
                 _Common.BILL_ERROR = 'BILL_DEVICE_JAM'
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
                 LOGGER.warning(('BILL Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
-                                                                     'COLLECTED': COLLECTED_CASH,
-                                                                     'TARGET': DIRECT_PRICE_AMOUNT})))
+                                                                    'COLLECTED': COLLECTED_CASH,
+                                                                    'TARGET': DIRECT_PRICE_AMOUNT})))
                 # Call API To Force Update Into Server
                 _Common.upload_device_state('mei', _Common.BILL_ERROR)
                 sleep(1.5)
@@ -261,6 +261,20 @@ def start_receive_note():
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
         LOGGER.warning(e)
+
+
+def store_cash_into_cashbox():
+    attempt = 0
+    max_attempt = 3
+    while True:
+        sleep(1)
+        attempt += 1
+        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+        LOGGER.info((str(attempt), str(_result_store)))
+        if _ == 0:
+            break
+        if attempt == max_attempt:
+            break
 
 
 def is_exceed_payment(target, value_in, current_value):
