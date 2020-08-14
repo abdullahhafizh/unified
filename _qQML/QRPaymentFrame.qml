@@ -250,13 +250,21 @@ Base{
     }
 
     function close(){
-        if (!successPayment && calledFrom!=undefined) {
-            switch(calledFrom){
-            case 'general_payment_process':
-                general_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
-                break;
+        if (calledFrom!=undefined) {
+            if (!successPayment){
+                switch(calledFrom){
+                case 'general_payment_process':
+                    general_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
+                    break;
+                }
             }
         }
+        qr_payment_frame.visible = false;
+        successPayment = false;
+        show_timer.stop();
+    }
+
+    function hide(){
         qr_payment_frame.visible = false;
         successPayment = false;
         show_timer.stop();
@@ -267,7 +275,7 @@ Base{
         if (waitTime==undefined) waitTime = waitAfterSuccess;
         successPayment = true;
         delay(waitTime*1000, function(){
-            close();
+            hide();
         });
     }
 
