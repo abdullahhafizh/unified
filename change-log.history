@@ -1,3 +1,9 @@
+11.8.N-GLOBAL:
+- Detect Cashbox Full Status To Dashboard,
+- Detect Cashbox Full Status To Homepage,
+- Detect Cashbox Full Status To Sentry Error Monitoring,
+- ...
+
 11.8.M-GLOBAL:
 - Re-Enhance BILL Storing Validation,
 - ...

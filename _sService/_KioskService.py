@@ -742,6 +742,7 @@ def begin_collect_cash():
         list_collect.append(cash['csid'])
     # Backend Updation Changed Indo Admin Access Report Endpoint
     # post_cash_collection(list_collect, _Helper.now())
+    _Common.BILL_ERROR = ''
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|DONE')
 
 

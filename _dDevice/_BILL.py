@@ -39,6 +39,7 @@ GRG = {
     "LOOP_DELAY": 1,
     "KEY_STORED": None,
     "MAX_STORE_ATTEMPT": 1,
+    "KEY_BOX_FULL": '!@#$%^&UI',
 }
 
 NV = {
@@ -56,9 +57,9 @@ NV = {
     "TIMEOUT_BAD_NOTES": None,
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
-    "KEY_STORED": 'stack',
+    "KEY_STORED": 'Note stacked',
     "MAX_STORE_ATTEMPT": 4,
-
+    "KEY_BOX_FULL": 'Stacker full',
 }
 
 
@@ -195,7 +196,8 @@ def start_receive_note():
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
-                do_store_note = store_cash_into_cashbox()
+                _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                do_store_note = store_cash_into_cashbox(str(cash_in))
                 LOGGER.debug(('Check Cash Store Status:', str(do_store_note), str(cash_in)))
                 if do_store_note is True:
                     CASH_HISTORY.append(str(cash_in))
@@ -265,7 +267,7 @@ def start_receive_note():
         LOGGER.warning(e)
 
 
-def store_cash_into_cashbox():
+def store_cash_into_cashbox(cash):
     attempt = 0
     max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
     while True:
@@ -276,7 +278,12 @@ def store_cash_into_cashbox():
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
         if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
             return True
-        if BILL['KEY_STORED'] in _result_store:
+        if BILL['KEY_STORED'].lower() in _result_store.lower():
+            return True
+        if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
+            _Common.BILL_ERROR = 'CASHBOX_FULL'
+            _Common.online_logger(['CASHBOX_FULL WHEN STACKING', cash], 'device')
+            _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
             return True
         if attempt == max_attempt:
             return False
