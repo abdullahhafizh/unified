@@ -38,7 +38,7 @@ GRG = {
     "UNKNOWN_ITEM": "Received=CNY|Denomination=0|",
     "LOOP_DELAY": 1,
     "KEY_STORED": None,
-    "MAX_STORE_ATTEMPT": None,
+    "MAX_STORE_ATTEMPT": 1,
 }
 
 NV = {
@@ -56,8 +56,8 @@ NV = {
     "TIMEOUT_BAD_NOTES": None,
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
-    "KEY_STORED": 'Note stacked',
-    "MAX_STORE_ATTEMPT": 10,
+    "KEY_STORED": 'stack',
+    "MAX_STORE_ATTEMPT": 4,
 
 }
 
@@ -195,7 +195,9 @@ def start_receive_note():
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
-                if store_cash_into_cashbox() is True:
+                do_store_note = store_cash_into_cashbox()
+                LOGGER.debug(('Check Cash Store Status:', str(do_store_note), str(cash_in)))
+                if do_store_note is True:
                     CASH_HISTORY.append(str(cash_in))
                     COLLECTED_CASH += int(cash_in)
                     _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
@@ -265,17 +267,17 @@ def start_receive_note():
 
 def store_cash_into_cashbox():
     attempt = 0
-    max_attempt = 3
+    max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
     while True:
         sleep(1)
         attempt += 1
         _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-        LOGGER.info((str(attempt), str(_result_store)))
-        if _ == 0:
-            if _Helper.empty(BILL['KEY_STORED']):
-                return True
-            if BILL['KEY_STORED'] in _result_store:
-                return True
+        LOGGER.debug((str(attempt), str(_result_store)))
+        # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
+        if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
+            return True
+        if BILL['KEY_STORED'] in _result_store:
+            return True
         if attempt == max_attempt:
             return False
 
