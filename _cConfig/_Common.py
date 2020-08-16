@@ -819,7 +819,9 @@ def check_payment(name='ovo'):
     if len(PAYMENT_SETTING) == 0 or empty(PAYMENT_SETTING) is True:
         return False
     for x in range(len(PAYMENT_SETTING)):
-        if PAYMENT_SETTING[x]['name'].lower() == name and BILL_ERROR != 'CASHBOX_FULL':
+        if PAYMENT_SETTING[x]['name'].lower() == name:
+            if name == 'cash' and BILL_ERROR == 'CASHBOX_FULL':
+                return False
             return True
     return False
 
