@@ -1,3 +1,8 @@
+11.8.O-GLOBAL:
+- Add Bank Penerbit In Topup Gagal,
+- Adjust Cash Collection Timestamp in Pending Data Push,
+- ...
+
 11.8.N-GLOBAL:
 - Detect Cashbox Full Status To Dashboard,
 - Detect Cashbox Full Status To Homepage,

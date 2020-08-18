@@ -955,6 +955,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
             'edc_settlement': edc_settlement,
             'card_adjustment': card_adjustment,
             'remarks': remarks,
+            'collect_time': _Helper.time_string()
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/access-report', param)
         LOGGER.info((response, str(param)))

@@ -62,7 +62,7 @@ ERROR_RESPONSE = {
 }
 SERVICE_NOT_RESPONDING = {
     'statusCode': -999,
-    'statusMessage': 'Service Not Responding'
+    'statusMessage': 'Service Response Timeout/No Response From Device'
 }
 
 DISK_SERIAL_NUMBER = ''

@@ -313,6 +313,9 @@ def print_topup_trx(p, t, ext='.pdf'):
             else:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['raw']['bank_name'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NO. KARTU   : ' + p['raw']['card_no'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
@@ -347,6 +350,9 @@ def print_topup_trx(p, t, ext='.pdf'):
                     # failure = 'TOPUP_FAILURE'
         else:
             pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['raw']['bank_name'], 0, 0, 'L')
+            pdf.ln(small_space)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'NO. KARTU   : ' + p['raw']['card_no'], 0, 0, 'L')
             pdf.ln(small_space)

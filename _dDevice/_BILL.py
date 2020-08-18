@@ -197,7 +197,7 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-                do_store_note = store_cash_into_cashbox(str(cash_in))
+                do_store_note = store_cash_into_cashbox()
                 LOGGER.debug(('Check Cash Store Status:', str(do_store_note), str(cash_in)))
                 if do_store_note is True:
                     CASH_HISTORY.append(str(cash_in))
@@ -267,7 +267,7 @@ def start_receive_note():
         LOGGER.warning(e)
 
 
-def store_cash_into_cashbox(cash):
+def store_cash_into_cashbox():
     attempt = 0
     max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
     while True:
@@ -282,7 +282,8 @@ def store_cash_into_cashbox(cash):
             return True
         if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
             _Common.BILL_ERROR = 'CASHBOX_FULL'
-            _Common.online_logger(['CASHBOX_FULL WHEN STACKING', cash], 'device')
+            total_cash = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
+            _Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
             _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
             return True
         if attempt == max_attempt:

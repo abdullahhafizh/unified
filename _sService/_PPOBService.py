@@ -289,7 +289,7 @@ def global_refund_balance(payload, store_only=False):
     try:
         url = _Common.BACKEND_URL+'refund/global'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['data'] is not None:
+        if s == 200:
             if r['result'] == 'OK':
                 LAST_TRANSFER_REFF_NO = payload['reff_no']
                 if not store_only:
