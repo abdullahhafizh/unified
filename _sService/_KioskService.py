@@ -1127,23 +1127,11 @@ def start_store_topup_transaction(param):
 def reset_db_record():
     LOGGER.info(('START_RESET_DB_RECORDS', _Helper.time_string()))
     try:
-        # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Common.TID+'" ')
-        # time.sleep(1)
-        _DAO.flush_table('Receipts', ' tid <> "'+_Common.TID+'" ')
-        time.sleep(1)
-        _DAO.flush_table('Settlement', ' tid <> "'+_Common.TID+'" AND status NOT LIKE "%EDC%" ')
-        time.sleep(1)
-        _DAO.custom_update('UPDATE Settlement SET status = "EDC|VOID" WHERE status LIKE "%EDC%" AND tid <> "'+_Common.TID+'" ')
-        time.sleep(1)
         _DAO.flush_table('Cash', ' tid <> "'+_Common.TID+'" ')
-        # time.sleep(1)
-        # _DAO.flush_table('Product')
         time.sleep(1)
         _DAO.flush_table('Transactions', ' tid <> "'+_Common.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Common.TID+'" ')
-        # Add Data HouseKeeping Which Older Than n Months
-        # house_keeping(age_month=3)
         LOGGER.info(('FINISH_RESET_DB_RECORDS', _Helper.time_string()))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
