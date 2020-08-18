@@ -22,6 +22,7 @@ from time import sleep
 import subprocess
 from operator import itemgetter
 from _dDevice import _BILL
+import json
 
 
 class KioskSignalHandler(QObject):
@@ -742,6 +743,9 @@ def begin_collect_cash():
         list_collect.append(cash['csid'])
     # Backend Updation Changed Indo Admin Access Report Endpoint
     # post_cash_collection(list_collect, _Helper.now())
+    # Generate Admin Data Here
+    collection_data = _Common.generate_collection_data()
+    K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_DATA|'.json.dumps(collection_data))
     _Common.BILL_ERROR = ''
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|DONE')
 

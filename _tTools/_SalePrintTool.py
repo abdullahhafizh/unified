@@ -788,75 +788,7 @@ def get_admin_data():
     global CARD_ADJUSTMENT
     __data = dict()
     try:
-        __data['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
-        __data['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
-        __data['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
-        __data['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
-        __data['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
-        __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
-        __data['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
-        __data['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
-        __data['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
-        __data['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
-        __data['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
-        # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-        #                                        ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
-        #                                        ' AND  pid like "shop%" ')[0]['__']
-        # __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale > ' + str(CARD_SALE) +
-        #                                        ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
-        __data['amt_card'] = 0
-        __data['trx_card'] = 0
-        __data['card_trx_summary'] = []
-        if len(__data['all_cards']) > 0:
-            for card in __data['all_cards']:
-                pid = card['pid']
-                price = card['sell_price']
-                __data['amt_card_'+str(pid)] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND pidStock = "' + str(pid) +'" ')[0]['__']
-                __data['amt_card'] += __data['amt_card_'+str(pid)]
-                __data['trx_card_'+str(pid)] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE amount = ' + str(price) +
-                                                       ' AND isCollected = 0 AND pidStock = "'+str(pid)+'" ')[0]['__']
-                __data['trx_card'] += __data['trx_card_'+str(pid)]
-                __data['card_trx_summary'].append({
-                    'pid': pid,
-                    'price': price,
-                    'count': __data['trx_card_'+str(pid)],
-                    'amount': __data['amt_card_'+str(pid)]
-                })
-        # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
-        __data['all_amount'] = int(__data['amt_card']) + int(__data['amt_top10k']) + int(__data['amt_top20k']) + \
-                               int(__data['amt_top50k']) + int(__data['amt_top100k'] + int(__data['amt_top200k']))
-        __data['failed_amount'] = 0
-        if int(__data['all_cash']) > (int(__data['all_amount']) + int(__data['ppob_cash'])):
-            __data['failed_amount'] = int(__data['all_cash']) - (int(__data['all_amount']) + int(__data['ppob_cash']))
-        __data['init_slot1'] = __data['slot1']
-        __data['init_slot2'] = __data['slot2']
-        __data['init_slot3'] = __data['slot3']
-        __data['sam_1_balance'] = '0'
-        __data['sam_2_balance'] = '0'
-        __notes = []
-        for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 '):
-            __notes.append(json.loads(money['note'])['history'])
-        __data['notes_summary'] = '|'.join(__notes)
-        # Status Bank BNI in Global
-        if _Common.BANKS[0]['STATUS'] is True:
-            __data['sam_1_balance'] = str(_Common.MANDIRI_ACTIVE_WALLET)
-            __data['sam_2_balance'] = str(_Common.BNI_ACTIVE_WALLET)
-        if len(_ProductService.LAST_UPDATED_STOCK) > 0:
-            CARD_ADJUSTMENT = json.dumps(_ProductService.LAST_UPDATED_STOCK)
-            for update in _ProductService.LAST_UPDATED_STOCK:
-                if update['status'] == 101:
-                    __data['init_slot1'] = update['stock']
-                if update['status'] == 102:
-                    __data['init_slot2'] = update['stock']
-                if update['status'] == 103:
-                    __data['init_slot3'] = update['stock']
-        _KioskService.python_dump(str(__data))
-        _KioskService.python_dump(str(_ProductService.LAST_UPDATED_STOCK))
+        __data = _Common.COLLECTION_DATA
         # LOGGER.info(('get_admin_data', str(__data), str(_ProductService.LAST_UPDATED_STOCK)))
     except Exception as e:
         __data = False
@@ -904,11 +836,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
         GENERAL_TITLE = 'VM COLLECTION REPORT'
         pdf = GeneralPDF('P', 'mm', (80, 140))
-        s = get_admin_data()
-        if s is False:
-            LOGGER.warning(('get_admin_data', str(s)))
-            SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
-            return
+        s = _Common.COLLECTION_DATA
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -975,6 +903,11 @@ def admin_print_global(struct_id, ext='.pdf'):
         #     total_t200k = str(int(qty_t200k) * 200000)
         #     pdf.cell(padding_left, 0,
         #              '- 200K : '+str(qty_t200k)+' x 200.000 = Rp. '+clean_number(total_t200k), 0, 0, 'L')
+        pdf.set_font(USED_FONT, '', line_size)
+        qty_xdenom = s['trx_xdenom']
+        amt_xdenom = s['amt_xdenom']
+        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+' x Various = Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
+        pdf.ln(tiny_space)
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'CARD UPDATE', 0, 0, 'L') 
@@ -1028,7 +961,8 @@ def admin_print_global(struct_id, ext='.pdf'):
         _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
         mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
-        _ProductService.LAST_UPDATED_STOCK = []
+        _Common.LAST_UPDATED_STOCK = []
+        _Common.COLLECTION_DATA = []
         del pdf
 
 

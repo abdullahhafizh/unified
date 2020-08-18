@@ -23,7 +23,6 @@ class ProductSignalHandler(QObject):
 PR_SIGNDLER = ProductSignalHandler()
 LOGGER = logging.getLogger()
 BACKEND_URL = _Common.BACKEND_URL
-LAST_UPDATED_STOCK = []
 
 
 def start_change_product_stock(port, stock):
@@ -31,7 +30,6 @@ def start_change_product_stock(port, stock):
 
 
 def change_product_stock(port, stock):
-    global LAST_UPDATED_STOCK
     check_product = _DAO.custom_query(' SELECT * FROM ProductStock WHERE status='+port+' ')
     if len(check_product) == 0:
         PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|STID_NOT_FOUND')
@@ -47,7 +45,7 @@ def change_product_stock(port, stock):
             'user': operator
         }
         # Record Local Change
-        LAST_UPDATED_STOCK.append(check_product[0])
+        _Common.LAST_UPDATED_STOCK.append(check_product[0])
         # Log Change To Local And Send Signal Into View
         _DAO.custom_update(' UPDATE ProductStock SET stock=' + stock + ' WHERE stid="'+_stid+'" ')
         _KioskService.kiosk_get_product_stock()

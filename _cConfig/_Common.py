@@ -1185,3 +1185,87 @@ def online_logger(e='', mode='service'):
         capture_exception(KioskDeviceError(e))
     else:
         capture_exception(KioskGeneralError(e))
+
+
+LAST_UPDATED_STOCK = []
+COLLECTION_DATA = []
+
+
+def generate_collection_data():
+    global COLLECTION_DATA
+    __ = dict()
+    __['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+    __['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+    __['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+    __['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']        
+    __['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+    __['trx_xdenom'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale NOT IN (10000, 20000, 50000, 100000, 200000) AND isCollected = 0 AND pid like "topup%" ')[0]['__']        
+    __['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
+    __['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
+    __['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
+    __['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
+    __['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
+    __['amt_xdenom'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale NOT IN (10000, 20000, 50000, 100000, 200000) AND pid like "topup%" ')[0]['__']
+    __['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
+    __['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
+    __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
+    __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
+    __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
+    __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
+    __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
+    # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
+    #                                        ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
+    #                                        ' AND  pid like "shop%" ')[0]['__']
+    # __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale > ' + str(CARD_SALE) +
+    #                                        ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
+    __['amt_card'] = 0
+    __['trx_card'] = 0
+    __['card_trx_summary'] = []
+    if len(__['all_cards']) > 0:
+        for card in __['all_cards']:
+            pid = card['pid']
+            price = card['sell_price']
+            __['amt_card_'+str(pid)] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND pidStock = "' + str(pid) +'" ')[0]['__']
+            __['amt_card'] += __['amt_card_'+str(pid)]
+            __['trx_card_'+str(pid)] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE amount = ' + str(price) +
+                                                        ' AND isCollected = 0 AND pidStock = "'+str(pid)+'" ')[0]['__']
+            __['trx_card'] += __['trx_card_'+str(pid)]
+            __['card_trx_summary'].append({
+                'pid': pid,
+                'price': price,
+                'count': __['trx_card_'+str(pid)],
+                'amount': __['amt_card_'+str(pid)]
+            })
+        # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
+    __['all_amount'] = int(__['amt_card']) + int(__['amt_top10k']) + int(__['amt_top20k']) + int(__['amt_top50k']) + int(__['amt_top100k'] + int(__['amt_top200k'])) + int(__['amt_xdenom'])
+    __['failed_amount'] = 0
+    if int(__['all_cash']) > (int(__['all_amount']) + int(__['ppob_cash'])):
+        __['failed_amount'] = int(__['all_cash']) - (int(__['all_amount']) + int(__['ppob_cash']))
+    __['init_slot1'] = __['slot1']
+    __['init_slot2'] = __['slot2']
+    __['init_slot3'] = __['slot3']
+    __['init_slot4'] = __['slot4']
+    __['sam_1_balance'] = '0'
+    __['sam_2_balance'] = '0'
+    __notes = []
+    for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 '):
+        __notes.append(json.loads(money['note'])['history'])
+    __['notes_summary'] = '|'.join(__notes)
+        # Status Bank BNI in Global
+    if BANKS[0]['STATUS'] is True:
+        __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
+        __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)
+    if len(LAST_UPDATED_STOCK) > 0:
+        CARD_ADJUSTMENT = json.dumps(LAST_UPDATED_STOCK)
+        for update in LAST_UPDATED_STOCK:
+            if update['status'] == 101:
+                __['init_slot1'] = update['stock']
+            if update['status'] == 102:
+                __['init_slot2'] = update['stock']
+            if update['status'] == 103:
+                __['init_slot3'] = update['stock']
+            if update['status'] == 104:
+                __['init_slot4'] = update['stock']
+    __['collect_time'] = _Helper.time_string()
+    COLLECTION_DATA = __
+    return __
