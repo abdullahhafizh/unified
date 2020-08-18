@@ -61,6 +61,8 @@ def kiosk_login(username, password):
             #     "last_activity": 1552546792
             #     }
             US_SIGNDLER.SIGNAL_USER_LOGIN.emit('SUCCESS|'+json.dumps(USER))
+            _Common.LAST_UPDATED_STOCK = []
+            _Common.COLLECTION_DATA = []
         else:
             if 'statusCode' in response.keys():
                 if response['statusCode'] == -1:

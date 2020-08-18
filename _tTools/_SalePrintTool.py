@@ -907,7 +907,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         qty_xdenom = s['trx_xdenom']
         amt_xdenom = s['amt_xdenom']
-        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+' , Total = Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
+        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+' -- Total = Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'CARD UPDATE', 0, 0, 'L') 
@@ -961,8 +961,6 @@ def admin_print_global(struct_id, ext='.pdf'):
         _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
         mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
-        _Common.LAST_UPDATED_STOCK = []
-        _Common.COLLECTION_DATA = []
         del pdf
 
 

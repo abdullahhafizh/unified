@@ -135,7 +135,7 @@ Base{
             false_notif('Dear '+userData.first_name+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
             _SLOT.start_init_bill();
         } else if (a=='ADMIN_PRINT|DONE'){
-            false_notif('Dear '+userData.first_name+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Petugas Loket TJ');
+            false_notif('Dear '+userData.first_name+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
         } else if (a=='INIT_BILL|DONE'){
             false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor BILL Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
