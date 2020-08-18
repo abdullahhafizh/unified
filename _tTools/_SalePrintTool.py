@@ -906,7 +906,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         qty_xdenom = s['trx_xdenom']
         amt_xdenom = s['amt_xdenom']
-        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+' x Various = Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
+        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+', Total : Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)

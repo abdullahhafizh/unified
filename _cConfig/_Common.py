@@ -1192,7 +1192,7 @@ COLLECTION_DATA = []
 
 
 def generate_collection_data():
-    global COLLECTION_DATA
+    global COLLECTION_DATA, LAST_UPDATED_STOCK
     __ = dict()
     try:
         __['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
@@ -1248,11 +1248,15 @@ def generate_collection_data():
         __['init_slot4'] = __['slot4']
         __['sam_1_balance'] = '0'
         __['sam_2_balance'] = '0'
+        __['notes_summary'] = ''
+        __['total_notes'] = 0
         __notes = []
-        for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 '):
-            __notes.append(json.loads(money['note'])['history'])
-        __['notes_summary'] = '|'.join(__notes)
-        __['total_notes'] = len('|'.join(__notes).split('|'))
+        __all_payment_notes = _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 ')
+        if len(__all_payment_notes) > 0:
+            for money in __all_payment_notes:
+                __notes.append(json.loads(money['note'])['history'])
+            __['notes_summary'] = '|'.join(__notes)
+            __['total_notes'] = len(__['notes_summary'].split('|'))
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
         __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)
@@ -1268,8 +1272,10 @@ def generate_collection_data():
                 if update['status'] == 104:
                     __['init_slot4'] = update['stock']
         __['collect_time'] = _Helper.time_string()
+        BILL_ERROR = ''
         COLLECTION_DATA = __
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
+        LOGGER.debug(str(__))
         return __
