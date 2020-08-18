@@ -903,10 +903,11 @@ def admin_print_global(struct_id, ext='.pdf'):
         #     total_t200k = str(int(qty_t200k) * 200000)
         #     pdf.cell(padding_left, 0,
         #              '- 200K : '+str(qty_t200k)+' x 200.000 = Rp. '+clean_number(total_t200k), 0, 0, 'L')
+        pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         qty_xdenom = s['trx_xdenom']
         amt_xdenom = s['amt_xdenom']
-        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+', Total : Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
+        pdf.cell(padding_left, 0, '- Other : '+str(qty_xdenom)+'  Total : Rp. '+clean_number(amt_xdenom), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)
