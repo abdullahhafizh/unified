@@ -788,37 +788,22 @@ def get_admin_data():
     global CARD_ADJUSTMENT
     __data = dict()
     try:
-        __data['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 '
-                                                 ' AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 '
-                                                 ' AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 '
-                                                 ' AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 '
-                                                  'AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 '
-                                                  'AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __data['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                 ' isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
-        __data['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                 ' isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
-        __data['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                 ' isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
-        __data['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                  ' isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
-        __data['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                  ' isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
-        __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
-                                            ' status = 101 ')[0]['__']
-        __data['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
-                                            ' status = 102 ')[0]['__']
-        __data['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
-                                            ' status = 103 ')[0]['__']
-        __data['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE  '
-                                               ' collectedAt = 19900901 ')[0]['__']        
+        __data['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        __data['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        __data['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        __data['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        __data['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        __data['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
+        __data['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
+        __data['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
+        __data['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
+        __data['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
+        __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
+        __data['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
+        __data['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
+        __data['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         __data['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
-        __data['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" '
-                                               ' AND collectedAt = 19900901 ')[0]['__']    
+        __data['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
         #                                        ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
         #                                        ' AND  pid like "shop%" ')[0]['__']
@@ -831,8 +816,7 @@ def get_admin_data():
             for card in __data['all_cards']:
                 pid = card['pid']
                 price = card['sell_price']
-                __data['amt_card_'+str(pid)] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                ' isCollected = 0 AND pidStock = "' + str(pid) +'" ')[0]['__']
+                __data['amt_card_'+str(pid)] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND pidStock = "' + str(pid) +'" ')[0]['__']
                 __data['amt_card'] += __data['amt_card_'+str(pid)]
                 __data['trx_card_'+str(pid)] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE amount = ' + str(price) +
                                                        ' AND isCollected = 0 AND pidStock = "'+str(pid)+'" ')[0]['__']
@@ -855,8 +839,7 @@ def get_admin_data():
         __data['sam_1_balance'] = '0'
         __data['sam_2_balance'] = '0'
         __notes = []
-        for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI" '
-                                       ' AND isCollected = 0 '):
+        for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 '):
             __notes.append(json.loads(money['note'])['history'])
         __data['notes_summary'] = '|'.join(__notes)
         # Status Bank BNI in Global

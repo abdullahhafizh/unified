@@ -1159,6 +1159,8 @@ def python_dump(log):
 
 
 def house_keeping(age_month=1, mode='DATA_FILES'):
+    # Add Flushing Data Which Not Belong To This Terminal ID
+    reset_db_record()
     if mode == 'DATA_FILES':
         LOGGER.info(('START DATA HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: START DATA HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
