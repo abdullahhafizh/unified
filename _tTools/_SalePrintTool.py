@@ -785,7 +785,6 @@ CARD_SALE = 0 # Will Count All Card Shop TRX
 
 
 def get_admin_data():
-    global CARD_ADJUSTMENT
     __data = dict()
     try:
         __data = _Common.COLLECTION_DATA
@@ -795,9 +794,6 @@ def get_admin_data():
         LOGGER.warning(str(e))
     finally:
         return __data
-
-
-CARD_ADJUSTMENT = ''
 
 
 def save_receipt_local(__id, __data, __type):
@@ -819,6 +815,7 @@ def save_receipt_local(__id, __data, __type):
 
 def start_admin_print_global(struct_id):
     _Helper.get_thread().apply_async(admin_print_global, (struct_id,))
+
 
 def admin_print_global(struct_id, ext='.pdf'):
     global GENERAL_TITLE
@@ -958,7 +955,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         # Send To Backend
-        _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
+        _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', s['card_adjustment'], json.dumps(s), s['trx_list'])
         mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf

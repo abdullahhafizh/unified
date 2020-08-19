@@ -580,6 +580,12 @@ def handle_tasks(tasks):
             else:
                 result = 'FAILED_EXECUTED_VM_ON_USED'
                 update_task(task, result)
+        if task['taskName'] == 'FORCE_REBOOT':
+            result = 'EXECUTED_INTO_MACHINE'
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
+            update_task(task, result)
+            sleep(30)
+            _KioskService.execute_command('shutdown -r -f -t 0')
         if task['taskName'] == 'EDC_CLEAR_BATCH':
             result = _EDC.void_settlement_data()
             update_task(task, result)

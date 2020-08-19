@@ -946,7 +946,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
 #                                                         card_adjustment, remarks,))
 
 
-def upload_admin_access(aid, username, cash_collection='', edc_settlement='', card_adjustment='', remarks=''):
+def upload_admin_access(aid, username, cash_collection='', edc_settlement='', card_adjustment='', remarks='', trx_list=''):
     try:
         param = {
             'aid': aid,
@@ -955,6 +955,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
             'edc_settlement': edc_settlement,
             'card_adjustment': card_adjustment,
             'remarks': remarks,
+            'trx_list': trx_list,
             'collect_time': _Helper.time_string()
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/access-report', param)
@@ -1249,6 +1250,7 @@ def generate_collection_data():
         __['sam_1_balance'] = '0'
         __['sam_2_balance'] = '0'
         __['notes_summary'] = ''
+        __['trx_list'] = []
         __['total_notes'] = 0
         __notes = []
         __all_payment_notes = _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 ')
@@ -1257,11 +1259,15 @@ def generate_collection_data():
                 __notes.append(json.loads(money['note'])['history'])
             __['notes_summary'] = '|'.join(__notes)
             __['total_notes'] = len(__['notes_summary'].split('|'))
+        __all_cash_trx_list = _DAO.custom_query(' SELECT csid FROM Cash WHERE collectedAt = 19900901 ')
+        if len(__all_cash_trx_list) > 0:
+            for trx_list in __all_cash_trx_list:
+                __['trx_list'].append(trx_list['csid'][::-1])    
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
         __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)
         if len(LAST_UPDATED_STOCK) > 0:
-            CARD_ADJUSTMENT = json.dumps(LAST_UPDATED_STOCK)
+            __['card_adjustment'] = json.dumps(LAST_UPDATED_STOCK)
             for update in LAST_UPDATED_STOCK:
                 if update['status'] == 101:
                     __['init_slot1'] = update['stock']
