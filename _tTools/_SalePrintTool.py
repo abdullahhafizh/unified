@@ -955,7 +955,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         # Send To Backend
-        _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', s['card_adjustment'], json.dumps(s), s['trx_list'])
+        _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
         mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf

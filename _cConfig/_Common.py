@@ -1267,6 +1267,7 @@ def generate_collection_data():
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
         __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)
+        __['card_adjustment'] = ''
         if len(LAST_UPDATED_STOCK) > 0:
             __['card_adjustment'] = json.dumps(LAST_UPDATED_STOCK)
             for update in LAST_UPDATED_STOCK:
