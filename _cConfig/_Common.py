@@ -1262,7 +1262,8 @@ def generate_collection_data():
         __all_cash_trx_list = _DAO.custom_query(' SELECT csid FROM Cash WHERE collectedAt = 19900901 ')
         if len(__all_cash_trx_list) > 0:
             for trx_list in __all_cash_trx_list:
-                __['trx_list'].append(trx_list['csid'][::-1])    
+                __['trx_list'].append(trx_list['csid'][::-1])
+            __['trx_list'] = ','.join(__['trx_list'])    
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
         __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)
