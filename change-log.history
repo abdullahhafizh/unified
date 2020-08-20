@@ -1,6 +1,7 @@
 11.8.P-GLOBAL:
 - Add TRX List For Collection Data,
 - Enhance PPOB Trx Time to 180 Seconds,
+- Remove Mismatch TID Data,
 - ...
 
 11.8.O-GLOBAL:
