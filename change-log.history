@@ -1,7 +1,11 @@
+11.8.P-GLOBAL:
+- Add TRX List For Collection Data,
+- Enhance PPOB Trx Time to 180 Seconds,
+- ...
+
 11.8.O-GLOBAL:
 - Add Bank Penerbit In Topup Gagal,
 - Adjust Cash Collection Timestamp in Pending Data Push,
-- Add TRX List For Collection Data,
 - ...
 
 11.8.N-GLOBAL:
