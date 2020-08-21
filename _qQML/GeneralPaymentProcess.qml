@@ -553,6 +553,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
         console.log('payment_complete', now, JSON.stringify(details))
+        //Add Payment Complete System Action Log
+        _SLOT.system_action_log('PAYMENT_COMPLETE START | ' + mode.toUpperCase(), 'debug')
         if (mode != undefined){
             console.log('payment_complete mode', mode)
 //            details.notes = mode + ' - ' + new Date().getTime().toString();
@@ -565,21 +567,6 @@ Base{
         abc.counter = 600;
         my_timer.restart();
         switch(details.shop_type){
-            case 'shop':
-                attemptCD = details.qty;
-                var attempt = details.status.toString();
-                var multiply = details.qty.toString();
-                _SLOT.start_multiple_eject(attempt, multiply);
-                break;
-            case 'topup':
-                var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
-                var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
-                // Force Disable All Cancel Button
-                back_button.visible = false;
-                cancel_button_global.visible = false;
-                perform_do_topup();
-                break;
             case 'ppob':
                 var payload = {
                     msisdn: details.msisdn,
@@ -595,8 +582,24 @@ Base{
                 } else {
                     _SLOT.start_do_topup_ppob(JSON.stringify(payload));
                 }
+            break;
+            case 'shop':
+                attemptCD = details.qty;
+                var attempt = details.status.toString();
+                var multiply = details.qty.toString();
+                _SLOT.start_multiple_eject(attempt, multiply);
+                break;
+            case 'topup':
+                var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
+                var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
+                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
+                // Force Disable All Cancel Button
+                back_button.visible = false;
+                cancel_button_global.visible = false;
+                perform_do_topup();
                 break;
         }
+        _SLOT.system_action_log('PAYMENT_COMPLETE END | ' + mode.toUpperCase()	 + ' | ' + JSON.stringify(details), 'debug')
     }
 
     function bill_payment_result(r){
@@ -613,8 +616,6 @@ Base{
                 validate_release_refund('cash_device_error');
                 return;
             } else if (grgResult == 'COMPLETE'){
-//                _SLOT.start_dis_accept_mei();
-//                _SLOT.start_store_es_mei();
                 _SLOT.stop_bill_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
@@ -657,7 +658,7 @@ Base{
                 details.payment_received = cashResponse.total;
                 // Overwrite receivedPayment from STOP_BILL result
                 receivedPayment = parseInt(cashResponse.total);
-                if (proceedAble) payment_complete('grg');
+                if (proceedAble) payment_complete('bill_acceptor');
             }
         } else if (grgFunction == 'STATUS_BILL'){
             if(grgResult=='ERROR') {

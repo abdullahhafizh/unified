@@ -179,13 +179,28 @@ def do_trx_ppob(payload, mode='PAY'):
         LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
         return
+    if _Common.LAST_PPOB_TRX['payload'] == payload:
+        if not _Common.LAST_PPOB_TRX['error']:
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(_Common.LAST_PPOB_TRX['result']))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
+        LOGGER.warning(('Duplicate PPOB TRX Payload', str(_Common.LAST_PPOB_TRX)))
+        return
     _Helper.dump(payload)
     try:
         url = _Common.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
             url = _Common.BACKEND_URL+'ppob/topup'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        _Common.LAST_PPOB_TRX = {
+            'payload': payload,
+            'result': r,
+            'error': True
+        }
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            _Common.LAST_PPOB_TRX['result'] = r['data']
+            _Common.LAST_PPOB_TRX['error'] = False
+            LOGGER.info(('Store Last PPOB TRX', str(_Common.LAST_PPOB_TRX)))
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(r['data']))
             LOGGER.debug((str(payload), mode, str(r)))
         else:

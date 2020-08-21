@@ -141,8 +141,9 @@ def set_direct_price(price):
 
 
 def start_bill_receive_note():
-    # Add Billing Initiation En Every Note Receive
-    init_bill()
+    # Add Billing Initiation En Every Note Receive For NV Only
+    if BILL_TYPE == 'NV':
+        init_bill()
     _Helper.get_thread().apply_async(start_receive_note)
 
 
@@ -209,22 +210,9 @@ def start_receive_note():
                         'HISTORY': CASH_HISTORY})))
                     # Signal Emit To Update View Cash Status
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
-                    # Handling NV Strange Response
-                    # _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                    # if not _Helper.empty(BILL["KEY_STORED"]) and not _Helper.empty(BILL["MAX_STORE_ATTEMPT"]):
-                    #     for attempt in range(BILL["MAX_STORE_ATTEMPT"]):
-                    #         if BILL["KEY_STORED"].lower() in _result_store.lower():
-                    #             continue
-                    #         else:
-                    #             _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
-                    #             sleep(_Common.BILL_STORE_DELAY)
-                if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
-                    break
-                # else:
-                #     sleep(.25)
-                #     param = BILL["RECEIVE"] + '|'
-                #     _Command.send_request(param=param, output=None)
+            if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
+                break
             if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
                 _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
                 # _Command.send_request(param=BILL["STOP"]+'|', output=None)

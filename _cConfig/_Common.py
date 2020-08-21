@@ -1287,3 +1287,6 @@ def generate_collection_data():
     finally:
         LOGGER.debug(str(__))
         return __
+
+
+LAST_PPOB_TRX = None

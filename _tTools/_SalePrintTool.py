@@ -635,7 +635,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
         # pdf.set_font(USED_FONT, '', regular_space)
         # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
-        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+        if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
             if p['ppob_mode'] == 'tagihan':
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)

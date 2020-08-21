@@ -1146,6 +1146,15 @@ def user_action_log(log):
         LOGGER.info(('[USER_ACTION]', str(log)))
 
 
+def system_action_log(log, level='info'):
+    if level == 'info':
+        LOGGER.info(('[SYSTEM_ACTION]', str(log)))
+    elif level == 'debug':
+        LOGGER.debug(('[SYSTEM_ACTION]', str(log)))
+    else:
+        LOGGER.warning(('[SYSTEM_ACTION]', str(log)))
+
+
 def python_dump(log):
     _Helper.dump(log)
 

@@ -452,6 +452,10 @@ class SlotHandler(QObject):
         _KioskService.user_action_log(log)
     user_action_log = pyqtSlot(str)(user_action_log)
 
+    def system_action_log(self, log, level):
+        _KioskService.system_action_log(log, level)
+    system_action_log = pyqtSlot(str, str)(system_action_log)
+
     def python_dump(self, log):
         _KioskService.python_dump(log)
     python_dump = pyqtSlot(str)(python_dump)
