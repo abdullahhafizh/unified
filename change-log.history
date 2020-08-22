@@ -1,6 +1,7 @@
 11.8.Q-GLOBAL:
 - Handle Anomali In PPOB TRX in receipt,
 - TRX Bill Reset For NV Only,
+- Enhance Cash Update Method,
 - ...
 
 11.8.P-GLOBAL:
