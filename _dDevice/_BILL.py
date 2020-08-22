@@ -198,18 +198,19 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-                do_store_note = store_cash_into_cashbox()
-                LOGGER.debug(('Check Cash Store Status:', str(do_store_note), str(cash_in)))
-                if do_store_note is True:
-                    CASH_HISTORY.append(str(cash_in))
-                    COLLECTED_CASH += int(cash_in)
-                    _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
-                    LOGGER.info(('Cash Status:', json.dumps({
-                        'ADD': cash_in,
-                        'COLLECTED': COLLECTED_CASH,
-                        'HISTORY': CASH_HISTORY})))
-                    # Signal Emit To Update View Cash Status
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
+                store_result = store_cash_into_cashbox()
+                update_cash_result = update_cash_status(str(cash_in), store_result)
+                LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
+                # if do_store_note is True or do_store_note is not False:
+                #     CASH_HISTORY.append(str(cash_in))
+                #     COLLECTED_CASH += int(cash_in)
+                #     _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
+                #     LOGGER.info(('Cash Status:', json.dumps({
+                #         'ADD': cash_in,
+                #         'COLLECTED': COLLECTED_CASH,
+                #         'HISTORY': CASH_HISTORY})))
+                #     # Signal Emit To Update View Cash Status
+                #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
             if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 break
@@ -276,6 +277,23 @@ def store_cash_into_cashbox():
             return True
         if attempt == max_attempt:
             return False
+
+
+def update_cash_status(cash_in, store_result=False):
+    global CASH_HISTORY, COLLECTED_CASH
+    if not store_result:
+        LOGGER.warning(('Store Cash Failed', 'Update Cash Failed', store_result))
+        return False
+    CASH_HISTORY.append(str(cash_in))
+    COLLECTED_CASH += int(cash_in)
+    _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
+    LOGGER.info(('Cash Status:', json.dumps({
+                'ADD': cash_in,
+                'COLLECTED': COLLECTED_CASH,
+                'HISTORY': CASH_HISTORY})))
+    # Signal Emit To Update View Cash Status
+    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
+    return True
 
 
 def is_exceed_payment(target, value_in, current_value):

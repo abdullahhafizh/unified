@@ -219,7 +219,7 @@ def do_pending_upload_job():
                     else:
                         result = False
                     LOGGER.debug((p, host, data, result))
-                    if result['success'] == True:
+                    if result['success'] is True:
                         jobs_path_done = jobs_path_process.replace('.process_upload', '.done')
                         os.rename(jobs_path_process, jobs_path_done)
                         LOGGER.debug((jobs_path_process, jobs_path_done))
