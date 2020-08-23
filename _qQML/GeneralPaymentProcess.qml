@@ -555,20 +555,19 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
         console.log('payment_complete', now, JSON.stringify(details))
-        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase()	 + ' | ' + JSON.stringify(details), 'debug')
-    }
-
-    function execute_transaction(mode){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-    //        popup_loading.close();
-        console.log('execute_transaction', now, JSON.stringify(details))
-        //Add Payment Complete System Action Log
         //Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
         back_button.visible = false;
         abc.counter = 600;
         my_timer.restart();
-        switch(details.shop_type){
+//        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
+    }
+
+    function execute_transaction(channel){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+    //        popup_loading.close();
+        var trx_type = details.shop_type;
+        switch(trx_type){
             case 'ppob':
                 var payload = {
                     msisdn: details.msisdn,
@@ -584,12 +583,14 @@ Base{
                 } else {
                     _SLOT.start_do_topup_ppob(JSON.stringify(payload));
                 }
+                console.log('DO PPOB', now, JSON.stringify(payload))
             break;
             case 'shop':
                 attemptCD = details.qty;
                 var attempt = details.status.toString();
                 var multiply = details.qty.toString();
                 _SLOT.start_multiple_eject(attempt, multiply);
+                console.log('DO SHOP', now, attempt, multiply)
                 break;
             case 'topup':
                 var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
@@ -597,10 +598,14 @@ Base{
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 // Force Disable All Cancel Button
                 cancel_button_global.visible = false;
+                console.log('DO TOPUP', now)
                 perform_do_topup();
                 break;
         }
-        _SLOT.system_action_log('EXECUTE_TRANSACTION | ' + mode.toUpperCase()	 + ' | ' + JSON.stringify(details), 'debug')
+        _SLOT.system_action_log('EXECUTE_TRANSACTION | ' +
+                                channel.toUpperCase()  + ' | ' +
+                                trx_type.toUpperCase()  + ' | ' +
+                                JSON.stringify(details), 'debug')
     }
 
     function bill_payment_result(r){
