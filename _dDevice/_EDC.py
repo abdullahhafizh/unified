@@ -127,6 +127,7 @@ def sale_edc_mobile(amount, trxid=None):
                 EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
                 EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
+                sleep(.5)
                 GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('EDC_PAYMENT')
                 _KioskService.python_dump(EDC_PAYMENT_RESULT)
                 try:

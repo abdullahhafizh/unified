@@ -217,6 +217,7 @@ def do_check_qr(payload, mode, serialize=True):
         if success is True:
             # trigger_success_qr_payment(mode, r['data'])
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
+            sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
@@ -287,6 +288,7 @@ def do_pay_qr(payload, mode, serialize=True):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
+            sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             LOGGER.debug((str(payload), str(r)))
             handle_confirm_process(json.dumps(payload), mode)
