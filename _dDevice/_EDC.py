@@ -14,6 +14,8 @@ from time import sleep, time
 import json
 import re
 from datetime import datetime
+from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
+
 
 LOGGER = logging.getLogger()
 EDC_PORT = _Common.EDC_PORT
@@ -125,6 +127,7 @@ def sale_edc_mobile(amount, trxid=None):
                 EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
                 EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
+                GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('EDC_PAYMENT')
                 _KioskService.python_dump(EDC_PAYMENT_RESULT)
                 try:
                     _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)

@@ -7,6 +7,7 @@ from _cConfig import _Common
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from time import sleep
+from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 
 
 class QRSignalHandler(QObject):
@@ -216,6 +217,7 @@ def do_check_qr(payload, mode, serialize=True):
         if success is True:
             # trigger_success_qr_payment(mode, r['data'])
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
+            GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
@@ -285,6 +287,7 @@ def do_pay_qr(payload, mode, serialize=True):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
+            GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             LOGGER.debug((str(payload), str(r)))
             handle_confirm_process(json.dumps(payload), mode)
         else:

@@ -11,6 +11,7 @@ from time import sleep
 import sys
 import os
 import subprocess
+from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 
 
 LOGGER = logging.getLogger()
@@ -325,6 +326,7 @@ def stop_receive_note():
                 'total': get_collected_cash()
             }
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
+            GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
             LOGGER.warning((str(response), str(result)))

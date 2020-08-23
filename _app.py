@@ -33,6 +33,7 @@ from _sService import _SettlementService
 from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
+from _sService import _GeneralPaymentService
 import json
 import sentry_sdk
 
@@ -776,6 +777,7 @@ def s_handler():
     _TopupService.TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.connect(view.rootObject().result_topup_readiness)
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
+    _GeneralPaymentService.GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.connect(view.rootObject().result_general_payment)
 
 
 

@@ -1,3 +1,7 @@
+11.8.R-GLOBAL:
+- Enhancement In Payment Complete Handling,
+- ...
+
 11.8.Q-GLOBAL:
 - Handle Anomali In PPOB TRX in receipt,
 - TRX Bill Reset For NV Only,

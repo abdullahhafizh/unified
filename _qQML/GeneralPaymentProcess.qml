@@ -95,6 +95,7 @@ Base{
         base.result_pay_qr.connect(qr_check_result);
         base.result_global_refund_balance.connect(transfer_balance_result);
         base.result_get_refund.connect(get_refund_result);
+        base.result_general_payment.connect(execute_transaction);
         framingSignal.connect(get_signal_frame);
     }
 
@@ -120,6 +121,7 @@ Base{
         base.result_pay_qr.disconnect(qr_check_result);
         base.result_global_refund_balance.disconnect(transfer_balance_result);
         base.result_get_refund.disconnect(get_refund_result);
+        base.result_general_payment.disconnect(execute_transaction);
         framingSignal.disconnect(get_signal_frame);
 
     }
@@ -396,7 +398,7 @@ Base{
             qr_payment_frame.success(3)
             details.payment_details = info;
             details.payment_received = details.value.toString();
-            payment_complete(details.shop_type);
+            payment_complete('QR_PAYMENT');
 //            var qrMode = mode.toLowerCase();
 //            switch(qrMode){
 //            case 'ovo':
@@ -553,16 +555,16 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
         console.log('payment_complete', now, JSON.stringify(details))
+        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase()	 + ' | ' + JSON.stringify(details), 'debug')
+    }
+
+    function execute_transaction(mode){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+    //        popup_loading.close();
+        console.log('execute_transaction', now, JSON.stringify(details))
         //Add Payment Complete System Action Log
-        _SLOT.system_action_log('PAYMENT_COMPLETE START | ' + mode.toUpperCase(), 'debug')
-        if (mode != undefined){
-            console.log('payment_complete mode', mode)
-//            details.notes = mode + ' - ' + new Date().getTime().toString();
-        }
         //Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
-        var pid = details.shop_type + details.epoch.toString();
-        // if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedPayment.toString());
         back_button.visible = false;
         abc.counter = 600;
         my_timer.restart();
@@ -594,12 +596,11 @@ Base{
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 // Force Disable All Cancel Button
-                back_button.visible = false;
                 cancel_button_global.visible = false;
                 perform_do_topup();
                 break;
         }
-        _SLOT.system_action_log('PAYMENT_COMPLETE END | ' + mode.toUpperCase()	 + ' | ' + JSON.stringify(details), 'debug')
+        _SLOT.system_action_log('EXECUTE_TRANSACTION | ' + mode.toUpperCase()	 + ' | ' + JSON.stringify(details), 'debug')
     }
 
     function bill_payment_result(r){
