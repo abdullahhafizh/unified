@@ -1355,8 +1355,11 @@ Base{
                     if (press!='0') return;
                     press = '1'
                     switch(modeButtonPopup){
-                    case 'retrigger_bill':
+                    case 'retrigger_bill':                      
                         _SLOT.start_bill_receive_note();
+                        modeButtonPopup = undefined;
+                        global_frame.modeAction = "";
+                        global_frame.close();
 //                        open_preload_notif();
                         break;
                     case 'do_topup':

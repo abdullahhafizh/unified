@@ -215,8 +215,8 @@ Base{
     }
 
     function close(){
-        globalFrame.visible = false;
         if (withTimer) global_frame_timer.stop();
+        globalFrame.visible = false;
         specialHandler = undefined;
         if (calledFrom != undefined){
             switch(calledFrom){
