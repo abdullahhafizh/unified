@@ -413,15 +413,15 @@ Base{
         console.log('qr_get_result', now, r);
         var mode = r.split('|')[1]
         var result = r.split('|')[2]
+        popup_loading.close();
         if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR', 'MODE_NOT_FOUND'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true );
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Waktu Proses Pembuatan QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|5', true )
+            switch_frame('source/smiley_down.png', 'Waktu Proses Pembuatan QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|5', true );
             return;
         }
-        popup_loading.close();
         var info = JSON.parse(result);
         var qrMode = mode.toUpperCase();
         qr_payment_frame.modeQR = (CONF.general_qr == '1') ? 'QR Wallet Anda' : qrMode;
@@ -1096,19 +1096,20 @@ Base{
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = false;
         press = '0';
-        global_frame.timerDuration = 5;
         global_frame.modeAction = "";
         if (modeButtonPopup == 'retrigger_bill') global_frame.modeAction = "RETRIGGER_BILL";
+        global_frame.closeMode = closeMode;
+        global_frame.timerDuration = 5;
         if (closeMode.indexOf('|') > -1){
-            closeMode = closeMode.split('|')[0];
+            var selectedCloseMode = closeMode.split('|')[0];
             var frame_timer = closeMode.split('|')[1];
             global_frame.timerDuration = parseInt(frame_timer);
-            global_frame.closeMode = closeMode;
+            global_frame.closeMode = selectedCloseMode;
         }
-        if (closeMode == 'closeWindow|30'){
-            global_frame.closeMode = 'closeWindow';
-            global_frame.timerDuration = 30;
-        }
+//        if (closeMode == 'closeWindow|30'){
+//            global_frame.closeMode = 'closeWindow';
+//            global_frame.timerDuration = 30;
+//        }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
