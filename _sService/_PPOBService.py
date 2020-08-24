@@ -180,7 +180,7 @@ def do_trx_ppob(payload, mode='PAY'):
             LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
             return
-        if _Common.LAST_PPOB_TRX['payload'] == payload:
+        if _Common.LAST_PPOB_TRX is not None and _Common.LAST_PPOB_TRX['payload'] == payload:
             if not _Common.LAST_PPOB_TRX['error']:
                 PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(_Common.LAST_PPOB_TRX['result']))
             else:
