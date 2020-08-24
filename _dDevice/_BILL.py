@@ -288,7 +288,7 @@ def update_cash_status(cash_in, store_result=False):
     CASH_HISTORY.append(str(cash_in))
     COLLECTED_CASH += int(cash_in)
     _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
-    LOGGER.info(('Cash Status:', json.dumps({
+    LOGGER.debug(('Cash Status:', json.dumps({
                 'ADD': cash_in,
                 'COLLECTED': COLLECTED_CASH,
                 'HISTORY': CASH_HISTORY})))
