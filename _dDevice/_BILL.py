@@ -55,7 +55,7 @@ NV = {
     "PORT": BILL_PORT,
     # TODO Must Define Below Property
     "CODE_JAM": None,
-    "TIMEOUT_BAD_NOTES": None,
+    "TIMEOUT_BAD_NOTES": 'Invalid note',
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
     "KEY_STORED": 'Note stacked',
@@ -143,8 +143,8 @@ def set_direct_price(price):
 
 def start_bill_receive_note():
     # Add Billing Initiation En Every Note Receive For NV Only
-    if IS_RECEIVING is True:
-        return
+    # if IS_RECEIVING is True:
+    #     return
     if BILL_TYPE == 'NV':
         init_bill()
     _Helper.get_thread().apply_async(start_receive_note)
@@ -218,10 +218,13 @@ def start_receive_note():
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 break
             if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
-                _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                # _Command.send_request(param=BILL["STOP"]+'|', output=None)
-                _Command.send_request(param=BILL["REJECT"] + '|', output=None)
+                if BILL_TYPE == 'GRG':
+                    _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
+                    # _Command.send_request(param=BILL["STOP"]+'|', output=None)
+                    _Command.send_request(param=BILL["REJECT"] + '|', output=None)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                if BILL_TYPE == 'NV':
+                    stop_receive_note()
                 break
             if BILL["UNKNOWN_ITEM"] is not None and BILL["UNKNOWN_ITEM"] in _result:
                 _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
@@ -256,6 +259,7 @@ def start_receive_note():
             return
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
+        IS_RECEIVING = False
         LOGGER.warning(e)
 
 
@@ -322,20 +326,19 @@ def stop_receive_note():
     try:
         param = BILL["STOP"] + '|'
         response, result = _Command.send_request(param=param, output=None)
-        if response == 0:
+        if response == 0 and COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
             cash_received = {
                 'history': get_cash_history(),
                 'total': get_collected_cash()
             }
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
-            if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
-                sleep(.5)
-                GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
+            sleep(.5)
+            GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
+            COLLECTED_CASH = 0
+            CASH_HISTORY = []
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
             LOGGER.warning((str(response), str(result)))
-        COLLECTED_CASH = 0
-        CASH_HISTORY = []
     except Exception as e:
         _Common.BILL_ERROR = 'FAILED_STOP_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
