@@ -584,14 +584,14 @@ Base{
                 } else {
                     _SLOT.start_do_topup_ppob(JSON.stringify(payload));
                 }
-                console.log('DO_PPOB_TRX', now, details.ppob_mode, JSON.stringify(payload))
+                console.log('DO_PPOB_TRX', now, channel, details.ppob_mode, JSON.stringify(payload))
             break;
             case 'shop':
                 attemptCD = details.qty;
                 var attempt = details.status.toString();
                 var multiply = details.qty.toString();
                 _SLOT.start_multiple_eject(attempt, multiply);
-                console.log('DO_SHOP_TRX', now, attempt, multiply)
+                console.log('DO_SHOP_TRX', now, channel, attempt, multiply)
                 break;
             case 'topup':
                 var provider = details.provider;
@@ -602,7 +602,7 @@ Base{
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 // Force Disable All Cancel Button
                 cancel_button_global.visible = false;
-                console.log('DO_TOPUP_TRX', now, provider, amount, structId);
+                console.log('DO_TOPUP_TRX', now, channel, provider, amount, structId);
                 perform_do_topup();
                 break;
         }
