@@ -150,44 +150,44 @@ def start_do_topup_ppob(payload):
 
 def do_trx_ppob(payload, mode='PAY'):
     # product_id,msisdn,amount,reff_no,payment_type,product_category,operator
-    payload = json.loads(payload)
-    if _Common.empty(payload['msisdn']):
-        LOGGER.warning((str(payload), 'MISSING_MSISDN'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_MSISDN')
-        return
-    if _Common.empty(payload['product_id']):
-        LOGGER.warning((str(payload), 'MISSING_PRODUCT_ID'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_ID')
-        return
-    if _Common.empty(payload['amount']):
-        LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_AMOUNT')
-        return
-    if _Common.empty(payload['reff_no']):
-        LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_REFF_NO')
-        return
-    if _Common.empty(payload['product_category']):
-        LOGGER.warning((str(payload), 'MISSING_PRODUCT_CATEGORY'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_CATEGORY')
-        return
-    if _Common.empty(payload['payment_type']):
-        LOGGER.warning((str(payload), 'MISSING_PAYMENT_TYPE'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PAYMENT_TYPE')
-        return
-    if _Common.empty(payload['operator']):
-        LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
-        return
-    if _Common.LAST_PPOB_TRX['payload'] == payload:
-        if not _Common.LAST_PPOB_TRX['error']:
-            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(_Common.LAST_PPOB_TRX['result']))
-        else:
-            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
-        LOGGER.warning(('Duplicate PPOB TRX Payload', str(_Common.LAST_PPOB_TRX)))
-        return
-    _Helper.dump(payload)
     try:
+        payload = json.loads(payload)
+        if _Common.empty(payload['msisdn']):
+            LOGGER.warning((str(payload), 'MISSING_MSISDN'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_MSISDN')
+            return
+        if _Common.empty(payload['product_id']):
+            LOGGER.warning((str(payload), 'MISSING_PRODUCT_ID'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_ID')
+            return
+        if _Common.empty(payload['amount']):
+            LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_AMOUNT')
+            return
+        if _Common.empty(payload['reff_no']):
+            LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_REFF_NO')
+            return
+        if _Common.empty(payload['product_category']):
+            LOGGER.warning((str(payload), 'MISSING_PRODUCT_CATEGORY'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_CATEGORY')
+            return
+        if _Common.empty(payload['payment_type']):
+            LOGGER.warning((str(payload), 'MISSING_PAYMENT_TYPE'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PAYMENT_TYPE')
+            return
+        if _Common.empty(payload['operator']):
+            LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
+            return
+        if _Common.LAST_PPOB_TRX['payload'] == payload:
+            if not _Common.LAST_PPOB_TRX['error']:
+                PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(_Common.LAST_PPOB_TRX['result']))
+            else:
+                PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
+            LOGGER.warning(('Duplicate PPOB TRX Payload', str(_Common.LAST_PPOB_TRX)))
+            return
+        _Helper.dump(payload)
         url = _Common.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
             url = _Common.BACKEND_URL+'ppob/topup'
