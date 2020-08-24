@@ -178,6 +178,7 @@ def start_receive_note():
             if _response == -1:
                 if BILL_TYPE == 'NV':
                     stop_receive_note()
+                    sleep(2.5)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
                 break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
