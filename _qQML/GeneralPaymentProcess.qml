@@ -398,6 +398,7 @@ Base{
             qr_payment_frame.success(3)
             details.payment_details = info;
             details.payment_received = details.value.toString();
+            receivedPayment = totalPrice;
             payment_complete('QR_PAYMENT');
 //            var qrMode = mode.toLowerCase();
 //            switch(qrMode){
@@ -556,7 +557,7 @@ Base{
     //        popup_loading.close();
         var trx_type = details.shop_type;
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
-        //Overwrite receivedPayment into totalPrice for non-cash transaction
+        //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
         back_button.visible = false;
         abc.counter = 600;
@@ -567,6 +568,10 @@ Base{
     function execute_transaction(channel){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
+        if (receivedPayment == 0){
+            console.log('EMPTY_PAYMENT', now);
+            return;
+        }
         var trx_type = details.shop_type;
         switch(trx_type){
             case 'ppob':
@@ -731,6 +736,7 @@ Base{
         if (edcResult=='SUCCESS') {
             details.payment_details = JSON.parse(r.replace('SALE|SUCCESS|', ''));
             details.payment_received = totalPrice;
+            receivedPayment = totalPrice;
             payment_complete('edc');
 //            popup_loading.open();
             return;

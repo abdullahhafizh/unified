@@ -326,8 +326,9 @@ def stop_receive_note():
                 'total': get_collected_cash()
             }
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
-            sleep(.5)
-            GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
+            if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
+                sleep(.5)
+                GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
             LOGGER.warning((str(response), str(result)))
