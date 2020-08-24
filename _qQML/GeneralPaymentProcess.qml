@@ -554,7 +554,8 @@ Base{
     function payment_complete(mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
-        console.log('payment_complete', now, JSON.stringify(details))
+        var trx_type = details.shop_type;
+        console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
         back_button.visible = false;
@@ -583,22 +584,25 @@ Base{
                 } else {
                     _SLOT.start_do_topup_ppob(JSON.stringify(payload));
                 }
-                console.log('DO PPOB', now, JSON.stringify(payload))
+                console.log('DO_PPOB_TRX', now, details.ppob_mode, JSON.stringify(payload))
             break;
             case 'shop':
                 attemptCD = details.qty;
                 var attempt = details.status.toString();
                 var multiply = details.qty.toString();
                 _SLOT.start_multiple_eject(attempt, multiply);
-                console.log('DO SHOP', now, attempt, multiply)
+                console.log('DO_SHOP_TRX', now, attempt, multiply)
                 break;
             case 'topup':
+                var provider = details.provider;
+                var amount = getDenom.toString();
+                var structId = details.shop_type + details.epoch.toString();
                 var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 // Force Disable All Cancel Button
                 cancel_button_global.visible = false;
-                console.log('DO TOPUP', now)
+                console.log('DO_TOPUP_TRX', now, provider, amount, structId);
                 perform_do_topup();
                 break;
         }
