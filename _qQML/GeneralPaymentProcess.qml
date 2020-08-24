@@ -397,6 +397,7 @@ Base{
             console.log('qr_check_result', now, mode, result, JSON.stringify(info));
             qr_payment_frame.success(3)
             details.payment_details = info;
+            details.payment = info.provider;
             details.payment_received = details.value.toString();
             receivedPayment = totalPrice;
             payment_complete('QR_PAYMENT');

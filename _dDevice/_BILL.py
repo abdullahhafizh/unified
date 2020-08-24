@@ -176,6 +176,8 @@ def start_receive_note():
             _response, _result = _Command.send_request(param=param, output=None)
             _Helper.dump([_response, _result])
             if _response == -1:
+                if BILL_TYPE == 'NV':
+                    stop_receive_note()
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
                 break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
@@ -223,8 +225,8 @@ def start_receive_note():
                     # _Command.send_request(param=BILL["STOP"]+'|', output=None)
                     _Command.send_request(param=BILL["REJECT"] + '|', output=None)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
-                if BILL_TYPE == 'NV':
-                    stop_receive_note()
+                # if BILL_TYPE == 'NV':
+                #     stop_receive_note()
                 break
             if BILL["UNKNOWN_ITEM"] is not None and BILL["UNKNOWN_ITEM"] in _result:
                 _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
