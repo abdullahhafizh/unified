@@ -101,9 +101,9 @@ IniCfgFileName=BillDepositDevCfg.ini'''
     LOGGER.debug(('command', command, 'output', str(process)))
 
 
-def start_init_bill():
+def start_reset_bill():
     sleep(1)
-    _Helper.get_thread().apply_async(init_bill, )
+    _Helper.get_thread().apply_async(reset_bill, )
 
 
 DIRECT_PRICE_MODE = False
@@ -126,6 +126,26 @@ def init_bill():
         _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
     LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
+    return OPEN_STATUS
+
+
+def reset_bill():
+    global OPEN_STATUS, BILL
+    BILL = GRG if BILL_TYPE == 'GRG' else NV
+    LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
+    if BILL_PORT is None:
+        LOGGER.warning(("port", BILL_PORT))
+        _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
+        return False
+    param = BILL["SET"] + '|' + BILL["PORT"]
+    if BILL_TYPE == 'NV':
+        param = BILL["RESET"] + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0:
+        OPEN_STATUS = True
+    else:
+        _Common.BILL_ERROR = 'FAILED_RESET_BILL'
+    LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     return OPEN_STATUS
 
 

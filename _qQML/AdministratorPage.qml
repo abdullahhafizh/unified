@@ -133,7 +133,7 @@ Base{
             false_notif('Dear '+userData.first_name+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
         } else if (a=='COLLECT_CASH|DONE'){
             false_notif('Dear '+userData.first_name+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
-            _SLOT.start_init_bill();
+            _SLOT.start_reset_bill();
         } else if (a=='ADMIN_PRINT|DONE'){
             false_notif('Dear '+userData.first_name+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
         } else if (a=='INIT_BILL|DONE'){
@@ -369,7 +369,7 @@ Base{
                     press = '1';
                     console.log('reset_bill_button is pressed..!');
                     popup_loading.open();
-                    _SLOT.start_init_bill();
+                    _SLOT.start_reset_bill();
                 }
             }
         }
