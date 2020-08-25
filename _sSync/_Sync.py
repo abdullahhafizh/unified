@@ -594,7 +594,7 @@ def handle_tasks(tasks):
             update_task(task, result)
         if task['taskName'] in ['RESET_GRG', 'RESET_BILL']:
             if IDLE_MODE is True:
-                _BILL.start_init_bill()
+                _BILL.start_reset_bill()
                 result = 'EXECUTED_INTO_BILL'
             else:
                 result = 'FAILED_EXECUTED_VM_ON_USED'

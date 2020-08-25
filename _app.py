@@ -405,9 +405,9 @@ class SlotHandler(QObject):
         _TopupService.start_define_topup_slot_bni()
     start_define_topup_slot_bni = pyqtSlot()(start_define_topup_slot_bni)
 
-    def start_init_bill(self):
-        _BILL.start_init_bill()
-    start_init_bill = pyqtSlot()(start_init_bill)
+    def start_reset_bill(self):
+        _BILL.start_reset_bill()
+    start_reset_bill = pyqtSlot()(start_reset_bill)
 
     def start_upload_device_state(self, device, state):
         _Common.start_upload_device_state(device, state)
