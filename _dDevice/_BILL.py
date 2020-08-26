@@ -41,6 +41,7 @@ GRG = {
     "KEY_STORED": None,
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": '!@#$%^&UI',
+    "DIRECT_MODULE": None
 }
 
 NV = {
@@ -61,6 +62,7 @@ NV = {
     "KEY_STORED": 'Note stacked',
     "MAX_STORE_ATTEMPT": 4,
     "KEY_BOX_FULL": 'Stacker full',
+    "DIRECT_MODULE": None
 }
 
 
@@ -119,7 +121,7 @@ def init_bill():
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
         return False
     param = BILL["SET"] + '|' + BILL["PORT"]
-    response, result = _Command.send_request(param=param, output=None)
+    response, result = send_command_to_bill(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
     else:
@@ -127,6 +129,12 @@ def init_bill():
     LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
+
+
+def send_command_to_bill(param=None, output=None):
+    if _Helper.empty(BILL["DIRECT_MODULE"]):
+        return _Command.send_request(param, output)
+    return -1, json.dumps({"Error": "MODULE_UNDEFINED", "Status": "Gagal"})
 
 
 def reset_bill():
@@ -140,7 +148,7 @@ def reset_bill():
     param = BILL["SET"] + '|' + BILL["PORT"]
     if BILL_TYPE == 'NV':
         param = BILL["RESET"] + '|'
-    response, result = _Command.send_request(param=param, output=None)
+    response, result = send_command_to_bill(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
     else:
@@ -151,6 +159,7 @@ def reset_bill():
 
 def start_set_direct_price(price):
     _Helper.get_thread().apply_async(set_direct_price, (price,))
+
 
 
 def set_direct_price(price):
@@ -193,7 +202,7 @@ def start_receive_note():
                 break
             attempt += 1
             param = BILL["RECEIVE"] + '|'
-            _response, _result = _Command.send_request(param=param, output=None)
+            _response, _result = send_command_to_bill(param=param, output=None)
             _Helper.dump([_response, _result])
             if _response == -1:
                 if BILL_TYPE == 'NV':
@@ -208,14 +217,14 @@ def start_receive_note():
                 if cash_in in SMALL_NOTES_NOT_ALLOWED:
                     sleep(1.5)
                     param = BILL["REJECT"] + '|'
-                    _Command.send_request(param=param, output=None)
+                    send_command_to_bill(param=param, output=None)
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                     break
                 if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                     sleep(1.5)
                     param = BILL["REJECT"] + '|'
-                    _Command.send_request(param=param, output=None)
+                    send_command_to_bill(param=param, output=None)
                     LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
                                                                           'COLLECTED': COLLECTED_CASH,
                                                                           'TARGET': DIRECT_PRICE_AMOUNT})))
@@ -224,8 +233,7 @@ def start_receive_note():
                 #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 #     break
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-                store_result = store_cash_into_cashbox()
-                update_cash_result = update_cash_status(str(cash_in), store_result)
+                update_cash_result, store_result = update_cash_status(str(cash_in), store_cash_into_cashbox())
                 LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                 # if do_store_note is True or do_store_note is not False:
                 #     CASH_HISTORY.append(str(cash_in))
@@ -243,8 +251,8 @@ def start_receive_note():
             if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
                 if BILL_TYPE == 'GRG':
                     _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                    # _Command.send_request(param=BILL["STOP"]+'|', output=None)
-                    _Command.send_request(param=BILL["REJECT"] + '|', output=None)
+                    # send_command_to_bill(param=BILL["STOP"]+'|', output=None)
+                    send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                 # if BILL_TYPE == 'NV':
                 #     stop_receive_note()
@@ -292,7 +300,7 @@ def store_cash_into_cashbox():
     while True:
         sleep(1)
         attempt += 1
-        _, _result_store = _Command.send_request(param=BILL["STORE"]+'|', output=None)
+        _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((str(attempt), str(_result_store)))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
         if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
@@ -311,19 +319,27 @@ def store_cash_into_cashbox():
 
 def update_cash_status(cash_in, store_result=False):
     global CASH_HISTORY, COLLECTED_CASH
-    if not store_result:
-        LOGGER.warning(('Store Cash Failed', 'Update Cash Failed', store_result))
-        return False
-    CASH_HISTORY.append(str(cash_in))
-    COLLECTED_CASH += int(cash_in)
-    _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
-    LOGGER.debug(('Cash Status:', json.dumps({
-                'ADD': cash_in,
-                'COLLECTED': COLLECTED_CASH,
-                'HISTORY': CASH_HISTORY})))
-    # Signal Emit To Update View Cash Status
-    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
-    return True
+    try:
+        if not store_result:
+            LOGGER.warning(('Store Cash Failed', 'Update Cash Failed', store_result))
+            return False, store_result
+        CASH_HISTORY.append(str(cash_in))
+        COLLECTED_CASH += int(cash_in)
+        # _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
+        LOGGER.debug(('Cash Status:', json.dumps({
+                    'ADD': cash_in,
+                    'COLLECTED': COLLECTED_CASH,
+                    'HISTORY': CASH_HISTORY})))
+        # Signal Emit To Update View Cash Status
+        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
+        result = True, store_result
+    except Exception as e:
+        LOGGER.warning('Store Cash Failed', 'Update Cash Failed', e)
+        result = False, store_result
+    finally:
+        if not _Helper.empty(cash_in):
+            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
+        return result
 
 
 def is_exceed_payment(target, value_in, current_value):
@@ -348,7 +364,7 @@ def stop_receive_note():
     # sleep(_Common.BILL_STORE_DELAY)
     try:
         param = BILL["STOP"] + '|'
-        response, result = _Command.send_request(param=param, output=None)
+        response, result = send_command_to_bill(param=param, output=None)
         if response == 0 and COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
             cash_received = {
                 'history': get_cash_history(),
@@ -371,7 +387,7 @@ def stop_receive_note():
     # finally:
     #     if BILL_TYPE == 'NV':
     #         param = BILL["SET"] + '|'
-    #         _response, _result = _Command.send_request(param=param, output=None)
+    #         _response, _result = send_command_to_bill(param=param, output=None)
     #         if _response != 0:
     #             _Common.BILL_ERROR = 'FAILED_RESET_BILL_NV'
     #             LOGGER.warning(('FAILED_RESET_BILL_NV|ERROR'))
@@ -384,7 +400,7 @@ def start_get_status_bill():
 def get_status_bill():
     try:
         param = BILL["STATUS"] + '|'
-        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+        response, result = send_command_to_bill(param=param, output=_Command.MO_REPORT, wait_for=1.5)
         LOGGER.debug((str(response), str(result)))
         if response == 0 and result is not None:
             BILL_SIGNDLER.SIGNAL_BILL_STATUS.emit('STATUS_BILL|'+result)
