@@ -4,6 +4,10 @@ import serial.tools.list_ports
 from _tTools import _Helper
 from . import _eSSPLib
 import json
+import logging
+
+LOGGER = logging.getLogger()
+
 
 class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serialPort='COM3', forbiddenDenom=["1000", "2000", "5000"]):
@@ -113,7 +117,6 @@ class NV200_BILL_ACCEPTOR(object):
                         time.sleep(5)
             time.sleep(5)
         
-
     def parse_reject_code(self, rejectCode):
         if rejectCode == '0x0':
             return "NOTE ACCEPTED"
@@ -184,7 +187,6 @@ class NV200_BILL_ACCEPTOR(object):
         else:
             return 0
 
-# Parsing Event Name        
     def parse_event(self, poll_data):
         event = []
         event_data = []
@@ -255,7 +257,6 @@ class NV200_BILL_ACCEPTOR(object):
         event_data.append(0)
         return event_data
     
-
     def listen_poll(self):
         active = 1
         holdTry = 0
@@ -333,6 +334,7 @@ def send_command(param=None, config=[], restricted=[]):
     param = "0"
     if len(args[1:]) > 0:
         param = "|".join(args[1:])
+    LOGGER.debug((args, command, param))
 
     if command == config['SET']:
         result = NV200.check_active()
