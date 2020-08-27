@@ -1,13 +1,13 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
-from eSSPModule import eSSP
 import time
 import serial.tools.list_ports
 from _tTools import _Helper
+from . import _eSSPLib
 import json
 
 class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serialPort='COM3', forbiddenDenom=["1000", "2000", "5000"]):
-        self.nv200 = eSSP.eSSP(serialPort, 0, 10)
+        self.nv200 = _eSSPLib.eSSP(serialPort, 0, 10)
         self.serialPort = serialPort
         self.forbiddenDenom = forbiddenDenom
         self.channelMapping = {
