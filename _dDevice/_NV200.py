@@ -26,7 +26,7 @@ class NV200_BILL_ACCEPTOR(object):
         }
         if len(forbiddenDenom) > 0:
             for f in self.forbiddenDenom:
-                if f in self.channelMapping.keys():
+                if f in list(self.channelMapping.keys()):
                     self.channelMapping[f] = 0
             
         self.openStatus = False
@@ -36,7 +36,7 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()
             result = self.nv200.enable_higher_protocol()
-            inhibits = self.nv200.easy_inhibit(self.channelMapping.values())
+            inhibits = self.nv200.easy_inhibit(list(self.channelMapping.values()))
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             self.openStatus =  True
         except Exception as e:
