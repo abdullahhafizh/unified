@@ -42,7 +42,7 @@ GRG = {
     "KEY_STORED": None,
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": '!@#$%^&UI',
-    "DIRECT_MODULE": None
+    "DIRECT_MODULE": False
 }
 
 NV = {
@@ -134,7 +134,7 @@ def init_bill():
 
 def send_command_to_bill(param=None, output=None):
     # If Not Using Direct Module
-    if _Helper.empty(BILL["DIRECT_MODULE"]):
+    if not BILL["DIRECT_MODULE"]:
         return _Command.send_request(param, output)
     # If Bill_TYPE Not NV Failed
     if BILL_TYPE != 'NV':
