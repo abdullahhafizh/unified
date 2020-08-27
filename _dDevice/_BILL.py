@@ -12,6 +12,7 @@ import sys
 import os
 import subprocess
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
+from _dDevice import _NV200
 
 
 LOGGER = logging.getLogger()
@@ -62,7 +63,7 @@ NV = {
     "KEY_STORED": 'Note stacked',
     "MAX_STORE_ATTEMPT": 4,
     "KEY_BOX_FULL": 'Stacker full',
-    "DIRECT_MODULE": None
+    "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE
 }
 
 
@@ -132,9 +133,13 @@ def init_bill():
 
 
 def send_command_to_bill(param=None, output=None):
+    # If Not Using Direct Module
     if _Helper.empty(BILL["DIRECT_MODULE"]):
         return _Command.send_request(param, output)
-    return -1, json.dumps({"Error": "MODULE_UNDEFINED", "Status": "Gagal"})
+    # If Bill_TYPE Not NV Failed
+    if BILL_TYPE != 'NV':
+        return -1, ""
+    return _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
 
 
 def reset_bill():

@@ -1,3 +1,8 @@
+11.9.A-GLOBAL:
+- Handle 0290 Topup C2C Error,
+- Dev #1 Embed NV Module,
+- ...
+
 11.8.R-GLOBAL:
 - Fix RESET Command To NV,
 - ...

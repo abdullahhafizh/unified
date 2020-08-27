@@ -1,70 +1,395 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
+from eSSPModule import eSSP
+import time
+import serial.tools.list_ports
+from _tTools import _Helper
+import json
 
-import threading
-from _cConfig._Common import BILL_PORT
-from eSSP.constants import Status
-from eSSP import eSSP  # Import the library
-from time import sleep
+class NV200_BILL_ACCEPTOR(object):
+    def __init__(self, serialPort='COM3', forbiddenDenom=["1000", "2000", "5000"]):
+        self.nv200 = eSSP.eSSP(serialPort, 0, 10)
+        self.serialPort = serialPort
+        self.forbiddenDenom = forbiddenDenom
+        self.channelMapping = {
+            "1000": 1,
+            "2000": 1,
+            "5000": 1,
+            "10000": 1,
+            "20000": 1,
+            "50000": 1,
+            "100000": 1,
+            "X": 1            
+        }
+        if len(forbiddenDenom) > 0:
+            for f in self.forbiddenDenom:
+                if f in self.channelMapping.keys():
+                    self.channelMapping[f] = 0
+            
+        self.openStatus = False
 
-#  Create a new object ( Validator Object ) and initialize it ( In debug mode, so it will print debug infos )
-validator = eSSP(com_port=BILL_PORT, ssp_address="0", nv11=False, debug=True)
+    def open(self):
+        self.openStatus = False
+        try:
+            result = self.nv200.sync()
+            result = self.nv200.enable_higher_protocol()
+            inhibits = self.nv200.easy_inhibit(self.channelMapping.values())
+            result = self.nv200.set_inhibits(inhibits, '0xFF')
+            self.openStatus =  True
+        except:
+            pass
+        finally:
+            return self.openStatus
+
+    def enable(self):
+        try:
+            if not self.check_active:
+                result = self.open()
+            result = self.nv200.bulb_on()
+            result = self.nv200.enable()
+            return True
+        except:
+            return False
+
+    def disable(self):
+        try:
+            result = self.nv200.bulb_off()
+            result = self.nv200.disable()
+            return True
+        except:
+            return False
+
+    def reject(self):
+        try:
+            result = self.nv200.bulb_off()
+            result = self.nv200.reject_note()
+            return True
+        except:
+            return False
+    
+    # def store(self):
+    #     try:
+    #         result = self.nv200.bulb_off()
+    #         result = self.nv200.reject_note()
+    #         return True
+    #     except Exception as e:
+    #         return False
+
+    # def resync(self):
+    #     result = self.nv200.sync()
+    #     result = self.nv200.enable_higher_protocol()
+    #     inhibits = self.nv200.easy_inhibit(self.channelMapping.values())
+    #     result = self.nv200.set_inhibits(inhibits, '0xFF')
+    #     result = self.nv200.configure_bezel('0x00', '0xF0', '0x00', '0x00', '0x00')
+    #     result = self.nv200.bulb_on()
+    #     result = self.nv200.enable()
+    #     return True
+
+    def check_active(self):
+        result = '0x00'
+        try:
+            result = self.nv200.sync()            
+        except:
+            pass
+            # print("Serial for Sync Cmd Timeout")
+        finally:
+            return result == '0xf0'
+    
+    def reset_bill(self):
+        # print ("Device Reset")
+        self.nv200.reset()
+        time.sleep(5)
+        while 1:
+            portlist = serial.tools.list_ports.comports()
+            for port in portlist:
+                if port.device == self.serialPort:
+                    attempt = 0
+                    while True:
+                        attempt += 1
+                        if self.check_active():
+                            # print ("Device Active")
+                            return True
+                        if attempt >= 3:
+                            return False
+                        time.sleep(5)
+            time.sleep(5)
+        
+
+    def parse_reject_code(self, rejectCode):
+        if rejectCode == '0x0':
+            return "NOTE ACCEPTED"
+        elif  rejectCode == '0x1':
+            return "LENGTH FAIL"
+        elif  rejectCode == '0x2':
+            return "AVERAGE FAIL"
+        elif  rejectCode == '0x3':
+            return "COASTLINE FAIL"
+        elif  rejectCode == '0x4':
+            return "GRAPH FAIL"
+        elif  rejectCode == '0x5':
+            return "BURIED FAIL"
+        elif  rejectCode == '0x6':
+            return "CHANNEL INHIBIT"
+        elif  rejectCode == '0x7':
+            return "SECOND NOTE DETECTED"
+        elif  rejectCode == '0x8':
+            return "REJECT BY HOST"
+        elif  rejectCode == '0x9':
+            return "CROSS CHANNEL DETECTED"
+        elif  rejectCode == '0xa':
+            return "REAR SENSOR ERROR"
+        elif  rejectCode == '0xb':
+            return "NOTE TO LONG"
+        elif  rejectCode == '0xc':
+            return "DISABLED BY HOST"
+        elif  rejectCode == '0xd':
+            return "SLOW MECH"
+        elif  rejectCode == '0xe':
+            return "STRIM ATTEMPT"
+        elif  rejectCode == '0xf':
+            return "FRAUD CHANNEL"
+        elif  rejectCode == '0x10':
+            return "NO NOTES DETECTED"
+        elif  rejectCode == '0x11':
+            return "PEAK DETECT FAIL"
+        elif  rejectCode == '0x12':
+            return "TWISTED NOTE REJECT"
+        elif  rejectCode == '0x13':
+            return "ESCROW TIME-OUT"
+        elif  rejectCode == '0x14':
+            return "BARCODE SCAN FAIL"
+        elif  rejectCode == '0x15':
+            return "NO CAM ACTIVATE"
+        elif  rejectCode == '0x16':
+            return "SLOT FAIL 1"
+        elif  rejectCode == '0x17':
+            return "SLOT FAIL 2"
+        elif  rejectCode == '0x18':
+            return "LENS OVERSAMPLE"
+        elif  rejectCode == '0x19':
+            return "WIDTH DETECTION FAIL"
+        elif  rejectCode == '0x1a':
+            return "SHORT NOTE DETECTED"
+        elif  rejectCode == '0x1b':
+            return "PAYOUT NOTE"
+        elif  rejectCode == '0x1c':
+            return "DOUBLE NOTE DETECTED"
+        elif  rejectCode == '0x1d':
+            return "UNABLE TO STACK"
+        else:
+            return "INVALID NOTE: " + rejectCode
+
+    def parse_value(self, channel):
+        if len(self.channelMapping.keys()) >= (channel + 1):
+            return int(self.channelMapping.keys()[channel-1])
+        else:
+            return 0
+
+# Parsing Event Name        
+    def parse_event(self, poll_data):
+        event = []
+        event_data = []
+        event_data.append(poll_data)
+        if len(poll_data[1]) == 2:
+            event.append('0xff')
+            event.append(poll_data[1][0])
+            event.append(poll_data[1][1])
+        else:
+            event = poll_data
+            
+        if event[1] == '0xf1':
+            event_data.append("Slave reset")
+        elif  event[1] == '0xef':
+            event_data.append("Read")
+        elif  event[1] == '0xee':
+            event_data.append("Note in escrow, amount:" + str(event[2]))
+            event_data.append(self.parse_value(event[2]))
+            return event_data
+        elif  event[1] == '0xed':
+            event_data.append("Rejecting")
+        elif  event[1] == '0xec':
+            event_data.append("Rejected")
+        elif  event[1] == '0xcc':
+            event_data.append("Stacking")
+        elif  event[1] == '0xeb':
+            event_data.append("Note stacked")
+        elif  event[1] == '0xe9':
+            event_data.append("Unsafe Jam")
+        elif  event[1] == '0xe8':
+            event_data.append("Disabled")
+        elif  event[1] == '0xe7':
+            event_data.append("Stacker full")
+        elif  event[1] == '0xe6':
+            event_data.append("Fraud Attempt")
+        elif  event[1] == '0xe1':
+            event_data.append("Note Cleared From Front")
+        elif  event[1] == '0xe2':
+            event_data.append("Note Cleared Into Cashbox")
+        elif  event[1] == '0xe3':
+            event_data.append("Cashbox Removed")
+        elif  event[1] == '0xe4':
+            event_data.append("Cashbox Replaced")
+        elif  event[1] == '0xe5':
+            event_data.append("Barcode Ticket Validated")
+        elif  event[1] == '0xd1':
+            event_data.append("Barcode Ticket Ack")
+        elif  event[1] == '0xe0':
+            event_data.append("Note Path Open")
+        elif  event[1] == '0xb5':
+            event_data.append("Channel Disable")
+        elif  event[1] == '0xb6':
+            event_data.append("Initialising")
+        elif  event[1] == '0xa5':
+            event_data.append("Ticket Printing")
+        elif  event[1] == '0xa6':
+            event_data.append("Ticket Printed")
+        elif  event[1] == '0xa8':
+            event_data.append("Ticket Printing Error")
+        elif  event[1] == '0xae':
+            event_data.append("Print Halted")
+        elif  event[1] == '0xad':
+            event_data.append("Ticket In Bezel")
+        elif  event[1] == '0xaf':
+            event_data.append("Printed To Cashbox")
+        else:
+            event_data.append("Unknown Event: " + str(event))
+        event_data.append(0)
+        return event_data
+    
+
+    def listen_poll(self):
+        active = 1
+        holdTry = 0
+        while active == 1:
+            poll = self.nv200.poll()            
+            if len(poll) > 1:                
+                if len(poll[1]) == 2:
+                    if poll[1][0] == '0xef':
+                        if poll[1][1]==1 or poll[1][1]==3:
+                            while holdTry < 10:
+                                self.nv200.hold()
+                                time.sleep(0.5)
+                                holdTry += 1
+                    if poll[1][0] == '0xee':
+                        event = self.parse_event(poll)
+                        last_reject = self.nv200.last_reject()
+                        event.append(self.parse_reject_code(last_reject))
+                        return event
+                else:
+                    event = self.parse_event(poll)
+                    last_reject = self.nv200.last_reject()
+                    event.append(self.parse_reject_code(last_reject))
+                    return event
+            time.sleep(0.5)
 
 
-def event_loop():
-    while True:
-                    # ---- Example of interaction with events ---- #
-        if validator.nv11: # If the model is an NV11, put every 100 note in the storage, and others in the stack(cashbox), but that's just for this example
-            (note, currency,event) = validator.get_last_event()
-            if note == 0 or currency == 0 or event == 0:
-                pass  # Operation that do not send money info, we don't do anything with it
-            else:
-                if note != 4 and event == Status.SSP_POLL_CREDIT:
-                    validator.print_debug("NOT A 100 NOTE")
-                    validator.nv11_stack_next_note()
-                    validator.enable_validator()
-                elif note == 4 and event == Status.SSP_POLL_READ:
-                    validator.print_debug("100 NOTE")
-                    validator.set_route_storage(100)  # Route to storage
-                    validator.do_actions()
-                    validator.set_route_cashbox(50)  # Everything under or equal to 50 to cashbox ( NV11 )
-        sleep(0.5)
+NV200 = None
 
-t1 = threading.Thread(target=event_loop)  # Create a new thread on the Validator System Loop ( needed for the signal )
-t1.setDaemon(True)  # Set the thread as daemon because it don't catch the KeyboardInterrupt, so it will stop when we cut the main thread
-t1.start()  # Start the validator system loop thread ( Needed for starting sending action )
+# NV = {
+#     "SET": "601",
+#     "RECEIVE": "602",
+#     "STORE": "603",
+#     "REJECT": "604",
+#     "STOP": "605",
+#     # "STATUS": "504",
+#     "RESET": "606",
+#     "KEY_RECEIVED": "Note in escrow, amount:",
+#     "PORT": BILL_PORT,
+#     # TODO Must Define Below Property
+#     "CODE_JAM": None,
+#     "TIMEOUT_BAD_NOTES": 'Invalid note',
+#     "UNKNOWN_ITEM": None ,
+#     "LOOP_DELAY": 2,
+#     "KEY_STORED": 'Note stacked',
+#     "MAX_STORE_ATTEMPT": 4,
+#     "KEY_BOX_FULL": 'Stacker full',
+#     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE
+# }
 
-try:  # Command Interpreter
-    while True:
-        choice = input("")
-        if choice == "p":  # Payout "choice" value bill ( 10, 20, 50, 100, etc. )
-            choice = input("")
-            validator.payout(int(choice))
-        elif choice == "s":  # Route to cashbox ( In NV11, it is any amount <= than "choice" )
-            choice = input("")
-            validator.set_route_storage(int(choice))
-        elif choice == "c":  # Route to cashbox ( In NV11, it is any amount <= than "choice" )
-            choice = input("")
-            validator.set_route_cashbox(int(choice))
-        elif choice == "e":  # Enable ( Automaticaly disabled after a payout )
-            validator.enable_validator()
-        elif choice == "r":  # Reset ( It's like a "reboot" of the validator )
-            validator.reset()
-        elif choice == "y":  # NV11 Payout last entered ( next available )
-            print("Payout next 1")
-            validator.nv11_payout_next_note()
-        elif choice == "d":  # Disable
-            validator.disable_validator()
-        elif choice == "D":  # Disable the payout device
-            validator.disable_payout()
-        elif choice == "E":  # Empty the storage to the cashbox
-            validator.empty_storage()
-        elif choice == "g":  # Get the number of bills denominated with their values
-            choice = input("")
-            validator.get_note_amount(int(choice))
-            sleep(1)
-            print("Number of bills of %s : %s"%(choice, validator.response_data['getnoteamount_response']))
+# 601 = http://localhost:9000/Service/GET?type=json&cmd=601&param=COM16 <STAT>: 200 
+# <RESP>: {'Response': '', 'Command': '601', 'ErrorDesc': 'Sukses', 'Parameter': 'COM16', 'Result': '0000'}
 
-except KeyboardInterrupt:  # If user do CTRL+C
-    validator.close()  # Close the connection with the validator
-    print("Exiting")
-    exit(0)
+# 602 = http://localhost:9000/Service/GET?type=json&cmd=602&param=0 <STAT>: 200 
+# <RESP>: {'Response': 'Note in escrow, amount: 50000.00  IDR\r\n', 'Command': '602', 'ErrorDesc': 'Sukses', 'Parameter': '0', 'Result': '0000'}
+
+# 603 = http://localhost:9000/Service/GET?type=json&cmd=603&param=0 <STAT>: 200 
+# <RESP>: {'Response': 'Note stacked\r\n', 'Command': '603', 'ErrorDesc': 'Sukses', 'Parameter': '0', 'Result': '0000'}
+
+# 604 = http://localhost:9000/Service/GET?type=json&cmd=604&param=0 <STAT>: 200 
+# <RESP>: {'Parameter': '0', 'Response': 'Host rejected note\r\n', 'ErrorDesc': 'Sukses', 'Result': '0000', 'Command': '604'}
+
+# 605 = http://localhost:9000/Service/GET?type=json&cmd=605&param=0 <STAT>: 200 
+# <RESP>: {'Parameter': '0', 'Response': '', 'ErrorDesc': 'Sukses', 'Result': '0000', 'Command': '605'}
+
+
+
+def send_command(param=None, config=[], restricted=[]):
+    global NV200
+    if _Helper.empty(param) or _Helper.empty(config):
+        return -1, ""
+    if NV200 is None:
+        NV200 = NV200_BILL_ACCEPTOR(serialPort=config['PORT'], forbiddenDenom=restricted)
+    args = param.split('|')
+    command = args[0]
+    param = "0"
+    if len(args[1:]) > 0:
+        param = "|".join(args[1:])
+
+    if command == config['SET']:
+        result = NV200.check_active()
+        if result is True:
+            return 0, "0000"
+        else:
+            NV200 = None
+            return -1, ""
+    elif command == config['RECEIVE']:
+        action = NV200.open()
+        if action is True:
+            action = NV200.enable()
+            attempt = 0
+            while True:
+                pool = NV200.listen_poll()
+                attempt += 1
+                if config['KEY_RECEIVED'] in pool[1]:
+                    return 0, pool[1]
+                    break
+                if attempt >= 60:
+                    break
+                time.sleep(1)
+            return -1, ""
+        else:
+            return -1, ""
+    elif command == config['STORE']:
+        attempt = 0
+        while True:
+            pool = NV200.listen_poll()
+            attempt += 1
+            if config['KEY_STORED'] in pool[1]:
+                return 0, pool[1]
+                break
+            if attempt >= 60:
+                break
+            time.sleep(1)
+        return -1, ""
+    elif command == config['REJECT']:
+        action = NV200.reject()
+        attempt = 0
+        while action:
+            pool = NV200.listen_poll()
+            attempt += 1
+            if "Rejected" in pool[1]:
+                return 0, pool[1]
+                break
+            if attempt >= 60:
+                break
+            time.sleep(1)
+            return -1, ""
+    elif command == config['RESET']:
+        action = NV200.reset_bill()
+        if action is True:
+            return 0, "Bill Reset"
+        else:
+            return -1, ""
+    else:
+        return -1, ""
+    
+    
