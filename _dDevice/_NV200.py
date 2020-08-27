@@ -334,7 +334,7 @@ def send_command(param=None, config=[], restricted=[]):
     param = "0"
     if len(args[1:]) > 0:
         param = "|".join(args[1:])
-    LOGGER.debug((args, command, param))
+    LOGGER.debug((command, param, config))
 
     if command == config['SET']:
         result = NV200.check_active()
