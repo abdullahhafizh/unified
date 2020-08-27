@@ -127,7 +127,7 @@ def init_bill():
         OPEN_STATUS = True
     else:
         _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
-    LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
+    # LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
 

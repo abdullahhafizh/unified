@@ -39,8 +39,8 @@ class NV200_BILL_ACCEPTOR(object):
             inhibits = self.nv200.easy_inhibit(self.channelMapping.values())
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             self.openStatus =  True
-        except:
-            pass
+        except Exception as e:
+            LOGGER.warning((e))
         finally:
             return self.openStatus
 
@@ -51,7 +51,8 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
             return True
-        except:
+        except Exception as e:
+            LOGGER.warning((e))
             return False
 
     def disable(self):
@@ -59,7 +60,8 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.disable()
             return True
-        except:
+        except Exception as e:
+            LOGGER.warning((e))
             return False
 
     def reject(self):
@@ -67,7 +69,8 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.reject_note()
             return True
-        except:
+        except Exception as e:
+            LOGGER.warning((e))
             return False
     
     # def store(self):
@@ -325,8 +328,8 @@ NV200 = None
 
 def send_command(param=None, config=[], restricted=[]):
     global NV200
-    if _Helper.empty(param) or _Helper.empty(config):
-        return -1, ""
+    # if _Helper.empty(param) or _Helper.empty(config):
+    #     return -1, ""
     if NV200 is None:
         NV200 = NV200_BILL_ACCEPTOR(serialPort=config['PORT'], forbiddenDenom=restricted)
     args = param.split('|')
