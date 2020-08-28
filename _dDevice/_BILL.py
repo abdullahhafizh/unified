@@ -133,19 +133,18 @@ def init_bill():
 
 
 def send_command_to_bill(param=None, output=None):
-    # If Not Using Direct Module
-    if not BILL["DIRECT_MODULE"]:
-        return _Command.send_request(param, output)
-    # If Bill_TYPE Not NV Failed
-    if BILL_TYPE != 'NV':
-        return -1, ""
-    return _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
+    if BILL["DIRECT_MODULE"] and BILL_TYPE == 'NV':
+        result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
+        LOGGER.info((param, result))
+    else:
+        result = _Command.send_request(param, output)
+    return result
 
 
 def reset_bill():
     global OPEN_STATUS, BILL
     BILL = GRG if BILL_TYPE == 'GRG' else NV
-    LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
+    # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
         LOGGER.warning(("port", BILL_PORT))
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
@@ -158,7 +157,7 @@ def reset_bill():
         OPEN_STATUS = True
     else:
         _Common.BILL_ERROR = 'FAILED_RESET_BILL'
-    LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
+    # LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     return OPEN_STATUS
 
 

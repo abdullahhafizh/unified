@@ -7,14 +7,15 @@ import json
 import logging
 
 LOGGER = logging.getLogger()
+POLL_DEBUG = True
 
 
 class NV200_BILL_ACCEPTOR(object):
-    def __init__(self, serialPort='COM3', forbiddenDenom=["1000", "2000", "5000"]):
-        self.nv200 = _eSSPLib.eSSP(serialPort, 0, 10)
-        self.serialPort = serialPort
-        self.forbiddenDenom = forbiddenDenom
-        self.channelMapping = {
+    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
+        self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
+        self.serial_port = serial_port
+        self.restricted_denom = restricted_denom
+        self.channel_mapping = {
             "1000": 1,
             "2000": 1,
             "5000": 1,
@@ -24,10 +25,10 @@ class NV200_BILL_ACCEPTOR(object):
             "100000": 1,
             "X": 1            
         }
-        if len(forbiddenDenom) > 0:
-            for f in self.forbiddenDenom:
-                if f in list(self.channelMapping.keys()):
-                    self.channelMapping[f] = 0
+        if len(restricted_denom) > 0:
+            for f in self.restricted_denom:
+                if f in list(self.channel_mapping.keys()):
+                    self.channel_mapping[f] = 0
             
         self.openStatus = False
 
@@ -36,7 +37,7 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()
             result = self.nv200.enable_higher_protocol()
-            inhibits = self.nv200.easy_inhibit(list(self.channelMapping.values()))
+            inhibits = self.nv200.easy_inhibit(list(self.channel_mapping.values()))
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             self.openStatus =  True
         except Exception as e:
@@ -185,8 +186,8 @@ class NV200_BILL_ACCEPTOR(object):
             return "INVALID NOTE: " + rejectCode
 
     def parse_value(self, channel):
-        if len(self.channelMapping.keys()) >= (channel + 1):
-            return int(self.channelMapping.keys()[channel-1])
+        if len(self.channel_mapping.keys()) >= (channel + 1):
+            return int(self.channel_mapping.keys()[channel-1])
         else:
             return 0
 
@@ -264,7 +265,7 @@ class NV200_BILL_ACCEPTOR(object):
         active = 1
         holdTry = 0
         while active == 1:
-            poll = self.nv200.poll()            
+            poll = self.nv200.poll()          
             if len(poll) > 1:                
                 if len(poll[1]) == 2:
                     if poll[1][0] == '0xef':
@@ -277,11 +278,15 @@ class NV200_BILL_ACCEPTOR(object):
                         event = self.parse_event(poll)
                         last_reject = self.nv200.last_reject()
                         event.append(self.parse_reject_code(last_reject))
+                        if POLL_DEBUG is True:
+                            print(str(event))
                         return event
                 else:
                     event = self.parse_event(poll)
                     last_reject = self.nv200.last_reject()
                     event.append(self.parse_reject_code(last_reject))
+                    if POLL_DEBUG is True:
+                        print(str(event))
                     return event
             time.sleep(0.5)
 
@@ -331,14 +336,14 @@ def send_command(param=None, config=[], restricted=[]):
     # if _Helper.empty(param) or _Helper.empty(config):
     #     return -1, ""
     if NV200 is None:
-        NV200 = NV200_BILL_ACCEPTOR(serialPort=config['PORT'], forbiddenDenom=restricted)
+        NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
     args = param.split('|')
     command = args[0]
     param = "0"
     if len(args[1:]) > 0:
         param = "|".join(args[1:])
-    LOGGER.debug((command, param, config))
-
+    # LOGGER.debug((command, param, config))
+    # Define Command
     if command == config['SET']:
         result = NV200.check_active()
         if result is True:
@@ -357,6 +362,9 @@ def send_command(param=None, config=[], restricted=[]):
                 if config['KEY_RECEIVED'] in pool[1]:
                     return 0, pool[1]
                     break
+                # if config['KEY_BOX_FULL'] in pool[1]:
+                #     return 0, pool[1]
+                #     break
                 if attempt >= 60:
                     break
                 time.sleep(1)
@@ -368,7 +376,7 @@ def send_command(param=None, config=[], restricted=[]):
         while True:
             pool = NV200.listen_poll()
             attempt += 1
-            if config['KEY_STORED'] in pool[1]:
+            if config['KEY_STORED'] in pool[1] or config['KEY_BOX_FULL'] in pool[1]:
                 return 0, pool[1]
                 break
             if attempt >= 60:
