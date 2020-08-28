@@ -271,7 +271,7 @@ class NV200_BILL_ACCEPTOR(object):
         event_data.append(0)
         return event_data
     
-    
+
     def listen_poll(self):
         while True:
             poll = self.nv200.poll()      
@@ -396,6 +396,12 @@ def send_command(param=None, config=[], restricted=[]):
             action = NV200.reset_bill()
             if action is True:
                 return 0, "Bill Reset"
+            else:
+                return -1, ""
+        elif command == config['STOP']:
+            action = NV200.disable()
+            if action is True:
+                return 0, "Bill Stop"
             else:
                 return -1, ""
         else:
