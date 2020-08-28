@@ -8,8 +8,15 @@ import logging
 
 LOGGER = logging.getLogger()
 POLL_DEBUG = True
-POLL_TIMEOUT = 3
-DENOMS = {
+POLL_TIMEOUT = 10
+
+
+class NV200_BILL_ACCEPTOR(object):
+    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
+        self.nv200 = _eSSPLib.eSSP(serial_port, 0, POLL_TIMEOUT)
+        self.serial_port = serial_port
+        self.restricted_denom = restricted_denom
+        self.channel_mapping = {
             "1000": 1,
             "2000": 1,
             "5000": 1,
@@ -20,13 +27,6 @@ DENOMS = {
             "X": 1            
         }
 
-
-class NV200_BILL_ACCEPTOR(object):
-    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
-        self.nv200 = _eSSPLib.eSSP(serial_port, 0, POLL_TIMEOUT)
-        self.serial_port = serial_port
-        self.restricted_denom = restricted_denom
-        self.channel_mapping = DENOMS
         if len(restricted_denom) > 0:
             for f in self.restricted_denom:
                 if f in list(self.channel_mapping.keys()):
@@ -193,8 +193,8 @@ class NV200_BILL_ACCEPTOR(object):
 
     def parse_value(self, channel):
         try:
-            channel_list = list(DENOMS.keys())
-            if len(channel_list) >= (channel):
+            channel_list = list(self.channel_mapping.keys())
+            if len(channel_list) >= channel:
                 return int(channel_list[channel-1])
             else:
                 return 0
@@ -216,10 +216,11 @@ class NV200_BILL_ACCEPTOR(object):
         if event[1] == '0xf1':
             event_data.append("Slave reset")
         elif  event[1] == '0xef':
-            event_data.append("Read")
+            event_data.append("Reading Note")
         elif  event[1] == '0xee':
-            event_data.append("Note in escrow, amount:" + str(event[2]))
-            event_data.append(self.parse_value(event[2]))
+            note_value = self.parse_value(event[2])
+            event_data.append("Note in escrow, amount:" + str(note_value))
+            event_data.append(note_value)
             return event_data
         elif  event[1] == '0xed':
             event_data.append("Rejecting")
@@ -273,31 +274,22 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
     
     def listen_poll(self):
-        holdTry = 0
         while True:
             poll = self.nv200.poll()      
             if len(poll) > 1:                
                 if len(poll[1]) == 2:
-                    if poll[1][0] == '0xef':
-                        if poll[1][1]==1 or poll[1][1]==3:
-                            while holdTry < 10:
-                                self.nv200.hold()
-                                time.sleep(0.5)
-                                holdTry += 1
-                    if poll[1][0] == '0xee':
-                        event = self.parse_event(poll)
-                        last_reject = self.nv200.last_reject()
-                        event.append(self.parse_reject_code(last_reject))
-                        if POLL_DEBUG is True:
-                            print(self.base_name(), ' --- ', str(event))    
-                        return event
+                    event = self.parse_event(poll)
+                    event.append('')
                 else:
                     event = self.parse_event(poll)
-                    last_reject = self.nv200.last_reject()
-                    event.append(self.parse_reject_code(last_reject))
-                    if POLL_DEBUG is True:
-                        print(self.base_name(), ' --- ', str(event))    
-                    return event
+                    if poll[1] == '0xed' or poll[1] == '0xec':
+                        last_reject = self.nv200.last_reject()
+                        event.append(self.parse_reject_code(last_reject))
+                    else:
+                        event.append('')
+                if POLL_DEBUG is True:
+                    print(self.base_name(), ' --- ', str(event))   
+                return event
             time.sleep(0.5)
 
 
