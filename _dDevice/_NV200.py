@@ -325,10 +325,10 @@ NV200 = None
 # 605 = http://localhost:9000/Service/GET?type=json&cmd=605&param=0 <STAT>: 200 
 # <RESP>: {'Parameter': '0', 'Response': '', 'ErrorDesc': 'Sukses', 'Result': '0000', 'Command': '605'}
 
-
+LOOP_ATTEMPT = 0
 
 def send_command(param=None, config=[], restricted=[]):
-    global NV200
+    global NV200, LOOP_ATTEMPT
     try:
         # if _Helper.empty(param) or _Helper.empty(config):
         #     return -1, ""
@@ -349,19 +349,19 @@ def send_command(param=None, config=[], restricted=[]):
                 NV200 = None
                 return -1, ""
         elif command == config['RECEIVE']:
+            LOOP_ATTEMPT = 0
             action = NV200.open()
             if action is True:
                 action = NV200.enable()
-                attempt = 0
                 while True:
                     pool = NV200.listen_poll()
-                    attempt += 1
+                    LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1]:
                         return 0, pool[1]
                     # if config['KEY_BOX_FULL'] in pool[1]:
                     #     return 0, pool[1]
                     #     break
-                    if attempt >= 60:
+                    if LOOP_ATTEMPT >= 60:
                         break
                     time.sleep(1)
                 return -1, ""
@@ -399,6 +399,7 @@ def send_command(param=None, config=[], restricted=[]):
             else:
                 return -1, ""
         elif command == config['STOP']:
+            LOOP_ATTEMPT = 60
             action = NV200.disable()
             if action is True:
                 return 0, "Bill Stop"
