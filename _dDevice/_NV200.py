@@ -7,13 +7,13 @@ import json
 import logging
 
 LOGGER = logging.getLogger()
-POLL_DEBUG = True
-POLL_TIMEOUT = 10
 
 
 class NV200_BILL_ACCEPTOR(object):
+    __qualname__ = 'NV200_Module'
+
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
-        self.nv200 = _eSSPLib.eSSP(serial_port, 0, POLL_TIMEOUT)
+        self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
         self.serial_port = serial_port
         self.restricted_denom = restricted_denom
         self.channel_mapping = {
@@ -34,9 +34,6 @@ class NV200_BILL_ACCEPTOR(object):
             
         self.open_status = False
 
-    def base_name(self):
-        return self.__qualname__
-
     def open(self):
         self.open_status = False
         try:
@@ -47,7 +44,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             self.open_status =  True
         except Exception as e:
-            LOGGER.warning((self.base_name(), e))
+            LOGGER.warning((self.__qualname__, e))
         finally:
             return self.open_status
 
@@ -59,7 +56,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.enable()
             return True
         except Exception as e:
-            LOGGER.warning((self.base_name(), e))
+            LOGGER.warning((self.__qualname__, e))
             return False
 
     def disable(self):
@@ -68,7 +65,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.disable()
             return True
         except Exception as e:
-            LOGGER.warning((self.base_name(), e))
+            LOGGER.warning((self.__qualname__, e))
             return False
 
     def reject(self):
@@ -77,7 +74,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.reject_note()
             return True
         except Exception as e:
-            LOGGER.warning((self.base_name(), e))
+            LOGGER.warning((self.__qualname__, e))
             return False
     
     # def store(self):
@@ -103,7 +100,7 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()            
         except Exception as e:
-            LOGGER.warning((self.base_name(), e))
+            LOGGER.warning((self.__qualname__, e))
             # print("Serial for Sync Cmd Timeout")
         finally:
             return result == '0xf0'
@@ -199,7 +196,7 @@ class NV200_BILL_ACCEPTOR(object):
             else:
                 return 0
         except Exception as e:
-            LOGGER.warning((self.base_name(), e))
+            LOGGER.warning((self.__qualname__, e))
             return 0
 
     def parse_event(self, poll_data):
@@ -287,8 +284,7 @@ class NV200_BILL_ACCEPTOR(object):
                         event.append(self.parse_reject_code(last_reject))
                     else:
                         event.append('')
-                if POLL_DEBUG is True:
-                    print(self.base_name(), ' --- ', str(event))   
+                print(self.__qualname__, ' --- ', str(event))   
                 return event
             time.sleep(0.5)
 
@@ -363,7 +359,6 @@ def send_command(param=None, config=[], restricted=[]):
                 attempt += 1
                 if config['KEY_RECEIVED'] in pool[1]:
                     return 0, pool[1]
-                    break
                 # if config['KEY_BOX_FULL'] in pool[1]:
                 #     return 0, pool[1]
                 #     break
