@@ -15,22 +15,25 @@ class NV200_BILL_ACCEPTOR(object):
         self.serial_port = serial_port
         self.restricted_denom = restricted_denom.sort()
         self.channel_mapping = {
-            "1000": 1,
-            "2000": 1,
-            "5000": 1,
-            "10000": 1,
-            "20000": 1,
-            "50000": 1,
-            "100000": 1,
-            "999999999": 1            
+            1000: 1,
+            2000: 1,
+            5000: 1,
+            10000: 1,
+            20000: 1,
+            50000: 1,
+            100000: 1,
+            999999999: 1            
         }
 
         if len(restricted_denom) > 0:
             for f in self.restricted_denom:
-                all_channel_denom = list(self.channel_mapping.keys()).sort()
-                print('pyt: [NV200] All Channel Denom', str(all_channel_denom))   
+                f = int(f)
+                all_channel_denom = list(self.channel_mapping.keys()).sort()                    
+                print('pyt: [NV200] Start Channel Denom', str(all_channel_denom))   
                 if f in all_channel_denom:
                     self.channel_mapping[f] = 0
+            print('pyt: [NV200] End Channel Denom', str(self.channel_mapping))   
+
             
         self.open_status = False
 
@@ -39,6 +42,7 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()
             result = self.nv200.enable_higher_protocol()
+            self.channel_mapping = sorted(self.channel_mapping)
             allowed_channel = list(self.channel_mapping.values())
             print('pyt: [NV200] Allowed Channel Denom', str(allowed_channel))   
             inhibits = self.nv200.easy_inhibit(allowed_channel)
