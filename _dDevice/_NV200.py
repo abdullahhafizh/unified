@@ -271,8 +271,6 @@ class NV200_BILL_ACCEPTOR(object):
         holdTry = 0
         while True:
             poll = self.nv200.poll()      
-            if POLL_DEBUG is True:
-                print('--init', str(poll))    
             if len(poll) > 1:                
                 if len(poll[1]) == 2:
                     if poll[1][0] == '0xef':
@@ -286,14 +284,14 @@ class NV200_BILL_ACCEPTOR(object):
                         last_reject = self.nv200.last_reject()
                         event.append(self.parse_reject_code(last_reject))
                         if POLL_DEBUG is True:
-                            print('--event', str(event))
+                            print(self.base_name(), ' --- ', str(event))    
                         return event
                 else:
                     event = self.parse_event(poll)
                     last_reject = self.nv200.last_reject()
                     event.append(self.parse_reject_code(last_reject))
                     if POLL_DEBUG is True:
-                            print('--event', str(event))
+                        print(self.base_name(), ' --- ', str(event))    
                     return event
             time.sleep(0.5)
 
