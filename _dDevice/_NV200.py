@@ -38,7 +38,9 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.sync()
             result = self.nv200.enable_higher_protocol()
             allowed_channel = list(self.channel_mapping.values())
+            print('pyt: [NV200] Allowed Channel Denom', str(allowed_channel))   
             inhibits = self.nv200.easy_inhibit(allowed_channel)
+            print('pyt: [NV200] Channel Setting', str(inhibits))   
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             self.open_status =  True
         except Exception as e:
@@ -115,7 +117,7 @@ class NV200_BILL_ACCEPTOR(object):
                     while True:
                         attempt += 1
                         if self.check_active():
-                            # print ("Device Active")
+                            print('pyt: [NV200]', 'Bill Reactivated')   
                             return True
                         if attempt >= 3:
                             return False
@@ -189,6 +191,7 @@ class NV200_BILL_ACCEPTOR(object):
     def parse_value(self, channel):
         try:
             channel_list = list(self.channel_mapping.keys())
+            print('pyt: [NV200] Parse Note Value', str(channel), str(channel_list), str(channel_list[channel-1]))   
             if len(channel_list) >= channel:
                 return int(channel_list[channel-1])
             else:
@@ -213,8 +216,9 @@ class NV200_BILL_ACCEPTOR(object):
         elif  event[1] == '0xef':
             event_data.append("Reading Note")
         elif  event[1] == '0xee':
+            # Note in escrow, amount: 2000.00  IDR
             note_value = self.parse_value(event[2])
-            event_data.append("Note in escrow, amount:" + str(note_value))
+            event_data.append("Note in escrow, amount: " + str(note_value) + ".00  IDR")
             event_data.append(note_value)
             return event_data
         elif  event[1] == '0xed':
@@ -278,7 +282,7 @@ class NV200_BILL_ACCEPTOR(object):
                     event.append(self.parse_reject_code(last_reject))
                 else:
                     event.append('')
-                print('NV200_Module', ' --- ', str(event))   
+                print('pyt: [NV200]', str(event))   
                 return event
             time.sleep(0.5)
 
@@ -397,7 +401,7 @@ def send_command(param=None, config=[], restricted=[]):
         else:
             return -1, ""
     except Exception as e:
-        LOGGER.warning(('NV200_Module', e))
+        LOGGER.warning((e))
         return -1, ""
     
     
