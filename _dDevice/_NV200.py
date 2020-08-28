@@ -273,17 +273,13 @@ class NV200_BILL_ACCEPTOR(object):
     def listen_poll(self):
         while True:
             poll = self.nv200.poll()      
-            if len(poll) > 1:                
-                if len(poll[1]) == 2:
-                    event = self.parse_event(poll)
-                    event.append('')
+            if len(poll) > 1:     
+                event = self.parse_event(poll)
+                if poll[1] == '0xed' or poll[1] == '0xec':
+                    last_reject = self.nv200.last_reject()
+                    event.append(self.parse_reject_code(last_reject))
                 else:
-                    event = self.parse_event(poll)
-                    if poll[1] == '0xed' or poll[1] == '0xec':
-                        last_reject = self.nv200.last_reject()
-                        event.append(self.parse_reject_code(last_reject))
-                    else:
-                        event.append('')
+                    event.append('')
                 print(self.__qualname__, ' --- ', str(event))   
                 return event
             time.sleep(0.5)
