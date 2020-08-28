@@ -192,10 +192,14 @@ class NV200_BILL_ACCEPTOR(object):
             return "INVALID NOTE: " + rejectCode
 
     def parse_value(self, channel):
-        channel_list = list(DENOMS.keys())
-        if len(channel_list) >= (channel):
-            return int(channel_list[channel-1])
-        else:
+        try:
+            channel_list = list(DENOMS.keys())
+            if len(channel_list) >= (channel):
+                return int(channel_list[channel-1])
+            else:
+                return 0
+        except Exception as e:
+            LOGGER.warning((self.base_name(), e))
             return 0
 
     def parse_event(self, poll_data):
