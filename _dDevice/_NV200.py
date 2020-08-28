@@ -9,14 +9,7 @@ import logging
 LOGGER = logging.getLogger()
 POLL_DEBUG = True
 POLL_TIMEOUT = 3
-
-
-class NV200_BILL_ACCEPTOR(object):
-    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
-        self.nv200 = _eSSPLib.eSSP(serial_port, 0, POLL_TIMEOUT)
-        self.serial_port = serial_port
-        self.restricted_denom = restricted_denom
-        self.channel_mapping = {
+DENOMS = {
             "1000": 1,
             "2000": 1,
             "5000": 1,
@@ -26,6 +19,14 @@ class NV200_BILL_ACCEPTOR(object):
             "100000": 1,
             "X": 1            
         }
+
+
+class NV200_BILL_ACCEPTOR(object):
+    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
+        self.nv200 = _eSSPLib.eSSP(serial_port, 0, POLL_TIMEOUT)
+        self.serial_port = serial_port
+        self.restricted_denom = restricted_denom
+        self.channel_mapping = DENOMS
         if len(restricted_denom) > 0:
             for f in self.restricted_denom:
                 if f in list(self.channel_mapping.keys()):
@@ -34,8 +35,7 @@ class NV200_BILL_ACCEPTOR(object):
         self.open_status = False
 
     def base_name(self):
-        for base in self.__class__.__bases__:
-            return base.__name__
+        return self.__qualname__
 
     def open(self):
         self.open_status = False
@@ -192,8 +192,9 @@ class NV200_BILL_ACCEPTOR(object):
             return "INVALID NOTE: " + rejectCode
 
     def parse_value(self, channel):
-        if len(self.channel_mapping.keys()) >= (channel + 1):
-            return int(self.channel_mapping.keys()[channel-1])
+        channel_list = list(DENOMS.keys())
+        if len(channel_list) >= (channel):
+            return int(channel_list[channel-1])
         else:
             return 0
 
