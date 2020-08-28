@@ -136,8 +136,8 @@ Base{
             _SLOT.start_reset_bill();
         } else if (a=='ADMIN_PRINT|DONE'){
             false_notif('Dear '+userData.first_name+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
-        } else if (a=='INIT_BILL|DONE'){
-            false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor BILL Selesai, Periksa Kembali Kondisi Aktual Mesin');
+        } else if (a=='INIT_BILL|DONE'||a=='RESET_BILL|DONE'){
+            false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
             false_notif('Dear '+userData.first_name+'|Sedang Memproses Perubahan Stok Pada Peladen Pusat\nSilakan Tunggu Beberapa Saat');
         } else if (a=='REFILL_ZERO|SUCCESS'){

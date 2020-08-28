@@ -145,18 +145,20 @@ def reset_bill():
     global OPEN_STATUS, BILL
     BILL = GRG if BILL_TYPE == 'GRG' else NV
     # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
-    if BILL_PORT is None:
-        LOGGER.warning(("port", BILL_PORT))
-        _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
-        return False
+    # if BILL_PORT is None:
+    #     LOGGER.warning(("port", BILL_PORT))
+    #     _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
+    #     return False
     param = BILL["SET"] + '|' + BILL["PORT"]
     if BILL_TYPE == 'NV':
         param = BILL["RESET"] + '|'
     response, result = send_command_to_bill(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
+        BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('RESET_BILL|DONE')
     else:
         _Common.BILL_ERROR = 'FAILED_RESET_BILL'
+        BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('RESET_BILL|ERROR')
     # LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
     return OPEN_STATUS
 
