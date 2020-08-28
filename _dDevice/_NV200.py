@@ -102,7 +102,7 @@ class NV200_BILL_ACCEPTOR(object):
         while 1:
             portlist = serial.tools.list_ports.comports()
             for port in portlist:
-                if port.device == self.serialPort:
+                if port.device == self.serial_port:
                     attempt = 0
                     while True:
                         attempt += 1
