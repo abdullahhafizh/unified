@@ -647,7 +647,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note();
-                    waitAndExitFor(10);
+                    waitAndExitFor(7);
                     return;
                 }
             } else if (grgResult == 'EXCEED'){
@@ -660,7 +660,8 @@ Base{
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
-                back_button.visible = true;
+// TODO: Back Button
+//                back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
                 abc.counter = 600;
@@ -886,7 +887,6 @@ Base{
             return;
         }
         if (details.payment == 'cash') {
-            back_button.visible = false;
             open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
@@ -1023,7 +1023,7 @@ Base{
                         validate_release_refund('user_cancellation');
                         return;
                     } else {
-                        waitAndExitFor(10);
+                        waitAndExitFor(7);
                         return;
                     }
                 }
