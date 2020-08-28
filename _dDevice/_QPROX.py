@@ -686,6 +686,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
     # {"Command": "028", "ErrorDesc": "Gagal", "Result": "0290", "Response": "", "Parameter": "0"}
+    print(_response, _result)
     if _response == 0 and len(_result) >= 196:
         c2c_report = _result
         parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
