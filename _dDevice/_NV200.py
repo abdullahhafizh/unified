@@ -13,7 +13,7 @@ class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
         self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
         self.serial_port = serial_port
-        self.restricted_denom = restricted_denom
+        self.restricted_denom = restricted_denom.sort()
         self.channel_mapping = {
             "1000": 1,
             "2000": 1,
@@ -27,7 +27,9 @@ class NV200_BILL_ACCEPTOR(object):
 
         if len(restricted_denom) > 0:
             for f in self.restricted_denom:
-                if f in list(self.channel_mapping.keys()):
+                all_channel_denom = list(self.channel_mapping.keys()).sort()
+                print('pyt: [NV200] All Channel Denom', str(all_channel_denom))   
+                if f in all_channel_denom:
                     self.channel_mapping[f] = 0
             
         self.open_status = False
@@ -190,7 +192,7 @@ class NV200_BILL_ACCEPTOR(object):
 
     def parse_value(self, channel):
         try:
-            channel_list = list(self.channel_mapping.keys())
+            channel_list = list(self.channel_mapping.keys()).sort()
             print('pyt: [NV200] Parse Note Value', str(channel), str(channel_list), str(channel_list[channel-1]))   
             if len(channel_list) >= channel:
                 return int(channel_list[channel-1])
