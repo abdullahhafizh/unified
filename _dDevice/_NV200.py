@@ -13,39 +13,18 @@ class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
         self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
         self.serial_port = serial_port
-        self.restricted_denom = restricted_denom.sort()
-        self.channel_mapping = {
-            1000: 1,
-            2000: 1,
-            5000: 1,
-            10000: 1,
-            20000: 1,
-            50000: 1,
-            100000: 1,
-            999999999: 1            
-        }
-
-        if len(restricted_denom) > 0:
-            for f in self.restricted_denom:
-                f = int(f)
-                all_channel_denom = list(self.channel_mapping.keys()).sort()                    
-                print('pyt: [NV200] Start Channel Denom', str(all_channel_denom))   
-                if f in all_channel_denom:
-                    self.channel_mapping[f] = 0
-            print('pyt: [NV200] End Channel Denom', str(self.channel_mapping))   
-
-            
+        self.default_channel = [0,0,1,1,1,1,1,1]
+        if len(restricted_denom) == 3:
+            self.default_channel = [0,0,0,1,1,1,1,1]
         self.open_status = False
+
 
     def open(self):
         self.open_status = False
         try:
             result = self.nv200.sync()
             result = self.nv200.enable_higher_protocol()
-            self.channel_mapping = sorted(self.channel_mapping)
-            allowed_channel = list(self.channel_mapping.values())
-            print('pyt: [NV200] Allowed Channel Denom', str(allowed_channel))   
-            inhibits = self.nv200.easy_inhibit(allowed_channel)
+            inhibits = self.nv200.easy_inhibit(self.default_channel)
             print('pyt: [NV200] Channel Setting', str(inhibits))   
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             self.open_status =  True
@@ -53,6 +32,7 @@ class NV200_BILL_ACCEPTOR(object):
             LOGGER.warning(('NV200_Module', e))
         finally:
             return self.open_status
+
 
     def enable(self):
         try:
@@ -65,6 +45,7 @@ class NV200_BILL_ACCEPTOR(object):
             LOGGER.warning(('NV200_Module', e))
             return False
 
+
     def disable(self):
         try:
             result = self.nv200.bulb_off()
@@ -73,6 +54,7 @@ class NV200_BILL_ACCEPTOR(object):
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
             return False
+
 
     def reject(self):
         try:
@@ -101,6 +83,7 @@ class NV200_BILL_ACCEPTOR(object):
     #     result = self.nv200.enable()
     #     return True
 
+
     def check_active(self):
         result = '0x00'
         try:
@@ -110,6 +93,7 @@ class NV200_BILL_ACCEPTOR(object):
             # print("Serial for Sync Cmd Timeout")
         finally:
             return result == '0xf0'
+    
     
     def reset_bill(self):
         # print ("Device Reset")
@@ -130,6 +114,7 @@ class NV200_BILL_ACCEPTOR(object):
                         time.sleep(5)
             time.sleep(5)
         
+
     def parse_reject_code(self, rejectCode):
         if rejectCode == '0x0':
             return "NOTE ACCEPTED"
@@ -194,17 +179,25 @@ class NV200_BILL_ACCEPTOR(object):
         else:
             return "INVALID NOTE: " + rejectCode
 
+
     def parse_value(self, channel):
-        try:
-            channel_list = list(self.channel_mapping.keys()).sort()
-            print('pyt: [NV200] Parse Note Value', str(channel), str(channel_list), str(channel_list[channel-1]))   
-            if len(channel_list) >= channel:
-                return int(channel_list[channel-1])
-            else:
-                return 0
-        except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+        if channel == 1:
+            return 1000
+        elif channel == 2:
+            return 2000
+        elif channel == 3:
+            return 5000
+        elif channel == 4:
+            return 10000
+        elif channel == 5:
+            return 20000
+        elif channel == 6:
+            return 50000
+        elif channel == 7:
+            return 100000
+        else:
             return 0
+
 
     def parse_event(self, poll_data):
         event = []
@@ -277,6 +270,7 @@ class NV200_BILL_ACCEPTOR(object):
             event_data.append("Unknown Event: " + str(event))
         event_data.append(0)
         return event_data
+    
     
     def listen_poll(self):
         while True:
