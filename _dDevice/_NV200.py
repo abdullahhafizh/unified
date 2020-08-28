@@ -8,11 +8,12 @@ import logging
 
 LOGGER = logging.getLogger()
 POLL_DEBUG = True
+POLL_TIMEOUT = 3
 
 
 class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
-        self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
+        self.nv200 = _eSSPLib.eSSP(serial_port, 0, POLL_TIMEOUT)
         self.serial_port = serial_port
         self.restricted_denom = restricted_denom
         self.channel_mapping = {
@@ -30,30 +31,35 @@ class NV200_BILL_ACCEPTOR(object):
                 if f in list(self.channel_mapping.keys()):
                     self.channel_mapping[f] = 0
             
-        self.openStatus = False
+        self.open_status = False
+
+    def base_name(self):
+        for base in self.__class__.__bases__:
+            return base.__name__
 
     def open(self):
-        self.openStatus = False
+        self.open_status = False
         try:
             result = self.nv200.sync()
             result = self.nv200.enable_higher_protocol()
-            inhibits = self.nv200.easy_inhibit(list(self.channel_mapping.values()))
+            allowed_channel = list(self.channel_mapping.values())
+            inhibits = self.nv200.easy_inhibit(allowed_channel)
             result = self.nv200.set_inhibits(inhibits, '0xFF')
-            self.openStatus =  True
+            self.open_status =  True
         except Exception as e:
-            LOGGER.warning((e))
+            LOGGER.warning((self.base_name(), e))
         finally:
-            return self.openStatus
+            return self.open_status
 
     def enable(self):
         try:
-            if not self.check_active:
+            if not self.check_active():
                 result = self.open()
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
             return True
         except Exception as e:
-            LOGGER.warning((e))
+            LOGGER.warning((self.base_name(), e))
             return False
 
     def disable(self):
@@ -62,7 +68,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.disable()
             return True
         except Exception as e:
-            LOGGER.warning((e))
+            LOGGER.warning((self.base_name(), e))
             return False
 
     def reject(self):
@@ -71,7 +77,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.reject_note()
             return True
         except Exception as e:
-            LOGGER.warning((e))
+            LOGGER.warning((self.base_name(), e))
             return False
     
     # def store(self):
@@ -96,8 +102,8 @@ class NV200_BILL_ACCEPTOR(object):
         result = '0x00'
         try:
             result = self.nv200.sync()            
-        except:
-            pass
+        except Exception as e:
+            LOGGER.warning((self.base_name(), e))
             # print("Serial for Sync Cmd Timeout")
         finally:
             return result == '0xf0'
@@ -262,10 +268,11 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
     
     def listen_poll(self):
-        active = 1
         holdTry = 0
-        while active == 1:
-            poll = self.nv200.poll()          
+        while True:
+            poll = self.nv200.poll()      
+            if POLL_DEBUG is True:
+                print('--init', str(poll))    
             if len(poll) > 1:                
                 if len(poll[1]) == 2:
                     if poll[1][0] == '0xef':
@@ -279,14 +286,14 @@ class NV200_BILL_ACCEPTOR(object):
                         last_reject = self.nv200.last_reject()
                         event.append(self.parse_reject_code(last_reject))
                         if POLL_DEBUG is True:
-                            print(str(event))
+                            print('--event', str(event))
                         return event
                 else:
                     event = self.parse_event(poll)
                     last_reject = self.nv200.last_reject()
                     event.append(self.parse_reject_code(last_reject))
                     if POLL_DEBUG is True:
-                        print(str(event))
+                            print('--event', str(event))
                     return event
             time.sleep(0.5)
 

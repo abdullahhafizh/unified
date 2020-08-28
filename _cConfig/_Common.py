@@ -63,7 +63,7 @@ EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') =
 MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
-BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'native', '1') == '1' and BILL_TYPE == 'NV' else False
+BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^library', '1') == '1' and BILL_TYPE == 'NV' else False
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 
@@ -136,6 +136,7 @@ INFOS = [
     '[BILL]-type -> Define Type Of Bill Acceptor Which is used NV or GRG',
     '[BILL]-not^allowed^denom -> Define Not Allowed Notes/Denom',
     '[BILL]-store^money^delay -> Define Delay Waiting Time in second For Each Notes Storing',
+    '[BILL]-service^library -> Define Library To Handle NV Bill Acceptor 1(MDDTopupService) or 0(NV200)',
     '[MANDIRI]-daily^settle^time -> Define Specific Time For Mandiri Deposit KA Auto Settlement',
     '[BRI]-procode -> The Merchant Agreement Code, For Purchase Settlement Purpose',
     '[MANDIRI_C2C]-mactros -> TID+MID Purchase Padded with 0, Total Must Be 16 Chars',
