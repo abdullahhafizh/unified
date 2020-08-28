@@ -327,75 +327,79 @@ NV200 = None
 
 def send_command(param=None, config=[], restricted=[]):
     global NV200
-    # if _Helper.empty(param) or _Helper.empty(config):
-    #     return -1, ""
-    if NV200 is None:
-        NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
-    args = param.split('|')
-    command = args[0]
-    param = "0"
-    if len(args[1:]) > 0:
-        param = "|".join(args[1:])
-    # LOGGER.debug((command, param, config))
-    # Define Command
-    if command == config['SET']:
-        result = NV200.check_active()
-        if result is True:
-            return 0, "0000"
-        else:
-            NV200 = None
-            return -1, ""
-    elif command == config['RECEIVE']:
-        action = NV200.open()
-        if action is True:
-            action = NV200.enable()
+    try:
+        # if _Helper.empty(param) or _Helper.empty(config):
+        #     return -1, ""
+        if NV200 is None:
+            NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
+        args = param.split('|')
+        command = args[0]
+        param = "0"
+        if len(args[1:]) > 0:
+            param = "|".join(args[1:])
+        # LOGGER.debug((command, param, config))
+        # Define Command
+        if command == config['SET']:
+            result = NV200.check_active()
+            if result is True:
+                return 0, "0000"
+            else:
+                NV200 = None
+                return -1, ""
+        elif command == config['RECEIVE']:
+            action = NV200.open()
+            if action is True:
+                action = NV200.enable()
+                attempt = 0
+                while True:
+                    pool = NV200.listen_poll()
+                    attempt += 1
+                    if config['KEY_RECEIVED'] in pool[1]:
+                        return 0, pool[1]
+                    # if config['KEY_BOX_FULL'] in pool[1]:
+                    #     return 0, pool[1]
+                    #     break
+                    if attempt >= 60:
+                        break
+                    time.sleep(1)
+                return -1, ""
+            else:
+                return -1, ""
+        elif command == config['STORE']:
             attempt = 0
             while True:
                 pool = NV200.listen_poll()
                 attempt += 1
-                if config['KEY_RECEIVED'] in pool[1]:
+                if config['KEY_STORED'] in pool[1] or config['KEY_BOX_FULL'] in pool[1]:
                     return 0, pool[1]
-                # if config['KEY_BOX_FULL'] in pool[1]:
-                #     return 0, pool[1]
-                #     break
+                    break
                 if attempt >= 60:
                     break
                 time.sleep(1)
             return -1, ""
+        elif command == config['REJECT']:
+            action = NV200.reject()
+            attempt = 0
+            while action:
+                pool = NV200.listen_poll()
+                attempt += 1
+                if "Rejected" in pool[1]:
+                    return 0, pool[1]
+                    break
+                if attempt >= 60:
+                    break
+                time.sleep(1)
+                return -1, ""
+        elif command == config['RESET']:
+            action = NV200.reset_bill()
+            if action is True:
+                return 0, "Bill Reset"
+            else:
+                return -1, ""
         else:
             return -1, ""
-    elif command == config['STORE']:
-        attempt = 0
-        while True:
-            pool = NV200.listen_poll()
-            attempt += 1
-            if config['KEY_STORED'] in pool[1] or config['KEY_BOX_FULL'] in pool[1]:
-                return 0, pool[1]
-                break
-            if attempt >= 60:
-                break
-            time.sleep(1)
-        return -1, ""
-    elif command == config['REJECT']:
-        action = NV200.reject()
-        attempt = 0
-        while action:
-            pool = NV200.listen_poll()
-            attempt += 1
-            if "Rejected" in pool[1]:
-                return 0, pool[1]
-                break
-            if attempt >= 60:
-                break
-            time.sleep(1)
-            return -1, ""
-    elif command == config['RESET']:
-        action = NV200.reset_bill()
-        if action is True:
-            return 0, "Bill Reset"
-        else:
-            return -1, ""
-    else:
+    except Exception as e:
+        LOGGER.warning((e))
         return -1, ""
     
     
