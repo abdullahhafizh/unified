@@ -22,7 +22,7 @@ class NV200_BILL_ACCEPTOR(object):
             "20000": 1,
             "50000": 1,
             "100000": 1,
-            "X": 1            
+            "999999999": 1            
         }
 
         if len(restricted_denom) > 0:
