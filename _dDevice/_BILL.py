@@ -116,7 +116,7 @@ DIRECT_PRICE_AMOUNT = 0
 def init_bill():
     global OPEN_STATUS, BILL
     BILL = GRG if BILL_TYPE == 'GRG' else NV
-    LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
+    # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
         LOGGER.warning(("port", BILL_PORT))
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
@@ -133,7 +133,7 @@ def init_bill():
 
 
 def send_command_to_bill(param=None, output=None):
-    if BILL["DIRECT_MODULE"] and BILL_TYPE == 'NV':
+    if BILL["DIRECT_MODULE"] is True and BILL_TYPE == 'NV':
         result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
         LOGGER.info((param, result))
     else:
@@ -163,7 +163,6 @@ def reset_bill():
 
 def start_set_direct_price(price):
     _Helper.get_thread().apply_async(set_direct_price, (price,))
-
 
 
 def set_direct_price(price):
