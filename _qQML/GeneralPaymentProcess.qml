@@ -647,7 +647,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note();
-                    waitAndExitFor(7);
+                    waitAndExitFor(3);
                     return;
                 }
             } else if (grgResult == 'EXCEED'){
@@ -1023,7 +1023,7 @@ Base{
                         validate_release_refund('user_cancellation');
                         return;
                     } else {
-                        waitAndExitFor(7);
+                        waitAndExitFor(3);
                         return;
                     }
                 }
