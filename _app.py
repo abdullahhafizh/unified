@@ -1147,9 +1147,9 @@ if __name__ == '__main__':
         _SettlementService.start_validate_update_balance()    
         _TopupService.get_mandiri_card_blocked_list()
     if _QPROX.INIT_BNI is True:
-        # sleep(.5)
-        # print("pyt: Triggering BNI Settlement Sync...")
-        # _Sync.start_sync_settlement_bni()
+        sleep(.5)
+        print("pyt: Triggering BNI Settlement Sync...")
+        _Sync.start_sync_settlement_bni()
         sleep(2)
         print("pyt: Triggering BNI Balance Update Check...")
         _TopupService.start_define_topup_slot_bni()
