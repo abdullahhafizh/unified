@@ -443,47 +443,49 @@ def sync_sam_audit():
 
 def start_sync_settlement_bni():
     bank = 'BNI'
-    _Helper.get_thread().apply_async(sync_settlement_data, (bank,))
+    _Helper.get_thread().apply_async(sync_settlement_bni, (bank,))
 
 
-def sync_settlement_data(bank):
-    _url = _Common.SMT_CONFIG['full_url']
-    # Do BNI Settlement Creation Every +- 15 Minutes
-    _SettlementService.start_do_bni_topup_settlement()
-    _table_ = 'Settlement'
+def sync_settlement_bni(bank):
+    # _url = _Common.SMT_CONFIG['full_url']
+    # # Do BNI Settlement Creation Every +- 15 Minutes
+    # _SettlementService.start_do_bni_topup_settlement()
+    # _table_ = 'Settlement'
     while True:
         try:
-            if _Helper.is_online(source='sync_settlement_data') is True and IDLE_MODE is True:
-                settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
-                                                ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
-                if len(settlements) > 0:
-                    print('pyt: sync_settlement_data ' + _Helper.time_string() + ' Re-Sync Settlement Data...')
-                    for s in settlements:
-                        _param = {
-                            'mid': _Common.SMT_CONFIG['mid'],
-                            'token': _Common.SMT_CONFIG['token'],
-                            'tid': 'MDD-VM'+_Common.TID,
-                            'path_file': os.path.join(sys.path[0], '_rRemoteFiles', s['filename']),
-                            'filename': s['filename'],
-                            'row': s['row'],
-                            'amount': s['amount'],
-                            'bank': bank,
-                            'bid': _Common.BID[bank],
-                            'settlement_created_at': datetime.fromtimestamp(s['createdAt']).strftime('%Y-%m-%d %H:%M:%S')
-                        }
-                        status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
-                        if status == 200 and response['response']['code'] == 200:
-                            _DAO.update_settlement({'sid': s['sid'], 'status': 'TOPUP_PREPAID|CLOSED'})
-                            LOGGER.info(response)
-                        else:
-                            LOGGER.warning(response)
+            # Do BNI Settlement Creation Every +- 15 Minutes
+            _SettlementService.start_do_bni_topup_settlement()
+            # if _Helper.is_online(source='sync_settlement_bni') is True and IDLE_MODE is True:
+            #     settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
+            #                                     ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
+            #     if len(settlements) > 0:
+            #         print('pyt: sync_settlement_bni ' + _Helper.time_string() + ' Re-Sync Settlement Data...')
+            #         for s in settlements:
+            #             _param = {
+            #                 'mid': _Common.SMT_CONFIG['mid'],
+            #                 'token': _Common.SMT_CONFIG['token'],
+            #                 'tid': 'MDD-VM'+_Common.TID,
+            #                 'path_file': os.path.join(sys.path[0], '_rRemoteFiles', s['filename']),
+            #                 'filename': s['filename'],
+            #                 'row': s['row'],
+            #                 'amount': s['amount'],
+            #                 'bank': bank,
+            #                 'bid': _Common.BID[bank],
+            #                 'settlement_created_at': datetime.fromtimestamp(s['createdAt']).strftime('%Y-%m-%d %H:%M:%S')
+            #             }
+            #             status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
+            #             if status == 200 and response['response']['code'] == 200:
+            #                 _DAO.update_settlement({'sid': s['sid'], 'status': 'TOPUP_PREPAID|CLOSED'})
+            #                 LOGGER.info(response)
+            #             else:
+            #                 LOGGER.warning(response)
         except Exception as e:
-            LOGGER.warning(e)
+            LOGGER.warning((e), bank)
         finally:
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(888.8)
+        sleep(900.1)
 
 
 def start_sync_task():
