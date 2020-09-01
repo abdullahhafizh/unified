@@ -208,8 +208,11 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             _filecontent += _header
             _trailer = 'T' + str(len(settlements)).zfill(6) + '00000000'
             for settle in settlements:
-                remarks = json.loads(settle['remarks'])
-                _all_amount += int(remarks['value']) #Must Be Denom
+                # remarks = json.loads(settle['remarks'])
+                # Need to Parse Topup Amount Here From 
+                # 754605000081474000000000062937950200C626010E6A004844005FB4001770302C8EB2C9664EAD9AD0BD9D0F424002070100015A0000D40000070100C62600000088889999AAFF92D04416FEDF7A941CF5F3C9B6720FBA417DCBA9A5EB010E6AC9664EAD9AC9664EAD9AD0BD9D00015A0000D400007546990000042075754699000004207552A3A9E4496A98B1
+                _row_amount = int(settle['reportSAM'][46:52], 16)
+                _all_amount += _row_amount
                 _filecontent += ('D' + settle['reportSAM']) + '|'
                 # settle['key'] = settle['rid']
                 # _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
@@ -221,7 +224,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 __all_lines1 = _filecontent.split('|')
                 for line in __all_lines1:
                     if line != __all_lines1[-1]:
-                        f.write(line+os.linesep)
+                        f.write(line+'\n')
                     else:
                         f.write(line)
                 f.close()
@@ -234,7 +237,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 __all_lines2 = _filecontent2.split('|')
                 for line in __all_lines2:
                     if line != __all_lines2[-1]:
-                        f.write(line+os.linesep)
+                        f.write(line+'\n')
                     else:
                         f.write(line)
                 f.close()
@@ -245,7 +248,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'amount': str(_all_amount),
                 'bank': bank,
                 'bid': BID[bank],
-                'remarks': _filecontent2.replace('|', os.linesep),
+                'remarks': _filecontent2.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             # Insert Into DB
@@ -308,7 +311,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 __all_lines = _filecontent.split('|')
                 for line in __all_lines:
                     if line != __all_lines[-1]:
-                        f.write(line+os.linesep)
+                        f.write(line+'\n')
                     else:
                         f.write(line)
                 f.close()
@@ -323,7 +326,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'amount': str(_all_amount),
                 'bank': bank,
                 'bid': BID[bank],
-                'remarks': _filecontent.replace('|', os.linesep),
+                'remarks': _filecontent.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
@@ -375,7 +378,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 __all_lines = _filecontent.split('|')
                 for line in __all_lines:
                     if line != __all_lines[-1]:
-                        f.write(line+os.linesep)
+                        f.write(line+'\n')
                     else:
                         f.write(line)
                 f.close()
@@ -390,7 +393,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'amount': str(_all_amount),
                 'bank': bank,
                 'bid': BID[bank],
-                'remarks': _filecontent.replace('|', os.linesep),
+                'remarks': _filecontent.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
@@ -462,7 +465,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'amount': str(_all_amount),
                 'bank': bank,
                 'bid': BID[bank],
-                'remarks': _filecontent.replace('|', os.linesep),
+                'remarks': _filecontent.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
