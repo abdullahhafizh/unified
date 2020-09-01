@@ -476,7 +476,7 @@ ALLOWED_SYNC_TASK = [
     'sync_product_data',
     'sync_pending_refund',
     'sync_task',
-    # 'sync_settlement_data', -> Disable This, Settlement Data Will be send to Kiosk Backend Not SMT Anymore
+    'sync_settlement_bni',
     'sync_sam_audit',
     'sync_data_transaction_failure',
     'sync_data_transaction',
