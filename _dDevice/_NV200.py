@@ -368,30 +368,30 @@ def send_command(param=None, config=[], restricted=[]):
             else:
                 return -1, ""
         elif command == config['STORE']:
-            attempt = 0
+            LOOP_ATTEMPT = 0
             while True:
                 pool = NV200.listen_poll()
-                attempt += 1
+                LOOP_ATTEMPT += 1
                 if config['KEY_STORED'] in pool[1] or config['KEY_BOX_FULL'] in pool[1]:
                     return 0, pool[1]
                     break
-                if attempt >= 60:
+                if LOOP_ATTEMPT >= 60:
                     break
                 time.sleep(1)
             return -1, ""
         elif command == config['REJECT']:
             action = NV200.reject()
-            attempt = 0
-            while action:
+            LOOP_ATTEMPT = 0
+            while True:
                 pool = NV200.listen_poll()
-                attempt += 1
+                LOOP_ATTEMPT += 1
                 if "Rejected" in pool[1]:
                     return 0, pool[1]
                     break
-                if attempt >= 60:
+                if LOOP_ATTEMPT >= 60:
                     break
                 time.sleep(1)
-                return -1, ""
+            return -1, ""
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
