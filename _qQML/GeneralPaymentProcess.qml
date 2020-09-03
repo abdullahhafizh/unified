@@ -447,8 +447,6 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
-        // Trigger C2C Deposit Update Balance Check
-        if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
         //========
         if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='C2C_FORCE_SETTLEMENT'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
@@ -468,6 +466,12 @@ Base{
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
             return
         } else {
+            // Trigger Deposit Update Balance Check
+            if (cardNo.substring(0, 4) == '6032'){
+                if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
+            } else if (cardNo.substring(0, 4) == '7546'){
+                _SLOT.start_check_bni_deposit();
+            }
             var output = t.split('|')
             var topupResponse = output[0]
             var result = JSON.parse(output[1]);
