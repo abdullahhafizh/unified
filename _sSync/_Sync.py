@@ -804,11 +804,11 @@ def get_amount(idx, listx):
 #         sleep(3.3)
 
 
-def start_do_bni_topup_by_trx():
-    _Helper.get_thread().apply_async(do_bni_topup_by_trx)
+def start_check_bni_deposit():
+    _Helper.get_thread().apply_async(check_bni_deposit)
 
 
-def do_bni_topup_by_trx():
+def check_bni_deposit():
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
         _TopupService.do_topup_deposit_bni(slot=1)

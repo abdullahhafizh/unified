@@ -477,9 +477,9 @@ class SlotHandler(QObject):
         _SettlementService.start_validate_update_balance()
     start_validate_update_balance = pyqtSlot()(start_validate_update_balance)
 
-    def start_do_bni_topup_by_trx(self):
-        _Sync.start_do_bni_topup_by_trx()
-    start_do_bni_topup_by_trx = pyqtSlot()(start_do_bni_topup_by_trx)
+    def start_check_bni_deposit(self):
+        _Sync.start_check_bni_deposit()
+    start_check_bni_deposit = pyqtSlot()(start_check_bni_deposit)
 
     def start_do_update(self):
         _UpdateAppService.start_do_update()
