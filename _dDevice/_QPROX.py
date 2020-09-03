@@ -565,10 +565,13 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         __report_emoney = __data[102:]
         # TODO: Check If Balance is Initial or after process topup
         __deposit_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
+        if __deposit_balance > 0:
+            _Common.MANDIRI_WALLET_1 = __deposit_balance
+            _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
+        else:
+            __deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
         # Update Local Mandiri Wallet
         __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
-        _Common.MANDIRI_WALLET_1 = __deposit_balance
-        _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
         __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
         if not _Helper.empty(r[0].strip()) or r[0] != '0':
             __emoney_balance = r[0].strip()

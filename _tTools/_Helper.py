@@ -139,10 +139,13 @@ def full_row_reverse_hexdec(string):
 
 
 def reverse_hexdec(string, mode="BIG_ENDIAN"):
-    if mode in ['BIG_ENDIAN']:
-        return int("".join(map(str.__add__, string[-2::-2], string[-1::-2])), 16)
-    else:
-        return int(string, 16)
+    try:
+        if mode in ['BIG_ENDIAN']:
+            return int("".join(map(str.__add__, string[-2::-2], string[-1::-2])), 16)
+        else:
+            return int(string, 16)
+    except:
+        return 0
 
 
 def dump(s, iterate=False):
