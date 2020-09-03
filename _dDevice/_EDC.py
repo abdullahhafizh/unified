@@ -933,10 +933,11 @@ def edc_mobile_start_binding_edc():
         while not EDC_MOBILE_BINDING_STATUS:
             status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/start-binding', param)
             LOGGER.debug((status, response))
-            if status == 200 or response['response']['code'] == 200:
-                EDC_MOBILE_BINDING_STATUS = True
-                print('pyt: [INFO] EDC Binding Request Success to ' + str(_Common.EDC_SERIAL_NO))
-                return True
+            if status == 200 and not _Helper.empty(response.get('response', None)):
+                if response['response']['code'] == 200:
+                    EDC_MOBILE_BINDING_STATUS = True
+                    print('pyt: [INFO] EDC Binding Request Success to ' + str(_Common.EDC_SERIAL_NO))
+                    return True
             else:
                 print('pyt: [WARNING] EDC Binding Request Failed, Retrying...')
                 sleep(3)
