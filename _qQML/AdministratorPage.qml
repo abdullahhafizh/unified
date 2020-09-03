@@ -85,7 +85,7 @@ Base{
         if (action.type=='changeStock'){
             popup_loading.open();
             _SLOT.start_change_product_stock(action.port, action.stock);
-            actionList.push(action);
+//            actionList.push(action);
         }
     }
 
@@ -139,7 +139,7 @@ Base{
         } else if (a=='INIT_BILL|DONE'||a=='RESET_BILL|DONE'){
             false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
-            false_notif('Dear '+userData.first_name+'|Sedang Memproses Perubahan Stok Pada Peladen Pusat\nSilakan Tunggu Beberapa Saat');
+            false_notif('Dear '+userData.first_name+'|Memproses Perubahan Stok Di Peladen Pusat\nSilakan Tunggu Beberapa Saat');
         } else if (a=='REFILL_ZERO|SUCCESS'){
             false_notif('Dear '+userData.first_name+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
@@ -180,6 +180,8 @@ Base{
         } else if (a.indexOf('TOPUP_ONLINE_DEPOSIT') > -1){
             var topup_result = a.split('|')[1]
             false_notif('Dear '+userData.first_name+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
+        } else if (a=='CHANGE_PRODUCT|CONNECTION_ERROR'){
+            false_notif('Dear '+userData.first_name+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
         } else {
             false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+a);
         }
@@ -528,7 +530,7 @@ Base{
             modeReverse: false
             MouseArea{
                 anchors.fill: parent
-                onClicked: {
+                onDoubleClicked: {
                     _SLOT.user_action_log('Admin Page "Collection Print"');
                     if (press != '0') return;
                     press = '1';
@@ -538,6 +540,8 @@ Base{
                         var epoch = new Date().getTime();
                         var struct_id = userData.username+epoch;
                         _SLOT.start_admin_print_global(struct_id);
+                        actionList = [];
+                        print_receipt_button.visible = false;
                     } else {
                         false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
                     }
@@ -1161,7 +1165,6 @@ Base{
         }
 
     }
-
 
 
     function false_notif(param, button){
