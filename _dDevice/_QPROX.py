@@ -639,7 +639,7 @@ def top_up_mandiri_correction(amount, trxid=''):
     param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
     # Handle Old Applet Correction
     if LAST_C2C_APP_TYPE == '0':
-        return topup_offline_mandiri(amount, trxid)
+        return topup_offline_mandiri_c2c(amount, trxid)
     # Check Correction Result
     # Add Check Card Number First Before Correction
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
