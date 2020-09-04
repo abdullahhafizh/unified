@@ -1386,6 +1386,7 @@ Base{
                         break;
                     case 'c2c_correction':
                         var amount = getDenom.toString();
+                        if (CONF.c2c_mode == 1) amount = details.value;
                         var structId = details.shop_type + details.epoch.toString();
                         _SLOT.start_topup_mandiri_correction(amount, structId);
                         popup_loading.open();
