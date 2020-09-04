@@ -696,21 +696,25 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     if _response == 0 and len(_result) >= 196:
         c2c_report = _result
         parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
-    else:
-
-        if '"Result": "0290"' in _result:
+        return
+    try:
+        _result_json = json.loads(_result)
+        if _result_json["Result"] == "0290":
             param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
             _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if _ == 0 and len(report) >= 196:
                 c2c_report = '|' + report
                 parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
                 return
-        elif '83' in _result:
+        elif _result_json["Response"] == '83':
             LAST_C2C_APP_TYPE = '1'
         else:
             LAST_C2C_APP_TYPE = '0'
         LOGGER.warning(('result', _result, 'applet_type', LAST_C2C_APP_TYPE, 'TOPUP_C2C_CORRECTION'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
+    except Exception as e:
+        LOGGER.warning((e))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):
