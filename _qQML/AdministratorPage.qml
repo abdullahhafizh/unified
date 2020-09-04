@@ -821,7 +821,7 @@ Base{
                    anchors.rightMargin: 0
                    fontSize: 15
                    modeRadius: false
-                   button_text: 're-init grg'
+                   button_text: 'do-collect'
                    modeReverse: true
                    MouseArea{
                        anchors.fill: parent
