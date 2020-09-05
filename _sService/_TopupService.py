@@ -98,7 +98,7 @@ def do_topup_deposit_bni(slot=1, force=False):
         if _result_pending is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_PENDING_BALANCE_BNI')
             _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Result Pending', _result_pending], 'general')
+            # _Common.online_logger(['BNI Result Pending', _result_pending], 'general')
             return 'FAILED_PENDING_BALANCE_BNI'
         _result_ubal = update_balance({
             'card_no': _get_card_data['card_no'],
@@ -108,13 +108,13 @@ def do_topup_deposit_bni(slot=1, force=False):
         if _result_ubal is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_UPDATE_BALANCE_BNI')
             _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
+            # _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = _QPROX.bni_crypto_deposit(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
             _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
+            # _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
             BNI_UPDATE_BALANCE_PROCESS = False

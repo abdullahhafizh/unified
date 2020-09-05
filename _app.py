@@ -37,8 +37,10 @@ from _sService import _GeneralPaymentService
 import json
 import sentry_sdk
 
+
 print("""
-    Kiosk Ver: """ + _Common.VERSION + """
+    App Ver: """ + _Common.VERSION + """
+    Service Ver: """ + _Common.SERVICE_VERSION + """
 Powered By: PT. MultiDaya Dinamika
               -2020-
 """)
@@ -801,9 +803,15 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
-    sentry_sdk.init("https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-                    max_breadcrumbs=10,
-                    debug=True,)
+    sentry_sdk.init(
+        "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
+        max_breadcrumbs=10,
+        debug=False,
+        environment=_Common.APP_MODE,
+        server_name='VM-ID '+_Common.TID,
+        release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+        default_integrations=False,
+        )
     try:
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')

@@ -3,7 +3,8 @@
 - Enhance Update Card Stock Handling,
 - Fix Mandiri Wallet After Force Settlement,
 - Re-Activate BNI Deposit Check After TRX,
-- Re-adjust Correction Handle,
+- Re-Adjust Correction Handle,
+- Enhance Online Logging Tagging,
 - ...
 
 11.9.B-GLOBAL:
