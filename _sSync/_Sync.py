@@ -11,7 +11,6 @@ from _sService import _KioskService
 from _dDevice import _EDC
 from _dDevice import _BILL
 from _dDevice import _QPROX
-# from operator import itemgetter
 import json
 from _sService import _UserService
 from _sService import _SettlementService
