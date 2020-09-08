@@ -418,7 +418,7 @@ def sync_product_data():
 def start_sync_sam_audit():
     _Helper.get_thread().apply_async(sync_sam_audit)
 
-
+# Disabled
 def sync_sam_audit():
     url = _Common.BACKEND_URL + 'sync/sam-audit'
     _table_ = 'SAMAudit'
