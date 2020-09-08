@@ -1056,7 +1056,7 @@ if __name__ == '__main__':
     if _Common.LIVE_MODE:
         kill_explorer()
     print("pyt: Checking Auth to Server...")
-    _Sync.start_check_connection(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
+    _Sync.start_sync_machine(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     print("pyt: Setting Up Function(s)/Method(s)...")
     SLOT_HANDLER = SlotHandler()
     app = QGuiApplication(sys.argv)

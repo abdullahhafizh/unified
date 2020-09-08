@@ -25,11 +25,11 @@ LOGGER = logging.getLogger()
 SETTING_PARAM = []
 
 
-def start_check_connection(url, param):
-    _Helper.get_thread().apply_async(check_connection, (url, param,))
+def start_sync_machine(url, param):
+    _Helper.get_thread().apply_async(sync_machine, (url, param,))
 
 
-def check_connection(url, param):
+def sync_machine(url, param):
     global SETTING_PARAM
     SETTING_PARAM = param
     attempt = 0
@@ -38,14 +38,14 @@ def check_connection(url, param):
         try:
             status, response = _NetworkAccess.get_from_url(url=url, force=True)
             if status == 200:
-                print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
+                print('pyt: sync_machine ' + _Helper.time_string() + ' Connected To Backend')
                 _Common.KIOSK_STATUS = 'ONLINE'
                 _KioskService.LAST_SYNC = _Helper.time_string()
             else:
-                print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
+                print('pyt: sync_machine ' + _Helper.time_string() + ' Disconnected From Backend')
                 _Common.KIOSK_STATUS = 'OFFLINE'
             if attempt == 1:
-                print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
+                print('pyt: sync_machine ' + _Helper.time_string() + ' Setting Initiation From Backend')
                 s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                 _KioskService.update_kiosk_status(s, r)
                 _DAO.create_today_report(_Common.TID)
@@ -181,7 +181,7 @@ def do_pending_request_job():
                     continue
             except Exception as e:
                 LOGGER.warning(e)
-        sleep(35.35)
+        sleep(99.100)
 
 
 def start_do_pending_upload_job():
