@@ -1179,7 +1179,7 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.start_define_ads(3)
     print("pyt: Reset Open Previous Pending Jobs...")
-    sleep(3)
+    sleep(2)
     _KioskService.reset_open_job()
     print("pyt: Do Pending Request Jobs...")
     sleep(1)
