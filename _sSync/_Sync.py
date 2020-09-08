@@ -150,6 +150,7 @@ def do_pending_request_job():
         # LOGGER.info(('count', len(pending_jobs)))
         if len(pending_jobs) > 0:
             try:
+                pending_jobs = pending_jobs.sort()
                 for p in pending_jobs:
                     jobs_path = os.path.join(_Common.JOB_PATH, p)
                     content = open(jobs_path, 'r').read().strip()
