@@ -251,9 +251,9 @@ Base{
         _cash_trx.labelContent = info.cash_trx;
         _edc_trx.labelContent = info.edc_trx;
         _mandiri_wallet.labelContent = FUNC.insert_dot(info.mandiri_wallet.toString());
-        _mandiri_active_slot.labelContent = info.mandiri_active;
+        _mandiri_active_slot.labelContent = info.mandiri_active + ' | ' + info.mandiri_sam_no;
         _bni_wallet.labelContent = FUNC.insert_dot(info.bni_wallet.toString());
-        _bni_active_slot.labelContent = info.bni_active;
+        _bni_active_slot.labelContent = info.bni_active + ' | ' + info.bni_sam_no;
         _total_cash_available.labelContent = FUNC.insert_dot(info.cash_available.toString());
         _total_edc_available.labelContent = FUNC.insert_dot(info.edc_not_settle.toString());
         popup_loading.close();

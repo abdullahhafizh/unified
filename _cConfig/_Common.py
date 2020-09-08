@@ -427,11 +427,11 @@ KA_NIK = _ConfigParser.get_set_value('MANDIRI', 'ka^nik', '2345')
 MANDIRI_WALLET_1 = 0
 MANDIRI_WALLET_2 = 0
 MANDIRI_ACTIVE_WALLET = 0
-MANDIRI_NO_1 = _ConfigParser.get_set_value('MANDIRI', 'sam1^uid', '---')
-# Add assumption MANDIRI_NO_1 is C2C_DEPOSIT_NO When C2C_MODE is ON
+MANDIRI_SAM_NO_1 = _ConfigParser.get_set_value('MANDIRI', 'sam1^uid', '---')
+# Add assumption MANDIRI_SAM_NO_1 is C2C_DEPOSIT_NO When C2C_MODE is ON
 if C2C_MODE is True:
-    MANDIRI_NO_1 = C2C_DEPOSIT_NO
-MANDIRI_NO_2 = _ConfigParser.get_set_value('MANDIRI', 'sam2^uid', '---')
+    MANDIRI_SAM_NO_1 = C2C_DEPOSIT_NO
+MANDIRI_SAM_NO_2 = _ConfigParser.get_set_value('MANDIRI', 'sam2^uid', '---')
 MANDIRI_REVERSE_SLOT_MODE = False
 MANDIRI_SINGLE_SAM = True if _ConfigParser.get_set_value('MANDIRI', 'single^sam', '1') == '1' else False
 if MANDIRI_SINGLE_SAM is True:
@@ -615,12 +615,12 @@ def bni_single_sam():
 
 
 def set_mandiri_uid(slot, uid):
-    global MANDIRI_NO_1, MANDIRI_NO_2
+    global MANDIRI_SAM_NO_1, MANDIRI_SAM_NO_2
     if slot == '1':
-        MANDIRI_NO_1 = uid
+        MANDIRI_SAM_NO_1 = uid
         _ConfigParser.set_value('MANDIRI', 'sam1^uid', uid)
     if slot == '2':
-        MANDIRI_NO_2 = uid
+        MANDIRI_SAM_NO_2 = uid
         _ConfigParser.set_value('MANDIRI', 'sam2^uid', uid)
 
 
@@ -866,8 +866,8 @@ def upload_mandiri_wallet():
             'bank_mid': MID_MAN,
             'wallet_1': MANDIRI_WALLET_1,
             "wallet_2": MANDIRI_WALLET_2,
-            "card_no_1": MANDIRI_NO_1,
-            "card_no_2": MANDIRI_NO_2
+            "card_no_1": MANDIRI_SAM_NO_1,
+            "card_no_2": MANDIRI_SAM_NO_2
         }
         if C2C_MODE is True:
             param['card_no_1'] = C2C_DEPOSIT_NO

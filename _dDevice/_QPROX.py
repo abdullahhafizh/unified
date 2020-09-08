@@ -599,7 +599,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
-            _Common.MANDIRI_NO_1 = _Common.C2C_DEPOSIT_NO
+            _Common.MANDIRI_SAM_NO_1 = _Common.C2C_DEPOSIT_NO
         _Common.log_to_temp_config('c2c^card^no', __report_deposit[:16])
         param = {
             'trxid': reff_no,
@@ -1009,7 +1009,7 @@ def c2c_balance_info():
         _Common.C2C_DEPOSIT_UID = res[1]
         _Common.log_to_temp_config('c2c^card^uid', res[1])
         _Common.C2C_DEPOSIT_NO = res[2][:16]
-        _Common.MANDIRI_NO_1 = _Common.C2C_DEPOSIT_NO
+        _Common.MANDIRI_SAM_NO_1 = _Common.C2C_DEPOSIT_NO
         _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_ACTIVE = 1

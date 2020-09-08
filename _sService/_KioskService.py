@@ -445,6 +445,8 @@ def machine_summary():
         'online_status': str(_Common.KIOSK_STATUS),
         'mandiri_active': str(_Common.MANDIRI_ACTIVE),
         'bni_active': str(_Common.BNI_ACTIVE),
+        'mandiri_sam_no': str(_Common.MANDIRI_SAM_NO_1),
+        'bni_sam_no': str(_Common.BNI_SAM_1_NO),
         'service_ver': str(_Common.SERVICE_VERSION),
         'theme': str(_Common.THEME_NAME),
         'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A'),
