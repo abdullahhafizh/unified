@@ -32,9 +32,9 @@ def start_check_connection(url, param):
 def check_connection(url, param):
     global SETTING_PARAM
     SETTING_PARAM = param
-    modulus = 0
+    attempt = 0
     while True:
-        modulus += 1
+        attempt += 1
         try:
             status, response = _NetworkAccess.get_from_url(url=url, force=True)
             if status == 200:
@@ -44,11 +44,18 @@ def check_connection(url, param):
             else:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
                 _Common.KIOSK_STATUS = 'OFFLINE'
-            if modulus == 1:
+            if attempt == 1:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
                 s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                 _KioskService.update_kiosk_status(s, r)
                 _DAO.create_today_report(_Common.TID)
+            if attempt > 1:
+                __url = _Common.BACKEND_URL + 'kiosk/status'
+                __param = _KioskService.machine_summary()
+                __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
+                # LOGGER.info((__url, str(__param)))
+                # print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
+                _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
             if _Common.DAILY_SYNC_SUMMARY_TIME in _Helper.time_string():
                 send_daily_summary()
             # Add Daily Reboot Time Local Setting
@@ -110,6 +117,7 @@ def start_sync_machine_status():
     _Helper.get_thread().apply_async(sync_machine_status)
 
 
+# Disabled
 def sync_machine_status():
     __url = _Common.BACKEND_URL + 'kiosk/status'
     __param = dict()
@@ -129,7 +137,7 @@ def sync_machine_status():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(33.3)
+        sleep(59.59)
 
 
 def start_do_pending_request_job():
@@ -153,11 +161,11 @@ def do_pending_request_job():
                     __url = job['url']
                     __param = job['payload']
                     __endpoint = job['payload'].get('endpoint')
-                    LOGGER.debug((p, __url, __param))
                     jobs_path_process = jobs_path.replace('.request', '.process')
                     os.rename(jobs_path, jobs_path_process)
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
-                    print('pyt: [DEBUG] ' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
+                    LOGGER.debug((p, __url, __param, status, response))
+                    # print('pyt: [DEBUG] ' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
                     if status == 200 and (__endpoint in _Common.ENDPOINT_SUCCESS_BY_200_HTTP_HEADER or response['result'] == 'OK'):
                         jobs_path_done = jobs_path_process.replace('.process', '.done')
                         os.rename(jobs_path_process, jobs_path_done)
@@ -173,8 +181,7 @@ def do_pending_request_job():
                     continue
             except Exception as e:
                 LOGGER.warning(e)
-        sleep(15.15)
-
+        sleep(35.35)
 
 
 def start_do_pending_upload_job():
@@ -232,8 +239,6 @@ def do_pending_upload_job():
         sleep(25.25)
 
 
-
-
 def start_kiosk_sync():
     _Helper.get_thread().apply_async(kiosk_sync)
 
@@ -266,7 +271,6 @@ def kiosk_topup_sync():
     sync_topup_records()
 
 
-
 def kiosk_sync():
     print("pyt: Start Syncing Remote Task...")
     sync_task()
@@ -288,6 +292,7 @@ def kiosk_sync():
     sync_data_transaction_failure()
     print("pyt: Start Syncing SAM Audit Records ...")
     sync_sam_audit()
+
 
 def start_sync_topup_records():
     _Helper.get_thread().apply_async(sync_topup_records)
@@ -317,7 +322,7 @@ def sync_topup_records():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(44.5)
+        sleep(44.55)
 
 
 def start_sync_data_transaction():
@@ -332,7 +337,7 @@ def sync_data_transaction():
             if _Helper.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
-                    print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
+                    # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
                     for t in transactions:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -348,7 +353,7 @@ def sync_data_transaction():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(99.9)
+        sleep(88.99)
 
 
 def start_sync_data_transaction_failure():
@@ -363,7 +368,7 @@ def sync_data_transaction_failure():
             if _Helper.is_online(source='sync_data_transaction_failure') is True and IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transaction_failures) > 0:
-                    print('pyt: sync_data_transaction_failure ' + _Helper.time_string() + ' Re-Sync Transaction Failure Data...')
+                    # print('pyt: sync_data_transaction_failure ' + _Helper.time_string() + ' Re-Sync Transaction Failure Data...')
                     for t in transaction_failures:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -378,7 +383,7 @@ def sync_data_transaction_failure():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(99.9)
+        sleep(77.88)
 
 
 def start_sync_product_data():
@@ -393,7 +398,7 @@ def sync_product_data():
             if _Helper.is_online(source='sync_product_data') is True and IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(products) > 0:
-                    print('pyt: sync_product_data ' + _Helper.time_string() + ' Re-Sync Product Data...')
+                    # print('pyt: sync_product_data ' + _Helper.time_string() + ' Re-Sync Product Data...')
                     for p in products:
                         status, response = _NetworkAccess.post_to_url(url=url, param=p)
                         if status == 200 and response['id'] == p['pid']:
@@ -408,7 +413,7 @@ def sync_product_data():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(55.5)
+        sleep(55.66)
 
 
 def start_sync_sam_audit():
@@ -423,7 +428,7 @@ def sync_sam_audit():
             if _Helper.is_online(source='sync_sam_audit') is True and IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(audits) > 0:
-                    print('pyt: sync_sam_audit ' + _Helper.time_string() + ' Re-Sync SAM Audit...')
+                    # print('pyt: sync_sam_audit ' + _Helper.time_string() + ' Re-Sync SAM Audit...')
                     for a in audits:
                         status, response = _NetworkAccess.post_to_url(url=url, param=a)
                         if status == 200 and response['id'] == a['lid']:
@@ -453,8 +458,9 @@ def sync_settlement_bni(bank):
     # _table_ = 'Settlement'
     while True:
         try:
+            if _Helper.is_online(source='sync_settlement_bni') is True and IDLE_MODE is True:
+                _SettlementService.start_do_bni_topup_settlement()
             # Do BNI Settlement Creation Every +- 15 Minutes
-            _SettlementService.start_do_bni_topup_settlement()
             # if _Helper.is_online(source='sync_settlement_bni') is True and IDLE_MODE is True:
             #     settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
             #                                     ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
@@ -485,7 +491,7 @@ def sync_settlement_bni(bank):
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(900.1)
+        sleep(900.1010)
 
 
 def start_sync_task():
@@ -511,13 +517,14 @@ def sync_task():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(33.3)
+        sleep(33.33)
 
 
 def start_sync_pending_refund():
     _Helper.get_thread().apply_async(sync_pending_refund)
 
 
+# Disabled
 def sync_pending_refund():
     _url = _Common.BACKEND_URL + 'refund/global'
     while True:

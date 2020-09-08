@@ -1122,9 +1122,9 @@ if __name__ == '__main__':
     print("pyt: Syncing PPOB Product...")
     _PPOBService.start_init_ppob_product()
     sleep(1)
-    print("pyt: Syncing Machine Status...")
-    _Sync.start_sync_machine_status()
-    sleep(1)
+    # print("pyt: Syncing Machine Status...")
+    # _Sync.start_sync_machine_status()
+    # sleep(1)
     if INITIAL_SETTING['reloadService'] is True:
         sleep(1)
         print("pyt: Restarting MDDTopUpService...")

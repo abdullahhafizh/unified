@@ -208,8 +208,8 @@ def start_receive_note():
             attempt += 1
             param = BILL["RECEIVE"] + '|'
             _response, _result = send_command_to_bill(param=param, output=None)
-            _Helper.dump([_response, _result])
-            if _response == -1:
+            # _Helper.dump([_response, _result])
+            if _response == -1 and BILL["DIRECT_MODULE"] is False:
                 if BILL_TYPE == 'NV':
                     stop_receive_note()
                     sleep(2.5)
@@ -217,39 +217,26 @@ def start_receive_note():
                 break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
-                _Helper.dump(cash_in)
-                _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-                if cash_in in SMALL_NOTES_NOT_ALLOWED:
-                    sleep(1.5)
-                    param = BILL["REJECT"] + '|'
-                    send_command_to_bill(param=param, output=None)
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
-                    break
-                if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
-                    sleep(1.5)
-                    param = BILL["REJECT"] + '|'
-                    send_command_to_bill(param=param, output=None)
-                    LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
-                                                                          'COLLECTED': COLLECTED_CASH,
-                                                                          'TARGET': DIRECT_PRICE_AMOUNT})))
-                    break
-                # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
-                #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
-                #     break
+                # _Helper.dump(cash_in)
+                if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
+                    if cash_in in SMALL_NOTES_NOT_ALLOWED:
+                        sleep(1.5)
+                        param = BILL["REJECT"] + '|'
+                        send_command_to_bill(param=param, output=None)
+                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                        break
+                    if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
+                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                        sleep(1.5)
+                        param = BILL["REJECT"] + '|'
+                        send_command_to_bill(param=param, output=None)
+                        LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
+                                                                            'COLLECTED': COLLECTED_CASH,
+                                                                            'TARGET': DIRECT_PRICE_AMOUNT})))
+                        break
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
                 update_cash_result, store_result = update_cash_status(str(cash_in), store_cash_into_cashbox())
                 LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
-                # if do_store_note is True or do_store_note is not False:
-                #     CASH_HISTORY.append(str(cash_in))
-                #     COLLECTED_CASH += int(cash_in)
-                #     _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
-                #     LOGGER.info(('Cash Status:', json.dumps({
-                #         'ADD': cash_in,
-                #         'COLLECTED': COLLECTED_CASH,
-                #         'HISTORY': CASH_HISTORY})))
-                #     # Signal Emit To Update View Cash Status
-                #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
             if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 break

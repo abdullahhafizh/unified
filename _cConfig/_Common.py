@@ -475,14 +475,14 @@ LAST_EDC_TRX_RECEIPT = None
 
 ALLOWED_SYNC_TASK = [
     'sync_product_data',
-    'sync_pending_refund',
+    # 'sync_pending_refund',
     'sync_task',
     'sync_settlement_bni',
-    'sync_sam_audit',
+    # 'sync_sam_audit',
     'sync_data_transaction_failure',
     'sync_data_transaction',
     'sync_topup_records',
-    'sync_machine_status',
+    # 'sync_machine_status',
     # 'validate_update_balance_c2c'
 
 ]
