@@ -45,6 +45,7 @@ if TEST_MODE is True:
 
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
+REFUND_FEATURE = True if _ConfigParser.get_set_value('GENERAL', 'refund^feature', '1') == '1' else False
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
 

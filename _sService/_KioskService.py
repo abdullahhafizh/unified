@@ -680,7 +680,10 @@ def start_get_refunds():
 
 
 def get_refunds():
-    K_SIGNDLER.SIGNAL_GET_REFUNDS.emit(json.dumps(_Common.get_refunds()))
+    if not _Common.REFUND_FEATURE:
+        K_SIGNDLER.SIGNAL_GET_REFUNDS.emit('REFUND_DISABLED')
+    else:
+        K_SIGNDLER.SIGNAL_GET_REFUNDS.emit(json.dumps(_Common.get_refunds()))
 
 
 FIRST_RUN_FLAG = True
