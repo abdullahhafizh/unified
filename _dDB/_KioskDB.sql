@@ -216,7 +216,7 @@ CREATE TABLE TransactionFailure
 CREATE UNIQUE INDEX UK_airpref001a ON Airport(prefix);
 CREATE UNIQUE INDEX UK_bankid002b ON Bank(bid);
 CREATE UNIQUE INDEX UK_setid003c ON Settlement(sid);
-CREATE UNIQUE INDEX UK_mercid004d ON Merchant(mid);
+-- CREATE UNIQUE INDEX UK_mercid004d ON Merchant(mid);
 CREATE UNIQUE INDEX UK_prodid005e ON Product(pid);
 CREATE UNIQUE INDEX UK_termid006f ON Terminal(tid);
 CREATE UNIQUE INDEX UK_trxid007g ON Transactions(trxid);
