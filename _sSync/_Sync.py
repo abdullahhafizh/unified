@@ -149,9 +149,9 @@ def do_pending_request_job():
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         # LOGGER.info(('count', len(pending_jobs)))
         if len(pending_jobs) > 0:
-            try:
-                pending_jobs = pending_jobs.sort()
-                for p in pending_jobs:
+            pending_jobs = pending_jobs.sort()
+            for p in pending_jobs:
+                try:
                     jobs_path = os.path.join(_Common.JOB_PATH, p)
                     content = open(jobs_path, 'r').read().strip()
                     if len(_Common.clean_white_space(content)) == 0:
@@ -178,9 +178,9 @@ def do_pending_request_job():
                         LOGGER.warning((p, status, response))
                         jobs_path_reopen = jobs_path_process.replace('.process', '.request')
                         os.rename(jobs_path_process, jobs_path_reopen)
-                    continue
-            except Exception as e:
-                LOGGER.warning(e)
+                except Exception as e:
+                    LOGGER.warning((e, p))
+                continue
         sleep(100.100)
 
 
