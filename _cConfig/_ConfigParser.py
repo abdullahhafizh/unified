@@ -14,6 +14,9 @@ BACKUP_FILE = FILE_SETTING+'.bak'
 if not os.path.exists(BACKUP_FILE) and os.stat(FILE_SETTING).st_size != 0:
     copyfile(FILE_SETTING, BACKUP_FILE)
 
+TEMP_FOLDER='_tTmp/'
+if not os.path.isdir(TEMP_FOLDER):
+    os.mkdir(TEMP_FOLDER)
 
 TEMP_SETTING = sys.path[0] + '/_tTmp/temporary.ini'
 if not os.path.exists(TEMP_SETTING) and os.stat(FILE_SETTING).st_size != 0:
