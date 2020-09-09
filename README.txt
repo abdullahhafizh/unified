@@ -17,5 +17,9 @@ External Module(s) / Librari(es) :
 - ecspos,
 -
 
+Installer:
+PyQt5-5.5.1-gpl-Py3.4-Qt5.5.1-x64
+pywin32-221.win-amd64-py3.4
+
 
 root mysql sandbox2 pass & phpmyadmin ht: kiosk123

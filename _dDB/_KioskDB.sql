@@ -224,3 +224,4 @@ CREATE INDEX FK_trxidtid001a ON Transactions(tid);
 CREATE INDEX FK_setidbid002b ON Settlement(bid);
 CREATE INDEX FK_trxidpid003c ON Transactions(pid);
 CREATE INDEX FK_trxidtpid004d ON Transactions(tpid);
+
