@@ -514,6 +514,7 @@ Base{
         details.process_error = 1;
         if (!refundFeature){
         // details.pending_trx_code = details.epoch.toString().substr(-6);
+            details.payment_received = receivedPayment.toString();
             details.pending_trx_code = uniqueCode;
             console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
             release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi');
@@ -574,6 +575,7 @@ Base{
             details.process_error = 1
             if (!refundFeature){
             // details.pending_trx_code = details.epoch.toString().substr(-6);
+                details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
                 release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi');
@@ -1010,6 +1012,7 @@ Base{
                         //Disable Auto Manual Refund
                         if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                            details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
                             console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
                             release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
@@ -1069,6 +1072,7 @@ Base{
                         console.log('[CANCELLATION] User Payment', receivedPayment);
                         if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                            details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
                             console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
                             release_print('Terjadi Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
