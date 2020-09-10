@@ -225,7 +225,7 @@ Base{
 //                }
 // Handle Success Transaction With Exceed Payment
         if (!refundFeature){
-            set_refund_channel('WHATSAPP_ONLY');
+            if (details.payment=='cash') set_refund_channel('WHATSAPP_ONLY');
         }
         switch(error){
         case undefined:
