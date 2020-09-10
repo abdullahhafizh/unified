@@ -512,6 +512,7 @@ Base{
             // Do not return here to handle refund for failed topup response
         }
         details.process_error = 1;
+        details.payment_error = 1;
         if (!refundFeature){
         // details.pending_trx_code = details.epoch.toString().substr(-6);
             details.payment_received = receivedPayment.toString();
@@ -572,7 +573,8 @@ Base{
             return;
         }
         if (r == 'EJECT|ERROR') {
-            details.process_error = 1
+            details.process_error = 1;
+            details.payment_error = 1;
             if (!refundFeature){
             // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
@@ -1010,6 +1012,8 @@ Base{
                     }
                     if (receivedPayment > 0){
                         //Disable Auto Manual Refund
+                        details.process_error = 1;
+                        details.payment_error = 1;
                         if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                             details.payment_received = receivedPayment.toString();
@@ -1070,6 +1074,8 @@ Base{
                     _SLOT.stop_bill_receive_note();
                     if (receivedPayment > 0){
                         console.log('[CANCELLATION] User Payment', receivedPayment);
+                        details.process_error = 1;
+                        details.payment_error = 1;
                         if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                             details.payment_received = receivedPayment.toString();
