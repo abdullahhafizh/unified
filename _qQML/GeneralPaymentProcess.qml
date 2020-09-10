@@ -407,7 +407,7 @@ Base{
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|3', true )
             set_refund_channel('CS_ONLY');
             do_refund_or_print('user_payment_timeout_qr');
             return;
@@ -973,7 +973,7 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                console.log('TIMER_MAIN_LAYER', abc.counter);
+//                console.log('TIMER_MAIN_LAYER', abc.counter);
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
@@ -1389,7 +1389,7 @@ Base{
                     }
                     if (details.payment == 'debit'){
                         console.log('[CANCELLATION] User Payment Debit', receivedPayment);
-                        set_refund_channel('CS_ONLY');
+                        set_refund_channel('');
                         do_refund_or_print('user_cancellation_debit');
                         return;
                     }

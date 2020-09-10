@@ -189,7 +189,7 @@ Base{
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
-            console.log('TIMER_GLOBAL_FRAME', showDuration);
+//            console.log('TIMER_GLOBAL_FRAME', showDuration);
             showDuration -= 1;
             if (showDuration==0) {
                 global_frame_timer.stop();
