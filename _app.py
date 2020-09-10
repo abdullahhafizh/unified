@@ -803,16 +803,16 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
-    sentry_sdk.init(
-        "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-        max_breadcrumbs=10,
-        debug=False,
-        environment=_Common.APP_MODE,
-        server_name='VM-ID '+_Common.TID,
-        release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
-        default_integrations=False,
-        )
     try:
+        sentry_sdk.init(
+            "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
+            max_breadcrumbs=10,
+            debug=True,
+            environment=_Common.APP_MODE,
+            server_name='VM-ID '+_Common.TID,
+            release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+            default_integrations=True,
+        )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',
@@ -1103,10 +1103,10 @@ if __name__ == '__main__':
     sleep(1)
     print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
-    sleep(1)
-    print("pyt: Syncing Transaction Failure Data...")
-    _Sync.start_sync_data_transaction_failure()
-    # sleep(.5)
+    # sleep(1)
+    # print("pyt: Syncing Transaction Failure Data...")
+    # _Sync.start_sync_data_transaction_failure()
+    # sleep(1)
     # print("pyt: Syncing Topup Records...")
     # _Sync.start_sync_topup_records()
     sleep(1)

@@ -584,7 +584,7 @@ Base{
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
         modeReverse: true
-        visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible
+        visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible && (textInput.length >= 6)
         blinkingMode: true
         MouseArea{
             anchors.fill: parent
@@ -592,47 +592,45 @@ Base{
                 console.log('button "LANJUT" is pressed..!')
                 _SLOT.user_action_log('press "LANJUT" In Input Number Page');
                 if(press != "0") return;
-                if (max_count+1 > textInput.length){
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                    press = "1"
+                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                press = "1"
 //                    console.log('number input', now, textInput);
-                    switch(mode){
-                    case 'PPOB':
-                        popup_loading.open()
-                        if (checkMode){
-                            var msisdn = textInput;
-                            var product_id = selectedProduct.product_id;
-                            ppobMode = 'tagihan';
-                            _SLOT.start_check_ppob_product(msisdn, product_id);
-                            return;
-                        } else {
-                            var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
-                            var rows = [
-                                {label: 'Tanggal', content: now},
-                                {label: 'Produk', content: product_name},
-                                {label: 'No Tujuan', content: textInput},
-                                {label: 'Jumlah', content: '1'},
-                                {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-                                {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-                            ]
-                            ppobMode = 'non-tagihan';
-                            generateConfirm(rows, true);
-                            return;
-                        }
-                    case 'SEARCH_TRX':
-                        console.log('Checking Transaction Number : ', now, textInput);
-                        popup_loading.open('Memeriksa Transaksi Anda...')
-                        _SLOT.start_check_trx_online(textInput);
-                        return
-                    case 'WA_VOUCHER':
-                        console.log('Checking WA Invoice Number : ', now, textInput);
-                        popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
-                        _SLOT.start_check_voucher(textInput);
+                switch(mode){
+                case 'PPOB':
+                    popup_loading.open()
+                    if (checkMode){
+                        var msisdn = textInput;
+                        var product_id = selectedProduct.product_id;
+                        ppobMode = 'tagihan';
+                        _SLOT.start_check_ppob_product(msisdn, product_id);
                         return;
-                    default:
-                        false_notif('No Handle Set For This Action', 'backToMain');
-                        return
+                    } else {
+                        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+                        var rows = [
+                            {label: 'Tanggal', content: now},
+                            {label: 'Produk', content: product_name},
+                            {label: 'No Tujuan', content: textInput},
+                            {label: 'Jumlah', content: '1'},
+                            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                        ]
+                        ppobMode = 'non-tagihan';
+                        generateConfirm(rows, true);
+                        return;
                     }
+                case 'SEARCH_TRX':
+                    console.log('Checking Transaction Number : ', now, textInput);
+                    popup_loading.open('Memeriksa Transaksi Anda...')
+                    _SLOT.start_check_trx_online(textInput);
+                    return
+                case 'WA_VOUCHER':
+                    console.log('Checking WA Invoice Number : ', now, textInput);
+                    popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
+                    _SLOT.start_check_voucher(textInput);
+                    return;
+                default:
+                    false_notif('No Handle Set For This Action', 'backToMain');
+                    return
                 }
             }
         }
