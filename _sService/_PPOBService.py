@@ -245,6 +245,7 @@ def do_check_trx(reff_no):
             r['receipt_amount'] = r['amount'];
             r['status'] = 'PENDING';
             r['source'] = r['failureType'];
+            r.pop('pid')
             r.pop('createdAt')
             r.pop('trxid')
             r.pop('paymentMethod')
