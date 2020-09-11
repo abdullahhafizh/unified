@@ -336,7 +336,7 @@ Base{
         generateConfirm(rows, false, 'backToMain');
         // Set Value For Retry Transaction If Status Pending
         if (i.status=='PENDING') {
-            receivedPayment = parseInt(amount);
+            receivedPayment = parseInt(i.receipt_amount);
             pendingPayment = parseInt(i.remarks.value) - receivedPayment;
             set_pending_trx_data(i.remarks);
             if (i.retry_able == 1) {
