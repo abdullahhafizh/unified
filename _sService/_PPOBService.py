@@ -228,22 +228,21 @@ def do_check_trx(reff_no):
         pending_record = _DAO.get_transaction_failure(param=payload)
         if len(pending_record) > 0:
             data = pending_record.__getitem__(0)
-            time_stamp = data.get('createdAt')
-            notes = data.get('remarks', '')
+            time_stamp = data.get('createdAt')/1000
+            remarks = json.loads(data.get('remarks'))
             r = {
-                # 'date': _Helper.convert_epoch(time_stamp),
-                'date': time_stamp,
+                'date': _Helper.convert_epoch(time_stamp),
                 'trx_id': data.get('trxid'),
                 'payment_method': data.get('paymentMethod'),
                 'product_id': data.get('trxid'),
-                'receipt_amount': data.get('payment_received'),
-                'amount': data.get('amount'),
+                'receipt_amount': remarks.get('payment_received'),
+                'amount': remarks.get('value'),
                 'status': 'PENDING',
                 'source': data.get('failureType'),
-                'remarks': notes
-                # 'remarks': json.loads(data.get('remarks', {}))
+                'remarks': remarks
             }
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            del remarks
             del data
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
