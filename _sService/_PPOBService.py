@@ -215,6 +215,16 @@ def start_check_status_trx(reff_no):
     _Helper.get_thread().apply_async(do_check_trx, (reff_no,))
 
 
+
+# '{"date":"Thursday, March 07, 2019","epoch":1551970698740,"payment":"cash","shop_type":"shop","time":"9:58:18 PM",
+# "qty":4,"value":"3000","provider":"Kartu Prabayar","raw":{"init_price":500,"syncFlag":1,"createdAt":1551856851000,
+# "stock":99,"pid":"testprod001","name":"Test Product","status":1,"sell_price":750,"stid":"stid001",
+# "remarks":"TEST STOCK PRODUCT"},"notes":"DEBUG_TEST - 1551970698879"}'
+
+# '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
+# "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},
+# "notes":"DEBUG_TEST - 1551970911187"}')
+
 def do_check_trx(reff_no):
     if _Common.empty(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
@@ -228,27 +238,32 @@ def do_check_trx(reff_no):
     try:
         pending_record = _DAO.get_transaction_failure(param=payload)
         if len(pending_record) > 0:
-            # 'trxid': trxid,
-            # 'tid': TID,
-            # 'mid': '',
-            # 'pid': pid,
-            # 'amount': amount,
-            # 'cardNo': '',
-            # 'failureType': failure_type,
-            # 'paymentMethod': payment_method,
-            # 'remarks': remarks,
-            row = pending_record[0]
+            # {
+            #    "amount":10000,
+            #    "paymentMethod":"cash",
+            #    "failureType":"PENDING_TRANSACTION",
+            #    "createdAt":1599776035000,
+            #    "pid":"",
+            #    "syncFlag":1,
+            #    "remarks":"{\"raw\": {\"syncFlag\": 1, \"stock\": 100, \"createdAt\": 1599775872000, \"pid\": \"faw02\", \"remarks\": \"Kartu Tapcash Test\", \"name\": \"Kartu Tapcash Test\", \"sell_price\": 20000, \"image\": \"source/card/20200909140032lRV5YK67JBqG85o325.jpeg\", \"init_price\": 15000, \"status\": 102, \"stid\": \"faw02-102-17092001\", \"tid\": \"17092001\", \"bid\": 2}, 
+            #                \"shop_type\": \"shop\", \"pending_trx_code\": \"016484\", \"payment_received\": \"10000\", \"epoch\": 1599776016484, \"value\": \"20000\", \"admin_fee\": \"0\", \"process_error\": 1, \"payment_error\": 1, \"payment\": \"cash\", \"time\": \"05:13:36\", \"status\": 102, \"provider\": \"Kartu Tapcash Test\", \"qty\": 1, \"date\": \"11/09/20\"}",
+            #    "cardNo":"",
+            #    "trxid":"shop1599776016484",
+            #    "mid":"",
+            #    "t
+            row = json.loads(pending_record[0])
             _Helper.dump(row)
-            # remarks = json.loads(row['remarks'])
-            # row['date'] = _Helper.convert_epoch(row['createdAt']);
-            # row['trx_id'] = row['trxid'];
-            # row['payment_method'] = row['paymentMethod'];
-            # row['product_id'] = row['trxid']
-            # row['receipt_amount'] = remarks['payment_received'];
-            # row['amount'] = remarks['value']
-            # row['status'] = 'PENDING';
-            # row['source'] = row['failureType'];
-            # row['remarks'] = remarks;
+            remarks = row['remarks']
+            _Helper.dump(remarks)
+            row['date'] = _Helper.convert_epoch(row['createdAt']);
+            row['trx_id'] = row['trxid'];
+            row['payment_method'] = row['paymentMethod'];
+            row['product_id'] = row['trxid']
+            row['receipt_amount'] = remarks['payment_received'];
+            row['amount'] = remarks['value']
+            row['status'] = 'PENDING';
+            row['source'] = row['failureType'];
+            row['remarks'] = remarks;
             LOGGER.debug((reff_no, row))
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(row))
             return
