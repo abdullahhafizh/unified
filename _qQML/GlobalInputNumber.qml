@@ -160,9 +160,11 @@ Base{
             return;
         }
         if (r == 'EJECT|SUCCESS') {
-            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
-            var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
-            _SLOT.start_use_voucher(textInput, reff_no_voucher);
+            if (vCollectionData!=undefined){
+                switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+                var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
+                _SLOT.start_use_voucher(textInput, reff_no_voucher);
+            }
             return;
         }
     }

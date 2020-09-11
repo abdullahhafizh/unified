@@ -1365,7 +1365,7 @@ Base{
 
     GlobalFrame{
         id: global_frame
-        calledFrom: 'general_payment_process'
+        calledFrom: 'retry_payment_process'
 
         CircleButton{
             id: cancel_button_global
@@ -1470,7 +1470,7 @@ Base{
 
     QRPaymentFrame{
         id: qr_payment_frame
-        calledFrom: 'general_payment_process'
+        calledFrom: 'retry_payment_process'
 
         CircleButton{
             id: cancel_button_qr
@@ -1498,7 +1498,7 @@ Base{
 
     PopupInputNoRefund{
         id: popup_refund
-        calledFrom: 'general_payment_process'
+        calledFrom: 'retry_payment_process'
         handleButtonVisibility: next_button_input_number
 //        externalSetValue: refundData
 //        visible: true
@@ -1616,7 +1616,7 @@ Base{
 
     PopupConfirmation{
         id: popup_confirm
-        calledFrom: 'general_payment_process'
+        calledFrom: 'retry_payment_process'
 //        handleButtonVisibility: next_button_input_number
 //        externalSetValue: refundData
 //        visible: true

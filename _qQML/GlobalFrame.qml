@@ -224,6 +224,10 @@ Base{
             case 'general_payment_process':
                 general_payment_process.framingSignal('CALLBACK_ACTION|'+modeAction);
                 break;
+            case 'retry_payment_process':
+                retry_payment_process.framingSignal('CALLBACK_ACTION|'+modeAction);
+                break;
+
             }
         }
     }

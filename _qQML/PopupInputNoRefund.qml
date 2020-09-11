@@ -378,6 +378,9 @@ Rectangle{
             case 'general_payment_process':
                 general_payment_process.framingSignal('SELECT_REFUND|'+JSON.stringify(externalSetValue))
                 break;
+            case 'retry_payment_process':
+                retry_payment_process.framingSignal('SELECT_REFUND|'+JSON.stringify(externalSetValue))
+                break;
             }
         }
         switch(id.channelCode){

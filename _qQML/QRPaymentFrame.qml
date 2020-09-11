@@ -257,6 +257,9 @@ Base{
                 case 'general_payment_process':
                     general_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
                     break;
+                case 'retry_payment_process':
+                    retry_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
+                    break;
                 }
             }
         }
