@@ -214,6 +214,7 @@ def do_trx_ppob(payload, mode='PAY'):
 def start_check_status_trx(reff_no):
     _Helper.get_thread().apply_async(do_check_trx, (reff_no,))
 
+
 def do_check_trx(reff_no):
     if _Common.empty(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
@@ -240,7 +241,8 @@ def do_check_trx(reff_no):
                 'amount': remarks.get('value'),
                 'status': 'PENDING',
                 'source': data.get('failureType'),
-                'remarks': remarks
+                'remarks': remarks,
+                'retry_able': _Common.check_retry_able(remarks)
             }
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks

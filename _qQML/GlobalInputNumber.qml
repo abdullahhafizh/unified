@@ -32,11 +32,17 @@ Base{
     property bool qrJakoneEnable: false
     property var totalPaymentEnable: 0
 
+    property bool retryAbleTransaction: false
+
     property bool isConfirm: false
     property var ppobMode
     property var ppobTagihanData
     property var vCollectionMode
     property var vCollectionData
+
+    property var retryDetails
+    property int receivedPayment: 0
+    property int pendingPayment: 0
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -51,6 +57,9 @@ Base{
             isConfirm = false;
             vCollectionMode = undefined;
             vCollectionData = undefined;
+            retryAbleTransaction = false;
+            receivedPayment = 0;
+            pendingPayment = 0;
             press = '0'
 
         }
@@ -106,6 +115,7 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 abc.counter -= 1
+                global_confirmation_frame.notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -157,7 +167,6 @@ Base{
         }
     }
 
-
     function get_use_voucher(v){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_use_voucher', now, v);
@@ -167,7 +176,6 @@ Base{
             return;
         }
     }
-
 
     function get_check_voucher(v){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -202,7 +210,6 @@ Base{
         generateConfirm(rows, true);
     }
 
-
     function get_check_ppob_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
 //        console.log('get_check_ppob_result', now, r);
@@ -236,7 +243,6 @@ Base{
         generateConfirm(rows, true);
     }
 
-
     function do_set_confirm(_mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('Confirmation Flagged By', _mode, now)
@@ -263,10 +269,20 @@ Base{
             case 'dki_topup':
                 console.log('DKI Topup...')
                 break;
-
             }
         }
     }
+
+
+    function set_pending_trx_data(obj){
+        if (obj != undefined){
+            retryDetails = obj;
+            delete retryDetails.payment_error;
+            delete retryDetails.process_error;
+            console.log('set_pending_trx_data', JSON.stringify(retryDetails));
+        }
+    }
+
 
     function get_trx_check_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -318,6 +334,17 @@ Base{
                     ]
         }
         generateConfirm(rows, false, 'backToMain');
+        // Set Value For Retry Transaction If Status Pending
+        if (i.status=='PENDING') {
+            receivedPayment = parseInt(amount);
+            pendingPayment = parseInt(i.remarks.value) - receivedPayment;
+            set_pending_trx_data(i.remarks);
+            if (i.retry_able == 1) {
+                retryAbleTransaction = true;
+                global_confirmation_frame.no_button();
+            }
+        }
+        // ---
     }
 
     function generateConfirm(rows, confirmation, closeMode, timer){
@@ -666,6 +693,45 @@ Base{
     GlobalConfirmationFrame{
         id: global_confirmation_frame
         calledFrom: 'global_input_number'
+
+        BoxTitle{
+            id: notice_retry_able
+            width: 1200
+            height: 120
+            visible: retryAbleTransaction
+            radius: 50
+            fontSize: 30
+            border.width: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 150
+            anchors.horizontalCenter: parent.horizontalCenter
+            title_text: 'TRANSAKSI ANDA DAPAT DILANJUTKAN\nSILAKAN TEKAN TOMBOL LANJUT'
+    //        modeReverse: (abc.counter %2 == 0) ? true : false
+            boxColor: CONF.frame_color
+
+        }
+
+        CircleButton{
+            id: proceed_button
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            visible: retryAbleTransaction
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT" For Retry Transaction');
+                    console.log('Press "LANJUT" For Retry Transaction');
+                    if (press != '0') return;
+                    press = '1';
+                    my_layer.push(retry_payment_process, {details: retryDetails, totalPrice: pendingPayment});
+                }
+            }
+        }
 
     }
 

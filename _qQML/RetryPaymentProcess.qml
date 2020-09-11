@@ -58,9 +58,9 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             reset_default();
-            if (details != undefined) console.log('product details', JSON.stringify(details));
+            if (details != undefined) console.log('product retry details', JSON.stringify(details));
             if (preloadNotif==undefined){
-                define_first_process();
+                initial_process();
             } else {
                 popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
             }
@@ -856,7 +856,7 @@ Base{
         if (i=='ppob') return 'Pembayaran/Pembelian';
     }
 
-    function define_first_process(){
+    function initial_process(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
@@ -867,9 +867,9 @@ Base{
             getDenom = parseInt(details.denom);
             row2.labelContent = details.provider + ' - ' + details.value
         }
-        totalPrice = parseInt(getDenom) + parseInt(adminFee);
-        var epoch_string = details.epoch.toString();
-        uniqueCode = epoch_string.substring(epoch_string.length-6);
+//        totalPrice = parseInt(getDenom) + parseInt(adminFee);
+//        var epoch_string = details.epoch.toString();
+//        uniqueCode = epoch_string.substring(epoch_string.length-6);
         // Unnecessary
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
@@ -1537,7 +1537,7 @@ Base{
                     }
                      popup_refund.close();
                     // proceedAble = true;
-                    // define_first_process();
+                    // initial_process();
                 }
             }
         }
@@ -1634,7 +1634,7 @@ Base{
                     popup_confirm.close();
                     hide_all_cancel_button();
                     // proceedAble = true;
-                    // define_first_process();
+                    // initial_process();
                 }
             }
         }

@@ -1298,3 +1298,16 @@ def generate_collection_data():
 
 
 LAST_PPOB_TRX = None
+
+
+# TODO: Finalise Retry Able Check
+def check_retry_able(data):
+    if _Helper.empty(data) is True:
+        return 0
+    if data.get('shop_type') == 'ppob':
+        return 0
+    if data.get('shop_type') == 'shop':
+        return 1
+    if data.get('shop_type') == 'topup':
+        return 0
+    return 0

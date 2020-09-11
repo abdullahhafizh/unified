@@ -378,6 +378,15 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1;
+            details.payment_error = 1;
+            if (!refundFeature){
+            // details.pending_trx_code = details.epoch.toString().substr(-6);
+                details.payment_received = receivedPayment.toString();
+                details.pending_trx_code = uniqueCode;
+                console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
+                release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+                return;
+            }
             //PPOB Not Be able for pending trx retry
             do_refund_or_print('ppob_error');
             // Must return here to avoid double refund
