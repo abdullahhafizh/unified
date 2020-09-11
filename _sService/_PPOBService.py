@@ -214,17 +214,6 @@ def do_trx_ppob(payload, mode='PAY'):
 def start_check_status_trx(reff_no):
     _Helper.get_thread().apply_async(do_check_trx, (reff_no,))
 
-
-
-# '{"date":"Thursday, March 07, 2019","epoch":1551970698740,"payment":"cash","shop_type":"shop","time":"9:58:18 PM",
-# "qty":4,"value":"3000","provider":"Kartu Prabayar","raw":{"init_price":500,"syncFlag":1,"createdAt":1551856851000,
-# "stock":99,"pid":"testprod001","name":"Test Product","status":1,"sell_price":750,"stid":"stid001",
-# "remarks":"TEST STOCK PRODUCT"},"notes":"DEBUG_TEST - 1551970698879"}'
-
-# '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
-# "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},
-# "notes":"DEBUG_TEST - 1551970911187"}')
-
 def do_check_trx(reff_no):
     if _Common.empty(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
@@ -239,25 +228,29 @@ def do_check_trx(reff_no):
         pending_record = _DAO.get_transaction_failure(param=payload)
         r = {}
         if len(pending_record) > 0:
+            data = pending_record[0]
+            remarks = json.loads(data['remarks'])
+            r['date'] = _Helper.convert_epoch(data['createdAt'])
+            print(str(r))
+            r['trx_id'] = data['trxid']
+            print(str(r))
+            r['payment_method'] = data['paymentMethod']
+            print(str(r))
+            r['product_id'] = data['trxid']
+            print(str(r))
+            r['receipt_amount'] = data['payment_received']
+            print(str(r))
+            r['amount'] = remarks['value']
+            print(str(r))
+            r['status'] = 'PENDING'
+            print(str(r))
+            r['source'] = data['failureType']
+            print(str(r))
+            r['remarks'] = data['remarks']
+            print(str(r))
+            _Helper.dump(r)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             return
-            # r = pending_record[0]
-            # # remarks = json.loads(r['remarks'])
-            # r['date'] = _Helper.convert_epoch(int(r['createdAt']))
-            # r['trx_id'] = r['trxid']
-            # r['payment_method'] = r['paymentMethod']
-            # r['product_id'] = r['trxid']
-            # r['receipt_amount'] = r['amount']
-            # r['amount'] = r['amount']
-            # r['status'] = 'PENDING'
-            # r['source'] = r['failureType']
-            # r.pop('createdAt')
-            # r.pop('failureType')
-            # r.pop('mid')
-            # r.pop('paymentMethod')
-            # _Helper.dump(r)
-            # PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
-            # return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
