@@ -251,9 +251,9 @@ def do_check_trx(reff_no):
             #    "trxid":"shop1599776016484",
             #    "mid":"",
             #    "t
-            row = json.loads(pending_record[0])
+            row = pending_record[0]
             _Helper.dump(row)
-            remarks = row['remarks']
+            remarks = json.loads(row['remarks'])
             _Helper.dump(remarks)
             row['date'] = _Helper.convert_epoch(row['createdAt']);
             row['trx_id'] = row['trxid'];
