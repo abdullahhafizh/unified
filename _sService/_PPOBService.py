@@ -237,32 +237,19 @@ def do_check_trx(reff_no):
     }
     try:
         pending_record = _DAO.get_transaction_failure(param=payload)
+        r = {}
         if len(pending_record) > 0:
-            # {
-            #    "amount":10000,
-            #    "paymentMethod":"cash",
-            #    "failureType":"PENDING_TRANSACTION",
-            #    "createdAt":1599776035000,
-            #    "pid":"",
-            #    "syncFlag":1,
-            #    "remarks":"{\"raw\": {\"syncFlag\": 1, \"stock\": 100, \"createdAt\": 1599775872000, \"pid\": \"faw02\", \"remarks\": \"Kartu Tapcash Test\", \"name\": \"Kartu Tapcash Test\", \"sell_price\": 20000, \"image\": \"source/card/20200909140032lRV5YK67JBqG85o325.jpeg\", \"init_price\": 15000, \"status\": 102, \"stid\": \"faw02-102-17092001\", \"tid\": \"17092001\", \"bid\": 2}, 
-            #                \"shop_type\": \"shop\", \"pending_trx_code\": \"016484\", \"payment_received\": \"10000\", \"epoch\": 1599776016484, \"value\": \"20000\", \"admin_fee\": \"0\", \"process_error\": 1, \"payment_error\": 1, \"payment\": \"cash\", \"time\": \"05:13:36\", \"status\": 102, \"provider\": \"Kartu Tapcash Test\", \"qty\": 1, \"date\": \"11/09/20\"}",
-            #    "cardNo":"",
-            #    "trxid":"shop1599776016484",
-            #    "mid":"",
-            #    "t
-            row = pending_record[0]
-            remarks = json.loads(row['remarks'])
-            row['date'] = _Helper.convert_epoch(row['createdAt'])
-            row['trx_id'] = row['trxid']
-            row['payment_method'] = row['paymentMethod']
-            row['product_id'] = row['trxid']
-            row['receipt_amount'] = remarks['payment_received']
-            row['amount'] = remarks['value']
-            row['status'] = 'PENDING'
-            row['source'] = row['failureType']
-            row['remarks'] = remarks
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(row))
+            r = pending_record[0]
+            # remarks = json.loads(r['remarks'])
+            r['date'] = _Helper.convert_epoch(r['createdAt'])
+            r['trx_id'] = r['trxid']
+            r['payment_method'] = r['paymentMethod']
+            r['product_id'] = r['trxid']
+            r['receipt_amount'] = r['amount']
+            r['amount'] = r['amount']
+            r['status'] = 'PENDING'
+            r['source'] = r['failureType']
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
