@@ -930,7 +930,10 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
         }
         # Only Store Pending Transaction To Transaction Failure Table
         if failure_type == 'PENDING_TRANSACTION':
-            _DAO.delete_transaction_failure(__param)
+            _DAO.delete_transaction_failure({
+                'reff_no': trxid,
+                'tid': TID,            
+            })
             _DAO.insert_transaction_failure(__param)
             # Auto Assign syncFlag
             __param['key'] = __param['trxid']

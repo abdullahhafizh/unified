@@ -98,7 +98,7 @@ def get_transaction_failure(param):
 
 def delete_transaction_failure(param):
     """
-      trxid           VARCHAR(100) PRIMARY KEY NOT NULL,
+      reff_no           VARCHAR(100) PRIMARY KEY NOT NULL,
       tid             VARCHAR(100)             NOT NULL,
     """
     condition = " trxid LIKE '%{}' AND tid = '{}' ".format(param['reff_no'], param['tid'])

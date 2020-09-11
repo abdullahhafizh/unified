@@ -960,7 +960,7 @@ def store_transaction_global(param, retry=False):
         __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
         # Delete Failure/Pending TRX Local Records
         _DAO.delete_transaction_failure({
-            'trxid': __pid,
+            'reff_no': __pid,
             'tid': _Common.TID
         })
         __bid = _Common.get_bid(g['provider'])

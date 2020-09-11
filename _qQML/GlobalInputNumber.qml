@@ -291,8 +291,8 @@ Base{
 //        console.log('get_trx_check_result', now, r);
         popup_loading.close();
         var res = r.split('|')[1]
-        if (['ERROR', 'MISSING_REFF_NO'].indexOf(res) > -1){
-            false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', res);
+        if (['ERROR', 'MISSING_REFF_NO', 'TRX_NOT_FOUND'].indexOf(res) > -1){
+            false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', 'Data Transaksi Tidak Ditemukan');
             return;
         }
         var i = JSON.parse(res);

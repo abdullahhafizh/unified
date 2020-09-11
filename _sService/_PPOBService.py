@@ -250,15 +250,15 @@ def do_check_trx(reff_no):
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+        if s == 200 and r['result'] == 'OK' and not _Helper.empty(r['data']):
             # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
         else:
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
 
 
 def start_check_diva_balance(username):
