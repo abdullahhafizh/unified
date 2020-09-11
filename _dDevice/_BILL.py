@@ -418,8 +418,9 @@ def log_book_cash(pid, amount, mode='normal'):
     }
     check_cash = _DAO.get_query_from('Cash', 'csid = "{}"'.format(param['csid']))
     if len(check_cash) > 0:
-        LOGGER.debug(('DUPLICATE_CSID', mode, param))
-        return False
+        _DAO.flush_table('Cash', 'csid = "{}"'.format(param['csid']))
+        # LOGGER.debug(('DUPLICATE_CSID', mode, param))
+        # return False
     try:
         _DAO.insert_cash(param=param)
         LOGGER.info(('SUCCESS', mode, param))

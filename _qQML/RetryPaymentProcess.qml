@@ -28,6 +28,8 @@ Base{
     property int reprintAttempt: 0
     property var uniqueCode: ''
 
+    property var retryCashHistory: ''
+
     property bool frameWithButton: false
     property bool centerOnlyButton: false
     property bool proceedAble: false
@@ -716,6 +718,7 @@ Base{
 // TODO: Back Button
 //                back_button.visible = true;
                 global_frame.close();
+                retryCashHistory = retryCashHistory + '|' + grgFunction;
                 receivedPayment += parseInt(grgResult);
                 abc.counter = 600;
                 my_timer.restart();
@@ -725,7 +728,10 @@ Base{
             if(grgResult.indexOf('SUCCESS') > -1 && receivedPayment >= totalPrice){
                 console.log("bill_payment_result STOP_SUCCESS : ", now, receivedPayment, totalPrice, proceedAble);
                 var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
-                details.payment_details = cashResponse;
+                details.payment_details = {
+                    'history': retryCashHistory,
+                    'total': cashResponse.total
+                };
                 details.payment_received = cashResponse.total;
                 // Overwrite receivedPayment from STOP_BILL result
 //                receivedPayment = parseInt(cashResponse.total);
@@ -917,8 +923,8 @@ Base{
             row2.labelContent = details.provider + ' - ' + details.value
         }
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
-//        var epoch_string = details.epoch.toString();
-//        uniqueCode = epoch_string.substring(epoch_string.length-6);
+        var epoch_string = details.epoch.toString();
+        uniqueCode = epoch_string.substring(epoch_string.length-6);
         // Unnecessary
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
@@ -943,6 +949,7 @@ Base{
             open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
+            retryCashHistory = receivedPayment.toString();
             _SLOT.start_set_direct_price(pendingPayment.toString());
 //            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note();
