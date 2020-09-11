@@ -716,7 +716,7 @@ Base{
 // TODO: Back Button
 //                back_button.visible = true;
                 global_frame.close();
-                receivedPayment = parseInt(grgResult);
+                receivedPayment += parseInt(grgResult);
                 abc.counter = 600;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
@@ -728,7 +728,7 @@ Base{
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
                 // Overwrite receivedPayment from STOP_BILL result
-                receivedPayment = parseInt(cashResponse.total);
+//                receivedPayment = parseInt(cashResponse.total);
                 if (proceedAble) payment_complete('bill_acceptor');
             }
         } else if (grgFunction == 'STATUS_BILL'){
