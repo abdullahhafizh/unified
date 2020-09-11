@@ -229,37 +229,18 @@ def do_check_trx(reff_no):
         if len(pending_record) > 0:
             data = pending_record.__getitem__(0)
             r = {
-                'date': '',
-                'trx_id': '',
-                'payment_method': '',
-                'product_id': '',
-                'receipt_amount': '',
-                'amount': '',
+                'date': _Helper.convert_epoch(data.get('createdAt')),
+                'trx_id': data.get('trxid'),
+                'payment_method': data.get('paymentMethod'),
+                'product_id': data.get('trxid'),
+                'receipt_amount': data.get('payment_received'),
+                'amount': data.get('amount'),
                 'status': 'PENDING',
-                'source': '',
-                'remarks': ''
+                'source': data.get('failureType'),
+                'remarks': json.loads(data.get('remarks', {}))
             }
-            # _Helper.dump(data)
-            # # remarks = json.loads(data['remarks'])
-            # r['date'] = _Helper.convert_epoch(data['createdAt'])
-            # _Helper.dump(r)
-            # r['trx_id'] = data['trxid']
-            # _Helper.dump(r)
-            # r['payment_method'] = data['paymentMethod']
-            # _Helper.dump(r)
-            # r['product_id'] = data['trxid']
-            # _Helper.dump(r)
-            # r['receipt_amount'] = data['payment_received']
-            # _Helper.dump(r)
-            # # r['amount'] = remarks['value']
-            # # _Helper.dump(r)
-            # r['status'] = 'PENDING'
-            # _Helper.dump(r)
-            # r['source'] = data['failureType']
-            # _Helper.dump(r)
-            # # r['remarks'] = data['remarks']
-            # _Helper.dump(r)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            del data
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
