@@ -18,6 +18,7 @@ Base{
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool successTransaction: false
     property int receivedPayment: 0
+    property int pendingPayment: 0
     property var lastBalance: '999000'
     property var cardNo: '6024123443211234'
     property var totalPrice: 0
@@ -189,7 +190,7 @@ Base{
         customerPhone = '';
         notifTitle = '';
         notifMessage = ''
-        receivedPayment = 0;
+//        receivedPayment = 0;
         successTransaction = false;
         reprintAttempt = 0;
         qrPayload = undefined;
@@ -873,7 +874,7 @@ Base{
         // Unnecessary
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
-        _SLOT.start_get_refunds();
+//        _SLOT.start_get_refunds();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
@@ -892,9 +893,9 @@ Base{
         }
         if (details.payment == 'cash') {
             open_preload_notif();
-//            totalPrice = parseInt(details.value) * parseInt(details.qty);
+            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
-            _SLOT.start_set_direct_price(totalPrice.toString());
+            _SLOT.start_set_direct_price(pendingPayment.toString());
 //            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note();
             return;

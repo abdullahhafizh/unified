@@ -115,7 +115,7 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 abc.counter -= 1
-                global_confirmation_frame.notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
+                notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -728,7 +728,7 @@ Base{
                     console.log('Press "LANJUT" For Retry Transaction');
                     if (press != '0') return;
                     press = '1';
-                    my_layer.push(retry_payment_process, {details: retryDetails, totalPrice: pendingPayment});
+                    my_layer.push(retry_payment_process, {details: retryDetails, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
                 }
             }
         }
