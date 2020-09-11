@@ -435,9 +435,10 @@ Base{
                         _SLOT.start_trigger_edc_settlement();
                     }
                 }
+                //Handle Button Blinking
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
-                    search_trx_button.color = 'silver';
+                    search_trx_button.color = 'orange';
                     wa_voucher_button.color = '#4FCE5D';
                 } else {
                     search_trx_button.color = 'white';
