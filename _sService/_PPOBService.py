@@ -253,16 +253,15 @@ def do_check_trx(reff_no):
             #    "t
             row = pending_record[0]
             remarks = json.loads(row['remarks'])
-            row['date'] = _Helper.convert_epoch(row['createdAt']);
-            row['trx_id'] = row['trxid'];
-            row['payment_method'] = row['paymentMethod'];
+            row['date'] = _Helper.convert_epoch(row['createdAt'])
+            row['trx_id'] = row['trxid']
+            row['payment_method'] = row['paymentMethod']
             row['product_id'] = row['trxid']
-            row['receipt_amount'] = remarks['payment_received'];
+            row['receipt_amount'] = remarks['payment_received']
             row['amount'] = remarks['value']
-            row['status'] = 'PENDING';
-            row['source'] = row['failureType'];
-            row['remarks'] = remarks;
-            _Helper.dump(row)
+            row['status'] = 'PENDING'
+            row['source'] = row['failureType']
+            row['remarks'] = remarks
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(row))
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
