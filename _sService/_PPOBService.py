@@ -231,7 +231,7 @@ def do_check_trx(reff_no):
             _Helper.dump(pending_record)
             data = pending_record.__getitem__(0)
             _Helper.dump(data)
-            remarks = json.loads(data['remarks'])
+            # remarks = json.loads(data['remarks'])
             r['date'] = _Helper.convert_epoch(data['createdAt'])
             _Helper.dump(r)
             r['trx_id'] = data['trxid']
@@ -242,13 +242,13 @@ def do_check_trx(reff_no):
             _Helper.dump(r)
             r['receipt_amount'] = data['payment_received']
             _Helper.dump(r)
-            r['amount'] = remarks['value']
-            _Helper.dump(r)
+            # r['amount'] = remarks['value']
+            # _Helper.dump(r)
             r['status'] = 'PENDING'
             _Helper.dump(r)
             r['source'] = data['failureType']
             _Helper.dump(r)
-            r['remarks'] = data['remarks']
+            # r['remarks'] = data['remarks']
             _Helper.dump(r)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             return
