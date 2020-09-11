@@ -228,7 +228,7 @@ def do_check_trx(reff_no):
         pending_record = _DAO.get_transaction_failure(param=payload)
         r = {}
         if len(pending_record) > 0:
-            data = pending_record[0]
+            data = pending_record.__getitem__(0)
             remarks = json.loads(data['remarks'])
             r['date'] = _Helper.convert_epoch(data['createdAt'])
             print(str(r))
