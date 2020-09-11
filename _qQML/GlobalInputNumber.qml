@@ -286,7 +286,7 @@ Base{
         if (i.category == 'SHOP') trx_name = i.category + ' ' + i.remarks.provider;
         var amount = FUNC.insert_dot(i.receipt_amount.toString());
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
-        if (i.status!='PAID' || i.status=='FAILED') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
+        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
         var rows = [
                     {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
@@ -326,7 +326,7 @@ Base{
             return;
         }
         if (mode=='SEARCH_TRX'){
-            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang) Nomor Transaksi Anda';
+            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang)/Kode Voucher Transaksi Anda';
             min_count = 6;
             return;
         }

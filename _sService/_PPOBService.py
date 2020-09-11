@@ -238,11 +238,13 @@ def do_check_trx(reff_no):
             # 'remarks': remarks,
             row = pending_record[0]
             r = json.loads(row)
+            remarks = json.loads(row['remarks'])
             r['date'] = _Helper.convert_epoch(r['createdAt']);
             r['trx_id'] = r['trxid'];
             r['payment_method'] = r['paymentMethod'];
-            r['product_id'] = r['pid'];
-            r['receipt_amount'] = r['amount'];
+            r['product_id'] = remarks['shop_type'] + str(remarks['epoch'])
+            r['receipt_amount'] = remarks['payment_received'];
+            r['amount'] = remarks['value']
             r['status'] = 'PENDING';
             r['source'] = r['failureType'];
             r.pop('pid')
