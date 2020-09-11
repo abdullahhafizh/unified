@@ -249,7 +249,13 @@ def do_check_trx(reff_no):
             r['amount'] = r['amount']
             r['status'] = 'PENDING'
             r['source'] = r['failureType']
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            r.pop('createdAt')
+            r.pop('failureType')
+            r.pop('mid')
+            r.pop('paymentMethod')
+            data = json.dumps(r)
+            _Helper.dump(data)
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + data)
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
