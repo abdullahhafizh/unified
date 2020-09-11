@@ -438,10 +438,10 @@ Base{
                 //Handle Button Blinking
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
-                    search_trx_button.color = 'orange';
+                    search_trx_button.color = 'white';
                     wa_voucher_button.color = '#4FCE5D';
                 } else {
-                    search_trx_button.color = 'white';
+                    search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout != 999999){
