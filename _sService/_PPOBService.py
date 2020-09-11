@@ -239,24 +239,25 @@ def do_check_trx(reff_no):
         pending_record = _DAO.get_transaction_failure(param=payload)
         r = {}
         if len(pending_record) > 0:
-            r = pending_record[0]
-            # remarks = json.loads(r['remarks'])
-            r['date'] = _Helper.convert_epoch(r['createdAt'])
-            r['trx_id'] = r['trxid']
-            r['payment_method'] = r['paymentMethod']
-            r['product_id'] = r['trxid']
-            r['receipt_amount'] = r['amount']
-            r['amount'] = r['amount']
-            r['status'] = 'PENDING'
-            r['source'] = r['failureType']
-            r.pop('createdAt')
-            r.pop('failureType')
-            r.pop('mid')
-            r.pop('paymentMethod')
-            data = json.dumps(r)
-            _Helper.dump(data)
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + data)
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             return
+            # r = pending_record[0]
+            # # remarks = json.loads(r['remarks'])
+            # r['date'] = _Helper.convert_epoch(int(r['createdAt']))
+            # r['trx_id'] = r['trxid']
+            # r['payment_method'] = r['paymentMethod']
+            # r['product_id'] = r['trxid']
+            # r['receipt_amount'] = r['amount']
+            # r['amount'] = r['amount']
+            # r['status'] = 'PENDING'
+            # r['source'] = r['failureType']
+            # r.pop('createdAt')
+            # r.pop('failureType')
+            # r.pop('mid')
+            # r.pop('paymentMethod')
+            # _Helper.dump(r)
+            # PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            # return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
