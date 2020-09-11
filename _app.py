@@ -339,6 +339,11 @@ class SlotHandler(QObject):
         _BILL.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
+    def start_set_direct_price_with_current(self, current, price):
+        # _MEI.start_set_direct_price(price)
+        _BILL.start_set_direct_price_with_current(current, price)
+    start_set_direct_price_with_current = pyqtSlot(str, str)(start_set_direct_price_with_current)
+
     def start_multiple_eject(self, attempt, multiply):
         _CD.start_multiple_eject(attempt, multiply)
     start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
