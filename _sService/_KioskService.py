@@ -1173,8 +1173,8 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     # Add Flushing Data Which Not Belong To This Terminal ID
     reset_db_record()
     if mode == 'DATA_FILES':
-        LOGGER.info(('START DATA HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
-        print('pyt: START DATA HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
+        LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
+        print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
                                     'TopupRecords', 'TransactionFailure', 'Transactions'],
                             key='createdAt',
@@ -1182,7 +1182,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
     paths = ['_pPDF', '_lLog', '_qQr', '_jJob|.done']
     LOGGER.info(('START FILES HOUSE_KEEPING', age_month, paths, expired, mode, _Helper.time_string()))
-    print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
+    print('pyt: [START] HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
         ext = '*.*'
         if '|' in path:
@@ -1203,7 +1203,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                     LOGGER.debug(('Removing', file, stat.st_ctime, expired))
                     os.remove(file)
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
-    print('pyt: FINISH DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
+    print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
     return 'HOUSE_KEEPING_' + str(age_month) + '_SUCCESS'
 
 
