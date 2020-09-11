@@ -242,7 +242,7 @@ def do_check_trx(reff_no):
             row['date'] = _Helper.convert_epoch(row['createdAt']);
             row['trx_id'] = row['trxid'];
             row['payment_method'] = row['paymentMethod'];
-            row['product_id'] = remarks['shop_type'] + str(remarks['epoch'])
+            row['product_id'] = row['trxid']
             row['receipt_amount'] = remarks['payment_received'];
             row['amount'] = remarks['value']
             row['status'] = 'PENDING';
