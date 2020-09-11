@@ -287,21 +287,21 @@ Base{
 
 
     function get_trx_check_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-//        console.log('get_trx_check_result', now, r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
+        console.log('get_trx_check_result', now, r);
         var res = r.split('|')[1]
         if (['ERROR', 'MISSING_REFF_NO', 'TRX_NOT_FOUND'].indexOf(res) > -1){
             false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', 'Data Transaksi Tidak Ditemukan');
             return;
         }
-        console.log('get_trx_check_result', now, res);
+//        console.log('get_trx_check_result', now, res);
         var i = JSON.parse(res);
         var trx_name = '';
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
             trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
-        var total_payment = i.amount.toString()
+        var total_payment = i.amount.toString();
         if (i.category == 'SHOP'){
             trx_name = i.category + ' ' + i.remarks.provider;
             total_payment = i.remarks.value.toString();
