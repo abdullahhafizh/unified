@@ -785,6 +785,10 @@ def print_ppob_trx(p, t, ext='.pdf'):
         # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
         if p['payment'].upper() == 'CASH':
             _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
+        if 'payment_error' in p.keys() and 'pending_trx_code' in p.keys():
+            failure = 'PENDING_TRANSACTION'
+            # Send Failure To Backend
+            _Common.store_upload_failed_trx(trxid, trxid, cash, failure, p.get('payment', 'cash'), json.dumps(p))
         if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
             print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
@@ -794,7 +798,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
 
 def sale_reprint_global(ext='.pdf'):
     sale_print_global(ext=ext, use_last=True)
-
+    
 
 def clean_number(sn):
     return re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(sn))

@@ -504,6 +504,7 @@ Base{
 
     }
 
+
     TextRectangle{
         id: textRectangle
         width: 650
@@ -515,6 +516,7 @@ Base{
         border.color: CONF.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }
+
 
     TextInput {
         id: inputText
