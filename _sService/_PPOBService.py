@@ -226,7 +226,7 @@ def do_check_trx(reff_no):
         'tid': _Common.TID
     }
     try:
-        pending_record = _DAO.get_transaction_failure(reff_no)
+        pending_record = _DAO.get_transaction_failure(param=payload)
         if len(pending_record) > 0:
             # 'trxid': trxid,
             # 'tid': TID,
