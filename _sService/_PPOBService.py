@@ -252,6 +252,7 @@ def do_check_trx(reff_no):
             r.pop('trxid')
             r.pop('paymentMethod')
             r.pop('failureType')
+            LOGGER.debug((r))
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
