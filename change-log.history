@@ -1,6 +1,7 @@
-11.10.A-GLOBAL:
+11.9.D-GLOBAL:
 - Disable Refund Feature For Failed/Cancel TRX,
 - Enhance Sentry Config,
+- Fix Pending Job Execution,
 - ...
 
 11.9.C-GLOBAL

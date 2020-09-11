@@ -508,7 +508,7 @@ Base{
         height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
-            text: 'CEK\nTRANSAKSI'
+            text: 'CEK/LANJUT\nTRANSAKSI'
             font.pixelSize: (globalScreenType == '1') ? 30 : 20
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom

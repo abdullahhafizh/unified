@@ -148,7 +148,7 @@ def do_pending_request_job():
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         # LOGGER.info(('count', len(pending_jobs)))
-        if len(pending_jobs) > 0:
+        if len(pending_jobs) > 0 and IDLE_MODE is True:
             # pending_jobs = pending_jobs.sort()
             for p in pending_jobs:
                 try:

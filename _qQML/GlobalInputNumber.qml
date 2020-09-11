@@ -621,7 +621,7 @@ Base{
                 case 'SEARCH_TRX':
                     console.log('Checking Transaction Number : ', now, textInput);
                     popup_loading.open('Memeriksa Transaksi Anda...')
-                    _SLOT.start_check_trx_online(textInput);
+                    _SLOT.start_check_status_trx(textInput);
                     return
                 case 'WA_VOUCHER':
                     console.log('Checking WA Invoice Number : ', now, textInput);

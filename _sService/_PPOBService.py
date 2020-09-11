@@ -211,7 +211,7 @@ def do_trx_ppob(payload, mode='PAY'):
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
 
 
-def start_check_trx_online(reff_no):
+def start_check_status_trx(reff_no):
     _Helper.get_thread().apply_async(do_check_trx, (reff_no,))
 
 
@@ -220,13 +220,41 @@ def do_check_trx(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|MISSING_REFF_NO')
         return
+    # Add Check Local TRX Here
     payload = {
         'reff_no': reff_no
     }
     try:
+        pending_record = _DAO.check_trx_failure(reff_no)
+        if len(pending_record) > 0:
+            # 'trxid': trxid,
+            # 'tid': TID,
+            # 'mid': '',
+            # 'pid': pid,
+            # 'amount': amount,
+            # 'cardNo': '',
+            # 'failureType': failure_type,
+            # 'paymentMethod': payment_method,
+            # 'remarks': remarks,
+            row = pending_record[0]
+            r = json.loads(row)
+            r['date'] = _Helper.convert_epoch(r['createdAt']);
+            r['trx_id'] = r['trxid'];
+            r['payment_method'] = r['paymentMethod'];
+            r['product_id'] = r['pid'];
+            r['receipt_amount'] = r['amount'];
+            r['status'] = 'PENDING';
+            r['source'] = r['failureType'];
+            r.pop('createdAt')
+            r.pop('trxid')
+            r.pop('paymentMethod')
+            r.pop('failureType')
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
         else:
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')

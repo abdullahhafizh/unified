@@ -511,9 +511,9 @@ class SlotHandler(QObject):
         _PPOBService.start_do_topup_ppob(payload)
     start_do_topup_ppob = pyqtSlot(str)(start_do_topup_ppob)
 
-    def start_check_trx_online(self, reff_no):
-        _PPOBService.start_check_trx_online(reff_no)
-    start_check_trx_online = pyqtSlot(str)(start_check_trx_online)
+    def start_check_status_trx(self, reff_no):
+        _PPOBService.start_check_status_trx(reff_no)
+    start_check_status_trx = pyqtSlot(str)(start_check_status_trx)
 
     def start_get_qr_gopay(self, payload):
         _QRPaymentService.start_get_qr_gopay(payload)
@@ -810,7 +810,7 @@ def config_log():
             debug=False,
             environment=_Common.APP_MODE,
             server_name='VM-ID '+_Common.TID,
-            release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+            # release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
             default_integrations=False,
         )
         if not os.path.exists(sys.path[0] + '/_lLog/'):

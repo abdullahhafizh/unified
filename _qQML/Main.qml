@@ -304,6 +304,11 @@ Rectangle {
         CardPrepaidHistory{}
     }
 
+    Component {id: retry_payment_process
+        RetryPaymentProcess{}
+
+    }
+
 //    Component {id: global_confirm_frame
 //        GlobalConfirmationFrame
 //    }

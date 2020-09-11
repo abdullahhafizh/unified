@@ -928,9 +928,13 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        # check_trx = _DAO.check_trx_failure(trxid)
-        # if len(check_trx) == 0:
-        #     _DAO.insert_transaction_failure(__param)
+        # Only Store Pending Transaction To Transaction Failure Table
+        if failure_type == 'PENDING_TRANSACTION':
+            if len(_DAO.check_trx_failure(trxid)) == 0:
+                _DAO.insert_transaction_failure(__param)
+                # Auto Assign syncFlag
+                __param['key'] = __param['trxid']
+                _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
         LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':

@@ -958,6 +958,11 @@ def store_transaction_global(param, retry=False):
     try:
         update_summary_report(g)
         __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
+        # Delete Failure/Pending TRX Local Records
+        _DAO.delete_transaction_failure({
+            'trxid': __pid,
+            'tid': _Common.TID
+        })
         __bid = _Common.get_bid(g['provider'])
         # Overwrite bid value for shop transaction
         if g['shop_type'] == 'shop':
