@@ -238,23 +238,23 @@ def do_check_trx(reff_no):
             # 'paymentMethod': payment_method,
             # 'remarks': remarks,
             row = pending_record[0]
-            r = json.loads(row)
             remarks = json.loads(row['remarks'])
-            r['date'] = _Helper.convert_epoch(r['createdAt']);
-            r['trx_id'] = r['trxid'];
-            r['payment_method'] = r['paymentMethod'];
-            r['product_id'] = remarks['shop_type'] + str(remarks['epoch'])
-            r['receipt_amount'] = remarks['payment_received'];
-            r['amount'] = remarks['value']
-            r['status'] = 'PENDING';
-            r['source'] = r['failureType'];
-            r.pop('pid')
-            r.pop('createdAt')
-            r.pop('trxid')
-            r.pop('paymentMethod')
-            r.pop('failureType')
-            LOGGER.debug((r))
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            row['date'] = _Helper.convert_epoch(row['createdAt']);
+            row['trx_id'] = row['trxid'];
+            row['payment_method'] = row['paymentMethod'];
+            row['product_id'] = remarks['shop_type'] + str(remarks['epoch'])
+            row['receipt_amount'] = remarks['payment_received'];
+            row['amount'] = remarks['value']
+            row['status'] = 'PENDING';
+            row['source'] = row['failureType'];
+            row['remarks'] = remarks;
+            row.pop('pid')
+            row.pop('createdAt')
+            row.pop('trxid')
+            row.pop('paymentMethod')
+            row.pop('failureType')
+            LOGGER.debug((reff_no, row))
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(row))
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)

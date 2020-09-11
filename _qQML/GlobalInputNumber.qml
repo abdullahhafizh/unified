@@ -292,8 +292,10 @@ Base{
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
         if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
+        var trx_id = FUNC.get_value(i.product_id);
+        if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
         var rows = [
-                    {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
+                    {label: 'No Transaksi', content: trx_id},
                     {label: 'Tanggal', content: FUNC.get_value(i.date)},
                     {label: 'Jenis Transaksi', content: trx_name},
                     {label: 'Nilai Bayar', content: FUNC.insert_dot(total_payment)},
