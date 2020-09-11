@@ -232,6 +232,7 @@ def do_check_trx(reff_no):
             remarks = json.loads(data.get('remarks'))
             r = {
                 'date': _Helper.convert_epoch(time_stamp),
+                'category': remarks.get('shop_type', '').upper(),
                 'trx_id': data.get('trxid'),
                 'payment_method': data.get('paymentMethod'),
                 'product_id': data.get('trxid'),
