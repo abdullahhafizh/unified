@@ -231,7 +231,8 @@ def do_check_trx(reff_no):
             time_stamp = data.get('createdAt')
             notes = data.get('remarks', '')
             r = {
-                'date': _Helper.convert_epoch(time_stamp),
+                # 'date': _Helper.convert_epoch(time_stamp),
+                'date': time_stamp,
                 'trx_id': data.get('trxid'),
                 'payment_method': data.get('paymentMethod'),
                 'product_id': data.get('trxid'),
