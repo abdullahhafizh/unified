@@ -222,10 +222,11 @@ def do_check_trx(reff_no):
         return
     # Add Check Local TRX Here
     payload = {
-        'reff_no': reff_no
+        'reff_no': reff_no,
+        'tid': _Common.TID
     }
     try:
-        pending_record = _DAO.check_trx_failure(reff_no)
+        pending_record = _DAO.get_transaction_failure(reff_no)
         if len(pending_record) > 0:
             # 'trxid': trxid,
             # 'tid': TID,

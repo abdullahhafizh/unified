@@ -89,7 +89,7 @@ def insert_transaction_failure(param):
 
 def get_transaction_failure(param):
     """
-      trxid           VARCHAR(100) PRIMARY KEY NOT NULL,
+      reff_no         VARCHAR(100) PRIMARY KEY NOT NULL,
       tid             VARCHAR(100)             NOT NULL,
     """
     sql = "SELECT * FROM TransactionFailure WHERE trxid LIKE '%{}' AND tid = '{}' ".format(param['reff_no'], param['tid'])

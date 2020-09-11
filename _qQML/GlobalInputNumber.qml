@@ -283,7 +283,11 @@ Base{
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
             trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
-        if (i.category == 'SHOP') trx_name = i.category + ' ' + i.remarks.provider;
+        var total_payment = i.amount.toString()
+        if (i.category == 'SHOP'){
+            trx_name = i.category + ' ' + i.remarks.provider;
+            total_payment = i.remarks.value.toString();
+        }
         var amount = FUNC.insert_dot(i.receipt_amount.toString());
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
         if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
@@ -292,7 +296,7 @@ Base{
                     {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
                     {label: 'Tanggal', content: FUNC.get_value(i.date)},
                     {label: 'Jenis Transaksi', content: trx_name},
-                    {label: 'Nilai Bayar', content: FUNC.insert_dot(i.amount.toString())},
+                    {label: 'Nilai Bayar', content: FUNC.insert_dot(total_payment)},
                     {label: 'Nilai Diterima', content: amount},
                     {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
                     {label: 'Status', content: i.status}
