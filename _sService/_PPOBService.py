@@ -250,8 +250,9 @@ def do_check_trx(reff_no):
             return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['result'] == 'OK' and not _Helper.empty(r['data']):
+        if s == 200 and r['result'] == 'OK':
             # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
+            r['data']['retry_able'] = 0
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
         else:
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')

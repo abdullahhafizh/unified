@@ -295,8 +295,8 @@ Base{
             false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', 'Data Transaksi Tidak Ditemukan');
             return;
         }
-        var i = JSON.parse(res);
         console.log('get_trx_check_result', now, res);
+        var i = JSON.parse(res);
         var trx_name = '';
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
