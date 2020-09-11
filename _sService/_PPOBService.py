@@ -218,7 +218,7 @@ def start_check_status_trx(reff_no):
 def do_check_trx(reff_no):
     if _Common.empty(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
-        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|MISSING_REFF_NO')
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK#|#MISSING_REFF_NO')
         return
     # Add Check Local TRX Here
     payload = {
@@ -244,7 +244,7 @@ def do_check_trx(reff_no):
                 'remarks': remarks,
                 'retry_able': _Common.check_retry_able(remarks)
             }
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK#|#' + json.dumps(r))
             del remarks
             del data
             return
@@ -253,13 +253,13 @@ def do_check_trx(reff_no):
         if s == 200 and r['result'] == 'OK':
             # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
             r['data']['retry_able'] = 0
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK#|#' + json.dumps(r['data']))
         else:
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK#|#TRX_NOT_FOUND')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK#|#TRX_NOT_FOUND')
 
 
 def start_check_diva_balance(username):

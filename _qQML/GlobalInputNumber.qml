@@ -290,7 +290,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
         console.log('get_trx_check_result', now, r);
-        var res = r.split('|')[1]
+        var res = r.split('#|#')[1]
         if (['ERROR', 'MISSING_REFF_NO', 'TRX_NOT_FOUND'].indexOf(res) > -1){
             false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', 'Data Transaksi Tidak Ditemukan');
             return;
@@ -306,9 +306,9 @@ Base{
             trx_name = i.category + ' ' + i.remarks.provider;
             total_payment = i.remarks.value.toString();
         }
-        var amount = FUNC.insert_dot(i.receipt_amount.toString());
+        var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
-        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
+//        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
         var trx_id = FUNC.get_value(i.product_id);
         if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
