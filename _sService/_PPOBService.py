@@ -248,11 +248,6 @@ def do_check_trx(reff_no):
             row['status'] = 'PENDING';
             row['source'] = row['failureType'];
             row['remarks'] = remarks;
-            row.pop('pid')
-            row.pop('createdAt')
-            row.pop('trxid')
-            row.pop('paymentMethod')
-            row.pop('failureType')
             LOGGER.debug((reff_no, row))
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(row))
             return
