@@ -290,7 +290,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
         console.log('get_trx_check_result', now, r);
-        var res = r.split('#|#')[1]
+        var res = r.replace('TRX_CHECK|', '')
         if (['ERROR', 'MISSING_REFF_NO', 'TRX_NOT_FOUND'].indexOf(res) > -1){
             false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', 'Data Transaksi Tidak Ditemukan');
             return;

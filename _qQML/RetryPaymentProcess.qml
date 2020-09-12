@@ -17,8 +17,11 @@ Base{
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool successTransaction: false
+
     property int receivedPayment: 0
     property int pendingPayment: 0
+    property int initialPayment: 0
+
     property var lastBalance: '999000'
     property var cardNo: '6024123443211234'
     property var totalPrice: 0
@@ -196,6 +199,7 @@ Base{
         customerPhone = '';
         notifTitle = '';
         notifMessage = ''
+        initialPayment = 0;
 //        receivedPayment = 0;
         successTransaction = false;
         reprintAttempt = 0;
@@ -217,7 +221,7 @@ Base{
         my_timer.restart();
         // Validation To Get This Condition, payment received, refund feature disabled and not a success trx
         // While success trx must keep using refund, NAHLOH..!
-//                if (receivedPayment > 0 && !refundFeature && !successTransaction){
+//                if (receivedPayment > initialPayment && !refundFeature && !successTransaction){
 //                    details.pending_trx_code = details.epoch.toString().substr(-6);
 //                    details.pending_trx_code = uniqueCode;
 //                    console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
@@ -270,7 +274,7 @@ Base{
             message_case_refund = 'Terjadi Pembatalan/Kegagalan Transaksi, ';
             break;
         case 'cash_device_error':
-            if (receivedPayment == 0) {
+            if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
                 abc.counter = 5;
@@ -282,7 +286,7 @@ Base{
             message_case_refund = 'Terjadi Kesalahan Mesin,';
             break;
         case 'cash_device_timeout':
-            if (receivedPayment == 0) {
+            if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain', false);
                 abc.counter = 5;
@@ -357,16 +361,23 @@ Base{
     function release_print(title, msg){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         popup_loading.close();
-        if (title==undefined || title.length == 0) title = 'Terima Kasih';
-        if (successTransaction) title = 'Transaksi Berhasil';
-        if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
-        console.log('release_print', now, title, msg);
-        switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
         hide_all_cancel_button();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
-        _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+        if (title==undefined || title.length == 0) title = 'Terima Kasih';
+        if (successTransaction) {
+            title = 'Pengulangan Transaksi Berhasil';
+            if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
+            console.log('release_print', now, title, msg);
+            switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
+            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+        } else {
+            switch_frame('source/smiley_down.png', title, msg, 'backToMain', true );
+            //Do Print If Only Status Payment is Changed
+            if (receivedPayment > initialPayment)
+                _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+        }
         abc.counter = 3;
         reset_variables_to_default();
     }
@@ -384,8 +395,8 @@ Base{
             // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
-                console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
-                release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+//                console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
+                release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
                 return;
             }
             //PPOB Not Be able for pending trx retry
@@ -527,8 +538,8 @@ Base{
         // details.pending_trx_code = details.epoch.toString().substr(-6);
             details.payment_received = receivedPayment.toString();
             details.pending_trx_code = uniqueCode;
-            console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
-            release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+//            console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
+            release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
             return;
         }
         do_refund_or_print('topup_prepaid_error');
@@ -589,8 +600,8 @@ Base{
             // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
-                console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
-                release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+//                console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
+                release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
                 return;
             }
             do_refund_or_print('card_eject_error');
@@ -622,7 +633,7 @@ Base{
     function execute_transaction(channel){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
-        if (receivedPayment == 0){
+        if (receivedPayment == initialPayment){
             console.log('EMPTY_PAYMENT', now);
             return;
         }
@@ -693,7 +704,7 @@ Base{
                 popup_loading.open();
                 return;
             } else if (grgResult == 'SERVICE_TIMEOUT'){
-                if (receivedPayment > 0){
+                if (receivedPayment > initialPayment){
                     back_button.visible = false;
                     modeButtonPopup = 'retrigger_bill';
                     switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
@@ -745,7 +756,7 @@ Base{
         if (meiFunction == 'STACK'){
             if (meiResult == "ERROR"||meiResult == "REJECTED"||meiResult == "OSERROR"){
 //                false_notif();
-                if (receivedPayment > 0){
+                if (receivedPayment > initialPayment){
                     _SLOT.start_return_es_mei();
                 }
             } if (meiResult == 'COMPLETE'){
@@ -914,6 +925,7 @@ Base{
             getDenom = parseInt(details.denom);
             row2.labelContent = details.provider + ' - ' + details.value
         }
+        initialPayment = receivedPayment;
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
@@ -997,7 +1009,7 @@ Base{
                 }
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
                 if (popup_confirm.visible) popup_confirm.showDuration = abc.counter.toString();
-//                if (abc.counter == 7 && receivedPayment > 0 && !successTransaction){
+//                if (abc.counter == 7 && receivedPayment > initialPayment && !successTransaction){
                 // Assumming Only In-Completed Transaction Reach Here
                 if (abc.counter == 7){
                     if (details.payment=='debit') {
@@ -1019,7 +1031,7 @@ Base{
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
-                    if (receivedPayment > 0){
+                    if (receivedPayment > initialPayment){
                         //Disable Auto Manual Refund
                         details.process_error = 1;
                         details.payment_error = 1;
@@ -1027,8 +1039,8 @@ Base{
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                             details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
-                            console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
-                            release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+//                            console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
+                            release_print('Waktu Transaksi Habis', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
                             return;
                         }
                         refundChannel = 'MANUAL';
@@ -1081,7 +1093,7 @@ Base{
                     console.log('[CANCELLATION] Cash Method Payment Detected..!');
                     proceedAble = false;
                     _SLOT.stop_bill_receive_note();
-                    if (receivedPayment > 0){
+                    if (receivedPayment > initialPayment){
                         console.log('[CANCELLATION] User Payment', receivedPayment);
                         details.process_error = 1;
                         details.payment_error = 1;
@@ -1089,8 +1101,8 @@ Base{
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                             details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
-                            console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                            release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+//                            console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
+                            release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
                             return;
                         }
                         do_refund_or_print('user_cancellation');
@@ -1386,7 +1398,7 @@ Base{
                         console.log('[CANCELLATION] Cash Method Payment Detected..!')
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
-                        if (receivedPayment > 0){
+                        if (receivedPayment > initialPayment){
                             console.log('[CANCELLATION] User Payment', receivedPayment)
                             do_refund_or_print('user_cancellation');
                             return;

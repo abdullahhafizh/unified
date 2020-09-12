@@ -285,6 +285,11 @@ def get_product_stock():
     return _Database.get_query(sql=sql, parameter={})
 
 
+def get_product_stock_by_slot_status(status):
+    sql = " SELECT stock FROM ProductStock WHERE status = {} ".format(str(status))
+    return _Database.get_query(sql=sql, parameter={})
+
+
 def check_product_stock(param):
     sql = " SELECT count(*) as count FROM ProductStock WHERE stid = :stid AND pid = :pid LIMIT 0,1 "
     return _Database.get_query(sql=sql, parameter=param)

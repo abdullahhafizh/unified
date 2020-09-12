@@ -1302,15 +1302,42 @@ def generate_collection_data():
 
 LAST_PPOB_TRX = None
 
+# SHOP 
+# {'details': '{"date":"08/06/20","epoch":1591589266780,"payment":"cash","shop_type":"shop","time":"11:07:46","qty":1,"value":"5000","provider":"Test Card 2","admin_fee":"0","status":102,"raw":{"stock":74,"image":"source/card/20200306163800DF0FfQIKJ31s6ZEt33.png","remarks":"Test Card 2","init_price":5000,"pid":"dfaw2","stid":"dfaw2-102-001122334455","tid":"001122334455","syncFlag":1,"name":"Test Card 2","status":102,"createdAt":1591589169000,"sell_price":5000},"payment_details":{"total":"10000","history":"10000"},"payment_received":"10000"}', 'name': 'Test Card 2', 'price': 5000, 'syncFlag': 0, 'createdAt': 1591589279000, 'status': 1, 'pid': 'shop1591589266780'}
 
-# TODO: Finalise Retry Able Check
+# TOPUP
+# {'createdAt': 1591585430000, 'status': 1, 'pid': 'topup1591585396411', 'syncFlag': 0, 'name': 'e-Money Mandiri', 'details': '{"date":"08/06/20","epoch":1591585396411,"payment":"cash","shop_type":"topup","time":"10:03:16","qty":1,"value":"2000","provider":"e-Money Mandiri","admin_fee":1500,"raw":{"admin_fee":1500,"bank_name":"MANDIRI","bank_type":"0","card_no":"6032984075869341","prev_balance":"108110","provider":"e-Money Mandiri","value":"2000"},"status":"1","final_balance":"108610","denom":"500","payment_details":{"history":"10000","total":"10000"},"payment_received":"10000","topup_details":{"bank_name":"MANDIRI","card_no":"6032984075869341","bank_id":"1","report_sam":"603298407586934100770D706E86B69161010101000110F401000042A80100080620100326000000060006831D21CF","c2c_mode":"1","last_balance":"108610","report_ka":"603298180000008500030D706E86B69161510101880120D0070000C02D080008062010032600000006240003DC05000042BC14"}}'
+
+
 def check_retry_able(data):
     if _Helper.empty(data) is True:
         return 0
+    # Topup BRI Retry Validation Also User Connection Status
+    if not _Helper.is_online(_Helper.whoami()):
+        return 0
     if data.get('shop_type') == 'ppob':
-        return 0
-    if data.get('shop_type') == 'shop':
         return 1
+    if data.get('shop_type') == 'shop':
+        try:
+            slot_cd = data.get('raw').get('status')
+            check_stock = _DAO.get_product_stock_by_slot_status(slot_cd)
+            if len(check_stock) == 0:
+                return 0
+            if check_stock[0]['stock'] == 0:
+                return 0
+            return 1
+        except Exception as e:
+            LOGGER.warning((e))
+            return 0
     if data.get('shop_type') == 'topup':
-        return 0
+        # Can Change Topup Provider
+        try:
+            topup_value = int(data.get('value', '0'))
+            if MANDIRI_ACTIVE_WALLET > topup_value:
+                return 1
+            if BNI_ACTIVE_WALLET > topup_value:
+                return 1
+        except Exception as e:
+            LOGGER.warning((e))
+            return 0
     return 0
