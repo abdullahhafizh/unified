@@ -950,6 +950,11 @@ Base{
             return;
         }
         if (details.payment == 'cash') {
+            // Handle if Payment is completely done before
+            if (receivedPayment >= totalPrice){
+                payment_complete('bill_acceptor');
+                return;
+            }
             open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;

@@ -231,6 +231,8 @@ def do_check_trx(reff_no):
             data = pending_record.__getitem__(0)
             time_stamp = data.get('createdAt')/1000
             remarks = json.loads(data.get('remarks'))
+            remarks.pop('payment_error')
+            remarks.pop('process_error')
             r = {
                 'date': _Helper.convert_epoch(time_stamp),
                 'category': remarks.get('shop_type', '').upper(),
@@ -252,8 +254,14 @@ def do_check_trx(reff_no):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK':
             # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
-            r['data']['retry_able'] = 0
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
+            data = r['data']
+            # remarks = data.get('remarks')
+            # remarks.pop('payment_error')
+            # remarks.pop('process_error')
+            # data['remarks'] = remarks
+            # Force Close Retry TRX From Online
+            data['retry_able'] = 0
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(data))
         else:
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
         LOGGER.debug((str(payload), str(r)))
