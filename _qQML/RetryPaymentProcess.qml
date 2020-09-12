@@ -633,7 +633,7 @@ Base{
     function execute_transaction(channel){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
-        if (receivedPayment == initialPayment){
+        if (receivedPayment == 0){
             console.log('EMPTY_PAYMENT', now);
             return;
         }
