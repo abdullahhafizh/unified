@@ -953,6 +953,7 @@ Base{
             // Handle if Payment is completely done before
             if (receivedPayment >= totalPrice){
                 payment_complete('bill_acceptor');
+                execute_transaction('CASH_PAYMENT');
                 return;
             }
             open_preload_notif();
