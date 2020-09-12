@@ -34,12 +34,16 @@ Base{
 
     property bool retryAbleTransaction: false
 
+    property var cardData: undefined
+    property int cardBalance: 0
+
     property bool isConfirm: false
     property var ppobMode
     property var ppobTagihanData
     property var vCollectionMode
     property var vCollectionData
 
+    property var retryCategory
     property var retryDetails
     property int receivedPayment: 0
     property int pendingPayment: 0
@@ -55,11 +59,14 @@ Base{
             my_timer.start();
             define_wording();
             isConfirm = false;
+            retryCategory = undefined;
             vCollectionMode = undefined;
             vCollectionData = undefined;
             retryAbleTransaction = false;
             receivedPayment = 0;
             pendingPayment = 0;
+            cardData = undefined;
+            cardBalance = 0;
             press = '0'
 
         }
@@ -78,6 +85,7 @@ Base{
         base.result_check_voucher.connect(get_check_voucher);
         base.result_use_voucher.connect(get_use_voucher);
         base.result_cd_move.connect(card_eject_result);
+        base.result_balance_qprox.connect(get_balance);
 
     }
 
@@ -90,6 +98,7 @@ Base{
         base.result_check_voucher.disconnect(get_check_voucher);
         base.result_use_voucher.disconnect(get_use_voucher);
         base.result_cd_move.disconnect(card_eject_result);
+        base.result_balance_qprox.disconnect(get_balance);
 
     }
 
@@ -138,6 +147,66 @@ Base{
                 _SLOT.user_action_log('press "BATAL" In Input Number Page');
                 my_layer.pop()
             }
+        }
+    }
+
+
+    function get_balance(text){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_balance', text, now);
+        press = '0';
+        popup_loading.close();
+        var result = text.split('|')[1];
+        if (result == 'ERROR'){
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
+            return;
+        } else {
+            var info = JSON.parse(result);
+            var bankName = info.bank_name;
+            var ableTopupCode = info.able_topup;
+            if (ableTopupCode !="0000"){
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
+                return;
+            }
+            cardBalance = parseInt(info.balance);
+            cardData = {
+                balance: info.balance,
+                card_no: info.card_no,
+                bank_type: info.bank_type,
+                bank_name: info.bank_name,
+            }
+            var provider = '';
+            switch(info.bank_name){
+            case 'MANDIRI':
+                provider = 'e-Money Mandiri';
+                break;
+            case 'BNI':
+                provider = 'Tapcash BNI';
+                break;
+            case 'BRI':
+                provider = 'Brizzi BRI';
+                break;
+            case 'BCA':
+                provider = 'Flazz BCA';
+                break;
+            case 'DKI':
+                provider = 'JakCard DKI';
+                break;
+
+            }
+            //Define Data Card, Amount Button, Topup Availability
+            var prev_admin_fee = retryDetails.raw.admin_fee
+            var prev_topup_denom = retryDetails.raw.value
+            retryDetails.raw = {
+                value: prev_topup_denom,
+                provider: provider,
+                admin_fee: prev_admin_fee,
+                card_no: cardData.card_no,
+                prev_balance: cardData.balance,
+                bank_type: cardData.bank_type,
+                bank_name: cardData.bank_name,
+            }
+            my_layer.push(retry_payment_process, {details: retryDetails, cardNo: cardData.card_no, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
         }
     }
 
@@ -298,6 +367,7 @@ Base{
 //        console.log('get_trx_check_result', now, res);
         var i = JSON.parse(res);
         var trx_name = '';
+        retryCategory = i.category;
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
             trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
@@ -710,8 +780,26 @@ Base{
             title_text: 'TRANSAKSI ANDA DAPAT DILANJUTKAN\nSILAKAN TEKAN TOMBOL LANJUT'
     //        modeReverse: (abc.counter %2 == 0) ? true : false
             boxColor: CONF.frame_color
-
         }
+
+        CircleButton{
+            id: cancel_button_confirmation
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL" For Retry Transaction');
+                    console.log('Press "BATAL" For Retry Transaction');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
 
         CircleButton{
             id: proceed_button
@@ -730,6 +818,11 @@ Base{
                     console.log('Press "LANJUT" For Retry Transaction');
                     if (press != '0') return;
                     press = '1';
+                    if (retryCategory == 'TOPUP'){
+                        press = '0';
+                        preload_check_card.open();
+                        return;
+                    }
                     my_layer.push(retry_payment_process, {details: retryDetails, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
                 }
             }
@@ -755,6 +848,47 @@ Base{
     }
 
 
+    PreloadCheckCard{
+        id: preload_check_card
+        CircleButton{
+            id: cancel_button_preload
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_preload
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    preload_check_card.close();
+                    if (press!='0') return;
+                    press = '1'
+                    popup_loading.open();
+                    _SLOT.start_check_card_balance();
+                }
+            }
+        }
+    }
 
 
 }

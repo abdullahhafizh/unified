@@ -556,7 +556,7 @@ Base{
         console.log('store_result', now, r)
         if (r.indexOf('ERROR') > -1 || r.indexOf('FAILED|STORE_TRX') > -1){
 //            _SLOT.retry_store_transaction_global()
-            console.log('Retry To Store The Data into DB')
+//            console.log('Retry To Store The Data into DB')
         }
     }
 
