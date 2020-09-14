@@ -815,7 +815,7 @@ def config_log():
             debug=False,
             environment=_Common.APP_MODE,
             server_name='VM-ID '+_Common.TID,
-            # release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+            release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
             default_integrations=False,
         )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
