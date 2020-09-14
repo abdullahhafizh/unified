@@ -428,9 +428,9 @@ Base{
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|3', true )
-            set_refund_channel('CS_ONLY');
-            do_refund_or_print('user_payment_timeout_qr');
+//            switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|3', true )
+//            set_refund_channel('CS_ONLY');
+//            do_refund_or_print('user_payment_timeout_qr');
             return;
         }
         if (result=='SUCCESS'){
@@ -1028,8 +1028,8 @@ Base{
 //                        details.process_error = 'user_payment_timeout';
 //                        details.payment_received = '0';
 //                        release_print();
-                        set_refund_channel('CS_ONLY');
-                        do_refund_or_print('user_payment_timeout_debit');
+//                        set_refund_channel('CS_ONLY');
+//                        do_refund_or_print('user_payment_timeout_debit');
                         return;
                     }
                     if (details.payment=='cash') {
@@ -1129,8 +1129,8 @@ Base{
 //                    details.payment_received = '0';
 //                    release_print();
 //                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
-                    set_refund_channel('CS_ONLY');
-                    do_refund_or_print('user_cancellation_debit');
+//                    set_refund_channel('CS_ONLY');
+//                    do_refund_or_print('user_cancellation_debit');
                     return;
                 }
                 my_timer.stop();
@@ -1256,8 +1256,8 @@ Base{
                 global_frame.modeAction = "";
                 break;
             case 'PRINT_QR_TIMEOUT_RECEIPT':
-                set_refund_channel('CS_ONLY');
-                do_refund_or_print('user_payment_timeout_qr');
+//                set_refund_channel('CS_ONLY');
+//                do_refund_or_print('user_payment_timeout_qr');
                 break;
             }
         }
