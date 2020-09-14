@@ -440,7 +440,7 @@ Base{
             details.payment = info.provider;
             details.payment_received = details.value.toString();
             receivedPayment = totalPrice;
-            payment_complete('QR_PAYMENT');
+            payment_complete('qr');
 //            var qrMode = mode.toLowerCase();
 //            switch(qrMode){
 //            case 'ovo':

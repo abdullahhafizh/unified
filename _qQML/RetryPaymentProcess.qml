@@ -933,6 +933,12 @@ Base{
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
+        // Handle if Payment is completely done before
+        if (receivedPayment >= totalPrice){
+            payment_complete(details.payment);
+            execute_transaction('RETRY_TRANSACTION');
+            return;
+        }
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
@@ -949,13 +955,7 @@ Base{
             popup_loading.open();
             return;
         }
-        if (details.payment == 'cash') {
-            // Handle if Payment is completely done before
-            if (receivedPayment >= totalPrice){
-                payment_complete('bill_acceptor');
-                execute_transaction('CASH_PAYMENT');
-                return;
-            }
+        if (details.payment == 'cash') {         
             open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
