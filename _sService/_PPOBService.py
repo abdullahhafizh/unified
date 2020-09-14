@@ -9,6 +9,8 @@ from _nNetwork import _NetworkAccess
 import sys
 from operator import itemgetter
 from _dDAO import _DAO
+from _dDevice import _EDC
+from _sService import _QRPaymentService
 
 # import os
 
@@ -246,6 +248,16 @@ def do_check_trx(reff_no):
                 'remarks': remarks,
                 'retry_able': _Common.check_retry_able(remarks)
             }
+            # Add Debit & QR Payment Check
+            check_trx_id = r['product_id']
+            if r['payment_method'].lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay']:
+                check_trx_id = remarks.get('host_trx_id', check_trx_id)
+            status, result = validate_payment_history(r['payment_method'], check_trx_id)
+            if status is True:
+                remarks['payment_received'] = result['amount']
+                remarks['payment_details'] = result
+                r['status'] = 'PAID'
+                r['retry_able'] = _Common.check_retry_able(remarks)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data
@@ -268,6 +280,15 @@ def do_check_trx(reff_no):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
+
+
+def validate_payment_history(payment_method='QR', trx_id=None):
+    if _Helper.empty(trx_id) is True:
+        return False, None
+    if payment_method.lower() == 'debit':
+        return _EDC.edc_mobile_check_payment(trx_id)
+    else:
+        return _QRPaymentService.one_time_check_qr(trx_id=trx_id)
 
 
 def start_check_diva_balance(username):

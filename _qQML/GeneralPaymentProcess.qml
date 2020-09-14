@@ -416,6 +416,14 @@ Base{
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
+            if (!refundFeature){
+//              details.pending_trx_code = details.epoch.toString().substr(-6);
+                details.payment_received = receivedPayment.toString();
+                details.pending_trx_code = uniqueCode;
+                console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
+                release_print('Waktu Bayar QR Habis', 'Silakan Ambil Struk Transaksi Anda Dan Cek Transaksi Anda Dari Kode Voucher Tertera');
+                return;
+            }
             switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|3', true )
             set_refund_channel('CS_ONLY');
             do_refund_or_print('user_payment_timeout_qr');
@@ -1012,6 +1020,14 @@ Base{
 //                        details.process_error = 'user_payment_timeout';
 //                        details.payment_received = '0';
 //                        release_print();
+                        if (!refundFeature){
+//                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                            details.payment_received = receivedPayment.toString();
+                            details.pending_trx_code = uniqueCode;
+                            console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
+                            release_print('Waktu Pembayaran Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Cek Transaksi Anda Dari Kode Voucher Tertera');
+                            return;
+                        }
                         set_refund_channel('CS_ONLY');
                         do_refund_or_print('user_payment_timeout_debit');
                         return;
@@ -1113,6 +1129,14 @@ Base{
 //                    details.payment_received = '0';
 //                    release_print();
 //                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
+                    if (!refundFeature){
+//                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                        details.payment_received = receivedPayment.toString();
+                        details.pending_trx_code = uniqueCode;
+                        console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
+                        release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Cek Transaksi Anda Dari Kode Voucher Tertera');
+                        return;
+                    }
                     set_refund_channel('CS_ONLY');
                     do_refund_or_print('user_cancellation_debit');
                     return;
@@ -1240,6 +1264,14 @@ Base{
                 global_frame.modeAction = "";
                 break;
             case 'PRINT_QR_TIMEOUT_RECEIPT':
+                if (!refundFeature){
+//                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                    details.payment_received = receivedPayment.toString();
+                    details.pending_trx_code = uniqueCode;
+                    console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
+                    release_print('Waktu Bayar QR Habis', 'Silakan Ambil Struk Transaksi Anda Dan Cek Transaksi Anda Dari Kode Voucher Tertera');
+                    return;
+                }
                 set_refund_channel('CS_ONLY');
                 do_refund_or_print('user_payment_timeout_qr');
                 break;
