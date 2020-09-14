@@ -239,7 +239,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
     # _Helper.dump(payload)
     try:
         url = _Common.QR_HOST+mode.lower()+'/status-payment'
-        if not _Common.QR_PROD_STATE[mode]:
+        if not _Common.QR_PROD_STATE[mode.upper()]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
         # Handle QR Payment Cancellation Realtime Abort
             # _Helper.dump([success, attempt])
