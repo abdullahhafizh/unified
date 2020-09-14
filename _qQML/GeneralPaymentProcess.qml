@@ -418,6 +418,8 @@ Base{
         if (['TIMEOUT'].indexOf(result) > -1){
             if (!refundFeature){
 //              details.pending_trx_code = details.epoch.toString().substr(-6);
+                details.process_error = 1;
+                details.payment_error = 1;
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
@@ -1022,6 +1024,8 @@ Base{
 //                        release_print();
                         if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                            details.process_error = 1;
+                            details.payment_error = 1;
                             details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
                             console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
@@ -1131,6 +1135,8 @@ Base{
 //                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
                     if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                        details.process_error = 1;
+                        details.payment_error = 1;
                         details.payment_received = receivedPayment.toString();
                         details.pending_trx_code = uniqueCode;
                         console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
@@ -1266,6 +1272,8 @@ Base{
             case 'PRINT_QR_TIMEOUT_RECEIPT':
                 if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                    details.process_error = 1;
+                    details.payment_error = 1;
                     details.payment_received = receivedPayment.toString();
                     details.pending_trx_code = uniqueCode;
                     console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
