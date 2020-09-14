@@ -928,10 +928,11 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay']:
+        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee']:
             remarks = json.loads(remarks)
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)
+            __param['remarks'] = remarks
         # Only Store Pending Transaction To Transaction Failure Table
         if failure_type == 'PENDING_TRANSACTION':
             _DAO.delete_transaction_failure({

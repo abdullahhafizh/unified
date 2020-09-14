@@ -249,15 +249,15 @@ def do_check_trx(reff_no):
                 'retry_able': _Common.check_retry_able(remarks)
             }
             # Add Debit & QR Payment Check
-            check_trx_id = r['product_id']
-            if r['payment_method'].lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay']:
-                check_trx_id = remarks.get('host_trx_id', check_trx_id)
-            status, result = validate_payment_history(r['payment_method'], check_trx_id)
-            if status is True:
-                remarks['payment_received'] = result['amount']
-                remarks['payment_details'] = result
-                r['status'] = 'PAID'
-                r['retry_able'] = _Common.check_retry_able(remarks)
+            if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay']:
+                r['retry_able'] = 0
+                check_trx_id = remarks.get('host_trx_id', r['product_id'])
+                status, result = validate_payment_history(r['payment_method'], check_trx_id)
+                if status is True:
+                    remarks['payment_received'] = str(result['amount'])
+                    remarks['payment_details'] = result
+                    r['status'] = 'PAID'
+                    r['retry_able'] = _Common.check_retry_able(remarks)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data
