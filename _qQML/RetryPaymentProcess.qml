@@ -929,11 +929,10 @@ Base{
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
-        // Unnecessary
-//        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
         // Handle if Payment is completely done before
+        console.log('Check Received Payment', now, receivedPayment, totalPrice);
         if (receivedPayment >= totalPrice){
             payment_complete(details.payment);
             execute_transaction('RETRY_TRANSACTION');
