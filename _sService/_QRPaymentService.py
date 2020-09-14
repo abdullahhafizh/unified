@@ -107,8 +107,8 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
-                _Common.LAST_QR_PAYMENT_HOST_TRX_ID = param['trx_id']
-            LOGGER.debug((str(param), str(r)))
+                _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
+            LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
             handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
@@ -245,7 +245,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
             # _Helper.dump([success, attempt])
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
-            if check_payment_result(r['data'], mode) is True:
+            if check_payment_result(r['data'], mode.upper()) is True:
                 return True, r['data']
         else:
             return False, None
