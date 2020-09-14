@@ -256,7 +256,6 @@ def do_check_trx(reff_no):
                 if status is True:
                     remarks['payment_received'] = str(result['amount'])
                     remarks['payment_details'] = result
-                    r['status'] = 'PAID'
                     r['retry_able'] = _Common.check_retry_able(remarks)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
