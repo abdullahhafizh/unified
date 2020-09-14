@@ -624,6 +624,9 @@ Base{
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
+        delete details.pending_trx_code;
+        delete details.payment_error;
+        delete details.process_error;
         back_button.visible = false;
         abc.counter = 600;
         my_timer.restart();
