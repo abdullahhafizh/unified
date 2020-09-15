@@ -10,6 +10,7 @@ from _tTools import _Helper
 from time import sleep
 from _cCommand import _Command
 import json
+from _sService import _BniActivationCommand
 
 
 class TopupSignalHandler(QObject):
@@ -19,6 +20,7 @@ class TopupSignalHandler(QObject):
     SIGNAL_DO_ONLINE_TOPUP = pyqtSignal(str)
     SIGNAL_GET_TOPUP_READINESS = pyqtSignal(str)
     SIGNAL_UPDATE_BALANCE_ONLINE = pyqtSignal(str)
+    SIGNAL_ACTIVATE_BNI_TRY = pyqtSignal(str,str)
 
 
 
@@ -428,6 +430,11 @@ def start_master_activation_bni():
     slot = 1
     _Helper.get_thread().apply_async(refill_zero_bni, (slot,))
 
+def start_activation_bni_try():
+    slot = 4
+    print("masuk topupservice.py strart_activation_bni")
+    _Helper.get_thread().apply_async(activation_bni_try, (slot,))
+
 
 def start_slave_activation_bni():
     slot = 2
@@ -450,6 +457,19 @@ def refill_zero_bni(slot=1):
             _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_2_BNI_ERROR'
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO_ERROR')
 
+def activation_bni_try(slot=1):
+    _slot = slot - 1
+    # param = _QPROX.QPROX['RAW_APDU']+'|'+str(4)+'|'+'0084000008'
+    bni = _BniActivationCommand.BniActivate()
+    # response, result = bni.activate_bni_sequence()
+    response, result = bni.activate_bni_sequence()
+        
+    if response == 0:
+        TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.emit('ACTIVATION_BNI_TRY|SUCCESS','Success')
+        sleep(1)
+    else:
+        TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.emit('ACTIVATION_BNI_TRY|FAILURE','RAW_APDU|FAILURE')
+        sleep(1)
 
 def start_check_online_topup(mode, payload):
     _Helper.get_thread().apply_async(ping_online_topup, (mode, payload,))
