@@ -99,6 +99,8 @@ SLOT_SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
 SLOT_SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
 BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'))
+URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://192.168.9.44:5000/')
+URL_BNI_ACTIVATION_RETRY = _ConfigParser.get_set_value('BNI', 'activation^retry', '5')
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
