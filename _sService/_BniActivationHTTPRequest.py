@@ -3,10 +3,13 @@ import json
 import time
 import binascii
 
+class HttpError(IOError):  # noqa
+    pass
+
 class BniActivationHTTPRequest(object):
 
-    def __init__(self):
-        self.url = "http://192.168.9.44:5000/"
+    def __init__(self, url='http://192.168.9.44:5000/'):
+        self.url = url
         self.reff_no = -1
         self.sequence = 0
 
@@ -23,7 +26,8 @@ class BniActivationHTTPRequest(object):
         if code == 0:
             return re_apdu
         else:
-            return "FF"
+            raise self.HttpError("Error response = "+ str(code) + " result = "+ re_apdu)
+            # return "FF"
 
     # send apdu
     def send_apdu(self, card_no, reff_no, apdu, apdu_no):
@@ -37,6 +41,8 @@ class BniActivationHTTPRequest(object):
             code = data['code']
             if code == 0:
                 data = data['result']['re_apdu']
+        else:
+            raise self.HttpError("Error response = "+ str(response.text))
         return code, data
 
     # close session
@@ -54,7 +60,6 @@ class BniActivationHTTPRequest(object):
 
     def get_reference_no(self):
         response = requests.get(url=self.url+'activation/getreferenceno')
-
         print("Reference number result : " + response.text)
 
         if response.status_code != 200:

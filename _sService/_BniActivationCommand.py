@@ -7,6 +7,7 @@ class BniActivate(object):
 
     def __init__(self):
         self.debug = True
+        self.retry = int(_Common.URL_BNI_ACTIVATION_RETRY) - 1
     
     def send_command(self, param, _Command):
         try:
@@ -22,23 +23,25 @@ class BniActivate(object):
     def activate_bni_sequence(self):
         result = ""
         code = 1
-        retry = int(_Common.URL_BNI_ACTIVATION_RETRY) - 1
         
 
-        while retry < 5:
-            print('Mencoba proses ke '+ str(5 - retry))
-            print('Mengulang proses ke '+ str(retry))
+        while self.retry < 5:
+            print('Mencoba proses ke '+ str(5 - self.retry))
+            print('Mengulang proses ke '+ str(self.retry))
             try:
                 # Purse Data BNI
+                print("Purse data BNI")
                 res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
                 if res == 0:
                     _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
                 
                 # Init BNI
+                print("Init data BNI")
                 param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
                 response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
                 if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
                 
+                print("Sending http data BNI")
                 bniHTTP = _bniSCard2.bniSCard2(mode=3, debug=True, card_no = _Common.BNI_SAM_1_NO)
                 bniService = _bniSCard2.bniSCard2(mode=4, debug=True)
 
@@ -94,12 +97,20 @@ class BniActivate(object):
                 result = "Success"
             except Exception as e:
                 print(traceback.format_exc())
-                retry = retry - 1
-                print('Mengulang proses ke '+ str(retry))
+                self.retry = self.retry - 1
+                print('Mengulang proses ke '+ str(self.retry))
                 result = "Error, see log"
+                if self.retry != 0:
+                    sleep(1)
+                    self.activate_bni_sequence()
+                else:
+                    bniHTTP.devClose()
+                    break
             finally:
                 bniHTTP.devClose()
                 return code, result
+        
+        return 1, 'Request Failed!'
 
 
 
