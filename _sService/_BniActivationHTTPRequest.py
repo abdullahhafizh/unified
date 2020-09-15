@@ -26,7 +26,7 @@ class BniActivationHTTPRequest(object):
         if code == 0:
             return re_apdu
         else:
-            raise self.HttpError("Error response = "+ str(code) + " result = "+ re_apdu)
+            raise HttpError("Error response = "+ str(code) + " result = "+ re_apdu)
             # return "FF"
 
     # send apdu
@@ -42,7 +42,7 @@ class BniActivationHTTPRequest(object):
             if code == 0:
                 data = data['result']['re_apdu']
         else:
-            raise self.HttpError("Error response = "+ str(response.text))
+            raise HttpError("Error response = "+ str(response.text))
         return code, data
 
     # close session

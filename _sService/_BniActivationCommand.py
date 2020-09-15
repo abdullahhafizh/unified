@@ -24,7 +24,6 @@ class BniActivate(object):
         result = ""
         code = 1
         
-
         while self.retry < 5:
             print('Mencoba proses ke '+ str(5 - self.retry))
             print('Mengulang proses ke '+ str(self.retry))
@@ -39,6 +38,7 @@ class BniActivate(object):
                 print("Init data BNI")
                 param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
                 response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
+                print("Sending data INIT")
                 if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
                 
                 print("Sending http data BNI")
@@ -95,22 +95,21 @@ class BniActivate(object):
 
                 code = 0
                 result = "Success"
+                bniHTTP.devClose()
+                break
             except Exception as e:
                 print(traceback.format_exc())
                 self.retry = self.retry - 1
                 print('Mengulang proses ke '+ str(self.retry))
-                result = "Error, see log"
                 if self.retry != 0:
-                    sleep(1)
-                    self.activate_bni_sequence()
+                    continue
                 else:
                     bniHTTP.devClose()
+                    code = 1
+                    result = "Error, see log"
                     break
-            finally:
-                bniHTTP.devClose()
-                return code, result
         
-        return 1, 'Request Failed!'
+        return code, result
 
 
 
