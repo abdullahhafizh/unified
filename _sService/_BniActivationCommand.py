@@ -22,76 +22,84 @@ class BniActivate(object):
     def activate_bni_sequence(self):
         result = ""
         code = 1
-        try:
-            # Purse Data BNI
-            res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
-            if res == 0:
-                _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
-            
-            # Init BNI
-            param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
-            response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
-            if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
-
-            bniHTTP = _bniSCard2.bniSCard2(mode=3, debug=True, card_no = _Common.BNI_SAM_1_NO)
-            bniService = _bniSCard2.bniSCard2(mode=4, debug=True)
-
-            TM_KEY = b"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E\x4F"
-            IV = b"\x00\x00\x00\x00\x00\x00\x00\x00"
-            BNI_PIN = b"\x12\x34\x56\x00\x00\x00\x00\x00"
-            APDU_TAPCASH_SELECT = b"\x00\xA4\x04\x00\x08\xA0\x00\x42\x4E\x49\x10\x00\x01"
-            CMD_GET_CREDIT_CRIPTOGRAM = b"\x80\x33\x00\x00\x73"
-            CMD_GET_CREDIT_TRANSREC = b"\x80\x37\x14\x01\x32"
-
-            # bniService.cmdTerminalInit(TM_KEY, IV, BNI_PIN)
-    
-            """ CREDIT PROCESSING """ 
-            print("Start CREDIT PROCESSING")
-            # print("APDU TAPCASH SELECT")
-            # _bniSCard2.LOGGER.info("Start CREDIT PROCESSING")
-            # _bniSCard2.LOGGER.info("APDU TAPCASH SELECT")
-            # bniHTTP.devTransmit(APDU_TAPCASH_SELECT)    
+        retry = int(_Common.URL_BNI_ACTIVATION_RETRY) - 1
         
-            """ bniTopupSecureReadPurse """
-            # bniHTTP.cmdSecureReadPurse()
 
-            """ cmd_tapcash_get_chalange """
-            CRN = bniService.cmdGetCRN()   
-            SRAND = bniHTTP.cmdGetSAMRandomNumber(CRN)
-            SRAND = SRAND[0:len(SRAND)-2]
-            SRAND = SRAND + b'\x00'
-            
-            print("GET TOPUP_SECURE_PACK_DATA")
-            _bniSCard2.LOGGER.info("GET TOPUP_SECURE_PACK_DATA")
-            TOPUP_SECURE_PACK_DATA = bniService.devTransmit(SRAND)    
-            GCC = CMD_GET_CREDIT_CRIPTOGRAM + TOPUP_SECURE_PACK_DATA
-            
-            print("GET_CREDIT_CRIPTOGRAM")
-            _bniSCard2.LOGGER.info("GET_CREDIT_CRIPTOGRAM")
-            data = bniHTTP.devTransmit(GCC)
-            data = data[0:len(data)-2]
-            
-            print("CREDIT")
-            _bniSCard2.LOGGER.info("CREDIT")
-            data = bniService.devTransmit(data)
-            
-            print("GET GET_CREDIT_TRANSREC")
-            _bniSCard2.LOGGER.info("GET GET_CREDIT_TRANSREC")
-            GCT = CMD_GET_CREDIT_TRANSREC + data
-            data = bniHTTP.devTransmit(GCT)   
+        while retry < 5:
+            print('Mencoba proses ke '+ str(5 - retry))
+            print('Mengulang proses ke '+ str(retry))
+            try:
+                # Purse Data BNI
+                res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
+                if res == 0:
+                    _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
+                
+                # Init BNI
+                param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
+                response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
+                if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
+                
+                bniHTTP = _bniSCard2.bniSCard2(mode=3, debug=True, card_no = _Common.BNI_SAM_1_NO)
+                bniService = _bniSCard2.bniSCard2(mode=4, debug=True)
 
-            res2, hasil2 = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
-            if res2 == 0:
-                _bniSCard2.LOGGER.info("Purse Setelah Aktivasi = "+ hasil2)
+                TM_KEY = b"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E\x4F"
+                IV = b"\x00\x00\x00\x00\x00\x00\x00\x00"
+                BNI_PIN = b"\x12\x34\x56\x00\x00\x00\x00\x00"
+                APDU_TAPCASH_SELECT = b"\x00\xA4\x04\x00\x08\xA0\x00\x42\x4E\x49\x10\x00\x01"
+                CMD_GET_CREDIT_CRIPTOGRAM = b"\x80\x33\x00\x00\x73"
+                CMD_GET_CREDIT_TRANSREC = b"\x80\x37\x14\x01\x32"
 
-            code = 0
-            result = "Success"
-        except Exception as e:
-            print(traceback.format_exc())
-            result = "Error, see log"
-        finally:
-            bniHTTP.devClose()
-            return code, result
+                # bniService.cmdTerminalInit(TM_KEY, IV, BNI_PIN)
+        
+                """ CREDIT PROCESSING """ 
+                print("Start CREDIT PROCESSING")
+                # print("APDU TAPCASH SELECT")
+                # _bniSCard2.LOGGER.info("Start CREDIT PROCESSING")
+                # _bniSCard2.LOGGER.info("APDU TAPCASH SELECT")
+                # bniHTTP.devTransmit(APDU_TAPCASH_SELECT)    
+            
+                """ bniTopupSecureReadPurse """
+                # bniHTTP.cmdSecureReadPurse()
+
+                """ cmd_tapcash_get_chalange """
+                CRN = bniService.cmdGetCRN()   
+                SRAND = bniHTTP.cmdGetSAMRandomNumber(CRN)
+                SRAND = SRAND[0:len(SRAND)-2]
+                SRAND = SRAND + b'\x00'
+                
+                print("GET TOPUP_SECURE_PACK_DATA")
+                _bniSCard2.LOGGER.info("GET TOPUP_SECURE_PACK_DATA")
+                TOPUP_SECURE_PACK_DATA = bniService.devTransmit(SRAND)    
+                GCC = CMD_GET_CREDIT_CRIPTOGRAM + TOPUP_SECURE_PACK_DATA
+                
+                print("GET_CREDIT_CRIPTOGRAM")
+                _bniSCard2.LOGGER.info("GET_CREDIT_CRIPTOGRAM")
+                data = bniHTTP.devTransmit(GCC)
+                data = data[0:len(data)-2]
+                
+                print("CREDIT")
+                _bniSCard2.LOGGER.info("CREDIT")
+                data = bniService.devTransmit(data)
+                
+                print("GET GET_CREDIT_TRANSREC")
+                _bniSCard2.LOGGER.info("GET GET_CREDIT_TRANSREC")
+                GCT = CMD_GET_CREDIT_TRANSREC + data
+                data = bniHTTP.devTransmit(GCT)   
+
+                res2, hasil2 = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
+                if res2 == 0:
+                    _bniSCard2.LOGGER.info("Purse Setelah Aktivasi = "+ hasil2)
+
+                code = 0
+                result = "Success"
+            except Exception as e:
+                print(traceback.format_exc())
+                retry = retry - 1
+                print('Mengulang proses ke '+ str(retry))
+                result = "Error, see log"
+            finally:
+                bniHTTP.devClose()
+                return code, result
 
 
 
