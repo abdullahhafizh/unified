@@ -59,27 +59,21 @@ Base{
             height: 300
             anchors.horizontalCenter: parent.horizontalCenter
             visible: (imageSource=='source/insert_card_dc.png')
-            Image{
+            Rectangle {
+                color: 'white'
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: (globalScreenType == '1') ? -50 : -200
-                scale: (globalScreenType == '1') ? 0.8 : 0.5
-                source: "source/insert_card_step01.png"
-                fillMode: Image.PreserveAspectFit
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width
+                height: 400
+                AnimatedImage{
+                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "source/vm_edc_usage_guideline.gif"
+                    scale: 1.2
+                    fillMode: Image.PreserveAspectFit
+                }
             }
-//            AnimatedImage{
-//                scale: 1
-//                source: "source/arrow_down.gif"
-//                fillMode: Image.PreserveAspectFit
-            //            }
-            Image{
-                anchors.right: parent.right
-                anchors.rightMargin: (globalScreenType == '1') ? -50 : -200
-                anchors.verticalCenter: parent.verticalCenter
-                scale: (globalScreenType == '1') ? 0.8 : 0.5
-                source: "source/insert_pin_step02.png"
-                fillMode: Image.PreserveAspectFit
-            }
+
         }
 //        ColorOverlay {
 //            id: reverse_original_image
