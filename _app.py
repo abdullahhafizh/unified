@@ -37,7 +37,6 @@ from _sService import _GeneralPaymentService
 import json
 import sentry_sdk
 
-
 print("""
     App Ver: """ + _Common.VERSION + """
     Service Ver: """ + _Common.SERVICE_VERSION + """
@@ -431,6 +430,10 @@ class SlotHandler(QObject):
         _TopupService.start_master_activation_bni()
     start_master_activation_bni = pyqtSlot()(start_master_activation_bni)
 
+    def start_activation_bni_try(self):
+        _TopupService.start_activation_bni_try()
+    start_activation_bni_try = pyqtSlot()(start_activation_bni_try)
+
     def start_slave_activation_bni(self):
         _TopupService.start_slave_activation_bni()
     start_slave_activation_bni = pyqtSlot()(start_slave_activation_bni)
@@ -780,6 +783,7 @@ def s_handler():
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
     _GeneralPaymentService.GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.connect(view.rootObject().result_general_payment)
+    _TopupService.TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.connect(view.rootObject().result_activation_bni_try)
 
 
 
