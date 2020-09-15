@@ -303,8 +303,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         LOGGER.warning(('Unknown', bank, mode))
         return False
 
-
-def update_balance(_param, bank='BNI', mode='TOPUP'):
+def update_balance(_param, bank='BNI', mode='TOPUP', BNI_ACTIVATION=True):
     if bank == 'BNI' and mode == 'TOPUP':
         try:
             # param must be
@@ -337,9 +336,22 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
                 # _Common.ALLOW_DO_TOPUP = True
                 return response['data']
             else:
-                _Common.ALLOW_DO_TOPUP = False
-                _Common.online_logger([response, bank, _param], 'general')
-                return False
+                if response['data']['errorCode']=='05' and response['data']['errorDescription'] == 'General error' and BNI_ACTIVATION:                    
+                    bni = _BniActivationCommand.BniActivate()
+                    bni_act_resp, bni_act_result = bni.activate_bni_sequence()
+                    LOGGER.debug(('bni_activation', str(bni_act_resp), str(bni_act_result)))
+                    if bni_act_resp == 0:
+                        return update_balance(_param, bank, mode, False)
+                    else:
+                        response['data']['bni_activation_response'] = bni_act_resp
+                        response['data']['bni_activation_result'] = bni_act_result
+                        _Common.ALLOW_DO_TOPUP = False
+                        _Common.online_logger([response, bank, _param], 'general')
+                        return False
+                else:
+                    _Common.ALLOW_DO_TOPUP = False
+                    _Common.online_logger([response, bank, _param], 'general')
+                    return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False

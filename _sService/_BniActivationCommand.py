@@ -22,7 +22,7 @@ class BniActivate(object):
     def activate_bni_sequence(self):
         result = ""
         code = 1
-        retry = int(_Common.URL_BNI_ACTIVATION_RETRY) - 1
+        retry = int(_Common.BNI_ACTIVATION_RETRY) - 1
         
 
         while retry < 5:
