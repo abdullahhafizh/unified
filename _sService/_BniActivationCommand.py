@@ -7,7 +7,7 @@ class BniActivate(object):
 
     def __init__(self):
         self.debug = True
-        self.retry = int(_Common.URL_BNI_ACTIVATION_RETRY) - 1
+        self.retry = int(_Common.BNI_ACTIVATION_RETRY) - 1
     
     def send_command(self, param, _Command):
         try:
@@ -23,6 +23,7 @@ class BniActivate(object):
     def activate_bni_sequence(self):
         result = ""
         code = 1
+        trace_error = ''
         
         while self.retry < 5:
             print('Mencoba proses ke '+ str(5 - self.retry))
@@ -30,18 +31,18 @@ class BniActivate(object):
             try:
                 # Purse Data BNI
                 print("Purse data BNI")
-                res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
+                res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + _Common.SLOT_SAM1_BNI, output=None)
                 if res == 0:
                     _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
                 
                 # Init BNI
                 print("Init data BNI")
-                param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
+                param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+ _Common.SLOT_SAM1_BNI + '|' + _Common.TID_BNI
                 response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
                 print("Sending data INIT")
                 if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
                 
-                print("Sending http data BNI")
+                print("Sending http dan service data BNI")
                 bniHTTP = _bniSCard2.bniSCard2(mode=3, debug=True, card_no = _Common.BNI_SAM_1_NO)
                 bniService = _bniSCard2.bniSCard2(mode=4, debug=True)
 
@@ -89,24 +90,25 @@ class BniActivate(object):
                 GCT = CMD_GET_CREDIT_TRANSREC + data
                 data = bniHTTP.devTransmit(GCT)   
 
-                res2, hasil2 = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + str(4), output=None)
+                res2, hasil2 = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + _Common.SLOT_SAM1_BNI, output=None)
                 if res2 == 0:
                     _bniSCard2.LOGGER.info("Purse Setelah Aktivasi = "+ hasil2)
 
                 code = 0
-                result = "Success"
+                result = hasil2
                 bniHTTP.devClose()
                 break
             except Exception as e:
                 print(traceback.format_exc())
+                print("Error "+ e)
+                trace_error = trace_error + '\n\n' + traceback.format_exc() + '\n\n'
                 self.retry = self.retry - 1
-                print('Mengulang proses ke '+ str(self.retry))
                 if self.retry != 0:
                     continue
                 else:
                     bniHTTP.devClose()
                     code = 1
-                    result = "Error, see log"
+                    result = trace_error
                     break
         
         return code, result

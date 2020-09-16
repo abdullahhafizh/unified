@@ -11,6 +11,7 @@ from time import sleep
 from _cCommand import _Command
 import json
 from _sService import _BniActivationCommand
+import traceback
 
 
 class TopupSignalHandler(QObject):
@@ -172,7 +173,7 @@ def bni_reset_update_balance(slot=1):
             _Common.ALLOW_DO_TOPUP = True
             return 'SUCCESS_RESET_PENDING_BNI'
     except Exception as e:
-        LOGGER.warning((str(slot), str(e)))
+        LOGGER.warning((str(slot), str(traceback.format_exc())))
         return False
 
 
@@ -303,8 +304,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         LOGGER.warning(('Unknown', bank, mode))
         return False
 
-
-def update_balance(_param, bank='BNI', mode='TOPUP'):
+def update_balance(_param, bank='BNI', mode='TOPUP', BNI_ACTIVATION=True):
     if bank == 'BNI' and mode == 'TOPUP':
         try:
             # param must be
@@ -337,9 +337,23 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
                 # _Common.ALLOW_DO_TOPUP = True
                 return response['data']
             else:
-                _Common.ALLOW_DO_TOPUP = False
-                _Common.online_logger([response, bank, _param], 'general')
-                return False
+                if response['data']['errorCode']=='05' and response['data']['errorDescription'] == 'General error' and BNI_ACTIVATION:                    
+                    bni = _BniActivationCommand.BniActivate()
+                    bni_act_resp, bni_act_result = bni.activate_bni_sequence()
+                    LOGGER.debug(('bni_activation', str(bni_act_resp), str(bni_act_result)))
+                    if bni_act_resp == 0:
+                        _param['card_info'] = bni_act_result
+                        return update_balance(_param, bank, mode, False)
+                    else:
+                        response['data']['bni_activation_response'] = bni_act_resp
+                        response['data']['bni_activation_result'] = bni_act_result
+                        _Common.ALLOW_DO_TOPUP = False
+                        _Common.online_logger([response, bank, _param], 'general')
+                        return False
+                else:
+                    _Common.ALLOW_DO_TOPUP = False
+                    _Common.online_logger([response, bank, _param], 'general')
+                    return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
@@ -460,16 +474,35 @@ def refill_zero_bni(slot=1):
 def activation_bni_try(slot=1):
     _slot = slot - 1
     # param = _QPROX.QPROX['RAW_APDU']+'|'+str(4)+'|'+'0084000008'
-    bni = _BniActivationCommand.BniActivate()
+    # bni = _BniActivationCommand.BniActivate()
     # response, result = bni.activate_bni_sequence()
-    response, result = bni.activate_bni_sequence()
-        
-    if response == 0:
-        TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.emit('ACTIVATION_BNI_TRY|SUCCESS','Success')
+    # response, result = bni.activate_bni_sequence()
+    try:
+        response = {'data': {'errorCode': '05', 'errorDescription': 'General error'}, 'response': {'code': 400, 'message': 'Something Went Wrong', 'latency': 0.67454695701599, 'host': '172.31.253.204'}}
+        hasil = False
+        BNI_ACTIVATION = True
+
+        if response['data']['errorCode']=='05' and response['data']['errorDescription'] == 'General error' and BNI_ACTIVATION:    
+            bni = _BniActivationCommand.BniActivate()
+            bni_act_resp, bni_act_result = bni.activate_bni_sequence()
+            LOGGER.debug(('bni_activation', str(bni_act_resp), str(bni_act_result)))
+            if bni_act_resp == 0:
+                hasil = update_balance(_param, bank, mode, False)
+            else:
+                response['data']['bni_activation_response'] = bni_act_resp
+                response['data']['bni_activation_result'] = bni_act_result
+                _Common.ALLOW_DO_TOPUP = False
+                _Common.online_logger([response, bank, _param], 'general')
+                hasil = False
+
+        LOGGER.debug(("activation_bni_try" ,"Hasil update balance ", str(hasil)))
+        LOGGER.debug(("activation_bni_try", "Response Update Balance ", str(response)))
+
+        TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.emit('ACTIVATION_BNI_TRY|FAILURE', 'LIHAT LOG')
         sleep(1)
-    else:
-        TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.emit('ACTIVATION_BNI_TRY|FAILURE','RAW_APDU|FAILURE')
-        sleep(1)
+    except Exception as e:
+        LOGGER.debug(("activation_bni_try" ,"Hasil Exception", traceback.format_exc()))
+    
 
 def start_check_online_topup(mode, payload):
     _Helper.get_thread().apply_async(ping_online_topup, (mode, payload,))

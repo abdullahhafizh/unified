@@ -2,6 +2,7 @@ import requests
 import json
 import time
 import binascii
+from _cConfig import _Common
 
 class HttpError(IOError):  # noqa
     pass
@@ -14,9 +15,17 @@ class BniActivationHTTPRequest(object):
         self.sequence = 0
 
     def send_data(self, card_no, data):
+        startTime = time.time()
+        timeOut = float(_Common.BNI_GET_REFERENCE_TIMEOUT) * 60
+        
         while self.reff_no == -1:
             self.reff_no = self.get_reference_no()
-            if self.reff_no == -1: time.sleep(10)
+            if self.reff_no == -1: 
+                curTime = time.time()
+                if (curTime-startTime) > timeOut:
+                    raise Exception("BNI Get Reference Number Timeout: Started:" + str(startTime) + ", Ended: " + str(curTime))
+                else : time.sleep(10)
+
         self.sequence = self.sequence+1 
         if type(data) is bytes or type(data) is bytearray:
             code, re_apdu = self.send_apdu(card_no,self.reff_no,binascii.b2a_hex(data).decode("utf-8"),self.sequence)
