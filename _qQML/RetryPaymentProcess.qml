@@ -1158,8 +1158,8 @@ Base{
 
     function waitAndExitFor(second){
         popup_loading.open();
-        popup_loading.textMain = 'Harap Tunggu Sebentar';
-        popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
+        popup_loading.textMain = 'Menutup Sesi Pembayaran Anda';
+        popup_loading.textSlave = 'Anda Masih Dapat Melanjutkan Transaksi Dari Voucher Tertera';
         back_button.visible = false;
         cancel_button_global.visible = false;
         delay(second*1000, function(){
