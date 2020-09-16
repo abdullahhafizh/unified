@@ -7,7 +7,7 @@ class BniActivate(object):
 
     def __init__(self):
         self.debug = True
-        self.retry = int(_Common.BNI_ACTIVATION_RETRY) - 1
+        self.retry = int(_Common.BNI_ACTIVATION_RETRY)
     
     def send_command(self, param, _Command):
         try:
@@ -25,9 +25,10 @@ class BniActivate(object):
         code = 1
         trace_error = ''
         
-        while self.retry < 5:
-            print('Mencoba proses ke '+ str(5 - self.retry))
-            print('Mengulang proses ke '+ str(self.retry))
+        while self.retry < int(_Common.BNI_ACTIVATION_RETRY) or self.retry == int(_Common.BNI_ACTIVATION_RETRY):
+
+            print('Mencoba proses ke '+ str((int(_Common.BNI_ACTIVATION_RETRY) - self.retry) + 1))
+
             try:
                 # Purse Data BNI
                 print("Purse data BNI")
@@ -52,18 +53,6 @@ class BniActivate(object):
                 APDU_TAPCASH_SELECT = b"\x00\xA4\x04\x00\x08\xA0\x00\x42\x4E\x49\x10\x00\x01"
                 CMD_GET_CREDIT_CRIPTOGRAM = b"\x80\x33\x00\x00\x73"
                 CMD_GET_CREDIT_TRANSREC = b"\x80\x37\x14\x01\x32"
-
-                # bniService.cmdTerminalInit(TM_KEY, IV, BNI_PIN)
-        
-                """ CREDIT PROCESSING """ 
-                print("Start CREDIT PROCESSING")
-                # print("APDU TAPCASH SELECT")
-                # _bniSCard2.LOGGER.info("Start CREDIT PROCESSING")
-                # _bniSCard2.LOGGER.info("APDU TAPCASH SELECT")
-                # bniHTTP.devTransmit(APDU_TAPCASH_SELECT)    
-            
-                """ bniTopupSecureReadPurse """
-                # bniHTTP.cmdSecureReadPurse()
 
                 """ cmd_tapcash_get_chalange """
                 CRN = bniService.cmdGetCRN()   
@@ -100,7 +89,6 @@ class BniActivate(object):
                 break
             except Exception as e:
                 print(traceback.format_exc())
-                print("Error "+ e)
                 trace_error = trace_error + '\n\n' + traceback.format_exc() + '\n\n'
                 self.retry = self.retry - 1
                 if self.retry != 0:
