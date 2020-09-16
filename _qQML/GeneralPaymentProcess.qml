@@ -1133,10 +1133,10 @@ Base{
 //                    details.payment_received = '0';
 //                    release_print();
 //                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
+                    details.process_error = 1;
+                    details.payment_error = 1;
                     if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
-                        details.process_error = 1;
-                        details.payment_error = 1;
                         details.payment_received = receivedPayment.toString();
                         details.pending_trx_code = uniqueCode;
                         console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);

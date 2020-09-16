@@ -249,13 +249,15 @@ def do_check_trx(reff_no):
                 'retry_able': _Common.check_retry_able(remarks)
             }
             # Add Debit & QR Payment Check
-            if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay']:
+            if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee']:
                 r['retry_able'] = 0
+                r['status'] = 'FAILED'
                 check_trx_id = remarks.get('host_trx_id', r['product_id'])
                 status, result = validate_payment_history(r['payment_method'], check_trx_id)
                 if status is True:
                     remarks['payment_received'] = str(result['amount'])
                     remarks['payment_details'] = result
+                    r['status'] = 'PENDING'
                     r['receipt_amount'] = str(result['amount'])
                     if r['payment_method'].lower() != 'debit':
                         r['payment_method'] = result['provider']
