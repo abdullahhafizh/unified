@@ -56,9 +56,9 @@ Base{
     CircleButton{
         id: back_button
         anchors.left: parent.left
-        anchors.leftMargin: 30
+        anchors.leftMargin: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 50
         button_text: 'BATAL'
         modeReverse: true
         visible: !disableButton
@@ -74,9 +74,9 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 30
+        anchors.rightMargin: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 50
         button_text: (modeConfirm) ? 'LANJUT' : 'O K'
         modeReverse: true
         visible: !disableButton

@@ -61,7 +61,6 @@ Base{
         base.result_topup_readiness.connect(topup_readiness);
         base.result_auth_qprox.connect(ka_login_status);
         base.result_get_ppob_product.connect(get_ppob_product);
-        base.result_activation_bni_try.connect(get_respon_bni_try);
     }
 
     Component.onDestruction: {
@@ -74,20 +73,6 @@ Base{
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_auth_qprox.disconnect(ka_login_status);
         base.result_get_ppob_product.disconnect(get_ppob_product);
-        base.result_activation_bni_try.connect(get_respon_bni_try);
-    }
-
-
-    function get_respon_bni_try(a,b){
-        popup_loading.close();
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_respon_bni_try', now, a);
-        console.log('Get nilai b', now, b);
-        if(a == 'ACTIVATION_BNI_TRY|SUCCESS'){
-            bni_activate_try_notif('',b)
-        }else{
-            bni_activate_try_notif(a,b)
-        }
     }
 
     function get_ppob_product(p){
@@ -226,20 +211,6 @@ Base{
         press = '0';
         switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
         return;
-    }
-
-    function bni_activate_try_notif(response, result){
-        press = '0';
-        console.log('Get nilai result dalam function', result);
-        console.log('Get nilai response dalam function', response);
-        if (response == 'ACTIVATION_BNI_TRY|FAILURE'){
-            switch_frame('source/smiley_down.png', result, response, 'closeWindow', true )
-            return;
-        }
-        else{
-            switch_frame('source/thumb_ok.png', result, response, 'closeWindow', true )
-            return;
-        }
     }
 
     function kalog_notif(){
@@ -464,12 +435,13 @@ Base{
                         _SLOT.start_trigger_edc_settlement();
                     }
                 }
+                //Handle Button Blinking
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
-                    search_trx_button.color = 'silver';
+                    search_trx_button.color = 'white';
                     wa_voucher_button.color = '#4FCE5D';
                 } else {
-                    search_trx_button.color = 'white';
+                    search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout != 999999){
@@ -526,39 +498,6 @@ Base{
     }
 
     Rectangle{
-        id: activation_bni_button_try
-        color: 'white'
-        anchors.top: parent.top
-        anchors.topMargin: 300
-        anchors.left: parent.left
-        anchors.leftMargin: -30
-        width: 100
-        height: 80
-        Image {
-            id: activate_bni_image_try
-            width: 80
-            height: 90
-            anchors.horizontalCenterOffset: 10
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.horizontalCenter: parent.horizontalCenter
-            scale: 0.75
-            source: "source/success.png"
-            fillMode: Image.PreserveAspectFit
-        }
-
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Activate BNI Try"');
-                console.log('activation_bni_button_try is pressed..!');
-                popup_loading.open();
-                _SLOT.start_activation_bni_try();
-            }
-        }
-    }
-
-    Rectangle{
         id: search_trx_button
         color: 'white'
         radius: 20
@@ -570,7 +509,7 @@ Base{
         height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
-            text: 'CEK\nTRANSAKSI'
+            text: 'CEK/LANJUT\nTRANSAKSI'
             font.pixelSize: (globalScreenType == '1') ? 30 : 20
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom

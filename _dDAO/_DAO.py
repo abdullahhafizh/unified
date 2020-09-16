@@ -87,6 +87,24 @@ def insert_transaction_failure(param):
     return _Database.insert_update(sql=sql, parameter=param)
 
 
+def get_transaction_failure(param):
+    """
+      reff_no         VARCHAR(100) PRIMARY KEY NOT NULL,
+      tid             VARCHAR(100)             NOT NULL,
+    """
+    sql = "SELECT * FROM TransactionFailure WHERE trxid LIKE '%{}' AND tid = '{}' ".format(param['reff_no'], param['tid'])
+    return _Database.get_query(sql=sql, parameter={})
+
+
+def delete_transaction_failure(param):
+    """
+      reff_no           VARCHAR(100) PRIMARY KEY NOT NULL,
+      tid             VARCHAR(100)             NOT NULL,
+    """
+    condition = " trxid LIKE '%{}' AND tid = '{}' ".format(param['reff_no'], param['tid'])
+    flush_table('TransactionFailure', condition)
+
+
 def update_transaction(param):
     """
       trxid           VARCHAR(100) PRIMARY KEY NOT NULL,
@@ -264,6 +282,11 @@ def update_product_stock(param):
 
 def get_product_stock():
     sql = " SELECT * FROM ProductStock WHERE status > 1 "
+    return _Database.get_query(sql=sql, parameter={})
+
+
+def get_product_stock_by_slot_status(status):
+    sql = " SELECT stock FROM ProductStock WHERE status = {} ".format(str(status))
     return _Database.get_query(sql=sql, parameter={})
 
 

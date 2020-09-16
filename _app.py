@@ -37,6 +37,7 @@ from _sService import _GeneralPaymentService
 import json
 import sentry_sdk
 
+
 print("""
     App Ver: """ + _Common.VERSION + """
     Service Ver: """ + _Common.SERVICE_VERSION + """
@@ -338,6 +339,11 @@ class SlotHandler(QObject):
         _BILL.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
+    def start_set_direct_price_with_current(self, current, price):
+        # _MEI.start_set_direct_price(price)
+        _BILL.start_set_direct_price_with_current(current, price)
+    start_set_direct_price_with_current = pyqtSlot(str, str)(start_set_direct_price_with_current)
+
     def start_multiple_eject(self, attempt, multiply):
         _CD.start_multiple_eject(attempt, multiply)
     start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
@@ -430,10 +436,6 @@ class SlotHandler(QObject):
         _TopupService.start_master_activation_bni()
     start_master_activation_bni = pyqtSlot()(start_master_activation_bni)
 
-    def start_activation_bni_try(self):
-        _TopupService.start_activation_bni_try()
-    start_activation_bni_try = pyqtSlot()(start_activation_bni_try)
-
     def start_slave_activation_bni(self):
         _TopupService.start_slave_activation_bni()
     start_slave_activation_bni = pyqtSlot()(start_slave_activation_bni)
@@ -514,9 +516,9 @@ class SlotHandler(QObject):
         _PPOBService.start_do_topup_ppob(payload)
     start_do_topup_ppob = pyqtSlot(str)(start_do_topup_ppob)
 
-    def start_check_trx_online(self, reff_no):
-        _PPOBService.start_check_trx_online(reff_no)
-    start_check_trx_online = pyqtSlot(str)(start_check_trx_online)
+    def start_check_status_trx(self, reff_no):
+        _PPOBService.start_check_status_trx(reff_no)
+    start_check_status_trx = pyqtSlot(str)(start_check_status_trx)
 
     def start_get_qr_gopay(self, payload):
         _QRPaymentService.start_get_qr_gopay(payload)
@@ -783,7 +785,6 @@ def s_handler():
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
     _GeneralPaymentService.GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.connect(view.rootObject().result_general_payment)
-    _TopupService.TP_SIGNDLER.SIGNAL_ACTIVATE_BNI_TRY.connect(view.rootObject().result_activation_bni_try)
 
 
 
@@ -807,16 +808,16 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
-    sentry_sdk.init(
-        "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-        max_breadcrumbs=10,
-        debug=False,
-        environment=_Common.APP_MODE,
-        server_name='VM-ID '+_Common.TID,
-        release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
-        default_integrations=False,
-        )
     try:
+        sentry_sdk.init(
+            "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
+            max_breadcrumbs=10,
+            debug=False,
+            environment=_Common.APP_MODE,
+            server_name='VM-ID '+_Common.TID,
+            release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+            default_integrations=False,
+        )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',
@@ -1094,9 +1095,6 @@ if __name__ == '__main__':
     _KioskService.alter_table('_DailySummary.sql')
     sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
-    _KioskService.alter_table('_SAMAudit.sql')
-    sleep(1)
-    print("pyt: HouseKeeping Old Local Data/Files...")
     _KioskService.house_keeping(age_month=3)
     sleep(1)
     print("pyt: Syncing Remote Task...")
@@ -1110,10 +1108,10 @@ if __name__ == '__main__':
     sleep(1)
     print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
-    sleep(1)
-    print("pyt: Syncing Transaction Failure Data...")
-    _Sync.start_sync_data_transaction_failure()
-    # sleep(.5)
+    # sleep(1)
+    # print("pyt: Syncing Transaction Failure Data...")
+    # _Sync.start_sync_data_transaction_failure()
+    # sleep(1)
     # print("pyt: Syncing Topup Records...")
     # _Sync.start_sync_topup_records()
     sleep(1)

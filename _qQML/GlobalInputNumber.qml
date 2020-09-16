@@ -32,11 +32,21 @@ Base{
     property bool qrJakoneEnable: false
     property var totalPaymentEnable: 0
 
+    property bool retryAbleTransaction: false
+
+    property var cardData: undefined
+    property int cardBalance: 0
+
     property bool isConfirm: false
     property var ppobMode
     property var ppobTagihanData
     property var vCollectionMode
     property var vCollectionData
+
+    property var retryCategory
+    property var retryDetails
+    property int receivedPayment: 0
+    property int pendingPayment: 0
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -49,8 +59,14 @@ Base{
             my_timer.start();
             define_wording();
             isConfirm = false;
+            retryCategory = undefined;
             vCollectionMode = undefined;
             vCollectionData = undefined;
+            retryAbleTransaction = false;
+            receivedPayment = 0;
+            pendingPayment = 0;
+            cardData = undefined;
+            cardBalance = 0;
             press = '0'
 
         }
@@ -69,6 +85,7 @@ Base{
         base.result_check_voucher.connect(get_check_voucher);
         base.result_use_voucher.connect(get_use_voucher);
         base.result_cd_move.connect(card_eject_result);
+        base.result_balance_qprox.connect(get_balance);
 
     }
 
@@ -81,6 +98,7 @@ Base{
         base.result_check_voucher.disconnect(get_check_voucher);
         base.result_use_voucher.disconnect(get_use_voucher);
         base.result_cd_move.disconnect(card_eject_result);
+        base.result_balance_qprox.disconnect(get_balance);
 
     }
 
@@ -106,6 +124,7 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 abc.counter -= 1
+                notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -131,6 +150,66 @@ Base{
         }
     }
 
+
+    function get_balance(text){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_balance', text, now);
+        press = '0';
+        popup_loading.close();
+        var result = text.split('|')[1];
+        if (result == 'ERROR'){
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
+            return;
+        } else {
+            var info = JSON.parse(result);
+            var bankName = info.bank_name;
+            var ableTopupCode = info.able_topup;
+            if (ableTopupCode !="0000"){
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
+                return;
+            }
+            cardBalance = parseInt(info.balance);
+            cardData = {
+                balance: info.balance,
+                card_no: info.card_no,
+                bank_type: info.bank_type,
+                bank_name: info.bank_name,
+            }
+            var provider = '';
+            switch(info.bank_name){
+            case 'MANDIRI':
+                provider = 'e-Money Mandiri';
+                break;
+            case 'BNI':
+                provider = 'Tapcash BNI';
+                break;
+            case 'BRI':
+                provider = 'Brizzi BRI';
+                break;
+            case 'BCA':
+                provider = 'Flazz BCA';
+                break;
+            case 'DKI':
+                provider = 'JakCard DKI';
+                break;
+
+            }
+            //Define Data Card, Amount Button, Topup Availability
+            var prev_admin_fee = retryDetails.raw.admin_fee
+            var prev_topup_denom = retryDetails.raw.value
+            retryDetails.raw = {
+                value: prev_topup_denom,
+                provider: provider,
+                admin_fee: prev_admin_fee,
+                card_no: cardData.card_no,
+                prev_balance: cardData.balance,
+                bank_type: cardData.bank_type,
+                bank_name: cardData.bank_name,
+            }
+            my_layer.push(retry_payment_process, {details: retryDetails, cardNo: cardData.card_no, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
+        }
+    }
+
     function card_eject_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('card_eject_result', now, r);
@@ -150,13 +229,14 @@ Base{
             return;
         }
         if (r == 'EJECT|SUCCESS') {
-            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
-            var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
-            _SLOT.start_use_voucher(textInput, reff_no_voucher);
+            if (vCollectionData!=undefined){
+                switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+                var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
+                _SLOT.start_use_voucher(textInput, reff_no_voucher);
+            }
             return;
         }
     }
-
 
     function get_use_voucher(v){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -167,7 +247,6 @@ Base{
             return;
         }
     }
-
 
     function get_check_voucher(v){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -202,7 +281,6 @@ Base{
         generateConfirm(rows, true);
     }
 
-
     function get_check_ppob_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
 //        console.log('get_check_ppob_result', now, r);
@@ -236,7 +314,6 @@ Base{
         generateConfirm(rows, true);
     }
 
-
     function do_set_confirm(_mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('Confirmation Flagged By', _mode, now)
@@ -263,36 +340,53 @@ Base{
             case 'dki_topup':
                 console.log('DKI Topup...')
                 break;
-
             }
         }
     }
 
+
+    function set_pending_trx_data(obj){
+        if (obj != undefined){
+            retryDetails = obj;
+            delete retryDetails.payment_error;
+            delete retryDetails.process_error;
+            console.log('set_pending_trx_data', JSON.stringify(retryDetails));
+        }
+    }
+
+
     function get_trx_check_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-//        console.log('get_trx_check_result', now, r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
-        var res = r.split('|')[1]
-        if (['ERROR', 'MISSING_REFF_NO'].indexOf(res) > -1){
-            false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', res);
+        console.log('get_trx_check_result', now, r);
+        var res = r.replace('TRX_CHECK|', '')
+        if (['ERROR', 'MISSING_REFF_NO', 'TRX_NOT_FOUND'].indexOf(res) > -1){
+            false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', 'Data Transaksi Tidak Ditemukan');
             return;
         }
+//        console.log('get_trx_check_result', now, res);
         var i = JSON.parse(res);
-        console.log('get_trx_check_result', now, res);
         var trx_name = '';
+        retryCategory = i.category;
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
             trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
-        if (i.category == 'SHOP') trx_name = i.category + ' ' + i.remarks.provider;
-        var amount = FUNC.insert_dot(i.receipt_amount.toString());
+        var total_payment = i.amount.toString();
+        if (i.category == 'SHOP'){
+            trx_name = i.category + ' ' + i.remarks.provider;
+            total_payment = i.remarks.value.toString();
+        }
+        var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
-        if (i.status!='PAID' || i.status=='FAILED') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
+//        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
+        var trx_id = FUNC.get_value(i.product_id);
+        if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
         var rows = [
-                    {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
+                    {label: 'No Transaksi', content: trx_id},
                     {label: 'Tanggal', content: FUNC.get_value(i.date)},
                     {label: 'Jenis Transaksi', content: trx_name},
-                    {label: 'Nilai Bayar', content: FUNC.insert_dot(i.amount.toString())},
+                    {label: 'Nilai Bayar', content: FUNC.insert_dot(total_payment)},
                     {label: 'Nilai Diterima', content: amount},
                     {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
                     {label: 'Status', content: i.status}
@@ -312,6 +406,17 @@ Base{
                     ]
         }
         generateConfirm(rows, false, 'backToMain');
+        // Set Value For Retry Transaction If Status Pending
+        if (i.status=='PENDING') {
+            receivedPayment = parseInt(i.receipt_amount);
+            pendingPayment = parseInt(i.remarks.value) - receivedPayment;
+            set_pending_trx_data(i.remarks);
+            if (i.retry_able == 1) {
+                retryAbleTransaction = true;
+                global_confirmation_frame.no_button();
+            }
+        }
+        // ---
     }
 
     function generateConfirm(rows, confirmation, closeMode, timer){
@@ -326,7 +431,7 @@ Base{
             return;
         }
         if (mode=='SEARCH_TRX'){
-            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang) Nomor Transaksi Anda';
+            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang)/Kode Voucher Transaksi Anda';
             min_count = 6;
             return;
         }
@@ -498,6 +603,7 @@ Base{
 
     }
 
+
     TextRectangle{
         id: textRectangle
         width: 650
@@ -509,6 +615,7 @@ Base{
         border.color: CONF.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }
+
 
     TextInput {
         id: inputText
@@ -584,7 +691,7 @@ Base{
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
         modeReverse: true
-        visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible
+        visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible && (textInput.length >= 6)
         blinkingMode: true
         MouseArea{
             anchors.fill: parent
@@ -592,47 +699,45 @@ Base{
                 console.log('button "LANJUT" is pressed..!')
                 _SLOT.user_action_log('press "LANJUT" In Input Number Page');
                 if(press != "0") return;
-                if (max_count+1 > textInput.length){
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                    press = "1"
+                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                press = "1"
 //                    console.log('number input', now, textInput);
-                    switch(mode){
-                    case 'PPOB':
-                        popup_loading.open()
-                        if (checkMode){
-                            var msisdn = textInput;
-                            var product_id = selectedProduct.product_id;
-                            ppobMode = 'tagihan';
-                            _SLOT.start_check_ppob_product(msisdn, product_id);
-                            return;
-                        } else {
-                            var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
-                            var rows = [
-                                {label: 'Tanggal', content: now},
-                                {label: 'Produk', content: product_name},
-                                {label: 'No Tujuan', content: textInput},
-                                {label: 'Jumlah', content: '1'},
-                                {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-                                {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-                            ]
-                            ppobMode = 'non-tagihan';
-                            generateConfirm(rows, true);
-                            return;
-                        }
-                    case 'SEARCH_TRX':
-                        console.log('Checking Transaction Number : ', now, textInput);
-                        popup_loading.open('Memeriksa Transaksi Anda...')
-                        _SLOT.start_check_trx_online(textInput);
-                        return
-                    case 'WA_VOUCHER':
-                        console.log('Checking WA Invoice Number : ', now, textInput);
-                        popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
-                        _SLOT.start_check_voucher(textInput);
+                switch(mode){
+                case 'PPOB':
+                    popup_loading.open()
+                    if (checkMode){
+                        var msisdn = textInput;
+                        var product_id = selectedProduct.product_id;
+                        ppobMode = 'tagihan';
+                        _SLOT.start_check_ppob_product(msisdn, product_id);
                         return;
-                    default:
-                        false_notif('No Handle Set For This Action', 'backToMain');
-                        return
+                    } else {
+                        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+                        var rows = [
+                            {label: 'Tanggal', content: now},
+                            {label: 'Produk', content: product_name},
+                            {label: 'No Tujuan', content: textInput},
+                            {label: 'Jumlah', content: '1'},
+                            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                        ]
+                        ppobMode = 'non-tagihan';
+                        generateConfirm(rows, true);
+                        return;
                     }
+                case 'SEARCH_TRX':
+                    console.log('Checking Transaction Number : ', now, textInput);
+                    popup_loading.open('Memeriksa Transaksi Anda...')
+                    _SLOT.start_check_status_trx(textInput);
+                    return
+                case 'WA_VOUCHER':
+                    console.log('Checking WA Invoice Number : ', now, textInput);
+                    popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
+                    _SLOT.start_check_voucher(textInput);
+                    return;
+                default:
+                    false_notif('No Handle Set For This Action', 'backToMain');
+                    return
                 }
             }
         }
@@ -661,6 +766,68 @@ Base{
         id: global_confirmation_frame
         calledFrom: 'global_input_number'
 
+        BoxTitle{
+            id: notice_retry_able
+            width: 1200
+            height: 120
+            visible: retryAbleTransaction
+            radius: 50
+            fontSize: 30
+            border.width: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 150
+            anchors.horizontalCenter: parent.horizontalCenter
+            title_text: 'TRANSAKSI ANDA DAPAT DILANJUTKAN\nSILAKAN TEKAN TOMBOL LANJUT'
+    //        modeReverse: (abc.counter %2 == 0) ? true : false
+            boxColor: CONF.frame_color
+        }
+
+        CircleButton{
+            id: cancel_button_confirmation
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL" For Retry Transaction');
+                    console.log('Press "BATAL" For Retry Transaction');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+
+        CircleButton{
+            id: proceed_button
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            visible: retryAbleTransaction
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT" For Retry Transaction');
+                    console.log('Press "LANJUT" For Retry Transaction');
+                    if (press != '0') return;
+                    press = '1';
+                    if (retryCategory == 'TOPUP'){
+                        press = '0';
+                        preload_check_card.open();
+                        return;
+                    }
+                    my_layer.push(retry_payment_process, {details: retryDetails, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
+                }
+            }
+        }
+
     }
 
 
@@ -681,6 +848,47 @@ Base{
     }
 
 
+    PreloadCheckCard{
+        id: preload_check_card
+        CircleButton{
+            id: cancel_button_preload
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_preload
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    preload_check_card.close();
+                    if (press!='0') return;
+                    press = '1'
+                    popup_loading.open();
+                    _SLOT.start_check_card_balance();
+                }
+            }
+        }
+    }
 
 
 }

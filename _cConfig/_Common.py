@@ -45,6 +45,7 @@ if TEST_MODE is True:
 
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
+REFUND_FEATURE = True if _ConfigParser.get_set_value('GENERAL', 'refund^feature', '1') == '1' else False
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
 
@@ -930,9 +931,21 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        # check_trx = _DAO.check_trx_failure(trxid)
-        # if len(check_trx) == 0:
-        #     _DAO.insert_transaction_failure(__param)
+        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee']:
+            remarks = json.loads(remarks)
+            remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
+            remarks = json.dumps(remarks)
+            __param['remarks'] = remarks
+        # Only Store Pending Transaction To Transaction Failure Table
+        if failure_type == 'PENDING_TRANSACTION':
+            _DAO.delete_transaction_failure({
+                'reff_no': trxid,
+                'tid': TID,            
+            })
+            _DAO.insert_transaction_failure(__param)
+            # Auto Assign syncFlag
+            __param['key'] = __param['trxid']
+            _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')                
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
         LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
@@ -1296,3 +1309,46 @@ def generate_collection_data():
 
 
 LAST_PPOB_TRX = None
+
+# SHOP 
+# {'details': '{"date":"08/06/20","epoch":1591589266780,"payment":"cash","shop_type":"shop","time":"11:07:46","qty":1,"value":"5000","provider":"Test Card 2","admin_fee":"0","status":102,"raw":{"stock":74,"image":"source/card/20200306163800DF0FfQIKJ31s6ZEt33.png","remarks":"Test Card 2","init_price":5000,"pid":"dfaw2","stid":"dfaw2-102-001122334455","tid":"001122334455","syncFlag":1,"name":"Test Card 2","status":102,"createdAt":1591589169000,"sell_price":5000},"payment_details":{"total":"10000","history":"10000"},"payment_received":"10000"}', 'name': 'Test Card 2', 'price': 5000, 'syncFlag': 0, 'createdAt': 1591589279000, 'status': 1, 'pid': 'shop1591589266780'}
+
+# TOPUP
+# {'createdAt': 1591585430000, 'status': 1, 'pid': 'topup1591585396411', 'syncFlag': 0, 'name': 'e-Money Mandiri', 'details': '{"date":"08/06/20","epoch":1591585396411,"payment":"cash","shop_type":"topup","time":"10:03:16","qty":1,"value":"2000","provider":"e-Money Mandiri","admin_fee":1500,"raw":{"admin_fee":1500,"bank_name":"MANDIRI","bank_type":"0","card_no":"6032984075869341","prev_balance":"108110","provider":"e-Money Mandiri","value":"2000"},"status":"1","final_balance":"108610","denom":"500","payment_details":{"history":"10000","total":"10000"},"payment_received":"10000","topup_details":{"bank_name":"MANDIRI","card_no":"6032984075869341","bank_id":"1","report_sam":"603298407586934100770D706E86B69161010101000110F401000042A80100080620100326000000060006831D21CF","c2c_mode":"1","last_balance":"108610","report_ka":"603298180000008500030D706E86B69161510101880120D0070000C02D080008062010032600000006240003DC05000042BC14"}}'
+
+
+def check_retry_able(data):
+    if _Helper.empty(data) is True:
+        return 0
+    # Topup BRI Retry Validation Also User Connection Status
+    if not _Helper.is_online(_Helper.whoami()):
+        return 0
+    if data.get('shop_type') == 'ppob':
+        return 1
+    if data.get('shop_type') == 'shop':
+        try:
+            slot_cd = data.get('raw').get('status')
+            check_stock = _DAO.get_product_stock_by_slot_status(slot_cd)
+            if len(check_stock) == 0:
+                return 0
+            if check_stock[0]['stock'] == 0:
+                return 0
+            return 1
+        except Exception as e:
+            LOGGER.warning((e))
+            return 0
+    if data.get('shop_type') == 'topup':
+        # Can Change Topup Provider
+        try:
+            topup_value = int(data.get('value', '0'))
+            if MANDIRI_ACTIVE_WALLET > topup_value:
+                return 1
+            if BNI_ACTIVE_WALLET > topup_value:
+                return 1
+        except Exception as e:
+            LOGGER.warning((e))
+            return 0
+    return 0
+
+
+LAST_QR_PAYMENT_HOST_TRX_ID = None

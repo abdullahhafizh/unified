@@ -295,6 +295,10 @@ def print_topup_trx(p, t, ext='.pdf'):
                         pdf.ln(small_space)
                         pdf.set_font(USED_FONT, '', regular_space)
                         pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+                # elif 'pending_trx_code' in p.keys():
+                #     pdf.ln(small_space)
+                #     pdf.set_font(USED_FONT, '', regular_space)
+                #     pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
                 # pdf.ln(small_space*2)
                 # pdf.set_font(USED_FONT, '', regular_space-1)
                 # pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
@@ -341,6 +345,13 @@ def print_topup_trx(p, t, ext='.pdf'):
                         pdf.ln(small_space)
                         pdf.set_font(USED_FONT, '', regular_space)
                         pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+                elif 'pending_trx_code' in p.keys():
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space-1)
                 pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -379,6 +390,13 @@ def print_topup_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
             pdf.ln(small_space*4)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -411,6 +429,8 @@ def print_topup_trx(p, t, ext='.pdf'):
         if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
             if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
                 failure = 'TOPUP_FAILURE'
+            if 'pending_trx_code' in p.keys():
+                failure = 'PENDING_TRANSACTION'
             # Send Failure To Backend
             _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
@@ -496,6 +516,13 @@ def print_shop_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
                 # price_unit = str(int(int(p['value'])/p['qty']))
                 # sub_total = p['value']
                 # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
@@ -540,6 +567,13 @@ def print_shop_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
             pdf.ln(small_space*3)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -572,6 +606,8 @@ def print_shop_trx(p, t, ext='.pdf'):
         if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
             if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
                 failure = 'TOPUP_FAILURE'
+            if 'pending_trx_code' in p.keys():
+                failure = 'PENDING_TRANSACTION'
             # Send Failure To Backend
             _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
@@ -683,6 +719,13 @@ def print_ppob_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, '', regular_space+2)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
@@ -713,6 +756,13 @@ def print_ppob_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
             pdf.ln(small_space*3)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -735,6 +785,10 @@ def print_ppob_trx(p, t, ext='.pdf'):
         # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
         if p['payment'].upper() == 'CASH':
             _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
+        if 'payment_error' in p.keys() and 'pending_trx_code' in p.keys():
+            failure = 'PENDING_TRANSACTION'
+            # Send Failure To Backend
+            _Common.store_upload_failed_trx(trxid, trxid, cash, failure, p.get('payment', 'cash'), json.dumps(p))
         if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
             print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
@@ -744,7 +798,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
 
 def sale_reprint_global(ext='.pdf'):
     sale_print_global(ext=ext, use_last=True)
-
+    
 
 def clean_number(sn):
     return re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(sn))

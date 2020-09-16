@@ -210,6 +210,7 @@ Base{
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
+//            console.log('TIMER_QR_FRAME', showDuration);
             showDuration -= 1;
             if (showDuration < 30) textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
             if (showDuration <= 7) {
@@ -255,6 +256,9 @@ Base{
                 switch(calledFrom){
                 case 'general_payment_process':
                     general_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
+                    break;
+                case 'retry_payment_process':
+                    retry_payment_process.framingSignal('CALLBACK_ACTION|PRINT_QR_TIMEOUT_RECEIPT')
                     break;
                 }
             }

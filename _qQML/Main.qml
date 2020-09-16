@@ -126,7 +126,6 @@ Rectangle {
     signal result_card_log_history(string str)
     signal result_do_online_topup(string str)
     signal result_general_payment(string str)
-    signal result_activation_bni_try(string str, string str)
 
 
     //==================================================================================================//
@@ -303,6 +302,11 @@ Rectangle {
 
     Component {id: card_prepaid_history
         CardPrepaidHistory{}
+    }
+
+    Component {id: retry_payment_process
+        RetryPaymentProcess{}
+
     }
 
 //    Component {id: global_confirm_frame

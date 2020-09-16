@@ -148,8 +148,8 @@ def do_pending_request_job():
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         # LOGGER.info(('count', len(pending_jobs)))
-        if len(pending_jobs) > 0:
-            pending_jobs = pending_jobs.sort()
+        if len(pending_jobs) > 0 and IDLE_MODE is True:
+            # pending_jobs = pending_jobs.sort()
             for p in pending_jobs:
                 try:
                     jobs_path = os.path.join(_Common.JOB_PATH, p)
@@ -181,7 +181,7 @@ def do_pending_request_job():
                 except Exception as e:
                     LOGGER.warning((e, p))
                 continue
-        sleep(100.100)
+        sleep(30.30)
 
 
 def start_do_pending_upload_job():
