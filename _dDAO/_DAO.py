@@ -171,6 +171,17 @@ def list_uncollected_cash():
     return _Database.get_query(sql=sql, parameter={})
 
 
+def mark_uncollected_cash(param):
+    """
+    :param param:
+    'collectedAt'
+    'collectedUser'
+    :return: _Database.insert_update
+    """
+    sql = " UPDATE Cash SET updatedAt=:updatedAt, collectedAt=:collectedAt, collectedUser=:collectedUser Where collectedAt is Null "
+    return _Database.insert_update(sql=sql, parameter={})
+
+
 def insert_product(param):
     '''
     :param param:

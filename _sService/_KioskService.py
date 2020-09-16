@@ -730,22 +730,20 @@ def begin_collect_cash():
     # if _Common.BILL['status'] is True:
     #     LOGGER.info(('begin_collect_cash', 'call init_bill'))
     #     _BILL.init_bill()
-    list_cash = _DAO.list_uncollected_cash()
-    if len(list_cash) == 0:
+    count_uncollected_cash = _DAO.custom_query(' SELECT IFNULL(count(*), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    if count_uncollected_cash == 0:
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')
         return
     operator = 'OPERATOR'
     if _UserService.USER is not None:
         operator = _UserService.USER['first_name']
-    list_collect = []
-    for cash in list_cash:
-        param = {
-            'csid': cash['csid'],
+    _DAO.mark_uncollected_cash({
             'collectedAt': 19900901,
             'collectedUser': operator
-        }
-        _DAO.collect_cash(param)
-        list_collect.append(cash['csid'])
+    })
+    # list_collect = _DAO.custom_query(" SELECT csid FROM Cash WHERE collectedAt = 19900901 AND collectedUser = '"+operator+"' ")
+    # for cash in list_collect:
+        # list_collect.append(cash['csid'])
     # Backend Updation Changed Indo Admin Access Report Endpoint
     # post_cash_collection(list_collect, _Helper.now())
     # Generate Admin Data Here
