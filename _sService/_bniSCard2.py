@@ -12,6 +12,7 @@ import socket
 from _sService import _BniActivationHTTPRequest
 from _cCommand import _Command
 from _dDevice import _QPROX
+from _cConfig import _Common
 # from BniActivationHTTPRequest import BniActivationHTTPRequest
 
 LOGGER = logging.getLogger()
@@ -51,7 +52,7 @@ class bniSCard2(object):
         elif mode == 3:
             self.modestr = "HTTP"
             self.reff_no = -1
-            self.http = _BniActivationHTTPRequest.BniActivationHTTPRequest()
+            self.http = _BniActivationHTTPRequest.BniActivationHTTPRequest(url=_Common.URL_BNI_ACTIVATION)
             self.card_no = card_no
         elif mode == 4:
             self.modestr = "SERVICE"

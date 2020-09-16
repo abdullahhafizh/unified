@@ -343,7 +343,8 @@ def update_balance(_param, bank='BNI', mode='TOPUP', BNI_ACTIVATION=True):
                     LOGGER.debug(('bni_activation', str(bni_act_resp), str(bni_act_result)))
                     if bni_act_resp == 0:
                         _param['card_info'] = bni_act_result
-                        return update_balance(_param, bank, mode, False)
+                        # return update_balance(_param, bank, mode, False)
+                        return bni_reset_update_balance(slot=1)
                     else:
                         response['data']['bni_activation_response'] = bni_act_resp
                         response['data']['bni_activation_result'] = bni_act_result

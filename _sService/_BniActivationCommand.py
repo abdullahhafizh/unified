@@ -31,10 +31,10 @@ class BniActivate(object):
 
             try:
                 # Purse Data BNI
-                print("Purse data BNI")
-                res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + _Common.SLOT_SAM1_BNI, output=None)
-                if res == 0:
-                    _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
+                # print("Purse data BNI")
+                # res, hasil = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + _Common.SLOT_SAM1_BNI, output=None)
+                # if res == 0:
+                #     _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
                 
                 # Init BNI
                 print("Init data BNI")
@@ -47,10 +47,6 @@ class BniActivate(object):
                 bniHTTP = _bniSCard2.bniSCard2(mode=3, debug=True, card_no = _Common.BNI_SAM_1_NO)
                 bniService = _bniSCard2.bniSCard2(mode=4, debug=True)
 
-                TM_KEY = b"\x40\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4A\x4B\x4C\x4D\x4E\x4F"
-                IV = b"\x00\x00\x00\x00\x00\x00\x00\x00"
-                BNI_PIN = b"\x12\x34\x56\x00\x00\x00\x00\x00"
-                APDU_TAPCASH_SELECT = b"\x00\xA4\x04\x00\x08\xA0\x00\x42\x4E\x49\x10\x00\x01"
                 CMD_GET_CREDIT_CRIPTOGRAM = b"\x80\x33\x00\x00\x73"
                 CMD_GET_CREDIT_TRANSREC = b"\x80\x37\x14\x01\x32"
 
@@ -79,12 +75,12 @@ class BniActivate(object):
                 GCT = CMD_GET_CREDIT_TRANSREC + data
                 data = bniHTTP.devTransmit(GCT)   
 
-                res2, hasil2 = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + _Common.SLOT_SAM1_BNI, output=None)
-                if res2 == 0:
-                    _bniSCard2.LOGGER.info("Purse Setelah Aktivasi = "+ hasil2)
+                # res2, hasil2 = _bniSCard2._Command.send_request(param=_bniSCard2._QPROX.QPROX['PURSE_DATA_BNI'] + '|' + _Common.SLOT_SAM1_BNI, output=None)
+                # if res2 == 0:
+                #     _bniSCard2.LOGGER.info("Purse Setelah Aktivasi = "+ hasil2)
 
                 code = 0
-                result = hasil2
+                result = "Success"
                 bniHTTP.devClose()
                 break
             except Exception as e:
