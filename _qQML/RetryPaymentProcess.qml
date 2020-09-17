@@ -714,7 +714,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note();
-                    waitAndExitFor(3);
+                    exit_with_message(3);
                     return;
                 }
             } else if (grgResult == 'EXCEED'){
@@ -1039,6 +1039,10 @@ Base{
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
+                    if (receivedPayment == initialPayment){
+                        exit_with_message(3);
+                        return;
+                    }
                     if (receivedPayment > initialPayment){
                         //Disable Auto Manual Refund
                         details.process_error = 1;
@@ -1097,6 +1101,10 @@ Base{
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
+                if (receivedPayment == initialPayment){
+                    exit_with_message(3);
+                    return;
+                }
                 if (details.payment=='cash') {
                     console.log('[CANCELLATION] Cash Method Payment Detected..!');
                     proceedAble = false;
@@ -1114,9 +1122,6 @@ Base{
                             return;
                         }
                         do_refund_or_print('user_cancellation');
-                        return;
-                    } else {
-                        waitAndExitFor(3);
                         return;
                     }
                 }
@@ -1156,7 +1161,7 @@ Base{
         timer_delay.start();
     }
 
-    function waitAndExitFor(second){
+    function exit_with_message(second){
         popup_loading.open();
         popup_loading.textMain = 'Menutup Sesi Pembayaran Anda';
         popup_loading.textSlave = 'Anda Masih Dapat Melanjutkan Transaksi Dari Voucher Tertera';
