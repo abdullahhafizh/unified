@@ -1349,3 +1349,36 @@ def check_retry_able(data):
 
 
 LAST_QR_PAYMENT_HOST_TRX_ID = None
+
+
+def generate_stock_change_data():
+    global LAST_UPDATED_STOCK
+    __ = dict()
+    try:
+        __['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
+        __['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
+        __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
+        __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
+        __['init_slot1'] = __['slot1']
+        __['init_slot2'] = __['slot2']
+        __['init_slot3'] = __['slot3']
+        __['init_slot4'] = __['slot4']
+        __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
+        __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)
+        if len(LAST_UPDATED_STOCK) > 0:
+            for update in LAST_UPDATED_STOCK:
+                if update['status'] == 101:
+                    __['init_slot1'] = update['stock']
+                if update['status'] == 102:
+                    __['init_slot2'] = update['stock']
+                if update['status'] == 103:
+                    __['init_slot3'] = update['stock']
+                if update['status'] == 104:
+                    __['init_slot4'] = update['stock']
+        __['change_stock_time'] = _Helper.time_string()
+    except Exception as e:
+        LOGGER.warning(str(e))
+    finally:
+        LOGGER.debug(str(__))
+        return __
+

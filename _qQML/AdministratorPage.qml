@@ -17,6 +17,8 @@ Base{
     property var userData: undefined
     property var productData: undefined
     property variant actionList: []
+    property variant actionChangeList: []
+
     isPanelActive: false
     isHeaderActive: true
     logo_vis: false
@@ -31,6 +33,7 @@ Base{
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
             actionList = []
+            actionChangeList = []
             if (userData!=undefined) parse_user_data();
         }
         if(Stack.status==Stack.Deactivating){
@@ -85,7 +88,7 @@ Base{
         if (action.type=='changeStock'){
             popup_loading.open();
             _SLOT.start_change_product_stock(action.port, action.stock);
-//            actionList.push(action);
+            actionChangeList.push(action);
         }
     }
 
@@ -140,6 +143,7 @@ Base{
             false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
             false_notif('Dear '+userData.first_name+'|Memproses Perubahan Stok Di Peladen Pusat\nSilakan Tunggu Beberapa Saat');
+//            actionChangeList.push(a);
         } else if (a=='REFILL_ZERO|SUCCESS'){
             false_notif('Dear '+userData.first_name+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
@@ -182,6 +186,7 @@ Base{
             false_notif('Dear '+userData.first_name+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
         } else if (a=='CHANGE_PRODUCT|CONNECTION_ERROR'){
             false_notif('Dear '+userData.first_name+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
+            actionChangeList.pop()
         } else {
             false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+a);
         }
@@ -544,6 +549,33 @@ Base{
                         print_receipt_button.visible = false;
                     } else {
                         false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
+                    }
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: print_stock_change_receipt_button
+            z: 10
+            button_text: 'change-stock\nprint'
+            visible: (!popup_loading.visible && actionChangeList.length > 0)
+            modeReverse: false
+            MouseArea{
+                anchors.fill: parent
+                onDoubleClicked: {
+                    _SLOT.user_action_log('Admin Page "Change Stock Print"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('print_stock_change_receipt_button is pressed..!');
+                    if (actionChangeList.length > 0){
+                        popup_loading.open();
+                        var epoch = new Date().getTime();
+                        var struct_id = userData.username+epoch;
+                        _SLOT.start_admin_change_stock_print(struct_id);
+                        actionChangeList = [];
+                        print_stock_change_receipt_button.visible = false;
+                    } else {
+                        false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Update Stok Kartu Dengan Benar');
                     }
                 }
             }
