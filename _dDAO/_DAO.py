@@ -178,7 +178,8 @@ def mark_uncollected_cash(param):
     'collectedUser'
     :return: _Database.insert_update
     """
-    sql = " UPDATE Cash SET updatedAt=:updatedAt, collectedAt=:collectedAt, collectedUser=:collectedUser Where collectedAt is Null "
+    param["updatedAt"] = _Helper.now()
+    sql = " UPDATE Cash SET updatedAt = :updatedAt, collectedAt = :collectedAt, collectedUser = :collectedUser Where collectedAt is Null "
     return _Database.insert_update(sql=sql, parameter=param)
 
 
