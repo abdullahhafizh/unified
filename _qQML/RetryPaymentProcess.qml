@@ -714,7 +714,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note();
-                    waitAndExitFor(3);
+                    exit_with_message(3);
                     return;
                 }
             } else if (grgResult == 'EXCEED'){
@@ -1039,23 +1039,34 @@ Base{
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
+                    if (receivedPayment == initialPayment){
+                        exit_with_message(3);
+                        return;
+                    }
                     if (receivedPayment > initialPayment){
                         //Disable Auto Manual Refund
-                        details.process_error = 1;
-                        details.payment_error = 1;
-                        if (!refundFeature){
-//                            details.pending_trx_code = details.epoch.toString().substr(-6);
-                            details.payment_received = receivedPayment.toString();
-                            details.pending_trx_code = uniqueCode;
-//                            console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
-                            release_print('Waktu Transaksi Habis', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
-                            return;
+                        if (!successTransaction){
+                            details.process_error = 1;
+                            details.payment_error = 1;
+                            if (!refundFeature){
+    //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                                details.payment_received = receivedPayment.toString();
+                                details.pending_trx_code = uniqueCode;
+    //                            console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
+                                release_print('Waktu Transaksi Habis', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
+                                return;
+                            }
                         }
-                        refundChannel = 'MANUAL';
+                        refundChannel = 'CUSTOMER-SERVICE';
                         details.refund_channel = refundChannel;
                         details.refund_status = 'AVAILABLE';
                         details.refund_number = '';
-                        details.refund_amount = receivedPayment.toString();
+                        var exceed = validate_cash_refundable();
+                        if (exceed == false){
+                            details.refund_amount = receivedPayment.toString();
+                        } else {
+                            details.refund_amount = exceed.toString();
+                        }
                         details.timeout_case = 'insert_refund_number_timeout'
                         var refundPayload = {
                             amount: details.refund_amount,
@@ -1097,6 +1108,10 @@ Base{
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
+                if (receivedPayment == initialPayment){
+                    exit_with_message(3);
+                    return;
+                }
                 if (details.payment=='cash') {
                     console.log('[CANCELLATION] Cash Method Payment Detected..!');
                     proceedAble = false;
@@ -1114,9 +1129,6 @@ Base{
                             return;
                         }
                         do_refund_or_print('user_cancellation');
-                        return;
-                    } else {
-                        waitAndExitFor(3);
                         return;
                     }
                 }
@@ -1156,10 +1168,10 @@ Base{
         timer_delay.start();
     }
 
-    function waitAndExitFor(second){
+    function exit_with_message(second){
         popup_loading.open();
-        popup_loading.textMain = 'Harap Tunggu Sebentar';
-        popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
+        popup_loading.textMain = 'Menutup Sesi Pembayaran Anda';
+        popup_loading.textSlave = 'Anda Masih Dapat Melanjutkan Transaksi Dari Voucher Tertera';
         back_button.visible = false;
         cancel_button_global.visible = false;
         delay(second*1000, function(){
@@ -1168,7 +1180,6 @@ Base{
             my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
         });
     }
-
 
     function open_preload_notif(msg, img){
         press = '0';

@@ -1052,11 +1052,19 @@ Base{
                             release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
                             return;
                         }
-                        refundChannel = 'MANUAL';
+                        refundChannel = 'CUSTOMER-SERVICE';
                         details.refund_channel = refundChannel;
                         details.refund_status = 'AVAILABLE';
                         details.refund_number = '';
                         details.refund_amount = receivedPayment.toString();
+                        if (successTransaction) {
+                            var exceed = validate_cash_refundable();
+                            if (exceed == false){
+                                details.refund_amount = receivedPayment.toString();
+                            } else {
+                                details.refund_amount = exceed.toString();
+                            }
+                        }
                         details.timeout_case = 'insert_refund_number_timeout'
                         var refundPayload = {
                             amount: details.refund_amount,
@@ -1133,10 +1141,10 @@ Base{
 //                    details.payment_received = '0';
 //                    release_print();
 //                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
+                    details.process_error = 1;
+                    details.payment_error = 1;
                     if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
-                        details.process_error = 1;
-                        details.payment_error = 1;
                         details.payment_received = receivedPayment.toString();
                         details.pending_trx_code = uniqueCode;
                         console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
@@ -1567,7 +1575,7 @@ Base{
                         customer: 'NO_PHONE_NUMBER',
                         reff_no: details.shop_type + details.epoch.toString(),
                         remarks: details,
-                        channel: 'MANUAL',
+                        channel: 'CUSTOMER-SERVICE',
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }

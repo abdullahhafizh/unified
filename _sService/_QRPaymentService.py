@@ -237,6 +237,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
         'tid': _Common.TID,
     }
     # _Helper.dump(payload)
+    result = False, None
     try:
         url = _Common.QR_HOST+mode.lower()+'/status-payment'
         if not _Common.QR_PROD_STATE[mode.upper()]:
@@ -246,12 +247,11 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             if check_payment_result(r['data'], mode.upper()) is True:
-                return True, r['data']
-        else:
-            return False, None
+                result = True, r['data']
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        return False, None
+    finally:
+        return result
             # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
             # break;
         
@@ -283,7 +283,7 @@ def check_payment_result(result, mode):
         return True
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE'] and result['status'] == 'SUCCESS':
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE'] and result['status'] == 'SUCCESS':
         return True
     return False
 

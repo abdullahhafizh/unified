@@ -743,6 +743,28 @@ Base{
         }
     }
 
+    Timer {
+        id: timer_delay
+    }
+
+    function delay(duration, callback) {
+        timer_delay.interval = duration;
+        timer_delay.repeat = false;
+        timer_delay.triggered.connect(callback);
+        timer_delay.start();
+    }
+
+    function exit_with_message(second){
+        popup_loading.open();
+        popup_loading.textMain = 'Membatalkan Transaksi Ulang';
+        popup_loading.textSlave = 'Anda Masih Dapat Melanjutkan Transaksi Dari Voucher Tertera';
+        delay(second*1000, function(){
+            popup_loading.close();
+            my_timer.stop();
+            my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+        });
+    }
+
 
     //==============================================================
 
@@ -795,7 +817,13 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "BATAL" For Retry Transaction');
                     console.log('Press "BATAL" For Retry Transaction');
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                    if (retryAbleTransaction){
+                        global_confirmation_frame.close();
+                        exit_with_message(5);
+                        return;
+                    } else {
+                        my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                    }
                 }
             }
         }

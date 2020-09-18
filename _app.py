@@ -424,6 +424,11 @@ class SlotHandler(QObject):
         _SalePrintTool.start_admin_print_global(struct_id)
     start_admin_print_global = pyqtSlot(str)(start_admin_print_global)
 
+
+    def start_admin_change_stock_print(self, struct_id):
+        _SalePrintTool.start_admin_change_stock_print(struct_id)
+    start_admin_change_stock_print = pyqtSlot(str)(start_admin_change_stock_print)
+
     def start_reprint_global(self):
         _SalePrintTool.start_reprint_global()
     start_reprint_global = pyqtSlot()(start_reprint_global)
