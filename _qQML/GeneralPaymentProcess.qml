@@ -1042,29 +1042,28 @@ Base{
                     }
                     if (receivedPayment > 0){
                         //Disable Auto Manual Refund
-                        details.process_error = 1;
-                        details.payment_error = 1;
-                        if (!refundFeature){
-//                            details.pending_trx_code = details.epoch.toString().substr(-6);
-                            details.payment_received = receivedPayment.toString();
-                            details.pending_trx_code = uniqueCode;
-                            console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
-                            release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
-                            return;
+                        if (!successTransaction){
+                            details.process_error = 1;
+                            details.payment_error = 1;
+                            if (!refundFeature){
+    //                            details.pending_trx_code = details.epoch.toString().substr(-6);
+                                details.payment_received = receivedPayment.toString();
+                                details.pending_trx_code = uniqueCode;
+                                console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
+                                release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi Dengan Kode Voucher Tertera');
+                                return;
+                            }
+                        }
+                        var exceed = validate_cash_refundable();
+                        if (exceed == false){
+                            details.refund_amount = receivedPayment.toString();
+                        } else {
+                            details.refund_amount = exceed.toString();
                         }
                         refundChannel = 'CUSTOMER-SERVICE';
                         details.refund_channel = refundChannel;
-                        details.refund_status = 'AVAILABLE';
+                        details.refund_status = 'PENDING';
                         details.refund_number = '';
-                        details.refund_amount = receivedPayment.toString();
-                        if (successTransaction) {
-                            var exceed = validate_cash_refundable();
-                            if (exceed == false){
-                                details.refund_amount = receivedPayment.toString();
-                            } else {
-                                details.refund_amount = exceed.toString();
-                            }
-                        }
                         details.timeout_case = 'insert_refund_number_timeout'
                         var refundPayload = {
                             amount: details.refund_amount,
