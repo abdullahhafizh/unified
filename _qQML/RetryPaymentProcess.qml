@@ -1001,7 +1001,7 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                console.log('TIMER_MAIN_LAYER', abc.counter);
+                console.log('[RETRY-PAYMENT]', abc.counter);
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
