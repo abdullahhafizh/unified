@@ -217,11 +217,10 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var message_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
-        abc.counter = 300;
-        my_timer.restart();
+//        abc.counter = 300;
+//        my_timer.restart();
         global_frame.exit_stop();
         // Validation To Get This Condition, payment received, refund feature disabled and not a success trx
-        // While success trx must keep using refund, NAHLOH..!
 //                if (receivedPayment > initialPayment && !refundFeature && !successTransaction){
 //                    details.pending_trx_code = details.epoch.toString().substr(-6);
 //                    details.pending_trx_code = uniqueCode;
@@ -1113,7 +1112,7 @@ Base{
                     exit_with_message(3);
                     return;
                 }
-                if (details.payment=='cash') {
+                if (details.payment == 'cash') {
                     console.log('[CANCELLATION] Cash Method Payment Detected..!');
                     proceedAble = false;
                     _SLOT.stop_bill_receive_note();
@@ -1133,7 +1132,7 @@ Base{
                         return;
                     }
                 }
-                if (details.payment=='debit') {
+                if (details.payment == 'debit') {
                     console.log('[CANCELLATION] Debit Method Payment Detected..!')
 //                    refundChannel = 'NONE';
 //                    details.refund_channel = refundChannel;
