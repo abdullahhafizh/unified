@@ -1017,7 +1017,6 @@ Base{
                 }
                 if (popup_refund.visible) popup_refund.showDuration = abc.counter.toString();
                 if (popup_confirm.visible) popup_confirm.showDuration = abc.counter.toString();
-//                if (abc.counter == 7 && receivedPayment > initialPayment && !successTransaction){
                 // Assumming Only In-Completed Transaction Reach Here
                 if (abc.counter == 7){
                     if (details.payment=='debit') {
