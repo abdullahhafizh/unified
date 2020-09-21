@@ -226,4 +226,10 @@ Base{
         }
     }
 
+    function exit_stop(){
+        global_frame_timer.stop();
+        globalFrame.visible = false;
+        specialHandler = undefined;
+    }
+
 }

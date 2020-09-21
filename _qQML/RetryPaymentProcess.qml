@@ -219,6 +219,7 @@ Base{
         refundMode = error;
         abc.counter = 300;
         my_timer.restart();
+        global_frame.exit_stop();
         // Validation To Get This Condition, payment received, refund feature disabled and not a success trx
         // While success trx must keep using refund, NAHLOH..!
 //                if (receivedPayment > initialPayment && !refundFeature && !successTransaction){
