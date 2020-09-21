@@ -217,8 +217,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var message_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
-//        abc.counter = 300;
-//        my_timer.restart();
+       abc.counter = 300;
+       my_timer.restart();
         global_frame.exit_stop();
         // Validation To Get This Condition, payment received, refund feature disabled and not a success trx
 //                if (receivedPayment > initialPayment && !refundFeature && !successTransaction){
