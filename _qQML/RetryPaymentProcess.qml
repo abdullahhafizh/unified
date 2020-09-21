@@ -487,8 +487,8 @@ Base{
         global_frame.close();
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
-        abc.counter = 60;
-        my_timer.restart();
+//        abc.counter = 60;
+//        my_timer.restart();
         //========
         if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='C2C_FORCE_SETTLEMENT'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
@@ -583,8 +583,8 @@ Base{
         global_frame.close();
         popup_loading.close();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
-        abc.counter = 60;
-        my_timer.restart();
+//        abc.counter = 60;
+//        my_timer.restart();
         if (r=='EJECT|PARTIAL'){
             press = '0';
             attemptCD -= 1;
@@ -1243,11 +1243,11 @@ Base{
             global_frame.timerDuration = parseInt(frame_timer);
             global_frame.withTimer = true;
         }
-        if (closeMode == 'closeWindow|30'){
-            global_frame.closeMode = 'closeWindow';
-            global_frame.timerDuration = 30;
-            global_frame.withTimer = true;
-        }
+//        if (closeMode == 'closeWindow|30'){
+//            global_frame.closeMode = 'closeWindow';
+//            global_frame.timerDuration = 30;
+//            global_frame.withTimer = true;
+//        }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
@@ -1557,7 +1557,7 @@ Base{
                         customer: 'NO_PHONE_NUMBER',
                         reff_no: details.shop_type + details.epoch.toString(),
                         remarks: details,
-                        channel: 'MANUAL',
+                        channel: 'CUSTOMER-SERVICE',
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }
