@@ -1082,6 +1082,7 @@ Base{
                     }
                 }
                 if (abc.counter == 0){
+                    console.log('[GLOBAL-PAYMENT]', 'BACK TO HOMEPAGE');
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
