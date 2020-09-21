@@ -628,8 +628,8 @@ Base{
         delete details.payment_error;
         delete details.process_error;
         back_button.visible = false;
-//        abc.counter = 600;
-//        my_timer.restart();
+        abc.counter = 600;
+        my_timer.restart();
 //        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
     }
 

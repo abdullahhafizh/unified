@@ -167,25 +167,25 @@ def start_set_direct_price(price):
     _Helper.get_thread().apply_async(set_direct_price, (price,))
 
 
-def start_set_direct_price_with_current(current, price):
-    _Helper.get_thread().apply_async(set_direct_price, (current, price, ))
-
-
-def set_direct_price(current, price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
-    DIRECT_PRICE_MODE = True
-    DIRECT_PRICE_AMOUNT = int(price)
-    COLLECTED_CASH = int(current)
-    CASH_HISTORY = []
-    CASH_HISTORY.append(current)
-
-
 def set_direct_price(price):
     global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
     DIRECT_PRICE_MODE = True
     DIRECT_PRICE_AMOUNT = int(price)
     COLLECTED_CASH = 0
     CASH_HISTORY = []
+
+
+def start_set_direct_price_with_current(current, price):
+    _Helper.get_thread().apply_async(set_direct_price_with_current, (current, price, ))
+
+
+def set_direct_price_with_current(current, price):
+    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
+    DIRECT_PRICE_MODE = True
+    DIRECT_PRICE_AMOUNT = int(price)
+    COLLECTED_CASH = int(current)
+    CASH_HISTORY = []
+    CASH_HISTORY.append(current)
 
 
 def start_bill_receive_note():
