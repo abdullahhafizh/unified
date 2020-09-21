@@ -1059,7 +1059,7 @@ Base{
                         }
                         refundChannel = 'CUSTOMER-SERVICE';
                         details.refund_channel = refundChannel;
-                        details.refund_status = 'AVAILABLE';
+                        details.refund_status = 'PENDING';
                         details.refund_number = '';
                         var exceed = validate_cash_refundable();
                         if (exceed == false){
