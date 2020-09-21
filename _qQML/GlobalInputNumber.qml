@@ -71,8 +71,8 @@ Base{
 
         }
         if(Stack.status==Stack.Deactivating){
-            my_timer.stop()
-            loading_view.close()
+            my_timer.stop();
+            loading_view.close();
         }
     }
 

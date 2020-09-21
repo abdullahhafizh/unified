@@ -74,7 +74,7 @@ Base{
             my_timer.start();
         }
         if(Stack.status==Stack.Deactivating){
-            my_timer.stop()
+            my_timer.stop();
         }
     }
 
@@ -378,7 +378,7 @@ Base{
             if (receivedPayment > initialPayment)
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
         }
-        abc.counter = 3;
+        abc.counter = 5;
         reset_variables_to_default();
     }
 
@@ -798,7 +798,7 @@ Base{
         if (['ERROR'].indexOf(edcResult) > -1){
             next_button_global.visible = false;
             switch_frame_with_button('source/insert_card_dc.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'closeWindow|10', true );
-            abc.counter = 8;
+            abc.counter = 10;
             return;
         }
         if (edcResult=='SUCCESS') {

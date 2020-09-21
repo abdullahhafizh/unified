@@ -282,7 +282,7 @@ class NV200_BILL_ACCEPTOR(object):
                     event.append(self.parse_reject_code(last_reject))
                 else:
                     event.append('')
-                # print('pyt: [NV200]', str(event))   
+                print('pyt: [NV200]', str(event))   
                 return event
             time.sleep(0.5)
 
