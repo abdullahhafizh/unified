@@ -1082,7 +1082,7 @@ Base{
                     }
                 }
                 if (abc.counter == 0){
-                    console.log('[GLOBAL-PAYMENT]', 'BACK TO HOMEPAGE');
+                    console.log('[GLOBAL-PAYMENT]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
@@ -1157,6 +1157,7 @@ Base{
                     return;
                 }
                 my_timer.stop();
+                console.log('[GLOBAL-PAYMENT]', 'CANCEL-BUTTON', 'BACK-TO-HOMEPAGE');
                 my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
             }
         }
@@ -1185,6 +1186,7 @@ Base{
         delay(second*1000, function(){
             popup_loading.close();
             my_timer.stop();
+            console.log('[GLOBAL-PAYMENT]', 'WAIT-EXIT-FUNCTION', 'BACK-TO-HOMEPAGE');
             my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
         });
     }
@@ -1452,8 +1454,8 @@ Base{
                         return;
                     }
                     my_timer.stop();
+                    console.log('[GLOBAL-PAYMENT]', 'CANCEL-BUTTON-GLOBAL-FRAME', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
-
     //
                 }
             }
@@ -1538,6 +1540,7 @@ Base{
 //                    _SLOT.start_cancel_qr_global('CANCEL_'+details.shop_type+details.epoch.toString());
                     qr_payment_frame.cancel('USER_CANCEL');
                     my_timer.stop();
+                    console.log('[GLOBAL-PAYMENT]', 'CANCEL-BUTTON-QR-FRAME', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }

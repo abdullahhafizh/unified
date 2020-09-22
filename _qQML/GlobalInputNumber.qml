@@ -126,7 +126,8 @@ Base{
                 abc.counter -= 1
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
-                    my_timer.stop()
+                    my_timer.stop();
+                    console.log('[GLOBAL-INPUT-NO]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
                 }
             }
@@ -762,7 +763,7 @@ Base{
         delay(second*1000, function(){
             popup_loading.close();
             my_timer.stop();
-            console.log('[GLOBAL-INPUT]', 'EXIT-MESSAGE-FUNCTION', 'BACK TO HOMEPAGE');
+            console.log('[GLOBAL-INPUT]', 'EXIT-MESSAGE-FUNCTION', 'BACK-TO-HOMEPAGE');
             my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
         });
     }
@@ -824,7 +825,7 @@ Base{
                         exit_with_message(5);
                         return;
                     } else {
-                        console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON', 'BACK TO HOMEPAGE');
+                        console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON', 'BACK-TO-HOMEPAGE');
                         my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     }
                 }
@@ -894,7 +895,7 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "BATAL"');
-                    console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON-CHECK-CARD', 'BACK TO HOMEPAGE');
+                    console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON-CHECK-CARD', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }

@@ -189,7 +189,7 @@ Base{
                 global_frame_timer.stop();
                 switch(closeMode){
                 case 'backToMain':
-                    console.log('[GLOBAL-FRAME]', 'BACK TO HOMEPAGE');
+                    console.log('[GLOBAL-FRAME]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     break;
                 case 'backToPrev': case 'backToPrevious':
