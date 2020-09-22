@@ -579,14 +579,21 @@ def start_reset_receipt_count(count):
     _Helper.get_thread().apply_async(reset_receipt_count, (count,))
 
 
+def reset_paper_roll():
+    return reset_receipt_count('0')
+
+
 def reset_receipt_count(count):
     global PRINTER_ERROR, RECEIPT_PRINT_COUNT
     RECEIPT_PRINT_COUNT = int(count)
     log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
     if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
         PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
+        return 'PAPER_ROLL_NOT_RESET'
     else:
         PRINTER_ERROR = ''
+        return 'PAPER_ROLL_RESET'
+
 
 
 def active_auth_session():

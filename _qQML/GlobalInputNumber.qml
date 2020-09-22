@@ -206,6 +206,7 @@ Base{
                 bank_type: cardData.bank_type,
                 bank_name: cardData.bank_name,
             }
+            global_confirmation_frame.close();
             my_layer.push(retry_payment_process, {details: retryDetails, cardNo: cardData.card_no, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
         }
     }
@@ -853,6 +854,7 @@ Base{
                         preload_check_card.open();
                         return;
                     }
+                    global_confirmation_frame.close();
                     my_layer.push(retry_payment_process, {details: retryDetails, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
                 }
             }

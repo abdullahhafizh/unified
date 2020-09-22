@@ -595,6 +595,9 @@ def handle_tasks(tasks):
             update_task(task, result)
             sleep(30)
             _KioskService.execute_command('shutdown -r -f -t 0')
+        if task['taskName'] == 'RESET_PAPER_ROLL':
+            result = _Common.reset_paper_roll()
+            update_task(task, result)
         if task['taskName'] == 'EDC_CLEAR_BATCH':
             result = _EDC.void_settlement_data()
             update_task(task, result)
