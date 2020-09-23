@@ -123,6 +123,7 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
+                console.log('[GLOBAL-INPUT]', abc.counter);
                 abc.counter -= 1;
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter == 0){
