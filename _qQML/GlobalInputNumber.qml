@@ -125,7 +125,7 @@ Base{
             onTriggered:{
                 abc.counter -= 1
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if(abc.counter < 0){
+                if(abc.counter == 0){
                     my_timer.stop();
                     console.log('[GLOBAL-INPUT-NO]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -208,6 +208,7 @@ Base{
                 bank_name: cardData.bank_name,
             }
             global_confirmation_frame.close();
+            my_timer.stop();
             my_layer.push(retry_payment_process, {details: retryDetails, cardNo: cardData.card_no, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
         }
     }
@@ -856,6 +857,7 @@ Base{
                         return;
                     }
                     global_confirmation_frame.close();
+                    my_timer.stop();
                     my_layer.push(retry_payment_process, {details: retryDetails, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
                 }
             }

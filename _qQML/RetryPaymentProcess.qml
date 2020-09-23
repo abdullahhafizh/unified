@@ -1437,7 +1437,6 @@ Base{
                     my_timer.stop();
                     console.log('[RETRY-PAYMENT]', 'CANCEL-BUTTON-GLOBAL-FRAME', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
-
     //
                 }
             }
