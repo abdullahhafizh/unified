@@ -214,30 +214,32 @@ Base{
     }
 
     function card_eject_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('card_eject_result', now, r);
-        popup_loading.close();
-        abc.counter = 30;
-        my_timer.restart();
-//        if (r=='EJECT|PARTIAL'){
-//            press = '0';
-//            attemptCD -= 1;
-//            switch_frame('source/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
-//            centerOnlyButton = true;
-//            modeButtonPopup = 'retrigger_card';
-//            return;
-//        }
-        if (r == 'EJECT|ERROR') {
-            switch_frame('source/smiley_down.png', 'Mohon Maaf Terjadi Kesalahan', 'Transaksi Pengambilan Kartu Digagalkan', 'backToMain', true )
-            return;
-        }
-        if (r == 'EJECT|SUCCESS') {
-            if (vCollectionData!=undefined){
-                switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
-                var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
-                _SLOT.start_use_voucher(textInput, reff_no_voucher);
+        if (vCollectionData!=undefined){
+            var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+            console.log('card_eject_result', now, r);
+            popup_loading.close();
+            abc.counter = 30;
+            my_timer.restart();
+            //        if (r=='EJECT|PARTIAL'){
+            //            press = '0';
+            //            attemptCD -= 1;
+            //            switch_frame('source/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
+            //            centerOnlyButton = true;
+            //            modeButtonPopup = 'retrigger_card';
+            //            return;
+            //        }
+            if (r == 'EJECT|ERROR') {
+                switch_frame('source/smiley_down.png', 'Mohon Maaf Terjadi Kesalahan', 'Transaksi Pengambilan Kartu Digagalkan', 'backToMain', true )
+                return;
             }
-            return;
+            if (r == 'EJECT|SUCCESS') {
+                if (vCollectionData!=undefined){
+                    switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+                    var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
+                    _SLOT.start_use_voucher(textInput, reff_no_voucher);
+                }
+                return;
+            }
         }
     }
 
