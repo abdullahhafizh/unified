@@ -11,7 +11,7 @@ Base{
     isHeaderActive: true
     isBoxNameActive: false
     textPanel: 'Pilih Produk'
-    property int timer_value: 300
+    property int timer_value: 240
     property int max_count: 24
     property int min_count: 10
     property var press: "0"
@@ -55,8 +55,6 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
 //            console.log('mode', mode, JSON.stringify(selectedProduct));
-            abc.counter = timer_value;
-            my_timer.start();
             define_wording();
             isConfirm = false;
             retryCategory = undefined;
@@ -67,7 +65,9 @@ Base{
             pendingPayment = 0;
             cardData = undefined;
             cardBalance = 0;
-            press = '0'
+            press = '0';
+            abc.counter = timer_value;
+            my_timer.start();
 
         }
         if(Stack.status==Stack.Deactivating){
@@ -127,7 +127,7 @@ Base{
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter == 0){
                     my_timer.stop();
-                    console.log('[GLOBAL-INPUT-NO]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
+                    console.log('[GLOBAL-INPUT]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
@@ -648,8 +648,8 @@ Base{
         property int count:0
 
         Component.onCompleted: {
-            virtual_keyboard.strButtonClick.connect(typeIn)
-            virtual_keyboard.funcButtonClicked.connect(functionIn)
+            virtual_keyboard.strButtonClick.connect(typeIn);
+            virtual_keyboard.funcButtonClicked.connect(functionIn);
         }
 
         function functionIn(str){
@@ -680,8 +680,8 @@ Base{
             } else {
                 textInput += str
             }
-            abc.counter = timer_value
-            my_timer.restart()
+            abc.counter = timer_value;
+            my_timer.restart();
         }
     }
 
