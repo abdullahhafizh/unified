@@ -11,7 +11,7 @@ Base{
     isHeaderActive: true
     isBoxNameActive: false
     textPanel: 'Pilih Produk'
-    property int timer_value: 150
+    property int timer_value: 300
     property int max_count: 24
     property int min_count: 10
     property var press: "0"
@@ -112,7 +112,7 @@ Base{
             id:abc
             property int counter
             Component.onCompleted:{
-                abc.counter = timer_value
+                abc.counter = timer_value;
             }
         }
 
@@ -123,12 +123,12 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                abc.counter -= 1
+                abc.counter -= 1;
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter == 0){
                     my_timer.stop();
                     console.log('[GLOBAL-INPUT-NO]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
         }
@@ -146,7 +146,7 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('press "BATAL" In Input Number Page');
-                my_layer.pop()
+                my_layer.pop();
             }
         }
     }
@@ -193,11 +193,10 @@ Base{
             case 'DKI':
                 provider = 'JakCard DKI';
                 break;
-
             }
             //Define Data Card, Amount Button, Topup Availability
-            var prev_admin_fee = retryDetails.raw.admin_fee
-            var prev_topup_denom = retryDetails.raw.value
+            var prev_admin_fee = retryDetails.raw.admin_fee;
+            var prev_topup_denom = retryDetails.raw.value;
             retryDetails.raw = {
                 value: prev_topup_denom,
                 provider: provider,
@@ -547,7 +546,8 @@ Base{
 //            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
             details.provider = selectedProduct.description;
         }
-        _SLOT.python_dump(JSON.stringify(details));
+//        _SLOT.python_dump(JSON.stringify(details));
+        my_timer.stop();
         my_layer.push(general_payment_process, {details: details});
     }
 
