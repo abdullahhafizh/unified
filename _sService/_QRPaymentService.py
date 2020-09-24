@@ -66,6 +66,7 @@ def start_get_qr_global(payload):
     _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
+
 def do_get_qr(payload, mode, serialize=True):
     global CANCELLING_QR_FLAG
     payload = json.loads(payload)
@@ -106,7 +107,8 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
-            LOGGER.debug((str(param), str(r)))
+                _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
+            LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
             handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
@@ -227,6 +229,33 @@ def do_check_qr(payload, mode, serialize=True):
         sleep(5)
 
 
+def one_time_check_qr(trx_id='', mode='shopeepay'):
+    payload = {
+        'token': _Common.QR_TOKEN,
+        'trx_id': trx_id,
+        'mid': _Common.QR_MID,
+        'tid': _Common.TID,
+    }
+    # _Helper.dump(payload)
+    result = False, None
+    try:
+        url = _Common.QR_HOST+mode.lower()+'/status-payment'
+        if not _Common.QR_PROD_STATE[mode.upper()]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
+        # Handle QR Payment Cancellation Realtime Abort
+            # _Helper.dump([success, attempt])
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['response']['code'] == 200:
+            if check_payment_result(r['data'], mode.upper()) is True:
+                result = True, r['data']
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+    finally:
+        return result
+            # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
+            # break;
+        
+
 CONFIRM_SUCCESS_QR = False
 
 
@@ -254,7 +283,7 @@ def check_payment_result(result, mode):
         return True
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE'] and result['status'] == 'SUCCESS':
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE'] and result['status'] == 'SUCCESS':
         return True
     return False
 

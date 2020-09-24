@@ -339,6 +339,11 @@ class SlotHandler(QObject):
         _BILL.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
+    def start_set_direct_price_with_current(self, current, price):
+        # _MEI.start_set_direct_price(price)
+        _BILL.start_set_direct_price_with_current(current, price)
+    start_set_direct_price_with_current = pyqtSlot(str, str)(start_set_direct_price_with_current)
+
     def start_multiple_eject(self, attempt, multiply):
         _CD.start_multiple_eject(attempt, multiply)
     start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
@@ -418,6 +423,11 @@ class SlotHandler(QObject):
     def start_admin_print_global(self, struct_id):
         _SalePrintTool.start_admin_print_global(struct_id)
     start_admin_print_global = pyqtSlot(str)(start_admin_print_global)
+
+
+    def start_admin_change_stock_print(self, struct_id):
+        _SalePrintTool.start_admin_change_stock_print(struct_id)
+    start_admin_change_stock_print = pyqtSlot(str)(start_admin_change_stock_print)
 
     def start_reprint_global(self):
         _SalePrintTool.start_reprint_global()
@@ -511,9 +521,9 @@ class SlotHandler(QObject):
         _PPOBService.start_do_topup_ppob(payload)
     start_do_topup_ppob = pyqtSlot(str)(start_do_topup_ppob)
 
-    def start_check_trx_online(self, reff_no):
-        _PPOBService.start_check_trx_online(reff_no)
-    start_check_trx_online = pyqtSlot(str)(start_check_trx_online)
+    def start_check_status_trx(self, reff_no):
+        _PPOBService.start_check_status_trx(reff_no)
+    start_check_status_trx = pyqtSlot(str)(start_check_status_trx)
 
     def start_get_qr_gopay(self, payload):
         _QRPaymentService.start_get_qr_gopay(payload)
@@ -803,16 +813,16 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
-    sentry_sdk.init(
-        "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-        max_breadcrumbs=10,
-        debug=False,
-        environment=_Common.APP_MODE,
-        server_name='VM-ID '+_Common.TID,
-        release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
-        default_integrations=False,
-        )
     try:
+        sentry_sdk.init(
+            "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
+            max_breadcrumbs=10,
+            debug=False,
+            environment=_Common.APP_MODE,
+            server_name='VM-ID '+_Common.TID,
+            release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+            default_integrations=False,
+        )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',
@@ -1103,10 +1113,10 @@ if __name__ == '__main__':
     sleep(1)
     print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
-    sleep(1)
-    print("pyt: Syncing Transaction Failure Data...")
-    _Sync.start_sync_data_transaction_failure()
-    # sleep(.5)
+    # sleep(1)
+    # print("pyt: Syncing Transaction Failure Data...")
+    # _Sync.start_sync_data_transaction_failure()
+    # sleep(1)
     # print("pyt: Syncing Topup Records...")
     # _Sync.start_sync_topup_records()
     sleep(1)

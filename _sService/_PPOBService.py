@@ -9,6 +9,8 @@ from _nNetwork import _NetworkAccess
 import sys
 from operator import itemgetter
 from _dDAO import _DAO
+from _dDevice import _EDC
+from _sService import _QRPaymentService
 
 # import os
 
@@ -211,7 +213,7 @@ def do_trx_ppob(payload, mode='PAY'):
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
 
 
-def start_check_trx_online(reff_no):
+def start_check_status_trx(reff_no):
     _Helper.get_thread().apply_async(do_check_trx, (reff_no,))
 
 
@@ -220,20 +222,77 @@ def do_check_trx(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|MISSING_REFF_NO')
         return
+    # Add Check Local TRX Here
     payload = {
-        'reff_no': reff_no
+        'reff_no': reff_no,
+        'tid': _Common.TID
     }
     try:
+        pending_record = _DAO.get_transaction_failure(param=payload)
+        if len(pending_record) > 0:
+            data = pending_record.__getitem__(0)
+            time_stamp = data.get('createdAt')/1000
+            remarks = json.loads(data.get('remarks'))
+            remarks.pop('payment_error')
+            remarks.pop('process_error')
+            r = {
+                'date': _Helper.convert_epoch(time_stamp),
+                'category': remarks.get('shop_type', '').upper(),
+                'trx_id': data.get('trxid'),
+                'payment_method': data.get('paymentMethod'),
+                'product_id': data.get('trxid'),
+                'receipt_amount': remarks.get('payment_received'),
+                'amount': remarks.get('value'),
+                'status': 'PENDING',
+                'source': data.get('failureType'),
+                'remarks': remarks,
+                'retry_able': _Common.check_retry_able(remarks)
+            }
+            # Add Debit & QR Payment Check
+            if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee']:
+                r['retry_able'] = 0
+                r['status'] = 'FAILED'
+                check_trx_id = remarks.get('host_trx_id', r['product_id'])
+                status, result = validate_payment_history(r['payment_method'], check_trx_id)
+                if status is True:
+                    remarks['payment_received'] = str(result['amount'])
+                    remarks['payment_details'] = result
+                    r['status'] = 'PENDING'
+                    r['receipt_amount'] = str(result['amount'])
+                    if r['payment_method'].lower() != 'debit':
+                        r['payment_method'] = result['provider']
+                    r['retry_able'] = _Common.check_retry_able(remarks)
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
+            del remarks
+            del data
+            return
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
+        if s == 200 and r['result'] == 'OK':
+            # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
+            data = r['data']
+            # remarks = data.get('remarks')
+            # remarks.pop('payment_error')
+            # remarks.pop('process_error')
+            # data['remarks'] = remarks
+            # Force Close Retry TRX From Online
+            data['retry_able'] = 0
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(data))
         else:
-            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
+
+
+def validate_payment_history(payment_method='QR', trx_id=None):
+    if _Helper.empty(trx_id) is True:
+        return False, None
+    if payment_method.lower() == 'debit':
+        return _EDC.edc_mobile_check_payment(trx_id)
+    else:
+        return _QRPaymentService.one_time_check_qr(trx_id=trx_id)
 
 
 def start_check_diva_balance(username):

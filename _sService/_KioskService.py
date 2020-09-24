@@ -680,7 +680,10 @@ def start_get_refunds():
 
 
 def get_refunds():
-    K_SIGNDLER.SIGNAL_GET_REFUNDS.emit(json.dumps(_Common.get_refunds()))
+    if not _Common.REFUND_FEATURE:
+        K_SIGNDLER.SIGNAL_GET_REFUNDS.emit('REFUND_DISABLED')
+    else:
+        K_SIGNDLER.SIGNAL_GET_REFUNDS.emit(json.dumps(_Common.get_refunds()))
 
 
 FIRST_RUN_FLAG = True
@@ -727,22 +730,20 @@ def begin_collect_cash():
     # if _Common.BILL['status'] is True:
     #     LOGGER.info(('begin_collect_cash', 'call init_bill'))
     #     _BILL.init_bill()
-    list_cash = _DAO.list_uncollected_cash()
-    if len(list_cash) == 0:
+    count_uncollected_cash = _DAO.custom_query(' SELECT IFNULL(count(*), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    if count_uncollected_cash == 0:
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')
         return
     operator = 'OPERATOR'
     if _UserService.USER is not None:
         operator = _UserService.USER['first_name']
-    list_collect = []
-    for cash in list_cash:
-        param = {
-            'csid': cash['csid'],
+    _DAO.mark_uncollected_cash({
             'collectedAt': 19900901,
             'collectedUser': operator
-        }
-        _DAO.collect_cash(param)
-        list_collect.append(cash['csid'])
+    })
+    # list_collect = _DAO.custom_query(" SELECT csid FROM Cash WHERE collectedAt = 19900901 AND collectedUser = '"+operator+"' ")
+    # for cash in list_collect:
+        # list_collect.append(cash['csid'])
     # Backend Updation Changed Indo Admin Access Report Endpoint
     # post_cash_collection(list_collect, _Helper.now())
     # Generate Admin Data Here
@@ -955,6 +956,11 @@ def store_transaction_global(param, retry=False):
     try:
         update_summary_report(g)
         __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
+        # Delete Failure/Pending TRX Local Records
+        _DAO.delete_transaction_failure({
+            'reff_no': __pid,
+            'tid': _Common.TID
+        })
         __bid = _Common.get_bid(g['provider'])
         # Overwrite bid value for shop transaction
         if g['shop_type'] == 'shop':
@@ -1165,8 +1171,8 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     # Add Flushing Data Which Not Belong To This Terminal ID
     reset_db_record()
     if mode == 'DATA_FILES':
-        LOGGER.info(('START DATA HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
-        print('pyt: START DATA HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
+        LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
+        print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
                                     'TopupRecords', 'TransactionFailure', 'Transactions'],
                             key='createdAt',
@@ -1174,7 +1180,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
     paths = ['_pPDF', '_lLog', '_qQr', '_jJob|.done']
     LOGGER.info(('START FILES HOUSE_KEEPING', age_month, paths, expired, mode, _Helper.time_string()))
-    print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
+    print('pyt: [START] HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
         ext = '*.*'
         if '|' in path:
@@ -1195,7 +1201,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                     LOGGER.debug(('Removing', file, stat.st_ctime, expired))
                     os.remove(file)
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
-    print('pyt: FINISH DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
+    print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
     return 'HOUSE_KEEPING_' + str(age_month) + '_SUCCESS'
 
 

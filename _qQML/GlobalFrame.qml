@@ -59,27 +59,21 @@ Base{
             height: 300
             anchors.horizontalCenter: parent.horizontalCenter
             visible: (imageSource=='source/insert_card_dc.png')
-            Image{
+            Rectangle {
+                color: 'white'
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: (globalScreenType == '1') ? -50 : -200
-                scale: (globalScreenType == '1') ? 0.8 : 0.5
-                source: "source/insert_card_step01.png"
-                fillMode: Image.PreserveAspectFit
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width
+                height: 400
+                AnimatedImage{
+                    anchors.fill: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    source: "source/vm_edc_usage_guideline.gif"
+                    scale: 1.2
+                    fillMode: Image.PreserveAspectFit
+                }
             }
-//            AnimatedImage{
-//                scale: 1
-//                source: "source/arrow_down.gif"
-//                fillMode: Image.PreserveAspectFit
-            //            }
-            Image{
-                anchors.right: parent.right
-                anchors.rightMargin: (globalScreenType == '1') ? -50 : -200
-                anchors.verticalCenter: parent.verticalCenter
-                scale: (globalScreenType == '1') ? 0.8 : 0.5
-                source: "source/insert_pin_step02.png"
-                fillMode: Image.PreserveAspectFit
-            }
+
         }
 //        ColorOverlay {
 //            id: reverse_original_image
@@ -189,11 +183,13 @@ Base{
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
+            console.log('[GLOBAL-FRAME]', showDuration);
             showDuration -= 1;
             if (showDuration==0) {
                 global_frame_timer.stop();
                 switch(closeMode){
                 case 'backToMain':
+                    console.log('[GLOBAL-FRAME]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     break;
                 case 'backToPrev': case 'backToPrevious':
@@ -223,8 +219,18 @@ Base{
             case 'general_payment_process':
                 general_payment_process.framingSignal('CALLBACK_ACTION|'+modeAction);
                 break;
+            case 'retry_payment_process':
+                retry_payment_process.framingSignal('CALLBACK_ACTION|'+modeAction);
+                break;
+
             }
         }
+    }
+
+    function exit_stop(){
+        global_frame_timer.stop();
+        globalFrame.visible = false;
+        specialHandler = undefined;
     }
 
 }
