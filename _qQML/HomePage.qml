@@ -592,7 +592,8 @@ Base{
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
-                preload_whatasapp_voucher.open()
+                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
+//                preload_whatasapp_voucher.open()
             }
         }
     }
