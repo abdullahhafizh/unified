@@ -366,7 +366,7 @@ Base{
         console.log('release_print', now, title, msg);
         if (successTransaction) {
             title = 'Transaksi Berhasil';
-            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda';
+            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
             if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
         }
         switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
