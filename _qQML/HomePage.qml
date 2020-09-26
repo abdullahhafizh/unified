@@ -29,6 +29,9 @@ Base{
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
     property var last_money_insert: 'N/A'
+
+    property var selectedMenu: ''
+    property bool showCustomerInfo: true
 //    width: globalWidth
 //    height: globalHeight
     isPanelActive: false
@@ -44,6 +47,7 @@ Base{
             productCount1 = 0;
             productCount2 = 0;
             productCount3 = 0;
+            selectedMenu = '';
             popup_loading.close();
             _SLOT.user_action_log('[Homepage] Standby Mode');
         }
@@ -179,6 +183,13 @@ Base{
             kioskStatus = false;
         }
 
+        //Set WhatsApp Config Here
+        if (CONF.whatsapp_qr !== undefined) preload_whatasapp_voucher.imageSource = CONF.whatsapp_qr;
+        if (CONF.whatsapp_no !== undefined && CONF.whatsapp_no.length > 3){
+            preload_whatasapp_voucher.whatsappNo = CONF.whatsapp_no;
+            preload_customer_info.whatsappNo = CONF.whatsapp_no;
+        }
+
         main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }
@@ -276,9 +287,14 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(check_balance);
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'CHECK_BALANCE';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    my_layer.push(check_balance);
                 }
             }
         }
@@ -299,16 +315,17 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
                     resetMediaTimer();
-//                    if (!mandiriTopupActive) {
-//                        kalog_notif();
-//                        return;
-//                    }
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'TOPUP_PREPAID';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                 }
             }
         }
@@ -335,9 +352,14 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'SHOP_PREPAID';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
                 }
             }
             Rectangle{
@@ -386,14 +408,18 @@ Base{
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
                     popup_loading.open();
-                    _SLOT.start_get_ppob_product();
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'SHOP_PPOB';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    _SLOT.start_get_ppob_product();
                 }
             }
         }
-
     }
 
 
@@ -882,4 +908,37 @@ Base{
 
     }
 
+    PreloadCustomerInfo{
+        id: preload_customer_info
+
+        CircleButton{
+            id: next_button_preload_info
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'O K'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "O K"');
+                    preload_customer_info.close();
+                    switch(selectedMenu){
+                    case 'CHECK_BALANCE':
+                        my_layer.push(check_balance);
+                        break;
+                    case 'TOPUP_PREPAID':
+                        my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
+                        break;
+                    case 'SHOP_PREPAID':
+                        my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+                        break;
+                    case 'SHOP_PPOB':
+                        _SLOT.start_get_ppob_product();
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

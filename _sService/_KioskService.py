@@ -237,6 +237,17 @@ def define_theme(d):
         content_js += 'var text_color = "' + _Common.COLOR_TEXT + '";' + os.linesep
         content_js += 'var frame_color = "' + d['frame_color'] + '";' + os.linesep
         content_js += 'var background_color = "' +  _Common.COLOR_BACK + '";' + os.linesep
+    if not _Common.empty(d['whatsapp_no']):
+        _Common.THEME_WA_NO = d['whatsapp_no']
+        _Common.log_to_temp_config('theme^wa^no', d['whatsapp_no'])
+        content_js += 'var whatsapp_no = "' +  d['whatsapp_no'] + '";' + os.linesep
+    if not _Common.empty(d['whatsapp_qr']):
+        _Common.THEME_WA_QR = d['whatsapp_qr']
+        _Common.log_to_temp_config('theme^wa^qr', d['whatsapp_qr'])
+        store, receipt_wa_qr = _NetworkAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/_qQML/source')
+        if store is True:
+            content_js += 'var whatsapp_qr = "source/' + receipt_wa_qr + '";' + os.linesep
+
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep

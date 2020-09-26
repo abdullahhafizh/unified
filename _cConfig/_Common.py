@@ -233,7 +233,11 @@ PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
+THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
+THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
+
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
 REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
