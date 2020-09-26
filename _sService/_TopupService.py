@@ -269,7 +269,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             _param['phone'] = '08129420492'
-            _param['email'] = 'vm@mdd.co.id'
+            _param['email'] = _Common.THEME_NAME.lower() + '@mdd.co.id'
             # This Below Key Is Mandatory For Topup Deposit C2C TO Reroute Mandiri Cred
             _param['purpose'] = 'TOPUP_DEPOSIT_C2C'
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)

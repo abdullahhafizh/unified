@@ -135,6 +135,7 @@ INFOS = [
     '[GENERAL]-allowed^ubal^online -> Define Default Bank Which Allowed Update Balance Online',
     '[GENERAL]-mode -> Define Application Repository Mode live or develop',
     '[GENERAL]-mandiri^sam^production -> When Using Develop Mode For Testing, But Keep Using Mandiri KA Deposit Production',
+    '[GENERAL]-refund^feature -> Disable Refund Feature And Set Default To Whatsapp',
     '[BILL]-type -> Define Type Of Bill Acceptor Which is used NV or GRG',
     '[BILL]-not^allowed^denom -> Define Not Allowed Notes/Denom',
     '[BILL]-store^money^delay -> Define Delay Waiting Time in second For Each Notes Storing',

@@ -1,3 +1,9 @@
+11.9.E-GLOBAL:
+- Enhance Messaging Flow In General Payment,
+- Enhance Note Channel Restrictions,
+- Enhance MID Per Merchant,
+- ...
+
 11.9.D-GLOBAL:
 - Disable Refund Feature For Failed/Cancel TRX,
 - Enhance Sentry Config,
