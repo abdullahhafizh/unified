@@ -377,6 +377,7 @@ Base{
         } else {
             //Do Print If Only Status Payment is Changed
             if (receivedPayment > initialPayment)
+                console.log('release_print', now, title, msg);
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
         }
