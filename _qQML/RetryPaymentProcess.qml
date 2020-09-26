@@ -359,26 +359,28 @@ Base{
     }
 
     function release_print(title, msg){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
         hide_all_cancel_button();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
+        if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         if (successTransaction) {
             title = 'Pengulangan Transaksi Berhasil';
-            if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
-            console.log('release_print', now, title, msg);
-            switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
+            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda';
+            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
             _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+            console.log('release_print', now, title, msg);
+            switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         } else {
-            switch_frame('source/smiley_down.png', title, msg, 'backToMain', true );
             //Do Print If Only Status Payment is Changed
             if (receivedPayment > initialPayment)
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+            switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
         }
-        abc.counter = 5;
+        my_timer.stop();
         reset_variables_to_default();
     }
 
