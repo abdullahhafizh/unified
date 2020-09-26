@@ -49,6 +49,8 @@ Base{
             productCount3 = 0;
             selectedMenu = '';
             popup_loading.close();
+            preload_whatasapp_voucher.close();
+            preload_customer_info.close();
             _SLOT.user_action_log('[Homepage] Standby Mode');
         }
         if(Stack.status==Stack.Deactivating){
@@ -618,8 +620,8 @@ Base{
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
-                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
-//                preload_whatasapp_voucher.open()
+//                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
+                preload_whatasapp_voucher.open()
             }
         }
     }
@@ -898,7 +900,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
+                    _SLOT.user_action_log('Press "LANJUT" From WHATSAPP_INFO Frame');
                     preload_whatasapp_voucher.close()
                     my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
 
@@ -921,7 +923,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "O K"');
+                    _SLOT.user_action_log('Press "O K" From CUSTOMER_INFO Frame');
                     preload_customer_info.close();
                     switch(selectedMenu){
                     case 'CHECK_BALANCE':
