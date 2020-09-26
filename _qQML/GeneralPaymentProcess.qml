@@ -359,16 +359,16 @@ Base{
         my_timer.stop();
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
-        if (successTransaction) {
-            title = 'Transaksi Berhasil';
-            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda';
-            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
-        }
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         _SLOT.start_direct_sale_print_global(JSON.stringify(details));
         console.log('release_print', now, title, msg);
+        if (successTransaction) {
+            title = 'Transaksi Berhasil';
+            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda';
+            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
+        }
         switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         hide_all_cancel_button();
 //        abc.counter = 3;
