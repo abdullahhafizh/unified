@@ -16,7 +16,7 @@ Base{
     property var textMain: 'Saat Ini Transaksi Gagal/Batal Dapat Diulang Kembali Pada Menu "CEK/LANJUT TRANSAKSI" Dengan Memasukkan Kode Voucher Yang Tertera Pada Struk Anda.'
     property var textSlave: 'Pengembalian Dana Transaksi Lebih Bayar Akan Dikembalikan Melalui WhatsApp Chat ' + whatsappNo
     property bool smallerSlaveSize: true
-    property int textSize: (globalScreenType == '1') ? 37 : 32
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     property int boxSize: 240
 
     visible: false
