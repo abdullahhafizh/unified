@@ -360,22 +360,26 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             LOGGER.warning(str(e))
             return False
     elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
-        try:        
-            response, result = _Command.send_request(param=_param, output=None)
-            # if _Common.TEST_MODE is True and _Common.empty(result):
-            #   result = '6032111122223333|20000|198000'
-            r = result.split('|')
-            if response == 0 and result is not None:
-                output = {
-                    'bank': bank,
-                    'card_no': r[0],
-                    'topup_amount': r[1],
-                    'last_balance': r[2],
-                }
-                return output
-            else:
-                _Common.online_logger([response, bank, _param], 'general')
-                return False
+        try:
+            attempt = 0
+            while True:     
+                attempt += 1   
+                response, result = _Command.send_request(param=_param, output=None)
+                # if _Common.TEST_MODE is True and _Common.empty(result):
+                #   result = '6032111122223333|20000|198000'
+                r = result.split('|')
+                if response == 0 and result is not None:
+                    output = {
+                        'bank': bank,
+                        'card_no': r[0],
+                        'topup_amount': r[1],
+                        'last_balance': r[2],
+                    }
+                    return output
+                if attempt > 5:
+                    _Common.online_logger([response, bank, _param], 'general')
+                    return False
+                sleep(_Common.C2C_DEPOSIT_UPDATE_LOOP)
         except Exception as e:
             LOGGER.warning(str(e))
             return False

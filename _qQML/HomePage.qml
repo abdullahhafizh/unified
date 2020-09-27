@@ -8,7 +8,7 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-//            property var globalScreenType: '2'
+//            property var globalScreenType: '1'
 //            height: (globalScreenType=='2') ? 1024 : 1080
 //            width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
@@ -915,7 +915,7 @@ Base{
 
         CircleButton{
             id: next_button_preload_info
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             button_text: 'O K'
