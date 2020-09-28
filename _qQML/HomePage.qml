@@ -55,6 +55,7 @@ Base{
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
+            preload_customer_info.close();
         }
     }
 
@@ -924,7 +925,7 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "O K" From CUSTOMER_INFO Frame');
-                    preload_customer_info.close();
+//                    preload_customer_info.close();
                     switch(selectedMenu){
                     case 'CHECK_BALANCE':
                         my_layer.push(check_balance);
