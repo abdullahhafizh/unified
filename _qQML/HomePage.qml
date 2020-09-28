@@ -193,6 +193,8 @@ Base{
             preload_customer_info.whatsappNo = CONF.whatsapp_no;
         }
 
+        if (kiosk.refund_feature != '1') showCustomerInfo = false;
+
         main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }

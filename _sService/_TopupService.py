@@ -365,6 +365,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             while True:     
                 attempt += 1   
                 response, result = _Command.send_request(param=_param, output=None)
+                LOGGER.debug((bank, mode, attempt, response, result))
                 # if _Common.TEST_MODE is True and _Common.empty(result):
                 #   result = '6032111122223333|20000|198000'
                 r = result.split('|')
@@ -376,7 +377,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
                         'last_balance': r[2],
                     }
                     return output
-                if attempt > 5:
+                if attempt > _Common.C2C_DEPOSIT_UPDATE_MAX_LOOP:
                     _Common.online_logger([response, bank, _param], 'general')
                     return False
                 sleep(_Common.C2C_DEPOSIT_UPDATE_LOOP)

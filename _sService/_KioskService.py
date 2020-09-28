@@ -74,7 +74,8 @@ def kiosk_status():
         'tid': _Common.TID,
         # 'payment': _Common.PAYMENT_SETTING,
         'feature': _Common.FEATURE_SETTING,
-        'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted')
+        'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted'),
+        'refund_feature': _ConfigParser.get_value('GENERAL', 'refund^feature')
     }))
 
 

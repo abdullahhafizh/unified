@@ -124,6 +124,7 @@ C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '603200
 C2C_DEPOSIT_UID = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^uid', '---')
 C2C_DEPOSIT_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^slot', '2')
 C2C_DEPOSIT_UPDATE_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^loop', '300'))
+C2C_DEPOSIT_UPDATE_MAX_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^max^loop', '10'))
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
 
@@ -152,6 +153,7 @@ INFOS = [
     '[MANDIRI_C2C]-sam^slot ->  Mandiri SAM Actual Slot in Reader',
     '[MANDIRI_C2C]-deposit^slot ->  C2C Deposit Actual Slot in Reader',
     '[MANDIRI_C2C]-deposit^update^loop ->  C2C Deposit Update Loop in Seconds',
+    '[MANDIRI_C2C]-deposit^update^max^loop ->  C2C Deposit Maximum Loop Attempt Per Event Update',
     '[EDC]-type -> Define EDC Type UPT-IUR/MOBILE-ANDROID',
     '[EDC]-serial^no -> Define Serial No of Mobile Android EDC',
 ] 
