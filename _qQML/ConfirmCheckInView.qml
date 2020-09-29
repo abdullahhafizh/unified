@@ -130,7 +130,7 @@ Termasuk perbuatan melanggar hukum untuk membawa ke dalam pesawat (sebagai bawaa
             y: 472
             width: parent.width
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter
             ConfirmButton{

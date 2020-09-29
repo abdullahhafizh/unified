@@ -64,7 +64,7 @@ Base{
         width: 900
         height: width/4
         wrapMode: Text.WordWrap
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
         color: 'white'

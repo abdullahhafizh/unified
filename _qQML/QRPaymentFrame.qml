@@ -189,7 +189,7 @@ Base{
         Text{
             text: 'Mohon Tunggu, Memproses Transaksi Anda...'
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             anchors.horizontalCenterOffset: 0
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter

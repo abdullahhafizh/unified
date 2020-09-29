@@ -209,7 +209,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 120
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         z: 10
         visible: !popup_loading.visible
         modeReverse: true
@@ -442,7 +442,7 @@ Base{
         color: "white"
         visible: false;
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         wrapMode: Text.WordWrap
         font.italic: true
