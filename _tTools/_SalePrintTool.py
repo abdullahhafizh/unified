@@ -100,12 +100,11 @@ class NEW_LAYOUT_PDF(FPDF):
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
         # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
-        self.set_y(-10)
+        self.set_y(-5)
         # if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
         #     for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
         #         self.ln(SPACING-1)
         #         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
-        self.ln(SPACING-1)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 
 
@@ -261,7 +260,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         cash = int(p['payment_received'])
         HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 100))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 120))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -511,7 +510,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         cash = int(p['payment_received'])
         HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 100))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 120))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()

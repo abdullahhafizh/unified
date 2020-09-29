@@ -1842,6 +1842,7 @@ Base{
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = refundAmount.toString();
+//                    _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
                     var refundPayload = {
                         amount: details.refund_amount,
                         customer: 'NO_PHONE_NUMBER',
