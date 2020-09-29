@@ -1038,7 +1038,7 @@ Base{
         CircleButton{
             id: next_button_global
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             button_text: 'LANJUT'
@@ -1092,7 +1092,7 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             button_text: 'LANJUT'

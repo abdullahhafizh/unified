@@ -1450,7 +1450,7 @@ Base{
         CircleButton{
             id: next_button_input_number
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             button_text: 'LANJUT'
