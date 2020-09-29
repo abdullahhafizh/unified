@@ -273,13 +273,13 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
+        if 'receipt_title' in p.keys():
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
+        pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         __title = t
         pdf.cell(padding_left, 0, merge_text([__title, p['raw']['bank_name'], p['payment'], ]), 0, 0, 'L')
-        if 'receipt_title' in p.keys():
-            pdf.ln(small_space)
-            pdf.set_font(USED_FONT, '', regular_space)
-            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
@@ -399,7 +399,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 elif 'pending_trx_code' in p.keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                    pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -444,7 +444,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -523,13 +523,13 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
+        if 'receipt_title' in p.keys():
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
+        pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         __title = t
         pdf.cell(padding_left, 0, merge_text([__title, p['payment'], ]), 0, 0, 'L')
-        if 'receipt_title' in p.keys():
-            pdf.ln(small_space)
-            pdf.set_font(USED_FONT, '', regular_space)
-            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
@@ -570,7 +570,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -621,7 +621,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -700,13 +700,13 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
+        if 'receipt_title' in p.keys():
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
+        pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         __title = t
         pdf.cell(padding_left, 0, merge_text([__title, p['payment'], ]), 0, 0, 'L')
-        if 'receipt_title' in p.keys():
-            pdf.ln(small_space)
-            pdf.set_font(USED_FONT, '', regular_space)
-            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
@@ -773,7 +773,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -810,7 +810,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
