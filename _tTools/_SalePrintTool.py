@@ -227,11 +227,11 @@ def sale_print_global(ext='.pdf', use_last=False):
 def sale_print_global_new_layout():
     p = LAST_TRX
     if p['shop_type'] == 'topup':    
-        new_print_topup_trx(p, 'ISI ULANG PRABAYAR')    
+        new_print_topup_trx(p, 'ISI ULANG KARTU')    
     if p['shop_type'] == 'shop':    
-        new_print_shop_trx(p, 'PEMBELIAN PRABAYAR')
+        new_print_shop_trx(p, 'PEMBELIAN KARTU')
     if p['shop_type'] == 'ppob':    
-        new_print_ppob_trx(p, 'PEMBELIAN/PEMBAYARAN')
+        new_print_ppob_trx(p, 'BELI/BAYAR')
 
 
 def merge_text(text=[]):
