@@ -1295,12 +1295,14 @@ Base{
             release_print();
             return;
         }
+        refundAmount = exceed;
 //        if (message != undefined && message.length > 0){
 //            transaction_completeness.textFirst = message[0];
 //            transaction_completeness.textSecond = (message[1] != undefined) ? message[1]  : '';
 //            transaction_completeness.textThird = (message[2] != undefined) ? message[2]  : '';
 //            transaction_completeness.textFourth = (message[3] != undefined) ? message[3]  : '';
 //        }
+        press = '0';
         transaction_completeness.mainTitle = mode;
         transaction_completeness.open();
     }
@@ -1624,6 +1626,8 @@ Base{
                     popup_refund.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
+                    refundChannel = 'CUSTOMER-SERVICE';
+                    details.refund_channel = refundChannel;
                     details.refund_amount = refundAmount.toString();
                     var refundPayload = {
                         amount: details.refund_amount,
@@ -1836,7 +1840,11 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                    if (press != '0') return;
+                    press = '1';
                     _SLOT.user_action_log('Press "BATAL" in Transaction Completeness');
+                    refundChannel = 'CUSTOMER-SERVICE';
+                    details.refund_channel = refundChannel;
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = refundAmount.toString();
@@ -1845,12 +1853,13 @@ Base{
                         customer: 'NO_PHONE_NUMBER',
                         reff_no: details.shop_type + details.epoch.toString(),
                         remarks: details,
-                        channel: 'CUSTOMER-SERVICE',
+                        channel: refundChannel,
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }
                     _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
                     console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
+                    transaction_completeness.close();
                     release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang ('+uniqueCode+') Yang Tertera Pada Struk.');
                 }
             }

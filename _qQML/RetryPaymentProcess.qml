@@ -1290,6 +1290,8 @@ Base{
 //            transaction_completeness.textThird = (message[2] != undefined) ? message[2]  : '';
 //            transaction_completeness.textFourth = (message[3] != undefined) ? message[3]  : '';
 //        }
+        refundAmount = exceed;
+        press = '0';
         transaction_completeness.mainTitle = mode;
         transaction_completeness.open();
     }
@@ -1822,7 +1824,6 @@ Base{
 
         CircleButton{
             id: cancel_button_transaction_completeness
-            visible: false
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
@@ -1833,7 +1834,11 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                    if (press != '0') return;
+                    press = '1';
                     _SLOT.user_action_log('Press "BATAL" in Transaction Completeness');
+                    refundChannel = 'CUSTOMER-SERVICE';
+                    details.refund_channel = refundChannel;
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = refundAmount.toString();
@@ -1842,12 +1847,13 @@ Base{
                         customer: 'NO_PHONE_NUMBER',
                         reff_no: details.shop_type + details.epoch.toString(),
                         remarks: details,
-                        channel: 'CUSTOMER-SERVICE',
+                        channel: refundChannel,
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }
                     _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
                     console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
+                    transaction_completeness.close();
                     release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang ('+uniqueCode+') Yang Tertera Pada Struk.');
                 }
             }
@@ -1885,7 +1891,6 @@ Base{
 
         CircleButton{
             id: cancel_button_cancel_confirmation
-            visible: false
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
