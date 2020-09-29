@@ -87,7 +87,7 @@ class NEW_LAYOUT_PDF(FPDF):
         # Logo
         if os.path.isfile(LOGO_PATH):
             # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
-            self.image(LOGO_PATH, 25, 20, 25)
+            self.image(LOGO_PATH, 25, 20, 30)
             self.ln(SPACING*3)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
         self.ln(SPACING*3)
@@ -96,16 +96,16 @@ class NEW_LAYOUT_PDF(FPDF):
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Common.KIOSK_NAME, 0, 1, 'C')
 
     def footer(self):
-        self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE-1)
+        # self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE-1)
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
         # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
-        self.set_y(-5)
+        # self.set_y(-5)
         # if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
         #     for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
         #         self.ln(SPACING-1)
         #         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
+        # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 
 
 GENERAL_TITLE = 'VM COLLECTION REPORT'
@@ -260,7 +260,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         cash = int(p['payment_received'])
         HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 120))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -510,7 +510,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         cash = int(p['payment_received'])
         HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 120))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -687,7 +687,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         cash = int(p['payment_received'])
         HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 120))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
