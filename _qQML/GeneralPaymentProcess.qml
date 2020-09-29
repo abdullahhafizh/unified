@@ -1135,6 +1135,7 @@ Base{
                 press = '1';
                 if (useCancelConfirmation){
                     cancel_confirmation.open();
+                    press = '0';
                     my_timer.stop();
                     return;
                 }
@@ -1490,6 +1491,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     if (useCancelConfirmation){
+                        press = '0';
                         cancel_confirmation.open();
                         my_timer.stop();
                         return;
