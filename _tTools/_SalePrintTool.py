@@ -95,7 +95,7 @@ class NEW_LAYOUT_PDF(FPDF):
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Common.KIOSK_NAME, 0, 1, 'C')
 
-    def footer(self):
+    # def footer(self):
         # self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE-1)
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
