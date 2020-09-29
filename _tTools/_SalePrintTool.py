@@ -82,6 +82,33 @@ class PDF(FPDF):
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 
 
+class NEW_LAYOUT_PDF(FPDF):
+    def header(self):
+        # Logo
+        if os.path.isfile(LOGO_PATH):
+            # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
+            self.image(LOGO_PATH, 25, 20, 25)
+            self.ln(SPACING*3)
+        self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
+        self.ln(SPACING*3)
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_Common.TID, 0, 0, 'C')
+        self.ln(SPACING)
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Common.KIOSK_NAME, 0, 1, 'C')
+
+    def footer(self):
+        self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE-1)
+        # self.ln(SPACING)
+        # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
+        # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
+        self.set_y(-10)
+        # if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
+        #     for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
+        #         self.ln(SPACING-1)
+        #         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
+        self.ln(SPACING-1)
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
+
+
 GENERAL_TITLE = 'VM COLLECTION REPORT'
 USE_FOOTER = False
 
@@ -184,6 +211,9 @@ def sale_print_global(ext='.pdf', use_last=False):
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
             return
         LAST_TRX = _KioskService.GLOBAL_TRANSACTION_DATA
+    if _Common.PRINTER_NEW_LAYOUT is True:
+        sale_print_global_new_layout()
+        return
     p = LAST_TRX
     if p['shop_type'] == 'topup':    
         print_topup_trx(p, 'ISI ULANG PRABAYAR')    
@@ -192,6 +222,632 @@ def sale_print_global(ext='.pdf', use_last=False):
     if p['shop_type'] == 'ppob':    
         print_ppob_trx(p, 'PEMBELIAN/PEMBAYARAN')
 
+
+
+def sale_print_global_new_layout():
+    p = LAST_TRX
+    if p['shop_type'] == 'topup':    
+        new_print_topup_trx(p, 'ISI ULANG PRABAYAR')    
+    if p['shop_type'] == 'shop':    
+        new_print_shop_trx(p, 'PEMBELIAN PRABAYAR')
+    if p['shop_type'] == 'ppob':    
+        new_print_ppob_trx(p, 'PEMBELIAN/PEMBAYARAN')
+
+
+def merge_text(text=[]):
+    if len(text) == 0:
+        return ''
+    return ' - '.join(text)
+
+
+# NEW LAYOUT =============
+# TODO: Adjust Below Layout
+
+def new_print_topup_trx(p, t, ext='.pdf'):
+    global HEADER_TEXT1
+    if _Common.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    # Init Variables
+    small_space = SMALL_SPACE - 0.5
+    regular_space = REGULAR_SPACE
+    padding_left = PADDING_LEFT
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        HEADER_TEXT1 = t
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 100))
+        # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        pdf.add_page()
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        # Layouting
+        # pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
+        pdf.ln(small_space*2)
+        pdf.set_font(USED_FONT, '', regular_space)
+        __title = t
+        pdf.cell(padding_left, 0, merge_text([__title, p['raw']['bank_name'], p['payment'], ]), 0, 0, 'L')
+        if 'receipt_title' in p.keys():
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        # pdf.ln(small_space)
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
+        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            if 'topup_details' in p.keys():
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # if 'Mandiri' in p['provider']:
+                #     pdf.cell(padding_left, 0, 'TID : ' + _Common.TID_MAN, 0, 0, 'L')
+                # else:
+                #     pdf.cell(padding_left, 0, 'TID : ' + _Common.TID_BNI, 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'ISI ULANG  : Rp. ' + clean_number(p['denom']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(p['admin_fee']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'TOTAL BAYAR: Rp. ' + clean_number(p['value']), 0, 0, 'L')
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['topup_details']['bank_name'], 0, 0, 'L')
+                if 'other_channel_topup' in p['topup_details'].keys():
+                    if int(p['topup_details']['other_channel_topup']) > 0:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, '', regular_space)
+                        pdf.cell(padding_left, 0, 'PENDING SALDO: Rp. ' + clean_number(str(p['topup_details']['other_channel_topup'])), 0, 0, 'L')
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # pdf.cell(padding_left, 0, 'UANG MASUK : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NO. KARTU  : ' + p['topup_details']['card_no'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                # saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
+                pdf.cell(padding_left, 0, 'SALDO AWAL : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'SALDO AKHIR: Rp. ' + clean_number(str(p['final_balance'])), 0, 0, 'L')
+                if 'refund_status' in p.keys():
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, '', regular_space)
+                        pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+                # elif 'pending_trx_code' in p.keys():
+                #     pdf.ln(small_space)
+                #     pdf.set_font(USED_FONT, '', regular_space)
+                #     pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                # pdf.ln(small_space*2)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
+                # pdf.ln(small_space-1)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(0, 0, 'KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+                # pdf.ln(small_space-1)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
+                # pdf.ln(small_space-1)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(0, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
+                # pdf.ln(small_space-1)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
+            else:
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['raw']['bank_name'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NO. KARTU   : ' + p['raw']['card_no'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # pdf.cell(padding_left, 0, 'STATUS ISI ULANG KARTU GAGAL', 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+                if 'refund_status' in p.keys():
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, '', regular_space)
+                        pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+                elif 'pending_trx_code' in p.keys():
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+                    # failure = 'TOPUP_FAILURE'
+        else:
+            # pdf.ln(small_space*2)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['raw']['bank_name'], 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'NO. KARTU   : ' + p['raw']['card_no'], 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
+            # pdf.ln(small_space*2)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+            if 'refund_status' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
+            # pdf.ln(small_space*4)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+            # pdf.ln(small_space)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+        pdf.ln(small_space)
+        # End Layouting
+        pdf_file = get_path(file_name+ext)
+        pdf.output(pdf_file, 'F')
+        LOGGER.debug((file_name))
+        # Print-out to printer
+        print_ = _Printer.do_printout(pdf_file)
+        print("pyt : sending pdf to default printer : {}".format(str(print_)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+        # failure = 'USER_CANCELLATION'
+        # if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
+        #     if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
+        #         failure = 'TOPUP_FAILURE'
+        #     # Send Failure To Backend
+        #     _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+        #                                     json.dumps(p))
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        failure = 'USER_CANCELLATION'
+        if p['payment'].upper() == 'CASH':
+            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
+        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
+            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
+                failure = 'TOPUP_FAILURE'
+            if 'pending_trx_code' in p.keys():
+                failure = 'PENDING_TRANSACTION'
+            # Send Failure To Backend
+            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+                                            json.dumps(p))
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Common.LAST_EDC_TRX_RECEIPT = None
+        del pdf
+
+
+def new_print_shop_trx(p, t, ext='.pdf'):
+    global HEADER_TEXT1
+    if _Common.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    # Init Variables
+    small_space = SMALL_SPACE - 0.5
+    regular_space = REGULAR_SPACE
+    padding_left = PADDING_LEFT
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        HEADER_TEXT1 = t
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 100))
+        # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        pdf.add_page()
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        # Layouting
+        # pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
+        pdf.ln(small_space*2)
+        pdf.set_font(USED_FONT, '', regular_space)
+        __title = t
+        pdf.cell(padding_left, 0, merge_text([__title, p['payment'], ]), 0, 0, 'L')
+        if 'receipt_title' in p.keys():
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
+        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'TIPE KARTU  : ' + p['provider'], 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'QTY KARTU   : ' + str(p['qty']), 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
+            # pdf.ln(small_space)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'UANG MASUK  : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
+            if 'refund_status' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
+                # price_unit = str(int(int(p['value'])/p['qty']))
+                # sub_total = p['value']
+                # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
+                #     sub_total = str(int(p['value']) - int(p['admin_fee']))
+                #     price_unit = str(int(int(sub_total) / p['qty']))
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space+2)
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            pdf.cell(padding_left, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            # pdf.ln(small_space*2)
+            # pdf.set_font(USED_FONT, '', regular_space-1)
+            # pdf.cell(padding_left, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+            # pdf.ln(small_space-1)
+            # pdf.set_font(USED_FONT, '', regular_space-1)
+            # pdf.cell(padding_left, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
+            # pdf.ln(small_space-1)
+            # pdf.set_font(USED_FONT, '', regular_space-1)
+            # pdf.cell(padding_left, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
+            # pdf.ln(small_space)
+            # pdf.set_font(USED_FONT, '', regular_space-1)
+            # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+            # failure = 'TOPUP_FAILURE'
+        else:
+            # pdf.ln(small_space*2)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+            if 'refund_status' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
+            # pdf.ln(small_space*3)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+            # pdf.ln(small_space)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+        pdf.ln(small_space)
+        # End Layouting
+        pdf_file = get_path(file_name+ext)
+        pdf.output(pdf_file, 'F')
+        LOGGER.debug((file_name))
+        # Print-out to printer
+        print_ = _Printer.do_printout(pdf_file)
+        print("pyt : sending pdf to default printer : {}".format(str(print_)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+        # failure = 'USER_CANCELLATION'
+        # if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
+        #     if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
+        #         failure = 'TOPUP_FAILURE'
+        #     # Send Failure To Backend
+        #     _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+        #                                     json.dumps(p))
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        failure = 'USER_CANCELLATION'
+        if p['payment'].upper() == 'CASH':
+            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
+        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
+            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
+                failure = 'TOPUP_FAILURE'
+            if 'pending_trx_code' in p.keys():
+                failure = 'PENDING_TRANSACTION'
+            # Send Failure To Backend
+            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+                                            json.dumps(p))
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Common.LAST_EDC_TRX_RECEIPT = None
+        del pdf
+
+
+def new_print_ppob_trx(p, t, ext='.pdf'):
+    global HEADER_TEXT1
+    if _Common.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    # Init Variables
+    small_space = SMALL_SPACE - 0.5
+    regular_space = REGULAR_SPACE
+    padding_left = PADDING_LEFT
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        HEADER_TEXT1 = t
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        pdf = NEW_LAYOUT_PDF('P', 'mm', (80, 120))
+        # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        pdf.add_page()
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        # Layouting
+        # pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
+        pdf.ln(small_space*2)
+        pdf.set_font(USED_FONT, '', regular_space)
+        __title = t
+        pdf.cell(padding_left, 0, merge_text([__title, p['payment'], ]), 0, 0, 'L')
+        if 'receipt_title' in p.keys():
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, p['receipt_title'].upper(), 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        # pdf.ln(small_space)
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, 'KATEGORI  : ' + str(p['category']), 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'PROVIDER  : ' + str(p['provider']), 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
+        if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            if p['ppob_mode'] == 'tagihan':
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'PELANGGAN  : Rp. ' + str(p['customer']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'TAGIHAN    : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+            else:
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'JUMLAH     : ' + str(p['qty']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'HARGA/UNIT : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                if 'sn' in p['ppob_details'].keys():
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    label_sn = 'S/N '
+                    if p['category'].lower() == 'listrik':
+                        label_sn = 'TOKEN '
+                        if str(p['ppob_details']['sn']) == '[]':
+                            pdf.cell(padding_left, 0, 'TOKEN DALAM PROSES, HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+                        else:    
+                            pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
+                    else:
+                        pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
+            if 'refund_status' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space+2)
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            # pdf.ln(small_space*2)
+            # pdf.set_font(USED_FONT, '', regular_space-1)
+            # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+            # failure = 'TOPUP_FAILURE'
+        else:
+            # pdf.ln(small_space*2)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+            if 'refund_status' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'METODE REFUND: ' + _Common.serialize_refund(p['refund_channel']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'FEE REFUND   : Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
+            elif 'pending_trx_code' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
+            # pdf.ln(small_space*3)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+            # pdf.ln(small_space)
+            # pdf.set_font(USED_FONT, '', regular_space)
+            # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+        pdf.ln(small_space)
+        # End Layouting
+        pdf_file = get_path(file_name+ext)
+        pdf.output(pdf_file, 'F')
+        LOGGER.debug((file_name))
+        # Print-out to printer
+        print_ = _Printer.do_printout(pdf_file)
+        print("pyt : sending pdf to default printer : {}".format(str(print_)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        if p['payment'].upper() == 'CASH':
+            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
+        if 'payment_error' in p.keys() and 'pending_trx_code' in p.keys():
+            failure = 'PENDING_TRANSACTION'
+            # Send Failure To Backend
+            _Common.store_upload_failed_trx(trxid, trxid, cash, failure, p.get('payment', 'cash'), json.dumps(p))
+        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Common.LAST_EDC_TRX_RECEIPT = None
+        del pdf
+
+
+# OLD LAYOUT =============
 
 def print_topup_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1

@@ -5,6 +5,7 @@ from _tTools import _Helper
 from . import _eSSPLib
 import json
 import logging
+from _cConfig import _Common
 
 LOGGER = logging.getLogger()
 
@@ -284,7 +285,8 @@ class NV200_BILL_ACCEPTOR(object):
                     event.append(self.parse_reject_code(last_reject))
                 else:
                     event.append('')
-                # print('pyt: [NV200]', str(event))   
+                if _Common.BILL_LIBRARY_DEBUG is True:
+                    print('pyt: [NV200] Event :', str(event))   
                 return event
             time.sleep(0.5)
 

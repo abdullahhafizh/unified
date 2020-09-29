@@ -66,6 +66,7 @@ MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
 BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^library', '1') == '0' and BILL_TYPE == 'NV' else False
+BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug', '1') == '0' and BILL_TYPE == 'NV' else False
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 
@@ -87,6 +88,7 @@ LOGGER.info((CD_NEW_TYPE))
 
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
+PRINTER_NEW_LAYOUT = True if _ConfigParser.get_set_value('PRINTER', 'new^layout', '0') == '1' else False
 
 MID_MAN = _ConfigParser.get_set_value('MANDIRI', 'mid', '---')
 TID_MAN = _ConfigParser.get_set_value('MANDIRI', 'tid', '---')

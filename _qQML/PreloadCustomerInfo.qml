@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 
 Base{
     id:preload_customer_info
-    // color: "silver"
+//    color: "silver"
 
 //    property var globalScreenType: '1'
 //    height: (globalScreenType=='2') ? 1024 : 1080
@@ -13,8 +13,8 @@ Base{
 
     isBoxNameActive: false
     property var whatsappNo: ''
-    property var textMain: 'Saat Ini Transaksi Gagal/Batal Dapat Diulang Kembali Pada Menu "CEK/LANJUT TRANSAKSI" Dengan Memasukkan Kode Voucher Yang Tertera Pada Struk Anda.'
-    property var textSlave: 'Pengembalian Dana Transaksi Lebih Bayar Akan Dikembalikan Melalui WhatsApp Chat ' + whatsappNo
+    property var textMain: 'Mesin ini tidak dapat mengembalikan uang, Proses pengembalian uang akan dilakukan melalui Whatsapp Voucher.'
+    property var textSlave: 'Anda dapat melakukan transaksi ulang untuk transaksi yang gagal/batal setelah uang masuk ke dalam mesin dengan memasukkan kode ulang.'
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
     property int boxSize: 240
@@ -35,7 +35,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 150 : 125
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Pelanggan YTH.'
+        show_text: 'Syarat dan Ketentuan'
         size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
@@ -50,7 +50,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/key_in_pincode.png"
+        source: "source/whatsapp_logo.jpeg"
         fillMode: Image.PreserveAspectFit
     }
 
@@ -76,20 +76,20 @@ Base{
         id: slaveImage
         width: boxSize
         height: boxSize
-        anchors.horizontalCenterOffset: 500
-        anchors.verticalCenterOffset: 200
+        anchors.horizontalCenterOffset: -500
+        anchors.verticalCenterOffset: 150
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/whatsapp_logo.jpeg"
+        source: "source/key_in_pincode.png"
         fillMode: Image.PreserveAspectFit
     }
 
     Text{
         id: slaveText
         text: textSlave
-        anchors.horizontalCenterOffset: -200
-        anchors.verticalCenterOffset: 200
+        anchors.horizontalCenterOffset: 200
+        anchors.verticalCenterOffset: 150
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: textSize

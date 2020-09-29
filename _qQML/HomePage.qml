@@ -295,11 +295,11 @@ Base{
                     _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
-                    selectedMenu = 'CHECK_BALANCE';
-                    if (showCustomerInfo){
-                        preload_customer_info.open();
-                        return;
-                    }
+//                    selectedMenu = 'CHECK_BALANCE';
+//                    if (showCustomerInfo){
+//                        preload_customer_info.open();
+//                        return;
+//                    }
                     my_layer.push(check_balance);
                 }
             }
@@ -881,12 +881,11 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "BATAL"');
+//                    _SLOT.user_action_log('Press "BATAL"');
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
                     _SLOT.kiosk_get_product_stock();
                     _SLOT.get_kiosk_status();
-        //            _SLOT.start_get_topup_readiness();
                     press = "0";
                     resetMediaTimer();
                 }
@@ -901,34 +900,57 @@ Base{
             anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
+            blinkingMode: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT" From WHATSAPP_INFO Frame');
+//                    _SLOT.user_action_log('Press "LANJUT" From WHATSAPP_INFO Frame');
                     preload_whatasapp_voucher.close()
                     my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
 
                 }
             }
         }
-
     }
+
 
     PreloadCustomerInfo{
         id: preload_customer_info
 
         CircleButton{
-            id: next_button_preload_info
-            anchors.horizontalCenter: parent.horizontalCenter
+            id: cancel_button_preload_info
+            anchors.left: parent.left
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
-            button_text: 'O K'
+            button_text: 'BATAL'
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "O K" From CUSTOMER_INFO Frame');
-//                    preload_customer_info.close();
+                    preload_customer_info.close();
+                    selectedMenu = '';
+                    _SLOT.start_idle_mode();
+                    _SLOT.kiosk_get_product_stock();
+                    _SLOT.get_kiosk_status();
+                    press = "0";
+                    resetMediaTimer();
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_preload_info
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
                     switch(selectedMenu){
                     case 'CHECK_BALANCE':
                         my_layer.push(check_balance);
