@@ -1875,7 +1875,6 @@ Base{
 
         CircleButton{
             id: cancel_button_cancel_confirmation
-            visible: false
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom

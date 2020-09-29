@@ -59,7 +59,7 @@ Base{
             anchors.topMargin: 45
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: mainTitle
-            size_: (popup_confirmation.width==1920) ? 40 : 30
+            size_: (cancel_confirmation.width==1920) ? 40 : 30
             color_: CONF.text_color
         }
 
@@ -76,7 +76,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.family:"Ubuntu"
-            font.pixelSize: (popup_confirmation.width==1920) ? 35 : 25
+            font.pixelSize: (cancel_confirmation.width==1920) ? 35 : 25
         }
 
     }
