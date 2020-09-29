@@ -1826,7 +1826,6 @@ Base{
 
         CircleButton{
             id: cancel_button_transaction_completeness
-            visible: false
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
