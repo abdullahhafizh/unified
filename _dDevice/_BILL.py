@@ -275,8 +275,8 @@ def start_receive_note():
                                                                     'TARGET': DIRECT_PRICE_AMOUNT})))
                 # Call API To Force Update Into Server
                 _Common.upload_device_state('mei', _Common.BILL_ERROR)
-                sleep(1.5)
-                init_bill()
+                # sleep(1.5)
+                # init_bill()
                 break
             if attempt == MAX_EXECUTION_TIME:
                 LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
