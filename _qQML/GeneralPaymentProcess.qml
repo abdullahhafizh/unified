@@ -1356,6 +1356,9 @@ Base{
             do_refund_or_print('user_cancellation_debit');
             return;
         }
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
+            qr_payment_frame.cancel('USER_CANCEL');
+        }
         my_timer.stop();
         console.log('[GLOBAL-PAYMENT]', 'CANCEL-TRANSACTION-FUNCTION', 'BACK-TO-HOMEPAGE');
         my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
@@ -1577,11 +1580,19 @@ Base{
                     _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
                     press = '1';
+                    if (useCancelConfirmation){
+                        press = '0';
+                        cancel_confirmation.open();
+                        qr_payment_frame.qrTimer.stop();
+                        my_timer.stop();
+                        return;
+                    }
+                    cancel_transaction();
 //                    _SLOT.start_cancel_qr_global('CANCEL_'+details.shop_type+details.epoch.toString());
-                    qr_payment_frame.cancel('USER_CANCEL');
-                    my_timer.stop();
-                    console.log('[GLOBAL-PAYMENT]', 'CANCEL-BUTTON-QR-FRAME', 'BACK-TO-HOMEPAGE');
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+//                    qr_payment_frame.cancel('USER_CANCEL');
+//                    my_timer.stop();
+//                    console.log('[GLOBAL-PAYMENT]', 'CANCEL-BUTTON-QR-FRAME', 'BACK-TO-HOMEPAGE');
+//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
         }
@@ -1891,6 +1902,9 @@ Base{
                     cancel_confirmation.close();
                     press = '0';
                     my_timer.start();
+                    if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
+                        qr_payment_frame.qrTimer.start();
+                    }
                 }
             }
         }

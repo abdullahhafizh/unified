@@ -21,6 +21,7 @@ Base{
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
 
+    property alias qrTimer: show_timer
     property var calledFrom
 
     visible: false
