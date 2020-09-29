@@ -1934,6 +1934,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" in Cancel Confirmation');
+                    cancel_confirmation.close();
                     cancel_transaction();
                 }
             }
