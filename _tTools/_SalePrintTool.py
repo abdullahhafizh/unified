@@ -278,7 +278,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         __title = t
-        pdf.cell(padding_left, 0, merge_text([__title, p['raw']['bank_name'], p['payment'], ]), 0, 0, 'L')
+        pdf.cell(padding_left, 0, merge_text([__title, p['raw']['bank_name'], p['payment'].upper(), ]), 0, 0, 'L')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
@@ -533,7 +533,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         __title = t
-        pdf.cell(padding_left, 0, merge_text([__title, p['payment'], ]), 0, 0, 'L')
+        pdf.cell(padding_left, 0, merge_text([__title, p['payment'].upper(), ]), 0, 0, 'L')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
@@ -715,7 +715,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         __title = t
-        pdf.cell(padding_left, 0, merge_text([__title, p['payment'], ]), 0, 0, 'L')
+        pdf.cell(padding_left, 0, merge_text([__title, p['payment'].upper(), ]), 0, 0, 'L')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
