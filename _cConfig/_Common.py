@@ -1400,3 +1400,5 @@ def generate_stock_change_data():
         LOGGER.debug(str(__))
         return __
 
+
+DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []

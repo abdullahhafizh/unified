@@ -248,7 +248,7 @@ Base{
         console.log('get_use_voucher', now, v);
         var res = v.split('|')[1];
         if (['ERROR', 'MISSING_VOUCHER_NUMBER', 'MISSING_REFF_NO'].indexOf(res) > -1){
-            false_notif('Terjadi Kesalahan Saat Menggunakan Kode Voucher Anda', 'backToPrevious', res);
+            false_notif('Terjadi Kesalahan Saat Menggunakan Kode Ulang Anda', 'backToPrevious', res);
             return;
         }
     }
@@ -258,7 +258,7 @@ Base{
 //        console.log('get_check_voucher', now, v);
         var res = v.split('|')[1];
         if (['ERROR', 'MISSING_VOUCHER_NUMBER', 'MISSING_PRODUCT_ID', 'EMPTY'].indexOf(res) > -1){
-            false_notif('Terjadi Kesalahan Saat Memeriksa Kode Voucher Anda', 'backToPrevious', res);
+            false_notif('Terjadi Kesalahan Saat Memeriksa Kode Ulang Anda', 'backToPrevious', res);
             return;
         }
         console.log('get_check_voucher', now, res);
@@ -266,7 +266,7 @@ Base{
         vCollectionData = i;
         vCollectionMode = i.mode;
         if (i.qty==0){
-            false_notif('Kode Voucher Tersebut Sudah Pernah Digunakan', 'backToMain', '');
+            false_notif('Kode Ulang Tersebut Sudah Pernah Digunakan', 'backToMain', '');
             return;
         }
         var rows = [
@@ -431,12 +431,12 @@ Base{
 
     function define_wording(){
         if (mode=='WA_VOUCHER'){
-            wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
+            wording_text = 'Masukkan Kode Ulang (VCODE) Dari WhatsApp Anda';
             min_count = 8;
             return;
         }
         if (mode=='SEARCH_TRX'){
-            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang)/Kode Voucher Transaksi Anda';
+            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang)/Kode Ulang Transaksi Anda';
             min_count = 6;
             return;
         }
@@ -738,7 +738,7 @@ Base{
                     return
                 case 'WA_VOUCHER':
                     console.log('Checking WA Invoice Number : ', now, textInput);
-                    popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
+                    popup_loading.open('Memeriksa Kode Ulang Anda Anda...')
                     _SLOT.start_check_voucher(textInput);
                     return;
                 default:

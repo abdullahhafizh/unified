@@ -398,7 +398,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 elif 'pending_trx_code' in p.keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
+                    pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -443,7 +443,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -457,9 +457,8 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         pdf.ln(regular_space)
         if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
             for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
-                pdf.ln(SPACING-1)
-                pdf.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
-        pdf.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
+                pdf.ln(2.5)
+                pdf.cell(MARGIN_LEFT, 6.5, custom_text, 0, 0, 'C')
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
@@ -575,7 +574,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -626,7 +625,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -640,9 +639,8 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         pdf.ln(regular_space)
         if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
             for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
-                pdf.ln(SPACING-1)
-                pdf.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
-        pdf.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
+                pdf.ln(2.5)
+                pdf.cell(MARGIN_LEFT, 6.5, custom_text, 0, 0, 'C')
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
@@ -784,7 +782,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -821,7 +819,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             elif 'pending_trx_code' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'KODE VOUCHER : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -835,9 +833,8 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         pdf.ln(regular_space)
         if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
             for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
-                pdf.ln(SPACING-1)
-                pdf.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
-        pdf.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
+                pdf.ln(2.5)
+                pdf.cell(MARGIN_LEFT, 6.5, custom_text, 0, 0, 'C')
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')

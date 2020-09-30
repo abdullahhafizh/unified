@@ -1160,7 +1160,7 @@ Base{
     function exit_with_message(second){
         popup_loading.open();
         popup_loading.textMain = 'Menutup Sesi Pembayaran Anda';
-        popup_loading.textSlave = 'Anda Tetap Dapat Melanjutkan Transaksi Dari Kode Voucher Yang Tertera Pada Struk';
+        popup_loading.textSlave = 'Anda Tetap Dapat Melanjutkan Transaksi Dari Kode Ulang Yang Tertera Pada Struk';
         back_button.visible = false;
         cancel_button_global.visible = false;
         delay(second*1000, function(){
@@ -1292,6 +1292,7 @@ Base{
 //        }
         refundAmount = exceed;
         press = '0';
+        my_timer.stop();
         transaction_completeness.mainTitle = mode;
         transaction_completeness.open();
     }
@@ -1896,13 +1897,13 @@ Base{
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
-            button_text: 'BATAL'
+            button_text: 'TIDAK'
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                    _SLOT.user_action_log('Press "BATAL" in Cancel Confirmation');
+                    _SLOT.user_action_log('Press "TIDAK" in Cancel Confirmation');
                     cancel_confirmation.close();
                     press = '0';
                     my_timer.start();
@@ -1916,7 +1917,7 @@ Base{
             anchors.rightMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
-            button_text: 'LANJUT'
+            button_text: 'Y A'
             modeReverse: true
             blinkingMode: true
             MouseArea{
@@ -1925,7 +1926,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.user_action_log('Press "LANJUT" in Cancel Confirmation');
+                    _SLOT.user_action_log('Press "Y A" in Cancel Confirmation');
                     cancel_confirmation.close();
                     cancel_transaction();
                 }

@@ -59,6 +59,20 @@ Base{
         fillMode: Image.PreserveAspectFit
     }
 
+    Text{
+        text: "*Pastikan Anda memiliki Aplikasi Scan Barcode"
+        visible: showWhatAppQR
+        anchors.top: mainImage.bottom
+        anchors.topMargin: 10
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.pixelSize: 20
+        horizontalAlignment: Text.AlignLeft
+        font.bold: false
+        color: 'white'
+        verticalAlignment: Text.AlignVCenter
+        font.family: "Ubuntu"
+    }
+
     Column{
         id: rowDetailText
         spacing: 50

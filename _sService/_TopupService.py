@@ -100,6 +100,16 @@ def do_topup_deposit_bni(slot=1, force=False):
             _Common.upload_topup_error(slot, 'ADD')
             # _Common.online_logger(['BNI Result Pending', _result_pending], 'general')
             return 'FAILED_PENDING_BALANCE_BNI'
+        # Waiting Another Deposit Update Balance Process
+        wait = 0
+        while True:
+            wait += 1
+            if len(_Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS) == 0:
+                break
+            if wait >= 3600:
+                break
+            sleep(1)
+        _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS.append(_Helper.whoami())
         _result_ubal = update_balance({
             'card_no': _get_card_data['card_no'],
             'card_info': _get_card_data['card_info'],
@@ -108,20 +118,24 @@ def do_topup_deposit_bni(slot=1, force=False):
         if _result_ubal is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_UPDATE_BALANCE_BNI')
             _Common.upload_topup_error(slot, 'ADD')
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             # _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = _QPROX.bni_crypto_deposit(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
             _Common.upload_topup_error(slot, 'ADD')
             # _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
             BNI_UPDATE_BALANCE_PROCESS = False
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('SUCCESS_TOPUP_BNI')
             _Common.upload_topup_error(slot, 'RESET')
             return 'SUCCESS_TOPUP_BNI'
     except Exception as e:
+        _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
         LOGGER.warning((str(slot), str(e)))
         TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_TOPUP_BNI')
 
@@ -151,21 +165,34 @@ def bni_reset_update_balance(slot=1):
             _Common.upload_topup_error(slot, 'ADD')
             _Common.online_logger(['BNI Pending Result', _result_pending], 'general')
             return 'FAILED_PENDING_BALANCE_BNI'
+        # Waiting Another Deposit Update Balance Process
+        wait = 0
+        while True:
+            wait += 1
+            if len(_Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS) == 0:
+                break
+            if wait >= 3600:
+                break
+            sleep(1)
+        _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS.append(_Helper.whoami())
         _result_ubal = update_balance({
             'card_no': _get_card_data['card_no'],
             'card_info': _get_card_data['card_info'],
             'reff_no': _result_pending['reff_no']
         })
         if _result_ubal is False:
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             _Common.upload_topup_error(slot, 'ADD')
             _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = _QPROX.bni_crypto_deposit(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             _Common.upload_topup_error(slot, 'ADD')
             _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             _Common.upload_topup_error(slot, 'RESET')
             _Common.ALLOW_DO_TOPUP = True
             return 'SUCCESS_RESET_PENDING_BNI'
@@ -361,6 +388,15 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             return False
     elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         try:
+            wait = 0
+            while True:
+                wait += 1
+                if len(_Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS) == 0:
+                    break
+                if wait >= 3600:
+                    break
+                sleep(1)
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS.append(_Helper.whoami())
             attempt = 0
             while True:     
                 attempt += 1   
@@ -370,6 +406,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
                 #   result = '6032111122223333|20000|198000'
                 r = result.split('|')
                 if response == 0 and result is not None:
+                    _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
                     output = {
                         'bank': bank,
                         'card_no': r[0],
@@ -379,9 +416,11 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
                     return output
                 if attempt > _Common.C2C_DEPOSIT_UPDATE_MAX_LOOP:
                     _Common.online_logger([response, bank, _param], 'general')
+                    _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
                     return False
                 sleep(_Common.C2C_DEPOSIT_UPDATE_LOOP)
         except Exception as e:
+            _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             LOGGER.warning(str(e))
             return False
     else:

@@ -19,6 +19,8 @@ Base{
     property variant actionList: []
     property variant actionChangeList: []
 
+    property var operatorName: ''
+
     isPanelActive: false
     isHeaderActive: true
     logo_vis: false
@@ -114,18 +116,18 @@ Base{
         console.log('get_topup_bni_result', now, r);
         popup_loading.close();
         if (r=='SUCCESS_TOPUP_BNI'){
-            false_notif('Dear '+userData.first_name+'|Selamat Proses Topup Deposit BNI Berhasil');
+            false_notif('Dear '+operatorName+'|Selamat Proses Topup Deposit BNI Berhasil');
             press = '0';
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
         }
         if (r=='FAILED_UPDATE_BALANCE_BNI'){
-            false_notif('Dear '+userData.first_name+'|Gagal Memproses, Silakan Aktivasi Ulang Deposit');
+            false_notif('Dear '+operatorName+'|Gagal Memproses, Silakan Aktivasi Ulang Deposit');
             press = '0';
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
         }
-        false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+r);
+        false_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+r);
     }
 
     function get_admin_action(a){
@@ -133,62 +135,62 @@ Base{
         console.log('get_admin_action', now, a);
         popup_loading.close();
         if (a=='CHANGE_PRODUCT|STID_NOT_FOUND'){
-            false_notif('Dear '+userData.first_name+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
+            false_notif('Dear '+operatorName+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
         } else if (a=='COLLECT_CASH|DONE'){
-            false_notif('Dear '+userData.first_name+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
+            false_notif('Dear '+operatorName+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
             _SLOT.start_reset_bill();
         } else if (a=='ADMIN_PRINT|DONE'){
-            false_notif('Dear '+userData.first_name+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
+            false_notif('Dear '+operatorName+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
         } else if (a=='INIT_BILL|DONE'||a=='RESET_BILL|DONE'){
-            false_notif('Dear '+userData.first_name+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
+            false_notif('Dear '+operatorName+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
-            false_notif('Dear '+userData.first_name+'|Memproses Perubahan Stok Di Peladen Pusat\nSilakan Tunggu Beberapa Saat');
+            false_notif('Dear '+operatorName+'|Memproses Perubahan Stok Di Peladen Pusat\nSilakan Tunggu Beberapa Saat');
 //            actionChangeList.push(a);
         } else if (a=='REFILL_ZERO|SUCCESS'){
-            false_notif('Dear '+userData.first_name+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
+            false_notif('Dear '+operatorName+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
             var r = a.split('|')[1]
             if (r.indexOf('FAILED') > -1){
-                false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Proses Settlement!\nKode Error ['+r+']');
+                false_notif('Dear '+operatorName+'|Terjadi Kegagalan Pada Proses Settlement!\nKode Error ['+r+']');
             } else if (r=='SUCCESS') {
-                false_notif('Dear '+userData.first_name+'|Status Proses Settlement...\n['+r+']', true);
+                false_notif('Dear '+operatorName+'|Status Proses Settlement...\n['+r+']', true);
             } else {
-                false_notif('Dear '+userData.first_name+'|Status Proses Settlement...\n['+r+']');
+                false_notif('Dear '+operatorName+'|Status Proses Settlement...\n['+r+']');
                 if (r!='WAITING_RSP_UPDATE') return;
             }
         } else if (a.indexOf('APP_UPDATE') > -1){
             if (a == 'APP_UPDATE|SUCCESS'){
-                false_notif('Dear '+userData.first_name+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
+                false_notif('Dear '+operatorName+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
                 _SLOT.user_action_log('Admin Page Notif Button "Reboot By Update"');
                 _SLOT.start_safely_shutdown('RESTART');
             } else {
                 var u = a.split('|')[1]
                 if (a.indexOf('APP_UPDATE|VER.') > -1){
-                    false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\n\nKode Versi Pembaharuan ['+u+']\n\nAplikasi Akan Memuat Ulang.');
+                    false_notif('Dear '+operatorName+'|Memproses Pembaharuan Aplikasi!\n\nKode Versi Pembaharuan ['+u+']\n\nAplikasi Akan Memuat Ulang.');
                 } else {
-                    false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\n\nProses Eksekusi ['+u+']\n\nMohon Tunggu Hingga Semua Proses Selesai.');
+                    false_notif('Dear '+operatorName+'|Memproses Pembaharuan Aplikasi!\n\nProses Eksekusi ['+u+']\n\nMohon Tunggu Hingga Semua Proses Selesai.');
                 }
             }
             return;
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
             var e = a.split('|')[1]
             if (e == 'PROCESSED' || e == 'SUCCESS_TRIGGERED_TO_HOST') {
-                false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+e+']', true);
+                false_notif('Dear '+operatorName+'|Status Proses EDC Settlement...\n['+e+']', true);
             } else {
-                false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+e+']');
+                false_notif('Dear '+operatorName+'|Status Proses EDC Settlement...\n['+e+']');
             }
         } else if (a.indexOf('SYNC_PRODUCT_STOCK') > -1){
             var s = a.split('|')[1]
-            false_notif('Dear '+userData.first_name+'|Status Proses Sync Product Stock..\n['+s+']');
+            false_notif('Dear '+operatorName+'|Status Proses Sync Product Stock..\n['+s+']');
 
         } else if (a.indexOf('TOPUP_ONLINE_DEPOSIT') > -1){
             var topup_result = a.split('|')[1]
-            false_notif('Dear '+userData.first_name+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
+            false_notif('Dear '+operatorName+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
         } else if (a=='CHANGE_PRODUCT|CONNECTION_ERROR'){
-            false_notif('Dear '+userData.first_name+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
+            false_notif('Dear '+operatorName+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
             actionChangeList.pop()
         } else {
-            false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+a);
+            false_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+a);
         }
         press = '0';
         _SLOT.kiosk_get_machine_summary();
@@ -220,13 +222,14 @@ Base{
     function parse_user_data(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('parse_user_data', now, JSON.stringify(userData));
+        operatorName = userData.first_name;
         if (userData.isAbleCollect==0){
-            false_notif('Selamat Datang '+userData.first_name+'|Akses Akun Anda Terbatas, Jika Anda Memerlukan Perubahan, Silakan Hubungi Master Admin')
+            false_notif('Selamat Datang '+operatorName+'|Akses Akun Anda Terbatas, Jika Anda Memerlukan Perubahan, Silakan Hubungi Master Admin')
         } else {
-            if (userData.first_name=='Offline'){
-                false_notif('Mode '+userData.first_name+'|Segala Aktifitas Perubahan Data Akan Disinkronisasi Setelah Terhubung Ke Internet')
+            if (operatorName=='Offline'){
+                false_notif('Mode '+operatorName+'|Segala Aktifitas Perubahan Data Akan Disinkronisasi Setelah Terhubung Ke Internet')
             } else {
-                false_notif('Selamat Datang '+userData.first_name+'|Segala Aktifitas Perubahan Data Berikut Ini Akan Tercatat Di Peladen Pusat')
+                false_notif('Selamat Datang '+operatorName+'|Segala Aktifitas Perubahan Data Berikut Ini Akan Tercatat Di Peladen Pusat')
             }
         }
     }
@@ -319,7 +322,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Cancel"');
+                    _SLOT.user_action_log(operatorName + ' - Admin Page "Cancel"');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
                 }
             }
@@ -334,7 +337,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Refresh"');
+                    _SLOT.user_action_log(operatorName + ' - Admin Page "Refresh"');
                     console.log('refresh_button is pressed..!');
                     popup_loading.open();
                     _SLOT.kiosk_get_machine_summary();
@@ -352,7 +355,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Reboot"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Reboot"');
                     if (press != '0') return;
                     press = '1';
                     console.log('reboot_button is pressed..!');
@@ -371,7 +374,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Reset BILL"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Reset BILL"');
                     if (press != '0') return;
                     press = '1';
                     console.log('reset_bill_button is pressed..!');
@@ -394,10 +397,10 @@ Base{
                     press = '1';
                     popup_loading.open();
                     if (CONF.c2c_mode==1){
-                        _SLOT.user_action_log('Admin Page "Update C2C Fee"');
+                        _SLOT.user_action_log(operatorName + '- Admin Page "Update C2C Fee"');
                         _SLOT.start_do_c2c_update_fee();
                     } else {
-                        _SLOT.user_action_log('Admin Page "KA Login"');
+                        _SLOT.user_action_log(operatorName + '- Admin Page "KA Login"');
                         _SLOT.start_auth_ka_mandiri();
                     }
                 }
@@ -419,10 +422,10 @@ Base{
                     popup_loading.open();
                     if (CONF.c2c_mode==1){
                         console.log('topup_deposit_c2c mode is ON..!');
-                        _SLOT.user_action_log('Admin Page "Topup C2C Deposit Mandiri"');
+                        _SLOT.user_action_log(operatorName + '- Admin Page "Topup C2C Deposit Mandiri"');
                         _SLOT.start_do_topup_c2c_deposit();
                     } else {
-                        _SLOT.user_action_log('Admin Page "Settlement Manual Mandiri"');
+                        _SLOT.user_action_log(operatorName + '- Admin Page "Settlement Manual Mandiri"');
                         _SLOT.start_reset_mandiri_settlement();
                     }
 
@@ -439,7 +442,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Activate BNI"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Activate BNI"');
                     if (press != '0') return;
                     press = '1';
                     console.log('activation_bni_button is pressed..!');
@@ -458,7 +461,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Topup BNI Deposit"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Topup BNI Deposit"');
                     if (press != '0') return;
                     press = '1';
                     console.log('topup_bni_deposit_button is pressed..!');
@@ -477,7 +480,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Sync Card"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Sync Card"');
                     if (press != '0') return;
                     press = '1';
                     console.log('sync_product_stock is pressed..!');
@@ -496,7 +499,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Force Update App"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Force Update App"');
                     if (press != '0') return;
                     press = '1';
                     console.log('update_app is pressed..!');
@@ -515,7 +518,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Admin Page "Reset Printer"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Reset Printer"');
                     if (press != '0') return;
                     press = '1';
                     console.log('reset_printer is pressed..!');
@@ -536,7 +539,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onDoubleClicked: {
-                    _SLOT.user_action_log('Admin Page "Collection Print"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Collection Print"');
                     if (press != '0') return;
                     press = '1';
                     console.log('print_receipt_button is pressed..!');
@@ -548,7 +551,7 @@ Base{
                         actionList = [];
                         print_receipt_button.visible = false;
                     } else {
-                        false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
+                        false_notif('Dear '+operatorName+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
                     }
                 }
             }
@@ -563,7 +566,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onDoubleClicked: {
-                    _SLOT.user_action_log('Admin Page "Change Stock Print"');
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Change Stock Print"');
                     if (press != '0') return;
                     press = '1';
                     console.log('print_stock_change_receipt_button is pressed..!');
@@ -575,7 +578,7 @@ Base{
                         actionChangeList = [];
                         print_stock_change_receipt_button.visible = false;
                     } else {
-                        false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Update Stok Kartu Dengan Benar');
+                        false_notif('Dear '+operatorName+'|Pastikan Anda Telah Melakukan Update Stok Kartu Dengan Benar');
                     }
                 }
             }
@@ -867,7 +870,7 @@ Base{
                                _total_cash_available.labelContent = '0';
                                actionList.push({
                                                    type: 'collectCash',
-                                                   user: userData.first_name
+                                                   user: operatorName
                                                })
                            } else {
                                false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
@@ -905,7 +908,7 @@ Base{
                                popup_loading.open();
 //                               actionList.push({
 //                                                   type: 'settleEdc',
-//                                                   user: userData.first_name
+//                                                   user: operatorName
 //                                               })
                            } else {
                                false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')

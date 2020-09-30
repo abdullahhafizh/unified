@@ -6,8 +6,9 @@
 - Add Preload General Customer Info,
 - Add Looping Update Balance Mandiri Deposit,
 - Add Max Looping Attempt Per Update Event,
-- Enhance Receipt Layouting,
-- Change Wording,
+- Enhance Receipt Layouting & Wording,
+- Enhance Topup Limit For Bank Deposit From Paralism,
+- Enhance Admin Action Loggin,
 - ...
 
 11.9.D-GLOBAL:
