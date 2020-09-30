@@ -14,7 +14,7 @@ Base{
     isBoxNameActive: false
     property var whatsappNo: ''
     property var textMain: 'Mesin ini tidak dapat mengembalikan uang, Proses pengembalian uang akan dilakukan melalui Whatsapp Voucher.'
-    property var textSlave: 'Anda dapat melakukan transaksi ulang untuk transaksi yang gagal/batal setelah uang masuk ke dalam mesin dengan memasukkan kode ulang.'
+    property var textSlave: 'Anda dapat melakukan transaksi ulang untuk transaksi yang gagal/batal setelah uang masuk ke dalam Bill Acceptor dengan memasukkan kode ulang.'
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
     property int boxSize: 240
