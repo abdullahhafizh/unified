@@ -300,7 +300,7 @@ Base{
 //                        preload_customer_info.open();
 //                        return;
 //                    }
-                    my_layer.push(check_balance);
+                    my_layer.push(check_balance, {showCustomerInfo: showCustomerInfo});
                 }
             }
         }

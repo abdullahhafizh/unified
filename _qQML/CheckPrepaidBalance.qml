@@ -35,6 +35,10 @@ Base{
     property variant allowedBank: []
     property variant allowedUpdateBalanceOnline: CONF.bank_ubal_online
 
+    property var selectedMenu: ''
+    property bool showCustomerInfo: true
+
+
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
@@ -170,6 +174,11 @@ Base{
             flazzAvailable = true;
             allowedBank.push('BCA');
         }
+
+        if (CONF.whatsapp_no !== undefined && CONF.whatsapp_no.length > 3){
+            preload_customer_info.whatsappNo = CONF.whatsapp_no;
+        }
+
     }
 
     function get_balance(text){
@@ -339,11 +348,16 @@ Base{
                             (bankName=='BRI' && !brizziAvailable) ||
                             (bankName=='DKI' && !jakcardAvailable) ||
                             (bankName=='BCA' && !flazzAvailable)){
-                        switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, ' sedang tidak dapat digunakan saat ini', 'backToMain', false );
+                        switch_frame('source/smiley_down.png', 'Mohon Maaf, Layanan isi ulang kartu prabayar bank '+bankName, ' sedang tidak dapat digunakan saat ini', 'backToMain', false );
                         return;
                     }
                     if (ableTopupCode !="0000"){
                         switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
+                        return;
+                    }
+                    selectedMenu = 'TOPUP_PREPAID';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
                         return;
                     }
                     var _cardData = {
@@ -356,7 +370,7 @@ Base{
                     }
                     my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData, allowedBank: allowedBank});
                 } else {
-                    switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
+                    switch_frame('source/smiley_down.png', 'Mohon Maaf, Layanan isi ulang kartu prabayar bank '+bankName, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
                     return;
                 }
             }
@@ -687,6 +701,58 @@ Base{
                         break;
                     }
                     preload_check_card.close();
+                }
+            }
+        }
+    }
+
+
+    PreloadCustomerInfo{
+        id: preload_customer_info
+
+        CircleButton{
+            id: cancel_button_preload_info
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    preload_customer_info.close();
+                    selectedMenu = '';
+                    press = "0";
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_preload_info
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch(selectedMenu){
+                    case 'TOPUP_PREPAID':
+                        var _cardData = {
+                            'balance': balance,
+                            'card_no': cardNo,
+                            'bank_type': bankType,
+                            'bank_name': bankName,
+                            'imageSource': imageSource,
+                            'notifSaldo': ''
+                        }
+                        my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData, allowedBank: allowedBank});
+                        break;
+                    }
                 }
             }
         }

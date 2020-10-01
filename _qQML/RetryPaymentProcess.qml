@@ -625,10 +625,6 @@ Base{
                 release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
                 return;
             }
-            if (useTransactionStatusFrame){
-                validate_transaction_success('Transaksi Sukses');
-                return;
-            }
             do_refund_or_print('card_eject_error');
             return;
         }
@@ -637,6 +633,10 @@ Base{
             successTransaction = true;
             _SLOT.start_store_transaction_global(JSON.stringify(details))
             details.receipt_title = 'Transaksi Sukses';
+            if (useTransactionStatusFrame){
+                validate_transaction_success('Transaksi Sukses');
+                return;
+            }
             do_refund_or_print();
             return;
 //            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
@@ -1312,7 +1312,7 @@ Base{
                     details.payment_received = receivedPayment.toString();
                     details.pending_trx_code = uniqueCode;
                     console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                    release_print('Anda Telah Membatalkan Transaksi', 'Silakan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang ('+uniqueCode+') Yang Tertera Pada Struk.');
+                    release_print('Anda Telah Membatalkan Transaksi', 'Silakan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                     return;
                 }
                 do_refund_or_print('user_cancellation');
@@ -1341,7 +1341,7 @@ Base{
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                release_print('Anda Telah Membatalkan Transaksi', 'Silakan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang ('+uniqueCode+') Yang Tertera Pada Struk.');
+                release_print('Anda Telah Membatalkan Transaksi', 'Silakan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                 return;
             }
             set_refund_channel('CS_ONLY');
@@ -1856,7 +1856,7 @@ Base{
                     _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
                     console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
                     transaction_completeness.close();
-                    release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang ('+uniqueCode+') Yang Tertera Pada Struk.');
+                    release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                 }
             }
         }

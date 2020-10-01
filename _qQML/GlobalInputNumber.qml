@@ -436,7 +436,7 @@ Base{
             return;
         }
         if (mode=='SEARCH_TRX'){
-            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang)/Kode Ulang Transaksi Anda';
+            wording_text = 'Masukkan 6 Digit Kode Ulang Transaksi Anda';
             min_count = 6;
             return;
         }
