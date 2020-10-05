@@ -305,6 +305,9 @@ def store_cash_into_cashbox():
     while True:
         sleep(1)
         attempt += 1
+        # Assumming Positive Response When Stacking Note
+        if _Common.BILL_DIRECT_READ_NOTE is True:
+            return True
         _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((str(attempt), str(_result_store)))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')

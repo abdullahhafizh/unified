@@ -1,6 +1,7 @@
 11.9.F-GLOBAL:
 - Enhance [BILL] direct^read^note from setting,
 - Add Topup DKI Jakcard Using Service - ISO 8583,
+- Fix House Keeping File Timestamp,
 - ...
 
 11.9.E-GLOBAL:

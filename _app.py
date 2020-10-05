@@ -1100,7 +1100,7 @@ if __name__ == '__main__':
     _KioskService.alter_table('_DailySummary.sql')
     sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
-    _KioskService.house_keeping(age_month=3)
+    _KioskService.house_keeping(age_month=6)
     sleep(1)
     print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()
