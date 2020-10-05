@@ -1,3 +1,8 @@
+11.9.F-GLOBAL:
+- Enhance [BILL] direct^read^note from setting,
+- Add Topup DKI Jakcard Using Service - ISO 8583,
+- ...
+
 11.9.E-GLOBAL:
 - Enhance Messaging Flow In General Payment,
 - Enhance Note Channel Restrictions,

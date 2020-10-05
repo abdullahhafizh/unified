@@ -69,6 +69,7 @@ BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^librar
 BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug', '1') == '1' and BILL_TYPE == 'NV' else False
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
+BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '0') == '1' else False
 
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
