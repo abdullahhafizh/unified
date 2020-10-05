@@ -116,7 +116,7 @@ TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 
 MID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'mid^topup', '---')
-TID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
+TID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'tid^topup', '---')
 MID_DKI = _ConfigParser.get_set_value('DKI', 'mid', '---')
 TID_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
 
