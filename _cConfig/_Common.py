@@ -115,6 +115,12 @@ MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 
+MID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'mid^topup', '---')
+TID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
+MID_DKI = _ConfigParser.get_set_value('DKI', 'mid', '---')
+TID_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
+DKI_TOPUP_ONLINE_BY_SERVICE = True if (_ConfigParser.get_set_value('DKI', 'service^library', '1') == '1') else False
+
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
 C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '0000000000000000')
 C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')

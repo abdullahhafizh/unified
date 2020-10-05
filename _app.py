@@ -687,6 +687,11 @@ class SlotHandler(QObject):
     start_mandiri_c2c_force_settlement = pyqtSlot(str, str)(start_mandiri_c2c_force_settlement)
 
 
+    def start_topup_online_dki(self, amount, trxid):
+        _TopupService.start_topup_online_dki(amount, trxid)
+    start_topup_online_dki = pyqtSlot(str, str)(start_topup_online_dki)
+
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -1100,7 +1105,7 @@ if __name__ == '__main__':
     _KioskService.alter_table('_DailySummary.sql')
     sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
-    _KioskService.house_keeping(age_month=6)
+    _KioskService.house_keeping(age_month=12)
     sleep(1)
     print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()

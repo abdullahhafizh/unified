@@ -78,7 +78,7 @@ QPROX = {
     "CARD_HISTORY_MANDIRI": "039", #MANDIRI CARD LOG
     "CARD_HISTORY_BNI": "040", #BNI CARD LOG
     "GET_LAST_C2C_REPORT": "041", #"Send SAM C2C Slot"
-
+    "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
 }
 
 
@@ -517,12 +517,12 @@ def check_card_balance():
                 output['able_topup'] = '1004'
             else:
                 output['able_topup'] = '0000'
-        elif bank_name == 'DKI':
-            prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
-            if not _Common.empty(prev_last_balance):
-                output['balance'] = prev_last_balance
-            else:
-                _Common.log_to_temp_config(card_no, balance)
+        # elif bank_name == 'DKI':
+        #     prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
+        #     if not _Common.empty(prev_last_balance):
+        #         output['balance'] = prev_last_balance
+        #     else:
+        #         _Common.log_to_temp_config(card_no, balance)
         LAST_BALANCE_CHECK = output
         _Common.NFC_ERROR = ''
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
@@ -880,6 +880,58 @@ def update_bni_wallet(slot, amount, last_balance=None):
 def start_fake_update_dki(card_no, amount):
     bank = 'DKI'
     _Helper.get_thread().apply_async(fake_update_balance, (bank, card_no, amount,))
+
+
+def start_topup_dki_by_service(amount, trxid):
+    _Helper.get_thread().apply_async(topup_dki_by_service, (amount, trxid,))
+
+# "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
+# LAST_DKI_STAN = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^stan', '120')
+# LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^invoice', '60')
+DKI_STAN = ''
+
+def get_set_dki_stan():
+    global DKI_STAN
+    DKI_STAN = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(DKI_STAN)+1))
+
+
+DKI_INVOICE = ''
+
+def get_set_dki_invoice():
+    global DKI_INVOICE
+    DKI_INVOICE = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^invoice')
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^invoice', str(int(DKI_INVOICE)+1))
+
+
+# {
+# "Result":"0000",
+# "Command":"043",
+# "Parameter":"80|91009003|000120|000080080088881|000060|200505191908",
+# "Response":"9360885090123100|80|93800",
+# "ErrorDesc":"Sukses"
+# }
+
+def topup_dki_by_service(amount, trxid):
+    dki_stan = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(dki_stan)+1))
+    param = '|'.join([QPROX['TOPUP_ONLINE_DKI'], str(amount), _Common.TID_TOPUP_ONLINE_DKI, DKI_STAN.zfill(6), 
+            _Common.MID_TOPUP_ONLINE_DKI, DKI_INVOICE.zfill(6), trxid])
+    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    if _response == 0 and ('|'+str(amount)+'|') in _result:
+        _data = _result.split('|')
+        output = {
+                    'last_balance': _data[2],
+                    'topup_amount': _data[1],
+                    'report_sam': 'N/A',
+                    'card_no': _data[0],
+                    'report_ka': 'N/A',
+                    'bank_id': '5',
+                    'bank_name': 'DKI',
+            }
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    else:
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
 
 def fake_update_balance(bank, card_no, amount):

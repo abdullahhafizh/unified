@@ -689,6 +689,14 @@ def update_balance_online(bank):
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
 
 
+def start_topup_online_dki(amount, trxid):
+    if _Common.DKI_TOPUP_ONLINE_BY_SERVICE is True:
+        return _QPROX.start_topup_dki_by_service(amount, trxid)
+    else:
+        LOGGER.warning(('NO AVAILABLE DKI TOPUP SERVICE DEFINED'))
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+
+
 def start_topup_online_bri(cardno, amount):
     bank = 'BRI'
     _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount,))
