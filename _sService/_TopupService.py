@@ -539,7 +539,7 @@ def get_topup_readiness():
         'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A',
         'bri': 'N/A',
         'bca': 'N/A',
-        'dki': 'N/A',
+        'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True) else 'N/A',
         'emoney': _Common.TOPUP_AMOUNT_SETTING['emoney'],
         'tapcash': _Common.TOPUP_AMOUNT_SETTING['tapcash'],
         'brizzi': _Common.TOPUP_AMOUNT_SETTING['brizzi'],
@@ -549,8 +549,6 @@ def get_topup_readiness():
     # Assuming always check card balance first before check topup readiness validation
     if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BRI':
         ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
-    if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'DKI':
-        ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True) else 'N/A'
     LOGGER.info((str(ready)))
     TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
 
