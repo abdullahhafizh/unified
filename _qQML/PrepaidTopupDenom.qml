@@ -512,7 +512,7 @@ Base{
             case 'BNI':
                 sam_balance = parseInt(bniTopupWallet);
                 break;
-            case 'BRI':
+            case 'BRI': case 'DKI':
                 sam_balance = parseInt(denom);
                 break;
         }
