@@ -888,20 +888,17 @@ def start_topup_dki_by_service(amount, trxid):
 # "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
 # LAST_DKI_STAN = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^stan', '120')
 # LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^invoice', '60')
-DKI_STAN = ''
 
 def get_set_dki_stan():
-    global DKI_STAN
-    DKI_STAN = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
-    _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(DKI_STAN)+1))
+    dki_stan = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(dki_stan)+1))
+    return dki_stan
 
-
-DKI_INVOICE = ''
 
 def get_set_dki_invoice():
-    global DKI_INVOICE
-    DKI_INVOICE = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^invoice')
-    _Common.log_to_config('TEMPORARY', 'dki^last^topup^invoice', str(int(DKI_INVOICE)+1))
+    dki_invoice = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^invoice')
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^invoice', str(int(dki_invoice)+1))
+    return dki_invoice
 
 
 # {
@@ -913,10 +910,10 @@ def get_set_dki_invoice():
 # }
 
 def topup_dki_by_service(amount, trxid):
-    dki_stan = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
-    _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(dki_stan)+1))
-    param = '|'.join([QPROX['TOPUP_ONLINE_DKI'], str(amount), _Common.TID_TOPUP_ONLINE_DKI, DKI_STAN.zfill(6), 
-            _Common.MID_TOPUP_ONLINE_DKI, DKI_INVOICE.zfill(6), trxid])
+    dki_stan = get_set_dki_stan()
+    dki_invoice = get_set_dki_invoice()
+    param = '|'.join([QPROX['TOPUP_ONLINE_DKI'], str(amount), _Common.TID_TOPUP_ONLINE_DKI, dki_stan.zfill(6), 
+            _Common.MID_TOPUP_ONLINE_DKI, dki_invoice.zfill(6), trxid])
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and ('|'+str(amount)+'|') in _result:
         _data = _result.split('|')
