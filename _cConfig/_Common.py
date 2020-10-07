@@ -69,7 +69,7 @@ BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^librar
 BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug', '1') == '1' and BILL_TYPE == 'NV' else False
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
-BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '0') == '1' else False
+BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False
 
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
@@ -122,7 +122,9 @@ TID_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
 
 LAST_DKI_STAN = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^stan', '121')
 LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^invoice', '61')
-DKI_TOPUP_ONLINE_BY_SERVICE = True if (_ConfigParser.get_set_value('DKI', 'service^library', '1') == '1') else False
+# DKI_TOPUP_ONLINE_BY_SERVICE = True if (_ConfigParser.get_set_value('DKI', 'service^library', '1') == '1') else False
+# Force Close DKI Topup
+DKI_TOPUP_ONLINE_BY_SERVICE = False
 
 
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
