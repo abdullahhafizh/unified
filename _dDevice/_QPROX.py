@@ -637,9 +637,6 @@ LAST_C2C_APP_TYPE = '0'
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
     param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
-    # Handle Old Applet Correction
-    if LAST_C2C_APP_TYPE == '0':
-        return topup_offline_mandiri_c2c(amount, trxid)
     # Check Correction Result
     # Add Check Card Number First Before Correction
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
@@ -663,6 +660,9 @@ def top_up_mandiri_correction(amount, trxid=''):
             c2c_report = '|' + report
             parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
             return
+    # Handle Old Applet Correction
+    if LAST_C2C_APP_TYPE == '0':
+        return topup_offline_mandiri_c2c(amount, trxid)
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
