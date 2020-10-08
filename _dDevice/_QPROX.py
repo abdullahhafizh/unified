@@ -656,7 +656,7 @@ def top_up_mandiri_correction(amount, trxid=''):
         get_c2c_failure_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
-    if (int(LAST_BALANCE_CHECK['balance']) + int(amount)) == int(last_balance):
+    if (int(LAST_BALANCE_CHECK['balance']) + int(amount) - 1500) == int(last_balance):
         param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
         _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
         if _ == 0 and len(report) >= 196:
