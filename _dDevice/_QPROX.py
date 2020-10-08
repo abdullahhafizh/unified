@@ -646,13 +646,23 @@ def top_up_mandiri_correction(amount, trxid=''):
     LOGGER.debug((param, result))
     # check_card_no = LAST_BALANCE_CHECK['card_no']
     check_card_no = '0'
+    last_balance = '0'
     if response == 0 and '|' in result:
         check_card_no = result.split('|')[1].replace('#', '')
+        last_balance = result.split('|')[0]  
     if LAST_BALANCE_CHECK['card_no'] != check_card_no:
         LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         get_c2c_failure_settlement(amount, trxid)
         return
+    # Add Customer Last Balance Card Check After Topup C2C Failure
+    if (int(LAST_BALANCE_CHECK['balance']) + int(amount)) == int(last_balance):
+        param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
+        _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        if _ == 0 and len(report) >= 196:
+            c2c_report = '|' + report
+            parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
+            return
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)

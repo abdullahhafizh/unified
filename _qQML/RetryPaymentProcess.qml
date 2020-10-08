@@ -519,7 +519,7 @@ Base{
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
-            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Anda Pada Reader', 'closeWindow|30', true );
             return
         } else {
             // Trigger Deposit Update Balance Check
