@@ -595,7 +595,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         elif status == 'FAILED':
             # Renew C2C Deposit Balance Info
             c2c_balance_info()
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
+            # Close Double Whatsapp When Failure
+            # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
