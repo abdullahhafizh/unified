@@ -2,6 +2,7 @@
 - Enhance [BILL] direct^read^note from setting (Active By Default),
 - Add Topup DKI Jakcard Using Service - ISO 8583 (Disabled),
 - Fix House Keeping File Timestamp,
+- Customer Last Balance Validation After Mandiri C2C Failure,
 - ...
 
 11.9.E-GLOBAL:
