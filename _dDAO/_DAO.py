@@ -632,3 +632,19 @@ def mark_today_report(tid):
     if len(result) > 0:
         result = result[0]
     return result
+
+
+def truncate_cashbox():
+    flush_table('Cashbox')
+
+
+def insert_cashbox(amount='0'):
+    param = {
+        'amount': int(amount)
+    }
+    sql = " INSERT INTO Cashbox (amount) VALUES (:amount) "
+    return _Database.insert_update(sql=sql, parameter=param)
+
+
+def cashbox_status():
+    return custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cashbox ')[0]['__'],

@@ -1260,6 +1260,7 @@ def generate_collection_data():
         __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
         __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
         __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
+        __['all_cashbox'] = _DAO.cashbox_status()      
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
         __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
@@ -1288,6 +1289,9 @@ def generate_collection_data():
             # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __['all_amount'] = int(__['amt_card']) + int(__['amt_top10k']) + int(__['amt_top20k']) + int(__['amt_top50k']) + int(__['amt_top100k']) + int(__['amt_top200k']) + int(__['amt_xdenom'])
         __['failed_amount'] = 0
+        # Redefine All Cashbox From All Cash in Casset Not From Transaction
+        if int(__['all_cashbox']) >= int(__['all_cash']):
+            __['all_cash'] = __['all_cashbox']
         if int(__['all_cash']) > (int(__['all_amount']) + int(__['ppob_cash'])):
             __['failed_amount'] = int(__['all_cash']) - (int(__['all_amount']) + int(__['ppob_cash']))
         __['init_slot1'] = __['slot1']

@@ -230,6 +230,9 @@ def start_receive_note():
                 break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
+                # Insert Into Table Cashbox
+                _DAO.insert_cashbox(cash_in)
+                # -------------------------
                 # _Helper.dump(cash_in)
                 if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
                     if cash_in in SMALL_NOTES_NOT_ALLOWED:

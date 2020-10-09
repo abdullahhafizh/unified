@@ -1795,6 +1795,8 @@ def mark_sync_collected_data(s):
         # _KioskService.python_dump(str(__update_cash_str))
         __exec_cash_update = _DAO.custom_update(__update_cash_str)
         # _KioskService.python_dump(str(__exec_cash_update))
+        # Reset Table Cashbox
+        _DAO.truncate_cashbox()
         return True
     else:
         return False

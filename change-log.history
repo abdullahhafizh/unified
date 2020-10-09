@@ -3,6 +3,7 @@
 - Add Topup DKI Jakcard Using Service - ISO 8583 (Disabled),
 - Fix House Keeping File Timestamp,
 - Customer Last Balance Validation After Mandiri C2C Failure,
+- Add Cashbox Calculation Beyond Transaction,
 - ...
 
 11.9.E-GLOBAL:

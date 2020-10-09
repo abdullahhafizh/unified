@@ -423,6 +423,9 @@ def get_machine_summary():
                                                      'WHERE status="EDC|OPEN" ')[0]['__']
         result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
                                                      'WHERE collectedAt is null ')[0]['__']
+        result['all_cashbox'] = _DAO.cashbox_status()
+        if int(result['all_cashbox']) >= int(result['cash_available']):
+            result['cash_available'] = result['all_cashbox']
         LOGGER.info(('SUCCESS', str(result)))
         K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.emit(json.dumps(result))
     except Exception as e:

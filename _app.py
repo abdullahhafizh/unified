@@ -1102,7 +1102,7 @@ if __name__ == '__main__':
     #     "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
     #     ])
     # sleep(1)
-    _KioskService.alter_table('_DailySummary.sql')
+    _KioskService.alter_table('_CashBox.sql')
     sleep(1)
     # print("pyt: HouseKeeping Old Local Data/Files...")
     # _KioskService.house_keeping(age_month=12)
