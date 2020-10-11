@@ -122,9 +122,9 @@ TID_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
 
 LAST_DKI_STAN = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^stan', '121')
 LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^invoice', '61')
-# DKI_TOPUP_ONLINE_BY_SERVICE = True if (_ConfigParser.get_set_value('DKI', 'service^library', '1') == '1') else False
+DKI_TOPUP_ONLINE_BY_SERVICE = True if (_ConfigParser.get_set_value('DKI', 'service^library', '1') == '1') else False
 # Force Close DKI Topup
-DKI_TOPUP_ONLINE_BY_SERVICE = False
+# DKI_TOPUP_ONLINE_BY_SERVICE = False
 
 
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
