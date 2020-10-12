@@ -4,6 +4,7 @@
 - Fix House Keeping File Timestamp,
 - Customer Last Balance Validation After Mandiri C2C Failure,
 - Add Cashbox Calculation Beyond Transaction,
+- Fix Topup DKI Retry Validation.
 - ...
 
 11.9.E-GLOBAL:
