@@ -1377,6 +1377,8 @@ def check_retry_able(data):
                 return 1
             if BNI_ACTIVE_WALLET > topup_value:
                 return 1
+            if DKI_TOPUP_ONLINE_BY_SERVICE is True:
+                return 1
         except Exception as e:
             LOGGER.warning((e))
             return 0
