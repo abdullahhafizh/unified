@@ -897,17 +897,18 @@ def start_topup_dki_by_service(amount, trxid):
     _Helper.get_thread().apply_async(topup_dki_by_service, (amount, trxid,))
 
 # "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
-# LAST_DKI_STAN = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^stan', '120')
-# LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^invoice', '60')
+
 
 def get_set_dki_stan():
     dki_stan = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
+    _Common.LAST_DKI_STAN = dki_stan
     _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(dki_stan)+1))
     return dki_stan
 
 
 def get_set_dki_invoice():
     dki_invoice = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^invoice')
+    _Common.LAST_DKI_INVOICE_NO = dki_invoice
     _Common.log_to_config('TEMPORARY', 'dki^last^topup^invoice', str(int(dki_invoice)+1))
     return dki_invoice
 

@@ -1037,6 +1037,11 @@ def store_transaction_global(param, retry=False):
             _DAO.update_product_stock(_param_stock)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + _param_stock['pid'])
             __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
+        __paymentType = get_payment(g['payment'])
+        # Insert DKI TRX STAN For Topup Jakcard Using Cash
+        if g['shop_type'] == 'topup' and __bid == 5 and __paymentType == 'MEI':
+            if _Helper.empty(g['payment_details']['stan_no']):
+                g['payment_details']['stan_no'] = _Common.LAST_DKI_STAN
         __notes = json.dumps(g['payment_details'])
         __total_price = int(g['value']) * int(g['qty'])
         __param = {
@@ -1048,7 +1053,7 @@ def store_transaction_global(param, retry=False):
             'sale': __total_price,
             'amount': __total_price,
             'cardNo': g['payment_details'].get('card_no', ''),
-            'paymentType': get_payment(g['payment']),
+            'paymentType': __paymentType,
             'paymentNotes': __notes,
             'isCollected': 0,
             'pidStock': PID_STOCK_SALE if g['shop_type'] == 'shop' else ''
