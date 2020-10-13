@@ -253,7 +253,11 @@ def do_check_trx(reff_no):
                 r['retry_able'] = 0
                 r['status'] = 'FAILED'
                 check_trx_id = remarks.get('host_trx_id', r['product_id'])
-                status, result = validate_payment_history(r['payment_method'], check_trx_id)
+                status, result = validate_payment_history(
+                    payment_method=r['payment_method'], 
+                    trx_id=check_trx_id,
+                    provider=r['payment_method'].lower()
+                    )
                 if status is True:
                     remarks['payment_received'] = str(result['amount'])
                     remarks['payment_details'] = result
@@ -286,13 +290,13 @@ def do_check_trx(reff_no):
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
 
 
-def validate_payment_history(payment_method='QR', trx_id=None):
+def validate_payment_history(payment_method='QR', trx_id=None, provider='shopeepay'):
     if _Helper.empty(trx_id) is True:
         return False, None
     if payment_method.lower() == 'debit':
         return _EDC.edc_mobile_check_payment(trx_id)
     else:
-        return _QRPaymentService.one_time_check_qr(trx_id=trx_id)
+        return _QRPaymentService.one_time_check_qr(trx_id=trx_id, mode=provider)
 
 
 def start_check_diva_balance(username):
