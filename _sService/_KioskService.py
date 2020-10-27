@@ -1039,8 +1039,8 @@ def store_transaction_global(param, retry=False):
             __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
         __paymentType = get_payment(g['payment'])
         # Insert DKI TRX STAN For Topup Jakcard Using Cash
-        if g['shop_type'] == 'topup' and __bid == 5 and __paymentType == 'MEI':
-            if _Helper.empty(g['payment_details']['stan_no']):
+        if g['shop_type'] == 'topup' and g['payment'] == 'cash':
+            if g['raw']['bank_name'] == 'DKI':
                 g['payment_details']['stan_no'] = _Common.LAST_DKI_STAN
         __notes = json.dumps(g['payment_details'])
         __total_price = int(g['value']) * int(g['qty'])
