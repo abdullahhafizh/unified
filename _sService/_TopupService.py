@@ -33,6 +33,7 @@ TOPUP_TID = _Common.TID
 MANDIRI_GENERAL_ERROR = '51000'
 MANDIRI_NO_PENDING = '51003'
 BRI_NO_PENDING = 'ZERO BALANCE'
+GENERAL_NO_PENDING = 'No Pending Balance'
 FW_BANK = _QPROX.FW_BANK
 QPROX = _QPROX.QPROX
 ERROR_TOPUP = _QPROX.ERROR_TOPUP
@@ -734,6 +735,27 @@ def update_balance_online(bank):
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
                 if BRI_NO_PENDING in result:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
+                else:
+                    TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+            LOGGER.debug((result, response))
+        except Exception as e:
+            LOGGER.warning(str(e))
+            TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    elif bank == 'BCA':
+        try:
+            param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                output = {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+                TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
+            else:
+                if GENERAL_NO_PENDING in result:
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
