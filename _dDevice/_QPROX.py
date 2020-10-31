@@ -79,6 +79,7 @@ QPROX = {
     "CARD_HISTORY_BNI": "040", #BNI CARD LOG
     "GET_LAST_C2C_REPORT": "041", #"Send SAM C2C Slot"
     "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
+    "UPDATE_BALANCE_ONLINE_BCA": "066", #DUMMY BCA UBAL ONLINE
 }
 
 
@@ -573,8 +574,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         # Update Local Mandiri Wallet
         __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
-        if not _Helper.empty(r[0].strip()) or r[0] != '0':
-            __emoney_balance = r[0].strip()
+        # if not _Helper.empty(r[0].strip()) or r[0] != '0':
+        #     __emoney_balance = r[0].strip()
         __emoney_prev_balance = int(__emoney_balance) - int(amount)
         if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
             __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
@@ -637,7 +638,6 @@ LAST_C2C_APP_TYPE = '0'
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
-    param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
     # Check Correction Result
     # Add Check Card Number First Before Correction
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
@@ -664,6 +664,7 @@ def top_up_mandiri_correction(amount, trxid=''):
     # Handle Old Applet Correction
     if LAST_C2C_APP_TYPE == '0':
         return topup_offline_mandiri_c2c(amount, trxid)
+    param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
@@ -710,7 +711,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         return
     try:
         _result_json = json.loads(_result)
-        if _result_json["Result"] == "0290":
+        if _result_json["Result"] in ["0290"]:
             param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
             _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if _ == 0 and len(report) >= 196:
@@ -722,10 +723,11 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         else:
             LAST_C2C_APP_TYPE = '0'
         LOGGER.warning(('result', _result, 'applet_type', LAST_C2C_APP_TYPE, 'TOPUP_C2C_CORRECTION'))
+        # "6987", "100C" Another Captured Error Code
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
     except Exception as e:
         LOGGER.warning((e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):

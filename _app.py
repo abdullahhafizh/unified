@@ -692,6 +692,11 @@ class SlotHandler(QObject):
     start_topup_online_dki = pyqtSlot(str, str)(start_topup_online_dki)
 
 
+    def start_topup_online_bca(self, cardno, amount):
+        _TopupService.start_topup_online_bca(cardno, amount)
+    start_topup_online_bca = pyqtSlot(str, str)(start_topup_online_bca)
+
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

@@ -285,6 +285,44 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
+    elif bank == 'BCA' and mode == 'TOPUP':
+        try:
+            # param must be
+            # "token":"<<YOUR API-TOKEN>>",
+            # "mid":"<<YOUR MERCHANT_ID>>",
+            # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
+            # "amount":"30000",
+            # "card_no":"7546990000025583"
+            # ---> Need Card Number And Amount
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bca/pending', param=_param)
+            LOGGER.debug(('pending_balance', str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                # {
+                #    "response":{
+                #       "code":200,
+                #       "message":"Pending Balance Success",
+                #       "latency":1.5800659656525,
+                #       "host":"192.168.2.194"
+                #    },
+                #    "data":{
+                #       "provider_id":"BRI - Brizzi",
+                #       "amount":"1",
+                #       "card_no":"6013500601505143",
+                #       "reff_no_trx":"430279",
+                #       "reff_no_topup":"202004201042571587354177",
+                #       "pending_balance":"1"
+                #    }
+                # }
+                return response['data']
+            else:
+                _Common.online_logger([response, bank, _param], 'general')
+                return False
+        except Exception as e:
+            LOGGER.warning((bank, mode, e))
+            return False
     elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         try:
             # "token":"<<YOUR API-TOKEN>>",
@@ -369,6 +407,24 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
             LOGGER.warning((bank, mode, e))
             return False
     elif bank == 'BRI' and mode == 'TOPUP':
+        try:
+            response, result = _Command.send_request(param=_param, output=None)
+            # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
+            # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+            if response == 0 and '|' in result:
+                return {
+                    'bank': bank,
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+            else:
+                _Common.online_logger([response, bank, _param], 'general')
+                return False
+        except Exception as e:
+            LOGGER.warning(str(e))
+            return False
+    elif bank == 'BCA' and mode == 'TOPUP':
         try:
             response, result = _Command.send_request(param=_param, output=None)
             # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
@@ -702,6 +758,11 @@ def start_topup_online_bri(cardno, amount):
     _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount,))
 
 
+def start_topup_online_bca(cardno, amount):
+    bank = 'BCA'
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount,))
+
+
 def topup_online(bank, cardno, amount):
     # LAST_BALANCE_CHECK = {
     #     'balance': balance,
@@ -759,6 +820,47 @@ def topup_online(bank, cardno, amount):
                     'report_ka': 'N/A',
                     'bank_id': '3',
                     'bank_name': 'BRI',
+            }
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    elif bank == 'BCA':
+        # last_check = _QPROX.LAST_BALANCE_CHECK
+        _param = {
+            'card_no': cardno,
+            'amount': amount
+        }
+        pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
+        # pending_result = {
+                    #   "amount":"30000",
+                    #   "card_no":"7546990000025583",
+                    #   "reff_no":"20181207180324000511",
+                    #   "provider_id":"BNI_TAPCASH",
+                    #   "trx_pin":"12345"
+                    #   }
+        if not pending_result:
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+            return
+        _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+        update_result = update_balance(_param, bank='BCA', mode='TOPUP')
+        if not update_result:
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        # {
+        #        'bank': bank,
+        #        'card_no': result.split('|')[0],
+        #        'topup_amount': result.split('|')[1],
+        #        'last_balance': result.split('|')[2],
+        #     }
+        other_channel_topup = str(0)
+        if str(amount) != str(update_result['topup_amount']):
+            other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
+        output = {
+                    'last_balance': update_result['last_balance'],
+                    'topup_amount': update_result['topup_amount'],
+                    'other_channel_topup': other_channel_topup,
+                    'report_sam': 'N/A',
+                    'card_no': update_result['card_no'],
+                    'report_ka': 'N/A',
+                    'bank_id': '4',
+                    'bank_name': 'BCA',
             }
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
     elif bank == 'MANDIRI_C2C_DEPOSIT':

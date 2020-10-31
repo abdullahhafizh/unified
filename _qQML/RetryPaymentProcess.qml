@@ -929,10 +929,12 @@ Base{
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
             _SLOT.start_topup_offline_bni(amount, structId);
         } else if (provider.indexOf('DKI') > -1){
-            //            _SLOT.start_fake_update_dki(cardNo, amount);
+            // _SLOT.start_fake_update_dki(cardNo, amount);
             _SLOT.start_topup_online_dki(amount, structId)
         } else if (provider.indexOf('BRI') > -1){
             _SLOT.start_topup_online_bri(cardNo, amount);
+        } else if (provider.indexOf('BCA') > -1){
+            _SLOT.start_topup_online_bca(cardNo, amount);
         }
     }
 
