@@ -249,7 +249,7 @@ Base{
             shop_type: shop_type,
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: new Date().getTime()
+            epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
         }
         switch(shop_type){
             case 'shop':

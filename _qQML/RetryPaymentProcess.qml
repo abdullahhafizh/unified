@@ -960,7 +960,7 @@ Base{
         initialPayment = receivedPayment;
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
-        uniqueCode = epoch_string.substring(epoch_string.length-6);
+        uniqueCode = epoch_string.substring(epoch_string.length-9);
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
         // Handle if Payment is completely done before

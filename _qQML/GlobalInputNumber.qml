@@ -431,12 +431,12 @@ Base{
 
     function define_wording(){
         if (mode=='WA_VOUCHER'){
-            wording_text = 'Masukkan Kode Ulang (VCODE) Dari WhatsApp Anda';
+            wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
             min_count = 8;
             return;
         }
         if (mode=='SEARCH_TRX'){
-            wording_text = 'Masukkan 6 Digit Kode Ulang Transaksi Anda';
+            wording_text = 'Masukkan 9 Digit Kode Ulang Transaksi Anda';
             min_count = 6;
             return;
         }
@@ -522,7 +522,7 @@ Base{
             shop_type: 'ppob',
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: new Date().getTime()
+            epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
         }
         details.qty = 1;
         details.status = '1';

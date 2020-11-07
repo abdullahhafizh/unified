@@ -955,7 +955,7 @@ Base{
         }
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
-        uniqueCode = epoch_string.substring(epoch_string.length-6);
+        uniqueCode = epoch_string.substring(epoch_string.length-9);
         // Unnecessary
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
