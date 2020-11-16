@@ -493,6 +493,8 @@ if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
+ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
+# ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:10107/generate/qr/')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
 EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
@@ -1421,3 +1423,8 @@ def generate_stock_change_data():
 
 
 DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
+
+PRINT_LOGO_MAPPING = {
+    'transjakarta': 'tj-logo',
+    'kai': 'kai-logo'
+}

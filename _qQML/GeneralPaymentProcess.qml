@@ -366,13 +366,19 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
-        _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-        console.log('release_print', now, title, msg);
         if (successTransaction) {
+            if (CONF.printer_type=='whatsapp'){
+                hide_all_cancel_button();
+                reset_variables_to_default();
+                my_layer.push(ereceipt_view, {details:details});
+                return;
+            }
             title = 'Transaksi Berhasil';
             if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
             if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
         }
+        _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+        console.log('release_print', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         hide_all_cancel_button();
 //        abc.counter = 3;

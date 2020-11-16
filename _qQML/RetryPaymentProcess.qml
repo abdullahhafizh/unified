@@ -373,6 +373,12 @@ Base{
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         if (successTransaction) {
+            if (CONF.printer_type=='whatsapp'){
+                hide_all_cancel_button();
+                reset_variables_to_default();
+                my_layer.push(ereceipt_view, {details:details});
+                return;
+            }
             title = 'Pengulangan Transaksi Berhasil';
             if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
             if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';

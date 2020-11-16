@@ -10,6 +10,7 @@ from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _Printer, _BILL
 from _sService import _KioskService
+from _nNetwork import _NetworkAccess
 from _cConfig import _Common
 from _sService import _UserService
 from _sService import _ProductService
@@ -36,6 +37,9 @@ FONT_PATH = os.path.join(sys.path[0], '_fFonts')
 if not os.path.exists(FONT_PATH):
     os.makedirs(FONT_PATH)
 LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', _Common.RECEIPT_LOGO)
+ERECEIPT_PATH = os.path.join(sys.path[0], '_rReceipts', '_jJson')
+if not os.path.exists(ERECEIPT_PATH):
+    os.makedirs(ERECEIPT_PATH)
 
 
 def get_paper_size(ls=None):
@@ -169,8 +173,14 @@ def start_direct_sale_print_global(payload):
     _Helper.get_thread().apply_async(sale_print_global, )
 
 
+def start_direct_sale_print_ereceipt(payload):
+    _KioskService.GLOBAL_TRANSACTION_DATA = json.loads(payload)
+    _Helper.get_thread().apply_async(sale_print_global_ereceipt, )
+
+
 def start_sale_print_global():
     _Helper.get_thread().apply_async(sale_print_global, )
+
 
     # '{"date":"Thursday, March 07, 2019","epoch":1551970698740,"payment":"cash","shop_type":"shop","time":"9:58:18 PM",
     # "qty":4,"value":"3000","provider":"Kartu Prabayar","raw":{"init_price":500,"syncFlag":1,"createdAt":1551856851000,
@@ -184,7 +194,6 @@ def start_sale_print_global():
 
 def start_reprint_global():
     _Helper.get_thread().apply_async(sale_reprint_global, )
-
 
 
 def validate_refund_fee(channel):
@@ -210,6 +219,9 @@ def sale_print_global(ext='.pdf', use_last=False):
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
             return
         LAST_TRX = _KioskService.GLOBAL_TRANSACTION_DATA
+    # if _Common.PRINTER_TYPE.lower() == 'ereceipt':
+    #     sale_print_global_ereceipt()
+    #     return
     if _Common.PRINTER_NEW_LAYOUT is True:
         sale_print_global_new_layout()
         return
@@ -222,7 +234,6 @@ def sale_print_global(ext='.pdf', use_last=False):
         print_ppob_trx(p, 'PEMBELIAN/PEMBAYARAN')
 
 
-
 def sale_print_global_new_layout():
     p = LAST_TRX
     if p['shop_type'] == 'topup':    
@@ -233,10 +244,45 @@ def sale_print_global_new_layout():
         new_print_ppob_trx(p, 'BELI/BAYAR')
 
 
+def sale_print_global_ereceipt():
+    p = LAST_TRX = _KioskService.GLOBAL_TRANSACTION_DATA
+    if p['shop_type'] == 'topup':    
+        ereceipt_print_topup_trx(p, 'ISI ULANG KARTU')    
+    if p['shop_type'] == 'shop':    
+        ereceipt_print_shop_trx(p, 'PEMBELIAN KARTU')
+    if p['shop_type'] == 'ppob':    
+        ereceipt_print_ppob_trx(p, 'BELI/BAYAR')
+
+
 def merge_text(text=[]):
     if len(text) == 0:
         return ''
     return ' - '.join(text)
+
+
+
+def start_finalize_trx_process(trxid, data, cash):
+    _Helper.get_thread().apply_async(finalize_trx_process, (trxid, data, cash,))
+
+
+
+def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION'):
+    p = data
+    if p['payment'].upper() == 'CASH':
+        _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
+    if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
+        if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
+            failure = 'TOPUP_FAILURE'
+        if 'pending_trx_code' in p.keys():
+            failure = 'PENDING_TRANSACTION'
+        # Send Failure To Backend
+        _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+                                        json.dumps(p))
+    # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
+    if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+        print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
+        print("pyt : sending pdf to default printer : {}".format(str(print__)))
+        _Common.LAST_EDC_TRX_RECEIPT = None
 
 
 # NEW LAYOUT =============
@@ -484,22 +530,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        failure = 'USER_CANCELLATION'
-        if p['payment'].upper() == 'CASH':
-            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
-        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
-            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
-                failure = 'TOPUP_FAILURE'
-            if 'pending_trx_code' in p.keys():
-                failure = 'PENDING_TRANSACTION'
-            # Send Failure To Backend
-            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
-                                            json.dumps(p))
-        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
-            print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Common.LAST_EDC_TRX_RECEIPT = None
+        finalize_trx_process(trxid, p, cash)
         del pdf
 
 
@@ -672,22 +703,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        failure = 'USER_CANCELLATION'
-        if p['payment'].upper() == 'CASH':
-            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
-        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
-            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
-                failure = 'TOPUP_FAILURE'
-            if 'pending_trx_code' in p.keys():
-                failure = 'PENDING_TRANSACTION'
-            # Send Failure To Backend
-            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
-                                            json.dumps(p))
-        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
-            print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Common.LAST_EDC_TRX_RECEIPT = None
+        finalize_trx_process(trxid, p, cash)
         del pdf
 
 
@@ -865,17 +881,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
-        if p['payment'].upper() == 'CASH':
-            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
-        if 'payment_error' in p.keys() and 'pending_trx_code' in p.keys():
-            failure = 'PENDING_TRANSACTION'
-            # Send Failure To Backend
-            _Common.store_upload_failed_trx(trxid, trxid, cash, failure, p.get('payment', 'cash'), json.dumps(p))
-        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
-            print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Common.LAST_EDC_TRX_RECEIPT = None
+        finalize_trx_process(trxid, p, cash)
         del pdf
 
 
@@ -1111,22 +1117,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        failure = 'USER_CANCELLATION'
-        if p['payment'].upper() == 'CASH':
-            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
-        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
-            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
-                failure = 'TOPUP_FAILURE'
-            if 'pending_trx_code' in p.keys():
-                failure = 'PENDING_TRANSACTION'
-            # Send Failure To Backend
-            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
-                                            json.dumps(p))
-        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
-            print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Common.LAST_EDC_TRX_RECEIPT = None
+        finalize_trx_process(trxid, p, cash)
         del pdf
 
 
@@ -1288,22 +1279,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        failure = 'USER_CANCELLATION'
-        if p['payment'].upper() == 'CASH':
-            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
-        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
-            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
-                failure = 'TOPUP_FAILURE'
-            if 'pending_trx_code' in p.keys():
-                failure = 'PENDING_TRANSACTION'
-            # Send Failure To Backend
-            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
-                                            json.dumps(p))
-        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
-            print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Common.LAST_EDC_TRX_RECEIPT = None
+        finalize_trx_process(trxid, p, cash)
         del pdf
 
 
@@ -1470,17 +1446,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
-        if p['payment'].upper() == 'CASH':
-            _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
-        if 'payment_error' in p.keys() and 'pending_trx_code' in p.keys():
-            failure = 'PENDING_TRANSACTION'
-            # Send Failure To Backend
-            _Common.store_upload_failed_trx(trxid, trxid, cash, failure, p.get('payment', 'cash'), json.dumps(p))
-        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
-            print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Common.LAST_EDC_TRX_RECEIPT = None
+        finalize_trx_process(trxid, p, cash)
         del pdf
 
 
@@ -1892,3 +1858,335 @@ def print_card_history(payload):
         LOGGER.warning(str(e))
     finally:
         _Common.LAST_CARD_LOG_HISTORY = []
+
+class Ereceipt:
+    header = []
+    lines = []
+    footer = [
+        {
+            'caption': '', #Padding To Body Receipt
+            'alignment': 'center',
+            'font': 'regular'
+        }
+    ]
+    logo = 'tj-logo'
+    filename = ''
+    data = None
+
+    def __init__(self, logo, filename, headers_line):             
+        self.logo = logo
+        self.filename = filename
+        if len(headers_line) > 0:
+            for h in headers_line:
+                self.header.append({
+                    'caption': h,
+                    'alignment': 'center',
+                    'font': 'bold'
+                })
+        if len(_Common.CUSTOM_RECEIPT_TEXT) > 3:
+            for c in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
+                self.footer.append({
+                    'caption': c,
+                    'aligment': 'center',
+                    'font': 'regular'
+                })
+        self.footer.append({
+            'caption': 'TERIMA KASIH',
+            'aligment': 'center',
+            'font': 'regular'
+        })
+
+    def set_line(self, text):
+        self.lines.append({
+            'caption': text,
+            'aligment': 'left',
+            'font': 'regular'
+        })
+
+    def generate(self):
+        self.data = {
+            'logo': self.logo,
+            'filename': self.filename,
+            'headers': self.header,
+            'lines': self.lines,
+            'footers': self.footer
+        }
+        _Common.log_to_file(self.data, ERECEIPT_PATH, self.filename, '.json')
+        return data
+    
+
+# ERECEIPT LAYOUT =============
+
+def ereceipt_print_topup_trx(p, t, ext='.pdf'):
+    if _Common.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        logo = _Common.PRINT_LOGO_MAPPING[_Common.THEME_NAME.lower()]
+        pdf = Ereceipt(logo=logo, filename=file_name, headers_line=[
+            _Common.THEME_NAME, 
+            'TERMINAL : '+_Common.TID, 
+            'LOKASI : '+_Common.KIOSK_NAME,
+        ])
+        pdf.set_line('')
+        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
+        pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
+        pdf.set_line('')
+        if 'receipt_title' in p.keys():
+            pdf.set_line(p['receipt_title'].upper())
+        __title = t
+        pdf.set_line(merge_text([__title, p['raw']['bank_name'], p['payment'].upper(), ]))
+        pdf.set_line('')
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.set_line('NO TRX    : '+trxid)
+        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            if 'topup_details' in p.keys():
+                pdf.set_line('ISI ULANG  : Rp. ' + clean_number(p['denom']))
+                pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(p['admin_fee']))
+                pdf.set_line('TOTAL BAYAR: Rp. ' + clean_number(p['value']))
+                if 'other_channel_topup' in p['topup_details'].keys():
+                    if int(p['topup_details']['other_channel_topup']) > 0:
+                        pdf.set_line('PENDING SALDO: Rp. ' + clean_number(str(p['topup_details']['other_channel_topup'])))
+                pdf.set_line('NO. KARTU  : ' + p['topup_details']['card_no'])
+                pdf.set_line('SALDO AWAL : Rp. ' + clean_number(p['raw']['prev_balance']))
+                pdf.set_line('SALDO AKHIR: Rp. ' + clean_number(str(p['final_balance'])))
+                if 'refund_status' in p.keys():
+                    pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
+                    pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                    pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                    pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+            else:
+                pdf.set_line('NO. KARTU   : ' + p['raw']['card_no'])
+                pdf.set_line('SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']))
+                pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
+                if 'refund_status' in p.keys():
+                    pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                    pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                    pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+                elif 'pending_trx_code' in p.keys():
+                    pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                    pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
+                    pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
+        else:
+            pdf.set_line('NO. KARTU   : ' + p['raw']['card_no'])
+            pdf.set_line('SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']))
+            pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
+            if 'refund_status' in p.keys():
+                pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+            elif 'pending_trx_code' in p.keys():
+                pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
+                pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
+        # Send Print Data To DIVA Loyalty Service
+        ereceipt_data = pdf.generate()
+        response, status = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
+        if status == 200:
+            output = response['response']
+            if output['status'] == 0:
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE|'+json.dumps(output))
+            else:
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        else:
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        finalize_trx_process(trxid, p, cash)
+        del pdf
+
+
+def ereceipt_print_shop_trx(p, t, ext='.pdf'):
+    if _Common.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        logo = _Common.PRINT_LOGO_MAPPING[_Common.THEME_NAME.lower()]
+        pdf = Ereceipt(logo=logo, filename=file_name, headers_line=[
+            _Common.THEME_NAME, 
+            'TERMINAL : '+_Common.TID, 
+            'LOKASI : '+_Common.KIOSK_NAME,
+        ])
+        pdf.set_line('')
+        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
+        pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
+        pdf.set_line('')
+        __title = t
+        if 'receipt_title' in p.keys():
+            pdf.set_line(p['receipt_title'].upper())
+        pdf.set_line(merge_text([__title, p['payment'].upper(), ]))
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.set_line('NO TRX    : '+trxid)
+        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            pdf.set_line('TIPE KARTU  : ' + p['provider'])
+            pdf.set_line('QTY KARTU   : ' + str(p['qty']))
+            pdf.set_line(str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
+            if 'refund_status' in p.keys():
+                pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
+                pdf.set_line('PENGEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+            elif 'pending_trx_code' in p.keys():
+                pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
+                pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
+            pdf.set_line('')
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(total_pay))
+        else:
+            pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))
+            if 'refund_status' in p.keys():
+                pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+            elif 'pending_trx_code' in p.keys():
+                pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
+                pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
+        # Send Print Data To DIVA Loyalty Service
+        ereceipt_data = pdf.generate()
+        response, status = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
+        if status == 200:
+            output = response['response']
+            if output['status'] == 0:
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE|'+json.dumps(output))
+            else:
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        else:
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        finalize_trx_process(trxid, p, cash)
+        del pdf
+
+
+def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
+    if _Common.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        logo = _Common.PRINT_LOGO_MAPPING[_Common.THEME_NAME.lower()]
+        pdf = Ereceipt(logo=logo, filename=file_name, headers_line=[
+            _Common.THEME_NAME, 
+            'TERMINAL : '+_Common.TID, 
+            'LOKASI : '+_Common.KIOSK_NAME,
+        ])
+        pdf.set_line('')
+        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
+        pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
+        pdf.set_line('')
+        if 'receipt_title' in p.keys():
+            pdf.set_line(p['receipt_title'].upper())
+        __title = t
+        pdf.set_line(merge_text([__title, p['payment'].upper(), ]))
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.set_line('NO TRX    : '+trxid)
+        pdf.set_line('PROVIDER  : ' + str(p['provider']))
+        pdf.set_line('MSISDN    : ' + str(p['msisdn']))
+        if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            if p['ppob_mode'] == 'tagihan':
+                pdf.set_line('PELANGGAN  : Rp. ' + str(p['customer']))
+                pdf.set_line('TAGIHAN    : Rp. ' + clean_number(str(p['value'])))
+                pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
+            else:
+                pdf.set_line('JUMLAH     : ' + str(p['qty']))
+                pdf.set_line('HARGA/UNIT : Rp. ' + clean_number(str(p['value'])))
+                if 'sn' in p['ppob_details'].keys():
+                    label_sn = 'S/N '
+                    if p['category'].lower() == 'listrik':
+                        label_sn = 'TOKEN '
+                        if str(p['ppob_details']['sn']) == '[]':
+                            pdf.set_line('TOKEN DALAM PROSES, HUBUNGI LAYANAN PELANGGAN')
+                        else:    
+                            pdf.set_line(label_sn + str(p['ppob_details']['sn'][:24]))
+                    else:
+                        pdf.set_line(label_sn + str(p['ppob_details']['sn'][:24]))
+            if 'refund_status' in p.keys():
+                pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
+                pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+            elif 'pending_trx_code' in p.keys():
+                pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
+                pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(total_pay))
+        else:
+            pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))
+            if 'refund_status' in p.keys():
+                pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
+                pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
+                pdf.set_line('NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])))
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
+            elif 'pending_trx_code' in p.keys():
+                pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
+                pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
+        # Send Print Data To DIVA Loyalty Service
+        ereceipt_data = pdf.generate()
+        response, status = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
+        if status == 200:
+            output = response['response']
+            if output['status'] == 0:
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE|'+json.dumps(output))
+            else:
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        else:
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        finalize_trx_process(trxid, p, cash)
+        del pdf
+
+

@@ -249,6 +249,10 @@ def define_theme(d):
         if store is True:
             content_js += 'var whatsapp_qr = "source/' + receipt_wa_qr + '";' + os.linesep
 
+    # Add Printer Type
+    printer_type = _Common.PRINTER_TYPE.lower()
+    content_js += 'var printer_type = ' +  printer_type + ';' + os.linesep
+
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep

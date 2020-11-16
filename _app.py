@@ -649,6 +649,10 @@ class SlotHandler(QObject):
         _SalePrintTool.start_direct_sale_print_global(payload)
     start_direct_sale_print_global = pyqtSlot(str)(start_direct_sale_print_global)
 
+    def start_direct_sale_print_ereceipt(self, payload):
+        _SalePrintTool.start_direct_sale_print_ereceipt(payload)
+    start_direct_sale_print_ereceipt = pyqtSlot(str)(start_direct_sale_print_ereceipt)
+
     def start_topup_mandiri_correction(self, amount, trxid):
         _QPROX.start_topup_mandiri_correction(amount, trxid)
     start_topup_mandiri_correction = pyqtSlot(str, str)(start_topup_mandiri_correction)

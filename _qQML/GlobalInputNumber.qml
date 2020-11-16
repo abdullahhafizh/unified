@@ -198,6 +198,7 @@ Base{
             //Define Data Card, Amount Button, Topup Availability
             var prev_admin_fee = retryDetails.raw.admin_fee;
             var prev_topup_denom = retryDetails.raw.value;
+            retryDetails.provider = provider;
             retryDetails.raw = {
                 value: prev_topup_denom,
                 provider: provider,
@@ -349,7 +350,6 @@ Base{
         }
     }
 
-
     function set_pending_trx_data(obj){
         if (obj != undefined){
             retryDetails = obj;
@@ -358,7 +358,6 @@ Base{
             console.log('set_pending_trx_data', JSON.stringify(retryDetails));
         }
     }
-
 
     function get_trx_check_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
