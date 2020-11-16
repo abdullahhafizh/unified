@@ -310,7 +310,7 @@ Rectangle {
     }
 
     Component {id: ereceipt_view
-        eReceipt{}
+        ElectronicReceipt{}
     }
 
 //    Component {id: global_confirm_frame
