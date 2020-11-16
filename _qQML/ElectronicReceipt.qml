@@ -33,7 +33,7 @@ Base{
             popup_loading.open();
             abc.counter = timer_value;
             my_timer.start();
-            _slot.start_direct_sale_print_ereceipt(JSON.stringify(details));
+            _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop();
