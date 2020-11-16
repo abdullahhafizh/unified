@@ -1926,7 +1926,7 @@ class Ereceipt:
             'lines': self.lines,
         }
         _Common.log_to_file(self.data, ERECEIPT_PATH, self.filename, '.json')
-        return data
+        return self.data
     
 
 # ERECEIPT LAYOUT =============
