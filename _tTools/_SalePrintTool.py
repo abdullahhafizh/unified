@@ -1929,7 +1929,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
     try:
         cash = int(p['payment_received'])
         file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
-        logo = _Common.PRINT_LOGO_MAPPING[_Common.THEME_NAME.lower()]
+        logo = _Common.logo_theme(_Common.THEME_NAME.lower())
         pdf = Ereceipt(logo=logo, filename=file_name, headers_line=[
             _Common.THEME_NAME, 
             'TERMINAL : '+_Common.TID, 
@@ -2027,7 +2027,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
     try:
         cash = int(p['payment_received'])
         file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
-        logo = _Common.PRINT_LOGO_MAPPING[_Common.THEME_NAME.lower()]
+        logo = _Common.logo_theme(_Common.THEME_NAME.lower())
         pdf = Ereceipt(logo=logo, filename=file_name, headers_line=[
             _Common.THEME_NAME, 
             'TERMINAL : '+_Common.TID, 
@@ -2107,7 +2107,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
     try:
         cash = int(p['payment_received'])
         file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
-        logo = _Common.PRINT_LOGO_MAPPING[_Common.THEME_NAME.lower()]
+        logo = _Common.logo_theme(_Common.THEME_NAME.lower())
         pdf = Ereceipt(logo=logo, filename=file_name, headers_line=[
             _Common.THEME_NAME, 
             'TERMINAL : '+_Common.TID, 

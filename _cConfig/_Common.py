@@ -1428,3 +1428,8 @@ PRINT_LOGO_MAPPING = {
     'transjakarta': 'tj-logo',
     'kai': 'kai-logo'
 }
+
+def logo_theme(theme):
+    if theme not in PRINT_LOGO_MAPPING.keys():
+        return 'tj-logo'
+    return PRINT_LOGO_MAPPING[theme]

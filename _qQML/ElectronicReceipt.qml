@@ -22,7 +22,7 @@ Base{
     property var textQuard: ''
     property var imageSource: "source/sand-clock-animated-2.gif"
     property var details
-    property int textSize: (globalScreenType == '1') ? 50 : 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     property var showDuration: ''
 
     imgPanel: 'source/cek_saldo.png'
