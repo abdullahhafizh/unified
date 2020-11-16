@@ -1871,6 +1871,9 @@ class Ereceipt:
     ]
     logo = 'tj-logo'
     filename = ''
+    amount = ''
+    trxid = ''
+    company = ''
     data = None
 
     def __init__(self, logo, filename, headers_line):             
@@ -1902,14 +1905,25 @@ class Ereceipt:
             'aligment': 'left',
             'font': 'regular'
         })
+    
+    def set_amount(self, amount):
+        self.amount = amount
+
+    def set_company(self, company):
+        self.company = company
+
+    def set_trxid(self, trxid):
+        self.trxid = trxid
 
     def generate(self):
         self.data = {
+            'company': self.company,
             'logo': self.logo,
-            'filename': self.filename,
+            'trxid': self.trxid,
+            'amount': self.amount,
             'headers': self.header,
+            'footers': self.footer,
             'lines': self.lines,
-            'footers': self.footer
         }
         _Common.log_to_file(self.data, ERECEIPT_PATH, self.filename, '.json')
         return data
@@ -1935,6 +1949,10 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
             'TERMINAL : '+_Common.TID, 
             'LOKASI : '+_Common.KIOSK_NAME,
         ])
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.set_trxid(trxid)
+        pdf.set_company(_Common.THEME_NAME.lower())
+        pdf.set_amount(p['payment_received'])
         pdf.set_line('')
         pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
         pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
@@ -1944,7 +1962,6 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         __title = t
         pdf.set_line(merge_text([__title, p['raw']['bank_name'], p['payment'].upper(), ]))
         pdf.set_line('')
-        trxid = p['shop_type']+str(p['epoch'])
         pdf.set_line('NO TRX    : '+trxid)
         if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
             if 'topup_details' in p.keys():
@@ -2033,6 +2050,10 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
             'TERMINAL : '+_Common.TID, 
             'LOKASI : '+_Common.KIOSK_NAME,
         ])
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.set_trxid(trxid)
+        pdf.set_company(_Common.THEME_NAME.lower())
+        pdf.set_amount(p['payment_received'])
         pdf.set_line('')
         pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
         pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
@@ -2041,7 +2062,6 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         if 'receipt_title' in p.keys():
             pdf.set_line(p['receipt_title'].upper())
         pdf.set_line(merge_text([__title, p['payment'].upper(), ]))
-        trxid = p['shop_type']+str(p['epoch'])
         pdf.set_line('NO TRX    : '+trxid)
         if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
             pdf.set_line('TIPE KARTU  : ' + p['provider'])
@@ -2113,6 +2133,10 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
             'TERMINAL : '+_Common.TID, 
             'LOKASI : '+_Common.KIOSK_NAME,
         ])
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.set_trxid(trxid)
+        pdf.set_company(_Common.THEME_NAME.lower())
+        pdf.set_amount(p['payment_received'])
         pdf.set_line('')
         pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
         pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
@@ -2121,7 +2145,6 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
             pdf.set_line(p['receipt_title'].upper())
         __title = t
         pdf.set_line(merge_text([__title, p['payment'].upper(), ]))
-        trxid = p['shop_type']+str(p['epoch'])
         pdf.set_line('NO TRX    : '+trxid)
         pdf.set_line('PROVIDER  : ' + str(p['provider']))
         pdf.set_line('MSISDN    : ' + str(p['msisdn']))
