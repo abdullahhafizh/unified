@@ -17,13 +17,14 @@ Base{
     property int timer_value: 60
     property var whatsappNo: 'tersebut'
     property var textMain: 'Scan QR di atas Untuk mendapatkan eReceipt Transaksi dan Point Reward Anda.'
-    property var textSlave: 'Gunakan Aplikasi Pembaca QR pada smartphone Anda dan ikuti Link yang tertera.'
+    property var textSlave: 'Buka Whatsapp dan Tekan Icon Camera, Android (Pojok Kiri Atas) dan IOS (Tengah Bawah)'
     property var textRebel: ''
     property var textQuard: ''
     property var imageSource: "source/sand-clock-animated-2.gif"
     property var details
-    property int textSize: (globalScreenType == '1') ? 40 : 35
+    property int textSize: (globalScreenType == '1') ? 38 : 33
     property var showDuration: ''
+    property bool retryMode: false
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
@@ -95,12 +96,14 @@ Base{
             console.log('ereceipt_qr', imageSource);
         } else {
             false_notif('closeWindow|3', 'Mohon Maaf, Terjadi Kesalahan Dalam Menampilkan QR eReceipt');
-//            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-//            var title = 'Transaksi Berhasil';
-//            var msg = '';
-//            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
-//            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
-//            switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
+            console.log('print_result_force_manual');
+            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+            var title = 'Transaksi Berhasil';
+            if (retryMode) title = 'Pengulangan ' + title;
+            var msg = '';
+            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
+            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
+            switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
         }
     }
 
@@ -122,10 +125,10 @@ Base{
         id: column
         width: parent.width
         height: 500
-        anchors.verticalCenterOffset: -20
+        anchors.verticalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 20
+        spacing: 30
         AnimatedImage  {
             width: 400
             height: 400
@@ -135,31 +138,19 @@ Base{
             fillMode: Image.PreserveAspectFit
         }
         Text{
+            text: textMain
+            horizontalAlignment: Text.AlignLeft
+            width: parent.width - 250
+            wrapMode: Text.WordWrap
+            font.pixelSize: textSize
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.bold: false
+            color: 'white'
+            verticalAlignment: Text.AlignVCenter
+            font.family: "Ubuntu"
+        }
+        Text{
             text: textSlave
-            horizontalAlignment: Text.AlignLeft
-            width: parent.width - 250
-            wrapMode: Text.WordWrap
-            font.pixelSize: textSize
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.bold: false
-            color: 'white'
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Ubuntu"
-        }
-        Text{
-            text: textRebel
-            horizontalAlignment: Text.AlignLeft
-            width: parent.width - 250
-            wrapMode: Text.WordWrap
-            font.pixelSize: textSize
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.bold: false
-            color: 'white'
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Ubuntu"
-        }
-        Text{
-            text: textQuard
             horizontalAlignment: Text.AlignLeft
             width: parent.width - 250
             wrapMode: Text.WordWrap
@@ -181,6 +172,7 @@ Base{
         anchors.bottomMargin: 30
         button_text: 'CETAK\nSTRUK'
         modeReverse: true
+        forceColorButton: 'orange'
         MouseArea{
             anchors.fill: parent
             onClicked: {

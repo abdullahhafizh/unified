@@ -153,7 +153,7 @@ DEFAULT_FONT_SIZE = 6
 
 class PDF(FPDF):
     def header(self):
-        self.set_font('Courier', '', HEADER_FONT_SIZE)
+        self.set_font('Ubuntu', '', HEADER_FONT_SIZE)
         # Logo
         self.image(LOGO_PATH, 25, 5, 30)
         self.ln(SPACING)
@@ -166,18 +166,18 @@ class PDF(FPDF):
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'JAKARTA', 0, 0, 'C')
         self.ln(SPACING*2)
 
-    def footer(self):
-        self.set_font('Courier', '', DEFAULT_FONT_SIZE)
-        self.set_y(-25)
-        self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***PIN VERIFICATION SUCCESS***', 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'NO SIGNATURE REQUIRED', 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'I AGREE TO PAY ABOVE TOTAL AMOUNT', 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'ACCORDING TO CARD ISSUER AGREEMENT', 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
+    # def footer(self):
+    #     self.set_font('Courier', '', DEFAULT_FONT_SIZE)
+    #     self.set_y(-25)
+    #     self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***PIN VERIFICATION SUCCESS***', 0, 0, 'C')
+    #     self.ln(SPACING)
+    #     self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'NO SIGNATURE REQUIRED', 0, 0, 'C')
+    #     self.ln(SPACING)
+    #     self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'I AGREE TO PAY ABOVE TOTAL AMOUNT', 0, 0, 'C')
+    #     self.ln(SPACING)
+    #     self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'ACCORDING TO CARD ISSUER AGREEMENT', 0, 0, 'C')
+    #     self.ln(SPACING)
+    #     self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
 
 
 def generate_edc_receipt_old(trx):
@@ -267,9 +267,9 @@ def generate_edc_receipt(trx):
     large_space = 8
     tiny_space = 4
 
-    default_size = 7.5
-    extra_size = 9
-    line_size = 9
+    default_size = 8
+    extra_size = 10
+    line_size = 10
 
     padding_left = 0
 
@@ -287,42 +287,56 @@ def generate_edc_receipt(trx):
 
         # Layouting
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', default_size)
+        pdf.set_font('Ubuntu', '', default_size)
         pdf.cell(padding_left, 0, justifying('TID: '+trx['tid'], 'MID: '+trx['mid']), 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.cell(padding_left, 0, 'TRXID: '+trx['struck_id'], 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'TRXID: '+trx['struck_id'], 0, 0, 'C')
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', line_size)
-        pdf.cell(padding_left, 0, '=' * (MAX_LENGTH-6), 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', default_size)
-        pdf.cell(padding_left, 0, justifying('DATE: '+date_text, 'TIME: '+time_text), 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', default_size)
-        pdf.cell(padding_left, 0, 'APP VER: '+VERSION.replace('VER:', ''), 0, 0, 'L')
+        pdf.set_font('Ubuntu', '', line_size)
+        pdf.cell(padding_left, 0, '_' * (MAX_LENGTH-6), 0, 0, 'L')
         pdf.ln(large_space)
-        pdf.set_font('Courier', '', default_size)
+        pdf.set_font('Ubuntu', '', default_size)
+        pdf.cell(padding_left, 0, justifying('DATE: '+date_text, 'TIME: '+time_text), 0, 0, 'L')
+        pdf.ln(large_space)
+        pdf.set_font('Ubuntu', '', default_size)
         pdf.cell(padding_left, 0, 'EMV OTHER', 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', extra_size)
+        pdf.set_font('Ubuntu', '', extra_size)
         pdf.cell(padding_left, 0, 'SALE', 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', default_size)
+        pdf.set_font('Ubuntu', '', default_size)
         pdf.cell(padding_left, 0, trx['card_type'], 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', 'B', extra_size+2)
+        pdf.set_font('Ubuntu', 'B', extra_size+2)
         pdf.cell(padding_left, 0, trx['card_no'], 0, 0, 'L')
         pdf.ln(large_space)
-        pdf.set_font('Courier', '', default_size)
+        pdf.set_font('Ubuntu', '', default_size)
         _batch = trx['batch_no'].replace(' ', '')
-        pdf.cell(padding_left, 0, justifying('BATCH: '+_batch, 'TRACE: '+trx['inv_no']), 0, 0, 'L')
+        pdf.cell(padding_left, 0, justifying('BATCH: '+_batch, 'TRACE: '+trx['trace_no']), 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', default_size)
-        pdf.cell(padding_left, 0, justifying('REF.NO: '+trx['ref_no'], 'APPR: '+trx['app_code']), 0, 0, 'L')
+        pdf.set_font('Ubuntu', '', default_size)
+        pdf.cell(padding_left, 0, justifying('REF.NO: '+trx['bank_reff_no'], 'APPR: '+trx['app_code']), 0, 0, 'L')
         pdf.ln(large_space)
-        pdf.set_font('Courier', 'B', extra_size+2)
+        pdf.set_font('Ubuntu', 'B', extra_size+2)
         pdf.cell(0, 0, 'TOTAL   Rp.'+re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', trx['amount']), 0, 0, 'C')
+        pdf.ln(large_space+2)
+        pdf.set_font('Ubuntu', '', DEFAULT_FONT_SIZE)
+        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'I AGREE TO PAY ABOVE TOTAL AMOUNT', 0, 0, 'C')
         pdf.ln(tiny_space)
+        pdf.set_font('Ubuntu', '', DEFAULT_FONT_SIZE)
+        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'ACCORDING TO CARD ISSUER AGREEMENT', 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font('Ubuntu', '', DEFAULT_FONT_SIZE)
+        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***PIN VERIFICATION SUCCESS***', 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font('Ubuntu', '', DEFAULT_FONT_SIZE)
+        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***NO SIGNATURE REQUIRED***', 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font('Ubuntu', '', DEFAULT_FONT_SIZE)
+        pdf.cell(MARGIN_LEFT, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font('Ubuntu', '', default_size-2)
+        pdf.cell(padding_left, 0, 'APP VER: '+VERSION.replace('VER:', ''), 0, 0, 'L')
 
         # Rendering
         pdf_file = get_path(file_name+'.pdf')

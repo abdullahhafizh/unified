@@ -376,7 +376,7 @@ Base{
             if (CONF.printer_type=='whatsapp'){
                 hide_all_cancel_button();
                 reset_variables_to_default();
-                my_layer.push(ereceipt_view, {details:details});
+                my_layer.push(ereceipt_view, {details:details, retryMode:true});
                 return;
             }
             title = 'Pengulangan Transaksi Berhasil';

@@ -107,8 +107,8 @@ def sale_edc_mobile(amount, trxid=None):
                 # "trx_type":"SALE"}
                 EDC_PAYMENT_RESULT['raw'] = json.dumps(sale_data)
                 EDC_PAYMENT_RESULT['card_type'] = sale_data['card_type']
-                if _Common.EDC_DEBIT_ONLY is True:
-                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
+                # if _Common.EDC_DEBIT_ONLY is True:
+                #     EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
                 EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
                 if IS_PIR is True:
