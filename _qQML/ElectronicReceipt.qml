@@ -87,7 +87,8 @@ Base{
         popup_loading.close();
         var result = p.split('|')[1];
         var info = p.split('|')[2];
-        if (result=='ERECEIPT_DONE' && info != undefined){
+        if (result == 'DONE') return;
+        if (result == 'ERECEIPT_DONE' && info != undefined){
             var data = JSON.parse(info);
             var whatsappNo = CONF.whatsapp_no;
             whatsappNo = '62' + whatsappNo.substring(1);
