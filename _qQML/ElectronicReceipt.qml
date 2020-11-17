@@ -108,6 +108,15 @@ Base{
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Whatsapp eReceipt'
+        size_: 50
+        color_: "white"
+    }
+
 
     Column{
         id: column

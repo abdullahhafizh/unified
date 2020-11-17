@@ -1890,19 +1890,19 @@ class Ereceipt:
             for c in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
                 self.footer.append({
                     'caption': c,
-                    'aligment': 'center',
+                    'alignment': 'center',
                     'font': 'regular'
                 })
         self.footer.append({
             'caption': 'TERIMA KASIH',
-            'aligment': 'center',
+            'alignment': 'center',
             'font': 'regular'
         })
 
     def set_line(self, text):
         self.lines.append({
             'caption': text,
-            'aligment': 'left',
+            'alignment': 'left',
             'font': 'regular'
         })
     
@@ -1954,8 +1954,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         pdf.set_company(_Common.THEME_NAME.lower())
         pdf.set_amount(p['payment_received'])
         pdf.set_line('')
-        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
-        pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
+        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'       Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
         pdf.set_line('')
         if 'receipt_title' in p.keys():
             pdf.set_line(p['receipt_title'].upper())
@@ -2055,8 +2054,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         pdf.set_company(_Common.THEME_NAME.lower())
         pdf.set_amount(p['payment_received'])
         pdf.set_line('')
-        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
-        pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
+        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'       Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
         pdf.set_line('')
         __title = t
         if 'receipt_title' in p.keys():
@@ -2138,8 +2136,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         pdf.set_company(_Common.THEME_NAME.lower())
         pdf.set_amount(p['payment_received'])
         pdf.set_line('')
-        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'))
-        pdf.set_line('Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
+        pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'       Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
         pdf.set_line('')
         if 'receipt_title' in p.keys():
             pdf.set_line(p['receipt_title'].upper())
