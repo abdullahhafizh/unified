@@ -1859,6 +1859,7 @@ def print_card_history(payload):
     finally:
         _Common.LAST_CARD_LOG_HISTORY = []
 
+
 class Ereceipt:
     header = []
     lines = []
@@ -2013,7 +2014,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
-        response, status = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
+        status, response = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
         if status == 200:
             output = response['response']
             if output['status'] == 0:
@@ -2095,7 +2096,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
-        response, status = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
+        status, response = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
         if status == 200:
             output = response['response']
             if output['status'] == 0:
@@ -2192,7 +2193,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
-        response, status = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
+        status, response = _NetworkAccess.post_to_url(_Common.ERECEIPT_URL, ereceipt_data)
         if status == 200:
             output = response['response']
             if output['status'] == 0:
