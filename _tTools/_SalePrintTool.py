@@ -1935,7 +1935,7 @@ class Ereceipt:
 def ereceipt_print_topup_trx(p, t, ext='.pdf'):
     if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         return
     pdf = None
     trxid = ''
@@ -2018,15 +2018,15 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         if status == 200:
             output = response['response']
             if output['status'] == 0:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE|'+json.dumps(output))
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
             else:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         else:
             _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
-            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     finally:
         finalize_trx_process(trxid, p, cash)
         del pdf
@@ -2035,7 +2035,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
 def ereceipt_print_shop_trx(p, t, ext='.pdf'):
     if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         return
     pdf = None
     trxid = ''
@@ -2100,15 +2100,15 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         if status == 200:
             output = response['response']
             if output['status'] == 0:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE|'+json.dumps(output))
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
             else:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         else:
             _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
-            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     finally:
         finalize_trx_process(trxid, p, cash)
         del pdf
@@ -2117,7 +2117,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
 def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
     if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         return
     pdf = None
     trxid = ''
@@ -2197,15 +2197,15 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         if status == 200:
             output = response['response']
             if output['status'] == 0:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE|'+json.dumps(output))
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
             else:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         else:
             _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
-            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     finally:
         finalize_trx_process(trxid, p, cash)
         del pdf
