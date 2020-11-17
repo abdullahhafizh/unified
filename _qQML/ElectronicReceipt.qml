@@ -88,25 +88,31 @@ Base{
         var result = p.split('|')[1];
         var info = p.split('|')[2];
         if (result == 'DONE') return;
-        if (result == 'ERECEIPT_DONE' && info != undefined){
-            var data = JSON.parse(info);
-            var whatsappNo = CONF.whatsapp_no;
-            whatsappNo = '62' + whatsappNo.substring(1);
-//            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
-            imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
-            console.log('ereceipt_qr', imageSource);
-            return;
+        if (result == 'ERECEIPT_DONE'){
+            if (info != undefined){
+                var data = JSON.parse(info);
+                var whatsappNo = CONF.whatsapp_no;
+                whatsappNo = '62' + whatsappNo.substring(1);
+    //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
+                imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
+                console.log('ereceipt_qr', imageSource);
+                return;
+            }
         }
-        imageSource = 'source/smiley_down.png';
-        false_notif('closeWindow|3', 'Mohon Maaf, Terjadi Kesalahan Dalam Menampilkan QR eReceipt');
-//            console.log('print_result_force_manual');
-//            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-//            var title = 'Transaksi Berhasil';
-//            if (retryMode) title = 'Pengulangan ' + title;
-//            var msg = '';
-//            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
-//            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
-//            switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
+        if (result == 'ERECEIPT_ERROR'){
+            textMain = '';
+            textSlave = '';
+            imageSource = 'source/smiley_down.png';
+            false_notif('closeWindow|3', 'Mohon Maaf, Terjadi Kesalahan Dalam Menampilkan QR eReceipt');
+            console.log('print_result_force_manual');
+            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+            var title = 'Transaksi Berhasil';
+            if (retryMode) title = 'Pengulangan ' + title;
+            var msg = '';
+            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
+            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
+            switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
+        }
     }
 
 
