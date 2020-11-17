@@ -1875,10 +1875,8 @@ class Ereceipt:
     amount = ''
     trxid = ''
     company = ''
-    data = None
 
     def __init__(self, logo, filename, headers_line):  
-        self.data = None           
         self.logo = logo
         self.filename = filename
         if len(headers_line) > 0:
@@ -1917,8 +1915,24 @@ class Ereceipt:
     def set_trxid(self, trxid):
         self.trxid = trxid
 
+    def reset(self):
+        self.header = []
+        self.lines = []
+        self.footer = [
+            {
+                'caption': '', #Padding To Body Receipt
+                'alignment': 'center',
+                'font': 'regular'
+            }
+        ]
+        self.logo = 'tj-logo'
+        self.filename = ''
+        self.amount = ''
+        self.trxid = ''
+        self.company = ''
+
     def generate(self):
-        self.data = {
+        output_data = {
             'company': self.company,
             'logo': self.logo,
             'trxid': self.trxid,
@@ -1927,8 +1941,9 @@ class Ereceipt:
             'footers': self.footer,
             'lines': self.lines,
         }
-        _Common.log_to_file(self.data, ERECEIPT_PATH, self.filename, '.json')
-        return self.data
+        _Common.log_to_file(output_data, ERECEIPT_PATH, self.filename, '.json')
+        self.reset()
+        return output_data
     
 
 # ERECEIPT LAYOUT =============
