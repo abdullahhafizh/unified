@@ -1877,7 +1877,8 @@ class Ereceipt:
     company = ''
     data = None
 
-    def __init__(self, logo, filename, headers_line):             
+    def __init__(self, logo, filename, headers_line):  
+        self.data = None           
         self.logo = logo
         self.filename = filename
         if len(headers_line) > 0:
