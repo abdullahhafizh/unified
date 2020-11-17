@@ -265,11 +265,11 @@ def generate_edc_receipt(trx):
 
     # Init Variables
     large_space = 8
-    tiny_space = 4
+    tiny_space = 3.5
 
     default_size = 8
     extra_size = 10
-    line_size = 10
+    footer_size = 6
 
     padding_left = 0
 
@@ -291,9 +291,6 @@ def generate_edc_receipt(trx):
         pdf.cell(padding_left, 0, justifying('TID: '+trx['tid'], 'MID: '+trx['mid']), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.cell(padding_left, 0, 'TRXID: '+trx['struck_id'], 0, 0, 'C')
-        pdf.ln(tiny_space)
-        pdf.set_font('Arial', '', line_size)
-        pdf.cell(padding_left, 0, '_' * (MAX_LENGTH-6), 0, 0, 'L')
         pdf.ln(large_space)
         pdf.set_font('Arial', '', default_size)
         pdf.cell(padding_left, 0, justifying('DATE: '+date_text, 'TIME: '+time_text), 0, 0, 'L')
@@ -319,23 +316,23 @@ def generate_edc_receipt(trx):
         pdf.ln(large_space)
         pdf.set_font('Arial', 'B', extra_size+2)
         pdf.cell(0, 0, 'TOTAL   Rp.'+re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', trx['amount']), 0, 0, 'C')
-        pdf.ln(large_space+2)
-        pdf.set_font('Arial', '', DEFAULT_FONT_SIZE)
-        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'I AGREE TO PAY ABOVE TOTAL AMOUNT', 0, 0, 'C')
+        pdf.ln(large_space)
+        pdf.set_font('Arial', '', footer_size)
+        pdf.cell(padding_left, 0, 'I AGREE TO PAY ABOVE TOTAL AMOUNT', 0, 0, 'C')
         pdf.ln(tiny_space)
-        pdf.set_font('Arial', '', DEFAULT_FONT_SIZE)
-        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, 'ACCORDING TO CARD ISSUER AGREEMENT', 0, 0, 'C')
+        pdf.set_font('Arial', '', footer_size)
+        pdf.cell(padding_left, 0, 'ACCORDING TO CARD ISSUER AGREEMENT', 0, 0, 'C')
         pdf.ln(tiny_space)
-        pdf.set_font('Arial', '', DEFAULT_FONT_SIZE)
-        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***PIN VERIFICATION SUCCESS***', 0, 0, 'C')
+        pdf.set_font('Arial', '', footer_size)
+        pdf.cell(padding_left, 0, '***PIN VERIFICATION SUCCESS***', 0, 0, 'C')
         pdf.ln(tiny_space)
-        pdf.set_font('Arial', '', DEFAULT_FONT_SIZE)
-        pdf.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***NO SIGNATURE REQUIRED***', 0, 0, 'C')
+        pdf.set_font('Arial', '', footer_size)
+        pdf.cell(padding_left, 0, '***NO SIGNATURE REQUIRED***', 0, 0, 'C')
         pdf.ln(tiny_space)
-        pdf.set_font('Arial', '', DEFAULT_FONT_SIZE)
-        pdf.cell(MARGIN_LEFT, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
+        pdf.set_font('Arial', '', footer_size)
+        pdf.cell(padding_left, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
         pdf.ln(tiny_space)
-        pdf.set_font('Arial', '', default_size-2)
+        pdf.set_font('Arial', '', footer_size-1)
         pdf.cell(padding_left, 0, 'APP VER: '+VERSION.replace('VER:', ''), 0, 0, 'L')
 
         # Rendering
