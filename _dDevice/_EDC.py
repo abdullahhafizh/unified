@@ -126,6 +126,7 @@ def sale_edc_mobile(amount, trxid=None):
                 EDC_PAYMENT_RESULT['tid'] = sale_data['bank_tid']
                 EDC_PAYMENT_RESULT['mid'] = sale_data['bank_mid']
                 EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
+                EDC_PAYMENT_RESULT['bank_reff_no'] = sale_data['bank_reff_no']
                 EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
                 sleep(.5)
