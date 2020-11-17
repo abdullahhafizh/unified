@@ -1433,3 +1433,14 @@ def logo_theme(theme):
     if theme not in PRINT_LOGO_MAPPING.keys():
         return 'tj-logo'
     return PRINT_LOGO_MAPPING[theme]
+
+PRINT_COMPANY_MAPPING = {
+    'transjakarta': 'TJ',
+    'kai': 'KC'
+}
+
+def company_theme(theme):
+    if theme not in PRINT_COMPANY_MAPPING.keys():
+        return 'TJ'
+    return PRINT_COMPANY_MAPPING[theme]
+
