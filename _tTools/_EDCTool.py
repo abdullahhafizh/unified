@@ -312,7 +312,7 @@ def generate_edc_receipt(trx):
         pdf.cell(padding_left, 0, justifying('BATCH: '+_batch, 'TRACE: '+trx['trace_no']), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font('Arial', '', default_size)
-        pdf.cell(padding_left, 0, justifying('REF.NO: '+trx['bank_reff_no'], 'APPR: '+trx['app_code']), 0, 0, 'L')
+        pdf.cell(padding_left, 0, justifying('REF.NO: '+trx['bank_reff_no'].zfill(12), 'APPR: '+trx['app_code']), 0, 0, 'L')
         pdf.ln(large_space)
         pdf.set_font('Arial', 'B', extra_size+2)
         pdf.cell(0, 0, 'TOTAL   Rp.'+re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', trx['amount']), 0, 0, 'C')
