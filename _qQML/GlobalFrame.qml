@@ -94,6 +94,7 @@ Base{
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
+            visible: (imageSource!='source/insert_card_dc.png')
         }
         Text{
             text: textSlave
@@ -106,6 +107,7 @@ Base{
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
+            visible: (imageSource!='source/insert_card_dc.png')
         }
 //        Text{
 //            visible:  (imageSource=='source/insert_money.png')

@@ -114,6 +114,7 @@ def sale_edc_mobile(amount, trxid=None):
                 if IS_PIR is True:
                     EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
                 EDC_PAYMENT_RESULT['res_code'] = sale_data['trace_no']
+                EDC_PAYMENT_RESULT['trace_no'] = sale_data['trace_no']
                 EDC_PAYMENT_RESULT['inv_no'] = sale_data['reff_no']
                 EDC_PAYMENT_RESULT['card_no'] = sale_data['card_pan']
                 _KioskService.CARD_NO = sale_data['card_pan']
