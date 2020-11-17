@@ -330,7 +330,7 @@ def generate_edc_receipt(trx):
         pdf.cell(padding_left, 0, '***NO SIGNATURE REQUIRED***', 0, 0, 'C')
         pdf.ln(tiny_space)
         pdf.set_font('Arial', '', footer_size)
-        pdf.cell(padding_left, HEADER_FONT_SIZE, '--CUSTOMER COPY--', 0, 0, 'C')
+        pdf.cell(padding_left, 0, '--CUSTOMER COPY--', 0, 0, 'C')
         pdf.ln(tiny_space)
         pdf.set_font('Arial', '', footer_size-1)
         pdf.cell(padding_left, 0, 'APP VER: '+VERSION.replace('VER:', ''), 0, 0, 'L')
