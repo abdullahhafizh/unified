@@ -1861,22 +1861,23 @@ def print_card_history(payload):
 
 
 class Ereceipt:
-    header = []
-    lines = []
-    footer = [
-        {
-            'caption': '', #Padding To Body Receipt
-            'alignment': 'center',
-            'font': 'regular'
-        }
-    ]
-    logo = 'tj-logo'
-    filename = ''
-    amount = ''
-    trxid = ''
-    company = ''
+    # header = []
+    # lines = []
+    # footer = [
+    #     {
+    #         'caption': '', #Padding To Body Receipt
+    #         'alignment': 'center',
+    #         'font': 'regular'
+    #     }
+    # ]
+    # logo = 'tj-logo'
+    # filename = ''
+    # amount = ''
+    # trxid = ''
+    # company = ''
 
     def __init__(self, logo, filename, headers_line):  
+        self.reset()
         self.logo = logo
         self.filename = filename
         if len(headers_line) > 0:
@@ -1899,22 +1900,6 @@ class Ereceipt:
             'font': 'regular'
         })
 
-    def set_line(self, text):
-        self.lines.append({
-            'caption': text,
-            'alignment': 'left',
-            'font': 'regular'
-        })
-    
-    def set_amount(self, amount):
-        self.amount = amount
-
-    def set_company(self, company):
-        self.company = company
-
-    def set_trxid(self, trxid):
-        self.trxid = trxid
-
     def reset(self):
         self.header = []
         self.lines = []
@@ -1931,6 +1916,22 @@ class Ereceipt:
         self.trxid = ''
         self.company = ''
 
+    def set_line(self, text):
+        self.lines.append({
+            'caption': text,
+            'alignment': 'left',
+            'font': 'regular'
+        })
+    
+    def set_amount(self, amount):
+        self.amount = amount
+
+    def set_company(self, company):
+        self.company = company
+
+    def set_trxid(self, trxid):
+        self.trxid = trxid
+
     def generate(self):
         output_data = {
             'company': self.company,
@@ -1942,7 +1943,6 @@ class Ereceipt:
             'lines': self.lines,
         }
         _Common.log_to_file(output_data, ERECEIPT_PATH, self.filename, '.json')
-        self.reset()
         return output_data
     
 
