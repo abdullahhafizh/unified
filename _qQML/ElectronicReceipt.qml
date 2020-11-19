@@ -16,8 +16,8 @@ Base{
     property var press: '0'
     property int timer_value: 60
     property var whatsappNo: 'tersebut'
-    property var textMain: 'Scan QR di atas Untuk mendapatkan eReceipt Transaksi dan Point Reward Anda.'
-    property var textSlave: 'Buka Whatsapp dan Tekan Icon Camera, Android (Pojok Kiri Atas) dan IOS (Tengah Bawah)'
+    property var textMain: 'Pada Android, Tekan Tombol Icon CAMERA di Pojok Kiri Atas'
+    property var textSlave: 'Pada IOS, Tekan Tombol Icon CAMERA di Tengah Bawah'
     property var textRebel: ''
     property var textQuard: ''
     property var imageSource: "source/sand-clock-animated-2.gif"
@@ -123,7 +123,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Whatsapp eReceipt'
+        show_text: 'Scan QR Berikut di Aplikasi Whatsapp Anda'
         size_: 50
         color_: "white"
     }

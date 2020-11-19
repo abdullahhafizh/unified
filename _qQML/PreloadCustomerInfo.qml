@@ -15,9 +15,10 @@ Base{
     property var whatsappNo: ''
     property var textMain: 'Mesin ini tidak dapat mengembalikan uang, Proses pengembalian uang akan dilakukan melalui Whatsapp Voucher.'
     property var textSlave: 'Anda dapat melakukan transaksi ulang untuk transaksi yang gagal/batal setelah uang masuk ke dalam Bill Acceptor dengan memasukkan kode ulang.'
+    property var textThird: 'Mesin ini akan menggunakan bukti elektronik via WhatsApps dan tidak mengeluarkan Struk Pembelian/Transaksi.'
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
-    property int boxSize: 240
+    property int boxSize: 200
 
     visible: false
     opacity: visible ? 1.0 : 0.0
@@ -57,12 +58,12 @@ Base{
     Text{
         id: mainText
         text: textMain
-        anchors.horizontalCenterOffset: 200
+        anchors.horizontalCenterOffset: 160
         anchors.verticalCenterOffset: -150
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
-        width: 900
-        height: width/4
+        width: 1000
+        height: boxSize
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignLeft
         anchors.horizontalCenter: parent.horizontalCenter
@@ -77,7 +78,7 @@ Base{
         width: boxSize
         height: boxSize
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: 150
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -88,13 +89,44 @@ Base{
     Text{
         id: slaveText
         text: textSlave
-        anchors.horizontalCenterOffset: 200
-        anchors.verticalCenterOffset: 150
+        anchors.horizontalCenterOffset: 160
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: textSize
-        width: 900
-        height: width/4
+        width: 1000
+        height: boxSize
+        wrapMode: Text.WordWrap
+        anchors.horizontalCenter: parent.horizontalCenter
+        font.bold: false
+        color: 'white'
+        verticalAlignment: Text.AlignVCenter
+        font.family: "Ubuntu"
+    }
+
+    AnimatedImage  {
+        id: thirdImage
+        width: boxSize
+        height: boxSize
+        anchors.horizontalCenterOffset: -500
+        anchors.verticalCenterOffset: 350
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        scale: 1
+        source: "source/get_receipt_.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+    Text{
+        id: thirdText
+        text: textThird
+        anchors.horizontalCenterOffset: 160
+        anchors.verticalCenterOffset: 350
+        anchors.verticalCenter: parent.verticalCenter
+        horizontalAlignment: Text.AlignLeft
+        font.pixelSize: textSize
+        width: 1000
+        height: boxSize
         wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
