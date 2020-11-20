@@ -1861,21 +1861,6 @@ def print_card_history(payload):
 
 
 class Ereceipt:
-    # header = []
-    # lines = []
-    # footer = [
-    #     {
-    #         'caption': '', #Padding To Body Receipt
-    #         'alignment': 'center',
-    #         'font': 'regular'
-    #     }
-    # ]
-    # logo = 'tj-logo'
-    # filename = ''
-    # amount = ''
-    # trxid = ''
-    # company = ''
-
     def __init__(self, logo, filename, headers_line):  
         self.reset()
         self.logo = logo

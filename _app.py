@@ -1162,7 +1162,7 @@ if __name__ == '__main__':
         print("pyt: Connecting to MEI Bill Acceptor...")
         _MEI.mei_standby_mode()
     if _Common.QPROX['status'] is True:
-        print("pyt: Connecting Into Prepaid Reader...")
+        print("pyt: Connecting to Prepaid Reader...")
         sleep(1)
         if _QPROX.open() is True:
             print("pyt: [INFO] Init Prepaid Reader...")
