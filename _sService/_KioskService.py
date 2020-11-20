@@ -74,7 +74,8 @@ def kiosk_status():
         'tid': _Common.TID,
         # 'payment': _Common.PAYMENT_SETTING,
         'feature': _Common.FEATURE_SETTING,
-        'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted')
+        'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted'),
+        'refund_feature': _ConfigParser.get_value('GENERAL', 'refund^feature')
     }))
 
 
@@ -237,6 +238,21 @@ def define_theme(d):
         content_js += 'var text_color = "' + _Common.COLOR_TEXT + '";' + os.linesep
         content_js += 'var frame_color = "' + d['frame_color'] + '";' + os.linesep
         content_js += 'var background_color = "' +  _Common.COLOR_BACK + '";' + os.linesep
+    if not _Common.empty(d['whatsapp_no']):
+        _Common.THEME_WA_NO = d['whatsapp_no']
+        _Common.log_to_temp_config('theme^wa^no', d['whatsapp_no'])
+        content_js += 'var whatsapp_no = "' +  d['whatsapp_no'] + '";' + os.linesep
+    if not _Common.empty(d['whatsapp_qr']):
+        _Common.THEME_WA_QR = d['whatsapp_qr']
+        _Common.log_to_temp_config('theme^wa^qr', d['whatsapp_qr'])
+        store, receipt_wa_qr = _NetworkAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/_qQML/source')
+        if store is True:
+            content_js += 'var whatsapp_qr = "source/' + receipt_wa_qr + '";' + os.linesep
+
+    # Add Printer Type
+    printer_type = _Common.PRINTER_TYPE.lower()
+    content_js += 'var printer_type = "' +  printer_type + '";' + os.linesep
+
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep
@@ -411,6 +427,9 @@ def get_machine_summary():
                                                      'WHERE status="EDC|OPEN" ')[0]['__']
         result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
                                                      'WHERE collectedAt is null ')[0]['__']
+        result['all_cashbox'] = _DAO.cashbox_status()
+        if int(result['all_cashbox']) >= int(result['cash_available']):
+            result['cash_available'] = result['all_cashbox']
         LOGGER.info(('SUCCESS', str(result)))
         K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.emit(json.dumps(result))
     except Exception as e:
@@ -1022,6 +1041,11 @@ def store_transaction_global(param, retry=False):
             _DAO.update_product_stock(_param_stock)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + _param_stock['pid'])
             __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
+        __paymentType = get_payment(g['payment'])
+        # Insert DKI TRX STAN For Topup Jakcard Using Cash
+        if g['shop_type'] == 'topup' and g['payment'] == 'cash':
+            if g['raw']['bank_name'] == 'DKI':
+                g['payment_details']['stan_no'] = _Common.LAST_DKI_STAN
         __notes = json.dumps(g['payment_details'])
         __total_price = int(g['value']) * int(g['qty'])
         __param = {
@@ -1033,7 +1057,7 @@ def store_transaction_global(param, retry=False):
             'sale': __total_price,
             'amount': __total_price,
             'cardNo': g['payment_details'].get('card_no', ''),
-            'paymentType': get_payment(g['payment']),
+            'paymentType': __paymentType,
             'paymentNotes': __notes,
             'isCollected': 0,
             'pidStock': PID_STOCK_SALE if g['shop_type'] == 'shop' else ''
@@ -1197,8 +1221,9 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
             file = os.path.join(work_dir, f)
             if os.path.isfile(file):
                 stat = os.stat(file)
-                if stat.st_ctime < expired and not file.endswith('.log'):
-                    LOGGER.debug(('Removing', file, stat.st_ctime, expired))
+                file_modification_time = stat.st_mtime
+                if file_modification_time < expired and not file.endswith('.log'):
+                    LOGGER.debug(('Removing', file, file_modification_time, expired))
                     os.remove(file)
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
     print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())

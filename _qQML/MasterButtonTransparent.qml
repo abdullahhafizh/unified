@@ -40,7 +40,7 @@ Rectangle {
         text: text_
         font.pixelSize: 20
         font.bold: true
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom

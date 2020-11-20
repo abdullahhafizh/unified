@@ -489,7 +489,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 120
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         z: 10
         visible: !popup_loading.visible
         modeReverse: true

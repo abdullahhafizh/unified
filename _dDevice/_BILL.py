@@ -167,25 +167,25 @@ def start_set_direct_price(price):
     _Helper.get_thread().apply_async(set_direct_price, (price,))
 
 
-def start_set_direct_price_with_current(current, price):
-    _Helper.get_thread().apply_async(set_direct_price, (current, price, ))
-
-
-def set_direct_price(current, price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
-    DIRECT_PRICE_MODE = True
-    DIRECT_PRICE_AMOUNT = int(price)
-    COLLECTED_CASH = int(current)
-    CASH_HISTORY = []
-    CASH_HISTORY.append(current)
-
-
 def set_direct_price(price):
     global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
     DIRECT_PRICE_MODE = True
     DIRECT_PRICE_AMOUNT = int(price)
     COLLECTED_CASH = 0
     CASH_HISTORY = []
+
+
+def start_set_direct_price_with_current(current, price):
+    _Helper.get_thread().apply_async(set_direct_price_with_current, (current, price, ))
+
+
+def set_direct_price_with_current(current, price):
+    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
+    DIRECT_PRICE_MODE = True
+    DIRECT_PRICE_AMOUNT = int(price)
+    COLLECTED_CASH = int(current)
+    CASH_HISTORY = []
+    CASH_HISTORY.append(current)
 
 
 def start_bill_receive_note():
@@ -230,6 +230,9 @@ def start_receive_note():
                 break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
+                # Insert Into Table Cashbox
+                _DAO.insert_cashbox(cash_in)
+                # -------------------------
                 # _Helper.dump(cash_in)
                 if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
                     if cash_in in SMALL_NOTES_NOT_ALLOWED:
@@ -275,8 +278,8 @@ def start_receive_note():
                                                                     'TARGET': DIRECT_PRICE_AMOUNT})))
                 # Call API To Force Update Into Server
                 _Common.upload_device_state('mei', _Common.BILL_ERROR)
-                sleep(1.5)
-                init_bill()
+                # sleep(1.5)
+                # init_bill()
                 break
             if attempt == MAX_EXECUTION_TIME:
                 LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
@@ -305,6 +308,9 @@ def store_cash_into_cashbox():
     while True:
         sleep(1)
         attempt += 1
+        # Assumming Positive Response When Stacking Note
+        if _Common.BILL_DIRECT_READ_NOTE is True:
+            return True
         _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((str(attempt), str(_result_store)))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')

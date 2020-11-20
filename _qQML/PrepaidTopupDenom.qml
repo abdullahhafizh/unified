@@ -168,7 +168,7 @@ Base{
             shop_type: 'topup',
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: new Date().getTime()
+            epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
         }
         globalCart = {
             value: selectedDenom.toString(),
@@ -250,7 +250,7 @@ Base{
         }
 
         if (allowedBank.indexOf(cardData.bank_name) == -1){
-            switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+cardData.bank_name, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
+            switch_frame('source/smiley_down.png', 'Mohon Maaf, Layanan isi ulang kartu prabayar bank '+cardData.bank_name, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
             return;
         }
 
@@ -512,7 +512,7 @@ Base{
             case 'BNI':
                 sam_balance = parseInt(bniTopupWallet);
                 break;
-            case 'BRI':
+            case 'BRI': case 'DKI': case 'BCA':
                 sam_balance = parseInt(denom);
                 break;
         }
@@ -704,7 +704,7 @@ Base{
         visible: !standard_notif_view.visible && !popup_loading.visible
         text: "*Pastikan Kartu Prabayar Anda masih Ditempelkan di Reader Hingga Proses Isi Ulang Selesai."
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: 150
         wrapMode: Text.WordWrap
@@ -1020,9 +1020,9 @@ Base{
         CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
@@ -1038,9 +1038,9 @@ Base{
         CircleButton{
             id: next_button_global
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton
@@ -1075,9 +1075,9 @@ Base{
         CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -1092,9 +1092,9 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             blinkingMode: true

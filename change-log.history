@@ -1,3 +1,30 @@
+11.9.G-GLOBAL:
+- Add Topup Flazz BCA Capability,
+- Enhance Pending code into 9 Digits,
+- ...
+
+11.9.F-GLOBAL:
+- Enhance [BILL] direct^read^note from setting (Active By Default),
+- Add Topup DKI Jakcard Using Service - ISO 8583 (Disabled),
+- Fix House Keeping File Timestamp,
+- Customer Last Balance Validation After Mandiri C2C Failure,
+- Add Cashbox Calculation Beyond Transaction,
+- Fix Topup DKI Retry Validation.
+- ...
+
+11.9.E-GLOBAL:
+- Enhance Messaging Flow In General Payment,
+- Enhance Note Channel Restrictions,
+- Enhance MID Per Merchant,
+- Add Whatsapp Configuration Per Mechant Theme,
+- Add Preload General Customer Info,
+- Add Looping Update Balance Mandiri Deposit,
+- Add Max Looping Attempt Per Update Event,
+- Enhance Receipt Layouting & Wording,
+- Enhance Topup Limit For Bank Deposit From Paralism,
+- Enhance Admin Action Loggin,
+- ...
+
 11.9.D-GLOBAL:
 - Disable Refund Feature For Failed/Cancel TRX,
 - Enhance Sentry Config,

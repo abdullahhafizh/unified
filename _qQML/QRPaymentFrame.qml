@@ -21,6 +21,7 @@ Base{
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
 
+    property alias qrTimer: show_timer
     property var calledFrom
 
     visible: false
@@ -189,7 +190,7 @@ Base{
         Text{
             text: 'Mohon Tunggu, Memproses Transaksi Anda...'
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             anchors.horizontalCenterOffset: 0
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
@@ -210,7 +211,7 @@ Base{
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
-//            console.log('TIMER_QR_FRAME', showDuration);
+            console.log('[QR-PAYMENT]', showDuration);
             showDuration -= 1;
             if (showDuration < 30) textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
             if (showDuration <= 7) {

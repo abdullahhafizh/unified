@@ -56,9 +56,9 @@ Base{
     CircleButton{
         id: back_button
         anchors.left: parent.left
-        anchors.leftMargin: 100
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'BATAL'
         modeReverse: true
         visible: !disableButton
@@ -66,6 +66,7 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "BATAL" In Confirmation Page');
+                console.log('[GLOBAL-CONFIRM]', 'CANCEL-BUTTON', 'BACK-TO-HOMEPAGE');
                 my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
             }
         }
@@ -74,9 +75,9 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: (modeConfirm) ? 'LANJUT' : 'O K'
         modeReverse: true
         visible: !disableButton
@@ -88,6 +89,7 @@ Base{
                     console.log('Press "OK" in Confirmation Page')
                     switch(closeMode){
                     case 'backToMain':
+                        console.log('[GLOBAL-CONFIRM]', 'OK-BUTTON', 'BACK-TO-HOMEPAGE');
                         my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                         break;
                     case 'backToPrev': case 'backToPrevious':
@@ -182,6 +184,7 @@ Base{
                 show_timer.stop();
                 switch(closeMode){
                 case 'backToMain':
+                    console.log('[GLOBAL-CONFIRM]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     break;
                 case 'backToPrev': case 'backToPrevious':

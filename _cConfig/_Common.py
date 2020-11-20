@@ -66,8 +66,10 @@ MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
 BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^library', '1') == '0' and BILL_TYPE == 'NV' else False
+BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug', '0') == '1' and BILL_TYPE == 'NV' else False
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
+BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False
 
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
@@ -87,6 +89,7 @@ LOGGER.info((CD_NEW_TYPE))
 
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
+PRINTER_NEW_LAYOUT = True if _ConfigParser.get_set_value('PRINTER', 'new^layout', '0') == '1' else False
 
 MID_MAN = _ConfigParser.get_set_value('MANDIRI', 'mid', '---')
 TID_MAN = _ConfigParser.get_set_value('MANDIRI', 'tid', '---')
@@ -103,6 +106,7 @@ BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'
 URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://192.168.9.44:5000/')
 BNI_ACTIVATION_RETRY = _ConfigParser.get_set_value('BNI', 'activation^retry', '5')
 BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^timeout^minute', '30')
+BNI_REMOTE_ACTIVATION = True if _ConfigParser.get_set_value('BNI', 'remote^activation', '0') == '1' else False
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
@@ -115,6 +119,18 @@ MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 
+MID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'mid^topup', '---')
+TID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'tid^topup', '---')
+MID_DKI = _ConfigParser.get_set_value('DKI', 'mid', '---')
+TID_DKI = _ConfigParser.get_set_value('DKI', 'tid', '---')
+
+LAST_DKI_STAN = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^stan', '121')
+LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^invoice', '61')
+DKI_TOPUP_ONLINE_BY_SERVICE = True if (_ConfigParser.get_set_value('DKI', 'service^library', '0') == '1') else False
+# Force Close DKI Topup
+# DKI_TOPUP_ONLINE_BY_SERVICE = False
+
+
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
 C2C_MACTROS = _ConfigParser.get_set_value('MANDIRI_C2C', 'mactros', '0000000000000000')
 C2C_MID = _ConfigParser.get_set_value('MANDIRI_C2C', 'mid', '---')
@@ -126,6 +142,8 @@ C2C_TOPUP_AMOUNT = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '1
 C2C_DEPOSIT_NO = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^no', '6032000000000000')
 C2C_DEPOSIT_UID = _ConfigParser.get_set_value('TEMPORARY', 'c2c^card^uid', '---')
 C2C_DEPOSIT_SLOT = _ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^slot', '2')
+C2C_DEPOSIT_UPDATE_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^loop', '300'))
+C2C_DEPOSIT_UPDATE_MAX_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^max^loop', '10'))
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
 
@@ -138,6 +156,7 @@ INFOS = [
     '[GENERAL]-allowed^ubal^online -> Define Default Bank Which Allowed Update Balance Online',
     '[GENERAL]-mode -> Define Application Repository Mode live or develop',
     '[GENERAL]-mandiri^sam^production -> When Using Develop Mode For Testing, But Keep Using Mandiri KA Deposit Production',
+    '[GENERAL]-refund^feature -> Disable Refund Feature And Set Default To Whatsapp',
     '[BILL]-type -> Define Type Of Bill Acceptor Which is used NV or GRG',
     '[BILL]-not^allowed^denom -> Define Not Allowed Notes/Denom',
     '[BILL]-store^money^delay -> Define Delay Waiting Time in second For Each Notes Storing',
@@ -152,6 +171,8 @@ INFOS = [
     '[MANDIRI_C2C]-c2c^path^resp^fee ->  Define Host Path To Get Response Settlement Fee File',
     '[MANDIRI_C2C]-sam^slot ->  Mandiri SAM Actual Slot in Reader',
     '[MANDIRI_C2C]-deposit^slot ->  C2C Deposit Actual Slot in Reader',
+    '[MANDIRI_C2C]-deposit^update^loop ->  C2C Deposit Update Loop in Seconds',
+    '[MANDIRI_C2C]-deposit^update^max^loop ->  C2C Deposit Maximum Loop Attempt Per Event Update',
     '[EDC]-type -> Define EDC Type UPT-IUR/MOBILE-ANDROID',
     '[EDC]-serial^no -> Define Serial No of Mobile Android EDC',
 ] 
@@ -235,7 +256,11 @@ PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
+THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
+THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
+
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
 REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
@@ -472,6 +497,8 @@ if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
+ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
+# ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:10107/generate/qr/')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
 EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
@@ -582,14 +609,21 @@ def start_reset_receipt_count(count):
     _Helper.get_thread().apply_async(reset_receipt_count, (count,))
 
 
+def reset_paper_roll():
+    return reset_receipt_count('0')
+
+
 def reset_receipt_count(count):
     global PRINTER_ERROR, RECEIPT_PRINT_COUNT
     RECEIPT_PRINT_COUNT = int(count)
     log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
     if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
         PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
+        return 'PAPER_ROLL_NOT_RESET'
     else:
         PRINTER_ERROR = ''
+        return 'PAPER_ROLL_RESET'
+
 
 
 def active_auth_session():
@@ -1232,6 +1266,7 @@ def generate_collection_data():
         __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
         __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
         __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
+        __['all_cashbox'] = _DAO.cashbox_status()      
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
         __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
@@ -1260,6 +1295,9 @@ def generate_collection_data():
             # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __['all_amount'] = int(__['amt_card']) + int(__['amt_top10k']) + int(__['amt_top20k']) + int(__['amt_top50k']) + int(__['amt_top100k']) + int(__['amt_top200k']) + int(__['amt_xdenom'])
         __['failed_amount'] = 0
+        # Redefine All Cashbox From All Cash in Casset Not From Transaction
+        if int(__['all_cashbox']) >= int(__['all_cash']):
+            __['all_cash'] = __['all_cashbox']
         if int(__['all_cash']) > (int(__['all_amount']) + int(__['ppob_cash'])):
             __['failed_amount'] = int(__['all_cash']) - (int(__['all_amount']) + int(__['ppob_cash']))
         __['init_slot1'] = __['slot1']
@@ -1345,6 +1383,8 @@ def check_retry_able(data):
                 return 1
             if BNI_ACTIVE_WALLET > topup_value:
                 return 1
+            if DKI_TOPUP_ONLINE_BY_SERVICE is True:
+                return 1
         except Exception as e:
             LOGGER.warning((e))
             return 0
@@ -1384,4 +1424,27 @@ def generate_stock_change_data():
     finally:
         LOGGER.debug(str(__))
         return __
+
+
+DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
+
+PRINT_LOGO_MAPPING = {
+    'transjakarta': 'tj-logo',
+    'kai': 'kai-logo'
+}
+
+def logo_theme(theme):
+    if theme not in PRINT_LOGO_MAPPING.keys():
+        return 'tj-logo'
+    return PRINT_LOGO_MAPPING[theme]
+
+PRINT_COMPANY_MAPPING = {
+    'transjakarta': 'TJ',
+    'kai': 'KC'
+}
+
+def company_theme(theme):
+    if theme not in PRINT_COMPANY_MAPPING.keys():
+        return 'TJ'
+    return PRINT_COMPANY_MAPPING[theme]
 

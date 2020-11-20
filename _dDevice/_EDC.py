@@ -107,13 +107,14 @@ def sale_edc_mobile(amount, trxid=None):
                 # "trx_type":"SALE"}
                 EDC_PAYMENT_RESULT['raw'] = json.dumps(sale_data)
                 EDC_PAYMENT_RESULT['card_type'] = sale_data['card_type']
-                if _Common.EDC_DEBIT_ONLY is True:
-                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
+                # if _Common.EDC_DEBIT_ONLY is True:
+                #     EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
                 EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
                 if IS_PIR is True:
                     EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
                 EDC_PAYMENT_RESULT['res_code'] = sale_data['trace_no']
+                EDC_PAYMENT_RESULT['trace_no'] = sale_data['trace_no']
                 EDC_PAYMENT_RESULT['inv_no'] = sale_data['reff_no']
                 EDC_PAYMENT_RESULT['card_no'] = sale_data['card_pan']
                 _KioskService.CARD_NO = sale_data['card_pan']
@@ -125,6 +126,7 @@ def sale_edc_mobile(amount, trxid=None):
                 EDC_PAYMENT_RESULT['tid'] = sale_data['bank_tid']
                 EDC_PAYMENT_RESULT['mid'] = sale_data['bank_mid']
                 EDC_PAYMENT_RESULT['ref_no'] = sale_data['bank_reff_no']
+                EDC_PAYMENT_RESULT['bank_reff_no'] = sale_data['bank_reff_no']
                 EDC_PAYMENT_RESULT['batch_no'] = sale_data['batch_no']
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
                 sleep(.5)

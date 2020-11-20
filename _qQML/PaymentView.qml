@@ -234,7 +234,7 @@ Base{
             id: label_text_price
             text: qsTr("TOTAL PAID :")
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.verticalCenterOffset: 70
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
@@ -248,7 +248,7 @@ Base{
             id: text_price
             text: "Rp. " + FUNC.insert_dot(totalCost) + ",-"
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.verticalCenterOffset: 100
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
@@ -444,7 +444,7 @@ Base{
             y: 472
             width: parent.width
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter
             visible: (meiTextMode=="continue" || meiTextMode=="exceeded") ? true : false

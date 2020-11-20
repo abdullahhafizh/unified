@@ -11,7 +11,7 @@ Base{
     isHeaderActive: true
     isBoxNameActive: false
     textPanel: 'Pilih Produk'
-    property int timer_value: 150
+    property int timer_value: 240
     property int max_count: 24
     property int min_count: 10
     property var press: "0"
@@ -55,8 +55,6 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
 //            console.log('mode', mode, JSON.stringify(selectedProduct));
-            abc.counter = timer_value;
-            my_timer.start();
             define_wording();
             isConfirm = false;
             retryCategory = undefined;
@@ -67,12 +65,14 @@ Base{
             pendingPayment = 0;
             cardData = undefined;
             cardBalance = 0;
-            press = '0'
+            press = '0';
+            abc.counter = timer_value;
+            my_timer.start();
 
         }
         if(Stack.status==Stack.Deactivating){
-            my_timer.stop()
-            loading_view.close()
+            my_timer.stop();
+            loading_view.close();
         }
     }
 
@@ -112,7 +112,7 @@ Base{
             id:abc
             property int counter
             Component.onCompleted:{
-                abc.counter = timer_value
+                abc.counter = timer_value;
             }
         }
 
@@ -123,11 +123,13 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                abc.counter -= 1
+                console.log('[GLOBAL-INPUT]', abc.counter);
+                abc.counter -= 1;
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if(abc.counter < 0){
-                    my_timer.stop()
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                if(abc.counter == 0){
+                    my_timer.stop();
+                    console.log('[GLOBAL-INPUT]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
         }
@@ -145,7 +147,7 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('press "BATAL" In Input Number Page');
-                my_layer.pop()
+                my_layer.pop();
             }
         }
     }
@@ -192,11 +194,11 @@ Base{
             case 'DKI':
                 provider = 'JakCard DKI';
                 break;
-
             }
             //Define Data Card, Amount Button, Topup Availability
-            var prev_admin_fee = retryDetails.raw.admin_fee
-            var prev_topup_denom = retryDetails.raw.value
+            var prev_admin_fee = retryDetails.raw.admin_fee;
+            var prev_topup_denom = retryDetails.raw.value;
+            retryDetails.provider = provider;
             retryDetails.raw = {
                 value: prev_topup_denom,
                 provider: provider,
@@ -206,35 +208,39 @@ Base{
                 bank_type: cardData.bank_type,
                 bank_name: cardData.bank_name,
             }
+            global_confirmation_frame.close();
+            my_timer.stop();
             my_layer.push(retry_payment_process, {details: retryDetails, cardNo: cardData.card_no, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
         }
     }
 
     function card_eject_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('card_eject_result', now, r);
-        popup_loading.close();
-        abc.counter = 30;
-        my_timer.restart();
-//        if (r=='EJECT|PARTIAL'){
-//            press = '0';
-//            attemptCD -= 1;
-//            switch_frame('source/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
-//            centerOnlyButton = true;
-//            modeButtonPopup = 'retrigger_card';
-//            return;
-//        }
-        if (r == 'EJECT|ERROR') {
-            switch_frame('source/smiley_down.png', 'Mohon Maaf Terjadi Kesalahan', 'Transaksi Pengambilan Kartu Digagalkan', 'backToMain', true )
-            return;
-        }
-        if (r == 'EJECT|SUCCESS') {
-            if (vCollectionData!=undefined){
-                switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
-                var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
-                _SLOT.start_use_voucher(textInput, reff_no_voucher);
+        if (vCollectionData!=undefined){
+            var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+            console.log('card_eject_result', now, r);
+            popup_loading.close();
+            abc.counter = 30;
+            my_timer.restart();
+            //        if (r=='EJECT|PARTIAL'){
+            //            press = '0';
+            //            attemptCD -= 1;
+            //            switch_frame('source/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
+            //            centerOnlyButton = true;
+            //            modeButtonPopup = 'retrigger_card';
+            //            return;
+            //        }
+            if (r == 'EJECT|ERROR') {
+                switch_frame('source/smiley_down.png', 'Mohon Maaf Terjadi Kesalahan', 'Transaksi Pengambilan Kartu Digagalkan', 'backToMain', true )
+                return;
             }
-            return;
+            if (r == 'EJECT|SUCCESS') {
+                if (vCollectionData!=undefined){
+                    switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+                    var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
+                    _SLOT.start_use_voucher(textInput, reff_no_voucher);
+                }
+                return;
+            }
         }
     }
 
@@ -243,7 +249,7 @@ Base{
         console.log('get_use_voucher', now, v);
         var res = v.split('|')[1];
         if (['ERROR', 'MISSING_VOUCHER_NUMBER', 'MISSING_REFF_NO'].indexOf(res) > -1){
-            false_notif('Terjadi Kesalahan Saat Menggunakan Kode Voucher Anda', 'backToPrevious', res);
+            false_notif('Terjadi Kesalahan Saat Menggunakan Kode Ulang Anda', 'backToPrevious', res);
             return;
         }
     }
@@ -253,7 +259,7 @@ Base{
 //        console.log('get_check_voucher', now, v);
         var res = v.split('|')[1];
         if (['ERROR', 'MISSING_VOUCHER_NUMBER', 'MISSING_PRODUCT_ID', 'EMPTY'].indexOf(res) > -1){
-            false_notif('Terjadi Kesalahan Saat Memeriksa Kode Voucher Anda', 'backToPrevious', res);
+            false_notif('Terjadi Kesalahan Saat Memeriksa Kode Ulang Anda', 'backToPrevious', res);
             return;
         }
         console.log('get_check_voucher', now, res);
@@ -261,7 +267,7 @@ Base{
         vCollectionData = i;
         vCollectionMode = i.mode;
         if (i.qty==0){
-            false_notif('Kode Voucher Tersebut Sudah Pernah Digunakan', 'backToMain', '');
+            false_notif('Kode Ulang Tersebut Sudah Pernah Digunakan', 'backToMain', '');
             return;
         }
         var rows = [
@@ -344,7 +350,6 @@ Base{
         }
     }
 
-
     function set_pending_trx_data(obj){
         if (obj != undefined){
             retryDetails = obj;
@@ -353,7 +358,6 @@ Base{
             console.log('set_pending_trx_data', JSON.stringify(retryDetails));
         }
     }
-
 
     function get_trx_check_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -431,7 +435,7 @@ Base{
             return;
         }
         if (mode=='SEARCH_TRX'){
-            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang)/Kode Voucher Transaksi Anda';
+            wording_text = 'Masukkan 9 Digit Kode Ulang Transaksi Anda';
             min_count = 6;
             return;
         }
@@ -517,7 +521,7 @@ Base{
             shop_type: 'ppob',
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: new Date().getTime()
+            epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
         }
         details.qty = 1;
         details.status = '1';
@@ -544,7 +548,8 @@ Base{
 //            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
             details.provider = selectedProduct.description;
         }
-        _SLOT.python_dump(JSON.stringify(details));
+//        _SLOT.python_dump(JSON.stringify(details));
+        my_timer.stop();
         my_layer.push(general_payment_process, {details: details});
     }
 
@@ -645,8 +650,8 @@ Base{
         property int count:0
 
         Component.onCompleted: {
-            virtual_keyboard.strButtonClick.connect(typeIn)
-            virtual_keyboard.funcButtonClicked.connect(functionIn)
+            virtual_keyboard.strButtonClick.connect(typeIn);
+            virtual_keyboard.funcButtonClicked.connect(functionIn);
         }
 
         function functionIn(str){
@@ -677,8 +682,8 @@ Base{
             } else {
                 textInput += str
             }
-            abc.counter = timer_value
-            my_timer.restart()
+            abc.counter = timer_value;
+            my_timer.restart();
         }
     }
 
@@ -732,7 +737,7 @@ Base{
                     return
                 case 'WA_VOUCHER':
                     console.log('Checking WA Invoice Number : ', now, textInput);
-                    popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
+                    popup_loading.open('Memeriksa Kode Ulang Anda Anda...')
                     _SLOT.start_check_voucher(textInput);
                     return;
                 default:
@@ -761,6 +766,7 @@ Base{
         delay(second*1000, function(){
             popup_loading.close();
             my_timer.stop();
+            console.log('[GLOBAL-INPUT]', 'EXIT-MESSAGE-FUNCTION', 'BACK-TO-HOMEPAGE');
             my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
         });
     }
@@ -807,9 +813,9 @@ Base{
         CircleButton{
             id: cancel_button_confirmation
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -822,6 +828,7 @@ Base{
                         exit_with_message(5);
                         return;
                     } else {
+                        console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON', 'BACK-TO-HOMEPAGE');
                         my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     }
                 }
@@ -832,9 +839,9 @@ Base{
         CircleButton{
             id: proceed_button
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             blinkingMode: true
@@ -851,6 +858,8 @@ Base{
                         preload_check_card.open();
                         return;
                     }
+                    global_confirmation_frame.close();
+                    my_timer.stop();
                     my_layer.push(retry_payment_process, {details: retryDetails, pendingPayment: pendingPayment, receivedPayment: receivedPayment});
                 }
             }
@@ -881,15 +890,16 @@ Base{
         CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "BATAL"');
+                    console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON-CHECK-CARD', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
@@ -898,9 +908,9 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             blinkingMode: true

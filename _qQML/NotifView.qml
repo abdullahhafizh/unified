@@ -88,7 +88,7 @@ Base{
             verticalAlignment: Text.AlignTop
             font.bold: true
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 25

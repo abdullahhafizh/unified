@@ -309,6 +309,10 @@ Rectangle {
 
     }
 
+    Component {id: ereceipt_view
+        ElectronicReceipt{}
+    }
+
 //    Component {id: global_confirm_frame
 //        GlobalConfirmationFrame
 //    }

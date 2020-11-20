@@ -78,7 +78,8 @@ QPROX = {
     "CARD_HISTORY_MANDIRI": "039", #MANDIRI CARD LOG
     "CARD_HISTORY_BNI": "040", #BNI CARD LOG
     "GET_LAST_C2C_REPORT": "041", #"Send SAM C2C Slot"
-
+    "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
+    "UPDATE_BALANCE_ONLINE_BCA": "066", #DUMMY BCA UBAL ONLINE
 }
 
 
@@ -517,12 +518,12 @@ def check_card_balance():
                 output['able_topup'] = '1004'
             else:
                 output['able_topup'] = '0000'
-        elif bank_name == 'DKI':
-            prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
-            if not _Common.empty(prev_last_balance):
-                output['balance'] = prev_last_balance
-            else:
-                _Common.log_to_temp_config(card_no, balance)
+        # elif bank_name == 'DKI':
+        #     prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
+        #     if not _Common.empty(prev_last_balance):
+        #         output['balance'] = prev_last_balance
+        #     else:
+        #         _Common.log_to_temp_config(card_no, balance)
         LAST_BALANCE_CHECK = output
         _Common.NFC_ERROR = ''
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
@@ -573,8 +574,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         # Update Local Mandiri Wallet
         __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
-        if not _Helper.empty(r[0].strip()) or r[0] != '0':
-            __emoney_balance = r[0].strip()
+        # if not _Helper.empty(r[0].strip()) or r[0] != '0':
+        #     __emoney_balance = r[0].strip()
         __emoney_prev_balance = int(__emoney_balance) - int(amount)
         if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
             __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
@@ -595,7 +596,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         elif status == 'FAILED':
             # Renew C2C Deposit Balance Info
             c2c_balance_info()
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
+            # Close Double Whatsapp When Failure
+            # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
@@ -636,23 +638,33 @@ LAST_C2C_APP_TYPE = '0'
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
-    param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
-    # Handle Old Applet Correction
-    if LAST_C2C_APP_TYPE == '0':
-        return topup_offline_mandiri_c2c(amount, trxid)
     # Check Correction Result
     # Add Check Card Number First Before Correction
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((param, result))
     # check_card_no = LAST_BALANCE_CHECK['card_no']
     check_card_no = '0'
+    last_balance = '0'
     if response == 0 and '|' in result:
         check_card_no = result.split('|')[1].replace('#', '')
+        last_balance = result.split('|')[0]  
     if LAST_BALANCE_CHECK['card_no'] != check_card_no:
         LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         get_c2c_failure_settlement(amount, trxid)
         return
+    # Add Customer Last Balance Card Check After Topup C2C Failure
+    if (int(LAST_BALANCE_CHECK['balance']) + int(amount) - 1500) == int(last_balance):
+        param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
+        _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        if _ == 0 and len(report) >= 196:
+            c2c_report = '|' + report
+            parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
+            return
+    # Handle Old Applet Correction
+    if LAST_C2C_APP_TYPE == '0':
+        return topup_offline_mandiri_c2c(amount, trxid)
+    param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     if _response == 0 and len(_result) > 100:
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
@@ -699,7 +711,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         return
     try:
         _result_json = json.loads(_result)
-        if _result_json["Result"] == "0290":
+        if _result_json["Result"] in ["0290"]:
             param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
             _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if _ == 0 and len(report) >= 196:
@@ -711,10 +723,11 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         else:
             LAST_C2C_APP_TYPE = '0'
         LOGGER.warning(('result', _result, 'applet_type', LAST_C2C_APP_TYPE, 'TOPUP_C2C_CORRECTION'))
+        # "6987", "100C" Another Captured Error Code
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
     except Exception as e:
         LOGGER.warning((e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):
@@ -880,6 +893,56 @@ def update_bni_wallet(slot, amount, last_balance=None):
 def start_fake_update_dki(card_no, amount):
     bank = 'DKI'
     _Helper.get_thread().apply_async(fake_update_balance, (bank, card_no, amount,))
+
+
+def start_topup_dki_by_service(amount, trxid):
+    _Helper.get_thread().apply_async(topup_dki_by_service, (amount, trxid,))
+
+# "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
+
+
+def get_set_dki_stan():
+    dki_stan = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^stan')
+    _Common.LAST_DKI_STAN = dki_stan
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^stan', str(int(dki_stan)+1))
+    return dki_stan
+
+
+def get_set_dki_invoice():
+    dki_invoice = _ConfigParser.get_value('TEMPORARY', 'dki^last^topup^invoice')
+    _Common.LAST_DKI_INVOICE_NO = dki_invoice
+    _Common.log_to_config('TEMPORARY', 'dki^last^topup^invoice', str(int(dki_invoice)+1))
+    return dki_invoice
+
+
+# {
+# "Result":"0000",
+# "Command":"043",
+# "Parameter":"80|91009003|000120|000080080088881|000060|200505191908",
+# "Response":"9360885090123100|80|93800",
+# "ErrorDesc":"Sukses"
+# }
+
+def topup_dki_by_service(amount, trxid):
+    dki_stan = get_set_dki_stan()
+    dki_invoice = get_set_dki_invoice()
+    param = '|'.join([QPROX['TOPUP_ONLINE_DKI'], str(amount), _Common.TID_TOPUP_ONLINE_DKI, dki_stan.zfill(6), 
+            _Common.MID_TOPUP_ONLINE_DKI, dki_invoice.zfill(6), trxid])
+    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    if _response == 0 and ('|'+str(amount)+'|') in _result:
+        _data = _result.split('|')
+        output = {
+                    'last_balance': _data[2],
+                    'topup_amount': _data[1],
+                    'report_sam': 'N/A',
+                    'card_no': _data[0],
+                    'report_ka': 'N/A',
+                    'bank_id': '5',
+                    'bank_name': 'DKI',
+            }
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    else:
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
 
 def fake_update_balance(bank, card_no, amount):

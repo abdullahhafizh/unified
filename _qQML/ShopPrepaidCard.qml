@@ -209,7 +209,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 120
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         z: 10
         visible: !popup_loading.visible
         modeReverse: true
@@ -249,7 +249,7 @@ Base{
             shop_type: shop_type,
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: new Date().getTime()
+            epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
         }
         switch(shop_type){
             case 'shop':
@@ -442,7 +442,7 @@ Base{
         color: "white"
         visible: false;
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         wrapMode: Text.WordWrap
         font.italic: true

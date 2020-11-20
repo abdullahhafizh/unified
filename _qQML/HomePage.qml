@@ -8,7 +8,7 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-//            property var globalScreenType: '2'
+//            property var globalScreenType: '1'
 //            height: (globalScreenType=='2') ? 1024 : 1080
 //            width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
@@ -29,6 +29,9 @@ Base{
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
     property var last_money_insert: 'N/A'
+
+    property var selectedMenu: ''
+    property bool showCustomerInfo: true
 //    width: globalWidth
 //    height: globalHeight
     isPanelActive: false
@@ -44,11 +47,15 @@ Base{
             productCount1 = 0;
             productCount2 = 0;
             productCount3 = 0;
+            selectedMenu = '';
             popup_loading.close();
+            preload_whatasapp_voucher.close();
+            preload_customer_info.close();
             _SLOT.user_action_log('[Homepage] Standby Mode');
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
+            preload_customer_info.close();
         }
     }
 
@@ -179,6 +186,16 @@ Base{
             kioskStatus = false;
         }
 
+        //Set WhatsApp Config Here
+        if (CONF.whatsapp_qr !== undefined) preload_whatasapp_voucher.imageSource = CONF.whatsapp_qr;
+        if (CONF.whatsapp_no !== undefined && CONF.whatsapp_no.length > 3){
+            preload_whatasapp_voucher.whatsappNo = CONF.whatsapp_no;
+            preload_customer_info.whatsappNo = CONF.whatsapp_no;
+        }
+
+        if (kiosk.refund_feature == '0') showCustomerInfo = true;
+        else showCustomerInfo = false;
+
         main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }
@@ -276,9 +293,14 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(check_balance);
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+//                    selectedMenu = 'CHECK_BALANCE';
+//                    if (showCustomerInfo){
+//                        preload_customer_info.open();
+//                        return;
+//                    }
+                    my_layer.push(check_balance, {showCustomerInfo: showCustomerInfo});
                 }
             }
         }
@@ -299,16 +321,17 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
                     resetMediaTimer();
-//                    if (!mandiriTopupActive) {
-//                        kalog_notif();
-//                        return;
-//                    }
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'TOPUP_PREPAID';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                 }
             }
         }
@@ -335,9 +358,14 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'SHOP_PREPAID';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
                 }
             }
             Rectangle{
@@ -386,14 +414,18 @@ Base{
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
                     popup_loading.open();
-                    _SLOT.start_get_ppob_product();
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
+                    selectedMenu = 'SHOP_PPOB';
+                    if (showCustomerInfo){
+                        preload_customer_info.open();
+                        return;
+                    }
+                    _SLOT.start_get_ppob_product();
                 }
             }
         }
-
     }
 
 
@@ -592,6 +624,7 @@ Base{
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
+//                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
                 preload_whatasapp_voucher.open()
             }
         }
@@ -848,12 +881,11 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "BATAL"');
+//                    _SLOT.user_action_log('Press "BATAL"');
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
                     _SLOT.kiosk_get_product_stock();
                     _SLOT.get_kiosk_status();
-        //            _SLOT.start_get_topup_readiness();
                     press = "0";
                     resetMediaTimer();
                 }
@@ -868,17 +900,73 @@ Base{
             anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
+            blinkingMode: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
+//                    _SLOT.user_action_log('Press "LANJUT" From WHATSAPP_INFO Frame');
                     preload_whatasapp_voucher.close()
                     my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
 
                 }
             }
         }
-
     }
 
+
+    PreloadCustomerInfo{
+        id: preload_customer_info
+
+        CircleButton{
+            id: cancel_button_preload_info
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    preload_customer_info.close();
+                    selectedMenu = '';
+                    _SLOT.start_idle_mode();
+                    _SLOT.kiosk_get_product_stock();
+                    _SLOT.get_kiosk_status();
+                    press = "0";
+                    resetMediaTimer();
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_preload_info
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch(selectedMenu){
+                    case 'CHECK_BALANCE':
+                        my_layer.push(check_balance);
+                        break;
+                    case 'TOPUP_PREPAID':
+                        my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
+                        break;
+                    case 'SHOP_PREPAID':
+                        my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+                        break;
+                    case 'SHOP_PPOB':
+                        _SLOT.start_get_ppob_product();
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }

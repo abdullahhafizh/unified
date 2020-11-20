@@ -801,9 +801,9 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 100
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'BATAL'
         modeReverse: true
         z: 10
@@ -1342,9 +1342,9 @@ Base{
         CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
@@ -1432,9 +1432,9 @@ Base{
         CircleButton{
             id: cancel_button_input_number
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -1450,9 +1450,9 @@ Base{
         CircleButton{
             id: next_button_input_number
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             visible: false

@@ -27,7 +27,7 @@ class BniActivate(object):
         
         while self.retry < int(_Common.BNI_ACTIVATION_RETRY) or self.retry == int(_Common.BNI_ACTIVATION_RETRY):
 
-            print('Mencoba proses ke '+ str((int(_Common.BNI_ACTIVATION_RETRY) - self.retry) + 1))
+            # print('Mencoba proses ke '+ str((int(_Common.BNI_ACTIVATION_RETRY) - self.retry) + 1))
 
             try:
                 # Purse Data BNI
@@ -37,13 +37,13 @@ class BniActivate(object):
                 #     _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
                 
                 # Init BNI
-                print("Init data BNI")
+                # print("Init data BNI")
                 param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+ _Common.SLOT_SAM1_BNI + '|' + _Common.TID_BNI
                 response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
-                print("Sending data INIT")
+                # print("Sending data INIT")
                 if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
                 
-                print("Sending http dan service data BNI")
+                # print("Sending http dan service data BNI")
                 bniHTTP = _bniSCard2.bniSCard2(mode=3, debug=True, card_no = _Common.BNI_SAM_1_NO)
                 bniService = _bniSCard2.bniSCard2(mode=4, debug=True)
 
@@ -56,21 +56,21 @@ class BniActivate(object):
                 SRAND = SRAND[0:len(SRAND)-2]
                 SRAND = SRAND + b'\x00'
                 
-                print("GET TOPUP_SECURE_PACK_DATA")
+                # print("GET TOPUP_SECURE_PACK_DATA")
                 _bniSCard2.LOGGER.info("GET TOPUP_SECURE_PACK_DATA")
                 TOPUP_SECURE_PACK_DATA = bniService.devTransmit(SRAND)    
                 GCC = CMD_GET_CREDIT_CRIPTOGRAM + TOPUP_SECURE_PACK_DATA
                 
-                print("GET_CREDIT_CRIPTOGRAM")
+                # print("GET_CREDIT_CRIPTOGRAM")
                 _bniSCard2.LOGGER.info("GET_CREDIT_CRIPTOGRAM")
                 data = bniHTTP.devTransmit(GCC)
                 data = data[0:len(data)-2]
                 
-                print("CREDIT")
+                # print("CREDIT")
                 _bniSCard2.LOGGER.info("CREDIT")
                 data = bniService.devTransmit(data)
                 
-                print("GET GET_CREDIT_TRANSREC")
+                # print("GET GET_CREDIT_TRANSREC")
                 _bniSCard2.LOGGER.info("GET GET_CREDIT_TRANSREC")
                 GCT = CMD_GET_CREDIT_TRANSREC + data
                 data = bniHTTP.devTransmit(GCT)   
@@ -84,7 +84,7 @@ class BniActivate(object):
                 bniHTTP.devClose()
                 break
             except Exception as e:
-                print(traceback.format_exc())
+                # print(traceback.format_exc())
                 trace_error = trace_error + '\n\n' + traceback.format_exc() + '\n\n'
                 self.retry = self.retry - 1
                 if self.retry != 0:
@@ -96,10 +96,6 @@ class BniActivate(object):
                     break
         
         return code, result
-
-
-
-
 
 
     # def activate_bni_sequence(self):

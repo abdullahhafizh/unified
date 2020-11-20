@@ -40,6 +40,8 @@ class bniSCard2(object):
                 3. HTTP\
                 4. Service """
         
+        self.tcp_ip = ''
+        self.tcp_port = ''
         self.mode = mode
         self.debug = debug
         if mode == 1:
@@ -62,8 +64,10 @@ class bniSCard2(object):
     
     def devTCPConnect(self, TCP_IP='192.168.9.42', TCP_PORT=444):
         self.socket.connect((TCP_IP, TCP_PORT))
+        self.tcp_ip = TCP_IP
+        self.tcp_port = TCP_PORT
         if self.debug : 
-            print("["+self.modestr+"] Connected To:" + TCP_IP + " Port: " + str(TCP_PORT))
+            # print("["+self.modestr+"] Connected To:" + TCP_IP + " Port: " + str(TCP_PORT))
             LOGGER.info("["+self.modestr+"] Connected To:" + TCP_IP + " Port: " + str(TCP_PORT))
             
         
@@ -73,8 +77,8 @@ class bniSCard2(object):
         if not reader[0] : raise bniSCardError("SmartCard Reader tidak ditemukan: "+reader_name)       
         self.card = self.context.connect(reader[1])
         if self.debug : 
-            print("["+self.modestr+"] Connected To:" + TCP_IP + " Port: " + str(TCP_PORT))
-            LOGGER.info("["+self.modestr+"] Connected To:" + TCP_IP + " Port: " + str(TCP_PORT))
+            # print("["+self.modestr+"] Connected To:" + self.tcp_ip + " Port: " + str(self.tcp_port))
+            LOGGER.info("["+self.modestr+"] Connected To:" + self.tcp_ip + " Port: " + str(self.tcp_port))
         
     def devPCSCIsReaderExist(self, reader_name):
         readers = self.context.list_readers()
@@ -104,16 +108,16 @@ class bniSCard2(object):
             com_type = type(command) 
             #print("Command is " + str(type(command)))
             if com_type is str:
-                print("SEND["+ str(self.modestr) + "] : " + command)
+                # print("SEND["+ str(self.modestr) + "] : " + command)
                 LOGGER.info("SEND["+ str(self.modestr) + "] : " + command)
             elif com_type is bytes:     
-                print("SEND["+ str(self.modestr) + "] : " + binascii.b2a_hex(command).decode("utf-8"))
+                # print("SEND["+ str(self.modestr) + "] : " + binascii.b2a_hex(command).decode("utf-8"))
                 LOGGER.info("SEND["+ str(self.modestr) + "] : " + binascii.b2a_hex(command).decode("utf-8"))
             elif com_type is bytearray:     
-                print("SEND["+ str(self.modestr) + "] : " + binascii.b2a_hex(command).decode("utf-8"))
+                # print("SEND["+ str(self.modestr) + "] : " + binascii.b2a_hex(command).decode("utf-8"))
                 LOGGER.info("SEND["+ str(self.modestr) + "] : " + binascii.b2a_hex(command).decode("utf-8"))
             else:
-                print("SEND["+ str(self.modestr) + "] : " + command)
+                # print("SEND["+ str(self.modestr) + "] : " + command)
                 LOGGER.info("SEND["+ str(self.modestr) + "] : " + command)
 
         if self.mode == 1:
@@ -136,13 +140,13 @@ class bniSCard2(object):
         if self.debug : 
             dat_type = type(data) 
             if dat_type is str:
-                print("RECV["+ str(self.modestr) + "] : " + data)
+                # print("RECV["+ str(self.modestr) + "] : " + data)
                 LOGGER.info("RECV["+ str(self.modestr) + "] : " + data)
             elif dat_type is bytes or dat_type is bytearray:
-                print("RECV["+ str(self.modestr) + "] : " + binascii.b2a_hex(data).decode("utf-8"))
+                # print("RECV["+ str(self.modestr) + "] : " + binascii.b2a_hex(data).decode("utf-8"))
                 LOGGER.info("RECV["+ str(self.modestr) + "] : " + binascii.b2a_hex(data).decode("utf-8"))
             else:
-                print("RECV["+ str(self.modestr) + "] : " + data)     
+                # print("RECV["+ str(self.modestr) + "] : " + data)     
                 LOGGER.info("RECV["+ str(self.modestr) + "] : " + data)           
         return data
     
@@ -157,7 +161,7 @@ class bniSCard2(object):
         data = self.card.transmit(NFC_ACT_RESET)
         #print binascii.b2a_hex(data)
         if self.debug : 
-            print ("SWITCHED_TO_NFC")
+            # print ("SWITCHED_TO_NFC")
             LOGGER.info("SWITCHED_TO_NFC")
         pass
     
@@ -171,13 +175,13 @@ class bniSCard2(object):
         data = self.card.transmit(SAM_ACT_RESET)
         #print binascii.b2a_hex(data)
         if self.debug : 
-            print ("SWITCHED_TO_SAM")
+            # print ("SWITCHED_TO_SAM")
             LOGGER.info("SWITCHED_TO_SAM")
         pass
     
     def cmdGetSRN(self):
         if self.debug : 
-            print ("GET Challange or SAM RN:")
+            # print ("GET Challange or SAM RN:")
             LOGGER.info("GET Challange or SAM RN:")
         BNI_GC_SAM = b"\x80\x84\x00\x00\x08"
         self.devTransmit(BNI_GC_SAM)        
@@ -185,7 +189,7 @@ class bniSCard2(object):
         
     def cmdGetCRN(self):
         if self.debug : 
-            print ("GET Challange or Card RN:")
+            # print ("GET Challange or Card RN:")
             LOGGER.info("GET Challange or Card RN:")
         BNI_GC_CARD = b"\x00\x84\x00\x00\x08"
         return self.devTransmit(BNI_GC_CARD)

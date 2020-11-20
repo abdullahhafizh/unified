@@ -649,6 +649,10 @@ class SlotHandler(QObject):
         _SalePrintTool.start_direct_sale_print_global(payload)
     start_direct_sale_print_global = pyqtSlot(str)(start_direct_sale_print_global)
 
+    def start_direct_sale_print_ereceipt(self, payload):
+        _SalePrintTool.start_direct_sale_print_ereceipt(payload)
+    start_direct_sale_print_ereceipt = pyqtSlot(str)(start_direct_sale_print_ereceipt)
+
     def start_topup_mandiri_correction(self, amount, trxid):
         _QPROX.start_topup_mandiri_correction(amount, trxid)
     start_topup_mandiri_correction = pyqtSlot(str, str)(start_topup_mandiri_correction)
@@ -685,6 +689,16 @@ class SlotHandler(QObject):
     def start_mandiri_c2c_force_settlement(self, amount, trxid):
         _QPROX.start_mandiri_c2c_force_settlement(amount, trxid)
     start_mandiri_c2c_force_settlement = pyqtSlot(str, str)(start_mandiri_c2c_force_settlement)
+
+
+    def start_topup_online_dki(self, amount, trxid):
+        _TopupService.start_topup_online_dki(amount, trxid)
+    start_topup_online_dki = pyqtSlot(str, str)(start_topup_online_dki)
+
+
+    def start_topup_online_bca(self, cardno, amount):
+        _TopupService.start_topup_online_bca(cardno, amount)
+    start_topup_online_bca = pyqtSlot(str, str)(start_topup_online_bca)
 
 
 
@@ -1097,11 +1111,11 @@ if __name__ == '__main__':
     #     "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
     #     ])
     # sleep(1)
-    _KioskService.alter_table('_DailySummary.sql')
+    _KioskService.alter_table('_CashBox.sql')
     sleep(1)
-    print("pyt: HouseKeeping Old Local Data/Files...")
-    _KioskService.house_keeping(age_month=3)
-    sleep(1)
+    # print("pyt: HouseKeeping Old Local Data/Files...")
+    # _KioskService.house_keeping(age_month=12)
+    # sleep(1)
     print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()
     sleep(1)
@@ -1148,7 +1162,7 @@ if __name__ == '__main__':
         print("pyt: Connecting to MEI Bill Acceptor...")
         _MEI.mei_standby_mode()
     if _Common.QPROX['status'] is True:
-        print("pyt: Connecting Into Prepaid Reader...")
+        print("pyt: Connecting to Prepaid Reader...")
         sleep(1)
         if _QPROX.open() is True:
             print("pyt: [INFO] Init Prepaid Reader...")

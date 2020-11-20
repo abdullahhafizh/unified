@@ -2,13 +2,15 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
+
 Base{
     id:preload_whatasapp_voucher
     isBoxNameActive: false
+    property var whatsappNo: 'tersebut'
     property var textMain: 'Untuk mengaktifkan fitur ini, Silakan lakukan hal berikut :'
     property var textSlave: '1. Pada smartphone Anda, unduh Aplikasi QR Reader/Pembaca QR'
     property var textRebel: '2. Buka Tautan yang terbaca pada Aplikasi tersebut (membuka aplikasi Whatsapp Anda)'
-    property var textQuard: '3. Kirim text "START" pada Aplikasi Whatsapp Anda pada nomor tersebut.'
+    property var textQuard: '3. Kirim text "START" pada Aplikasi Whatsapp Anda pada nomor ' +whatsappNo+ '.'
     property var imageSource: "source/qr_transjakarta_register_new.jpeg"
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35

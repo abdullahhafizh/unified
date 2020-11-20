@@ -544,7 +544,7 @@ Base{
             x: 598; y:774
             width: 190; height: 50;
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             anchors.right: parent.right
             anchors.rightMargin: 192
             text_: qsTr("Shutdown")
@@ -567,7 +567,7 @@ Base{
             x: 198; y:774
             width: 190
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             anchors.right: parent.right
             anchors.rightMargin: 592
             text_: qsTr("Just Restart")

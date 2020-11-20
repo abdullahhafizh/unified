@@ -5,17 +5,20 @@ from _tTools import _Helper
 from . import _eSSPLib
 import json
 import logging
+from _cConfig import _Common
 
 LOGGER = logging.getLogger()
 
 
 class NV200_BILL_ACCEPTOR(object):
-    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000", "5000"]):
+    def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000"]):
         self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
         self.serial_port = serial_port
         self.default_channel = [0,0,1,1,1,1,1,1]
-        if len(restricted_denom) == 3:
+        if len(restricted_denom) == 3 and restricted_denom == ["1000", "2000", "5000"]:
             self.default_channel = [0,0,0,1,1,1,1,1]
+        if len(restricted_denom) == 4 and restricted_denom == ["1000", "2000", "5000", "10000"]:
+            self.default_channel = [0,0,0,0,1,1,1,1]
         self.open_status = False
 
 
@@ -282,7 +285,8 @@ class NV200_BILL_ACCEPTOR(object):
                     event.append(self.parse_reject_code(last_reject))
                 else:
                     event.append('')
-                # print('pyt: [NV200]', str(event))   
+                if _Common.BILL_LIBRARY_DEBUG is True:
+                    print('pyt: [NV200] Event :', str(event))   
                 return event
             time.sleep(0.5)
 

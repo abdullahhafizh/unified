@@ -94,6 +94,7 @@ Base{
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
+            visible: (imageSource!='source/insert_card_dc.png')
         }
         Text{
             text: textSlave
@@ -106,6 +107,7 @@ Base{
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
+            visible: (imageSource!='source/insert_card_dc.png')
         }
 //        Text{
 //            visible:  (imageSource=='source/insert_money.png')
@@ -183,12 +185,13 @@ Base{
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
-//            console.log('TIMER_GLOBAL_FRAME', showDuration);
+            console.log('[GLOBAL-FRAME]', showDuration);
             showDuration -= 1;
             if (showDuration==0) {
                 global_frame_timer.stop();
                 switch(closeMode){
                 case 'backToMain':
+                    console.log('[GLOBAL-FRAME]', 'TIMER-TIMEOUT', 'BACK-TO-HOMEPAGE');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     break;
                 case 'backToPrev': case 'backToPrevious':
@@ -224,6 +227,12 @@ Base{
 
             }
         }
+    }
+
+    function exit_stop(){
+        global_frame_timer.stop();
+        globalFrame.visible = false;
+        specialHandler = undefined;
     }
 
 }

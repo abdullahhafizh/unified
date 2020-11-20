@@ -88,9 +88,9 @@ Rectangle{
         text: 'Stock : ' + itemStock
         horizontalAlignment: Text.AlignHCenter
         anchors.left: parent.left
-        anchors.leftMargin: 100
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         font.pixelSize: 25
         verticalAlignment: Text.AlignVCenter
     }
