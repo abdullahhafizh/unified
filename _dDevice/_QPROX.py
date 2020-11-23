@@ -947,7 +947,6 @@ def init_config_bca():
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug((param, result, response))
     if response == 0:
-        # TODO: Check Result
         _Common.BCA_TOPUP_ONLINE = True
     else:
         _Common.NFC_ERROR = 'INIT_CONFIG_BCA_TOPUP_ERROR'
