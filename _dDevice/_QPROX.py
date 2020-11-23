@@ -304,7 +304,7 @@ def start_init_config():
 
 
 def init_config():
-    global INIT_STATUS, INIT_LIST, INIT_BNI, INIT_MANDIRI
+    global INIT_STATUS, INIT_LIST, INIT_BNI, INIT_MANDIRI, INIT_BCA
     if OPEN_STATUS is not True:
         LOGGER.warning(('OPEN STATUS', str(OPEN_STATUS)))
         _Common.NFC_ERROR = 'PORT_NOT_OPENED'
