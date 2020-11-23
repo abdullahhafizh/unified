@@ -82,7 +82,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/inputpin_icon_tnc.png"
+        source: "source/inputcode_icon_tnc.png"
         fillMode: Image.PreserveAspectFit
     }
 
@@ -113,7 +113,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/receipt_icon_tnc.png"
+        source: "source/receipt_qr_icon_tnc.png"
         fillMode: Image.PreserveAspectFit
     }
 
