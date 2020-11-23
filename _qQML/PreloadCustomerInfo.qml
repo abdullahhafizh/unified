@@ -51,7 +51,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/whatsapp_logo.jpeg"
+        source: "source/whatsapp_icon_tnc.png"
         fillMode: Image.PreserveAspectFit
     }
 
@@ -82,7 +82,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/key_in_pincode.png"
+        source: "source/inputpin_icon_tnc.png"
         fillMode: Image.PreserveAspectFit
     }
 
@@ -113,7 +113,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
-        source: "source/get_receipt_.png"
+        source: "source/receipt_icon_tnc.png"
         fillMode: Image.PreserveAspectFit
     }
 
