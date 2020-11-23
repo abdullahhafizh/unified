@@ -651,6 +651,8 @@ def get_topup_readiness():
     # Assuming always check card balance first before check topup readiness validation
     if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BRI':
         ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
+    if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BCA':
+        ready['bca'] = 'AVAILABLE' if _Common.BCA_TOPUP_ONLINE is True else 'N/A'
     LOGGER.info((str(ready)))
     TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
 
@@ -694,6 +696,9 @@ def check_update_balance_bni(card_info):
     except Exception as e:
         LOGGER.warning(str(e))
         return False
+
+# TODO: Set BCA_KEY_REVERSAL
+BCA_KEY_REVERSAL = 'BCA_TOPUP_1_ERROR'
 
 
 def update_balance_online(bank):
@@ -803,6 +808,10 @@ def update_balance_online(bank):
                 if GENERAL_NO_PENDING in result:
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
+                    if BCA_KEY_REVERSAL in result:
+                        param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+                        response_reversal, result_reversal = _Command.send_request(param=param, output=None)
+                        LOGGER.debug((param_reversal, response_reversal, result_reversal))
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
             LOGGER.debug((result, response))
         except Exception as e:

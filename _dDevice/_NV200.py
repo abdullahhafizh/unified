@@ -330,6 +330,9 @@ NV200 = None
 # <RESP>: {'Parameter': '0', 'Response': '', 'ErrorDesc': 'Sukses', 'Result': '0000', 'Command': '605'}
 
 LOOP_ATTEMPT = 0
+# Set Max Waiting Event Listen From NV into 120 seconds
+MAX_LOOP_ATTEMPT = 120
+
 
 def send_command(param=None, config=[], restricted=[]):
     global NV200, LOOP_ATTEMPT
@@ -365,7 +368,7 @@ def send_command(param=None, config=[], restricted=[]):
                     # if config['KEY_BOX_FULL'] in pool[1]:
                     #     return 0, pool[1]
                     #     break
-                    if LOOP_ATTEMPT >= 60:
+                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
                 return -1, ""
@@ -379,7 +382,7 @@ def send_command(param=None, config=[], restricted=[]):
                 if config['KEY_STORED'] in pool[1] or config['KEY_BOX_FULL'] in pool[1]:
                     return 0, pool[1]
                     break
-                if LOOP_ATTEMPT >= 60:
+                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                     break
                 time.sleep(1)
             return -1, ""
@@ -392,7 +395,7 @@ def send_command(param=None, config=[], restricted=[]):
                 if "Rejected" in pool[1]:
                     return 0, pool[1]
                     break
-                if LOOP_ATTEMPT >= 60:
+                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                     break
                 time.sleep(1)
             return -1, ""
@@ -403,7 +406,7 @@ def send_command(param=None, config=[], restricted=[]):
             else:
                 return -1, ""
         elif command == config['STOP']:
-            LOOP_ATTEMPT = 60
+            LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
                 return 0, "Bill Stop"

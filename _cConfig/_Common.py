@@ -117,7 +117,10 @@ BRI_SAM_ACTIVE = digit_in(SLOT_BRI) and len(SLOT_BRI) == 1
 
 MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
+MID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'mid^topup', '885000942678')
+TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
+BCA_TOPUP_ONLINE = False
 
 MID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'mid^topup', '---')
 TID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'tid^topup', '---')
@@ -1266,7 +1269,9 @@ def generate_collection_data():
         __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
         __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
         __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
-        __['all_cashbox'] = _DAO.cashbox_status()      
+        __['all_cashbox'] = _DAO.cashbox_status()    
+        cashbox_history = _DAO.cashbox_history()  
+        __['all_cashbox_history'] = cashbox_history[0]['_'] if not _Helper.empty(cashbox_history[0]['_']) else ''
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
         __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
@@ -1358,7 +1363,7 @@ LAST_PPOB_TRX = None
 def check_retry_able(data):
     if _Helper.empty(data) is True:
         return 0
-    # Topup BRI Retry Validation Also User Connection Status
+    # Topup BRI & BCA Retry Validation Also User Connection Status
     if not _Helper.is_online(_Helper.whoami()):
         return 0
     if data.get('shop_type') == 'ppob':

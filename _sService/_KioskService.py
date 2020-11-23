@@ -749,6 +749,9 @@ def begin_collect_cash():
     # if _Common.BILL['status'] is True:
     #     LOGGER.info(('begin_collect_cash', 'call init_bill'))
     #     _BILL.init_bill()
+    if not _Helper.is_online('begin_collect_cash'):
+        K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|CONNECTION_ERROR')
+        return
     count_uncollected_cash = _DAO.custom_query(' SELECT IFNULL(count(*), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
     if count_uncollected_cash == 0:
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')

@@ -1192,9 +1192,9 @@ if __name__ == '__main__':
         pass
     if _QPROX.INIT_BCA is True:
         # TODO Add Special Handler For BCA Initiation
-        # sleep(.5)
-        # print("pyt: Triggering BCA Balance Validation...")
-        pass
+        sleep(1)
+        print("pyt: Triggering Topup BCA Init Config...")
+        _QPROX.start_init_config_bca()
     if _Common.EDC['mobile'] is True:
         sleep(1)
         print("pyt: [INFO] Re/Binding VM Machine Into EDC...")

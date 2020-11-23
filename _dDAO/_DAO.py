@@ -648,3 +648,7 @@ def insert_cashbox(amount='0'):
 
 def cashbox_status():
     return custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cashbox ')[0]['__']
+
+
+def cashbox_history():
+    return custom_query(' SELECT group_concat(cash_data, "|") as _ FROM ( SELECT amount || "," || createdAt AS cash_data FROM CashBox) ' )

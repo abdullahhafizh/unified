@@ -1,7 +1,11 @@
 11.9.G-GLOBAL:
 - Add Topup Flazz BCA Capability,
 - Enhance Pending code into 9 Digits,
-- ...
+- Add Cashbox History Data in Collection Send To Server,
+- Generate Data Cashbox History on Every Collection For Audit Trail,
+- Set NV Event Listen Timeout to 120,
+- Add Background Topup Init BCA When App Booting,
+- Add Connection Check Status Before Collect Cash Action,
 
 11.9.F-GLOBAL:
 - Enhance [BILL] direct^read^note from setting (Active By Default),

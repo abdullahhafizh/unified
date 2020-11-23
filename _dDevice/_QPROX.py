@@ -79,9 +79,20 @@ QPROX = {
     "CARD_HISTORY_BNI": "040", #BNI CARD LOG
     "GET_LAST_C2C_REPORT": "041", #"Send SAM C2C Slot"
     "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
-    "UPDATE_BALANCE_ONLINE_BCA": "066", #DUMMY BCA UBAL ONLINE
+    "UPDATE_BALANCE_ONLINE_BCA": "044", #BCA UBAL ONLINE TID, MID, Token
+    "REVERSAL_ONLINE_BCA": "045", #BCA REVERSAL TID, MID, Token
+    "CONFIG_ONLINE_BCA": "046", #BCA REVERSAL TID Topup BCA, MID Topup BCA
 }
 
+
+# 14. UPDATE BALANCE BCA, parameter : TID | MID | TOKEN
+# http://localhost:9000/Service/GET?cmd=044&param=01234567|1234567|ASDHKASJHDKSAJDabc&type=json
+
+# 15. REVERSAL BCA, parameter : TID | MID | TOKEN
+# http://localhost:9000/Service/GET?cmd=045&param=01234567|1234567|ASDHKASJHDKSAJDabc&type=json
+
+# 16. UPDATE TID MID BCA, parameter : TID | MID
+# http://localhost:9000/Service/GET?cmd=046&param=01234567|1234567&type=json
 
 # MANDIRI OLD = NO | DATE | TID | COUNTER | TYPE | AMOUNT | BALANCE
 # 0|200520153716|29040100|1295|1500|37450|166139
@@ -641,7 +652,7 @@ def top_up_mandiri_correction(amount, trxid=''):
     # Check Correction Result
     # Add Check Card Number First Before Correction
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
-    LOGGER.debug((param, result))
+    LOGGER.debug((response, result))
     # check_card_no = LAST_BALANCE_CHECK['card_no']
     check_card_no = '0'
     last_balance = '0'
@@ -922,6 +933,26 @@ def get_set_dki_invoice():
 # "Response":"9360885090123100|80|93800",
 # "ErrorDesc":"Sukses"
 # }
+
+
+def start_init_config_bca():
+    _Helper.get_thread().apply_async(init_config_bca)
+
+
+def init_config_bca():
+    if '---' in _Common.MID_TOPUP_BCA or '---' in _Common.TID_TOPUP_BCA:
+        LOGGER.warning(('BCA Topup Config Init Failed, Wrong TID/MID Topup', _Common.MID_TOPUP_BCA, _Common.TID_TOPUP_BCA))
+        return
+    param = QPROX['CONFIG_ONLINE_BCA'] + '|' + _Common.TID_TOPUP_BCA + '|' + _Common.MID_TOPUP_BCA + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug((param, result, response))
+    if response == 0:
+        # TODO: Check Result
+        _Common.BCA_TOPUP_ONLINE = True
+    else:
+        _Common.NFC_ERROR = 'INIT_CONFIG_BCA_TOPUP_ERROR'
+        _Common.BCA_TOPUP_ONLINE = False
+
 
 def topup_dki_by_service(amount, trxid):
     dki_stan = get_set_dki_stan()

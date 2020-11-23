@@ -1182,12 +1182,21 @@ def mark_sync_collected_data(s):
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
         # Reset Cash Log
-        __update_cash_str = ' UPDATE Cash SET collectedAt = ' + str(_Helper.now()) + ', collectedUser = "' + str(operator) + \
+        collection_time = str(_Helper.now())
+        __update_cash_str = ' UPDATE Cash SET collectedAt = ' + collection_time + ', collectedUser = "' + str(operator) + \
             '"  WHERE collectedAt = 19900901 '
         # _KioskService.python_dump(str(__update_cash_str))
         __exec_cash_update = _DAO.custom_update(__update_cash_str)
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
+        if not _Common.empty(s['all_cashbox_history']):
+            collection_code = _Helper.time_string(f='%Y%m%d%H%M%S___') + operator + collection_time
+            _Common.log_to_file(
+                content= s['all_cashbox_history'],
+                path=_Common.JOB_PATH,
+                filename=collection_code,
+                default_ext='.cashbox_history'
+            )
         _DAO.truncate_cashbox()
         return True
     else:

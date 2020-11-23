@@ -1089,6 +1089,8 @@ Base{
                                 release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                                 return;
                             }
+                        } else {
+                            details.receipt_title = 'Transaksi Sukses';
                         }
                         var exceed = validate_cash_refundable();
                         if (exceed == false){

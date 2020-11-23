@@ -139,6 +139,8 @@ Base{
         } else if (a=='COLLECT_CASH|DONE'){
             false_notif('Dear '+operatorName+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
             _SLOT.start_reset_bill();
+        } else if (a=='COLLECT_CASH|CONNECTION_ERROR'){
+            false_notif('Dear '+operatorName+'|Koneksi Internet Tidak Stabil, Perbaiki Koneksi Terlebih Dahulu Sebelum Melakukan Pengambilan Cashbox');
         } else if (a=='ADMIN_PRINT|DONE'){
             false_notif('Dear '+operatorName+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
         } else if (a=='INIT_BILL|DONE'||a=='RESET_BILL|DONE'){
