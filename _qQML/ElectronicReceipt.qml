@@ -120,8 +120,10 @@ Base{
     //PUT MAIN COMPONENT HERE
 
     MainTitle{
+        y: 150
+        width: 1198
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Scan QR Berikut di Aplikasi Whatsapp Anda'
         size_: 50
@@ -131,22 +133,34 @@ Base{
 
     Column{
         id: column
+        y: 250
         width: parent.width
         height: 500
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: -50
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 30
         AnimatedImage  {
-            width: 400
-            height: 400
+            id: imageQr
+            width: 350
+            height: 350
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
             fillMode: Image.PreserveAspectFit
         }
+        AnimatedImage  {
+            id: instructionQr
+            width: 800
+            height: 450
+            scale: 1
+            anchors.horizontalCenter: parent.horizontalCenter
+            source: 'source/scan_qr_receipt_instruction.jpg'
+            fillMode: Image.PreserveAspectFit
+        }
         Text{
             text: textMain
+            visible: false
             horizontalAlignment: Text.AlignLeft
             width: parent.width - 250
             wrapMode: Text.WordWrap
@@ -159,6 +173,7 @@ Base{
         }
         Text{
             text: textSlave
+            visible: false
             horizontalAlignment: Text.AlignLeft
             width: parent.width - 250
             wrapMode: Text.WordWrap
