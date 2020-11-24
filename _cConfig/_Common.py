@@ -1309,6 +1309,7 @@ def generate_collection_data():
         __['failed_amount'] = 0
         # Redefine All Cashbox From All Cash in Casset Not From Transaction
         if int(__['all_cashbox']) >= int(__['all_cash']):
+            LOGGER.warning(('CASHBOX VS TRX DATA NOT MATCH', __['all_cashbox'], __['all_cash']))
             __['all_cash'] = __['all_cashbox']
         if int(__['all_cash']) > (int(__['all_amount']) + int(__['ppob_cash'])):
             __['failed_amount'] = int(__['all_cash']) - (int(__['all_amount']) + int(__['ppob_cash']))
