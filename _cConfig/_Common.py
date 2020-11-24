@@ -528,6 +528,12 @@ if not os.path.exists(JOB_PATH):
     os.makedirs(JOB_PATH)
 
 
+CASHBOX_PATH = os.path.join(sys.path[0], '_cCashbox')
+if not os.path.exists(CASHBOX_PATH):
+    os.makedirs(CASHBOX_PATH)
+
+
+
 def store_request_to_job(name='', url='', payload=''):
     if empty(name) is True or empty(url) is True or empty(payload) is True:
         print('pyt: Missing Parameter in Logging Request..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())

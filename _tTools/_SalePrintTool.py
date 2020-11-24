@@ -1193,7 +1193,7 @@ def mark_sync_collected_data(s):
             collection_code = _Helper.time_string(f='%Y%m%d%H%M%S___') + operator + collection_time
             _Common.log_to_file(
                 content= s['all_cashbox_history'],
-                path=_Common.JOB_PATH,
+                path=_Common.CASHBOX_PATH,
                 filename=collection_code,
                 default_ext='.cashbox_history'
             )
