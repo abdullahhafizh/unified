@@ -304,6 +304,7 @@ ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'refund/global',
     'cancel-payment',
     'do-settlement',
+    'ereceipt/create',
     ]
 
 ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER = [

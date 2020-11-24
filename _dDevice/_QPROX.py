@@ -948,9 +948,11 @@ def init_config_bca():
     LOGGER.debug((param, result, response))
     if response == 0:
         _Common.BCA_TOPUP_ONLINE = True
+        LOGGER.info(('BCA_TOPUP_ONLINE', _Common.BCA_TOPUP_ONLINE))
     else:
         _Common.NFC_ERROR = 'INIT_CONFIG_BCA_TOPUP_ERROR'
         _Common.BCA_TOPUP_ONLINE = False
+        LOGGER.warning(('BCA_TOPUP_ONLINE', _Common.BCA_TOPUP_ONLINE))
 
 
 def topup_dki_by_service(amount, trxid):

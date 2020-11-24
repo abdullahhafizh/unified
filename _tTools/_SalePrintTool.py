@@ -1361,6 +1361,7 @@ class Ereceipt:
             'headers': self.header,
             'footers': self.footer,
             'lines': self.lines,
+            'endpoint': 'ereceipt/create'
         }
         _Common.log_to_file(output_data, ERECEIPT_PATH, self.filename, '.json')
         return output_data
