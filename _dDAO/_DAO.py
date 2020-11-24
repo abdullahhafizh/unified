@@ -651,4 +651,4 @@ def cashbox_status():
 
 
 def cashbox_history():
-    return custom_query(' SELECT group_concat(cash_data, "|") as _ FROM ( SELECT amount || "," || createdAt AS cash_data FROM CashBox) ' )
+    return custom_query(' SELECT group_concat(cash_data, "\n") as __ FROM ( SELECT createdAt || "," || amount AS cash_data FROM CashBox) ' )

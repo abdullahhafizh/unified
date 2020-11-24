@@ -1278,7 +1278,7 @@ def generate_collection_data():
         __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         __['all_cashbox'] = _DAO.cashbox_status()    
         cashbox_history = _DAO.cashbox_history()  
-        __['all_cashbox_history'] = cashbox_history[0]['_'] if not _Helper.empty(cashbox_history[0]['_']) else ''
+        __['all_cashbox_history'] = cashbox_history[0]['__'] if not _Helper.empty(cashbox_history[0]['__']) else ''
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
         __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
