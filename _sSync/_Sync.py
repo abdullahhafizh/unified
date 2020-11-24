@@ -164,6 +164,8 @@ def do_pending_request_job():
                     jobs_path_process = jobs_path.replace('.request', '.process')
                     os.rename(jobs_path, jobs_path_process)
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+                    if _Helper.empty(response['result']) is True:
+                        response['result'] = status
                     LOGGER.debug((p, __url, __param, status, response))
                     # print('pyt: [DEBUG] ' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
                     if status == 200 and (__endpoint in _Common.ENDPOINT_SUCCESS_BY_200_HTTP_HEADER or response['result'] == 'OK'):
