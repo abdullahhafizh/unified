@@ -34,8 +34,8 @@ Base{
             popup_loading.open();
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
-            actionList = []
-            actionChangeList = []
+            actionList = [];
+            actionChangeList = [];
             if (userData!=undefined) parse_user_data();
         }
         if(Stack.status==Stack.Deactivating){
@@ -140,6 +140,7 @@ Base{
             false_notif('Dear '+operatorName+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
             _SLOT.start_reset_bill();
         } else if (a=='COLLECT_CASH|CONNECTION_ERROR'){
+            actionList = [];
             false_notif('Dear '+operatorName+'|Koneksi Internet Tidak Stabil, Perbaiki Koneksi Terlebih Dahulu Sebelum Melakukan Pengambilan Cashbox');
         } else if (a=='ADMIN_PRINT|DONE'){
             false_notif('Dear '+operatorName+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
@@ -189,6 +190,7 @@ Base{
             var topup_result = a.split('|')[1]
             false_notif('Dear '+operatorName+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
         } else if (a=='CHANGE_PRODUCT|CONNECTION_ERROR'){
+//            actionChangeList = [];
             false_notif('Dear '+operatorName+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
             actionChangeList.pop()
         } else {
