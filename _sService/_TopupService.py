@@ -698,7 +698,7 @@ def check_update_balance_bni(card_info):
         return False
 
 # TODO: Set BCA_KEY_REVERSAL
-BCA_KEY_REVERSAL = 'BCA_TOPUP_1_ERROR'
+BCA_KEY_REVERSAL = 'BCATopup1_Failed'
 
 
 def update_balance_online(bank):

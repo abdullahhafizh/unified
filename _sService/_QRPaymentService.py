@@ -279,11 +279,9 @@ def trigger_success_qr_payment(mode, data):
 def check_payment_result(result, mode):
     if _Common.empty(result):
         return False
-    if mode in ['LINKAJA', 'JAKONE'] and result['status'] == 'PAID':
-        return True
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE'] and result['status'] == 'SUCCESS':
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA'] and result['status'] in ['SUCCESS', 'PAID']:
         return True
     return False
 
