@@ -93,30 +93,28 @@ Base{
         timer_delay.start();
     }
 
-    function ereceipt_success(data){
+    function ereceipt_show(data){
         var whatsappNo = CONF.whatsapp_no;
         whatsappNo = '62' + whatsappNo.substring(1);
 //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
         imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
         console.log('ereceipt_qr', imageSource);
+        popup_loading.close();
     }
 
     function print_result(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('print_result', now, p);
         var result = p.split('|')[1];
-        var info = p.split('|')[2];
         if (result == 'ERECEIPT_DONE'){
-            if (info != undefined){
-                var data = JSON.parse(info)
-                delay(3000, function(){
-                    ereceipt_success(data);
-                });
-                return;
-            }
+            var info = p.split('|')[2];
+            var data = JSON.parse(info);
+            delay(3000, function(){
+                ereceipt_show(data);
+            });
+            return;
         }
         popup_loading.close();
-        if (result == 'DONE') return;
         if (result == 'ERECEIPT_ERROR'){
             textMain = '';
             textSlave = '';
@@ -130,7 +128,9 @@ Base{
             if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
             if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
+            return;
         }
+        if (result == 'DONE') return;
     }
 
 
