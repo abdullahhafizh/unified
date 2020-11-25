@@ -81,24 +81,42 @@ Base{
         }
     }
 
+
+    Timer {
+        id: timer_delay
+    }
+
+    function delay(duration, callback) {
+        timer_delay.interval = duration;
+        timer_delay.repeat = false;
+        timer_delay.triggered.connect(callback);
+        timer_delay.start();
+    }
+
+    function ereceipt_success(data){
+        var whatsappNo = CONF.whatsapp_no;
+        whatsappNo = '62' + whatsappNo.substring(1);
+//            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
+        imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
+        console.log('ereceipt_qr', imageSource);
+    }
+
     function print_result(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('print_result', now, p);
-        popup_loading.close();
         var result = p.split('|')[1];
         var info = p.split('|')[2];
-        if (result == 'DONE') return;
         if (result == 'ERECEIPT_DONE'){
             if (info != undefined){
-                var data = JSON.parse(info);
-                var whatsappNo = CONF.whatsapp_no;
-                whatsappNo = '62' + whatsappNo.substring(1);
-    //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
-                imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
-                console.log('ereceipt_qr', imageSource);
+                var data = JSON.parse(info)
+                delay(3000, function(){
+                    ereceipt_success(data);
+                });
                 return;
             }
         }
+        popup_loading.close();
+        if (result == 'DONE') return;
         if (result == 'ERECEIPT_ERROR'){
             textMain = '';
             textSlave = '';

@@ -697,7 +697,6 @@ def check_update_balance_bni(card_info):
         LOGGER.warning(str(e))
         return False
 
-# TODO: Set BCA_KEY_REVERSAL
 BCA_KEY_REVERSAL = 'BCATopup1_Failed'
 
 
