@@ -31,7 +31,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            popup_loading.open();
+            popup_loading.open('Transaksi Anda Berhasil\nMempersiapkan eReceipt Anda...');
             abc.counter = timer_value;
             my_timer.start();
             _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
