@@ -94,6 +94,8 @@ Base{
     }
 
     function ereceipt_show(data){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('ereceipt_show', now, JSON.stringify(data));
         var whatsappNo = CONF.whatsapp_no;
         whatsappNo = '62' + whatsappNo.substring(1);
 //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
