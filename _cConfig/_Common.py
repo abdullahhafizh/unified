@@ -106,7 +106,7 @@ BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'
 URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://192.168.7.7:5000/')
 BNI_ACTIVATION_RETRY = _ConfigParser.get_set_value('BNI', 'activation^retry', '5')
 BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^timeout^minute', '30')
-BNI_REMOTE_ACTIVATION = True if _ConfigParser.get_set_value('BNI', 'remote^activation', '0') == '1' else False
+BNI_REMOTE_ACTIVATION = True if _ConfigParser.get_set_value('BNI', 'remote^activation', '1') == '1' else False
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')

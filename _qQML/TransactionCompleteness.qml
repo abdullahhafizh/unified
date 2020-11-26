@@ -12,7 +12,7 @@ Base{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     isBoxNameActive: false
-    property var mainTitle: 'Transaksi Sukses'
+    property var mainTitle: 'Transaksi Lebih Bayar'
     property var textFirst: 'Transaksi Kembalian akan dimasukkan ke Whatsapp Voucher.'
     property var textSecond: 'Silakan masukkan nomor Whatsapp Anda untuk transaksi kembalian.'
     property var textThird: 'Anda bisa melakukan transaksi Topup dan Beli Kartu melalui Whatsapp.'

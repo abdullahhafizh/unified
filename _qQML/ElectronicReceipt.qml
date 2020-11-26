@@ -224,7 +224,7 @@ Base{
                 press = '1';
                 _SLOT.user_action_log('Press "CETAK STRUK" in e-Receipt Activity');
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-                var title = 'Transaksi Berhasil';
+                var title = 'Terima Kasih';
                 var msg = '';
                 if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
                 if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
@@ -248,7 +248,7 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 _SLOT.user_action_log('Press "OK" in e-Receipt Activity');
-                var title = 'Transaksi Berhasil';
+                var title = 'Terima Kasih';
                 var msg = 'Silakan Cek eReceipt Anda di Whatsapp';
                 switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
             }
