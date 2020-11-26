@@ -254,7 +254,7 @@ def define_theme(d):
     content_js += 'var printer_type = "' +  printer_type + '";' + os.linesep
 
     # Add Printer Manual Delay Show
-    printer_manual_delay = str(_Common.MANUAL_DELAY_MANUAL_PRINT)
+    printer_manual_delay = str(_Common.DELAY_MANUAL_PRINT)
     content_js += 'var delay_manual_print = ' +  printer_manual_delay + ';' + os.linesep
 
     # C2C Mode View config

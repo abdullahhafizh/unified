@@ -496,7 +496,7 @@ CD3_ERROR = ''
 
 RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
 RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '1800'))
-MANUAL_DELAY_MANUAL_PRINT = int(_ConfigParser.get_set_value('PRINTER', 'delay^manual^print', '10'))
+DELAY_MANUAL_PRINT = int(_ConfigParser.get_set_value('PRINTER', 'delay^manual^print', '10'))
 if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
     PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')

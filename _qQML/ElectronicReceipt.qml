@@ -38,6 +38,7 @@ Base{
             my_timer.start();
             if (CONF.delay_manual_print != undefined){
                 showManualPrintButton = parseInt(CONF.delay_manual_print);
+                console.log('Delay Manual Print', showManualPrintButton);
             }
             _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
         }
@@ -78,7 +79,10 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 showDuration = abc.counter.toString();
-                if(abc.counter < (abc.counter-showManualPrintButton)) manualButtonVisible = true;
+                if(abc.counter == (timer_value-showManualPrintButton)){
+                    console.log('Show Manual Print Button', abc.counter);
+                    manualButtonVisible = true;
+                }
                 if(abc.counter < 0){
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
