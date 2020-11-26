@@ -253,6 +253,10 @@ def define_theme(d):
     printer_type = _Common.PRINTER_TYPE.lower()
     content_js += 'var printer_type = "' +  printer_type + '";' + os.linesep
 
+    # Add Printer Manual Delay Show
+    printer_manual_delay = str(_Common.MANUAL_DELAY_MANUAL_PRINT)
+    content_js += 'var delay_manual_print = ' +  printer_manual_delay + ';' + os.linesep
+
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep

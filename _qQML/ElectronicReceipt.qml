@@ -25,6 +25,8 @@ Base{
     property int textSize: (globalScreenType == '1') ? 38 : 33
     property var showDuration: ''
     property bool retryMode: false
+    property bool manualButtonVisible: false
+    property int showManualPrintButton: 10
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
@@ -34,6 +36,9 @@ Base{
             popup_loading.open('Transaksi Anda Berhasil\nMempersiapkan eReceipt Anda...');
             abc.counter = timer_value;
             my_timer.start();
+            if (CONF.delay_manual_print != undefined){
+                showManualPrintButton = parseInt(CONF.delay_manual_print);
+            }
             _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
         }
         if(Stack.status==Stack.Deactivating){
@@ -73,6 +78,7 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 showDuration = abc.counter.toString();
+                if(abc.counter < (abc.counter-showManualPrintButton)) manualButtonVisible = true;
                 if(abc.counter < 0){
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
@@ -216,6 +222,7 @@ Base{
         button_text: 'CETAK\nSTRUK'
         modeReverse: true
         forceColorButton: 'orange'
+        visible: manualButtonVisible
         MouseArea{
             anchors.fill: parent
             onClicked: {
