@@ -155,7 +155,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 150
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Scan QR Berikut di Aplikasi Whatsapp Anda'
+        show_text: 'Scan QR Berikut Untuk Mendapatkan eReceipt'
         size_: 50
         color_: "white"
     }
