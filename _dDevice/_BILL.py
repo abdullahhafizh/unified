@@ -210,6 +210,7 @@ def parse_notes(_result):
 
 def start_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
+    LOGGER.info(('Trigger Bill To Receive Money...'))
     try:
         attempt = 0
         IS_RECEIVING = True
