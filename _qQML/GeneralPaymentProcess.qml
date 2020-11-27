@@ -720,6 +720,7 @@ Base{
         global_frame.modeAction = "";
         press = '0';
         if (grgFunction == 'RECEIVE_BILL'){
+            back_button.visible = true;
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
                 do_refund_or_print('cash_device_error');
@@ -989,6 +990,7 @@ Base{
             _SLOT.start_set_direct_price(totalPrice.toString());
 //            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note();
+            back_button.visible = false;
             return;
         }
         if (details.payment == 'debit') {
@@ -1267,7 +1269,10 @@ Base{
             var action = s.split('|')[1];
             switch(action){
             case 'RETRIGGER_BILL':
-                if (details.payment=='cash') _SLOT.start_bill_receive_note();
+                if (details.payment=='cash'){
+                    _SLOT.start_bill_receive_note();
+                    back_button.visible = false;
+                }
                 modeButtonPopup = undefined;
                 global_frame.modeAction = "";
                 break;
@@ -1473,6 +1478,7 @@ Base{
                 }
                 if (modeButtonPopup=='retrigger_bill') {
                     _SLOT.start_bill_receive_note();
+                    back_button.visible = false;
                 }
                 if (modeButtonPopup=='reprint') {
                     _SLOT.start_reprint_global();
@@ -1539,6 +1545,7 @@ Base{
                     switch(modeButtonPopup){
                     case 'retrigger_bill':                      
                         _SLOT.start_bill_receive_note();
+                        back_button.visible = false;
                         modeButtonPopup = undefined;
                         global_frame.modeAction = "";
                         global_frame.close();
