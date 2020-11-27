@@ -746,7 +746,8 @@ FW_BANK = {
     '2': 'BRI', #BRI Desfire
     '3': 'BNI',
     '4': 'DKI',
-    '5': 'BCA'
+    '5': 'BCA',
+    '7': 'DKI'
 }
 
 BRI_LOG_LEGEND = {
