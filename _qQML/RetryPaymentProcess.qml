@@ -727,6 +727,7 @@ Base{
         press = '0';
         if (grgFunction == 'RECEIVE_BILL'){
             back_button.visible = true;
+            if (grgResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
                 do_refund_or_print('cash_device_error');

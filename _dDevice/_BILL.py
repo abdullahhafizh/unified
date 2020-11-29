@@ -223,12 +223,15 @@ def start_receive_note():
             param = BILL["RECEIVE"] + '|'
             _response, _result = send_command_to_bill(param=param, output=None)
             # _Helper.dump([_response, _result])
-            if _response == -1 and BILL["DIRECT_MODULE"] is False:
-                if BILL_TYPE == 'NV':
+            if _response == -1:
+                if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
                     stop_receive_note()
                     sleep(2.5)
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
-                break
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
+                    break
+                else: 
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
+                    break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
                 # Insert Into Table Cashbox

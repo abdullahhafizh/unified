@@ -331,7 +331,7 @@ NV200 = None
 
 LOOP_ATTEMPT = 0
 # Set Max Waiting Event Listen From NV into 120 seconds
-MAX_LOOP_ATTEMPT = 120
+MAX_LOOP_ATTEMPT = 90
 
 
 def send_command(param=None, config=[], restricted=[]):
