@@ -121,7 +121,7 @@ Base{
         if (result == 'ERECEIPT_DONE'){
             var info = p.split('|')[2];
             var data = JSON.parse(info);
-            delay(3000, function(){
+            delay(500, function(){
                 ereceipt_show(data);
             });
             return;
