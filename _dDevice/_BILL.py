@@ -230,9 +230,9 @@ def start_receive_note():
                     sleep(2.5)
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
                     break
-                else: 
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
-                    break
+                # else: 
+                    # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
+                    # break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                 cash_in = parse_notes(_result)
                 # Insert Into Table Cashbox
@@ -381,14 +381,17 @@ def stop_receive_note():
     try:
         param = BILL["STOP"] + '|'
         response, result = send_command_to_bill(param=param, output=None)
-        if response == 0 and COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
-            cash_received = {
-                'history': get_cash_history(),
-                'total': get_collected_cash()
-            }
-            BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
-            sleep(.5)
-            GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
+        if response == 0:
+            if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
+                cash_received = {
+                    'history': get_cash_history(),
+                    'total': get_collected_cash()
+                }
+                BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
+                sleep(.5)
+                GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
+            else:
+                BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS')
             COLLECTED_CASH = 0
             CASH_HISTORY = []
         else:

@@ -764,14 +764,16 @@ Base{
 //                _SLOT.start_bill_receive_note();
             }
         } else if (grgFunction == 'STOP_BILL'){
-            if(grgResult.indexOf('SUCCESS') > -1 && receivedPayment >= totalPrice){
-                console.log("bill_payment_result STOP_SUCCESS : ", now, receivedPayment, totalPrice, proceedAble);
-                var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
-                details.payment_details = cashResponse;
-                details.payment_received = cashResponse.total;
-                // Overwrite receivedPayment from STOP_BILL result
-                receivedPayment = parseInt(cashResponse.total);
-                if (proceedAble) payment_complete('bill_acceptor');
+            if(grgResult.indexOf('SUCCESS') > -1){
+                if (receivedPayment >= totalPrice){
+                    console.log("bill_payment_result STOP_SUCCESS : ", now, receivedPayment, totalPrice, proceedAble);
+                    var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
+                    details.payment_details = cashResponse;
+                    details.payment_received = cashResponse.total;
+                    // Overwrite receivedPayment from STOP_BILL result
+                    receivedPayment = parseInt(cashResponse.total);
+                    if (proceedAble) payment_complete('bill_acceptor');
+                }
             }
         } else if (grgFunction == 'STATUS_BILL'){
             if(grgResult=='ERROR') {
