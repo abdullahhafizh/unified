@@ -1033,7 +1033,7 @@ Base{
                 abc.counter -= 1;
                 //Force Allowed Back Button For Cash after 240 seconds
                 if (details.payment=='cash'){
-                    if (abc.counter > (timer_value-240)){
+                    if (abc.counter < (timer_value-240)){
                         back_button.visible = true;
                     }
                 }
