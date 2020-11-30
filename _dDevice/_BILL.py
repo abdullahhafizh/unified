@@ -192,7 +192,8 @@ def start_bill_receive_note():
     # Add Billing Initiation En Every Note Receive For NV Only
     # if IS_RECEIVING is True:
     #     return
-    if BILL_TYPE == 'NV':
+    # if BILL_TYPE == 'NV' and _Helper.empty(CASH_HISTORY):
+    if not OPEN_STATUS:
         init_bill()
     _Helper.get_thread().apply_async(start_receive_note)
 
