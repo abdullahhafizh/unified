@@ -1041,6 +1041,12 @@ Base{
             onTriggered:{
                 console.log('[RETRY-PAYMENT]', abc.counter);
                 abc.counter -= 1;
+                //Force Allowed Back Button For Cash after 240 seconds
+                if (details.payment=='cash'){
+                    if (abc.counter > (timer_value-240)){
+                        back_button.visible = true;
+                    }
+                }
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");

@@ -110,7 +110,7 @@ class NV200_BILL_ACCEPTOR(object):
                     while True:
                         attempt += 1
                         if self.check_active():
-                            print('pyt: [NV200]', 'Bill Reactivated')   
+                            print('pyt: [NV200]', 'Bill Re/Activated')   
                             return True
                         if attempt >= 3:
                             return False
@@ -349,7 +349,7 @@ def send_command(param=None, config=[], restricted=[]):
         # LOGGER.debug((command, param, config))
         # Define Command
         if command == config['SET']:
-            result = NV200.check_active()
+            result = NV200.open()
             if result is True:
                 return 0, "0000"
             else:
@@ -357,7 +357,7 @@ def send_command(param=None, config=[], restricted=[]):
                 return -1, ""
         elif command == config['RECEIVE']:
             LOOP_ATTEMPT = 0
-            action = NV200.open()
+            action = NV200.check_active()
             if action is True:
                 action = NV200.enable()
                 while True:
