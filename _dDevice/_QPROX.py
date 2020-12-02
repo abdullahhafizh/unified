@@ -1108,6 +1108,8 @@ def c2c_balance_info():
         _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
         _Common.MANDIRI_ACTIVE = 1
+        _DAO.create_today_report(_Common.TID)
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(_Common.MANDIRI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|' + str(result))
     else:
         _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
