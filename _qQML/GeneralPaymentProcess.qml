@@ -541,7 +541,7 @@ Base{
                 details.topup_details = result;
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
-                details.final_balance = lastBalance.toString();
+                if (parseInt(lastBalance) > 0) details.final_balance = lastBalance.toString();
                 // Move TRX Success Store Here
                 _SLOT.start_store_transaction_global(JSON.stringify(details))
 //                _SLOT.start_store_topup_transaction(JSON.stringify(details));
