@@ -111,6 +111,7 @@ Base{
         whatsappNo = '62' + whatsappNo.substring(1);
 //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
         imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
+        imageQr.source = imageSource;
         console.log('ereceipt_qr', imageSource);
         popup_loading.close();
     }
