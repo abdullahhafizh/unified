@@ -27,13 +27,14 @@ Base{
     property bool retryMode: false
     property bool manualButtonVisible: false
     property int showManualPrintButton: 10
+    property int delayExecution: 3000
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            popup_loading.open('Transaksi Anda Berhasil\nMempersiapkan eReceipt Anda...');
+            popup_loading.open('Transaksi Berhasil\nMempersiapkan eReceipt Anda.');
             abc.counter = timer_value;
             my_timer.start();
             if (CONF.delay_manual_print != undefined){
@@ -121,7 +122,7 @@ Base{
         if (result == 'ERECEIPT_DONE'){
             var info = p.split('|')[2];
             var data = JSON.parse(info);
-            delay(500, function(){
+            delay(delayExecution, function(){
                 ereceipt_show(data);
             });
             return;
@@ -155,7 +156,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 150
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Scan QR Berikut Untuk Mendapatkan eReceipt'
+        show_text: 'Transaksi Berhasil, Scan QR Untuk eReceipt Anda'
         size_: 50
         color_: "white"
     }

@@ -176,6 +176,7 @@ Rectangle{
     }
 
     function open(){
+        textInput = '';
         popup_update_stock.visible = true;
     }
 
