@@ -1208,9 +1208,9 @@ if __name__ == '__main__':
     print("pyt: Do Pending Request Jobs...")
     sleep(1)
     _Sync.start_do_pending_request_job()
-    # print("pyt: Do Pending Upload Jobs...")
-    # sleep(1)
-    # _Sync.start_do_pending_upload_job()
+    print("pyt: Do Pending Upload Jobs...")
+    sleep(1)
+    _Sync.start_do_pending_upload_job()
     view.show()
     app.exec_()
     del view

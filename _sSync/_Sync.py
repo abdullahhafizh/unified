@@ -222,8 +222,10 @@ def do_pending_upload_job():
                     jobs_path_process = jobs_path.replace('.upload', '.process_upload')
                     os.rename(jobs_path, jobs_path_process)
                     if host == 'BNI':
+                        _SFTPAccess.HOST_BID = 2
                         result = _SFTPAccess.send_file(data['filename'], local_path=data['path_file'], remote_path=None)
                     elif host == 'MANDIRI_C2C':
+                        _SFTPAccess.HOST_BID = 0
                         result = _SFTPAccess.send_file(data['filename'], local_path=data['local_path'], remote_path=data['remote_path'])
                     else:
                         result = False
