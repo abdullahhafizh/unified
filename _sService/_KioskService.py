@@ -17,11 +17,11 @@ from pprint import pprint
 import win32print
 import wmi
 import pythoncom
-from _sService import _UserService
+from _sService import _UserService, _MDSService
 from time import sleep
 import subprocess
 from operator import itemgetter
-from _dDevice import _BILL
+# from _dDevice import _BILL
 import json
 
 
@@ -49,6 +49,8 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_PAYMENT_SETTING = pyqtSignal(str)
     SIGNAL_SYNC_ADS_CONTENT = pyqtSignal(str)
     SIGNAL_ADMIN_GET_PRODUCT_STOCK = pyqtSignal(str)
+    SIGNAL_PANEL_SETTING = pyqtSignal(str)
+    SIGNAL_LOGOUT_OPERATOR = pyqtSignal(str)
 
 
 K_SIGNDLER = KioskSignalHandler()
@@ -60,23 +62,8 @@ def get_kiosk_status():
 
 
 def kiosk_status():
-    # if _Helper.is_online(source='kiosk_status') is False:
-    #     _Common.KIOSK_SETTING = _DAO.init_kiosk()[0]
-    #     _Common.KIOSK_ADMIN = _Common.KIOSK_SETTING['defaultAdmin']
-    #     _Common.KIOSK_MARGIN = _Common.KIOSK_SETTING['defaultMargin']
-    #     _Common.KIOSK_NAME = _Common.KIOSK_SETTING['name']
-    #     _Common.KIOSK_REAL_STATUS = 'OFFLINE'
-    K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps({
-        'name': _Common.KIOSK_NAME,
-        'version': _Common.VERSION,
-        'status': _Common.KIOSK_STATUS,
-        'real_status': _Common.KIOSK_STATUS,
-        'tid': _Common.TID,
-        # 'payment': _Common.PAYMENT_SETTING,
-        'feature': _Common.FEATURE_SETTING,
-        'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted'),
-        'refund_feature': _ConfigParser.get_value('GENERAL', 'refund^feature')
-    }))
+    data = _Common.kiosk_status_data()
+    K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps(data))
 
 
 def load_from_temp_data(section, selected_mode):
@@ -95,6 +82,10 @@ def load_previous_kiosk_status():
     _Common.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
     _Common.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
     _Common.KIOSK_STATUS = 'OFFLINE'
+    LOGGER.info(('LOAD_PREVIOUS_SETTING_VALUE'))
+
+
+load_previous_kiosk_status()
 
 
 def update_kiosk_status(s=400, r=None):
@@ -126,9 +117,11 @@ def update_kiosk_status(s=400, r=None):
                 _DAO.flush_table('Terminal')
                 # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
                 _DAO.update_kiosk_data(_Common.KIOSK_SETTING)
+        # else:
+            # load_previous_kiosk_status()
     except Exception as e:
         LOGGER.warning((e))
-        load_previous_kiosk_status() 
+        # load_previous_kiosk_status() 
     # finally:
     #     sleep(10)
     #     kiosk_status()
@@ -359,10 +352,6 @@ def kiosk_price_setting():
     }))
 
 
-def development_status():
-    return _Common.TEST_MODE
-
-
 IS_DEV = _Common.TEST_MODE
 
 
@@ -432,6 +421,21 @@ def get_machine_summary():
         result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
                                                      'WHERE collectedAt is null ')[0]['__']
         result['all_cashbox'] = _DAO.cashbox_status()
+        # Add Denom Setting
+        # result['first_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'first^denom', '10000')
+        # result['second_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'second^denom', '20000')
+        # result['third_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'third^denom', '50000')
+        # result['fourth_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'fourth^denom', '100000')
+        # result['fifth_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'fifth^denom', '150000')
+        # result['sixth_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'sixth^denom', '200000')
+        # result['seventh_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'seventh^denom', '250000')
+        # result['admin_fee'] = _Common.KIOSK_ADMIN
+        # result['admin_include'] = _ConfigParser.get_set_value('TEMPORARY', 'admin^include', '1')
+        # result['printer_setting'] = '1' if _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default') == 'Default' else '0'
+        # result['mdr_treshold'] = _ConfigParser.get_set_value('MANDIRI_C2C', 'minimum^amount', '1000')
+        # result['mdr_topup_amount'] = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '100000')
+        # result['bni_treshold'] = _ConfigParser.get_set_value('BNI', 'amount^minimum', '50000')
+        # result['bni_topup_amount'] = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
         if int(result['all_cashbox']) >= int(result['cash_available']):
             result['cash_available'] = result['all_cashbox']
         LOGGER.info(('SUCCESS', str(result)))
@@ -904,6 +908,7 @@ def get_product_stock():
 
 def start_store_transaction_global(param):
     _Helper.get_thread().apply_async(store_transaction_global, (param,))
+    # _Helper.get_thread().apply_async(store_transaction_mds, (param,))
 
 
 GLOBAL_TRANSACTION_DATA = None
@@ -973,6 +978,31 @@ def update_summary_report(data):
     elif data['shop_type'] == 'topup':
         _DAO.update_today_summary_multikeys([bank+'_topup_freq', bank+'_transaction_count'], 1)
         _DAO.update_today_summary(bank+'_transaction_amount', int(data.get('value', 0)))  
+
+
+def store_transaction_mds(param):
+    global GLOBAL_TRANSACTION_DATA
+    try:
+        p = GLOBAL_TRANSACTION_DATA = json.loads(param)
+        update_summary_report(p)
+        if p['shop_type'] != 'topup':
+            LOGGER.warning(('MDS Store Transaction Failed, Only Support Topup TRX This Time'))
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
+            return
+        bank_id = _Common.get_bid(p['provider'])
+        trx_id = p['shop_type'] + str(p['epoch'])
+        if bank_id in [0, 1, 2]: #Mandiri & BNI
+            store_result = _MDSService.push_trx_offline(param)
+        else:
+            store_result = _MDSService.push_trx_online(param)
+        if store_result is True:
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-'+trx_id)
+        else:
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|STORE_TRX-'+trx_id)
+    except Exception as e:
+        LOGGER.warning((e))
+        K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR|STORE_TRX')
+
 
 
 def store_transaction_global(param, retry=False):
@@ -1117,50 +1147,6 @@ def kiosk_get_payment_setting():
 def start_store_topup_transaction(param):
     # Moved Into Each Topup Offline Process
     return
-    # _Helper.get_thread().apply_async(store_topup_transaction, (param,))
-
-# '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
-# "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},
-# "topup_details": { 'last_balance': _result.split('|')[0], 'report_sam': _result.split('|')[1], 'report_ka': _result.split('|')[2],
-# 'card_no': _result.split('|')[3], 'bank_id': '1', 'bank_name': 'MANDIRI', }')
-
-
-# def store_topup_transaction(param, direct_push=False):
-#     global GLOBAL_TRANSACTION_DATA
-#     try:
-#         p = json.loads(param)
-#         if _Helper.empty(GLOBAL_TRANSACTION_DATA['topup_details']):
-#             GLOBAL_TRANSACTION_DATA['topup_details'] = p['topup_details']
-#         _param = {
-#             'rid': _Helper.get_uuid(),
-#             'trxid': TRX_ID_SALE,
-#             'cardNo': p['topup_details']['card_no'],
-#             'balance': p['topup_details']['last_balance'],
-#             'reportSAM': p['topup_details']['report_sam'],
-#             'reportKA': p['topup_details']['report_ka'],
-#             'status': 1,
-#             'remarks': param
-#         }
-#         _DAO.insert_topup_record(_param)
-#         if direct_push is True:
-#             _param['createdAt'] = _Helper.now()
-#             sleep(3)
-#             status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/topup-records', param=_param)
-#             # LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
-#             if status == 200 and response['id'] == _param['rid']:
-#                 _param['key'] = _param['rid']
-#                 _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
-#                 K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS')
-#             else:
-#                 K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
-#         else:
-#             _param['key'] = _param['rid']
-#             _DAO.mark_sync(param=_param, _table='TopUpRecords', _key='rid')
-#             payload['endpoint'] = 'sync/topup-records'
-#             _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.BACKEND_URL + 'sync/topup-records', payload=_param)
-#     except Exception as e:
-#         LOGGER.warning((e))
-#         K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')
 
 
 def reset_db_record():
@@ -1200,7 +1186,7 @@ def python_dump(log):
 
 def house_keeping(age_month=1, mode='DATA_FILES'):
     # Add Flushing Data Which Not Belong To This Terminal ID
-    reset_db_record()
+    # reset_db_record()
     if mode == 'DATA_FILES':
         LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
@@ -1252,3 +1238,38 @@ def reset_open_job():
             old_file_upload = os.path.join(_Common.JOB_PATH, upload_job)
             new_file_upload = old_file_upload.replace('.process_upload', '.upload')
             os.rename(old_file_upload, new_file_upload)
+
+
+def start_change_setting(key, value):
+    _Helper.get_thread().apply_async(change_setting, (key, value,))
+
+
+def change_setting(key, value):
+    # print(_Helper.whoami())
+    if '||' in key:
+        section = key.split('||')[0]
+        option = key.split('||')[1]
+        _ConfigParser.set_value(section, option, value)
+        if key == 'MANDIRI_C2C||minimum^amount':
+            _Common.C2C_THRESHOLD = int(value)
+        elif key == 'MANDIRI_C2C||amount^topup':
+            _Common.C2C_TOPUP_AMOUNT = value
+        elif key == 'BNI||amount^minimum':
+            _Common.BNI_THRESHOLD = int(value)
+        elif key == 'BNI||amount^topup':
+            _Common.BNI_TOPUP_AMOUNT = value
+    elif key == 'printer^setting':
+        if value == '1':
+            value = 'WhatsApp'
+        else:
+            value = 'Default'
+        _ConfigParser.set_value('PRINTER', 'printer^type', value)
+    else:
+        if value == '1':
+            value = '0'
+        else:
+            value = '1'
+        _Common.log_to_temp_config(key, value)
+    K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('CHANGE_SETTING|SUCCESS')
+
+    

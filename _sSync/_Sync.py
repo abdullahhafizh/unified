@@ -161,10 +161,25 @@ def do_pending_request_job():
                     __url = job['url']
                     __param = job['payload']
                     __endpoint = job['payload'].get('endpoint')
+                    if _Helper.empty(__endpoint):
+                        jobs_path_failed = jobs_path.replace('.request', '.failed')
+                        os.rename(jobs_path, jobs_path_failed)
+                        continue
                     jobs_path_process = jobs_path.replace('.request', '.process')
                     os.rename(jobs_path, jobs_path_process)
-                    status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
-                    if _Helper.empty(response['result']) is True:
+                    if 'header' in job:
+                        # header = {
+                        #     'Accept': '*/*',
+                        #     'Content-Type': 'application/json',
+                        #     'Authorization': 'Bearer: '+_Common.MDS_TOKEN
+                        # }
+                        __header = job['header']
+                        if not _Helper.empty(_Common.MDS_TOKEN):
+                            __header['Authorization'] = 'Bearer: '+_Common.MDS_TOKEN
+                        status, response = _NetworkAccess.post_to_url(url=__url, param=__param, header=__header)
+                    else:
+                        status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+                    if 'result' not in response.keys():
                         response['result'] = status
                     LOGGER.debug((p, __url, __param, status, response))
                     # print('pyt: [DEBUG] ' + ' '.join([p, _Helper.time_string(), str(status), str(response)]))
@@ -183,7 +198,7 @@ def do_pending_request_job():
                 except Exception as e:
                     LOGGER.warning((e, p))
                 continue
-        sleep(30.30)
+        sleep(61.61)
 
 
 def start_do_pending_upload_job():
@@ -240,7 +255,7 @@ def do_pending_upload_job():
                     continue
             except Exception as e:
                 LOGGER.warning(e)
-        sleep(25.25)
+        sleep(122.122)
 
 
 def start_kiosk_sync():
@@ -819,6 +834,9 @@ def get_amount(idx, listx):
 
 
 def start_check_bni_deposit():
+    # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
+    #     print("pyt: [FAILED] CHECK_BNI_TOPUP_DEPOSIT, DUMMY TEST MODE")
+    #     return
     _Helper.get_thread().apply_async(check_bni_deposit)
 
 
