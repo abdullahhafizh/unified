@@ -1520,3 +1520,4 @@ def kiosk_status_data():
 
 MDS_TOKEN = ''
 MDS_SESSION = 'N/A'
+MDS_MID = TERMINAL_TOKEN
