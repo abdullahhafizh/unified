@@ -232,6 +232,24 @@ def store_to_temp_data(temp, content):
         t.close()
 
 
+def remove_temp_data(temp):
+    if '.data' not in temp:
+        temp = temp + '.data'
+    temp_file = os.path.join(TEMP_FOLDER, temp)
+    if os.path.isfile(temp_file):
+        os.remove(temp_file)
+        
+
+
+def exist_temp_data(temp):
+    if '.data' not in temp:
+        temp = temp + '.data'
+    temp_file = os.path.join(TEMP_FOLDER, temp)
+    if os.path.isfile(temp_file):
+        return True
+    return False
+
+
 def load_from_temp_data(temp, mode='text'):
     if '.data' not in temp:
         temp = temp + '.data'

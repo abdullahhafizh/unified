@@ -825,7 +825,8 @@ def check_update_balance_bni(card_info):
         LOGGER.warning(str(e))
         return False
 
-BCA_KEY_REVERSAL = 'BCATopup1_Failed'
+
+BCA_KEY_REVERSAL = 'BCATopup2_Failed_Card_Reversal_Failed' #'BCATopup1_Failed'
 
 
 def update_balance_online(bank):
@@ -924,21 +925,28 @@ def update_balance_online(bank):
             param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             response, result = _Command.send_request(param=param, output=None)
             if response == 0 and '|' in result:
+                card_no = result.split('|')[0]
                 output = {
                     'bank': bank,
-                    'card_no': result.split('|')[0],
+                    'card_no': card_no,
                     'topup_amount': result.split('|')[1],
                     'last_balance': result.split('|')[2],
                 }
+                _Common.remove_temp_data(card_no)
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
                 if GENERAL_NO_PENDING in result:
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
                     if BCA_KEY_REVERSAL in result:
-                        param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
-                        response_reversal, result_reversal = _Command.send_request(param=param, output=None)
-                        LOGGER.debug((param_reversal, response_reversal, result_reversal))
+                        # Store Local Card Number Here For Futher Reversal Process
+                        previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+                        previous_card_data = _QPROX.LAST_BALANCE_CHECK
+                        _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
+                        # TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|BCA_NEED_REVERSAL')
+                        # param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+                        # response_reversal, result_reversal = _Command.send_request(param=param, output=None)
+                        # LOGGER.debug((param_reversal, response_reversal, result_reversal))
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
             LOGGER.debug((result, response))
         except Exception as e:
@@ -1073,29 +1081,42 @@ def topup_online(bank, cardno, amount, trxid=''):
             }
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
     elif bank == 'BCA':
-        # last_check = _QPROX.LAST_BALANCE_CHECK
+        # last_check = _QPROX.LAST_BALANCE_CHECK            
         _param = {
             'card_no': cardno,
             'amount': amount,
             'invoice_no': trxid,
             'time': _Helper.epoch('MDS')
         }
-        pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
-        # pending_result = _MDSService.mds_online_topup(bank, _param)
-        # pending_result = {
-                    #   "amount":"30000",
-                    #   "card_no":"7546990000025583",
-                    #   "reff_no":"20181207180324000511",
-                    #   "provider_id":"BNI_TAPCASH",
-                    #   "trx_pin":"12345"
-                    #   }
-        if not pending_result:
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-            return
+        if not _Common.exist_temp_data(cardno):
+            pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
+            # pending_result = _MDSService.mds_online_topup(bank, _param)
+            # pending_result = {
+                        #   "amount":"30000",
+                        #   "card_no":"7546990000025583",
+                        #   "reff_no":"20181207180324000511",
+                        #   "provider_id":"BNI_TAPCASH",
+                        #   "trx_pin":"12345"
+                        #   }
+            if not pending_result:
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+                return
+        else:
+            LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
+            param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+            response_reversal, result_reversal = _Command.send_request(param=param_reversal, output=None)
+            if response_reversal == 0 and '|' in result_reversal:
+                LOGGER.debug(('Success BCA Reversal For This Card Number', cardno, result_reversal))
+                _Common.remove_temp_data(cardno)
+            else:
+                LOGGER.warning(('Failed BCA Reversal For This Card Number', cardno, result_reversal))
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+                return
         _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
         update_result = update_balance(_param, bank='BCA', mode='TOPUP')
         if not update_result:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+            return
             # Keep Push Data To MDS as Failure
             # failed_data = {
             #     "invoice_number": _param['invoice_no'],
