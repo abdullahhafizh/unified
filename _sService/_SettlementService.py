@@ -855,8 +855,8 @@ def start_check_c2c_deposit():
     if _Common.C2C_MODE:
         _Helper.get_thread().apply_async(start_check_c2c_deposit)
     else:
-        print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE"
-
+        print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
+        
 
 def check_c2c_deposit():
     # FYI: Triggered After Success Transaction
