@@ -1175,6 +1175,7 @@ def topup_online(bank, cardno, amount, trxid=''):
         prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         # param['prev_deposit_balance'] = prev_balance
         # LAST_MANDIRI_C2C_SUCCESS_RESULT = {**param, **pending_result}
+        LAST_MANDIRI_C2C_SUCCESS_RESULT = param.update(pending_result)
         # LOGGER.debug(('LAST_MANDIRI_C2C_SUCCESS_RESULT', str(LAST_MANDIRI_C2C_SUCCESS_RESULT)))
         _Common.MANDIRI_ACTIVE_WALLET = 0
         send_kiosk_status()
