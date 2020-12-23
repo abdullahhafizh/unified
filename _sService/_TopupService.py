@@ -1006,91 +1006,23 @@ def topup_online(bank, cardno, amount, trxid=''):
     #     'bank_name': bank_name,
     #     'able_topup': '0000',
     # }
-    if bank is None or bank not in _Common.ALLOWED_BANK_PENDING_ONLINE:
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-        return
-    last_card_check = _QPROX.LAST_BALANCE_CHECK
-    if bank == 'BRI':
-        if not _Common.BRI_SAM_ACTIVE:
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR_BRI_SAM_SLOT_NOT_FOUND')
-            return
-        _param = {
-            'card_no': cardno,
-            'amount': amount,
-            'invoice_no': trxid,
-            'time': _Helper.epoch('MDS')
-        }
-        # pending_result = _MDSService.mds_online_topup(bank, _param)
-        pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
-        # pending_result = {
-                    #   "amount":"30000",
-                    #   "card_no":"7546990000025583",
-                    #   "reff_no":"20181207180324000511",
-                    #   "provider_id":"BNI_TAPCASH",
-                    #   "trx_pin":"12345"
-                    #   }
-        if not pending_result:
+    try:
+        if bank is None or bank not in _Common.ALLOWED_BANK_PENDING_ONLINE:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
             return
-        _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
-        update_result = update_balance(_param, bank='BRI', mode='TOPUP')
-        if not update_result:
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
-            # Keep Push Data To MDS as Failure
-            # failed_data = {
-            #     "invoice_number": _param['invoice_no'],
-            #     "transaction_status": 'UPDATE_BALANCE_FAILED',
-            #     "card_number": _param['card_no'],
-            #     "initial_balance": last_card_check['balance'],
-            #     "last_balance": last_card_check['balance'],
-            #     "amount_topup": str(_param['amount']),
-            #     "paid_amount": str(int(_param['amount']) + int(TOPUP_ADMIN_FEE)) if not ADMIN_FEE_INCLUDE else str(_param['amount']),
-            #     "admin_fee": TOPUP_ADMIN_FEE,
-            #     "bank_name": bank,
-            #     "device_timestamp": str(_param['time']),
-            #     "host_reff_number": str(_param['time']),
-            #     "initial_wallet": pending_result['prev_wallet'],
-            #     "last_wallet": pending_result['last_wallet'],
-            #     "session_id": _Helper.time_string(f='%d%m%y'),
-            # }
-            # _MDSService.start_push_trx_online(json.dumps(failed_data))
-            # Add Refund BRI
-            if _Common.BRI_AUTO_REFUND is True:
-                refund_bri_pending(pending_result)
-            return
-        # {
-        #        'bank': bank,
-        #        'card_no': result.split('|')[0],
-        #        'topup_amount': result.split('|')[1],
-        #        'last_balance': result.split('|')[2],
-        #     }
-        other_channel_topup = str(0)
-        if str(amount) != str(update_result['topup_amount']):
-            other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
-        output = {
-                    # 'prev_wallet': pending_result['prev_wallet'],
-                    # 'last_wallet': pending_result['last_wallet'],
-                    'last_balance': update_result['last_balance'],
-                    'topup_amount': update_result['topup_amount'],
-                    'other_channel_topup': other_channel_topup,
-                    'report_sam': 'N/A',
-                    'card_no': update_result['card_no'],
-                    'report_ka': 'N/A',
-                    'bank_id': '3',
-                    'bank_name': 'BRI',
+        last_card_check = _QPROX.LAST_BALANCE_CHECK
+        if bank == 'BRI':
+            if not _Common.BRI_SAM_ACTIVE:
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR_BRI_SAM_SLOT_NOT_FOUND')
+                return
+            _param = {
+                'card_no': cardno,
+                'amount': amount,
+                'invoice_no': trxid,
+                'time': _Helper.epoch('MDS')
             }
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
-    elif bank == 'BCA':
-        # last_check = _QPROX.LAST_BALANCE_CHECK            
-        _param = {
-            'card_no': cardno,
-            'amount': amount,
-            'invoice_no': trxid,
-            'time': _Helper.epoch('MDS')
-        }
-        if not _Common.exist_temp_data(cardno):
-            pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
             # pending_result = _MDSService.mds_online_topup(bank, _param)
+            pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
             # pending_result = {
                         #   "amount":"30000",
                         #   "card_no":"7546990000025583",
@@ -1101,147 +1033,219 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not pending_result:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                 return
-        else:
-            LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
-            param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
-            response_reversal, result_reversal = _Command.send_request(param=param_reversal, output=None)
-            if response_reversal == 0 and '|' in result_reversal:
-                LOGGER.debug(('Success BCA Reversal For This Card Number', cardno, result_reversal))
-                _Common.remove_temp_data(cardno)
+            _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
+            update_result = update_balance(_param, bank='BRI', mode='TOPUP')
+            if not update_result:
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+                # Keep Push Data To MDS as Failure
+                # failed_data = {
+                #     "invoice_number": _param['invoice_no'],
+                #     "transaction_status": 'UPDATE_BALANCE_FAILED',
+                #     "card_number": _param['card_no'],
+                #     "initial_balance": last_card_check['balance'],
+                #     "last_balance": last_card_check['balance'],
+                #     "amount_topup": str(_param['amount']),
+                #     "paid_amount": str(int(_param['amount']) + int(TOPUP_ADMIN_FEE)) if not ADMIN_FEE_INCLUDE else str(_param['amount']),
+                #     "admin_fee": TOPUP_ADMIN_FEE,
+                #     "bank_name": bank,
+                #     "device_timestamp": str(_param['time']),
+                #     "host_reff_number": str(_param['time']),
+                #     "initial_wallet": pending_result['prev_wallet'],
+                #     "last_wallet": pending_result['last_wallet'],
+                #     "session_id": _Helper.time_string(f='%d%m%y'),
+                # }
+                # _MDSService.start_push_trx_online(json.dumps(failed_data))
+                # Add Refund BRI
+                if _Common.BRI_AUTO_REFUND is True:
+                    refund_bri_pending(pending_result)
+                return
+            # {
+            #        'bank': bank,
+            #        'card_no': result.split('|')[0],
+            #        'topup_amount': result.split('|')[1],
+            #        'last_balance': result.split('|')[2],
+            #     }
+            other_channel_topup = str(0)
+            if str(amount) != str(update_result['topup_amount']):
+                other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
+            output = {
+                        # 'prev_wallet': pending_result['prev_wallet'],
+                        # 'last_wallet': pending_result['last_wallet'],
+                        'last_balance': update_result['last_balance'],
+                        'topup_amount': update_result['topup_amount'],
+                        'other_channel_topup': other_channel_topup,
+                        'report_sam': 'N/A',
+                        'card_no': update_result['card_no'],
+                        'report_ka': 'N/A',
+                        'bank_id': '3',
+                        'bank_name': 'BRI',
+                }
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+        elif bank == 'BCA':
+            # last_check = _QPROX.LAST_BALANCE_CHECK            
+            _param = {
+                'card_no': cardno,
+                'amount': amount,
+                'invoice_no': trxid,
+                'time': _Helper.epoch('MDS')
+            }
+            if not _Common.exist_temp_data(cardno):
+                pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
+                # pending_result = _MDSService.mds_online_topup(bank, _param)
+                # pending_result = {
+                            #   "amount":"30000",
+                            #   "card_no":"7546990000025583",
+                            #   "reff_no":"20181207180324000511",
+                            #   "provider_id":"BNI_TAPCASH",
+                            #   "trx_pin":"12345"
+                            #   }
+                if not pending_result:
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+                    return
             else:
-                LOGGER.warning(('Failed BCA Reversal For This Card Number', cardno, result_reversal))
+                LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
+                param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+                response_reversal, result_reversal = _Command.send_request(param=param_reversal, output=None)
+                if response_reversal == 0 and '|' in result_reversal:
+                    LOGGER.debug(('Success BCA Reversal For This Card Number', cardno, result_reversal))
+                    _Common.remove_temp_data(cardno)
+                else:
+                    LOGGER.warning(('Failed BCA Reversal For This Card Number', cardno, result_reversal))
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+                    return
+            _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+            update_result = update_balance(_param, bank='BCA', mode='TOPUP')
+            if not update_result:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
                 return
-        _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
-        update_result = update_balance(_param, bank='BCA', mode='TOPUP')
-        if not update_result:
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
-            return
-            # Keep Push Data To MDS as Failure
-            # failed_data = {
-            #     "invoice_number": _param['invoice_no'],
-            #     "transaction_status": 'UPDATE_BALANCE_FAILED',
-            #     "card_number": _param['card_no'],
-            #     "initial_balance": last_card_check['balance'],
-            #     "last_balance": last_card_check['balance'],
-            #     "amount_topup": str(_param['amount']),
-            #     "paid_amount": str(int(_param['amount']) + int(TOPUP_ADMIN_FEE)) if not ADMIN_FEE_INCLUDE else str(_param['amount']),
-            #     "admin_fee": TOPUP_ADMIN_FEE,
-            #     "bank_name": bank,
-            #     "device_timestamp": str(_param['time']),
-            #     "host_reff_number": str(_param['time']),
-            #     "initial_wallet": pending_result['prev_wallet'],
+                # Keep Push Data To MDS as Failure
+                # failed_data = {
+                #     "invoice_number": _param['invoice_no'],
+                #     "transaction_status": 'UPDATE_BALANCE_FAILED',
+                #     "card_number": _param['card_no'],
+                #     "initial_balance": last_card_check['balance'],
+                #     "last_balance": last_card_check['balance'],
+                #     "amount_topup": str(_param['amount']),
+                #     "paid_amount": str(int(_param['amount']) + int(TOPUP_ADMIN_FEE)) if not ADMIN_FEE_INCLUDE else str(_param['amount']),
+                #     "admin_fee": TOPUP_ADMIN_FEE,
+                #     "bank_name": bank,
+                #     "device_timestamp": str(_param['time']),
+                #     "host_reff_number": str(_param['time']),
+                #     "initial_wallet": pending_result['prev_wallet'],
+                #     "last_wallet": pending_result['last_wallet'],
+                #     "session_id": _Helper.time_string(f='%d%m%y'),
+                # }
+                # _MDSService.start_push_trx_online(json.dumps(failed_data))
+                # return
+            # {
+            #        'bank': bank,
+            #        'card_no': result.split('|')[0],
+            #        'topup_amount': result.split('|')[1],
+            #        'last_balance': result.split('|')[2],
+            #     }
+            other_channel_topup = str(0)
+            if str(amount) != str(update_result['topup_amount']):
+                other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
+            output = {
+                        # 'prev_wallet': pending_result['prev_wallet'],
+                        # 'last_wallet': pending_result['last_wallet'],
+                        'last_balance': update_result['last_balance'],
+                        'topup_amount': update_result['topup_amount'],
+                        'other_channel_topup': other_channel_topup,
+                        'report_sam': 'N/A',
+                        'card_no': update_result['card_no'],
+                        'report_ka': 'N/A',
+                        'bank_id': '4',
+                        'bank_name': 'BCA',
+                }
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+        elif bank == 'MANDIRI_C2C_DEPOSIT':
+            param = {
+                'card_no': cardno,
+                'amount': amount,
+                'invoice_no': 'mdr-c2c'+str(_Helper.epoch()),
+                'time': _Helper.epoch('MDS')
+            }
+            # pending_result = _MDSService.mds_online_topup(bank, param)
+            pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
+            if not pending_result:
+                TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|PENDING_ERROR')
+                _Common.online_logger([pending_result, bank, cardno, amount], 'general')
+                return False
+            # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
+            prev_balance = _Common.MANDIRI_ACTIVE_WALLET
+            # param['prev_deposit_balance'] = prev_balance
+            # LAST_MANDIRI_C2C_SUCCESS_RESULT = {**param, **pending_result}
+            LAST_MANDIRI_C2C_SUCCESS_RESULT = param.update(pending_result)
+            # LOGGER.debug(('LAST_MANDIRI_C2C_SUCCESS_RESULT', str(LAST_MANDIRI_C2C_SUCCESS_RESULT)))
+            _Common.MANDIRI_ACTIVE_WALLET = 0
+            send_kiosk_status()
+            _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
+            update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
+            if not update_result:
+                TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
+                _Common.online_logger([update_result, bank, cardno, amount], 'general')
+                return False
+            if update_result['last_balance'] == update_result['topup_amount']:
+                update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
+            output = {
+                        # 'prev_wallet': pending_result['prev_wallet'],
+                        # 'last_wallet': pending_result['last_wallet'],
+                        'prev_balance': prev_balance,
+                        'last_balance': update_result['last_balance'],
+                        'report_sam': 'N/A',
+                        'card_no': update_result['card_no'],
+                        'report_ka': 'N/A',
+                        'bank_id': '1',
+                        'bank_name': 'MANDIRI',
+                }
+            # Do Update Deposit Balance Value in Memory
+            _Common.MANDIRI_ACTIVE_WALLET = int(update_result['last_balance'])
+            _Common.MANDIRI_WALLET_1 = int(update_result['last_balance'])
+            # Do Upload SAM Refill Status Into BE Asyncronous
+            sam_audit_data = {
+                    'trxid': 'REFILL_SAM',
+                    'samCardNo': _Common.C2C_DEPOSIT_NO,
+                    'samCardSlot': _Common.C2C_SAM_SLOT,
+                    'samPrevBalance': output['prev_balance'],
+                    'samLastBalance': output['last_balance'],
+                    'topupCardNo': '',
+                    'topupPrevBalance': output['prev_balance'],
+                    'topupLastBalance': output['last_balance'],
+                    'status': 'REFILL_SUCCESS',
+                    'remarks': output,
+                }
+            # Update Audit Summary
+            # mandiri_deposit_refill_count              BIGINT DEFAULT 0,
+            # mandiri_deposit_refill_amount             BIGINT DEFAULT 0,
+            # mandiri_deposit_last_balance              BIGINT DEFAULT 0,
+            _DAO.create_today_report(_Common.TID)
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(amount))
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))
+            _Common.store_upload_sam_audit(sam_audit_data)   
+            # topup_deposit_data = {
+            #     "invoice_number": param['invoice_no'],
+            #     "host_reff_number": param['time'],
+            #     "amount": amount,
+            #     "last_deposit": output['last_balance'],
+            #     "prev_deposit": output['prev_balance'],
+            #     "prev_wallet": pending_result['prev_wallet'],
             #     "last_wallet": pending_result['last_wallet'],
-            #     "session_id": _Helper.time_string(f='%d%m%y'),
+            #     "card_no": update_result['card_no'],
+            #     "transaction_status": 'SUCCESS',
+            #     "session_id": _Helper.time_string('%Y%m%d'),
+            #     "bank_mid": _Common.C2C_MID,
+            #     "bank_tid": _Common.C2C_TID,
             # }
-            # _MDSService.start_push_trx_online(json.dumps(failed_data))
-            # return
-        # {
-        #        'bank': bank,
-        #        'card_no': result.split('|')[0],
-        #        'topup_amount': result.split('|')[1],
-        #        'last_balance': result.split('|')[2],
-        #     }
-        other_channel_topup = str(0)
-        if str(amount) != str(update_result['topup_amount']):
-            other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
-        output = {
-                    # 'prev_wallet': pending_result['prev_wallet'],
-                    # 'last_wallet': pending_result['last_wallet'],
-                    'last_balance': update_result['last_balance'],
-                    'topup_amount': update_result['topup_amount'],
-                    'other_channel_topup': other_channel_topup,
-                    'report_sam': 'N/A',
-                    'card_no': update_result['card_no'],
-                    'report_ka': 'N/A',
-                    'bank_id': '4',
-                    'bank_name': 'BCA',
-            }
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
-    elif bank == 'MANDIRI_C2C_DEPOSIT':
-        param = {
-            'card_no': cardno,
-            'amount': amount,
-            'invoice_no': 'mdr-c2c'+str(_Helper.epoch()),
-            'time': _Helper.epoch('MDS')
-        }
-        # pending_result = _MDSService.mds_online_topup(bank, param)
-        pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
-        if not pending_result:
-            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|PENDING_ERROR')
-            _Common.online_logger([pending_result, bank, cardno, amount], 'general')
-            return False
-        # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
-        prev_balance = _Common.MANDIRI_ACTIVE_WALLET
-        # param['prev_deposit_balance'] = prev_balance
-        # LAST_MANDIRI_C2C_SUCCESS_RESULT = {**param, **pending_result}
-        LAST_MANDIRI_C2C_SUCCESS_RESULT = param.update(pending_result)
-        # LOGGER.debug(('LAST_MANDIRI_C2C_SUCCESS_RESULT', str(LAST_MANDIRI_C2C_SUCCESS_RESULT)))
-        _Common.MANDIRI_ACTIVE_WALLET = 0
-        send_kiosk_status()
-        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
-        update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
-        if not update_result:
-            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
-            _Common.online_logger([update_result, bank, cardno, amount], 'general')
-            return False
-        if update_result['last_balance'] == update_result['topup_amount']:
-            update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
-        output = {
-                    # 'prev_wallet': pending_result['prev_wallet'],
-                    # 'last_wallet': pending_result['last_wallet'],
-                    'prev_balance': prev_balance,
-                    'last_balance': update_result['last_balance'],
-                    'report_sam': 'N/A',
-                    'card_no': update_result['card_no'],
-                    'report_ka': 'N/A',
-                    'bank_id': '1',
-                    'bank_name': 'MANDIRI',
-            }
-        # Do Update Deposit Balance Value in Memory
-        _Common.MANDIRI_ACTIVE_WALLET = int(update_result['last_balance'])
-        _Common.MANDIRI_WALLET_1 = int(update_result['last_balance'])
-        # Do Upload SAM Refill Status Into BE Asyncronous
-        sam_audit_data = {
-                'trxid': 'REFILL_SAM',
-                'samCardNo': _Common.C2C_DEPOSIT_NO,
-                'samCardSlot': _Common.C2C_SAM_SLOT,
-                'samPrevBalance': output['prev_balance'],
-                'samLastBalance': output['last_balance'],
-                'topupCardNo': '',
-                'topupPrevBalance': output['prev_balance'],
-                'topupLastBalance': output['last_balance'],
-                'status': 'REFILL_SUCCESS',
-                'remarks': output,
-            }
-        # Update Audit Summary
-        # mandiri_deposit_refill_count              BIGINT DEFAULT 0,
-        # mandiri_deposit_refill_amount             BIGINT DEFAULT 0,
-        # mandiri_deposit_last_balance              BIGINT DEFAULT 0,
-        _DAO.create_today_report(_Common.TID)
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(amount))
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))
-        _Common.store_upload_sam_audit(sam_audit_data)   
-        # topup_deposit_data = {
-        #     "invoice_number": param['invoice_no'],
-        #     "host_reff_number": param['time'],
-        #     "amount": amount,
-        #     "last_deposit": output['last_balance'],
-        #     "prev_deposit": output['prev_balance'],
-        #     "prev_wallet": pending_result['prev_wallet'],
-        #     "last_wallet": pending_result['last_wallet'],
-        #     "card_no": update_result['card_no'],
-        #     "transaction_status": 'SUCCESS',
-        #     "session_id": _Helper.time_string('%Y%m%d'),
-        #     "bank_mid": _Common.C2C_MID,
-        #     "bank_tid": _Common.C2C_TID,
-        # }
-        # _MDSService.start_push_trx_deposit(topup_deposit_data)
-        TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
-        send_kiosk_status()
-        return output        
-    else:
+            # _MDSService.start_push_trx_deposit(topup_deposit_data)
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
+            send_kiosk_status()
+            return output        
+        else:
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+    except Exception as e:
+        LOGGER.warning((bank, cardno, amount, e))
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
     
 
