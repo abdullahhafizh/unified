@@ -66,6 +66,18 @@ Rectangle{
         visible: logo_vis
     }
 
+    Image{
+        id: single_partner_logo
+        height: 60
+        width: 675
+        anchors.verticalCenter: header_opacity.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 25
+        visible: (partner_logos.length == 1)
+        source: partner_logos[0]
+        fillMode: Image.PreserveAspectFit
+    }
+
     Row{
         id: partners_logo
         spacing: 3
@@ -75,6 +87,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 25
+        visible: (partner_logos.length > 1)
 
         Image{
             width: parent.item_width
