@@ -46,7 +46,9 @@ def now():
     return int(time.time()) * 1000
 
 
-def epoch():
+def epoch(mode='DEFAULT'):
+    if mode == 'MDS':
+        return str(now())
     return int(time.time())
 
 
