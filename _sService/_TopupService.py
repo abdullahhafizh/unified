@@ -493,6 +493,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             response, result = _Command.send_request(param=_param, output=None)
             # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
             # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+            LOGGER.debug((_param, bank, mode, response, result))
             if response == 0 and '|' in result:
                 return {
                     'bank': bank,
@@ -511,6 +512,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             response, result = _Command.send_request(param=_param, output=None)
             # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
             # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+            LOGGER.debug((_param, bank, mode, response, result))
             if response == 0 and '|' in result:
                 return {
                     'bank': bank,
@@ -519,6 +521,11 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     'last_balance': result.split('|')[2],
                 }
             else:
+                if BCA_KEY_REVERSAL in result:
+                    # Store Local Card Number Here For Futher Reversal Process
+                    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+                    previous_card_data = _QPROX.LAST_BALANCE_CHECK
+                    _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
                 _Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
