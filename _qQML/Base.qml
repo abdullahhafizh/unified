@@ -74,7 +74,7 @@ Rectangle{
         anchors.right: parent.right
         anchors.rightMargin: 25
         visible: (partner_logos.length == 1)
-        source: partner_logos[0]
+        source: (partner_logos[0] !== undefined) ? "source/logo/" + partner_logos[0] : ''
         fillMode: Image.PreserveAspectFit
     }
 
