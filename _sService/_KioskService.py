@@ -1273,3 +1273,13 @@ def change_setting(key, value):
     K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('CHANGE_SETTING|SUCCESS')
 
     
+def remove_failed_trx(trx_id):
+    try:  
+        _DAO.delete_transaction_failure({
+            'reff_no': trx_id,
+            'tid': _Common.TID
+        })
+        return 'DELETE_FAILED_TRX_SUCCESS'
+    except Exception as e:
+        LOGGER.warning((e))
+        return 'DELETE_FAILED_TRX_FAILED'

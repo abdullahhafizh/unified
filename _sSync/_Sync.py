@@ -617,6 +617,10 @@ def handle_tasks(tasks):
         if task['taskName'] == 'RESET_PAPER_ROLL':
             result = _Common.reset_paper_roll()
             update_task(task, result)
+        if 'REMOVE_FAILED_TRX' in task['taskName']:
+            trx_id = task['taskName'].split('|')[1]
+            result = _KioskService.remove_failed_trx(trx_id)
+            update_task(task, result)
         if task['taskName'] == 'EDC_CLEAR_BATCH':
             result = _EDC.void_settlement_data()
             update_task(task, result)
