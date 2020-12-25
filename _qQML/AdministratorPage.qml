@@ -151,6 +151,8 @@ Base{
 //            actionChangeList.push(a);
         } else if (a=='REFILL_ZERO|SUCCESS'){
             false_notif('Dear '+operatorName+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
+        } else if (a=='REFILL_ZERO|AUTO_ACTIVATION_SUCCESS'){
+            false_notif('Dear '+operatorName+'|BNI Deposit Auto Activation Success');
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
             var r = a.split('|')[1]
             if (r.indexOf('FAILED') > -1){

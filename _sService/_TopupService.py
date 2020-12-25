@@ -430,7 +430,11 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             LAST_BNI_TOPUP_PARAM = _param
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=_param)
+            while True:
+                status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=_param)
+                if status != 404:
+                    break
+                sleep(1)
             LOGGER.debug(('update_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 response['data']['card_info'] = _param['card_info']
@@ -663,7 +667,22 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
 
 def start_master_activation_bni():
     slot = 1
-    _Helper.get_thread().apply_async(refill_zero_bni, (slot,))
+    _Helper.get_thread().apply_async(auto_refill_zero_bni, (slot,))
+    
+    
+def auto_refill_zero_bni(slot):
+    bni = _BniActivationCommand.BniActivate()
+    bni_act_resp, bni_act_result = bni.activate_bni_sequence()
+    LOGGER.debug(('remote_deposit_activation_bni', str(bni_act_resp), str(bni_act_result)))
+    if bni_act_resp == 0:
+        reset_result, result_message = bni_reset_update_balance(slot=1, activation=True)
+        if reset_result is True:
+            _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|AUTO_ACTIVATION_SUCCESS')
+        else:
+            _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|'+result_message)  
+    else:
+        _Common.ALLOW_DO_TOPUP = True
+        _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|ERROR_AUTO_ACTIVATION')
 
 
 def start_slave_activation_bni():

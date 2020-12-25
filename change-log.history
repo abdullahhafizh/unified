@@ -1,5 +1,7 @@
 11.9.I-GLOBAL:
 - Re-enable Failed FS Repload,
+- Force Enable BNI Auto Activation,
+- Handle BNI Deposit Ubal 404,
 - ...
 
 11.9.Hm-GLOBAL:
