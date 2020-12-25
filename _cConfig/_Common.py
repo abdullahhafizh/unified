@@ -103,10 +103,12 @@ SLOT_SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
 SLOT_SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
 BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'))
-URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://192.168.7.7:5000/')
+URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
+_ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
 BNI_ACTIVATION_RETRY = _ConfigParser.get_set_value('BNI', 'activation^retry', '5')
 BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^timeout^minute', '30')
-BNI_REMOTE_ACTIVATION = True if _ConfigParser.get_set_value('BNI', 'remote^activation', '1') == '1' else False
+BNI_REMOTE_ACTIVATION = True
+_ConfigParser.set_value('BNI', 'remote^activation', '1')
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
@@ -230,6 +232,24 @@ def store_to_temp_data(temp, content):
     with open(temp_path, 'w+') as t:
         t.write(content)
         t.close()
+
+
+def remove_temp_data(temp):
+    if '.data' not in temp:
+        temp = temp + '.data'
+    temp_file = os.path.join(TEMP_FOLDER, temp)
+    if os.path.isfile(temp_file):
+        os.remove(temp_file)
+        
+
+
+def exist_temp_data(temp):
+    if '.data' not in temp:
+        temp = temp + '.data'
+    temp_file = os.path.join(TEMP_FOLDER, temp)
+    if os.path.isfile(temp_file):
+        return True
+    return False
 
 
 def load_from_temp_data(temp, mode='text'):
@@ -1463,3 +1483,46 @@ def company_theme(theme):
         return 'TJ'
     return PRINT_COMPANY_MAPPING[theme]
 
+
+def kiosk_status_data():
+    mandiri_active_wallet = MANDIRI_ACTIVE_WALLET
+    bni_active_wallet = BNI_ACTIVE_WALLET
+    # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
+    #     mandiri_active_wallet = '999001'
+    #     bni_active_wallet = '999002'
+    try:
+        data = {
+            'name': KIOSK_NAME,
+            'version': VERSION,
+            'status': KIOSK_STATUS,
+            'tid': TID,
+            'mandiri_wallet': mandiri_active_wallet,
+            'bni_wallet': bni_active_wallet,
+            'payment': PAYMENT_SETTING,
+            'feature': FEATURE_SETTING,
+            'last_money_inserted': _ConfigParser.get_value('BILL', 'last^money^inserted'),
+            'refund_feature': _ConfigParser.get_value('GENERAL', 'refund^feature'),
+            # Add Denom Setting
+            # 'first_denom': _ConfigParser.get_set_value('TEMPORARY', 'first^denom', '10000'),
+            # 'second_denom': _ConfigParser.get_set_value('TEMPORARY', 'second^denom', '20000'),
+            # 'third_denom': _ConfigParser.get_set_value('TEMPORARY', 'third^denom', '50000'),
+            # 'fourth_denom': _ConfigParser.get_set_value('TEMPORARY', 'fourth^denom', '100000'),
+            # 'fifth_denom': _ConfigParser.get_set_value('TEMPORARY', 'fifth^denom', '150000'),
+            # 'sixth_denom': _ConfigParser.get_set_value('TEMPORARY', 'sixth^denom', '200000'),
+            # 'seventh_denom': _ConfigParser.get_set_value('TEMPORARY', 'seventh^denom', '250000'),
+            # 'admin_include': _ConfigParser.get_set_value('TEMPORARY', 'admin^include', '1'),
+            # 'printer_setting': '1' if _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default') == 'Default' else '0',
+            'admin_fee': C2C_ADMIN_FEE[0],
+            # 'operator_name': '' if LOGGED_OPERATOR is None else LOGGED_OPERATOR['first_name']
+        }
+        return data
+    except Exception as e:
+        return {}
+
+
+MDS_TOKEN = ''
+MDS_SESSION = 'N/A'
+MDS_MID = TERMINAL_TOKEN
+MDS_WALLET = 0
+
+LOGGED_OPERATOR = None

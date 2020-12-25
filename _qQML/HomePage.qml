@@ -178,10 +178,9 @@ Base{
         if (kiosk.status == "ONLINE" || kiosk.status == "AVAILABLE") {
             kioskStatus = true;
             box_connection.color = 'green';
-            box_connection.text = kiosk.real_status;
-            if (kiosk.real_status=='OFFLINE') box_connection.color = 'red';
+            box_connection.text = kiosk.status;
         } else {
-            box_connection.text = kiosk.real_status;
+            box_connection.text = kiosk.status;
             box_connection.color = 'red';
             kioskStatus = false;
         }

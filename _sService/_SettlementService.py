@@ -12,7 +12,7 @@ from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _nNetwork import _SFTPAccess, _FTPAccess
 from _dDevice import _QPROX, _EDC
-from _sService import _TopupService
+from _sService import _TopupService, _MDSService
 from time import sleep
 
 
@@ -126,6 +126,39 @@ def push_settlement_data(__param=None):
     "local_path": "c:/dir/",
     "remarks": "",
     """
+    # 'path_file': _file_created,
+    # 'filename': _filename,
+    # 'row': len(settlements),
+    # 'amount': str(_all_amount),
+    # 'bank': bank,
+    # 'bid': BID[bank],
+    # 'remarks': _filecontent2.replace('|', '\n'),
+    # 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    # if __param is not None:
+    #     if 'remarks' in __param.keys():
+    #         __param.pop('remarks')
+    #     # LOGGER.info(('START_MDS_SETTLEMENT_DATA_SYNC', str(__param)))
+    #     try:
+    #         param = {
+    #             "id": _Helper.get_uuid(),
+    #             "file_name": __param['filename'],
+    #             "header": __param['header'],
+    #             "body": __param['body'],
+    #             "footer": __param['footer'],
+    #             "created_date": __param['settlement_created_at'].split(' ')[0],
+    #             "created_time": __param['settlement_created_at'].split(' ')[1],
+    #             "uploaded_date": __param['settlement_uploaded_at'].split(' ')[0],
+    #             "uploaded_time": __param['settlement_uploaded_at'].split(' ')[1],
+    #             "count_transaction": __param['row'],
+    #             "total_transaction": __param['amount'],
+    #             "bank_tid": _Common.C2C_TID if __param['bank'] == 'MANDIRI' else _Common.TID_BNI,
+    #             "bank_mid": _Common.C2C_MID if __param['bank'] == 'MANDIRI' else _Common.MID_BNI,
+    #         }
+    #         # LOGGER.info(('MDS_SETTLEMENT_DATA', str(param)))
+    #         return _MDSService.push_settlement_data(param)
+    #     except Exception as e:
+    #         LOGGER.warning((e))
+    #         return False
     __url = _Common.BACKEND_URL + 'settlement/sync-record'
     if __param is None:
         LOGGER.warning(('[FAILED] Missing __param'))
@@ -205,7 +238,6 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             _filecontent2 = ''
             _all_amount = 0
             _header = 'H01' + _Common.MID_BNI + _Common.TID_BNI + '|'
-            _filecontent += _header
             _trailer = 'T' + str(len(settlements)).zfill(6) + '00000000'
             for settle in settlements:
                 # remarks = json.loads(settle['remarks'])
@@ -217,6 +249,8 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 # settle['key'] = settle['rid']
                 # _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
             # Copy File Content Here to Update with the new CRC32
+            _body = _filecontent
+            _filecontent = _header + _filecontent
             _filecontent2 = _filecontent
             _filecontent += _trailer
             _file_created = os.path.join(output_path, _filename)
@@ -249,6 +283,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'bank': bank,
                 'bid': BID[bank],
                 'remarks': _filecontent2.replace('|', '\n'),
+                'header': _header.replace('|', '\n'),
+                'body': _body.replace('|', '\n'),
+                'footer': _trailer.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             # Insert Into DB
@@ -303,6 +340,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 _filecontent += _Helper.full_row_reverse_hexdec(settle['reportSAM']) + __shift + str(x).zfill(6) + chr(3) + '|'
             _header = 'PREPAID' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                     _Common.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
+            _body = _filecontent
             _filecontent = _header + _filecontent
             _trailer = _Common.MID_MAN + str(len(settlements)).zfill(8)
             _filecontent += _trailer
@@ -327,6 +365,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'bank': bank,
                 'bid': BID[bank],
                 'remarks': _filecontent.replace('|', '\n'),
+                'header': _header.replace('|', '\n'),
+                'body': _body.replace('|', '\n'),
+                'footer': _trailer.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
@@ -370,6 +411,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 _filecontent += settle['reportKA'] + __shift + str(x).zfill(6) + chr(3) + '|'
             _header = 'ADMINCARD' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                       _Common.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
+            _body = _filecontent
             _filecontent = _header + _filecontent
             _trailer = _Common.MID_MAN + str(len(settlements)).zfill(8)
             _filecontent += _trailer
@@ -394,6 +436,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'bank': bank,
                 'bid': BID[bank],
                 'remarks': _filecontent.replace('|', '\n'),
+                'header': _header.replace('|', '\n'),
+                'body': _body.replace('|', '\n'),
+                'footer': _trailer.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
@@ -442,6 +487,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 _filecontent += settle['reportKA'] + settle['reportSAM'] + chr(3) + '|'
             _header = 'PREPAID' + str(x + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                     _Common.C2C_MID + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
+            _body = _filecontent
             _filecontent = _header + _filecontent
             _trailer = _Common.C2C_MID + str(x).zfill(8) + chr(3)
             _filecontent += _trailer
@@ -466,6 +512,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'bank': bank,
                 'bid': BID[bank],
                 'remarks': _filecontent.replace('|', '\n'),
+                'header': _header.replace('|', '\n'),
+                'body': _body.replace('|', '\n'),
+                'footer': _trailer.replace('|', '\n'),
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
@@ -607,6 +656,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
             }
             _param['reupload'] = reupload
             _Common.store_upload_to_job(name=_Helper.whoami(), host=bank, data=reupload)
+        _param['settlement_uploaded_at'] = _Helper.time_string()
         _param['host'] = _push['host']
         _param['remote_path'] = _push['remote_path']
         _param['local_path'] = _push['local_path']
@@ -707,6 +757,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
             }
             _param_sett['reupload'] = reupload
             _Common.store_upload_to_job(name=_Helper.whoami(), host=bank, data=reupload)
+        _param_sett['settlement_uploaded_at'] = _Helper.time_string()
         _param_sett['host'] = _push_file_sett['host']
         _param_sett['remote_path'] = _push_file_sett['remote_path']
         _param_sett['local_path'] = _push_file_sett['local_path']
@@ -805,13 +856,15 @@ def start_check_c2c_deposit():
         _Helper.get_thread().apply_async(start_check_c2c_deposit)
     else:
         print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
+        
 
-
-def start_check_c2c_deposit():
+def check_c2c_deposit():
     # FYI: Triggered After Success Transaction
     LOGGER.info(('CHECK_C2C_TOPUP_DEPOSIT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        # _Common.MANDIRI_ACTIVE_WALLET = 0
+        # _TopupService.send_kiosk_status()
         # do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
         # Set Mandiri C2C Force Settlement Delivery to FALSE 
         do_prepaid_settlement(bank='MANDIRI_C2C', force=False)

@@ -68,13 +68,13 @@ Rectangle{
 
     Image{
         id: single_partner_logo
-        height: 60
-        width: 675
+        height: 80
+        width: 800
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 25
+        anchors.rightMargin: 10
         visible: (partner_logos.length == 1)
-        source: partner_logos[0]
+        source: (partner_logos[0] !== undefined) ? "source/logo/" + partner_logos[0] : ''
         fillMode: Image.PreserveAspectFit
     }
 
