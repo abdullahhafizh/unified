@@ -57,23 +57,27 @@ class BniActivationHTTPRequest(object):
     # close session
     def close_session(self, card_no):
         response = requests.post(self.url+'activation/closesession',
-                                 json={'card_no': card_no,
-                                       'reff_no': self.reff_no})
-        if response.status_code != 200:
-            data = -1
-        else:
-            data = json.loads(response.text)
-            data = data['code']
-            self.reff_no = -1
+                                json={'card_no': card_no,
+                                      'reff_no': self.reff_no})
+        data = -1
+        if response.status_code == 200:
+            try:
+                data = json.loads(response.text)
+                data = data['code']
+                self.reff_no = -1
+            except Exception as e:
+                print('pyt: [WARNING] ' + str(e))
         return data
 
     def get_reference_no(self):
         response = requests.get(url=self.url+'activation/getreferenceno')
         print("Reference number result : " + response.text)
-
-        if response.status_code != 200:
-            data = -1
-        else:
-            data = json.loads(response.text)
-            data = data['reff_no']
+        data = -1
+        if response.status_code == 200:
+            try:
+                data = json.loads(response.text)
+                if 'reff_no' in data.keys():
+                    data = data['reff_no']
+            except Exception as e:
+                print('pyt: [WARNING] ' + str(e))
         return data
