@@ -103,12 +103,15 @@ SLOT_SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
 SLOT_SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
 BNI_THRESHOLD = int(_ConfigParser.get_set_value('BNI', 'amount^minimum', '50000'))
-URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
-_ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
 BNI_ACTIVATION_RETRY = _ConfigParser.get_set_value('BNI', 'activation^retry', '5')
 BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^timeout^minute', '30')
-BNI_REMOTE_ACTIVATION = True
-_ConfigParser.set_value('BNI', 'remote^activation', '1')
+URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://axa.mdd.co.id:5000/')
+BNI_REMOTE_ACTIVATION = _ConfigParser.get_set_value('BNI', 'remote^activation', '0')
+if LIVE_MODE is True:
+    URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
+    _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
+    BNI_REMOTE_ACTIVATION = True
+    _ConfigParser.set_value('BNI', 'remote^activation', '1')
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
