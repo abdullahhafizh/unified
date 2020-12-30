@@ -388,7 +388,7 @@ Base{
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         } else {
             //Do Print If Only Status Payment is Changed
-            if (receivedPayment > initialPayment)
+            if (parseInt(receivedPayment) > parseInt(initialPayment))
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
         }
