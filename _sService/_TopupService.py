@@ -470,7 +470,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                             'activation': '1'
                         })
                         if _activation_pending is False:
-                            _Common.upload_topup_error(slot, 'ADD')
+                            _Common.upload_topup_error(_param['slot'], 'ADD')
                             _Common.online_logger(['BNI Activation Pending Result', _activation_pending], 'general')
                             return False
                         return update_balance({
