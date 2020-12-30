@@ -367,6 +367,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
         hide_all_cancel_button();
+        console.log('release_print', now, title, msg, successTransaction, receivedPayment, initialPayment);
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
@@ -388,7 +389,6 @@ Base{
         } else {
             //Do Print If Only Status Payment is Changed
             if (receivedPayment > initialPayment)
-                console.log('release_print', now, title, msg);
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
         }
