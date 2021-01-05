@@ -6,13 +6,14 @@ import "config.js" as CONF
 
 
 Rectangle{
-    id:select_payment_popup
-    property var title_text: "Silakan Pilih Metode Bayar"
+    id:select_qr_provider
+    property var title_text: "Silakan Pilih Provider QR"
     property bool withBackground: true
     property bool modeReverse: true
     property var calledFrom: 'prepaid_topup_denom'
     property bool _cashEnable: false
     property bool _cardEnable: false
+    property bool _qrMultiEnable: false
     property bool _qrOvoEnable: false
     property bool _qrDanaEnable: false
     property bool _qrGopayEnable: false
@@ -152,9 +153,42 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR OVO")
-            text2_: qsTr("QR OVO")
+            img_: "source/phone_qr.jpeg"
+            text_: qsTr("QR Payment")
+            text2_: qsTr("")
+            visible: _qrMultiEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "MULTI_QR" Payment Method');
+                    var payment = 'MULTI_QR';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/ovo_logo.jpeg"
+            text_: qsTr("O V O")
+            text2_: qsTr("")
             visible: _qrOvoEnable
             MouseArea{
                 anchors.fill: parent
@@ -185,9 +219,9 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR LinkAja")
-            text2_: qsTr("QR LinkAja")
+            img_: "source/linkaja_logo.jpeg"
+            text_: qsTr("LinkAja")
+            text2_: qsTr("")
             visible: _qrLinkAjaEnable
             MouseArea{
                 anchors.fill: parent
@@ -218,9 +252,9 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Gopay")
-            text2_: qsTr("QR Gopay")
+            img_: "source/gopay_logo.png"
+            text_: qsTr("GOPAY")
+            text2_: qsTr("")
             visible: _qrGopayEnable
             MouseArea{
                 anchors.fill: parent
@@ -251,9 +285,9 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Dana")
-            text2_: qsTr("QR Dana")
+            img_: "source/dana_logo.jpeg"
+            text_: qsTr("DANA")
+            text2_: qsTr("")
             visible: _qrDanaEnable
             MouseArea{
                 anchors.fill: parent
@@ -284,9 +318,9 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR ShopeePay")
-            text2_: qsTr("QR Shopee")
+            img_: "source/shopee_logo.jpg"
+            text_: qsTr("SHOPEEPAY")
+            text2_: qsTr("")
             visible: _qrShopeeEnable
             MouseArea{
                 anchors.fill: parent
@@ -317,9 +351,9 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
-            text2_: qsTr("QR JakOne")
+            img_: "source/jakone_logo.jpg"
+            text_: qsTr("JAKONE")
+            text2_: qsTr("")
             visible: _qrJakoneEnable
             MouseArea{
                 anchors.fill: parent
@@ -367,12 +401,12 @@ Rectangle{
     }
 
     function open(){
-        select_payment_popup.visible = true;
+        select_qr_provider.visible = true;
     }
 
 
     function close(){
-        select_payment_popup.visible = false;
+        select_qr_provider.visible = false;
     }
 
 

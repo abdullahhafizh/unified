@@ -166,6 +166,12 @@ Base{
     function process_selected_payment(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('process_selected_payment', p, now);
+        if (p=='MULTI_QR'){
+            press = '0';
+            select_payment.close();
+            select_qr_provider.open();
+            return;
+        }
         selectedPayment = p;
         press = '0';
 //        var get_details = get_cart_details(p);
@@ -543,6 +549,7 @@ Base{
         calledFrom: 'general_shop_card'
         _cashEnable: cashEnable
         _cardEnable: cardEnable
+        _qrMultiEnable: true
         _qrOvoEnable: qrOvoEnable
         _qrDanaEnable: qrDanaEnable
         _qrGopayEnable: qrGopayEnable
@@ -551,6 +558,29 @@ Base{
         _qrJakoneEnable: qrJakoneEnable
         totalEnable: totalPaymentEnable
     }
+
+    SelectPaymentQR{
+        id: select_qr_provider
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: false
+//        visible: true
+        calledFrom: 'general_shop_card'
+        _cashEnable: false
+        _cardEnable: false
+        _qrMultiEnable: false
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        _qrShopeeEnable: qrShopeeEnable
+        _qrJakoneEnable: qrJakoneEnable
+
+        totalEnable: totalPaymentEnable
+    }
+
+
 
 
     Text {

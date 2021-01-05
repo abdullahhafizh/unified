@@ -516,6 +516,12 @@ Base{
     }
 
     function process_selected_payment(channel){
+        if (channel=='MULTI_QR'){
+            press = '0';
+            select_payment.close();
+            select_qr_provider.open();
+            return;
+        }
         var details = {
             payment: channel,
             shop_type: 'ppob',
@@ -874,6 +880,24 @@ Base{
         calledFrom: 'global_input_number'
         _cashEnable: cashEnable
         _cardEnable: cardEnable
+        _qrMultiEnable: true
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        _qrShopeeEnable: qrShopeeEnable
+        _qrJakoneEnable: qrJakoneEnable
+        totalEnable: totalPaymentEnable
+        z: 99
+    }
+
+    SelectQRProviderPopupNotif{
+        id: select_qr_provider
+        visible: false
+        calledFrom: 'global_input_number'
+        _cashEnable: false
+        _cardEnable: false
+        _qrMultiEnable: false
         _qrOvoEnable: qrOvoEnable
         _qrDanaEnable: qrDanaEnable
         _qrGopayEnable: qrGopayEnable
