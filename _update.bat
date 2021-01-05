@@ -2,6 +2,6 @@
 pip install --upgrade sentry-sdk
 pip list
 git config http.sslVerify false
-git pull origin master
+git pull --all
 exit
 
