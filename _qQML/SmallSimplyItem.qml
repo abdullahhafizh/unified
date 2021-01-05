@@ -8,6 +8,7 @@ Rectangle {
     property bool imageMaxMode: false
     property var itemName: 'QRIS Payment'
     property bool isSelected: false
+    property bool isActivated: true
 
     width: 359
     height: 183
@@ -59,6 +60,30 @@ Rectangle {
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"
+    }
+
+    Rectangle {
+        id: closed_rectangle
+        height: 50
+        width: parent.width
+        visible: !isActivated
+        color: "black"
+        anchors.verticalCenterOffset: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        opacity: .5
+    }
+
+    Text {
+        visible: closed_rectangle.visible
+        anchors.fill: closed_rectangle
+        text: qsTr("CLOSED")
+        font.pixelSize: 35
+        color: "white"
+        font.bold: true
+        font.family:"Ubuntu"
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
     }
 
     function set_active(){

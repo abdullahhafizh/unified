@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.0
 
 Rectangle {
+    property bool isActivated: true
     property bool modeReverse: false
     property var color_: (modeReverse) ? "white" : "black"
     property var img_:"source/phone_qr.png"
@@ -53,6 +54,30 @@ Rectangle {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
+        font.family:"Ubuntu"
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+    }
+
+    Rectangle {
+        id: closed_rectangle
+        height: 50
+        width: parent.width
+        visible: !isActivated
+        color: "black"
+        anchors.verticalCenterOffset: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        opacity: .5
+    }
+
+    Text {
+        visible: closed_rectangle.visible
+        anchors.fill: closed_rectangle
+        text: qsTr("CLOSED")
+        font.pixelSize: 35
+        color: "white"
+        font.bold: true
         font.family:"Ubuntu"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter

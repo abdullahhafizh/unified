@@ -161,9 +161,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/ovo_logo.jpeg"
             itemName: "O V O"
-            modeReverse: true
-            visible: _qrOvoEnable
+            isActivated: _qrOvoEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrOvoEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "OVO" Payment Method');
@@ -196,9 +197,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/linkaja_logo.jpeg"
             itemName: "Linkaja"
-            modeReverse: true
-            visible: _qrLinkAjaEnable
+            isActivated: _qrLinkAjaEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrLinkAjaEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "LINKAJA" Payment Method');
@@ -231,9 +233,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/gopay_logo.png"
             itemName: "GOPAY"
-            modeReverse: true
-            visible: _qrGopayEnable
+            isActivated: _qrGopayEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrGopayEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "GOPAY" Payment Method');
@@ -266,9 +269,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/dana_logo.jpeg"
             itemName: "DANA"
-            modeReverse: true
-            visible: _qrDanaEnable
+            isActivated: _qrDanaEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrDanaEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DANA" Payment Method');
@@ -301,9 +305,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/shopee_logo.jpg"
             itemName: "SHOPEEPAY"
-            modeReverse: true
-            visible: _qrShopeeEnable
+            isActivated: _qrShopeeEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrShopeeEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
@@ -336,9 +341,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/jakone_logo.jpg"
             itemName: "JAKONE"
-            modeReverse: true
-            visible: _qrJakoneEnable
+            isActivated: _qrJakoneEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrJakoneEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "JAKONE" Payment Method');

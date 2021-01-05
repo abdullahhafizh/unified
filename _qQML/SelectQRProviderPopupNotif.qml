@@ -189,8 +189,10 @@ Rectangle{
             img_: "source/ovo_logo.jpeg"
             text_: qsTr("O V O")
             text2_: qsTr("")
-            visible: _qrOvoEnable
+            isActivated: _qrOvoEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrOvoEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "OVO" Payment Method');
@@ -222,8 +224,10 @@ Rectangle{
             img_: "source/linkaja_logo.jpeg"
             text_: qsTr("LinkAja")
             text2_: qsTr("")
-            visible: _qrLinkAjaEnable
+            isActivated: _qrLinkAjaEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrLinkAjaEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "LINKAJA" Payment Method');
@@ -255,8 +259,10 @@ Rectangle{
             img_: "source/gopay_logo.png"
             text_: qsTr("GOPAY")
             text2_: qsTr("")
-            visible: _qrGopayEnable
+            isActivated: _qrGopayEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrGopayEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "GOPAY" Payment Method');
@@ -288,8 +294,10 @@ Rectangle{
             img_: "source/dana_logo.jpeg"
             text_: qsTr("DANA")
             text2_: qsTr("")
-            visible: _qrDanaEnable
+            isActivated: _qrDanaEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrDanaEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DANA" Payment Method');
@@ -321,8 +329,10 @@ Rectangle{
             img_: "source/shopee_logo.jpg"
             text_: qsTr("SHOPEEPAY")
             text2_: qsTr("")
-            visible: _qrShopeeEnable
+            isActivated: _qrShopeeEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrShopeeEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
@@ -354,8 +364,10 @@ Rectangle{
             img_: "source/jakone_logo.jpg"
             text_: qsTr("JAKONE")
             text2_: qsTr("")
-            visible: _qrJakoneEnable
+            isActivated: _qrJakoneEnable
+            modeReverse: false
             MouseArea{
+                enabled: _qrJakoneEnable
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "JAKONE" Payment Method');
