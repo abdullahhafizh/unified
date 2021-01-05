@@ -13,6 +13,7 @@ Rectangle{
     property var calledFrom: 'prepaid_topup_denom'
     property bool _cashEnable: false
     property bool _cardEnable: false
+    property bool _qrMultiEnable: false
     property bool _qrOvoEnable: false
     property bool _qrDanaEnable: false
     property bool _qrGopayEnable: false
