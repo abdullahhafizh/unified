@@ -346,7 +346,7 @@ Base{
         console.log('transfer_balance_result', now, transfer);
         popup_loading.close();
         var result = transfer.split('|')[1];
-        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR', 'PENDING', 'MISSING_CHANNEL'].indexOf(result) > -1){
+        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR', 'PENDING', 'MISSING_CHANNEL', 'TOPUP_REFF_NO_PENDING_SUCCESS'].indexOf(result) > -1){
             details.refund_status = 'PENDING';
         }
         if (result=='SUCCESS'){
@@ -942,9 +942,9 @@ Base{
             // _SLOT.start_fake_update_dki(cardNo, amount);
             _SLOT.start_topup_online_dki(amount, structId)
         } else if (provider.indexOf('BRI') > -1){
-            _SLOT.start_topup_online_bri(cardNo, amount);
+            _SLOT.start_topup_online_bri(cardNo, amount, structId);
         } else if (provider.indexOf('BCA') > -1){
-            _SLOT.start_topup_online_bca(cardNo, amount);
+            _SLOT.start_topup_online_bca(cardNo, amount, structId);
         }
     }
 

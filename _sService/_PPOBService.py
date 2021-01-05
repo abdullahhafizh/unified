@@ -348,6 +348,11 @@ def global_refund_balance(payload, store_only=False):
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
         # PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|DUPLICATE_REFF_NO')
         return
+    if _Common.exist_temp_data(payload['reff_no']):
+        prev_data = _Common.load_from_temp_data(payload['reff_no'])
+        LOGGER.warning((str(payload), str(prev_data), 'TOPUP_REFF_NO_PENDING_SUCCESS'))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|TOPUP_REFF_NO_PENDING_SUCCESS')
+        return
     if _Common.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
         if not store_only:

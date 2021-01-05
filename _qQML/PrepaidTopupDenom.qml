@@ -197,6 +197,12 @@ Base{
     function process_selected_payment(method){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('process_selected_payment', now, method);
+        if (method=='MULTI_QR'){
+            press = '0';
+            select_payment.close();
+            select_qr_provider.open();
+            return;
+        }
         selectedPayment = method;
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
         press = '0';
@@ -944,6 +950,28 @@ Base{
         calledFrom: 'prepaid_topup_denom'
         _cashEnable: cashEnable
         _cardEnable: cardEnable
+        _qrMultiEnable: true
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        _qrShopeeEnable: qrShopeeEnable
+        _qrJakoneEnable: qrJakoneEnable
+
+        totalEnable: totalPaymentEnable
+    }
+
+    SelectPaymentQR{
+        id: select_qr_provider
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: false
+//        visible: true
+        calledFrom: 'prepaid_topup_denom'
+        _cashEnable: false
+        _cardEnable: false
+        _qrMultiEnable: false
         _qrOvoEnable: qrOvoEnable
         _qrDanaEnable: qrDanaEnable
         _qrGopayEnable: qrGopayEnable

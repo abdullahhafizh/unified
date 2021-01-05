@@ -6,8 +6,8 @@ import "config.js" as CONF
 
 
 Rectangle{
-    id:select_payment_popup
-    property var title_text: "Pilih Metode Pembayaran"
+    id:select_payment_qr
+    property var title_text: "Pilih Provider QR"
     property bool modeReverse: true
     property var calledFrom: 'prepaid_topup_denom'
     property bool _cashEnable: false
@@ -24,6 +24,7 @@ Rectangle{
     color: 'transparent'
     height: 350
     width: parseInt(SCREEN.size.width)
+//    width: 1920
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
@@ -49,7 +50,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_cash
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/cash black.png"
@@ -84,7 +85,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_debit
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/credit card black.png"
@@ -120,7 +121,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_multi_qr
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
@@ -155,13 +156,13 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_ovo
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' :"QR OVO"
+            sourceImage: "source/ovo_logo.jpeg"
+            itemName: "O V O"
             modeReverse: true
-            visible: _qrOvoEnable && !_qrMultiEnable
+            visible: _qrOvoEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -190,13 +191,13 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_linkaja
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS LinkAja"
+            sourceImage: "source/linkaja_logo.jpeg"
+            itemName: "Linkaja"
             modeReverse: true
-            visible: _qrLinkAjaEnable && !_qrMultiEnable
+            visible: _qrLinkAjaEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -225,13 +226,13 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_gopay
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Gopay"
+            sourceImage: "source/gopay_logo.png"
+            itemName: "GOPAY"
             modeReverse: true
-            visible: _qrGopayEnable && !_qrMultiEnable
+            visible: _qrGopayEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -260,13 +261,13 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_dana
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Dana"
+            sourceImage: "source/dana_logo.jpeg"
+            itemName: "DANA"
             modeReverse: true
-            visible: _qrDanaEnable && !_qrMultiEnable
+            visible: _qrDanaEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -295,13 +296,13 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_shopeepay
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
+            sourceImage: "source/shopee_logo.jpg"
+            itemName: "SHOPEEPAY"
             modeReverse: true
-            visible: _qrShopeeEnable && !_qrMultiEnable
+            visible: _qrShopeeEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -330,13 +331,13 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_jakone
-            width: 359
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS JakOne"
+            sourceImage: "source/jakone_logo.jpg"
+            itemName: "JAKONE"
             modeReverse: true
-            visible: _qrJakoneEnable && !_qrMultiEnable
+            visible: _qrJakoneEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -380,12 +381,12 @@ Rectangle{
     }
 
     function open(){
-        select_payment_popup.visible = true;
+        select_payment_qr.visible = true;
     }
 
 
     function close(){
-        select_payment_popup.visible = false;
+        select_payment_qr.visible = false;
     }
 
 

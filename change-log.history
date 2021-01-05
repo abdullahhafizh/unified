@@ -1,3 +1,9 @@
+11.9.J-GLOBAL:
+- Try Add Multi Qr,
+- Handle Topup BRI Failed Ubal Refund,
+- Handle BNI Deposit Ubal 404,
+- ...
+
 11.9.I-GLOBAL:
 - Re-enable Failed FS Repload,
 - Force Enable BNI Auto Activation,

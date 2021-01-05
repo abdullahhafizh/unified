@@ -499,9 +499,11 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
             LOGGER.debug((_param, bank, mode, response, result))
             if response == 0 and '|' in result:
+                card_no = result.split('|')[0]
+                # _Common.remove_temp_data(card_no)
                 return {
                     'bank': bank,
-                    'card_no': result.split('|')[0],
+                    'card_no': card_no,
                     'topup_amount': result.split('|')[1],
                     'last_balance': result.split('|')[2],
                 }
@@ -930,12 +932,14 @@ def update_balance_online(bank):
             param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
             response, result = _Command.send_request(param=param, output=None)
             if response == 0 and '|' in result:
+                card_no = result.split('|')[0]
                 output = {
                     'bank': bank,
-                    'card_no': result.split('|')[0],
+                    'card_no': card_no,
                     'topup_amount': result.split('|')[1],
                     'last_balance': result.split('|')[2],
                 }
+                # _Common.remove_temp_data(card_no)
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
                 if BRI_NO_PENDING in result:
@@ -990,14 +994,14 @@ def start_topup_online_dki(amount, trxid):
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
 
-def start_topup_online_bri(cardno, amount):
+def start_topup_online_bri(cardno, amount, trxid):
     bank = 'BRI'
-    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount,))
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, trxid,))
 
 
-def start_topup_online_bca(cardno, amount,):
+def start_topup_online_bca(cardno, amount, trxid):
     bank = 'BCA'
-    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount,))
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, trxid,))
 
 
 LAST_MANDIRI_C2C_SUCCESS_RESULT = None
@@ -1049,16 +1053,11 @@ def topup_online(bank, cardno, amount, trxid=''):
             }
             # pending_result = _MDSService.mds_online_topup(bank, _param)
             pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
-            # pending_result = {
-                        #   "amount":"30000",
-                        #   "card_no":"7546990000025583",
-                        #   "reff_no":"20181207180324000511",
-                        #   "provider_id":"BNI_TAPCASH",
-                        #   "trx_pin":"12345"
-                        #   }
             if not pending_result:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                 return
+            _Common.store_to_temp_data(trxid, json.dumps(_param))
+            # _Common.update_to_temp_data('bri-success-pending', trxid)
             _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
             update_result = update_balance(_param, bank='BRI', mode='TOPUP')
             if not update_result:
@@ -1118,13 +1117,6 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not _Common.exist_temp_data(cardno):
                 pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
                 # pending_result = _MDSService.mds_online_topup(bank, _param)
-                # pending_result = {
-                            #   "amount":"30000",
-                            #   "card_no":"7546990000025583",
-                            #   "reff_no":"20181207180324000511",
-                            #   "provider_id":"BNI_TAPCASH",
-                            #   "trx_pin":"12345"
-                            #   }
                 if not pending_result:
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                     return

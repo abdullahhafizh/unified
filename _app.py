@@ -661,9 +661,9 @@ class SlotHandler(QObject):
         _TopupService.start_check_online_topup(mode, payload)
     start_check_online_topup = pyqtSlot(str, str)(start_check_online_topup)
 
-    def start_topup_online_bri(self, cardno, amount):
-        _TopupService.start_topup_online_bri(cardno, amount)
-    start_topup_online_bri = pyqtSlot(str, str)(start_topup_online_bri)
+    def start_topup_online_bri(self, cardno, amount, trxid):
+        _TopupService.start_topup_online_bri(cardno, amount, trxid)
+    start_topup_online_bri = pyqtSlot(str, str, str)(start_topup_online_bri)
 
     def start_do_c2c_update_fee(self):
         _SettlementService.start_do_c2c_update_fee()
@@ -696,9 +696,9 @@ class SlotHandler(QObject):
     start_topup_online_dki = pyqtSlot(str, str)(start_topup_online_dki)
 
 
-    def start_topup_online_bca(self, cardno, amount):
-        _TopupService.start_topup_online_bca(cardno, amount)
-    start_topup_online_bca = pyqtSlot(str, str)(start_topup_online_bca)
+    def start_topup_online_bca(self, cardno, amount, trxid):
+        _TopupService.start_topup_online_bca(cardno, amount, trxid)
+    start_topup_online_bca = pyqtSlot(str, str, str)(start_topup_online_bca)
 
 
 

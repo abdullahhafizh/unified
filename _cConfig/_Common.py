@@ -243,7 +243,6 @@ def remove_temp_data(temp):
     temp_file = os.path.join(TEMP_FOLDER, temp)
     if os.path.isfile(temp_file):
         os.remove(temp_file)
-        
 
 
 def exist_temp_data(temp):
