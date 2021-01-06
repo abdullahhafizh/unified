@@ -1194,7 +1194,7 @@ if __name__ == '__main__':
         # sleep(.5)
         # print("pyt: Triggering BRI Balance Validation...")
         pass
-    if _QPROX.INIT_BCA is True or _Common.BCA_TOPUP_ONLINE is True:
+    if _QPROX.INIT_BCA is True:
         # TODO Add Special Handler For BCA Initiation
         sleep(1)
         print("pyt: Triggering Topup BCA Init Config...")

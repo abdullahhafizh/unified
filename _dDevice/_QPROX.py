@@ -295,7 +295,7 @@ INIT_STATUS = False
 INIT_MANDIRI = False
 INIT_BNI = False
 INIT_BRI = False
-INIT_BCA = False
+INIT_BCA = True
 INIT_LIST = []
 
 
@@ -953,6 +953,7 @@ def init_config_bca():
         _Common.BCA_TOPUP_ONLINE = True
         LOGGER.info(('BCA_TOPUP_ONLINE', _Common.BCA_TOPUP_ONLINE))
     else:
+        INIT_BCA = False
         _Common.NFC_ERROR = 'INIT_CONFIG_BCA_TOPUP_ERROR'
         _Common.BCA_TOPUP_ONLINE = False
         LOGGER.warning(('BCA_TOPUP_ONLINE', _Common.BCA_TOPUP_ONLINE))
