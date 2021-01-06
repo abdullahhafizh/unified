@@ -77,7 +77,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -112,8 +111,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
-
                 }
             }
         }
@@ -148,7 +145,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -183,7 +179,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -218,7 +213,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -253,7 +247,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -288,7 +281,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -323,7 +315,6 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
@@ -358,11 +349,9 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
                 }
             }
         }
-
     }
 
 

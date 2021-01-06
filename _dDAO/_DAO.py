@@ -640,10 +640,11 @@ def truncate_cashbox():
 
 def insert_cashbox(amount='0'):
     param = {
-        'amount': int(amount)
+        'amount': int(amount),
+        'createdAt': _Helper.time_string()
     }
-    sql = " INSERT INTO Cashbox (amount) VALUES (:amount) "
-    return _Database.insert_update(sql=sql, parameter=param)
+    sql = " INSERT INTO Cashbox (amount, createdAt) VALUES (:amount, :createdAt) "
+    return _Database.insert_update(sql=sql, parameter=param, log=True)
 
 
 def cashbox_status():

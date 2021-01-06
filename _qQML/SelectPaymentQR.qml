@@ -159,7 +159,7 @@ Rectangle{
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/ovo_logo.jpeg"
+            sourceImage: "source/qr_logo/ovo_white_logo.png"
             itemName: "O V O"
             isActivated: _qrOvoEnable
             modeReverse: false
@@ -195,7 +195,7 @@ Rectangle{
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/linkaja_logo.jpeg"
+            sourceImage: "source/qr_logo/linkaja_white_logo.png"
             itemName: "Linkaja"
             isActivated: _qrLinkAjaEnable
             modeReverse: false
@@ -231,7 +231,7 @@ Rectangle{
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/gopay_logo.png"
+            sourceImage: "source/qr_logo/gopay_white_logo.png"
             itemName: "GOPAY"
             isActivated: _qrGopayEnable
             modeReverse: false
@@ -267,7 +267,7 @@ Rectangle{
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/dana_logo.jpeg"
+            sourceImage: "source/qr_logo/dana_white_logo.png"
             itemName: "DANA"
             isActivated: _qrDanaEnable
             modeReverse: false
@@ -303,7 +303,7 @@ Rectangle{
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/shopee_logo.jpg"
+            sourceImage: "source/qr_logo/shopeepay_white_logo.png"
             itemName: "SHOPEEPAY"
             isActivated: _qrShopeeEnable
             modeReverse: false
@@ -339,7 +339,7 @@ Rectangle{
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/jakone_logo.jpg"
+            sourceImage: "source/qr_logo/jakone_white_logo.png"
             itemName: "JAKONE"
             isActivated: _qrJakoneEnable
             modeReverse: false

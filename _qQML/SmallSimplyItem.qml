@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: rectangle
-    property var sourceImage:"source/phone_qr.png"
+    property var sourceImage:"source/qr_logo/linkaja_white_logo.png"
     property bool modeReverse: true
     property bool imageMaxMode: false
     property var itemName: 'QRIS Payment'

@@ -1301,8 +1301,12 @@ def generate_collection_data():
         __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
         __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         __['all_cashbox'] = _DAO.cashbox_status()    
-        cashbox_history = _DAO.cashbox_history()  
-        __['all_cashbox_history'] = cashbox_history[0]['__'] if not _Helper.empty(cashbox_history[0]['__']) else ''
+        __['all_cashbox_history'] = ''
+        if int(__['all_cashbox']) > 0:
+            cashbox_history = _DAO.cashbox_history()  
+            if len(cashbox_history) > 0:
+                if '__' in cashbox_history[0].keys():
+                    __['all_cashbox_history'] = cashbox_history[0]['__']
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
         __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
@@ -1347,6 +1351,7 @@ def generate_collection_data():
         __['trx_list'] = []
         __['total_notes'] = 0
         __notes = []
+        # {'trx_top20k': 187, 'slot3': 25, 'all_cash': 14930000, 'amt_xdenom': 0, 'slot4': 0, 'amt_top50k': 4400000, 'amt_top20k': 3740000, 'trx_xdenom': 0, 'trx_top200k': 0, 'trx_top50k': 88, 'trx_top10k': 307, 'amt_top200k': 0, 'slot1': 19, 'amt_top10k': 3070000, 'amt_top100k': 2700000, 'trx_top100k': 27, 'slot2': 14, 'all_cashbox': 0}
         __all_payment_notes = _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 ')
         if len(__all_payment_notes) > 0:
             for money in __all_payment_notes:

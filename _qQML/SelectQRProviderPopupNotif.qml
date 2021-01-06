@@ -186,7 +186,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/ovo_logo.jpeg"
+            img_: "source/qr_logo/ovo_white_logo.png"
             text_: qsTr("O V O")
             text2_: qsTr("")
             isActivated: _qrOvoEnable
@@ -221,7 +221,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/linkaja_logo.jpeg"
+            img_: "source/qr_logo/linkaja_white_logo.png"
             text_: qsTr("LinkAja")
             text2_: qsTr("")
             isActivated: _qrLinkAjaEnable
@@ -256,7 +256,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/gopay_logo.png"
+            img_: "source/qr_logo/gopay_white_logo.png"
             text_: qsTr("GOPAY")
             text2_: qsTr("")
             isActivated: _qrGopayEnable
@@ -291,7 +291,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/dana_logo.jpeg"
+            img_: "source/qr_logo/dana_white_logo.png"
             text_: qsTr("DANA")
             text2_: qsTr("")
             isActivated: _qrDanaEnable
@@ -326,7 +326,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/shopee_logo.jpg"
+            img_: "source/qr_logo/shopeepay_white_logo.png"
             text_: qsTr("SHOPEEPAY")
             text2_: qsTr("")
             isActivated: _qrShopeeEnable
@@ -361,7 +361,7 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/jakone_logo.jpg"
+            img_: "source/qr_logo/jakone_white_logo.png"
             text_: qsTr("JAKONE")
             text2_: qsTr("")
             isActivated: _qrJakoneEnable
