@@ -1127,6 +1127,8 @@ def topup_online(bank, cardno, amount, trxid=''):
                 if response_reversal == 0 and '|' in result_reversal:
                     LOGGER.debug(('Success BCA Reversal For This Card Number', cardno, result_reversal))
                     _Common.remove_temp_data(cardno)
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+                    return
                 else:
                     LOGGER.warning(('Failed BCA Reversal For This Card Number', cardno, result_reversal))
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
