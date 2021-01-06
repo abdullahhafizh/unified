@@ -126,7 +126,7 @@ MID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'mid^topup', '885000942678')
 TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 
-def bca_topup_online():
+def bca_topup_online_validation():
     if '-' in MID_TOPUP_BCA:
         return False
     if '-' in TID_TOPUP_BCA:
@@ -139,7 +139,7 @@ def bca_topup_online():
         return False
     return True
 
-BCA_TOPUP_ONLINE = bca_topup_online()
+BCA_TOPUP_ONLINE = False
 
 MID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'mid^topup', '---')
 TID_TOPUP_ONLINE_DKI = _ConfigParser.get_set_value('DKI', 'tid^topup', '---')
