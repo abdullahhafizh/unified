@@ -1052,11 +1052,13 @@ def topup_online(bank, cardno, amount, trxid=''):
                 'time': _Helper.epoch('MDS')
             }
             # pending_result = _MDSService.mds_online_topup(bank, _param)
-            pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
-            if not pending_result:
-                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-                return
-            _Common.store_to_temp_data(trxid, json.dumps(_param))
+            if _Common.LAST_BRI_ONLINE_PENDING != trxid:
+                pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
+                if not pending_result:
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+                    return
+                _Common.LAST_BRI_ONLINE_PENDING = trxid
+                _Common.store_to_temp_data(trxid, json.dumps(_param))
             # _Common.update_to_temp_data('bri-success-pending', trxid)
             _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
             update_result = update_balance(_param, bank='BRI', mode='TOPUP')
@@ -1114,12 +1116,13 @@ def topup_online(bank, cardno, amount, trxid=''):
                 'invoice_no': trxid,
                 'time': _Helper.epoch('MDS')
             }
-            if not _Common.exist_temp_data(cardno):
+            if not _Common.exist_temp_data(cardno) and _Common.LAST_BCA_ONLINE_PENDING != trxid:
                 pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
                 # pending_result = _MDSService.mds_online_topup(bank, _param)
                 if not pending_result:
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                     return
+                _Common.LAST_BCA_ONLINE_PENDING = trxid
             else:
                 LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
                 param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
