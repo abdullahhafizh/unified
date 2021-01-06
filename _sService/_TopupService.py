@@ -1052,12 +1052,11 @@ def topup_online(bank, cardno, amount, trxid=''):
                 'time': _Helper.epoch('MDS')
             }
             # pending_result = _MDSService.mds_online_topup(bank, _param)
-            if _Common.LAST_BRI_ONLINE_PENDING != trxid:
+            if not _Common.exist_temp_data(trxid):
                 pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
                 if not pending_result:
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                     return
-                _Common.LAST_BRI_ONLINE_PENDING = trxid
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
             # _Common.update_to_temp_data('bri-success-pending', trxid)
             _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
@@ -1092,6 +1091,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             #        'topup_amount': result.split('|')[1],
             #        'last_balance': result.split('|')[2],
             #     }
+            _Common.remove_temp_data(trxid)
             other_channel_topup = str(0)
             if str(amount) != str(update_result['topup_amount']):
                 other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
@@ -1117,13 +1117,13 @@ def topup_online(bank, cardno, amount, trxid=''):
                 'time': _Helper.epoch('MDS')
             }
             if not _Common.exist_temp_data(cardno):
-                if _Common.LAST_BCA_ONLINE_PENDING != trxid:
+                if not _Common.exist_temp_data(trxid):
                     pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
                     # pending_result = _MDSService.mds_online_topup(bank, _param)
                     if not pending_result:
                         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                         return
-                    _Common.LAST_BCA_ONLINE_PENDING = trxid
+                    _Common.store_to_temp_data(trxid, json.dumps(_param))
             else:
                 LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
                 param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
@@ -1142,6 +1142,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not update_result:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
                 return
+            _Common.remove_temp_data(trxid)
                 # Keep Push Data To MDS as Failure
                 # failed_data = {
                 #     "invoice_number": _param['invoice_no'],
