@@ -944,7 +944,7 @@ def init_config_bca():
     #     LOGGER.warning(('BCA Topup Config Init Failed, Wrong TID/MID Topup', _Common.MID_TOPUP_BCA, _Common.TID_TOPUP_BCA))
     #     return
     if not _Common.bca_topup_online_validation():
-        LOGGER.warning(('BCA Topup Config Init Failed, Wrong TID/MID Topup', _Common.MID_TOPUP_BCA, _Common.TID_TOPUP_BCA))
+        LOGGER.warning(('BCA Topup Config Init Failed, Wrong TID/MID Topup', '000885'+_Common.MID_TOPUP_BCA, _Common.TID_TOPUP_BCA))
         return
     param = QPROX['CONFIG_ONLINE_BCA'] + '|' + _Common.TID_TOPUP_BCA + '|' + _Common.MID_TOPUP_BCA + '|'
     response, result = _Command.send_request(param=param, output=None)
