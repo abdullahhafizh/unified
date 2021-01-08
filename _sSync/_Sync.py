@@ -55,10 +55,10 @@ def sync_machine(url, param):
                 # LOGGER.info((__url, str(__param)))
                 # print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
-            if _Common.DAILY_SYNC_SUMMARY_TIME in _Helper.time_string():
+            if _Common.DAILY_SYNC_SUMMARY_TIME == _Helper.time_string('%H:%M'):
                 send_daily_summary()
             # Add Daily Reboot Time Local Setting
-            if _Common.DAILY_REBOOT_TIME in _Helper.time_string():
+            if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
                 LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
                 sleep(30)
                 _KioskService.execute_command('shutdown -r -f -t 0')
