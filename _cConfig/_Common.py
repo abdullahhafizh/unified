@@ -129,6 +129,8 @@ SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 def bca_topup_online_validation():
     if '-' in MID_TOPUP_BCA:
         return False
+    if not MID_TOPUP_BCA.isdigit():
+        return False
     if '-' in TID_TOPUP_BCA:
         return False
     if len(MID_TOPUP_BCA) != 9:
