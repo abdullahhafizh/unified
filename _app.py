@@ -911,7 +911,7 @@ def check_db(data_name):
 
 def kill_explorer():
     if INITIAL_SETTING['dev_mode'] is False:
-        # os.system('taskkill /f /im explorer.exe')
+        os.system('taskkill /f /im explorer.exe')
         pass
     else:
         LOGGER.info('Development Mode is ON')
