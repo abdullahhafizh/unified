@@ -517,30 +517,30 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
         try:
             response, result = _Command.send_request(param=_param, output=None)
             # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
-            # "Response":"161037084533|0145000100018635|20000|298500|01010124014500010001863500298500000200002021011105192209013149124254455354444556454C5A5359423031885000942678845E374B6E1B1C4B8A025E180B1B0202180B1C1B373D4E1B5E6E026E27276E5E1C4B4B5E4E4B4B8A0B1C4E378A8A4B278A4B1B1C4E5E02023D1B4B27370B5E378A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E278A4B844E378482820B3D828A0B840B4E274B8A6E3718820B020B0B3D4B8A848A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4EF4C2998190093B0DB181","ErrorDesc":"Sukses"}
+            # "Response":"0145000100018635|20000|298500|01010124014500010001863500298500000200002021011105192209013149124254455354444556454C5A5359423031885000942678845E374B6E1B1C4B8A025E180B1B0202180B1C1B373D4E1B5E6E026E27276E5E1C4B4B5E4E4B4B8A0B1C4E378A8A4B278A4B1B1C4E5E02023D1B4B27370B5E378A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E278A4B844E378482820B3D828A0B840B4E274B8A6E3718820B020B0B3D4B8A848A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4EF4C2998190093B0DB181","ErrorDesc":"Sukses"}
             LOGGER.debug((_param, bank, mode, response, result))
             if response == 0 and '|' in result:
                 return {
                     'bank': bank,
-                    'refference_id': result.split('|')[0],
-                    'card_no': result.split('|')[1],
-                    'topup_amount': result.split('|')[2],
-                    'last_balance': result.split('|')[3],
+                    # 'refference_id': result.split('|')[0],
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
                 }
             else:
                 # 161037128387|BCATopup2_Failed_Card_Reversal_Failed
-                service_response = json.loads(result)
-                if 'Response' in service_response.keys():
-                    if '|' in service_response['Response']:
-                        result = service_response['Response'].split('|')[1]
-                        LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
-                        LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
-                # if BCA_KEY_REVERSAL in result:
+                # service_response = json.loads(result)
+                # if 'Response' in service_response.keys():
+                #     if '|' in service_response['Response']:
+                #         result = service_response['Response'].split('|')[1]
+                #         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
+                #         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
+                if BCA_KEY_REVERSAL in result:
                     # Store Local Card Number Here For Futher Reversal Process
-                    # previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
-                    # previous_card_data = _QPROX.LAST_BALANCE_CHECK
+                    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+                    previous_card_data = _QPROX.LAST_BALANCE_CHECK
                     # previous_card_data['refference_id'] = LAST_BCA_REFF_ID
-                    # _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
+                    _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
                 _Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
@@ -863,7 +863,7 @@ def check_update_balance_bni(card_info):
         return False
 
 
-BCA_KEY_REVERSAL = 'BCATopup2_Failed_Card_Reversal_Failed' #'BCATopup1_Failed'
+BCA_KEY_REVERSAL = 'UpdateAPI_Failed_Reversal_Success' #'BCATopup1_Failed'
 
 
 def update_balance_online(bank):
@@ -969,14 +969,15 @@ def update_balance_online(bank):
                 output = {
                     'bank': bank,
                     'card_no': card_no,
-                    'refference_id': result.split('|')[0],
-                    'topup_amount': result.split('|')[2],
-                    'last_balance': result.split('|')[3],
+                    # 'refference_id': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
                 }
                 _Common.remove_temp_data(card_no)
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
                 if GENERAL_NO_PENDING in result:
+                    _Common.remove_temp_data(card_no)
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
                     if BCA_KEY_REVERSAL in result:
@@ -1156,12 +1157,18 @@ def topup_online(bank, cardno, amount, trxid=''):
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                     return
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
+            # if _Common.exist_temp_data(cardno):
+            #     _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+            # else:
+            #     _param = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             update_result = update_balance(_param, bank='BCA', mode='TOPUP')
             if not update_result:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
                 return
             _Common.remove_temp_data(trxid)
+            if _Common.exist_temp_data(cardno):
+                _Common.remove_temp_data(cardno)
                 # Keep Push Data To MDS as Failure
                 # failed_data = {
                 #     "invoice_number": _param['invoice_no'],
