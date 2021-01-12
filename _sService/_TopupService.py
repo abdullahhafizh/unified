@@ -535,12 +535,12 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                         result = service_response['Response'].split('|')[1]
                         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
                         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
-                if BCA_KEY_REVERSAL in result:
+                # if BCA_KEY_REVERSAL in result:
                     # Store Local Card Number Here For Futher Reversal Process
-                    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
-                    previous_card_data = _QPROX.LAST_BALANCE_CHECK
-                    previous_card_data['refference_id'] = LAST_BCA_REFF_ID
-                    _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
+                    # previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+                    # previous_card_data = _QPROX.LAST_BALANCE_CHECK
+                    # previous_card_data['refference_id'] = LAST_BCA_REFF_ID
+                    # _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
                 _Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
@@ -1128,27 +1128,34 @@ def topup_online(bank, cardno, amount, trxid=''):
                 'invoice_no': trxid,
                 'time': _Helper.epoch('MDS')
             }
-            if not _Common.exist_temp_data(cardno):
-                if not _Common.exist_temp_data(trxid):
-                    pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
-                    # pending_result = _MDSService.mds_online_topup(bank, _param)
-                    if not pending_result:
-                        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
-                        return
-                    _Common.store_to_temp_data(trxid, json.dumps(_param))
-            else:
-                LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
-                param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + LAST_BCA_REFF_ID + '|' 
-                response_reversal, result_reversal = _Command.send_request(param=param_reversal, output=None)
-                if response_reversal == 0 and '|' in result_reversal:
-                    LOGGER.debug(('Success BCA Reversal For This Card Number', cardno, result_reversal))
-                    _Common.remove_temp_data(cardno)
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+            # if not _Common.exist_temp_data(cardno):
+            #     if not _Common.exist_temp_data(trxid):
+            #         pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
+            #         # pending_result = _MDSService.mds_online_topup(bank, _param)
+            #         if not pending_result:
+            #             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+            #             return
+            #         _Common.store_to_temp_data(trxid, json.dumps(_param))
+            # else:
+            #     LOGGER.debug(('Previous Failed BCA Reversal Detected For', cardno))
+            #     param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + LAST_BCA_REFF_ID + '|' 
+            #     response_reversal, result_reversal = _Command.send_request(param=param_reversal, output=None)
+            #     if response_reversal == 0 and '|' in result_reversal:
+            #         LOGGER.debug(('Success BCA Reversal For This Card Number', cardno, result_reversal))
+            #         _Common.remove_temp_data(cardno)
+            #         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+            #         return
+            #     else:
+            #         LOGGER.warning(('Failed BCA Reversal For This Card Number', cardno, result_reversal))
+            #         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+            #         return
+            if not _Common.exist_temp_data(trxid):
+                pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
+                # pending_result = _MDSService.mds_online_topup(bank, _param)
+                if not pending_result:
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
                     return
-                else:
-                    LOGGER.warning(('Failed BCA Reversal For This Card Number', cardno, result_reversal))
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
-                    return
+                _Common.store_to_temp_data(trxid, json.dumps(_param))
             _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             update_result = update_balance(_param, bank='BCA', mode='TOPUP')
             if not update_result:
