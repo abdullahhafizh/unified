@@ -1199,6 +1199,8 @@ if __name__ == '__main__':
         sleep(1)
         print("pyt: Triggering Topup BCA Init Config...")
         _QPROX.start_init_config_bca()
+        print("pyt: Triggering Topup BCA Reset Session...")
+        _TopupService.reset_bca_session()
     if _Common.EDC['mobile'] is True:
         sleep(1)
         print("pyt: [INFO] Re/Binding VM Machine Into EDC...")

@@ -1370,3 +1370,15 @@ def send_kiosk_status():
     data = _Common.kiosk_status_data()
     TP_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps(data))
     
+
+def reset_bca_session():
+    try:
+        param = {
+            'token': TOPUP_TOKEN,
+            'mid': TOPUP_MID,
+            'tid': TOPUP_TID
+        }
+        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bca/reset-session', param=param)
+        LOGGER.debug((str(status), str(response)))
+    except Exception as e:
+        LOGGER.warning((e))
