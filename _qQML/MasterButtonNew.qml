@@ -64,11 +64,11 @@ Rectangle {
         height: 50
         width: parent.width
         visible: !isActivated
-        color: "black"
+        color: "white"
         anchors.verticalCenterOffset: 25
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        opacity: .5
+        opacity: .8
     }
 
     Text {
@@ -76,7 +76,7 @@ Rectangle {
         anchors.fill: closed_rectangle
         text: qsTr("CLOSED")
         font.pixelSize: 35
-        color: "white"
+        color: "black"
         font.bold: true
         font.family:"Ubuntu"
         verticalAlignment: Text.AlignVCenter
