@@ -601,6 +601,9 @@ def update_summary_multikeys(keys=[], value=0, report_date=None):
     }
     sql = " UPDATE DailySummary SET "
     for key in keys:
+        if key in ['mandiri_deposit_last_balance', 'bni_deposit_last_balance']:
+            sql += ' '.join([key, '=', str(value)])
+            continue
         if key == keys[0]:
             sql += ' '.join([key, '=', key, '+', str(value)])
         else:

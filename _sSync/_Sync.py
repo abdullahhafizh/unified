@@ -80,8 +80,8 @@ def send_daily_summary():
     payload['last_stock_slot_3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
     payload['last_stock_slot_4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
     # Move Into Each Daily Summary
-    # payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
-    # payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET
+    payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
+    payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET
     url = _Common.BACKEND_URL + 'sync/daily-summary'
     if len(payload) > 0:
         _DAO.mark_today_report(_Common.TID)
