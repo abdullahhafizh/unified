@@ -312,7 +312,7 @@ def define_ads(a):
                 LOGGER.debug(("backup expired media : ", file_expired))
                 K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|BACKUP_EXPIRED_'+d.upper())
                 shutil.copy(file_expired, file_backup)
-                os.remove(file_backup)
+                os.remove(file_expired)
     __must_download = list(set(__playlist) - set(__current_list))
     while len(__must_download) > 0:
         for l in __must_download:
