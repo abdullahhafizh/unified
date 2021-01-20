@@ -220,6 +220,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             #Upload To Server
             _Common.upload_bni_wallet()
             _Common.TRIGGER_MANUAL_TOPUP = True
+            output['last_balance'] = samLastBalance
             return output
         else:
             _Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
