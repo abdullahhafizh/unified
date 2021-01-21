@@ -490,6 +490,10 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
+            if 'force_settlement' in p.keys():
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(MARGIN_LEFT, 0, '--FORCE SETTLEMENT MANDIRI--', 0, 0, 'C')
             # pdf.ln(small_space*4)
             # pdf.set_font(USED_FONT, 'B', regular_space)
             # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')

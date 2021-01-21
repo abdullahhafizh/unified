@@ -5,7 +5,6 @@ import "base_function.js" as FUNC
 import "screen.js" as SCREEN
 import "config.js" as CONF
 
-
 Base{
     id: general_payment_process
 
@@ -509,7 +508,7 @@ Base{
         abc.counter = 60;
         my_timer.restart();
         //========
-        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='C2C_FORCE_SETTLEMENT'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
+        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
             if (t=='MANDIRI_SAM_BALANCE_EXPIRED' && CONF.c2c_mode == 0) _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
@@ -555,6 +554,7 @@ Base{
             }
             // Do not return here to handle refund for failed topup response
         }
+        if (t=='C2C_FORCE_SETTLEMENT') details.force_settlement = 1;
         details.process_error = 1;
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';

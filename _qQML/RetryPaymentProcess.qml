@@ -388,8 +388,8 @@ Base{
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         } else {
             //Do Print If Only Status Payment is Changed
-            if (parseInt(receivedPayment) > parseInt(initialPayment))
-                _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+             if (parseInt(receivedPayment) > parseInt(initialPayment) || details.force_settlement == 1)
+                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
         }
         my_timer.stop();
@@ -510,7 +510,7 @@ Base{
 //        abc.counter = 60;
 //        my_timer.restart();
         //========
-        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='C2C_FORCE_SETTLEMENT'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
+        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
             if (t=='MANDIRI_SAM_BALANCE_EXPIRED' && CONF.c2c_mode == 0) _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
@@ -557,6 +557,7 @@ Base{
             }
             // Do not return here to handle refund for failed topup response
         }
+        if (t=='C2C_FORCE_SETTLEMENT') details.force_settlement = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
         details.process_error = 1;
         details.payment_error = 1;

@@ -662,7 +662,7 @@ def top_up_mandiri_correction(amount, trxid=''):
         last_balance = result.split('|')[0]  
     if LAST_BALANCE_CHECK['card_no'] != check_card_no:
         LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
         get_c2c_failure_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
@@ -682,7 +682,7 @@ def top_up_mandiri_correction(amount, trxid=''):
         parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
         LOGGER.warning((trxid, _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
         get_c2c_failure_settlement(amount, trxid)
 
 
