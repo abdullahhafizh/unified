@@ -1033,16 +1033,16 @@ def retry_topup_online_bca(amount, trxid):
     #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
     # }
     if not check_card_balance:
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
     if previous_card_no != check_card_balance['card_no']:
         LOGGER.warning(('BCA_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
     bca_card_info = _QPROX.bca_card_info()
     if bca_card_info is False:
         LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         return
     if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
         # Success Topup Here
