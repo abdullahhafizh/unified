@@ -1044,7 +1044,7 @@ def retry_topup_online_bca(amount, trxid):
         LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
         return
-    if int(amount) + int(previous_card_balance) = int(check_card_balance['balance']):
+    if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
         # Success Topup Here
         output = {
                 # 'prev_wallet': pending_result['prev_wallet'],
