@@ -387,7 +387,7 @@ Base{
             console.log('release_print', now, title, msg);
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         } else {
-            //Do Print If Only Status Payment is Changed
+            //Do Print If Only Status Payment is Changed Or Force Settlement
              if (parseInt(receivedPayment) > parseInt(initialPayment) || details.force_settlement == 1)
                  _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
@@ -1585,6 +1585,12 @@ Base{
                         if (CONF.c2c_mode == 1) amount = details.value;
                         var structId = details.shop_type + details.epoch.toString();
                         _SLOT.start_topup_mandiri_correction(amount, structId);
+                        popup_loading.open();
+                        break;
+                    case 'bca_correction':
+                        var topup_amount = getDenom.toString();
+                        var trxid = details.shop_type + details.epoch.toString();
+                        _SLOT.start_retry_topup_online_bca(topup_amount, trxid);
                         popup_loading.open();
                         break;
                     }

@@ -82,6 +82,7 @@ QPROX = {
     "UPDATE_BALANCE_ONLINE_BCA": "044", #BCA UBAL ONLINE TID, MID, Token
     "REVERSAL_ONLINE_BCA": "045", #BCA REVERSAL TID, MID, Token
     "CONFIG_ONLINE_BCA": "046", #BCA REVERSAL TID Topup BCA, MID Topup BCA
+    "BCA_CARD_INFO": "047",
 }
 
 
@@ -541,6 +542,54 @@ def check_card_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
     else:
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
+      
+
+def bca_card_info():
+    param = QPROX['BCA_CARD_INFO'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    LOGGER.debug((param, result))
+    if response == 0 and len(result) >= 512:
+        return result
+    else:
+        return False
+  
+
+def direct_card_balance():
+    param = QPROX['BALANCE'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    LOGGER.debug((param, result))
+    if response == 0 and '|' in result:
+        bank_type = result.split('|')[2].replace('#', '')
+        bank_name = FW_BANK.get(bank_type, 'N/A')
+        card_no = result.split('|')[1].replace('#', '')
+        if bank_type == '8':
+            bank_type = '0'
+        balance = result.split('|')[0]  
+        able_check_log = '1' if bank_name in _Common.ALLOWED_BANK_CHECK_CARD_LOG else '0'
+        output = {
+            'balance': balance,
+            'card_no': card_no,
+            'bank_type': bank_type,
+            'bank_name': bank_name,
+            # 'able_topup': result.split('|')[3].replace('#', ''),
+            'able_check_log': able_check_log,
+            'able_topup': '0000', #Force Allowed Topup For All Non BNI
+        }
+        # Special Handling For BNI Tapcash
+        if bank_name == 'MANDIRI':
+            if card_no in _Common.MANDIRI_CARD_BLOCKED_LIST:
+                output['able_topup'] = '1004'
+            LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
+        elif bank_name == 'BNI':
+            output['able_topup'] = result.split('|')[3].replace('#', '')
+            # Drop Balance Check If Not Available For Topup
+            if output['able_topup'] in ERROR_TOPUP.keys():
+                output['able_topup'] = '1004'
+            else:
+                output['able_topup'] = '0000'
+        return output
+    else:
+        return False
 
 
 def start_topup_offline_mandiri(amount, trxid):
@@ -635,7 +684,6 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         LOGGER.warning((e, report, reff_no, amount, status))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
-    
 
 def start_topup_mandiri_correction(amount, trxid):
     if not _Common.C2C_MODE:

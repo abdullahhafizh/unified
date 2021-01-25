@@ -699,6 +699,11 @@ class SlotHandler(QObject):
     def start_topup_online_bca(self, cardno, amount, trxid):
         _TopupService.start_topup_online_bca(cardno, amount, trxid)
     start_topup_online_bca = pyqtSlot(str, str, str)(start_topup_online_bca)
+    
+
+    def start_retry_topup_online_bca(self, amount, trxid):
+        _TopupService.start_retry_topup_online_bca(amount, trxid)
+    start_retry_topup_online_bca = pyqtSlot(str, str)(start_retry_topup_online_bca)
 
 
 

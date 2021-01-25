@@ -545,6 +545,9 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 #         result = service_response['Response'].split('|')[1]
                 #         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
                 #         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
+                if BCA_KEY_PARTIAL in result:
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
+                    return
                 if BCA_KEY_REVERSAL in result:
                     # Store Local Card Number Here For Futher Reversal Process
                     previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
@@ -874,6 +877,7 @@ def check_update_balance_bni(card_info):
 
 
 BCA_KEY_REVERSAL = 'UpdateAPI_Failed_Reversal_Success' #'BCATopup1_Failed'
+BCA_KEY_PARTIAL = 'UpdateAPI_Failed_Reversal_Failed' #'BCATopup1_Failed'
 
 
 def update_balance_online(bank):
@@ -1011,6 +1015,59 @@ def update_balance_online(bank):
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
 
 
+def start_retry_topup_online_bca(amount, trxid):
+    _Helper.get_thread().apply_async(retry_topup_online_bca, (amount, trxid,))
+
+
+def retry_topup_online_bca(amount, trxid):
+    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+    previous_card_balance = _QPROX.LAST_BALANCE_CHECK['balance']
+    check_card_balance = _QPROX.direct_card_balance()
+    #  output = {
+    #     'balance': balance,
+    #     'card_no': card_no,
+    #     'bank_type': bank_type,
+    #     'bank_name': bank_name,
+    #     # 'able_topup': result.split('|')[3].replace('#', ''),
+    #     'able_check_log': able_check_log,
+    #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
+    # }
+    if not check_card_balance:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        return
+    if previous_card_no != check_card_balance['card_no']:
+        LOGGER.warning(('BCA_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        return
+    bca_card_info = _QPROX.bca_card_info()
+    if bca_card_info is False:
+        LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+        return
+    if int(amount) + int(previous_card_balance) = int(check_card_balance['balance']):
+        # Success Topup Here
+        output = {
+                # 'prev_wallet': pending_result['prev_wallet'],
+                # 'last_wallet': pending_result['last_wallet'],
+                'last_balance': check_card_balance['balance'],
+                'topup_amount': amount,
+                'other_channel_topup': str(0),
+                'report_sam': 'N/A',
+                'card_no': check_card_balance['card_no'],
+                'report_ka': 'N/A',
+                'bank_id': '4',
+                'bank_name': 'BCA',
+            }
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    else:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+    confirm_bca_topup({
+        'card_data': bca_card_info,
+        'card_no': check_card_balance['card_no'],
+        'last_balance': check_card_balance['balance']
+    })
+    
+    
 def start_topup_online_dki(amount, trxid):
     if _Common.DKI_TOPUP_ONLINE_BY_SERVICE is True:
         return _QPROX.start_topup_dki_by_service(amount, trxid)
@@ -1340,6 +1397,32 @@ def confirm_bni_topup(data):
         else:
             param['endpoint'] = 'topup-bni/confirm'
             _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bni/confirm', payload=param)
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+
+
+def confirm_bca_topup(data):
+    if _Helper.empty(data):
+        return False
+    LOGGER.info((str(data)))
+    try:
+        param = {
+            'token': TOPUP_TOKEN,
+            'mid': TOPUP_MID,
+            'tid': TOPUP_TID,
+            'card_data': data['card_data'],
+            'card_no': data['card_no'],
+            'last_balance': data['last_balance']
+        }
+        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bca/confirm', param=param)
+        LOGGER.debug((str(param), str(status), str(response)))
+        if status == 200 and response['response']['code'] == 200:
+            return True
+        else:
+            param['endpoint'] = 'topup-bca/confirm'
+            _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bca/confirm', payload=param)
             return False
     except Exception as e:
         LOGGER.warning(str(e))
