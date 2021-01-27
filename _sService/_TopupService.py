@@ -546,7 +546,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 #         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
                 #         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
                 if service_response['Result'] in BCA_TOPUP_ONLINE_ERROR or BCA_KEY_REVERSAL in result:
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
+                    # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
                     # Store Local Card Number Here For Futher Reversal Process
                     previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
                     previous_card_data = _QPROX.LAST_BALANCE_CHECK
@@ -554,7 +554,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
                     reset_bca_session()
                     # Must Return Here To Stop Emit into Front
-                    return
+                    return 'BCA_PARTIAL_ERROR'
                 _Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
@@ -1237,8 +1237,11 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     _param = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             update_result = update_balance(_param, bank='BCA', mode='TOPUP')
-            if not update_result:
+            if update_result is False:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+                return
+            elif update_result == 'BCA_PARTIAL_ERROR':
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
                 return
             _Common.remove_temp_data(trxid)
             if _Common.exist_temp_data(cardno):
