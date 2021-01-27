@@ -879,7 +879,7 @@ def check_update_balance_bni(card_info):
 
 BCA_KEY_REVERSAL = 'UpdateAPI_Failed_Reversal_Success' #'BCATopup1_Failed'
 BCA_KEY_PARTIAL = 'UpdateAPI_Failed_Card_Reversal_Failed' #'BCATopup1_Failed'
-BCA_TOPUP_ONLINE_ERROR = ['8041', '1407', '2B45', 'A8AE', '8386']
+BCA_TOPUP_ONLINE_ERROR = ['8041', '1407', '2B45', 'A8AE', '8386', 'EE31']
 
 
 def update_balance_online(bank):
@@ -1237,10 +1237,10 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     _param = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             _param = QPROX['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             update_result = update_balance(_param, bank='BCA', mode='TOPUP')
-            if update_result is False:
-                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
-                return
-            elif update_result == 'BCA_PARTIAL_ERROR':
+            # if update_result is False:
+            #     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
+            #     return
+            if update_result is False or update_result == 'BCA_PARTIAL_ERROR':
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
                 return
             _Common.remove_temp_data(trxid)
