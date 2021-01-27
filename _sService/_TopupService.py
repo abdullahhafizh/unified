@@ -539,16 +539,15 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 }
             else:
                 # 161037128387|BCATopup2_Failed_Card_Reversal_Failed
-                # service_response = json.loads(result)
+                service_response = json.loads(result)
                 # if 'Response' in service_response.keys():
                 #     if '|' in service_response['Response']:
                 #         result = service_response['Response'].split('|')[1]
                 #         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
                 #         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
-                if BCA_KEY_PARTIAL in result:
+                if service_response['Result'] in BCA_TOPUP_ONLINE_ERROR or BCA_KEY_REVERSAL in result:
+                    reset_bca_session()
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
-                    return
-                if BCA_KEY_REVERSAL in result:
                     # Store Local Card Number Here For Futher Reversal Process
                     previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
                     previous_card_data = _QPROX.LAST_BALANCE_CHECK
@@ -877,7 +876,8 @@ def check_update_balance_bni(card_info):
 
 
 BCA_KEY_REVERSAL = 'UpdateAPI_Failed_Reversal_Success' #'BCATopup1_Failed'
-BCA_KEY_PARTIAL = 'UpdateAPI_Failed_Reversal_Failed' #'BCATopup1_Failed'
+BCA_KEY_PARTIAL = 'UpdateAPI_Failed_Card_Reversal_Failed' #'BCATopup1_Failed'
+BCA_TOPUP_ONLINE_ERROR = ['8041', '1407', '2B45']
 
 
 def update_balance_online(bank):
@@ -1033,7 +1033,7 @@ def retry_topup_online_bca(amount, trxid):
     #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
     # }
     if not check_card_balance:
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
         return
     if previous_card_no != check_card_balance['card_no']:
         LOGGER.warning(('BCA_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
