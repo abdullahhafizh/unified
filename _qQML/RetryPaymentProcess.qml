@@ -510,7 +510,7 @@ Base{
 //        abc.counter = 60;
 //        my_timer.restart();
         //========
-        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
+        if (t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
             if (t=='MANDIRI_SAM_BALANCE_EXPIRED' && CONF.c2c_mode == 0) _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
