@@ -1,5 +1,6 @@
 11.9.M-GLOBAL:
 - Add Wording Force-Settlement Mandiri If Failed
+- Handle BCA Card Info On Failed TRX
 - ...
 
 11.9.L-GLOBAL:

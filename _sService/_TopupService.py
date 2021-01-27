@@ -1059,6 +1059,8 @@ def retry_topup_online_bca(amount, trxid):
                 'bank_name': 'BCA',
             }
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+        _Common.remove_temp_data(trxid)
+        _Common.remove_temp_data(previous_card_no)
     else:
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
     confirm_bca_topup({
