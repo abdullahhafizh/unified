@@ -546,13 +546,13 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 #         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
                 #         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
                 if service_response['Result'] in BCA_TOPUP_ONLINE_ERROR or BCA_KEY_REVERSAL in result:
-                    reset_bca_session()
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
                     # Store Local Card Number Here For Futher Reversal Process
                     previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
                     previous_card_data = _QPROX.LAST_BALANCE_CHECK
                     # previous_card_data['refference_id'] = LAST_BCA_REFF_ID
                     _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
+                    reset_bca_session()
                     return
                 _Common.online_logger([response, bank, _param], 'general')
                 return False
