@@ -879,7 +879,7 @@ def check_update_balance_bni(card_info):
 
 BCA_KEY_REVERSAL = 'UpdateAPI_Failed_Reversal_Success' #'BCATopup1_Failed'
 BCA_KEY_PARTIAL = 'UpdateAPI_Failed_Card_Reversal_Failed' #'BCATopup1_Failed'
-BCA_TOPUP_ONLINE_ERROR = ['8041', '1407', '2B45']
+BCA_TOPUP_ONLINE_ERROR = ['8041', '1407', '2B45', 'A8AE']
 
 
 def update_balance_online(bank):
