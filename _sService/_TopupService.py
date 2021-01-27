@@ -553,6 +553,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     previous_card_data = _QPROX.LAST_BALANCE_CHECK
                     # previous_card_data['refference_id'] = LAST_BCA_REFF_ID
                     _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
+                    return
                 _Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
