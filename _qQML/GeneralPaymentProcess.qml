@@ -1400,11 +1400,10 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Silakan Masukkan Uang Anda'
+        show_text: (totalPrice > receivedPayment) ? 'Silakan Masukkan Uang Anda' : 'Pembayaran Selesai'
         size_: 50
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-
     }
 
     Column{
@@ -1450,7 +1449,7 @@ Base{
         id: notice_no_change
         width: 1200
         height: 120
-        visible: (details.payment == 'cash' && !global_frame.visible)
+        visible: (details.payment == 'cash' && !global_frame.visible && (totalPrice > receivedPayment))
         radius: 50
         fontSize: 30
         border.width: 0
