@@ -1428,8 +1428,9 @@ def confirm_bca_topup(data):
         if status == 200 and response['response']['code'] == 200:
             return True
         else:
-            param['endpoint'] = 'topup-bca/confirm'
-            _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bca/confirm', payload=param)
+            if _Common.LIVE_MODE:
+                param['endpoint'] = 'topup-bca/confirm'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bca/confirm', payload=param)
             return False
     except Exception as e:
         LOGGER.warning(str(e))
