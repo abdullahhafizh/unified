@@ -369,9 +369,12 @@ Base{
             provider = 'e-Money Mandiri';
             maxBalance = 2000000;
         }
+        if (bank_name=='BCA'){
+            provider = 'Flazz BCA';
+            maxBalance = 2000000;
+        }
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
-        if (bank_name=='BCA') provider = 'Flazz BCA';
         if (bank_name=='BRI') provider = 'Brizzi BRI';
         mainVisible = true;
         if (topupData!=undefined) topup_readiness(topupData);
