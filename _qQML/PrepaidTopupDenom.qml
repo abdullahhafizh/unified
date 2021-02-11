@@ -157,7 +157,37 @@ Base{
             qrJakoneEnable = true;
             totalPaymentEnable += 1;
         }
+    }
 
+    function open_only_cash_payment(){
+        if (cardEnable) {
+            cardEnable = false;
+            totalPaymentEnable -= 1;
+        }
+        if (qrLinkajaEnable) {
+            qrLinkajaEnable = false;
+            totalPaymentEnable -= 1;
+        }
+        if (qrDanaEnable) {
+            qrDanaEnable = false;
+            totalPaymentEnable -= 1;
+        }
+        if (qrGopayEnable) {
+            qrGopayEnable = false;
+            totalPaymentEnable -= 1;
+        }
+        if (qrOvoEnable) {
+            qrOvoEnable = false;
+            totalPaymentEnable -= 1;
+        }
+        if (qrShopeeEnable) {
+            qrShopeeEnable = false;
+            totalPaymentEnable -= 1;
+        }
+        if (qrJakoneEnable) {
+            qrJakoneEnable = false;
+            totalPaymentEnable -= 1;
+        }
     }
 
     function do_set_confirm(triggered){
@@ -372,6 +402,8 @@ Base{
         if (bank_name=='BCA'){
             provider = 'Flazz BCA';
             maxBalance = 2000000;
+            //Flazz BCA Only Allowed Topup With Cash
+            open_only_cash_payment();
         }
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
@@ -786,67 +818,6 @@ Base{
         visible: mainVisible
     }
 
-//    Column{
-//        id: denom_button
-//        width: 1220
-//        height: 500
-//        anchors.top: parent.top
-//        anchors.topMargin: 450
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        spacing: 60
-//        visible: mainVisible
-//        MandiriDenomButton{
-//            id: small_denom
-//            width: parent.width
-//            button_text: 'Rp ' + FUNC.insert_dot(smallDenomTopup)
-//            buttonActive: false
-//            MouseArea{
-//                anchors.fill: parent
-//                enabled: parent.buttonActive
-//                onClicked: {
-//                    if (exceed_balance(smallDenomTopup)) return
-//                    _SLOT.user_action_log('Press smallDenom "'+smallDenomTopup+'"');
-//                    if (press!='0') return;
-//                    press = '1';
-//                    set_selected_denom(smallDenomTopup);
-//                }
-//            }
-//        }
-//        MandiriDenomButton{
-//            id: mid_denom
-//            width: parent.width
-//            button_text: 'Rp ' + FUNC.insert_dot(midDenomTopup)
-//            buttonActive: false
-//            MouseArea{
-//                anchors.fill: parent
-//                enabled: parent.buttonActive
-//                onClicked: {
-//                    if (exceed_balance(midDenomTopup)) return
-//                    _SLOT.user_action_log('Press midDenom "'+midDenomTopup+'"');
-//                    if (press!='0') return;
-//                    press = '1';
-//                    set_selected_denom(midDenomTopup);
-//                }
-//            }
-//        }
-//        MandiriDenomButton{
-//            id: high_denom
-//            width: parent.width
-//            button_text: 'Rp ' + FUNC.insert_dot(highDenomTopup)
-//            buttonActive: false
-//            MouseArea{
-//                anchors.fill: parent
-//                enabled: parent.buttonActive
-//                onClicked: {
-//                    if (exceed_balance(highDenomTopup)) return
-//                    _SLOT.user_action_log('Press highDenom "'+highDenomTopup+'"');
-//                    if (press!='0') return;
-//                    press = '1';
-//                    set_selected_denom(highDenomTopup);
-//                }
-//            }
-//        }
-//    }
 
     function release_denom_selection(id){
         tiny_denom.do_release();
