@@ -530,7 +530,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     console.log('open_explorer is pressed..!');
-                    popup_loading.open();
+//                    popup_loading.open();
                     _SLOT.start_trigger_explorer();
                 }
             }
