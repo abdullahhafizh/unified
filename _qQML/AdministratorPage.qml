@@ -60,7 +60,6 @@ Base{
         base.result_init_online_mandiri.connect(get_admin_action);
         base.result_admin_sync_stock.connect(get_admin_action);
         base.result_do_online_topup.connect(get_admin_action);
-        base.result_general.connect(get_admin_action);
         base.result_do_topup_deposit_bni.connect(get_topup_bni_result)
     }
 
@@ -81,7 +80,6 @@ Base{
         base.result_init_online_mandiri.disconnect(get_admin_action);
         base.result_admin_sync_stock.disconnect(get_admin_action);
         base.result_do_online_topup.disconnect(get_admin_action);
-        base.result_general.disconnect(get_admin_action);
         base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result)
     }
 

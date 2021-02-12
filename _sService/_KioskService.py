@@ -1293,8 +1293,8 @@ def trigger_explorer():
     try:
         subprocess.Popen(r'explorer /select,"C:\"')
         # os.system('explorer.exe')
-        K_SIGNDLER.SIGNAL_GENERAL.emit('EXPLORER|DONE')
+        K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('EXPLORER|DONE')
     except Exception as e:
         LOGGER.warning((e))
-        K_SIGNDLER.SIGNAL_GENERAL.emit('EXPLORER|ERROR')
+        K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('EXPLORER|ERROR')
         
