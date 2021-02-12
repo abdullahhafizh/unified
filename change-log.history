@@ -1,6 +1,8 @@
-11.9.N-GLOBAL:
+11.9.Nm-GLOBAL:
 - Enhance Fix Mandiri & BNI Last Balance On Daily Summary,
-- Disable QR Payment For Topup BCA Flazz,
+- Disable QR/EDC Payment For Topup BCA Flazz,
+- Disable Update App Button in Admin,
+- Add Explorer Button in Admin,
 - ...
 
 11.9.Mm-GLOBAL:

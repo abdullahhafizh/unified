@@ -1283,3 +1283,17 @@ def remove_failed_trx(trx_id):
     except Exception as e:
         LOGGER.warning((e))
         return 'DELETE_FAILED_TRX_FAILED'
+
+
+def start_trigger_explorer():
+    _Helper.get_thread().apply_async(trigger_explorer,)
+    
+
+def trigger_explorer():
+    try:
+        os.system('explorer.exe')
+        K_SIGNDLER.SIGNAL_GENERAL.emit('EXPLORER|DONE')
+    except Exception as e:
+        LOGGER.warning((e))
+        K_SIGNDLER.SIGNAL_GENERAL.emit('EXPLORER|ERROR')
+        
