@@ -377,7 +377,11 @@ Base{
                 bank_name: info.bank_name,
             }
             //Define Data Card, Amount Button, Topup Availability
-            if (ableTopupCode !="0000"){
+            if (ableTopupCode == "1008"){
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar '+bankName+' Anda Telah Kadaluarsa', 'backToMain', false );
+                return;
+            }
+            if (ableTopupCode != "0000"){
                 switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu ini melebihi batas topup bank '+bankName, 'backToMain', false );
                 return;
             }
