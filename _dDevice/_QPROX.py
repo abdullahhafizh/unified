@@ -527,9 +527,7 @@ def check_card_balance():
         elif bank_name == 'BNI':
             output['able_topup'] = result.split('|')[3].replace('#', '')
             # Drop Balance Check If Not Available For Topup
-            if output['able_topup'] in ERROR_TOPUP.keys():
-                output['able_topup'] = '1004'
-            else:
+            if output['able_topup'] not in ERROR_TOPUP.keys():
                 output['able_topup'] = '0000'
         # elif bank_name == 'DKI':
         #     prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
