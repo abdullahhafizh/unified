@@ -1170,6 +1170,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                 # _MDSService.start_push_trx_online(json.dumps(failed_data))
                 # Add Refund BRI
                 if _Common.BRI_AUTO_REFUND is True:
+                    pending_result['trxid'] = trxid
                     refund_bri_pending(pending_result)
                 return
             # {
@@ -1452,6 +1453,7 @@ def refund_bri_pending(data):
         status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bri/refund', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
+            _Common.remove_temp_data(data['trxid'])
             return True
         else:
             # _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bri/refund', payload=param)

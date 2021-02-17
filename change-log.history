@@ -1,3 +1,8 @@
+11.9.P-GLOBAL:
+- Enhance Retry TRX BRI Topup,
+- Fix Paid PPOB TRX Summary,
+- ...
+
 11.9.O-GLOBAL:
 - Enhance Message For Not Active BNI Prepaid Card,
 - ...

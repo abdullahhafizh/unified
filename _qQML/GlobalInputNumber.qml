@@ -384,8 +384,8 @@ Base{
             trx_name = i.category + ' ' + i.remarks.provider;
             total_payment = i.remarks.value.toString();
         }
-        var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
+        var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
 //        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
         var trx_id = FUNC.get_value(i.product_id);
