@@ -39,6 +39,7 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
+            _SLOT.user_action_log('[Homepage] Standby Mode');
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -49,9 +50,8 @@ Base{
             popup_loading.close();
             preload_whatasapp_voucher.close();
             preload_customer_info.close();
-            _SLOT.kiosk_get_product_stock();
             _SLOT.get_kiosk_status();
-            _SLOT.user_action_log('[Homepage] Standby Mode');
+            _SLOT.kiosk_get_product_stock();
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
