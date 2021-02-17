@@ -39,8 +39,6 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
-            _SLOT.kiosk_get_product_stock();
-            _SLOT.get_kiosk_status();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -51,6 +49,8 @@ Base{
             popup_loading.close();
             preload_whatasapp_voucher.close();
             preload_customer_info.close();
+            _SLOT.kiosk_get_product_stock();
+            _SLOT.get_kiosk_status();
             _SLOT.user_action_log('[Homepage] Standby Mode');
         }
         if(Stack.status==Stack.Deactivating){
@@ -91,7 +91,7 @@ Base{
     }
 
     function resetMediaTimer(){
-        if (tvc_timeout > 300) return;
+//        if (tvc_timeout > 300) return;
         if(isMedia){
             tvc_loading.counter = tvc_timeout;
             show_tvc_loading.start();
@@ -450,7 +450,6 @@ Base{
             running:false
             triggeredOnStart:true
             onTriggered:{
-                if (globalBoxName=="") _SLOT.get_kiosk_status();
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
