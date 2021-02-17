@@ -216,7 +216,7 @@ Base{
                         if (press!="0") return
                         press = "1"
                         my_layer.push(check_balance)
-                        _SLOT.set_tvc_player("STOP")
+                        // _SLOT.set_tvc_player("STOP")
                         _SLOT.stop_idle_mode()
                         show_tvc_loading.stop()
                     } else {
@@ -240,7 +240,7 @@ Base{
                         if (press!="0") return
                         press = "1"
                         my_layer.push(select_prepaid_provider)
-                        _SLOT.set_tvc_player("STOP")
+                        // _SLOT.set_tvc_player("STOP")
                         _SLOT.stop_idle_mode()
                         show_tvc_loading.stop()
                     } else {
@@ -267,7 +267,7 @@ Base{
                         if (press!="0") return
                         press = "1"
                         my_layer.push(shop_prepaid_card, {productData: productData, shop_type: 'shop', productCount: productCount})
-                        _SLOT.set_tvc_player("STOP")
+                        // _SLOT.set_tvc_player("STOP")
                         _SLOT.stop_idle_mode()
                         show_tvc_loading.stop()
                     } else {
@@ -324,7 +324,7 @@ Base{
                 tvc_loading.counter -= 1
                 if(tvc_loading.counter == 0){
                     console.log("starting tvc player...")
-                    _SLOT.set_tvc_player("START")
+                    // _SLOT.set_tvc_player("START")
                     tvc_loading.counter = tvc_timeout
                     show_tvc_loading.restart()
                 }

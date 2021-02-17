@@ -91,6 +91,7 @@ Base{
     }
 
     function resetMediaTimer(){
+        if (tvc_timeout > 300) return;
         if(isMedia){
             tvc_loading.counter = tvc_timeout;
             show_tvc_loading.start();
@@ -291,7 +292,7 @@ Base{
                     resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    _SLOT.set_tvc_player("STOP");
+                    // _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
 //                    selectedMenu = 'CHECK_BALANCE';
@@ -322,7 +323,7 @@ Base{
                     resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    _SLOT.set_tvc_player("STOP");
+                    // _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
@@ -356,7 +357,7 @@ Base{
                     resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    _SLOT.set_tvc_player("STOP");
+                    // _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PREPAID';
@@ -411,8 +412,8 @@ Base{
                     resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    _SLOT.set_tvc_player("STOP");
-                    popup_loading.open();
+                    // _SLOT.set_tvc_player("STOP");
+                    if (!popup_loading.visible) popup_loading.open();
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -475,7 +476,7 @@ Base{
                     search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
                 }
-                if(tvc_loading.counter == 0 && tvc_timeout != 999999){
+                if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
@@ -520,7 +521,7 @@ Base{
             onDoubleClicked: {
                 _SLOT.user_action_log('Press "Admin" Button');
                 console.log('Admin Button is Pressed..!');
-                _SLOT.set_tvc_player("STOP");
+                // _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
                 my_layer.push(admin_login);
@@ -570,7 +571,7 @@ Base{
                 press = "1";
                 _SLOT.user_action_log('Press "SEARCH_TRX" Button');
                 console.log('Search Trx Button is Pressed..!');
-                _SLOT.set_tvc_player("STOP");
+                // _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
                 my_layer.push(global_input_number, {mode: 'SEARCH_TRX'});
@@ -620,7 +621,7 @@ Base{
                 press = "1";
                 _SLOT.user_action_log('Press "WA_VOUCHER" Button');
                 console.log('WA Voucher Button is Pressed..!');
-                _SLOT.set_tvc_player("STOP");
+                // _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
 //                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});

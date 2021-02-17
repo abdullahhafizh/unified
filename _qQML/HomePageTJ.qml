@@ -234,7 +234,7 @@ Base{
                         if (press!="0") return
                         press = "1"
                         my_layer.push(check_balance)
-                        _SLOT.set_tvc_player("STOP")
+                        // _SLOT.set_tvc_player("STOP")
                         _SLOT.stop_idle_mode()
                         show_tvc_loading.stop()
                     } else {
@@ -260,7 +260,7 @@ Base{
                         if (press!="0") return;
                         press = "1";
                         my_layer.push(topup_prepaid_denom);
-                        _SLOT.set_tvc_player("STOP");
+                        // _SLOT.set_tvc_player("STOP");
                         _SLOT.stop_idle_mode();
                         show_tvc_loading.stop();
                     } else {
@@ -289,7 +289,7 @@ Base{
                         if (press!="0") return;
                         press = "1";
                         my_layer.push(shop_prepaid_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
-                        _SLOT.set_tvc_player("STOP");
+                        // _SLOT.set_tvc_player("STOP");
                         _SLOT.stop_idle_mode();
                         show_tvc_loading.stop();
                     } else {
