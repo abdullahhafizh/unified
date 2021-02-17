@@ -837,15 +837,15 @@ def config_log():
     global LOGGER
     # Sentry Initiation
     try:
-        sentry_sdk.init(
-            "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-            max_breadcrumbs=10,
-            debug=False,
-            environment=_Common.APP_MODE,
-            server_name='VM-ID '+_Common.TID,
-            release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
-            default_integrations=False,
-        )
+        # sentry_sdk.init(
+        #     "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
+        #     max_breadcrumbs=10,
+        #     debug=False,
+        #     environment=_Common.APP_MODE,
+        #     server_name='VM-ID '+_Common.TID,
+        #     release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
+        #     default_integrations=False,
+        # )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',

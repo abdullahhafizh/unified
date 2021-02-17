@@ -1282,15 +1282,16 @@ def serialize_error_message(e):
 
 
 def online_logger(e='', mode='service'):
-    e = serialize_error_message(e)
-    if mode == 'service':
-        capture_exception(KioskServiceErrorResponse(e))
-    elif mode == 'connection':
-        capture_exception(KioskConnectionError(e))
-    elif mode == 'device':
-        capture_exception(KioskDeviceError(e))
-    else:
-        capture_exception(KioskGeneralError(e))
+    pass
+    # e = serialize_error_message(e)
+    # if mode == 'service':
+    #     capture_exception(KioskServiceErrorResponse(e))
+    # elif mode == 'connection':
+    #     capture_exception(KioskConnectionError(e))
+    # elif mode == 'device':
+    #     capture_exception(KioskDeviceError(e))
+    # else:
+    #     capture_exception(KioskGeneralError(e))
 
 
 LAST_UPDATED_STOCK = []
