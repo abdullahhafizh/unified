@@ -1139,6 +1139,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                 'time': _Helper.epoch('MDS')
             }
             # pending_result = _MDSService.mds_online_topup(bank, _param)
+            pending_result = False
             if not _Common.exist_temp_data(trxid):
                 pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
                 if not pending_result:
@@ -1170,6 +1171,8 @@ def topup_online(bank, cardno, amount, trxid=''):
                 # _MDSService.start_push_trx_online(json.dumps(failed_data))
                 # Add Refund BRI
                 if _Common.BRI_AUTO_REFUND is True:
+                    if not pending_result:
+                        return
                     pending_result['trxid'] = trxid
                     refund_bri_pending(pending_result)
                 return
