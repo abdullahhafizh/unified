@@ -413,16 +413,15 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     resetMediaTimer();
-                    popup_loading.open();
-//                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
+    //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PPOB';
                     if (showCustomerInfo){
                         preload_customer_info.open();
-                        popup_loading.close();
                         return;
                     }
+                    popup_loading.open();
                     _SLOT.start_get_ppob_product();
                 }
             }
@@ -963,6 +962,7 @@ Base{
                         my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
                         break;
                     case 'SHOP_PPOB':
+                        popup_loading.open();
                         _SLOT.start_get_ppob_product();
                         break;
                     }
