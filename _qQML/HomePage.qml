@@ -38,6 +38,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
+            resetPopup();
             _SLOT.start_idle_mode();
             _SLOT.user_action_log('[Homepage] Standby Mode');
             press = "0";
@@ -47,9 +48,6 @@ Base{
             productCount2 = 0;
             productCount3 = 0;
             selectedMenu = '';
-            popup_loading.close();
-            preload_whatasapp_voucher.close();
-            preload_customer_info.close();
             _SLOT.get_kiosk_status();
             _SLOT.kiosk_get_product_stock();
         }
@@ -82,12 +80,18 @@ Base{
         base.result_get_ppob_product.disconnect(get_ppob_product);
     }
 
+    function resetPopup(){
+        popup_loading.close();
+        preload_whatasapp_voucher.close();
+        preload_customer_info.close();
+    }
+
     function get_ppob_product(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_ppob_product', now, p);
-         press = '0';
-         my_layer.push(ppob_category, {ppobData: p});
+        press = '0';
         popup_loading.close();
+        my_layer.push(ppob_category, {ppobData: p});
     }
 
     function resetMediaTimer(){
@@ -289,10 +293,9 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
-                    resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    // _SLOT.set_tvc_player("STOP");
+                    resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
 //                    selectedMenu = 'CHECK_BALANCE';
@@ -320,10 +323,9 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
-                    resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    // _SLOT.set_tvc_player("STOP");
+                    resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
@@ -354,10 +356,9 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Beli Kartu"');
-                    resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    // _SLOT.set_tvc_player("STOP");
+                    resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PREPAID';
@@ -409,17 +410,17 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Bayar/Beli"');
-                    resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    // _SLOT.set_tvc_player("STOP");
-                    if (!popup_loading.visible) popup_loading.open();
+                    resetMediaTimer();
+                    popup_loading.open();
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PPOB';
                     if (showCustomerInfo){
                         preload_customer_info.open();
+                        popup_loading.close();
                         return;
                     }
                     _SLOT.start_get_ppob_product();
