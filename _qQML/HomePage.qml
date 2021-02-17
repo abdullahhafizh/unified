@@ -450,6 +450,7 @@ Base{
             running:false
             triggeredOnStart:true
             onTriggered:{
+                if (globalBoxName == "") _SLOT.get_kiosk_status();
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
