@@ -362,7 +362,7 @@ Base{
         my_timer.stop();
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         if (successTransaction) {
@@ -389,7 +389,7 @@ Base{
         console.log('ppob_trx_result', now, p);
         popup_loading.close();
         var result = p.split('|')[1]
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1) qr_payment_frame.hide();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1;
             details.payment_error = 1;
@@ -504,7 +504,7 @@ Base{
         console.log('topup_result', now, t);
         global_frame.close();
         popup_loading.close();
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
         //========
@@ -611,7 +611,7 @@ Base{
         console.log('shop_card_result', now, r);
         global_frame.close();
         popup_loading.close();
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1) qr_payment_frame.hide();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){
@@ -975,7 +975,7 @@ Base{
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
             open_preload_notif_qr(msg, 'source/phone_qr.png');
@@ -1388,7 +1388,7 @@ Base{
             do_refund_or_print('user_cancellation_debit');
             return;
         }
-        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1){
             qr_payment_frame.cancel('USER_CANCEL');
         }
         my_timer.stop();
@@ -1948,7 +1948,7 @@ Base{
                     cancel_confirmation.close();
                     press = '0';
                     my_timer.start();
-                    if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone'].indexOf(details.payment) > -1){
+                    if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca'].indexOf(details.payment) > -1){
                         qr_payment_frame.qrTimer.start();
                     }
                 }
