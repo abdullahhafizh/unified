@@ -331,10 +331,11 @@ if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)
 
 
-QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE']
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA']
 QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
+    'BCA': False,
     'JAKONE': True,
     'GOPAY': True,
     'DANA': True,
@@ -850,6 +851,7 @@ def get_payments():
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
+        "QR_BCA": "AVAILABLE" if check_payment('bca') is True else "NOT_AVAILABLE",
     }
 
 

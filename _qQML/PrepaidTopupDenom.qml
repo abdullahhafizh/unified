@@ -39,6 +39,7 @@ Base{
     property bool qrLinkajaEnable: false
     property bool qrShopeeEnable: false
     property bool qrJakoneEnable: false
+    property bool qrBcaEnable: false
 
     property bool mainVisible: false
     property var totalPaymentEnable: 0
@@ -157,6 +158,10 @@ Base{
             qrJakoneEnable = true;
             totalPaymentEnable += 1;
         }
+        if (device.QR_BCA == 'AVAILABLE') {
+            qrBcaEnable = true;
+            totalPaymentEnable += 1;
+        }
     }
 
     function open_only_cash_payment(){
@@ -188,6 +193,10 @@ Base{
             qrJakoneEnable = false;
             totalPaymentEnable -= 1;
         }
+//        if (qrBcaEnable) {
+//            qrBcaEnable = false;
+//            totalPaymentEnable -= 1;
+//        }
     }
 
     function do_set_confirm(triggered){
@@ -956,6 +965,7 @@ Base{
         _qrLinkAjaEnable: qrLinkajaEnable
         _qrShopeeEnable: qrShopeeEnable
         _qrJakoneEnable: qrJakoneEnable
+        _qrBcaEnable: qrBcaEnable
 
         totalEnable: totalPaymentEnable
     }

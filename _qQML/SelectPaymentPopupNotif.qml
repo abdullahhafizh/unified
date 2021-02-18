@@ -20,6 +20,7 @@ Rectangle{
     property bool _qrLinkAjaEnable: false
     property bool _qrShopeeEnable: false
     property bool _qrJakoneEnable: false
+    property bool _qrBcaEnable: false
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -162,6 +163,39 @@ Rectangle{
                 onClicked: {
                     _SLOT.user_action_log('choose "OVO" Payment Method');
                     var payment = 'ovo';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/phone_qr.png"
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BCA")
+            text2_: qsTr("QR BCA")
+            visible: _qrBcaEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "BCA" Payment Method');
+                    var payment = 'bca';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';

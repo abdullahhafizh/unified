@@ -82,7 +82,7 @@ def do_get_qr(payload, mode, serialize=True):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
-    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE']:
+    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA']:
         payload['reff_no'] = payload['trx_id']
     if serialize is True:
         param = serialize_payload(payload)
@@ -104,7 +104,7 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_DIRECT_PAY:
                 r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE']:
+            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE', 'BCA']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
@@ -281,7 +281,7 @@ def check_payment_result(result, mode):
         return False
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA'] and result['status'] in ['SUCCESS', 'PAID']:
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA', 'BCA'] and result['status'] in ['SUCCESS', 'PAID']:
         return True
     return False
 
