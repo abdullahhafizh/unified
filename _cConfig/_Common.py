@@ -647,6 +647,10 @@ def log_to_temp_config(section='last^auth', content=''):
     _ConfigParser.set_value('TEMPORARY', section, content)
 
 
+def load_from_temp_config(section='test^section', default=''):
+    return _ConfigParser.get_set_value('TEMPORARY', section, default)
+
+
 def log_to_config(option='TEMPORARY', section='last^auth', content=''):
     content = str(content)
     _ConfigParser.set_value(option, section, content)
