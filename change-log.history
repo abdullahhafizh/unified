@@ -1,3 +1,7 @@
+11.9.Q-GLOBAL:
+- Add Logger on Accesing Temp Data,
+- ...
+
 11.9.P-GLOBAL:
 - Enhance Retry TRX BRI Topup,
 - Fix Paid PPOB TRX Summary,

@@ -245,6 +245,7 @@ def init_temp_data():
 
 
 def store_to_temp_data(temp, content):
+    LOGGER.info((temp, content))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
@@ -256,6 +257,7 @@ def store_to_temp_data(temp, content):
 
 
 def remove_temp_data(temp):
+    LOGGER.info((temp))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_file = os.path.join(TEMP_FOLDER, temp)
@@ -264,6 +266,7 @@ def remove_temp_data(temp):
 
 
 def exist_temp_data(temp):
+    LOGGER.info((temp))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_file = os.path.join(TEMP_FOLDER, temp)
@@ -273,6 +276,7 @@ def exist_temp_data(temp):
 
 
 def load_from_temp_data(temp, mode='text'):
+    LOGGER.info((temp))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
