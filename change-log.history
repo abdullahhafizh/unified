@@ -1,3 +1,8 @@
+11.9.T-GLOBAL:
+- Handle Cancel Button When TRX Being Executed,
+- Wait 3 Seconds In Stopping Bill,
+- ...
+
 11.9.S-GLOBAL:
 - Change BCA QRIS Mode Payment,
 - ...

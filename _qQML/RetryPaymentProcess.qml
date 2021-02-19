@@ -41,7 +41,7 @@ Base{
     property var refundChannel: 'DIVA'
     property var refundData
     property bool refundFeature: true
-    property bool topupInProcess: false
+    property bool transactionInProcess: false
 
 
     property var qrPayload
@@ -217,7 +217,7 @@ Base{
         refundMode = '';
         modeButtonPopup = undefined;
         refundFeature = true;
-        topupInProcess = false;
+        transactionInProcess = false;
     }
 
     function do_refund_or_print(error){
@@ -675,6 +675,7 @@ Base{
             console.log('EMPTY_PAYMENT', now);
             return;
         }
+        transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
         var trx_type = details.shop_type;
@@ -931,7 +932,6 @@ Base{
 
     function perform_do_topup(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-        topupInProcess = true;
         var provider = details.provider;
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
@@ -1325,8 +1325,8 @@ Base{
     }
 
     function cancel_transaction(){
-        if (topupInProcess && details.shop_type=='topup'){
-            console.log('[WARNING] Topup In Process Not Allowed Cancellation');
+        if (transactionInProcess){
+            console.log('[WARNING] Transaction In Process Not Allowed Cancellation');
             return;
         }
         details.receipt_title = 'Transaksi Anda Batal';

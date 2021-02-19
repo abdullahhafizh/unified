@@ -409,6 +409,17 @@ def send_command(param=None, config=[], restricted=[]):
             LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
+                while True:
+                    pool = NV200.listen_poll()
+                    LOOP_ATTEMPT += 1
+                    # if config['KEY_RECEIVED'] in pool[1]:
+                    #     return 0, pool[1]
+                    # if config['KEY_BOX_FULL'] in pool[1]:
+                    #     return 0, pool[1]
+                    #     break
+                    if LOOP_ATTEMPT >= 3:
+                        break
+                    time.sleep(1)
                 return 0, "Bill Stop"
             else:
                 return -1, ""
