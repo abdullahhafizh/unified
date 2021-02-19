@@ -705,7 +705,7 @@ Base{
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 // Force Disable All Cancel Button
-                cancel_button_global.visible = false;
+                hide_all_cancel_button();
                 console.log('DO_TOPUP_TRX', now, channel, provider, amount, structId);
                 perform_do_topup();
                 break;
