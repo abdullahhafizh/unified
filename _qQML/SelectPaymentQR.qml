@@ -205,7 +205,7 @@ Rectangle{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BCA" Payment Method');
-                    var payment = 'bca';
+                    var payment = 'bca-qris';
                     do_release_all_set_active(button_bca);
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;

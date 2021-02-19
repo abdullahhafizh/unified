@@ -331,11 +331,11 @@ if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)
 
 
-QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA']
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']
 QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
-    'BCA': False,
+    'BCA-QRIS': False,
     'JAKONE': True,
     'GOPAY': True,
     'DANA': True,
@@ -851,7 +851,7 @@ def get_payments():
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
-        "QR_BCA": "AVAILABLE" if check_payment('bca') is True else "NOT_AVAILABLE",
+        "QR_BCA": "AVAILABLE" if check_payment('bca-qris') is True else "NOT_AVAILABLE",
     }
 
 
@@ -1027,7 +1027,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee']:
+        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris']:
             remarks = json.loads(remarks)
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)
