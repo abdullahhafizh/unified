@@ -36,6 +36,7 @@ Base{
     property var refundChannel: 'DIVA'
     property var refundData
     property bool refundFeature: true
+    property bool topupInProcess: false
 
 
     property var qrPayload
@@ -209,6 +210,7 @@ Base{
         refundMode = '';
         modeButtonPopup = undefined;
         refundFeature = true;
+        topupInProcess = false;
     }
 
     function do_refund_or_print(error){
@@ -671,6 +673,8 @@ Base{
             console.log('EMPTY_PAYMENT', now);
             return;
         }
+        // Force Disable All Cancel Button
+        hide_all_cancel_button();
         var trx_type = details.shop_type;
         switch(trx_type){
             case 'ppob':
@@ -703,9 +707,7 @@ Base{
                 var structId = details.shop_type + details.epoch.toString();
                 var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
-                // Force Disable All Cancel Button
-                hide_all_cancel_button();
+                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false );
                 console.log('DO_TOPUP_TRX', now, channel, provider, amount, structId);
                 perform_do_topup();
                 break;
@@ -928,7 +930,8 @@ Base{
     }
 
     function perform_do_topup(){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        topupInProcess = true;
         var provider = details.provider;
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
@@ -1338,6 +1341,10 @@ Base{
     }
 
     function cancel_transaction(){
+        if (topupInProcess && details.shop_type=='topup'){
+            console.log('[WARNING] Topup In Process Not Allowed Cancellation');
+            return;
+        }
         details.receipt_title = 'Transaksi Anda Batal';
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!');
