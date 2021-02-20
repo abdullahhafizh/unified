@@ -71,20 +71,25 @@ def load_from_temp_data(section, selected_mode):
 
 
 def load_previous_kiosk_status():
-    _Common.KIOSK_SETTING = _DAO.init_kiosk()[0]
-    _Common.KIOSK_ADMIN = int(_Common.KIOSK_SETTING['defaultAdmin'])
-    _Common.KIOSK_MARGIN = int(_Common.KIOSK_SETTING['defaultMargin'])
-    _Common.KIOSK_NAME = _Common.KIOSK_SETTING['name']
-    _Common.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
-    _Common.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
-    _Common.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
-    _Common.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
-    _Common.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
-    _Common.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
-    _Common.KIOSK_STATUS = 'OFFLINE'
-    LOGGER.info(('LOAD_PREVIOUS_SETTING_VALUE'))
-
-
+    try:
+        _Common.KIOSK_SETTING = _DAO.init_kiosk()[0]
+        _Common.KIOSK_ADMIN = int(_Common.KIOSK_SETTING['defaultAdmin'])
+        _Common.KIOSK_MARGIN = int(_Common.KIOSK_SETTING['defaultMargin'])
+        _Common.KIOSK_NAME = _Common.KIOSK_SETTING['name']
+        _Common.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
+        _Common.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+        _Common.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+        _Common.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
+        _Common.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+        _Common.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+        _Common.KIOSK_STATUS = 'OFFLINE'
+        LOGGER.info(('LOAD_PREVIOUS_SETTING_VALUE'))
+    except Exception as e:
+        LOGGER.warning(('DATABASE CORRUPT', e))
+        print('pyt: DATABASE CORRUPT', str(e))
+        sys.exit(99)
+        
+        
 load_previous_kiosk_status()
 
 
@@ -114,8 +119,7 @@ def update_kiosk_status(s=400, r=None):
                     _Common.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
                 _Common.KIOSK_STATUS = 'ONLINE'
                 print("pyt: Syncing Kiosk Information...")
-                _DAO.flush_table('Terminal')
-                # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
+                _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
                 _DAO.update_kiosk_data(_Common.KIOSK_SETTING)
         # else:
             # load_previous_kiosk_status()

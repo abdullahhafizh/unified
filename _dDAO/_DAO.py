@@ -360,8 +360,12 @@ def get_airport_terminal(param):
 
 
 def update_kiosk_data(param):
-    sql = ' INSERT INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
-          'VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin ) '
+    # sql = ' INSERT INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
+    #     'VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin ) '
+    sql =   ' INSERT OR IGNORE INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
+            ' VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin) ' \
+            ' UPDATE `Terminal` SET name=:name, locationId=:locationId, status=:status, token=:token, defaultMargin=:defaultMargin, defaultAdmin=:defaultAdmin ' \
+            ' WHERE tid=:tid '
     return _Database.insert_update(sql=sql, parameter=param)
 
 
