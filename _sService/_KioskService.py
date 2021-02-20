@@ -90,7 +90,7 @@ def load_previous_kiosk_status():
         sys.exit(99)
         
         
-load_previous_kiosk_status()
+# load_previous_kiosk_status()
 
 
 def update_kiosk_status(s=400, r=None):
@@ -121,8 +121,8 @@ def update_kiosk_status(s=400, r=None):
                 print("pyt: Syncing Kiosk Information...")
                 _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
                 _DAO.update_kiosk_data(_Common.KIOSK_SETTING)
-        # else:
-            # load_previous_kiosk_status()
+        else:
+            load_previous_kiosk_status()
     except Exception as e:
         LOGGER.warning((e))
         # load_previous_kiosk_status() 
