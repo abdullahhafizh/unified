@@ -119,7 +119,7 @@ def update_kiosk_status(s=400, r=None):
                     _Common.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
                 _Common.KIOSK_STATUS = 'ONLINE'
                 print("pyt: Syncing Kiosk Information...")
-                _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
+                # _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
                 _DAO.update_kiosk_data(_Common.KIOSK_SETTING)
         else:
             load_previous_kiosk_status()

@@ -362,11 +362,18 @@ def get_airport_terminal(param):
 def update_kiosk_data(param):
     # sql = ' INSERT INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
     #     'VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin ) '
-    sql =   ' INSERT OR IGNORE INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
-            ' VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin);' \
-            ' UPDATE `Terminal` SET name=:name, locationId=:locationId, status=:status, token=:token, defaultMargin=:defaultMargin, defaultAdmin=:defaultAdmin ' \
+    delete = ' DELETE FROM `Terminal` WHERE tid <> "'+param['tid']+'"'
+    _Database.delete_row(sql=delete)
+    insert = ' INSERT OR IGNORE INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
+            ' VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin);'
+    result_insert = _Database.insert_update(sql=insert, parameter=param)
+    update = ' UPDATE `Terminal` SET name=:name, locationId=:locationId, status=:status, token=:token, defaultMargin=:defaultMargin, defaultAdmin=:defaultAdmin ' \
             ' WHERE tid=:tid '
-    return _Database.insert_update(sql=sql, parameter=param)
+    result_update = _Database.insert_update(sql=update, parameter=param)
+    return {
+        'insert': result_insert,
+        'update': result_update
+    }
 
 
 def flush_table(_table, _where=None):
