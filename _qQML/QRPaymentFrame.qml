@@ -21,6 +21,8 @@ Base{
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
 
+    property variant qrisProvider: ['linkaja', 'dana', 'bca-qris', 'shopeepay', 'jakone']
+
     property alias qrTimer: show_timer
     property var calledFrom
 
@@ -28,6 +30,20 @@ Base{
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
+    }
+
+    AnimatedImage  {
+        id: qris_logo
+        width: 300
+        height: 200
+        anchors.left: parent.left
+        anchors.leftMargin: 200
+        anchors.top: parent.top
+        anchors.topMargin: 80
+        scale: 1
+        visible: (qrisProvider.indexOf(modeQr))
+        source: "source/qr_logo/qris_logo_white.png"
+        fillMode: Image.PreserveAspectFit
     }
 
     Column{
