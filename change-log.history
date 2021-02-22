@@ -1,3 +1,7 @@
+11.9.U-GLOBAL:
+- Fix Cancel TRX Validation,
+- ...
+
 11.9.T-GLOBAL:
 - Handle Cancel Button When TRX Being Executed,
 - Wait 3 Seconds In Stopping Bill,
