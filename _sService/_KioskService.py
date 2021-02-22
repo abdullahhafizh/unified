@@ -88,9 +88,6 @@ def load_previous_kiosk_status():
         LOGGER.warning(('DATABASE CORRUPT', e))
         print('pyt: DATABASE CORRUPT', str(e))
         sys.exit(99)
-        
-        
-# load_previous_kiosk_status()
 
 
 def update_kiosk_status(s=400, r=None):
