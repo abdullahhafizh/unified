@@ -39,7 +39,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 200
         anchors.top: parent.top
-        anchors.topMargin: 80
+        anchors.topMargin: 100
         scale: 1
         visible: (qrisProvider.indexOf(modeQr))
         source: "source/qr_logo/qris_logo_white.png"
