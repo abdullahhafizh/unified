@@ -48,9 +48,9 @@ class PDF(FPDF):
             # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
             self.image(LOGO_PATH, 25, 20, 30)
             self.ln(SPACING*5)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME + ' - ' + KIOSK_ID, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, ' - ', 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'JAKARTA', 0, 0, 'C')
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME + ' - ' + KIOSK_ID, 0, 0, 'C')
         self.ln(SPACING)
 
     # def footer(self):
@@ -182,7 +182,7 @@ def generate_qr_receipt(data):
         pdf.ln(tiny_space)
         _issuer = trx['transaction_detail']['issuer_name']
         _acquirer = trx['transaction_detail']['acquirer_name']
-        pdf.cell(padding_left, 0, justifying('ISS: '+_issuer, 'ACQ: '+_acquirer), 0, 0, 'L')
+        pdf.cell(padding_left, 0, justifying('ISSUER: '+_issuer, 'ACQUIRER: '+_acquirer), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font('Courier', '', default_size)
         _amount_fee = str(trx['transaction_detail']['convenience_fee'])
