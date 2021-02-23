@@ -47,7 +47,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         height: 300
         anchors.verticalCenterOffset: 50
-        spacing: (parent.width==1920) ? 50 : 20
+        spacing: (parent.width==1920) ? 40 : 20
 
         SmallSimplyItem {
             id: button_cash
