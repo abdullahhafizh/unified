@@ -154,7 +154,7 @@ def generate_qr_receipt(data):
         pdf.set_font('Arial', '', extra_size)
         pdf.cell(padding_left, 0, 'Acquirer: '+trx['transaction_detail']['acquirer_name'], 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.cell(padding_left, 0, 'Trx ID: '+trx['trx_reff_no'], 0, 0, 'C')
+        pdf.cell(padding_left, 0, 'Trx ID: '+data['trx_reff_no'], 0, 0, 'C')
         pdf.ln(large_space)
         pdf.set_font('Arial', '', default_size)
         pdf.cell(padding_left, 0, 'Trx Time: '+data['host_trx_date'], 0, 0, 'L')
