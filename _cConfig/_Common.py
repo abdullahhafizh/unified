@@ -317,6 +317,7 @@ COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
+QRIS_RECEIPT = _ConfigParser.get_set_value('QR', 'qris^receipt', 'BCA-QRIS|DUWIT').split('|')
 GENERAL_QR = True if _ConfigParser.get_set_value('QR', 'general^qr', '1') == '1' else False
 
 CORE_HOST = QR_HOST
