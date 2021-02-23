@@ -47,7 +47,7 @@ class PDF(FPDF):
         if os.path.isfile(LOGO_PATH):
             # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
             self.image(LOGO_PATH, 25, 20, 30)
-            self.ln(SPACING*2)
+            self.ln(SPACING*5)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME + ' - ' + KIOSK_ID, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'JAKARTA', 0, 0, 'C')
@@ -144,14 +144,14 @@ def generate_qr_receipt(data):
         # pdf.ln(tiny_space)
         # pdf.set_font('Courier', '', default_size)
         # pdf.cell(padding_left, 0, justifying('TID: '+trx['tid'], 'MID: '+trx['mid']), 0, 0, 'L')
-        pdf.ln(tiny_space)
+        pdf.ln(large_space)
         pdf.set_font('Courier', '', default_size)
         _trx_id = data['trx_reff_no'].split('-')[0]
         pdf.cell(padding_left, 0, 'Trx ID: '+_trx_id, 0, 0, 'l')
         pdf.ln(tiny_space)
         pdf.set_font('Courier', '', default_size)
         pdf.cell(padding_left, 0, 'Trx Time: '+data['host_trx_date'], 0, 0, 'L')
-        pdf.ln(tiny_space)
+        pdf.ln(5)
         pdf.set_font('Courier', '', default_size)
         pdf.cell(padding_left, 0, 'Cust. Name: '+trx['transaction_detail']['payer_name'], 0, 0, 'L')
         pdf.ln(tiny_space)
@@ -169,7 +169,7 @@ def generate_qr_receipt(data):
         pdf.ln(tiny_space)
         pdf.set_font('Courier', '', default_size)
         pdf.cell(padding_left, 0, 'Merc. Name: '+trx['transaction_detail']['merchant_info']['name'], 0, 0, 'L')
-        pdf.ln(large_space)
+        pdf.ln(5)
         pdf.set_font('Courier', '', default_size)
         _batch = trx['transaction_detail']['batch_number']
         _trace = trx['transaction_detail']['issuer_reference_number']
