@@ -46,14 +46,9 @@ class PDF(FPDF):
         # Logo
         self.image(LOGO_PATH, 25, 5, 30)
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'ACQUIRED BY BCA', 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME, 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'KIOSK ID : '+KIOSK_ID, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME + ' - ' +KIOSK_ID, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'JAKARTA', 0, 0, 'C')
-        self.ln(SPACING*2)
 
     # def footer(self):
     #     self.set_font('Courier', '', DEFAULT_FONT_SIZE)
