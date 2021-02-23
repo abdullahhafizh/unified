@@ -492,6 +492,7 @@ Base{
                 _SLOT.user_action_log('Press "LANJUT"');
                 if (press!='0') return;
                 press = '1';
+                next_button.visible = false;
                 do_set_confirm('button_LANJUT_trigger');
             }
         }
@@ -1066,6 +1067,7 @@ Base{
                     _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
                     press = '1'
+                    next_button_global.visible = false;
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
                         _SLOT.start_bill_receive_note();

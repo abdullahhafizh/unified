@@ -424,8 +424,10 @@ Base{
                 if (cashEnable && debitEnable){
                     isConfirm = true;
                 } else if (cashEnable && !debitEnable){
+                    confirm_button.visible = false;
                     process_selected_payment('cash');
                 } else if (!cashEnable && debitEnable){
+                    confirm_button.visible = false;
                     process_selected_payment('debit');
                 } else if (!cashEnable && !debitEnable){
                     false_notif('Mohon Maaf|Tidak Terdapat Metode Pembayaran Yang Aktif.');

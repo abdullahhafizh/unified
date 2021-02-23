@@ -868,6 +868,7 @@ Base{
                     console.log('Press "LANJUT" For Retry Transaction');
                     if (press != '0') return;
                     press = '1';
+                    proceed_button.visible = false;
                     if (retryCategory == 'TOPUP'){
                         press = '0';
                         preload_check_card.open();
