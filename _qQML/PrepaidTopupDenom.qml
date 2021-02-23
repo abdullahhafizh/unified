@@ -492,7 +492,7 @@ Base{
                 _SLOT.user_action_log('Press "LANJUT"');
                 if (press!='0') return;
                 press = '1';
-                next_button.visible = false;
+                disable_all_next_button();
                 do_set_confirm('button_LANJUT_trigger');
             }
         }
@@ -500,6 +500,13 @@ Base{
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
+
+    function disable_all_next_button(){
+        console.log('Disable All "LANJUT" button');
+        next_button.visible = false;
+        next_button_global.visible = false;
+        next_button_preload.visible = false;
+    }
 
     function open_preload_notif(){
         preload_check_card.open();
@@ -1067,7 +1074,6 @@ Base{
                     _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
                     press = '1'
-                    next_button_global.visible = false;
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
                         _SLOT.start_bill_receive_note();

@@ -78,6 +78,12 @@ Base{
     }
 
 
+    function disable_all_next_button(){
+        console.log('Disable All "LANJUT" button');
+        confirm_button.visible = false;
+   }
+
+
     function get_cd_readiness(c){
         console.log('get_cd_readiness', c);
         cdReadiness = JSON.parse(c);
@@ -101,6 +107,7 @@ Base{
 
     function process_selected_payment(p){
         console.log('process_selected_payment', p);
+        disable_all_next_button();
         var get_details = get_cart_details(p);
         my_layer.push(process_shop, {details: get_details});
     }
@@ -424,10 +431,8 @@ Base{
                 if (cashEnable && debitEnable){
                     isConfirm = true;
                 } else if (cashEnable && !debitEnable){
-                    confirm_button.visible = false;
                     process_selected_payment('cash');
                 } else if (!cashEnable && debitEnable){
-                    confirm_button.visible = false;
                     process_selected_payment('debit');
                 } else if (!cashEnable && !debitEnable){
                     false_notif('Mohon Maaf|Tidak Terdapat Metode Pembayaran Yang Aktif.');

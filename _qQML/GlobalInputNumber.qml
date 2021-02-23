@@ -49,6 +49,8 @@ Base{
     property int receivedPayment: 0
     property int pendingPayment: 0
 
+    property bool transactionInProcess: false
+
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
 
@@ -62,6 +64,7 @@ Base{
             vCollectionMode = undefined;
             vCollectionData = undefined;
             retryAbleTransaction = false;
+            transactionInProcess = false;
             receivedPayment = 0;
             pendingPayment = 0;
             cardData = undefined;
@@ -148,6 +151,12 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('press "BATAL" In Input Number Page');
+                if (mode=='WA_VOUCHER'){
+                    if (transactionInProcess){
+                        console.log('[WARNING] Transaction In Process Not Allowed Cancellation');
+                        return;
+                    }
+                }
                 my_layer.pop();
             }
         }
@@ -721,6 +730,7 @@ Base{
                 if(press != "0") return;
                 var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                 press = "1"
+                transactionInProcess = true;
 //                    console.log('number input', now, textInput);
                 switch(mode){
                 case 'PPOB':
@@ -880,7 +890,6 @@ Base{
                 }
             }
         }
-
     }
 
 
@@ -963,7 +972,6 @@ Base{
             }
         }
     }
-
 
 }
 

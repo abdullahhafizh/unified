@@ -41,7 +41,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 100
         scale: 1
-        visible: (qrisProvider.indexOf(modeQr))
+        visible: (qrisProvider.indexOf(modeQR))
         source: "source/qr_logo/qris_logo_white.png"
         fillMode: Image.PreserveAspectFit
     }
