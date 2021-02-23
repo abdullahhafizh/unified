@@ -147,12 +147,7 @@ def generate_qr_receipt(data):
         # pdf.set_font('Courier', '', default_size)
         # pdf.cell(padding_left, 0, justifying('TID: '+trx['tid'], 'MID: '+trx['mid']), 0, 0, 'L')
         pdf.ln(large_space)
-        pdf.set_font('Courier', '', extra_size)
-        pdf.cell(padding_left, 0, 'Issuer: '+trx['transaction_detail']['issuer_name'], 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', extra_size)
-        pdf.cell(padding_left, 0, 'Acquirer: '+trx['transaction_detail']['acquirer_name'], 0, 0, 'L')
-        pdf.ln(tiny_space)
+        pdf.set_font('Courier', '', default_size)
         _trx_id = data['trx_reff_no'].split('-')[0]
         pdf.cell(padding_left, 0, 'Trx ID: '+_trx_id, 0, 0, 'C')
         pdf.ln(large_space)
@@ -186,6 +181,10 @@ def generate_qr_receipt(data):
         _reff_no = data['detail']['data']['reference_number']
         _app_code = trx['transaction_detail']['approval_code']
         pdf.cell(padding_left, 0, justifying('REF.NO: '+_reff_no, 'APPR: '+_app_code), 0, 0, 'L')
+        pdf.ln(tiny_space)
+        _issuer = trx['transaction_detail']['issuer_name']
+        _acquirer = trx['transaction_detail']['acquirer_name']
+        pdf.cell(padding_left, 0, justifying('ISS: '+_issuer, 'ACQ: '+_acquirer), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font('Courier', '', default_size)
         _amount_fee = str(trx['transaction_detail']['convenience_fee'])
