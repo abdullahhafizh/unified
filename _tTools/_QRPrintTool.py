@@ -9,7 +9,7 @@ from _dDevice import _Printer
 from _sService import _KioskService
 from _cConfig import _ConfigParser, _Common
 import re
-import _Helper
+from _tTools import _Helper
 
 LOGGER = logging.getLogger()
 PDF_PATH = os.path.join(sys.path[0], '_pPDF')
