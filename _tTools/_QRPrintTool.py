@@ -44,11 +44,14 @@ class PDF(FPDF):
     def header(self):
         self.set_font('Courier', '', HEADER_FONT_SIZE)
         # Logo
-        self.image(LOGO_PATH, 25, 5, 30)
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME + ' - ' +KIOSK_ID, 0, 0, 'C')
+        if os.path.isfile(LOGO_PATH):
+            # self.image(name=LOGO_PATH, x=None, y=None, w=100, h=60, type='GIF')
+            self.image(LOGO_PATH, 25, 20, 30)
+            self.ln(SPACING*2)
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME + ' - ' + KIOSK_ID, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'JAKARTA', 0, 0, 'C')
+        self.ln(SPACING)
 
     # def footer(self):
     #     self.set_font('Courier', '', DEFAULT_FONT_SIZE)
