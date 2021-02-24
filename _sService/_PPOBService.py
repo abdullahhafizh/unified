@@ -295,7 +295,8 @@ def validate_payment_history(payment_method='QR', trx_id=None, provider='shopeep
         return False, None
     if payment_method.lower() == 'debit':
         result, data = _EDC.edc_mobile_check_payment(trx_id)
-        if data['status'] != 'SUCCESS':
+        edc_payment_result = data.get('status', 'FAILED')
+        if edc_payment_result != 'SUCCESS':
             result = False
         return result, data
     else:
