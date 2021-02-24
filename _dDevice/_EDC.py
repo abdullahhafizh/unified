@@ -925,6 +925,7 @@ def edc_mobile_start_binding_edc():
         return False
     linked_edc_sn = _Common.load_from_temp_config('linked^edc^sn', '')
     if linked_edc_sn == _Common.EDC_SERIAL_NO:
+        EDC_MOBILE_BINDING_STATUS = True
         LOGGER.info(('[INFO]', 'EDC SN ' + _Common.EDC_SERIAL_NO + ' Already Binded Previously'))
         return True
     param = {
