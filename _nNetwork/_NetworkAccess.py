@@ -164,18 +164,18 @@ def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
 
 
 def get_local(url, param=None, log=True):
-    # try:
-    #     s = requests.session()
-    #     s.keep_alive = False
-    # except Exception as e:
-    #     LOGGER.warning((url, SERVICE_NOT_RESPONDING, e))
-    #     return -1, SERVICE_NOT_RESPONDING
     try:
+        s = requests.session()
+        s.keep_alive = False
         r = requests.get(url, json=param, timeout=GLOBAL_TIMEOUT)
+    except Exception as e:
+        LOGGER.warning((url, SERVICE_NOT_RESPONDING, e))
+        return -1, SERVICE_NOT_RESPONDING
+    try:
         response = r.json()
     except Exception as e:
         LOGGER.warning((url, ERROR_RESPONSE, e))
-        return r.status_code, ERROR_RESPONSE
+        return -1, ERROR_RESPONSE
 
     if log is True:
         LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response)))
