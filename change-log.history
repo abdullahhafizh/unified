@@ -1,5 +1,8 @@
 11.9.W-GLOBAL:
 - Add BCA QRIS Receipt,
+- Fix EDC Payment Check Validation,
+- EDC Binding Enhancement,
+- 
 - ...
 
 11.9.V-GLOBAL:

@@ -923,6 +923,10 @@ def edc_mobile_start_binding_edc():
     if _Common.EDC_SERIAL_NO == ('0'*16):
         LOGGER.warning(('[FAILED]', 'Invalid Mobile-Android Serial Number'))
         return False
+    linked_edc_sn = _Common.load_from_temp_config('linked^edc^sn', '')
+    if linked_edc_sn == _Common.EDC_SERIAL_NO:
+        LOGGER.info(('[INFO]', 'EDC SN ' + _Common.EDC_SERIAL_NO + ' Already Binded Previously'))
+        return True
     param = {
         'mid': _Common.CORE_MID,
         'token': _Common.CORE_TOKEN,
@@ -938,6 +942,7 @@ def edc_mobile_start_binding_edc():
             if status == 200 and not _Helper.empty(response.get('response', None)):
                 if response['response']['code'] == 200:
                     EDC_MOBILE_BINDING_STATUS = True
+                    _Common.log_to_temp_config('linked^edc^sn', _Common.EDC_SERIAL_NO)
                     print('pyt: [INFO] EDC Binding Request Success to ' + str(_Common.EDC_SERIAL_NO))
                     return True
             else:
@@ -1056,7 +1061,7 @@ def edc_mobile_check_payment(trx_id):
         status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/status-payment', param)
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
-            if response['data']['status'] != "WAITING":
+            if response['data']['status'] == "SUCCESS":
                 return True, response['data']
             else:
                 return False, None
