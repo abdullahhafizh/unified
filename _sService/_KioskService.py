@@ -264,6 +264,8 @@ def define_theme(d):
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
         content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+    if not _Common.empty(_Common.EDC_MOBILE_DURATION):
+        content_js += 'var edc_waiting_time = "' +  str(_Common.EDC_MOBILE_DURATION) + '";' + os.linesep
     # Receipt Logo
     if not _Common.empty(d['receipt_custom_text']):
         _Common.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')

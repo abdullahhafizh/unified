@@ -983,6 +983,7 @@ Base{
         _SLOT.start_get_refunds();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca-qris'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
+            main_title.show_text = 'Ringkasan Transaksi Anda';
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
             open_preload_notif_qr(msg, 'source/phone_qr.png');
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
@@ -1008,8 +1009,11 @@ Base{
             return;
         }
         if (details.payment == 'debit') {
+            main_title.show_text = 'Ringkasan Transaksi Anda';
+            var edc_waiting_time = '150';
+            if (CONF.edc_waiting_time != undefined) edc_waiting_time = CONF.edc_waiting_time;
 //            open_preload_notif('Masukkan Kartu Debit dan PIN Anda Pada EDC', 'source/insert_card_new.png');
-            switch_frame('source/insert_card_dc.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar', 'closeWindow|90', false )
+            switch_frame('source/insert_card_dc.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar', 'closeWindow|'+edc_waiting_time, false )
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;
             var structId = details.shop_type + details.epoch.toString();
@@ -1407,6 +1411,7 @@ Base{
     }
 
     MainTitle{
+        id: main_title
         anchors.top: parent.top
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
