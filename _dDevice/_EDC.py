@@ -552,7 +552,7 @@ TIMEOUT_CODE = '03||TO|'
 FINAL_BREAK_CODE = '02||'
 NOT_FOUND = '03||NF|'
 NEED_RETRY = '03||SR|'
-FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('EDC', 'force^settlement', '0') == '1' else False
+EDC_FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('EDC', 'force^settlement', '0') == '1' else False
 LOOP_DELAY = 5
 
 
@@ -570,7 +570,7 @@ def handling_settlement(mode):
     # _Command.clear_content_of(_Command.MO_REPORT, pid)
     # _Command.clear_content_of(_Command.MO_STATUS, pid)
     settle_result_history = []
-    if FORCE_SETTLEMENT is True:
+    if EDC_FORCE_SETTLEMENT is True:
         mark_settlement_data()
         LOGGER.info('[Break] by Settlement Success in Force Mode')
         return
