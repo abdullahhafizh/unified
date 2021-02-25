@@ -427,6 +427,6 @@ def send_command(param=None, config=[], restricted=[]):
             return -1, ""
     except Exception as e:
         LOGGER.warning((e))
-        return -1, ""
+        return -99, str(e)
     
     

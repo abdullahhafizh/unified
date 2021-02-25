@@ -135,6 +135,12 @@ def init_bill():
 def send_command_to_bill(param=None, output=None):
     if BILL["DIRECT_MODULE"] is True and BILL_TYPE == 'NV':
         result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
+        code, message = result
+        # Retry Command if Exception Raise
+        if code == -99:
+            LOGGER.debug(('EXCEPTION_RAISED', 'RETRY_COMMAND', param, result))
+            sleep(1)
+            result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
         LOGGER.info((param, result))
     else:
         result = _Command.send_request(param, output)
