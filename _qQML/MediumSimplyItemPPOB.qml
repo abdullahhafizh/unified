@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: rectangle
-    property var sourceImage:"source/ppob_category/pulsa.png"
+    property var sourceImage:"source/ppob_operator/ovo.png"
     property bool modeReverse: true
     property var operatorName: 'Pulsa'
     width: 200
@@ -22,7 +22,7 @@ Rectangle {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        scale: 1.2
+        scale: 0.8
         source: sourceImage
         fillMode: Image.PreserveAspectFit
     }
@@ -34,8 +34,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 20
-        font.bold: true
-        font.pixelSize: 28
+        font.bold: false
+        font.pixelSize: 21
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"

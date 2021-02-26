@@ -163,7 +163,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Pilih Nominal / Item Produk'
+        show_text: textPanel
         visible: !popup_loading.visible
         size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
@@ -189,12 +189,12 @@ Base{
 
         GridView{
             id: gridViewPPOB
-            cellHeight: 170
-            cellWidth: (globalScreenType == '1') ? 1010 : 810
+            cellHeight: 320
+            cellWidth: 220
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: 150
-            contentWidth: (globalScreenType == '1') ? 1000 : 800
+            contentHeight: 300
+            contentWidth: 200
             flickDeceleration: 750
             maximumFlickVelocity: 1500
             layoutDirection: Qt.LeftToRight
