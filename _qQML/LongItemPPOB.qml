@@ -9,6 +9,7 @@ Rectangle {
     property var text_:"Data 25.000"
     property var text2_:"Kuota Reguler 270-750MB + 2GB Video Max. Berlaku selama 30 hari"
     property var logo_:"source/ppob_operator/Pulsa.png"
+    property var logo2_:"source/ppob_operator/Pulsa.png"
     property var itemWidth: 1000
     width: itemWidth
     height: 150
@@ -32,6 +33,11 @@ Rectangle {
         width: 150
         fillMode: Image.PreserveAspectFit
         source: logo_
+        onStatusChanged: {
+            if (operator_logo.status == Image.Error) {
+                operator_logo.source = logo2_;
+            }
+        }
     }
 
     Text{

@@ -60,11 +60,14 @@ Base{
                     }
                     var clean_operator = FUNC.strip(p[i]['operator'].toLowerCase());
                     var operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
-                    product_model.append({
+                    var clean_category = FUNC.strip(p[i]['category'].toLowerCase());
+                    var category_logo = 'source/ppob_category/'+clean_category+'.png';
+                        product_model.append({
                                              'ppob_name': prod_name,
                                              'ppob_desc': desc,
                                              'ppob_price': formated_price,
                                              'ppob_operator_logo': operator_logo,
+                                             'ppob_category_logo': category_logo,
                                              'raw': p[i]
                                           })
                 }
@@ -84,11 +87,14 @@ Base{
                     clean_operator = FUNC.strip(p[i]['operator'].toLowerCase());
                     clean_operator = clean_operator.replace('/', '-');
                     operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
+                    clean_category = FUNC.strip(p[i]['category'].toLowerCase());
+                    category_logo = 'source/ppob_category/'+clean_category+'.png';
                     product_model.append({
                                              'ppob_name': prod_name,
                                              'ppob_desc': desc,
                                              'ppob_price': formated_price,
                                              'ppob_operator_logo': operator_logo,
+                                             'ppob_category_logo': category_logo,
                                              'raw': p[i]
                                           })
                 }
@@ -254,6 +260,7 @@ Base{
                 text_: ppob_name;
                 text2_: ppob_desc;
                 logo_: ppob_operator_logo;
+                logo2_: ppob_category_logo;
                 itemWidth :  (globalScreenType == '1') ? 1000 : 780
                 MouseArea{
                     anchors.fill: parent;
