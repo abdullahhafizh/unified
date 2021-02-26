@@ -228,7 +228,7 @@ Base{
                         console.log('Selected Category : ', now, category_text);
                         _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
                         //Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
-                        if (category_text=='UANG ELEKTRONIK') my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
+                        if (category_text.toLowerCase()=='uang elektronik') my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
                         else my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text});
                     }
                 }
