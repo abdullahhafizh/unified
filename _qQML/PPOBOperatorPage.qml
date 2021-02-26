@@ -4,7 +4,7 @@ import "base_function.js" as FUNC
 
 Base{
     id: ppob_product_operator
-//        property var globalScreenType: '2'
+//        property var globalScreenType: '1'
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 60*5
@@ -174,7 +174,7 @@ Base{
         id: flickable_items
         width: (globalScreenType == '1') ? 1100 : 950
         height: 800
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.horizontalCenterOffset: (globalScreenType == '1') ? 0 : 75
         anchors.verticalCenter: parent.verticalCenter
