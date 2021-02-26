@@ -569,7 +569,7 @@ Base{
 //            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
             details.provider = selectedProduct.description;
             if (details.product_channel == 'MDD'){
-                details.provider = selectedProduct.description + ' - Admin Included';
+                details.provider = selectedProduct.description + ' (Admin 1500)';
                 details.value = (parseInt(selectedProduct.rs_price) - 1500).toString();
                 details.admin_fee = '1500';
             }

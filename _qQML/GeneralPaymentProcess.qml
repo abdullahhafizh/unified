@@ -975,6 +975,9 @@ Base{
             getDenom = parseInt(details.denom);
             row2.labelContent = details.provider + ' - ' + details.value
         }
+        if (details.shop_type=='ppob') {
+            row3.labelName = 'Nilai Denom'
+        }
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-9);
@@ -1444,7 +1447,7 @@ Base{
         TextDetailRow{
             id: row3
             labelName: (details.shop_type=='topup') ? 'Biaya Admin' : 'Harga Satuan'
-            labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value)
+            labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value);
         }
 
         TextDetailRow{
