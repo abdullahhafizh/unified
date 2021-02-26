@@ -36,6 +36,7 @@ Rectangle {
         onStatusChanged: {
             if (operator_logo.status == Image.Error) {
                 operator_logo.source = logo2_;
+                operator_logo.scale = 0.6;
             }
         }
     }
