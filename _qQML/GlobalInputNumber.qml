@@ -553,6 +553,7 @@ Base{
         details.rs_price = selectedProduct.rs_price;
         details.amount = selectedProduct.amount;
         details.ppob_mode = ppobMode;
+        details.product_channel = selectedProduct.product_channel;
         if (ppobTagihanData!==undefined && ppobMode=='tagihan'){
             details.customer = ppobTagihanData.customer;
             details.value = ppobTagihanData.value;
@@ -567,6 +568,11 @@ Base{
             details.msisdn = textInput;
 //            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
             details.provider = selectedProduct.description;
+            if (details.product_channel == 'MDD'){
+                details.provider = selectedProduct.description + ' - Admin Included';
+                details.value = (parseInt(selectedProduct.rs_price) - 1500).toString();
+                details.admin_fee = '1500';
+            }
         }
 //        _SLOT.python_dump(JSON.stringify(details));
         my_timer.stop();

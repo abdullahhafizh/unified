@@ -16,6 +16,7 @@ Base{
     property bool frameWithButton: false
     property var selectedCategory
     property var selectedOperator
+    property var channelMDD: ['CASHIN OVO', 'CASHIN LINKAJA']
 
 
     Stack.onStatusChanged:{
@@ -266,13 +267,16 @@ Base{
                     anchors.fill: parent;
                     onClicked: {
                         _SLOT.user_action_log('choose "'+ppob_name+'" PPOB Product');
+                        var product_channel = (channelMDD.indexOf(raw.operator) > -1) ? 'MDD' : 'DIVA';
+                        if (raw.product_channel != undefined) product_channel = raw.product_channel;
                         var details = {
                             category: raw.category,
                             operator: raw.operator,
                             description: raw.description,
                             product_id: raw.product_id,
                             rs_price: raw.rs_price,
-                            amount: raw.amount
+                            amount: raw.amount,
+                            product_channel: product_channel
                         }
                         console.log('Set Selected Product Into Input Layer: ', JSON.stringify(details));
                         my_layer.push(global_input_number, {selectedProduct: details, mode: 'PPOB'});

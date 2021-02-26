@@ -689,7 +689,8 @@ Base{
                     reff_no: details.shop_type + details.epoch.toString(),
                     product_category: details.category,
                     payment_type: details.payment,
-                    operator: details.operator
+                    operator: details.operator,
+                    product_channel: detail.product_channel,
                 }
                 if (details.ppob_mode=='tagihan'){
                     _SLOT.start_do_pay_ppob(JSON.stringify(payload));
