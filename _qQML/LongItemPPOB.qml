@@ -8,6 +8,7 @@ Rectangle {
     property var color_: (modeReverse) ? "black" : "white"
     property var text_:"Data 25.000"
     property var text2_:"Kuota Reguler 270-750MB + 2GB Video Max. Berlaku selama 30 hari"
+    property var logo_:"source/ppob_operator/Pulsa.png"
     property var itemWidth: 1000
     width: itemWidth
     height: 150
@@ -21,6 +22,18 @@ Rectangle {
         opacity: .3
     }
 
+    AnimatedImage{
+        id: operator_logo
+        height: parent.height
+        scale: 0.8
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 0
+        width: 150
+        fillMode: Image.PreserveAspectFit
+        source: logo_
+    }
+
     Text{
         id: name_item
         width: parent.width
@@ -29,8 +42,8 @@ Rectangle {
         anchors.top: parent.top
         anchors.topMargin: 25
         anchors.left: parent.left
-        anchors.leftMargin: 25
-        font.pixelSize: (itemWidth==1000) ? 35 : 25
+        anchors.leftMargin: 150
+        font.pixelSize: (itemWidth==1000) ? 33 : 25
         wrapMode: Text.WordWrap
         style: Text.Sunken
         anchors.horizontalCenterOffset: 0
@@ -61,11 +74,12 @@ Rectangle {
     Rectangle {
         id: separator_line
         color: "white"
+        anchors.horizontalCenterOffset: 50
         anchors.verticalCenterOffset: 10
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         height: 5
-        width: parent.width - 50
+        width: parent.width - 50 - 150
     }
 
     Text{
@@ -73,8 +87,8 @@ Rectangle {
         color: color_
         text: text2_.toUpperCase()
         anchors.left: parent.left
-        anchors.leftMargin: 25
-        font.pixelSize: (itemWidth==1000) ? 25 : 23
+        anchors.leftMargin: 150
+        font.pixelSize: (itemWidth==1000) ? 21 : 19
         anchors.bottomMargin: 25
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter

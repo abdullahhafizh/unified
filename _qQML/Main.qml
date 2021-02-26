@@ -292,6 +292,10 @@ Rectangle {
         PPOBCategoryPage{}
     }
 
+    Component {id: ppob_product_operator
+        PPOBOperatorPage{}
+    }
+
     Component {id: ppob_product
         PPOBProductPage{}
     }

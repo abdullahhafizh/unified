@@ -1,5 +1,7 @@
 11.9.X-GLOBAL:
 - Handle Retry NV Command On Exception,
+- Change Flow PPOB Uang Elektronik,
+- Add Logo in Item Select,
 - ...
 
 11.9.W-GLOBAL:

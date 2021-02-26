@@ -3,31 +3,31 @@ import QtQuick.Controls 1.3
 import "base_function.js" as FUNC
 
 Base{
-    id: ppob_category
-
-//    property var globalScreenType: '1'
-//    height: (globalScreenType=='2') ? 1024 : 1080
-//    width: (globalScreenType=='2') ? 1280 : 1920
-
+    id: ppob_product_operator
+//        property var globalScreenType: '2'
+//        height: (globalScreenType=='2') ? 1024 : 1080
+//        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 60*5
     isPanelActive: false
     isHeaderActive: true
     isBoxNameActive: false
-    textPanel: 'Pilih Kategori Produk'
+    textPanel: 'Pilih Produk Operator'
+    property var operators: []
     property var ppobData
-    property var category: []
     property bool frameWithButton: false
+    property var selectedCategory
+
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            abc.counter = timer_value
-            my_timer.start()
-            popup_loading.open()
-            if (ppobData!=undefined) parse_category(ppobData)
+            abc.counter = timer_value;
+            my_timer.start();
+            popup_loading.open();
+            if (ppobData!=undefined) parse_operator(ppobData);
         }
         if(Stack.status==Stack.Deactivating){
-            my_timer.stop()
-            loading_view.close()
+            my_timer.stop();
+            loading_view.close();
         }
     }
 
@@ -37,31 +37,33 @@ Base{
     Component.onDestruction:{
     }
 
-    function parse_category(p){
+    function parse_operator(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('parse_category', now, p);
+        console.log('parse_operator', now, p);
         p = JSON.parse(p)
         for (var i=0;i < p.length;i++){
-            var get_category = p[i]['category']
-//            console.log('>>>>>test parse_category', get_category, p[i]);
-            if (category.indexOf(p[i]['category']) == -1) category.push(p[i]['category'])
+            if (p[i]['category'] != selectedCategory) continue;
+            if (operators.indexOf(p[i]['operator']) == -1) operators.push(p[i]['operator']);
         }
-//        console.log('category update', category);
-        if (category.length > 0) parse_item_category(category);
+        if (operators.length > 0) parse_item_operator(operators);
         else switch_frame('source/smiley_down.png', 'Maaf Sementara Layanan Ini Tidak Dapat Digunakan', '', 'backToMain', false );
 
     }
 
-    function parse_item_category(c){
+    function parse_item_operator(o){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('parse_item_category', now, c);
-        category_model.clear();
-        gridViewPPOB.model = category_model;
-        for (var _c=0; _c < category.length;_c++){
-            var logo_category = FUNC.strip(category[_c].toLowerCase())
-            category_model.append({
-                                      'category_text': category[_c],
-                                      'category_url': 'source/ppob_category/'+logo_category+'.png'
+        console.log('parse_item_operator', now, o);
+        operator_model.clear();
+        gridViewPPOB.model = operator_model;
+        for (var _i=0; _i < operators.length;_i++){
+            var clean_operator = FUNC.strip(operators[_i].toLowerCase());
+            clean_operator = clean_operator.replace('/', '-');
+            var operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
+            operator_model.append({
+                                      'category_text': selectedCategory,
+                                      'operator_text': operators[_i],
+                                      'operator_url': operator_logo,
+
                                   })
         }
         popup_loading.close();
@@ -142,15 +144,14 @@ Base{
         anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
-        button_text: 'BATAL'
+        button_text: 'KEMBALI'
         modeReverse: true
-        z: 10
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('press "KEMBALI" In PPOB Category Page');
+                _SLOT.user_action_log('press "KEMBALI" In PPOB Product Page');
                 my_timer.stop()
-                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                my_layer.pop()
             }
         }
     }
@@ -162,7 +163,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Pilih Kategori Produk'
+        show_text: 'Pilih Nominal / Item Produk'
         visible: !popup_loading.visible
         size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
@@ -171,12 +172,12 @@ Base{
 
     Item  {
         id: flickable_items
-        width: (globalScreenType == '1') ? 1550 : parent.width
+        width: (globalScreenType == '1') ? 1100 : 950
         height: 800
         anchors.verticalCenterOffset: 100
-        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset:  (globalScreenType == '1') ? 0 : 75
+        anchors.horizontalCenterOffset: (globalScreenType == '1') ? 0 : 75
+        anchors.verticalCenter: parent.verticalCenter
 
         ScrollBarVertical{
             id: vertical_sbar
@@ -188,12 +189,12 @@ Base{
 
         GridView{
             id: gridViewPPOB
-            cellHeight: 203
-            cellWidth: 379
+            cellHeight: 170
+            cellWidth: (globalScreenType == '1') ? 1010 : 810
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: 183
-            contentWidth: 359
+            contentHeight: 150
+            contentWidth: (globalScreenType == '1') ? 1000 : 800
             flickDeceleration: 750
             maximumFlickVelocity: 1500
             layoutDirection: Qt.LeftToRight
@@ -211,31 +212,61 @@ Base{
         }
 
         ListModel {
-            id: category_model
+            id: operator_model
         }
 
         Component{
             id: component_ppob
-            SmallSimplyItemPPOB{
+            MediumSimplyItemPPOB{
                 id: item_ppob;
                 modeReverse: true
-                sourceImage: category_url
-                categoryName: category_text
+                sourceImage: operator_url
+                operatorName: operator_text
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
-                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                        console.log('Selected Category : ', now, category_text);
-                        _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
-                        //Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
-                        if (category_text=='UANG ELEKTRONIK') my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
-                        else my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text});
+                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                        console.log('Selected Operator : ', now, operator_text);
+                        _SLOT.user_action_log('choose "'+operator_text+'" PPOB Operator');
+                        my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text, selectedOperator: operator_text});
                     }
                 }
             }
+//            LongItemPPOB{
+//                id: item_ppob;
+//                text_: ppob_name;
+//                text2_: ppob_desc;
+//                logo_: ppob_operator_logo;
+//                itemWidth :  (globalScreenType == '1') ? 1000 : 780
+//                MouseArea{
+//                    anchors.fill: parent;
+//                    onClicked: {
+//                        _SLOT.user_action_log('choose "'+ppob_name+'" PPOB Product');
+//                        var details = {
+//                            category: raw.category,
+//                            operator: raw.operator,
+//                            description: raw.description,
+//                            product_id: raw.product_id,
+//                            rs_price: raw.rs_price,
+//                            amount: raw.amount
+//                        }
+//                        console.log('Set Selected Product Into Input Layer: ', JSON.stringify(details));
+//                        my_layer.push(global_input_number, {selectedProduct: details, mode: 'PPOB'});
+//                    }
+//                }
+//            }
         }
     }
 
+
+    Image{
+        id: sign_scroll
+        scale: (globalScreenType == '1') ? 0.75 : 0.45
+        anchors.right: parent.right
+        anchors.rightMargin: (globalScreenType == '1') ? 50 : -50
+        anchors.verticalCenter: parent.verticalCenter
+        source: 'source/scroll_sign.png'
+    }
 
     //==============================================================
 

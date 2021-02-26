@@ -15,6 +15,7 @@ Base{
     property var ppobData
     property bool frameWithButton: false
     property var selectedCategory
+    property var selectedOperator
 
 
     Stack.onStatusChanged:{
@@ -44,25 +45,55 @@ Base{
         gridViewPPOB.model = product_model;
         var p = JSON.parse(ppobData)
         for (var i=0;i < p.length;i++){
-            if (p[i]['category']==c){
-                var formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
-                var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
-                var desc = p[i]['description'];
-                if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
-                    prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
-                    desc = 'Plus Biaya Admin ' + formated_price;
+            if (selectedOperator == undefined){
+                if (p[i]['category']==c){
+                    var formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                    var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
+                    var desc = p[i]['description'];
+                    if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                        prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
+                        desc = 'Plus Biaya Admin ' + formated_price;
+                    }
+                    if (['VOUCHER', 'ZAKAT', 'PAKET INTERNET', 'UANG ELEKTRONIK', 'GAME', 'OJEK ONLINE', 'PULSA', 'LISTRIK'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                        prod_name = p[i]['description'];
+                        desc = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                    }
+                    var clean_operator = FUNC.strip(p[i]['operator'].toLowerCase());
+                    var operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
+                    product_model.append({
+                                             'ppob_name': prod_name,
+                                             'ppob_desc': desc,
+                                             'ppob_price': formated_price,
+                                             'ppob_operator_logo': operator_logo,
+                                             'raw': p[i]
+                                          })
                 }
-                if (['VOUCHER', 'ZAKAT', 'PAKET INTERNET', 'UANG ELEKTRONIK', 'GAME', 'OJEK ONLINE', 'PULSA', 'LISTRIK'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
-                    prod_name = p[i]['description'];
-                    desc = p[i]['operator'] + ' ' + 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+            } else {
+                if (p[i]['category']==c && p[i]['operator'] == selectedOperator){
+                    formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                    prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
+                    desc = p[i]['description'];
+                    if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                        prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
+                        desc = 'Plus Biaya Admin ' + formated_price;
+                    }
+                    if (['VOUCHER', 'ZAKAT', 'PAKET INTERNET', 'UANG ELEKTRONIK', 'GAME', 'OJEK ONLINE', 'PULSA', 'LISTRIK'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                        prod_name = p[i]['description'];
+                        desc = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                    }
+                    clean_operator = FUNC.strip(p[i]['operator'].toLowerCase());
+                    clean_operator = clean_operator.replace('/', '-');
+                    operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
+                    product_model.append({
+                                             'ppob_name': prod_name,
+                                             'ppob_desc': desc,
+                                             'ppob_price': formated_price,
+                                             'ppob_operator_logo': operator_logo,
+                                             'raw': p[i]
+                                          })
                 }
-                product_model.append({
-                                         'ppob_name': prod_name,
-                                         'ppob_desc': desc,
-                                         'ppob_price': formated_price,
-                                         'raw': p[i]
-                                      })
             }
+
 
         }
 
@@ -222,6 +253,7 @@ Base{
                 id: item_ppob;
                 text_: ppob_name;
                 text2_: ppob_desc;
+                logo_: ppob_operator_logo;
                 itemWidth :  (globalScreenType == '1') ? 1000 : 780
                 MouseArea{
                     anchors.fill: parent;
