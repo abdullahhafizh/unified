@@ -272,8 +272,8 @@ class NV200_BILL_ACCEPTOR(object):
         elif  event[1] == '0xaf':
             event_data.append("Printed To Cashbox")
         else:
-            unknown_event = binascii.hexlify(event)
-            event_data.append("Unknown Event: " + str(unknown_event))
+            print('pyt: [NV200] Unknown Event: ', str(poll_data))
+            event_data.append("Unknown Event")
         event_data.append(0)
         return event_data
     
