@@ -7,6 +7,7 @@ import json
 import logging
 from _cConfig import _Common
 import traceback
+import binascii
 
 LOGGER = logging.getLogger()
 
@@ -271,7 +272,8 @@ class NV200_BILL_ACCEPTOR(object):
         elif  event[1] == '0xaf':
             event_data.append("Printed To Cashbox")
         else:
-            event_data.append("Unknown Event: " + str(event))
+            print('pyt: [NV200] Unknown Event: ', str(poll_data))
+            event_data.append("Unknown Event")
         event_data.append(0)
         return event_data
     
