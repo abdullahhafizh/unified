@@ -6,6 +6,7 @@ from . import _eSSPLib
 import json
 import logging
 from _cConfig import _Common
+import traceback
 
 LOGGER = logging.getLogger()
 
@@ -426,7 +427,9 @@ def send_command(param=None, config=[], restricted=[]):
         else:
             return -1, ""
     except Exception as e:
+        error_string = traceback.format_exc()
         LOGGER.warning((e))
+        LOGGER.debug(error_string)
         return -99, str(e)
     
     
