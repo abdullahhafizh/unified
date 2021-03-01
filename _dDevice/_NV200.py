@@ -366,9 +366,10 @@ def send_command(param=None, config=[], restricted=[]):
                     LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1]:
                         return 0, pool[1]
-                    # if config['KEY_BOX_FULL'] in pool[1]:
-                    #     return 0, pool[1]
-                    #     break
+                    if config['KEY_BOX_FULL'] in pool[1]:
+                        NV200.disable()
+                        return -1, pool[1]
+                        break
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
@@ -380,8 +381,11 @@ def send_command(param=None, config=[], restricted=[]):
             while True:
                 pool = NV200.listen_poll()
                 LOOP_ATTEMPT += 1
-                if config['KEY_STORED'] in pool[1] or config['KEY_BOX_FULL'] in pool[1]:
+                if config['KEY_STORED'] in pool[1]:
                     return 0, pool[1]
+                    break
+                if config['KEY_BOX_FULL'] in pool[1]:
+                    return -1, pool[1]
                     break
                 if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                     break

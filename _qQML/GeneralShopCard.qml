@@ -43,6 +43,9 @@ Base{
 
     property bool mainVisible: false
 
+    property var cashboxFull
+
+
     idx_bg: 0
     imgPanel: 'source/beli_kartu.png'
     textPanel: 'Pembelian Kartu Prabayar'
@@ -129,6 +132,11 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_payments', s, now);
         var device = JSON.parse(s);
+        if (device.BILL == 'CASHBOX_FULL'){
+            cashboxFull = true;
+            cashEnable = true;
+            totalPaymentEnable += 1;
+        }
         if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
             totalPaymentEnable += 1;
@@ -175,6 +183,12 @@ Base{
             press = '0';
             select_payment.close();
             select_qr_provider.open();
+            return;
+        }
+        if (p=='cash' && cashboxFull){
+            console.log('Cashbox Full Detected', p);
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf, Pembayaran Tunai tidak dapat dilakukan saat ini.', ' Silakan Pilih Metode Pembayaran lain yang tersedia.', 'closeWindow|3', false );
             return;
         }
         selectedPayment = p;

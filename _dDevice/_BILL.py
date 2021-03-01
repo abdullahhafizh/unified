@@ -230,6 +230,11 @@ def start_receive_note():
             param = BILL["RECEIVE"] + '|'
             _response, _result = send_command_to_bill(param=param, output=None)
             # _Helper.dump([_response, _result])
+            if BILL['KEY_BOX_FULL'].lower() in _result.lower():
+                set_cashbox_full()
+                IS_RECEIVING = False
+                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
+                break
             if _response == -1:
                 if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
                     stop_receive_note()
@@ -330,13 +335,17 @@ def store_cash_into_cashbox():
         if BILL['KEY_STORED'].lower() in _result_store.lower():
             return True
         if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
-            _Common.BILL_ERROR = 'CASHBOX_FULL'
-            total_cash = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
-            _Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
-            _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
-            return True
+            set_cashbox_full()
+            return False
         if attempt == max_attempt:
             return False
+        
+
+def set_cashbox_full():
+    _Common.BILL_ERROR = 'CASHBOX_FULL'
+    total_cash = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    _Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
+    _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
 
 
 def update_cash_status(cash_in, store_result=False):

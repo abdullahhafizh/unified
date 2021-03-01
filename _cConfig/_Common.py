@@ -845,7 +845,7 @@ def get_payments():
         "EDC": "AVAILABLE" if (EDC["status"] is True and check_payment('card') is True) else "NOT_AVAILABLE",
         "CD": "AVAILABLE" if CD["status"] is True else "NOT_AVAILABLE",
         "MEI": "AVAILABLE" if (MEI["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
-        "BILL": "AVAILABLE" if (BILL["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
+        "BILL": check_bill_status(),
         "QR_OVO": "AVAILABLE" if check_payment('ovo') is True else "NOT_AVAILABLE",
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
@@ -854,6 +854,16 @@ def get_payments():
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
         "QR_BCA": "AVAILABLE" if check_payment('bca-qris') is True else "NOT_AVAILABLE",
     }
+    
+
+def check_bill_status():
+    if BILL["status"] is not True:
+        return 'NOT_AVAILABLE'
+    if check_payment('cash') is not True:
+        return 'NOT_AVAILABLE'
+    if BILL_ERROR == 'CASHBOX_FULL':
+        return BILL_ERROR
+    return 'AVAILABLE'
 
 
 def get_refunds():

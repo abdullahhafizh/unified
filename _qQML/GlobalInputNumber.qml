@@ -51,6 +51,9 @@ Base{
 
     property bool transactionInProcess: false
 
+    property var cashboxFull
+
+
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
 
@@ -536,6 +539,12 @@ Base{
             select_qr_provider.open();
             return;
         }
+        if (channel=='cash' && cashboxFull){
+            console.log('Cashbox Full Detected', channel);
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf, Pembayaran Tunai tidak dapat dilakukan saat ini.', ' Silakan Pilih Metode Pembayaran lain yang tersedia.', 'closeWindow|3', false );
+            return;
+        }
         var details = {
             payment: channel,
             shop_type: 'ppob',
@@ -583,6 +592,11 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_payments', now, s);
         var device = JSON.parse(s);
+        if (device.BILL == 'CASHBOX_FULL'){
+            cashboxFull = true;
+            cashEnable = true;
+            totalPaymentEnable += 1;
+        }
         if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
             totalPaymentEnable += 1;
