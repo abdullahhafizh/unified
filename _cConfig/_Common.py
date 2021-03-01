@@ -857,12 +857,13 @@ def get_payments():
     
 
 def check_bill_status():
+    last_status_bill = load_from_temp_config('BILL', 'last^money^inserted')
+    if last_status_bill == 'FULL':
+        return 'CASHBOX_FULL'
     if BILL["status"] is not True:
         return 'NOT_AVAILABLE'
     if check_payment('cash') is not True:
         return 'NOT_AVAILABLE'
-    if BILL_ERROR == 'CASHBOX_FULL':
-        return BILL_ERROR
     return 'AVAILABLE'
 
 
