@@ -656,6 +656,10 @@ def load_from_temp_config(section='test^section', default=''):
 def log_to_config(option='TEMPORARY', section='last^auth', content=''):
     content = str(content)
     _ConfigParser.set_value(option, section, content)
+    
+
+def load_from_custom_config(option='BILL', section='last^money^inserted', default=''):
+    return _ConfigParser.get_set_value(option, section, default)
 
 
 def update_receipt_count():
@@ -857,7 +861,7 @@ def get_payments():
     
 
 def check_bill_status():
-    last_status_bill = load_from_temp_config('BILL', 'last^money^inserted')
+    last_status_bill = load_from_custom_config('BILL', 'last^money^inserted')
     if last_status_bill == 'FULL':
         return 'CASHBOX_FULL'
     if BILL["status"] is not True:
