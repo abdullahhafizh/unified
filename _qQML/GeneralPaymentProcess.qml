@@ -1268,9 +1268,9 @@ Base{
         global_frame.modeAction = "";
         if (modeButtonPopup == 'retrigger_bill') global_frame.modeAction = "RETRIGGER_BILL";
         if (closeMode.indexOf('|') > -1){
-            closeMode = closeMode.split('|')[0];
+            var selectedCloseMode = closeMode.split('|')[0];
             var frame_timer = closeMode.split('|')[1];
-            global_frame.closeMode = closeMode;
+            global_frame.closeMode = selectedCloseMode;
             global_frame.timerDuration = parseInt(frame_timer);
             global_frame.withTimer = true;
         }

@@ -850,15 +850,17 @@ Base{
 
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = false;
+        global_frame.closeMode = closeMode;
+        global_frame.timerDuration = 5;
         if (closeMode.indexOf('|') > -1){
-            closeMode = closeMode.split('|')[0];
-            var timer = closeMode.split('|')[1];
-            global_frame.timerDuration = parseInt(timer);
+            var selectedCloseMode = closeMode.split('|')[0];
+            var frame_timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(frame_timer);
+            global_frame.closeMode = selectedCloseMode;
         }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
-        global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
         global_frame.withTimer = true;
         global_frame.open();
@@ -867,16 +869,17 @@ Base{
     function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = true;
         global_frame.withTimer = false;
+        global_frame.closeMode = closeMode;
+        global_frame.timerDuration = 5;
         if (closeMode.indexOf('|') > -1){
-            closeMode = closeMode.split('|')[0];
-            var timer = closeMode.split('|')[1];
-            global_frame.timerDuration = parseInt(timer);
-            global_frame.withTimer = true;
+            var selectedCloseMode = closeMode.split('|')[0];
+            var frame_timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(frame_timer);
+            global_frame.closeMode = selectedCloseMode;
         }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
-        global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
         global_frame.open();
     }
