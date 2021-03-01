@@ -1427,6 +1427,7 @@ def generate_collection_data():
                     __['init_slot4'] = update['stock']
         __['collect_time'] = _Helper.time_string()
         BILL_ERROR = ''
+        _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A'),
         COLLECTION_DATA = __
     except Exception as e:
         LOGGER.warning(str(e))
