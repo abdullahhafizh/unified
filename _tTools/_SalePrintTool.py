@@ -1341,6 +1341,8 @@ class Ereceipt:
         ]
         self.company = ''
         self.logo = self.company + '-logo'
+        if self.company == 'KAI':
+            self.logo = 'kci-logo'
         self.filename = ''
         self.amount = ''
         self.trxid = ''
