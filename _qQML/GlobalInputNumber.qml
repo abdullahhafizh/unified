@@ -478,9 +478,13 @@ Base{
                     wording_text = 'Masukkan 10 Digit User Token LinkAja (99XXXXXXXX)';
                     min_count = 10;
                 } else if (['TCASH LINKAJA', 'OVO', 'CASHIN OVO', 'CASHIN LINKAJA', 'DANA', 'BUKADANA', 'TIXID'].indexOf(operator) > -1) {
-                    wording_text = 'Masukkan Nomor Terdaftar Pada Aplikasi';
+                    operator = operator.split(' ')
+                    if (operator.length == 1) var selectedOperator = operator[0];
+                    else selectedOperator = operator[1];
+                    console.log('selected_operator', selectedOperator);
+                    wording_text = 'Masukkan Nomor HP Terdaftar Pada Aplikasi ' + selectedOperator;
                     min_count = 15;
-                }  else {
+                } else {
                     wording_text = 'Masukkan Nomor Kartu Prabayar Anda';
                     min_count = 15;
                 }
