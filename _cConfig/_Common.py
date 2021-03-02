@@ -1530,7 +1530,11 @@ def logo_theme(theme):
 
 PRINT_COMPANY_MAPPING = {
     'transjakarta': 'TJ',
-    'kai': 'KC'
+    'kai': 'KAI',
+    'jmto': 'JMTO',
+    'jmrb': 'JMRB',
+    'lms': 'LMS',
+    'uns': 'UNS'
 }
 
 def company_theme(theme):
