@@ -477,7 +477,7 @@ Base{
                 if (['DISABLE>>>TCASH LINKAJA'].indexOf(operator) > -1){
                     wording_text = 'Masukkan 10 Digit User Token LinkAja (99XXXXXXXX)';
                     min_count = 10;
-                } else if (['TCASH LINKAJA', 'OVO', 'DANA', 'BUKADANA', 'TIXID'].indexOf(operator) > -1) {
+                } else if (['TCASH LINKAJA', 'OVO', 'CASHIN OVO', 'CASHIN LINKAJA', 'DANA', 'BUKADANA', 'TIXID'].indexOf(operator) > -1) {
                     wording_text = 'Masukkan Nomor Terdaftar Pada Aplikasi';
                     min_count = 15;
                 }  else {
