@@ -272,11 +272,10 @@ class NV200_BILL_ACCEPTOR(object):
         elif  event[1] == '0xaf':
             event_data.append("Printed To Cashbox")
         else:
-            print('pyt: [NV200] Unknown Event: ', str(poll_data))
-            event_data.append("Unknown Event")
+            # print('pyt: [NV200] Unknown Event: ')
+            event_data.append("Unknown Event: " + str(event))
         event_data.append(0)
         return event_data
-    
 
     def listen_poll(self):
         while True:
@@ -289,12 +288,23 @@ class NV200_BILL_ACCEPTOR(object):
                 else:
                     event.append('')
                 if _Common.BILL_LIBRARY_DEBUG is True:
-                    print('pyt: [NV200] Event :', str(event))   
+                    try:
+                        print('pyt: [NV200] Event :', str(event))
+                    except Exception as e:
+                        ERROR_COUNT = ERROR_COUNT + 1
+                        error_string = traceback.format_exc()
+                        file = open( ERROR_FILE+ERROR_COUNT+".bin", "wb")
+                        file.write(error_string)
+                        file.write(event)
+                        file.close()
+
                 return event
             time.sleep(0.5)
 
 
 NV200 = None
+ERROR_COUNT = 0
+ERROR_FILE = "error_print_nv200_event_"
 
 # NV = {
 #     "SET": "601",
