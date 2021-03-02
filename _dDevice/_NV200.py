@@ -11,6 +11,9 @@ import binascii
 
 LOGGER = logging.getLogger()
 
+ERROR_COUNT = 0
+ERROR_FILE = "error_print_nv200_event_"
+
 
 class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000"]):
@@ -297,14 +300,10 @@ class NV200_BILL_ACCEPTOR(object):
                         file.write(error_string)
                         file.write(event)
                         file.close()
-
                 return event
             time.sleep(0.5)
 
-
 NV200 = None
-ERROR_COUNT = 0
-ERROR_FILE = "error_print_nv200_event_"
 
 # NV = {
 #     "SET": "601",
