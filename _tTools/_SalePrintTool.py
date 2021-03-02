@@ -1339,11 +1339,11 @@ class Ereceipt:
                 'font': 'regular'
             }
         ]
-        self.logo = 'tj-logo'
+        self.company = ''
+        self.logo = self.company + '-logo'
         self.filename = ''
         self.amount = ''
         self.trxid = ''
-        self.company = ''
 
     def set_line(self, text):
         self.lines.append({
