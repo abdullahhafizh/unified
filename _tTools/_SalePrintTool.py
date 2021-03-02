@@ -1340,9 +1340,7 @@ class Ereceipt:
             }
         ]
         self.company = ''
-        self.logo = self.company + '-logo'
-        if self.company == 'KAI':
-            self.logo = 'kci-logo'
+        self.logo = ''
         self.filename = ''
         self.amount = ''
         self.trxid = ''
@@ -1357,8 +1355,11 @@ class Ereceipt:
     def set_amount(self, amount):
         self.amount = amount
 
-    def set_company(self, company):
+    def set_company_n_logo(self, company):
         self.company = company
+        self.logo = company.lower() + '-logo'
+        if company == 'KAI':
+            self.logo = 'kci-logo'
 
     def set_trxid(self, trxid):
         self.trxid = trxid
@@ -1401,7 +1402,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         trxid = p['shop_type']+str(p['epoch'])
         pdf.set_trxid(trxid)
         company = _Common.company_theme(_Common.THEME_NAME.lower())
-        pdf.set_company(company)
+        pdf.set_company_n_logo(company)
         pdf.set_amount(p['payment_received'])
         pdf.set_line('')
         pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'       Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
@@ -1502,7 +1503,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         trxid = p['shop_type']+str(p['epoch'])
         pdf.set_trxid(trxid)
         company = _Common.company_theme(_Common.THEME_NAME.lower())
-        pdf.set_company(company)
+        pdf.set_company_n_logo(company)
         pdf.set_amount(p['payment_received'])
         pdf.set_line('')
         pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'       Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
@@ -1585,7 +1586,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         trxid = p['shop_type']+str(p['epoch'])
         pdf.set_trxid(trxid)
         company = _Common.company_theme(_Common.THEME_NAME.lower())
-        pdf.set_company(company)
+        pdf.set_company_n_logo(company)
         pdf.set_amount(p['payment_received'])
         pdf.set_line('')
         pdf.set_line('Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'       Jam : ' + datetime.strftime(datetime.now(), '%H:%M'))
