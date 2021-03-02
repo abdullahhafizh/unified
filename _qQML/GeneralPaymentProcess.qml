@@ -690,7 +690,7 @@ Base{
                     product_category: details.category,
                     payment_type: details.payment,
                     operator: details.operator,
-                    product_channel: detail.product_channel,
+                    product_channel: details.product_channel,
                 }
                 if (details.ppob_mode=='tagihan'){
                     _SLOT.start_do_pay_ppob(JSON.stringify(payload));

@@ -1,3 +1,9 @@
+11.9.Y-GLOBAL:
+- Disable Retry Hit ereceipt is Offline,
+- Add MDD Topup OVO,
+- Fix Do Collect NV Reset After Full,
+- ...
+
 11.9.X-GLOBAL:
 - Handle Retry NV Command On Exception,
 - Change Flow PPOB Uang Elektronik,

@@ -1469,7 +1469,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
             else:
                 SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         else:
-            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+            # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -1552,7 +1552,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
             else:
                 SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         else:
-            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+            # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -1650,7 +1650,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
             else:
                 SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         else:
-            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+            # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
