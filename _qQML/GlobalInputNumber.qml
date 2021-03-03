@@ -186,19 +186,22 @@ Base{
         }
 
         var data = JSON.parse(r);
-        console.log('Data Message', data.message);
-        return;
-//        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
-//        var rows = [
-//            {label: 'Tanggal', content: now},
-//            {label: 'Produk', content: product_name},
-//            {label: 'No Tujuan', content: textInput},
-//            {label: 'Jumlah', content: '1'},
-//            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-//            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-//        ]
-//        ppobMode = 'non-tagihan';
-//        generateConfirm(rows, true);
+        if (data.customer === undefined){
+            var message = data.response.message;
+            switch_frame('source/smiley_down.png', 'Gagal Memeriksa Nomor Anda', message, 'backToMain', false );
+            return;
+        }
+        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+        var rows = [
+            {label: 'Tanggal', content: now},
+            {label: 'Produk', content: product_name},
+            {label: 'No Tujuan', content: data.customer},
+            {label: 'Jumlah', content: '1'},
+            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+        ]
+        ppobMode = 'non-tagihan';
+        generateConfirm(rows, true);
     }
 
     function get_balance(text){
