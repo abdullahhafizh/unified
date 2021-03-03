@@ -281,6 +281,7 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
 
     def listen_poll(self):
+        global ERROR_COUNT
         while True:
             poll = self.nv200.poll()      
             if len(poll) > 1:     
