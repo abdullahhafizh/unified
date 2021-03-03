@@ -22,6 +22,7 @@ class PPOBSignalHandler(QObject):
     SIGNAL_TRX_PPOB = pyqtSignal(str)
     SIGNAL_TRX_CHECK = pyqtSignal(str)
     SIGNAL_CHECK_BALANCE = pyqtSignal(str)
+    SIGNAL_CHECK_CUSTOMER = pyqtSignal(str)
     SIGNAL_TRANSFER_BALANCE = pyqtSignal(str)
 
 
@@ -417,3 +418,29 @@ def store_pending_refund(payload):
         'remarks'       : json.dumps(payload['remarks'])
         }
     _DAO.insert_pending_refund(data)
+
+
+def start_do_check_customer(payload, mode):
+    _Helper.get_thread().apply_async(do_check_customer, (payload, mode,))
+
+
+def do_check_customer(payload, mode='CASHIN OVO'):
+    # msisdn,amount,reff_no,operator
+    try:
+        payload = json.loads(payload)
+        # _Helper.dump(payload)
+        url = _Common.BACKEND_URL+'ppob/check-customer'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.emit('CHECK_CUSTOMER|' + json.dumps(r['data']))
+            LOGGER.debug((str(payload), mode, str(r)))
+        elif s == 400 and r['result'] == 'BAD' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.emit('CHECK_CUSTOMER|' + json.dumps(r['data']))
+            LOGGER.debug((str(payload), mode, str(r)))
+        else:
+            PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.emit('CHECK_CUSTOMER|ERROR')
+            LOGGER.warning((str(payload), mode, str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), mode, str(e)))
+        PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.emit('CHECK_CUSTOMER|ERROR')
+

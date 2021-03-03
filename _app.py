@@ -708,7 +708,10 @@ class SlotHandler(QObject):
     def start_trigger_explorer(self):
         _KioskService.start_trigger_explorer()
     start_trigger_explorer = pyqtSlot()(start_trigger_explorer)
-
+    
+    def start_do_check_customer(self, payload, mode):
+        _PPOBService.start_do_check_customer(payload, mode)
+    start_do_check_customer = pyqtSlot(str, str)(start_do_check_customer)
 
 
 def s_handler():
@@ -797,6 +800,7 @@ def s_handler():
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.connect(view.rootObject().result_check_ppob)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_PPOB.connect(view.rootObject().result_trx_ppob)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_CHECK.connect(view.rootObject().result_check_trx)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.connect(view.rootObject().result_ppob_check_customer)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_GET_QR.connect(view.rootObject().result_get_qr)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_PAY_QR.connect(view.rootObject().result_pay_qr)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_CHECK_QR.connect(view.rootObject().result_check_qr)

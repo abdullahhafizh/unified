@@ -41,6 +41,7 @@ Base{
     property bool isConfirm: false
     property var ppobMode
     property var ppobTagihanData
+    property var ppobDetails
     property var vCollectionMode
     property var vCollectionData
 
@@ -75,6 +76,14 @@ Base{
             press = '0';
             abc.counter = timer_value;
             my_timer.start();
+            if (mode=='PPOB' && ppobDetails==undefined){
+                ppobDetails = {
+                    shop_type: 'ppob',
+                    time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
+                    date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
+                    epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
+                }
+            }
 
         }
         if(Stack.status==Stack.Deactivating){
@@ -93,7 +102,7 @@ Base{
         base.result_use_voucher.connect(get_use_voucher);
         base.result_cd_move.connect(card_eject_result);
         base.result_balance_qprox.connect(get_balance);
-
+        base.result_ppob_check_customer.connect(get_ppob_check);
     }
 
     Component.onDestruction:{
@@ -106,7 +115,7 @@ Base{
         base.result_use_voucher.disconnect(get_use_voucher);
         base.result_cd_move.disconnect(card_eject_result);
         base.result_balance_qprox.disconnect(get_balance);
-
+        base.result_ppob_check_customer.disconnect(get_ppob_check);
     }
 
     Rectangle{
@@ -165,6 +174,32 @@ Base{
         }
     }
 
+    function get_ppob_check(r){
+        //Result from _SLOT.start_do_check_customer(payload, mode)
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_ppob_check', now, r);
+        popup_loading.close();
+
+        if (r=='CHECK_CUSTOMER|ERROR'){
+            switch_frame('source/smiley_down.png', 'Gagal Memeriksa Nomor Anda', 'Pastikan nomor Anda benar dan coba lagi dalam beberapa saat.', 'backToMain', false );
+            return;
+        }
+
+        var data = JSON.parse(r);
+        console.log('Data Message', data.message);
+        return;
+//        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+//        var rows = [
+//            {label: 'Tanggal', content: now},
+//            {label: 'Produk', content: product_name},
+//            {label: 'No Tujuan', content: textInput},
+//            {label: 'Jumlah', content: '1'},
+//            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+//            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+//        ]
+//        ppobMode = 'non-tagihan';
+//        generateConfirm(rows, true);
+    }
 
     function get_balance(text){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -551,13 +586,8 @@ Base{
             switch_frame('source/smiley_down.png', 'Mohon Maaf, Pembayaran Tunai tidak dapat dilakukan saat ini.', ' Silakan Pilih Metode Pembayaran lain yang tersedia.', 'closeWindow|3', false );
             return;
         }
-        var details = {
-            payment: channel,
-            shop_type: 'ppob',
-            time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
-            date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: (new Date().getTime() * 1000) + (Math.floor(Math.random() * (987 - 101)) + 101)
-        }
+        var details = ppobDetails;
+        details.payment = channel;
         details.qty = 1;
         details.status = '1';
         details.raw = selectedProduct;
@@ -768,6 +798,18 @@ Base{
                         _SLOT.start_check_ppob_product(msisdn, product_id);
                         return;
                     } else {
+                        if (selectedProduct.operator=='CASHIN OVO'){
+                            console.log('Customer Check', selectedProduct.operator, textInput);
+                            var payload = {
+                                msisdn: textInput,
+                                amount: selectedProduct.rs_price.toString(),
+                                reff_no: ppobDetails.shop_type + ppobDetails.epoch.toString(),
+                                operator: selectedProduct.operator,
+                            }
+                            _SLOT.start_do_check_customer(JSON.stringify(payload), selectedProduct.operator);
+                            popup_loading.open('Memeriksa Nomor Anda...')
+                            return;
+                        }
                         var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
                         var rows = [
                             {label: 'Tanggal', content: now},
