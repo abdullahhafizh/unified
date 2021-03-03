@@ -185,7 +185,7 @@ Base{
             return;
         }
 
-        var data = JSON.parse(r);
+        var data = JSON.parse(r.replace('CHECK_CUSTOMER|', ''));
         if (data.customer === undefined){
             var message = data.response.message;
             switch_frame('source/smiley_down.png', 'Gagal Memeriksa Nomor Anda', message, 'backToMain', false );
