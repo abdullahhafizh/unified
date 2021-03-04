@@ -62,6 +62,16 @@ class NV200_BILL_ACCEPTOR(object):
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
             return False
+        
+    
+    def disable_only(self):
+        try:
+            # result = self.nv200.bulb_off()
+            result = self.nv200.disable()
+            return True
+        except Exception as e:
+            LOGGER.warning(('NV200_Module', e))
+            return False
 
 
     def reject(self):
@@ -281,7 +291,6 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
 
     def listen_poll(self):
-        # global ERROR_COUNT, ERROR_FILE
         while True:
             poll = self.nv200.poll()      
             if len(poll) > 1:     
@@ -295,12 +304,7 @@ class NV200_BILL_ACCEPTOR(object):
                     try:
                         print('pyt: [NV200] Event :', str(event))
                     except Exception as e:
-                        ERROR_COUNT = ERROR_COUNT + 1
-                        error_string = traceback.format_exc()
-                        file = open( str(ERROR_FILE)+str(ERROR_COUNT)+".bin", "wb")
-                        file.write(error_string)
-                        file.write(event)
-                        file.close()
+                        traceback.format_exc()
                         continue
                 return event
             time.sleep(0.5)
@@ -383,6 +387,10 @@ def send_command(param=None, config=[], restricted=[]):
                         NV200.disable()
                         return -1, pool[1]
                         break
+                    if config['CODE_JAM'] in pool[1]:
+                        NV200.disable_only()
+                        return -1, pool[1]
+                        break
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
@@ -398,6 +406,10 @@ def send_command(param=None, config=[], restricted=[]):
                     return 0, pool[1]
                     break
                 if config['KEY_BOX_FULL'] in pool[1]:
+                    return -1, pool[1]
+                    break
+                if config['CODE_JAM'] in pool[1]:
+                    NV200.disable_only()
                     return -1, pool[1]
                     break
                 if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
@@ -427,17 +439,17 @@ def send_command(param=None, config=[], restricted=[]):
             LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
-                while True:
-                    pool = NV200.listen_poll()
-                    LOOP_ATTEMPT += 1
-                    # if config['KEY_RECEIVED'] in pool[1]:
-                    #     return 0, pool[1]
-                    # if config['KEY_BOX_FULL'] in pool[1]:
-                    #     return 0, pool[1]
-                    #     break
-                    if LOOP_ATTEMPT >= 3:
-                        break
-                    time.sleep(1)
+                # while True:
+                #     # pool = NV200.listen_poll()
+                #     LOOP_ATTEMPT += 1
+                #     # if config['KEY_RECEIVED'] in pool[1]:
+                #     #     return 0, pool[1]
+                #     # if config['KEY_BOX_FULL'] in pool[1]:
+                #     #     return 0, pool[1]
+                #     #     break
+                #     if LOOP_ATTEMPT >= 3:
+                #         break
+                #     time.sleep(1)
                 return 0, "Bill Stop"
             else:
                 return -1, ""

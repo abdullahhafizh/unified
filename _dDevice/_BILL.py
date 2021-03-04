@@ -56,12 +56,12 @@ NV = {
     "KEY_RECEIVED": "Note in escrow, amount:",
     "PORT": BILL_PORT,
     # TODO Must Define Below Property
-    "CODE_JAM": None,
+    "CODE_JAM": 'Unsafe Jam',
     "TIMEOUT_BAD_NOTES": 'Invalid note',
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
     "KEY_STORED": 'Note stacked',
-    "MAX_STORE_ATTEMPT": 4,
+    "MAX_STORE_ATTEMPT": 3,
     "KEY_BOX_FULL": 'Stacker full',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE
 }
@@ -325,8 +325,8 @@ def store_cash_into_cashbox():
         sleep(1)
         attempt += 1
         # Assumming Positive Response When Stacking Note
-        if _Common.BILL_DIRECT_READ_NOTE is True:
-            return True
+        # if _Common.BILL_DIRECT_READ_NOTE is True:
+        #     return True
         _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((str(attempt), str(_result_store)))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')

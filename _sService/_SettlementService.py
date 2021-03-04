@@ -773,6 +773,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
                                             )
         if not topup_result:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
+            return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
     elif bank == 'MANDIRI_C2C_FEE':
         _SFTPAccess.HOST_BID = 0
