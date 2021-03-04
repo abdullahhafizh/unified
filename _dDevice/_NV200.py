@@ -281,7 +281,7 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
 
     def listen_poll(self):
-        global ERROR_COUNT, ERROR_FILE
+        # global ERROR_COUNT, ERROR_FILE
         while True:
             poll = self.nv200.poll()      
             if len(poll) > 1:     
@@ -297,10 +297,11 @@ class NV200_BILL_ACCEPTOR(object):
                     except Exception as e:
                         ERROR_COUNT = ERROR_COUNT + 1
                         error_string = traceback.format_exc()
-                        file = open( ERROR_FILE+ERROR_COUNT+".bin", "wb")
+                        file = open( str(ERROR_FILE)+str(ERROR_COUNT)+".bin", "wb")
                         file.write(error_string)
                         file.write(event)
                         file.close()
+                        continue
                 return event
             time.sleep(0.5)
 
