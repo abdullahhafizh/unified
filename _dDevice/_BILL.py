@@ -161,6 +161,7 @@ def reset_bill():
     response, result = send_command_to_bill(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
+        _Common.BILL_ERROR = ''
         BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('RESET_BILL|DONE')
     else:
         _Common.BILL_ERROR = 'FAILED_RESET_BILL'
