@@ -140,6 +140,7 @@ Base{
         if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
             totalPaymentEnable += 1;
+            cashboxFull = false;
         }
         if (device.EDC == 'AVAILABLE') {
             cardEnable = true;
