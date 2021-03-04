@@ -562,25 +562,33 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             return False
     elif bank == 'MANDIRI' and mode == 'TOPUP_DEPOSIT':
         message_error = 'UPDATE_ERROR'
+        attempt = 0
         try:
-            response, result = _Command.send_request(param=_param, output=None)
-            LOGGER.debug((bank, mode, response, result))
-            # if _Common.TEST_MODE is True and _Common.empty(result):
-            #   result = '6032111122223333|20000|198000'
-            r = result.split('|')
-            if response == 0 and result is not None:
-                _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
-                output = {
-                    'bank': bank,
-                    'card_no': r[0],
-                    'topup_amount': r[1],
-                    'last_balance': r[2],
-                }
-                response = output
-            else:
-                if 'No Pending Balance' in result:
-                    message_error = 'NO_PENDING_BALANCE'
-                response = False
+            while True:
+                attempt += 1
+                response, result = _Command.send_request(param=_param, output=None)
+                LOGGER.debug((bank, mode, attempt, response, result))
+                # if _Common.TEST_MODE is True and _Common.empty(result):
+                #   result = '6032111122223333|20000|198000'
+                r = result.split('|')
+                if response == 0 and result is not None:
+                    _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
+                    output = {
+                        'bank': bank,
+                        'card_no': r[0],
+                        'topup_amount': r[1],
+                        'last_balance': r[2],
+                    }
+                    response = output
+                    break
+                else:
+                    if 'No Pending Balance' in result:
+                        message_error = 'NO_PENDING_BALANCE'
+                    response = False
+                    if attempt == 3:
+                        LOGGER.debug(('CLOSE_LOOP', bank, mode, attempt))
+                        break
+                    sleep(3)
         except Exception as e:
             _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             LOGGER.warning(str(e))
