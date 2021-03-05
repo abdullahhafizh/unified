@@ -1,6 +1,7 @@
 12.0.B-GLOBAL:
 - Enhance Handle Mandiri Deposit Update Balance,
 - Handle BILL JAM code for NV,
+- Enhance NV Reset Handler,
 - ...
 
 
