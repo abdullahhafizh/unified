@@ -432,7 +432,7 @@ def send_command(param=None, config=[], restricted=[]):
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
-                # NV200.open()
+                NV200.open()
                 return 0, "Bill Reset"
             else:
                 return -1, ""
