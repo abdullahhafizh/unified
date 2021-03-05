@@ -297,7 +297,7 @@ def load_from_temp_data(temp, mode='text'):
     return content
 
 
-TOPUP_AMOUNT_SETTING = None
+TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
 FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
 PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 REFUND_SETTING = load_from_temp_data('refund-setting', 'json')

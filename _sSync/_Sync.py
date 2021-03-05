@@ -739,6 +739,9 @@ def sync_topup_amount():
             if s == 200 and r['result'] == 'OK':
                 _Common.TOPUP_AMOUNT_SETTING = r['data']
                 _Common.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
+                _KioskService.K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit('SYNC_TOPUP_AMOUNT|SUCCESS')
+            else:
+                _KioskService.K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit('SYNC_TOPUP_AMOUNT|FAILED')
         if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
             break

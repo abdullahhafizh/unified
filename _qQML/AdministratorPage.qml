@@ -60,7 +60,8 @@ Base{
         base.result_init_online_mandiri.connect(get_admin_action);
         base.result_admin_sync_stock.connect(get_admin_action);
         base.result_do_online_topup.connect(get_admin_action);
-        base.result_do_topup_deposit_bni.connect(get_topup_bni_result)
+        base.result_do_topup_deposit_bni.connect(get_topup_bni_result);
+        base.result_topup_amount.connect(get_admin_action);
     }
 
     Component.onDestruction:{
@@ -80,7 +81,9 @@ Base{
         base.result_init_online_mandiri.disconnect(get_admin_action);
         base.result_admin_sync_stock.disconnect(get_admin_action);
         base.result_do_online_topup.disconnect(get_admin_action);
-        base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result)
+        base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result);
+        base.result_topup_amount.disconnect(get_admin_action);
+
     }
 
     function do_action_signal(s){
@@ -492,6 +495,25 @@ Base{
                     console.log('sync_product_stock is pressed..!');
                     popup_loading.open();
                     _SLOT.start_sync_product_stock();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: sync_topup_amount
+            z: 10
+            button_text: 'sync\ntopup amt'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Sync Topup Amount"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('sync_topup_amount is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_sync_topup_amount();
                 }
             }
         }

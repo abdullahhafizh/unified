@@ -712,6 +712,10 @@ class SlotHandler(QObject):
     def start_do_check_customer(self, payload, mode):
         _PPOBService.start_do_check_customer(payload, mode)
     start_do_check_customer = pyqtSlot(str, str)(start_do_check_customer)
+    
+    def start_sync_topup_amount(self):
+        _Sync.start_sync_topup_amount()
+    start_sync_topup_amount = pyqtSlot()(start_sync_topup_amount)
 
 
 def s_handler():
@@ -1144,16 +1148,16 @@ if __name__ == '__main__':
     sleep(1)
     print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
-    # sleep(1)
+    sleep(1)
     # print("pyt: Syncing Transaction Failure Data...")
     # _Sync.start_sync_data_transaction_failure()
     # sleep(1)
     # print("pyt: Syncing Topup Records...")
     # _Sync.start_sync_topup_records()
-    sleep(1)
-    print("pyt: Syncing Topup Amount...")
-    _Sync.start_sync_topup_amount()
-    sleep(1)
+    # sleep(1)
+    # print("pyt: Syncing Topup Amount...")
+    # _Sync.start_sync_topup_amount()
+    # sleep(1)
     # print("pyt: Syncing SAM Audit...")
     # _Sync.start_sync_sam_audit()
     # sleep(.5)
