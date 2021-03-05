@@ -107,7 +107,8 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()            
         except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+            # LOGGER.warning(('NV200_Module', e))
+            pass
             # print("Serial for Sync Cmd Timeout")
         finally:
             return result == '0xf0'
@@ -116,21 +117,20 @@ class NV200_BILL_ACCEPTOR(object):
     def reset_bill(self):
         # print ("Device Reset")
         self.nv200.reset()
-        time.sleep(5)
-        while 1:
+        # Waiting Time Bill After Reset
+        time.sleep(7)
+        attempt = 0
+        while True:
             portlist = serial.tools.list_ports.comports()
+            attempt += 1
             for port in portlist:
                 if port.device == self.serial_port:
-                    attempt = 0
-                    while True:
-                        attempt += 1
-                        if self.check_active():
-                            print('pyt: [NV200]', 'Bill Re/Activated')   
-                            return True
-                        if attempt >= 3:
-                            return False
-                        time.sleep(5)
-            time.sleep(5)
+                    if self.check_active():
+                        print('pyt: [NV200]', 'Bill Re/Activated')
+                        return True
+            if attempt >= 5:
+                return False
+            time.sleep(1)
         
 
     def parse_reject_code(self, rejectCode):
@@ -432,6 +432,7 @@ def send_command(param=None, config=[], restricted=[]):
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
+                # NV200.open()
                 return 0, "Bill Reset"
             else:
                 return -1, ""
