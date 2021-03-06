@@ -539,8 +539,24 @@ def check_card_balance():
         _Common.NFC_ERROR = ''
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
     else:
+        # '003|', '{"statusCode": -999, "statusMessage": "Service Response Timeout/No Response From Device"}'
+        try:
+            output = json.loads(result)
+            if 'statusCode' in output.keys():
+                if output['statusCode'] == -999:
+                    LOGGER.warning(('SERVICE_NOT_RESPONSE_DETECTED', 'RE_INIT_READER'))
+                    do_reinit_reader()
+        except:
+            pass
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
-      
+        
+
+def do_reinit_reader():
+    print("pyt: [INFO] Re-Init Prepaid Reader...")
+    if open() is True:
+        print("pyt: [INFO] Re-Init Bank Config...")
+        init_config()
+
 
 def bca_card_info():
     param = QPROX['BCA_CARD_INFO'] + '|'
@@ -550,7 +566,7 @@ def bca_card_info():
         return result
     else:
         return False
-  
+
 
 def direct_card_balance():
     param = QPROX['BALANCE'] + '|'
