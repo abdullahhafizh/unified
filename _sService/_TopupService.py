@@ -804,6 +804,8 @@ def start_get_topup_readiness():
 def get_topup_readiness():
     global ADMIN_FEE_INCLUDE
     try:
+        if _Helper.empty(_Common.TOPUP_AMOUNT_SETTING):
+            _Common.TOPUP_AMOUNT_SETTING = _Common.load_from_temp_data('topup-amount-setting', 'json')
         ready = {
             # 'balance_mds': str(_Common.MDS_WALLET),
             'balance_mandiri': str(_Common.MANDIRI_ACTIVE_WALLET),
@@ -825,10 +827,11 @@ def get_topup_readiness():
         }
         ADMIN_FEE_INCLUDE = True if ready['admin_include'] == '1' else False
         # Assuming always check card balance first before check topup readiness validation
-        if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BRI':
-            ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
-        if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BCA':
-            ready['bca'] = 'AVAILABLE' if _Common.BCA_TOPUP_ONLINE is True else 'N/A'
+        if _QPROX.LAST_BALANCE_CHECK is not None:
+            if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BRI':
+                ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
+            if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BCA':
+                ready['bca'] = 'AVAILABLE' if _Common.BCA_TOPUP_ONLINE is True else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
         #     ready['balance_bni'] = '999002'
