@@ -1088,7 +1088,6 @@ def check_git_status(log=False):
 if __name__ == '__main__':
     print("pyt: Initiating Config...")
     config_log()
-    # run_script({'/_setOnStartUp.bat'})
     # update_module({})
     # install_font()
     init_setting()
@@ -1170,10 +1169,11 @@ if __name__ == '__main__':
     # print("pyt: Syncing Machine Status...")
     # _Sync.start_sync_machine_status()
     # sleep(1)
-    # if INITIAL_SETTING['reloadService'] is True:
-    #     sleep(1)
-    #     print("pyt: Restarting MDDTopUpService...")
-    #     _KioskService.start_restart_mdd_service()
+    if INITIAL_SETTING['reloadService'] is True:
+        sleep(1)
+        print("pyt: Restarting MDDTopUpService...")
+        # run_script({'/_restartMDDTopupService.bat'})
+        _KioskService.start_restart_mdd_service()
     if _Common.BILL['status'] is True:
         sleep(1)
         print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")

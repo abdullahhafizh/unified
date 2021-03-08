@@ -23,6 +23,7 @@ import subprocess
 from operator import itemgetter
 # from _dDevice import _BILL
 import json
+import win32serviceutil
 
 
 class KioskSignalHandler(QObject):
@@ -728,7 +729,13 @@ def start_restart_mdd_service():
 
 
 def restart_mdd_service():
-    os.system('powershell restart-service MDDTopUpService -force')
+    # os.system('powershell restart-service MDDTopUpService -force')
+    try:
+        win32serviceutil.RestartService('MDDTopUpService')
+        return True
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
     # process = subprocess.run('powershell restart-service MDDTopUpService -force', shell=True, stdout=subprocess.PIPE)
     # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
     # # LOGGER.info(('[INFO] restart_mdd_service result : ', str(output)))
