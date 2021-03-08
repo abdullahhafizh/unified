@@ -746,9 +746,12 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         # pdf.ln(small_space)
         # pdf.set_font(USED_FONT, 'B', regular_space)
         # pdf.cell(padding_left, 0, 'KATEGORI  : ' + str(p['category']), 0, 0, 'L')
+        provider = str(p['provider'])
+        if '(Admin' in provider:
+            provider = provider.split('(Admin')[0]
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
-        pdf.cell(padding_left, 0, 'PROVIDER  : ' + str(p['provider']), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'PROVIDER  : ' + provider, 0, 0, 'L')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
         pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
@@ -766,6 +769,10 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
             else:
+                if p['category'] == 'CASHIN OVO':
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'JUMLAH     : ' + str(p['qty']), 0, 0, 'L')
@@ -815,6 +822,9 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, 'B', regular_space+2)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
+            if 'product_channel' in p.keys():
+                if p['product_channel'] == 'MDD':
+                    total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
             # pdf.ln(small_space*2)
             # pdf.set_font(USED_FONT, 'B', regular_space-1)
@@ -1596,7 +1606,10 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         __title = t
         pdf.set_line(merge_text([__title, p['payment'].upper(), ]))
         pdf.set_line('NO TRX    : '+trxid)
-        pdf.set_line('PROVIDER  : ' + str(p['provider']))
+        provider = str(p['provider'])
+        if '(Admin' in provider:
+            provider = provider.split('(Admin')[0]
+        pdf.set_line('PROVIDER  : ' + provider)
         pdf.set_line('MSISDN    : ' + str(p['msisdn']))
         if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
             if p['ppob_mode'] == 'tagihan':
@@ -1604,6 +1617,8 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('TAGIHAN    : Rp. ' + clean_number(str(p['value'])))
                 pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
             else:
+                if p['category'] == 'CASHIN OVO':
+                    pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
                 pdf.set_line('JUMLAH     : ' + str(p['qty']))
                 pdf.set_line('HARGA/UNIT : Rp. ' + clean_number(str(p['value'])))
                 if 'sn' in p['ppob_details'].keys():
@@ -1629,6 +1644,9 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
             total_pay = str(int(int(p['value']) * int(p['qty'])))
+            if 'product_channel' in p.keys():
+                if p['product_channel'] == 'MDD':
+                    total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(total_pay))
         else:
             pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))

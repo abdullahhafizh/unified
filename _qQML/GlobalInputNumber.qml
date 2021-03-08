@@ -191,12 +191,15 @@ Base{
             switch_frame('source/smiley_down.png', 'Gagal Memeriksa Nomor Anda', message, 'backToMain', false );
             return;
         }
+        var customer_name = 'OVO User';
+        if (data.details.custName !== undefined) customer_name = data.details.custName;
         var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'Produk', content: product_name},
+            {label: 'Pelanggan', content: customer_name},
             {label: 'No Tujuan', content: data.customer},
-            {label: 'Jumlah', content: '1'},
+//            {label: 'Jumlah', content: '1'},
             {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
             {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
         ]
@@ -219,6 +222,10 @@ Base{
             var ableTopupCode = info.able_topup;
             if (ableTopupCode == "1008"){
                 switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar '+bankName+' Anda Telah Kadaluarsa', 'backToMain', false );
+                return;
+            }
+            if (ableTopupCode == "1031"){
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar Anda Tidak Dapat Dilakukan Isi Ulang Saat Ini', 'backToMain', false );
                 return;
             }
             if (ableTopupCode != "0000"){
