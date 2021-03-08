@@ -736,11 +736,17 @@ def restart_mdd_service():
     # except Exception as e:
     #     LOGGER.warning((e))
     #     return False
-    script = '/_restartMDDTopupService.bat'
-    process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
-    output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+    try:
+        script = '/_restartMDDTopupService.bat'
+        process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
+        output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+        LOGGER.info((output))
+        return True
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
     # LOGGER.info(('[INFO] restart_mdd_service result : ', str(output)))
-    print("pyt : ", output)
+    # print("pyt : ", output)
 
 
 def start_get_cash_data():
