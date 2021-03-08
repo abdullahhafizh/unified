@@ -31,7 +31,10 @@ if '%errorlevel%' NEQ '0' (
 
 :: BatchGotAdmin (Run as Admin code ends)
 :: Codes below to kill Video Screensaver processes
+echo Setup MDDTopUpService Autoload...
 sc.exe config "MDDTopUpService" start= auto
+echo Stop MDDTopUpService...
 net stop MDDTopUpService
+echo Start MDDTopUpService...
 net start MDDTopUpService
 
