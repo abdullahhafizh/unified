@@ -523,7 +523,7 @@ def check_card_balance():
         if bank_name == 'MANDIRI':
             if card_no in _Common.MANDIRI_CARD_BLOCKED_LIST:
                 output['able_topup'] = '1004'
-            if '6032984098' in card_no:
+            if card_no[:10] in _Common.MANDIRI_CLOSE_TOPUP_BIN_RANGE:
                 output['able_topup'] = '1031'
             LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
         elif bank_name == 'BNI':
@@ -595,7 +595,7 @@ def direct_card_balance():
         if bank_name == 'MANDIRI':
             if card_no in _Common.MANDIRI_CARD_BLOCKED_LIST:
                 output['able_topup'] = '1004'
-            if '6032984098' in card_no:
+            if card_no[:10] in _Common.MANDIRI_CLOSE_TOPUP_BIN_RANGE:
                 output['able_topup'] = '1031'
             LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
         elif bank_name == 'BNI':
