@@ -730,16 +730,17 @@ def start_restart_mdd_service():
 
 def restart_mdd_service():
     # os.system('powershell restart-service MDDTopUpService -force')
-    try:
-        win32serviceutil.RestartService('MDDTopUpService')
-        return True
-    except Exception as e:
-        LOGGER.warning((e))
-        return False
-    # process = subprocess.run('powershell restart-service MDDTopUpService -force', shell=True, stdout=subprocess.PIPE)
-    # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-    # # LOGGER.info(('[INFO] restart_mdd_service result : ', str(output)))
-    # print("pyt : ", output)
+    # try:
+    #     win32serviceutil.RestartService('MDDTopUpService')
+    #     return True
+    # except Exception as e:
+    #     LOGGER.warning((e))
+    #     return False
+    script = '/_restartMDDTopupService.bat'
+    process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
+    output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+    # LOGGER.info(('[INFO] restart_mdd_service result : ', str(output)))
+    print("pyt : ", output)
 
 
 def start_get_cash_data():
