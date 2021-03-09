@@ -3,6 +3,7 @@
 - Change Message When Failure Topup Mandiri,
 - Handle 6208 - Applet Type Definition For Force Settlement,
 - Add Admin Fee in MDD Product Channel Item,
+- Disable Auto Card Stock Sync on Booting,
 - ...
 
 12.0.F-GLOBAL:
