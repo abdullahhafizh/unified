@@ -64,15 +64,15 @@ Base{
                     var operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
                     var clean_category = FUNC.strip(p[i]['category'].toLowerCase());
                     var category_logo = 'source/ppob_category/'+clean_category+'.png';
-                    var product_channel = (channelMDD.indexOf(p[i]['category']) > -1) ? 'MDD' : 'DIVA';
+                    var product_channel = (channelMDD.indexOf(p[i]['operator']) > -1) ? 'MDD' : 'DIVA';
                     if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
                     if (product_channel == 'MDD'){
                         desc = desc + ' - Admin Fee ' + adminFee.toString()+ ' IDR';
-                        if (p[i]['category'] == 'CASHIN OVO') {
+                        if (channelMDD.indexOf(p[i]['operator']) > -1){
                             var denom = parseInt(p[i]['rs_price']) - parseInt(adminFee);
                             var formatted_denom = FUNC.insert_dot(denom.toString());
                             var formatted_admin = FUNC.insert_dot(adminFee.toString());
-                              desc = 'Saldo Diterima (Rp. ' + formatted_denom + ',-) Dikurangi Biaya Admin (Rp. ' +formatted_admin+ ',-)';
+                            desc = 'Saldo Diterima (Rp. ' + formatted_denom + ',-) Dikurangi Biaya Admin (Rp. ' +formatted_admin+ ',-)';
                         }
                     }
                     product_model.append({
@@ -103,11 +103,11 @@ Base{
                     operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
                     clean_category = FUNC.strip(p[i]['category'].toLowerCase());
                     category_logo = 'source/ppob_category/'+clean_category+'.png';
-                    product_channel = (channelMDD.indexOf(p[i]['category']) > -1) ? 'MDD' : 'DIVA';
+                    product_channel = (channelMDD.indexOf(p[i]['operator']) > -1) ? 'MDD' : 'DIVA';
                     if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
                     if (product_channel == 'MDD'){
                         desc = desc + ' - Admin Fee ' + adminFee.toString()+ ' IDR';
-                        if (p[i]['category'] == 'CASHIN OVO') {
+                        if (channelMDD.indexOf(p[i]['operator']) > -1){
                             denom = parseInt(p[i]['rs_price']) - parseInt(adminFee);
                             formatted_denom = FUNC.insert_dot(denom.toString());
                             formatted_admin = FUNC.insert_dot(adminFee.toString());
