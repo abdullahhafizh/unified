@@ -769,16 +769,17 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
             else:
-                if p['category'] == 'CASHIN OVO':
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, 'B', regular_space)
-                    pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'JUMLAH     : ' + str(p['qty']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'HARGA/UNIT : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                if 'product_channel' in p.keys():
+                    if p['product_channel'] == 'MDD':
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, 'B', regular_space)
+                        pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
                 if 'sn' in p['ppob_details'].keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1617,10 +1618,11 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('TAGIHAN    : Rp. ' + clean_number(str(p['value'])))
                 pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
             else:
-                if p['category'] == 'CASHIN OVO':
-                    pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
                 pdf.set_line('JUMLAH     : ' + str(p['qty']))
                 pdf.set_line('HARGA/UNIT : Rp. ' + clean_number(str(p['value'])))
+                if 'product_channel' in p.keys():
+                    if p['product_channel'] == 'MDD':
+                        pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
                 if 'sn' in p['ppob_details'].keys():
                     label_sn = 'S/N '
                     if p['category'].lower() == 'listrik':
