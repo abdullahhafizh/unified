@@ -63,12 +63,16 @@ Base{
                     var operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
                     var clean_category = FUNC.strip(p[i]['category'].toLowerCase());
                     var category_logo = 'source/ppob_category/'+clean_category+'.png';
+                    var product_channel = (channelMDD.indexOf(p[i]['category']) > -1) ? 'MDD' : 'DIVA';
+                    if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
+                    if (product_channel == 'MDD') desc = desc + ' - Admin Fee 1500 IDR'
                         product_model.append({
                                              'ppob_name': prod_name,
                                              'ppob_desc': desc,
                                              'ppob_price': formated_price,
                                              'ppob_operator_logo': operator_logo,
                                              'ppob_category_logo': category_logo,
+                                             'ppob_product_channel': product_channel,
                                              'raw': p[i]
                                           })
                 }
@@ -90,12 +94,16 @@ Base{
                     operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
                     clean_category = FUNC.strip(p[i]['category'].toLowerCase());
                     category_logo = 'source/ppob_category/'+clean_category+'.png';
+                    product_channel = (channelMDD.indexOf(p[i]['category']) > -1) ? 'MDD' : 'DIVA';
+                    if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
+                    if (product_channel == 'MDD') desc = desc + ' - Admin Fee 1500 IDR'
                     product_model.append({
                                              'ppob_name': prod_name,
                                              'ppob_desc': desc,
                                              'ppob_price': formated_price,
                                              'ppob_operator_logo': operator_logo,
                                              'ppob_category_logo': category_logo,
+                                             'ppob_product_channel': product_channel,
                                              'raw': p[i]
                                           })
                 }
@@ -269,8 +277,6 @@ Base{
                     anchors.fill: parent;
                     onClicked: {
                         _SLOT.user_action_log('choose "'+ppob_name+'" PPOB Product');
-                        var product_channel = (channelMDD.indexOf(raw.operator) > -1) ? 'MDD' : 'DIVA';
-                        if (raw.product_channel != undefined) product_channel = raw.product_channel;
                         var details = {
                             category: raw.category,
                             operator: raw.operator,
@@ -278,7 +284,7 @@ Base{
                             product_id: raw.product_id,
                             rs_price: raw.rs_price,
                             amount: raw.amount,
-                            product_channel: product_channel
+                            product_channel: ppob_product_channel,
                         }
                         console.log('Set Selected Product Into Input Layer: ', JSON.stringify(details));
                         my_layer.push(global_input_number, {selectedProduct: details, mode: 'PPOB'});
