@@ -17,6 +17,7 @@ Base{
     property var selectedCategory
     property var selectedOperator
     property var channelMDD: ['CASHIN OVO', 'CASHIN LINKAJA']
+    property var adminFee: 1500
 
 
     Stack.onStatusChanged:{
@@ -65,16 +66,24 @@ Base{
                     var category_logo = 'source/ppob_category/'+clean_category+'.png';
                     var product_channel = (channelMDD.indexOf(p[i]['category']) > -1) ? 'MDD' : 'DIVA';
                     if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
-                    if (product_channel == 'MDD') desc = desc + ' - Admin Fee 1500 IDR'
-                        product_model.append({
-                                             'ppob_name': prod_name,
-                                             'ppob_desc': desc,
-                                             'ppob_price': formated_price,
-                                             'ppob_operator_logo': operator_logo,
-                                             'ppob_category_logo': category_logo,
-                                             'ppob_product_channel': product_channel,
-                                             'raw': p[i]
-                                          })
+                    if (product_channel == 'MDD'){
+                        desc = desc + ' - Admin Fee ' + adminFee.toString()+ ' IDR';
+                        if (p[i]['category'] == 'CASHIN OVO') {
+                            var denom = parseInt(p[i]['rs_price']) - parseInt(adminFee);
+                            var formatted_denom = FUNC.insert_dot(denom.toString());
+                            var formatted_admin = FUNC.insert_dot(adminFee.toString());
+                              desc = 'Saldo Diterima (Rp. ' + formatted_denom + ',-) Dikurangi Biaya Admin (Rp. ' +formatted_admin+ ',-)';
+                        }
+                    }
+                    product_model.append({
+                                         'ppob_name': prod_name,
+                                         'ppob_desc': desc,
+                                         'ppob_price': formated_price,
+                                         'ppob_operator_logo': operator_logo,
+                                         'ppob_category_logo': category_logo,
+                                         'ppob_product_channel': product_channel,
+                                         'raw': p[i]
+                                      });
                 }
             } else {
                 if (p[i]['category']==c && p[i]['operator'] == selectedOperator){
@@ -96,7 +105,16 @@ Base{
                     category_logo = 'source/ppob_category/'+clean_category+'.png';
                     product_channel = (channelMDD.indexOf(p[i]['category']) > -1) ? 'MDD' : 'DIVA';
                     if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
-                    if (product_channel == 'MDD') desc = desc + ' - Admin Fee 1500 IDR'
+                    if (product_channel == 'MDD'){
+                        desc = desc + ' - Admin Fee ' + adminFee.toString()+ ' IDR';
+                        if (p[i]['category'] == 'CASHIN OVO') {
+                            denom = parseInt(p[i]['rs_price']) - parseInt(adminFee);
+                            formatted_denom = FUNC.insert_dot(denom.toString());
+                            formatted_admin = FUNC.insert_dot(adminFee.toString());
+                            desc = 'Saldo Diterima (Rp. ' + formatted_denom + ',-) Dikurangi Biaya Admin (Rp. ' +formatted_admin+ ',-)';
+                        }
+                    }
+
                     product_model.append({
                                              'ppob_name': prod_name,
                                              'ppob_desc': desc,
@@ -108,10 +126,7 @@ Base{
                                           })
                 }
             }
-
-
         }
-
         popup_loading.close();
     }
 
