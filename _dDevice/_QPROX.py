@@ -796,11 +796,16 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 c2c_report = '|' + report
                 parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
                 return
+        elif _result_json["Result"] in ["6208"]:
+            LAST_C2C_APP_TYPE = '1'
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            get_c2c_failure_settlement(amount, trxid)
+            return
         elif _result_json["Response"] == '83':
             LAST_C2C_APP_TYPE = '1'
         else:
             LAST_C2C_APP_TYPE = '0'
-        LOGGER.warning(('result', _result, 'applet_type', LAST_C2C_APP_TYPE, 'TOPUP_C2C_CORRECTION'))
+        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', _result, 'applet_type:', LAST_C2C_APP_TYPE ))
         # "6987", "100C" Another Captured Error Code
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
     except Exception as e:
