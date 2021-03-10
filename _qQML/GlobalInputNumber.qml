@@ -435,7 +435,7 @@ Base{
                 break;
             }
         }
-        if (i.details.error.message !-- undefined){
+        if (i.details.error.message !== undefined){
             lastPPOBDataCheck.push({
                         label: 'Notes', 
                         content: i.customer + ' - ' + i.details.error.message
