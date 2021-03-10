@@ -44,16 +44,6 @@ Powered By: PT. MultiDaya Dinamika
               -2020-
 """)
 
-
-if 'admin' not in os.getlogin():
-    try:
-        from elevate import elevate
-        print('pyt: Elevating Privileges...')
-        elevate(show_console=False)
-        print('pyt: Elevating Privileges...Success')
-    except:
-        pass
-
 # Set Default Screen Frame Size
 GLOBAL_WIDTH = 1920
 GLOBAL_HEIGHT = 1080
