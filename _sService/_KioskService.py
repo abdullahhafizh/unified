@@ -740,13 +740,14 @@ def restart_mdd_service():
     try:
         admin_pass = _Common.OS_ADMIN_PASS
         shell = client.Dispatch("WScript.shell")
-        shell.Run("runas /user:administrator net start MDDTopUpService")
-        sleep(1)
-        shell.SendKeys(admin_pass+"\r\n", 0)
+        # shell.Run("runas /user:administrator net start MDDTopUpService") 
+        output = shell.Run('powershell -command "Restart-Service MDDTopUpService -Force')
+        # sleep(1)
+        # shell.SendKeys(admin_pass+"\r\n", 0)
         # script = '/_restartMDDTopupService.bat'
         # process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
         # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-        # LOGGER.info((output))
+        LOGGER.info((output))
         return True
     except Exception as e:
         LOGGER.warning((e))
