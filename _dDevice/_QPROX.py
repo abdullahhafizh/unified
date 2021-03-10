@@ -13,6 +13,9 @@ from _nNetwork import _NetworkAccess
 from datetime import datetime
 import random
 
+import win32com.client as client
+import pythoncom
+
 
 LOGGER = logging.getLogger()
 QPROX_PORT = _Common.QPROX_PORT
@@ -553,11 +556,25 @@ def check_card_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
         
 
+def restart_mdd_service():
+    try:
+        shell = client.Dispatch("WScript.shell")
+        pythoncom.CoInitialize()
+        shell.Run("net stop MDDTopUpService") 
+        sleep(1)
+        shell.Run("net start MDDTopUpService") 
+        return True
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
+    
+
 def do_reinit_reader():
-    print("pyt: [INFO] Re-Init Prepaid Reader...")
-    if open() is True:
-        print("pyt: [INFO] Re-Init Bank Config...")
-        init_config()
+    if restart_mdd_service():
+        print("pyt: [INFO] Re-Init Prepaid Reader...")
+        if open() is True:
+            print("pyt: [INFO] Re-Init Bank Config...")
+            init_config()
 
 
 def bca_card_info():
