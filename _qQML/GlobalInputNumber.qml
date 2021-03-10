@@ -430,20 +430,16 @@ Base{
         if (r == 'CHECK_TRX_STATUS|ERROR') return;
         var res = r.replace('CHECK_TRX_STATUS|', '')
         var data = JSON.parse(res);
+        var new_status = data.status;
+        if (data.details.error.message !== undefined){
+            new_status = data.status + ' ' + data.details.error.message
+        }
         for (var i=0;i < lastPPOBDataCheck.length; i++){
             if (lastPPOBDataCheck[i].label == 'Status'){
-                lastPPOBDataCheck[i].content = data.status;
+                lastPPOBDataCheck[i].content = new_status;
                 break;
             }
         }
-        console.log('Raw Status', data.details.error.message);
-        if (data.details.error.message !== undefined){
-            lastPPOBDataCheck.push({
-                        label: 'Notes', 
-                        content: data.details.error.message
-                    })
-        }
-        console.log('Length Row Confirmation', lastPPOBDataCheck.length);
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
         // Reset PPOB Data Check
         lastPPOBDataCheck = undefined;
