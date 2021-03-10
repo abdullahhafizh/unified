@@ -45,7 +45,7 @@ Powered By: PT. MultiDaya Dinamika
 """)
 
 
-if not os.getuid() == 0:
+if 'admin' not in os.getlogin():
     try:
         from elevate import elevate
         print('pyt: Elevating Privileges...')
