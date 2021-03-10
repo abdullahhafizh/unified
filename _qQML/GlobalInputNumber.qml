@@ -426,6 +426,7 @@ Base{
     function parse_ppob_detail_status(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('parse_ppob_detail_status', now, r);
+        popup_loading.close();
         if (r == 'CHECK_TRX_STATUS|ERROR') return;
         var res = r.replace('CHECK_TRX_STATUS|', '')
         var i = JSON.parse(res);
