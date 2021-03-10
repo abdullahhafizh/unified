@@ -576,8 +576,11 @@ def do_reinit_reader():
     if restart_mdd_service():
         print("pyt: [INFO] Re-Init Prepaid Reader...")
         if open() is True:
-            print("pyt: [INFO] Re-Init Bank Config...")
+            print("pyt: [INFO] Re-Init Bank Offline Config...")
             init_config()
+            sleep(1)
+            print("pyt: [INFO] Re-Init BCA Config...")
+            init_config_bca()
 
 
 def bca_card_info():
