@@ -429,13 +429,17 @@ Base{
         if (r == 'CHECK_TRX_STATUS|ERROR') return;
         var res = r.replace('CHECK_TRX_STATUS|', '')
         var i = JSON.parse(res);
-        //TODO Parse OVO Status
-        var new_status = 'New Dummy Status';
         for (var i=0;i < lastPPOBDataCheck.length; i++){
             if (lastPPOBDataCheck[i].label == 'Status'){
-                lastPPOBDataCheck[i].content = new_status;
+                lastPPOBDataCheck[i].content = i.status;
                 break;
             }
+        }
+        if (i.details.error.message !-- undefined){
+            lastPPOBDataCheck.push({
+                        label: 'Notes', 
+                        content: i.details.clientTxnId + ' - ' + i.details.error.message
+                    })
         }
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
         // Reset PPOB Data Check
@@ -483,15 +487,26 @@ Base{
                     {label: 'Status', content: i.status}
                 ]
         if (i.remarks.product_channel !== undefined){
-            if (i.remarks.operator == 'CASHIN OVO'){
-                popup_loading.open('Memeriksa Data Transaksi...');
-                var payload = {
-                                reff_no: trx_id,
-                                operator: i.remarks.operator,
-                            }
-                _SLOT.start_check_detail_trx_status(JSON.stringify(payload), i.remarks.operator);
-                lastPPOBDataCheck = rows;
-                return;
+            if (i.remarks.product_channel == 'MDD'){
+                rows = [
+                    {label: 'No Transaksi', content: trx_id},
+                    {label: 'Tanggal', content: FUNC.get_value(i.date)},
+                    {label: 'Jenis Transaksi', content: trx_name},
+                    {label: 'Nilai Diterima', content: FUNC.insert_dot(total_payment)},
+                    {label: 'Nilai Bayar', content: amount},
+                    {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                    {label: 'Status', content: i.status}
+                ]
+                if (i.remarks.operator == 'CASHIN OVO'){
+                    popup_loading.open('Memeriksa Data Transaksi...');
+                    var payload = {
+                                    reff_no: trx_id,
+                                    operator: i.remarks.operator,
+                                }
+                    _SLOT.start_check_detail_trx_status(JSON.stringify(payload), i.remarks.operator);
+                    lastPPOBDataCheck = rows;
+                    return;
+                }
             }
         }
         if (i.remarks.product_category == 'Listrik' && i.status == 'PAID' && i.category == 'PPOB' ){
