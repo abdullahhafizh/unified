@@ -436,12 +436,14 @@ Base{
                 break;
             }
         }
+        console.log('Raw Status', data.details.error.message);
         if (data.details.error.message !== undefined){
             lastPPOBDataCheck.push({
                         label: 'Notes', 
                         content: data.details.error.message
                     })
         }
+        console.log('Length Row Confirmation', lastPPOBDataCheck.length);
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
         // Reset PPOB Data Check
         lastPPOBDataCheck = undefined;
