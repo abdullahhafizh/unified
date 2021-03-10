@@ -738,8 +738,8 @@ def restart_mdd_service():
     #     LOGGER.warning((e))
     #     return False
     try:
-        pythoncom.CoInitialize()
-        shell = client.Dispatch("WScript.shell")
+        # pythoncom.CoInitialize()
+        # shell = client.Dispatch("WScript.shell")
         # service_name = 'MDDTopUpService'
         # service_path = '\\'+os.environ['COMPUTERNAME']+'\/'+service_name
         # user = os.getlogin()
@@ -751,9 +751,9 @@ def restart_mdd_service():
         #     result = shell.Run(argument)
         #     print('pyt: Result : ', result)
         # command = 'runas /user:administrator powershell -command "Restart-Service MDDTopUpService -Force"'
-        shell.Run("net stop MDDTopUpService") 
+        os.system("net stop MDDTopUpService") 
         sleep(1)
-        output = shell.Run("net start MDDTopUpService") 
+        os.system("net start MDDTopUpService") 
         # shell.Run(command)
         # shell.SendKeys(admin_pass+"\r\n", 0)
         # script = '/_restartMDDTopupService.bat'
