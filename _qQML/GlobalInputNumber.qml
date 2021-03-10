@@ -429,17 +429,17 @@ Base{
         popup_loading.close();
         if (r == 'CHECK_TRX_STATUS|ERROR') return;
         var res = r.replace('CHECK_TRX_STATUS|', '')
-        var i = JSON.parse(res);
+        var data = JSON.parse(res);
         for (var i=0;i < lastPPOBDataCheck.length; i++){
             if (lastPPOBDataCheck[i].label == 'Status'){
-                lastPPOBDataCheck[i].content = i.status;
+                lastPPOBDataCheck[i].content = data.status;
                 break;
             }
         }
-        if (i.details.error.message !== undefined){
+        if (data.details.error.message !== undefined){
             lastPPOBDataCheck.push({
                         label: 'Notes', 
-                        content: i.customer + ' - ' + i.details.error.message
+                        content: data.details.error.message
                     })
         }
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
@@ -482,9 +482,9 @@ Base{
                     {label: 'No Transaksi', content: trx_id},
                     {label: 'Tanggal', content: FUNC.get_value(i.date)},
                     {label: 'Jenis Transaksi', content: trx_name},
-                    {label: 'Nilai Bayar', content: FUNC.insert_dot(total_payment)},
-                    {label: 'Nilai Diterima', content: amount},
+                    {label: 'Total Bayar', content: FUNC.insert_dot(total_payment)},
                     {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                    {label: 'Uang Diterima', content: amount},
                     {label: 'Status', content: i.status}
                 ]
         if (i.remarks.product_channel !== undefined){
@@ -493,9 +493,9 @@ Base{
                     {label: 'No Transaksi', content: trx_id},
                     {label: 'Tanggal', content: FUNC.get_value(i.date)},
                     {label: 'Jenis Transaksi', content: trx_name},
-                    {label: 'Nilai Diterima', content: FUNC.insert_dot(total_payment)},
-                    {label: 'Nilai Bayar', content: amount},
+                    {label: 'Total Bayar', content: amount},
                     {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                    {label: 'Uang Diterima', content: amount},
                     {label: 'Status', content: i.status}
                 ]
                 if (i.remarks.operator == 'CASHIN OVO'){
