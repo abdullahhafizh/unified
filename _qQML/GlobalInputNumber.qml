@@ -6,6 +6,9 @@ import "config.js" as CONF
 
 Base{
     id: global_input_number
+//                property var globalScreenType: '1'
+//                height: (globalScreenType=='2') ? 1024 : 1080
+//                width: (globalScreenType=='2') ? 1280 : 1920
     mode_: "reverse"
     isPanelActive: false
     isHeaderActive: true
@@ -432,7 +435,7 @@ Base{
         var data = JSON.parse(res);
         var new_status = data.status;
         if (data.details.error.message !== undefined){
-            new_status = data.status + ' ' + data.details.error.message
+            new_status = data.details.error.message
         }
         for (var i=0;i < lastPPOBDataCheck.length; i++){
             if (lastPPOBDataCheck[i].label == 'Status'){

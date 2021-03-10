@@ -61,7 +61,7 @@ Rectangle{
         anchors.left: separator_text.right
         anchors.leftMargin: 50
         wrapMode: Text.WordWrap
-        font.pixelSize: contentSize
+        font.pixelSize: (labelContent.length > 35) ? contentSize - 4 : contentSize;
         font.family: "Ubuntu"
         font.bold: false
         color: theme
