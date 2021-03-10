@@ -434,14 +434,24 @@ Base{
         var res = r.replace('CHECK_TRX_STATUS|', '')
         var data = JSON.parse(res);
         var new_status = data.status;
-        if (data.details.error.message !== undefined){
-            new_status = data.details.error.message
-        }
         for (var i=0;i < lastPPOBDataCheck.length; i++){
-            if (lastPPOBDataCheck[i].label == 'Status'){
-                lastPPOBDataCheck[i].content = new_status;
-                break;
+            var payment_method = 'CASH';
+            if (lastPPOBDataCheck[i].label == 'Metode Bayar'){
+                payment_method = lastPPOBDataCheck[i].content;
+                lastPPOBDataCheck.splice(i,1);
             }
+            if (lastPPOBDataCheck[i].label == 'Status'){
+                lastPPOBDataCheck[i].content = data.status;
+            }
+            if (lastPPOBDataCheck[i].label == 'Uang Diterima'){
+                lastPPOBDataCheck[i].content = payment_method + ' ' + lastPPOBDataCheck[i].content;
+            }
+        }
+        if (data.details.error.message !== undefined){
+            lastPPOBDataCheck.push({
+                                   label: 'Notes',
+                                   content: data.details.error.message
+                                   });
         }
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
         // Reset PPOB Data Check
