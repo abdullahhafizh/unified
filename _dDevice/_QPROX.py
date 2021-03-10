@@ -559,11 +559,13 @@ def check_card_balance():
 
 def restart_mdd_service():
     try:
-        # shell = client.Dispatch("WScript.shell")
-        # pythoncom.CoInitialize()
-        os.system("net stop MDDTopUpService") 
+        pythoncom.CoInitialize()
+        shell = client.Dispatch("WScript.shell")
+        # os.system("net stop MDDTopUpService") 
+        shell.Run("net stop MDDTopUpService") 
         sleep(1)
-        os.system("net start MDDTopUpService") 
+        shell.Run("net start MDDTopUpService") 
+        # os.system("net start MDDTopUpService") 
         return True
     except Exception as e:
         LOGGER.warning((e))
