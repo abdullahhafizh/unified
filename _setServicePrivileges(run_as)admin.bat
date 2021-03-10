@@ -1,0 +1,1 @@
+subinacl.exe  /SERVICE MDDTopUpService /GRANT=everyone=F
