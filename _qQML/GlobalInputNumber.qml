@@ -438,7 +438,7 @@ Base{
         if (i.details.error.message !-- undefined){
             lastPPOBDataCheck.push({
                         label: 'Notes', 
-                        content: i.details.clientTxnId + ' - ' + i.details.error.message
+                        content: i.customer + ' - ' + i.details.error.message
                     })
         }
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
