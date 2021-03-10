@@ -12,6 +12,7 @@ import json
 from _nNetwork import _NetworkAccess
 from datetime import datetime
 import random
+import os
 
 import win32com.client as client
 import pythoncom
@@ -549,7 +550,7 @@ def check_card_balance():
             output = json.loads(result)
             if 'statusCode' in output.keys():
                 if output['statusCode'] == -999:
-                    LOGGER.warning(('SERVICE_NOT_RESPONSE_DETECTED', 'RE_INIT_READER'))
+                    LOGGER.warning(('SERVICE_NOT_RESPONSE_DETECTED', 'RESTART_SERVICE', 'RE_INIT_READER'))
                     do_reinit_reader()
         except:
             pass
@@ -558,11 +559,11 @@ def check_card_balance():
 
 def restart_mdd_service():
     try:
-        shell = client.Dispatch("WScript.shell")
-        pythoncom.CoInitialize()
-        shell.Run("net stop MDDTopUpService") 
+        # shell = client.Dispatch("WScript.shell")
+        # pythoncom.CoInitialize()
+        os.system("net stop MDDTopUpService") 
         sleep(1)
-        shell.Run("net start MDDTopUpService") 
+        os.system("net start MDDTopUpService") 
         return True
     except Exception as e:
         LOGGER.warning((e))
