@@ -738,7 +738,8 @@ def restart_mdd_service():
     #     LOGGER.warning((e))
     #     return False
     try:
-        admin_pass = _Common.OS_ADMIN_PASS
+        pythoncom.CoInitialize()
+        # admin_pass = _Common.OS_ADMIN_PASS
         shell = client.Dispatch("WScript.shell")
         # shell.Run("runas /user:administrator net start MDDTopUpService") 
         output = shell.Run('powershell -command "Restart-Service MDDTopUpService -Force"')
