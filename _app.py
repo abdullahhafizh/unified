@@ -1137,6 +1137,10 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.alter_table('_SAMAudit.sql')
     sleep(1)
+    if INITIAL_SETTING['reloadService'] is True:
+        print("pyt: Restarting MDDTopUpService...")
+        _KioskService.start_restart_mdd_service()
+        sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
     _KioskService.house_keeping(age_month=12)
     sleep(1)
@@ -1173,11 +1177,6 @@ if __name__ == '__main__':
     # print("pyt: Syncing Machine Status...")
     # _Sync.start_sync_machine_status()
     # sleep(1)
-    if INITIAL_SETTING['reloadService'] is True:
-        sleep(1)
-        print("pyt: Restarting MDDTopUpService...")
-        # run_script({'/_restartMDDTopupService.bat'})
-        _KioskService.start_restart_mdd_service()
     if _Common.BILL['status'] is True:
         sleep(1)
         print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
