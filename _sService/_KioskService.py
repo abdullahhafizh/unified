@@ -760,9 +760,11 @@ def restart_mdd_service():
         # process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
         # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         # LOGGER.info((output))
+        print("pyt: Restarting MDDTopUpService...Success")
         return True
     except Exception as e:
         LOGGER.warning((e))
+        print("pyt: Restarting MDDTopUpService...Failed")
         return False
     # LOGGER.info(('[INFO] restart_mdd_service result : ', str(output)))
     # print("pyt : ", output)
