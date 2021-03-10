@@ -53,6 +53,7 @@ Base{
     property bool transactionInProcess: false
 
     property var cashboxFull
+    property var lastPPOBDataCheck
 
 
     signal get_payment_method_signal(string str)
@@ -67,6 +68,7 @@ Base{
             retryCategory = undefined;
             vCollectionMode = undefined;
             vCollectionData = undefined;
+            lastPPOBDataCheck = undefined;
             retryAbleTransaction = false;
             transactionInProcess = false;
             receivedPayment = 0;
@@ -421,7 +423,30 @@ Base{
         }
     }
 
+    function parse_ppob_detail_status(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('parse_ppob_detail_status', now, r);
+        if (r == 'CHECK_TRX_STATUS|ERROR') return;
+        var res = r.replace('CHECK_TRX_STATUS|', '')
+        var i = JSON.parse(res);
+        //TODO Parse OVO Status
+        var new_status = 'New Dummy Status';
+        for (var i=0;i < lastPPOBDataCheck.length; i++){
+            if (lastPPOBDataCheck[i].label == 'Status'){
+                lastPPOBDataCheck[i].content = new_status;
+                break;
+            }
+        }
+        generateConfirm(lastPPOBDataCheck, false, 'backToMain');
+        // Reset PPOB Data Check
+        lastPPOBDataCheck = undefined;
+    }
+
     function get_trx_check_result(r){
+        if (r.indexOf('CHECK_TRX_STATUS|') > -1){
+            parse_ppob_detail_status(r);
+            return;
+        }
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         popup_loading.close();
         console.log('get_trx_check_result', now, r);
@@ -433,6 +458,8 @@ Base{
 //        console.log('get_trx_check_result', now, res);
         var i = JSON.parse(res);
         var trx_name = '';
+        var trx_id = FUNC.get_value(i.product_id);
+        if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
         retryCategory = i.category;
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
@@ -446,8 +473,6 @@ Base{
         var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
 //        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
-        var trx_id = FUNC.get_value(i.product_id);
-        if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
         var rows = [
                     {label: 'No Transaksi', content: trx_id},
                     {label: 'Tanggal', content: FUNC.get_value(i.date)},
@@ -457,6 +482,18 @@ Base{
                     {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
                     {label: 'Status', content: i.status}
                 ]
+        if (i.remarks.product_channel !== undefined){
+            if (i.remarks.operator == 'CASHIN OVO'){
+                popup_loading.open('Memeriksa Data Transaksi...');
+                var payload = {
+                                reff_no: trx_id,
+                                operator: i.remarks.operator,
+                            }
+                _SLOT.start_check_detail_trx_status(JSON.stringify(payload), i.remarks.operator);
+                lastPPOBDataCheck = rows;
+                return;
+            }
+        }
         if (i.remarks.product_category == 'Listrik' && i.status == 'PAID' && i.category == 'PPOB' ){
             var add_info = i.remarks.remarks;
             console.log('get add_info', JSON.stringify(add_info.data.sn));

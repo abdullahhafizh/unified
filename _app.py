@@ -716,6 +716,10 @@ class SlotHandler(QObject):
     def start_sync_topup_amount(self):
         _Sync.start_sync_topup_amount()
     start_sync_topup_amount = pyqtSlot()(start_sync_topup_amount)
+    
+    def start_check_detail_trx_status(self, payload, mode):
+        _PPOBService.start_check_detail_trx_status(payload, mode)
+    start_check_detail_trx_status = pyqtSlot(str, str)(start_check_detail_trx_status)
 
 
 def s_handler():

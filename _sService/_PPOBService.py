@@ -444,3 +444,27 @@ def do_check_customer(payload, mode='CASHIN OVO'):
         LOGGER.warning((str(payload), mode, str(e)))
         PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.emit('CHECK_CUSTOMER|ERROR')
 
+
+def start_check_detail_trx_status(payload, mode):
+    _Helper.get_thread().apply_async(check_detail_trx_status, (payload, mode,))
+
+
+def check_detail_trx_status(payload, mode='CASHIN OVO'):
+    # msisdn,amount,reff_no,operator
+    try:
+        payload = json.loads(payload)
+        # _Helper.dump(payload)
+        url = _Common.BACKEND_URL+'ppob/trx-status'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('CHECK_TRX_STATUS|' + json.dumps(r['data']))
+            LOGGER.debug((str(payload), mode, str(r)))
+        elif s == 400 and r['result'] == 'BAD' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('CHECK_TRX_STATUS|' + json.dumps(r['data']))
+            LOGGER.debug((str(payload), mode, str(r)))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('CHECK_TRX_STATUS|ERROR')
+            LOGGER.warning((str(payload), mode, str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), mode, str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('CHECK_TRX_STATUS|ERROR')
