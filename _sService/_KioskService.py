@@ -738,7 +738,7 @@ def restart_mdd_service():
     #     LOGGER.warning((e))
     #     return False
     try:
-         win32serviceutil.RestartService('MDDTopUpService')
+        win32serviceutil.RestartService('MDDTopUpService')
         # pythoncom.CoInitialize()
         # command = 'runas /user:administrator powershell -command "Restart-Service MDDTopUpService -Force"'
         # admin_pass = _Common.OS_ADMIN_PASS
