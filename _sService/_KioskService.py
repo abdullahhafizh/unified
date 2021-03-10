@@ -738,14 +738,15 @@ def restart_mdd_service():
     #     LOGGER.warning((e))
     #     return False
     try:
-        pythoncom.CoInitialize()
-        command = 'runas /user:administrator powershell -command "Restart-Service MDDTopUpService -Force"'
-        admin_pass = _Common.OS_ADMIN_PASS
-        shell = client.Dispatch("WScript.shell")
-        # shell.Run("runas /user:administrator net start MDDTopUpService") 
-        shell.Run(command)
-        sleep(1)
-        shell.SendKeys(admin_pass+"\r\n", 0)
+         win32serviceutil.RestartService('MDDTopUpService')
+        # pythoncom.CoInitialize()
+        # command = 'runas /user:administrator powershell -command "Restart-Service MDDTopUpService -Force"'
+        # admin_pass = _Common.OS_ADMIN_PASS
+        # shell = client.Dispatch("WScript.shell")
+        # # shell.Run("runas /user:administrator net start MDDTopUpService") 
+        # shell.Run(command)
+        # sleep(1)
+        # shell.SendKeys(admin_pass+"\r\n", 0)
         # script = '/_restartMDDTopupService.bat'
         # process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
         # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
