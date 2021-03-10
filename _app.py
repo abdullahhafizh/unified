@@ -37,13 +37,22 @@ from _sService import _GeneralPaymentService
 import json
 import sentry_sdk
 
-
 print("""
     App Ver: """ + _Common.VERSION + """
     Service Ver: """ + _Common.SERVICE_VERSION + """
 Powered By: PT. MultiDaya Dinamika
               -2020-
 """)
+
+
+if not os.getuid() == 0:
+    try:
+        from elevate import elevate
+        print('pyt: Elevating Privileges...')
+        elevate(show_console=False)
+        print('pyt: Elevating Privileges...Success')
+    except:
+        pass
 
 # Set Default Screen Frame Size
 GLOBAL_WIDTH = 1920
@@ -1027,7 +1036,8 @@ def init_setting():
     INITIAL_SETTING['tid'] = _Common.TID
     # setting['prepaid'] = _QPROX.BANKS
     INITIAL_SETTING['server'] = _Common.BACKEND_URL
-    INITIAL_SETTING['reloadService'] = _Common.RELOAD_SERVICE
+    # Force Reload Service To True
+    INITIAL_SETTING['reloadService'] = True
     INITIAL_SETTING['allowedSyncTask'] = _Common.ALLOWED_SYNC_TASK
     # setting['sftpMandiri'] = _Common.SFTP_MANDIRI
     # setting['ftp'] = _Common.FTP

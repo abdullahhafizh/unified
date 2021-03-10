@@ -216,7 +216,6 @@ KIOSK_SETTING = []
 KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
 PRINTER_STATUS = "NORMAL"
-OS_ADMIN_PASS = _ConfigParser.get_set_value('GENERAL', 'admin^pass', 'mdd*123')
 PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
 EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
