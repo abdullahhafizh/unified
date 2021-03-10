@@ -738,10 +738,19 @@ def restart_mdd_service():
     #     LOGGER.warning((e))
     #     return False
     try:
-        # win32serviceutil.RestartService('MDDTopUpService')
+        shell = client.Dispatch("WScript.shell")
+        service_name = 'MDDTopUpService'
+        service_path = '\\'+os.environ['COMPUTERNAME']+'\/'+service_name
+        user = os.getlogin()
+        user_domain = os.environ['USERDOMAIN']
+        commander = os.getcwd() + '/subinacl.exe'
+        argument = 'subinacl.exe  /SERVICE '+service_path+' /GRANT='+user_domain+'\/'+user+'=F'
+        if os.path.exists(commander):
+            print('pyt: Sending : ', argument)
+            result = shell.Run(argument)
+            print('pyt: Result : ', result)
         pythoncom.CoInitialize()
         # command = 'runas /user:administrator powershell -command "Restart-Service MDDTopUpService -Force"'
-        shell = client.Dispatch("WScript.shell")
         shell.Run("net stop MDDTopUpService") 
         sleep(1)
         output = shell.Run("net start MDDTopUpService") 
