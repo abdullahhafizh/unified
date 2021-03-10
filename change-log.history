@@ -1,3 +1,9 @@
+12.0.H-GLOBAL:
+- Enable Restart Service On Reader Hang,
+- Enhanve Topup OVO Failed TRX Inquiry,
+- Add Script To Modify Service Permission (Run As Administator),
+- ...
+
 12.0.G-GLOBAL:
 - Change Bin Range Block Into Setting Parameter,
 - Change Message When Failure Topup Mandiri,
