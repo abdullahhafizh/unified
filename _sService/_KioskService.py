@@ -24,6 +24,7 @@ from operator import itemgetter
 # from _dDevice import _BILL
 import json
 import win32serviceutil
+import win32com.client as client
 
 
 class KioskSignalHandler(QObject):
@@ -737,10 +738,15 @@ def restart_mdd_service():
     #     LOGGER.warning((e))
     #     return False
     try:
-        script = '/_restartMDDTopupService.bat'
-        process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
-        output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-        LOGGER.info((output))
+        admin_pass = _Common.OS_ADMIN_PASS
+        shell = client.Dispatch("WScript.shell")
+        shell.Run("runas /user:administrator net start MDDTopUpService")
+        sleep(1)
+        shell.SendKeys(admin_pass+"\r\n", 0)
+        # script = '/_restartMDDTopupService.bat'
+        # process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
+        # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+        # LOGGER.info((output))
         return True
     except Exception as e:
         LOGGER.warning((e))
