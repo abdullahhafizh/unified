@@ -456,7 +456,7 @@ def start_check_card_balance():
     _Helper.get_thread().apply_async(check_card_balance)
 
 
-LAST_BALANCE_CHECK = None
+LAST_BALANCE_CHECK = None   
 FW_BANK = _Common.FW_BANK
 
 DUMMY_BALANCE_CHECK_BALANCE = [

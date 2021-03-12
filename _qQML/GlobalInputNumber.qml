@@ -58,6 +58,8 @@ Base{
     property var cashboxFull
     property var lastPPOBDataCheck
 
+    property var adminFee: 1500
+
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -199,14 +201,16 @@ Base{
         var customer_name = 'OVO User';
         if (data.details.custName !== undefined) customer_name = data.details.custName;
         var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+        var topup_denom = parseInt(selectedProduct.rs_price) - parseInt(adminFee);
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'Produk', content: product_name},
             {label: 'Pelanggan', content: customer_name},
             {label: 'No Tujuan', content: data.customer},
 //            {label: 'Jumlah', content: '1'},
-            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+            {label: 'Harga/Unit', content: FUNC.insert_dot(topup_denom.toString())},
+            {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+            {label: 'Total Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
         ]
         ppobMode = 'non-tagihan';
         generateConfirm(rows, true);
