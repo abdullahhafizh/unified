@@ -172,8 +172,8 @@ def generate_qr_receipt(data):
         pdf.ln(5)
         pdf.set_font('Courier', '', default_size)
         _batch = trx['transaction_detail']['batch_number']
-        _trace = trx['transaction_detail']['issuer_reference_number']
-        pdf.cell(padding_left, 0, justifying('BATCH: '+_batch, 'TRACE: '+_trace), 0, 0, 'L')
+        _rrn = trx['transaction_detail']['issuer_reference_number']
+        pdf.cell(padding_left, 0, justifying('BATCH: '+_batch, 'RRN QRIS: '+_rrn), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font('Courier', '', default_size)
         _reff_no = data['detail']['data']['reference_number']
