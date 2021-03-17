@@ -265,7 +265,8 @@ def do_check_trx(reff_no):
                     r['status'] = 'PENDING'
                     r['receipt_amount'] = str(result['amount'])
                     if r['payment_method'].lower() != 'debit':
-                        r['payment_method'] = result['provider']
+                        if not _Helper.empty(result.get('provider', None)):
+                            r['payment_method'] = result['provider']
                     r['retry_able'] = _Common.check_retry_able(remarks)
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
