@@ -277,11 +277,13 @@ def do_check_trx(reff_no):
         if s == 200 and r['result'] == 'OK':
             # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
             data = r['data']
-            # remarks = data.get('remarks')
+            remarks = data.get('remarks')
             # remarks.pop('payment_error')
             # remarks.pop('process_error')
             # data['remarks'] = remarks
             # Force Close Retry TRX From Online
+            if data['payment_method'] is None:
+                data['payment_method'] = remarks.get('payment', '').replace('-', ' ')
             data['retry_able'] = 0
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(data))
         else:
