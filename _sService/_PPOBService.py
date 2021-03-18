@@ -206,6 +206,11 @@ def do_trx_ppob(payload, mode='PAY'):
             LOGGER.info(('Store Last PPOB TRX', str(_Common.LAST_PPOB_TRX)))
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(r['data']))
             LOGGER.debug((str(payload), mode, str(r)))
+            # Remove TRX Failure Under This reff_no
+            _DAO.delete_transaction_failure({
+                'reff_no': payload['product_id'],
+                'tid': _Common.TID,            
+            })
         else:
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
             LOGGER.warning((str(payload), mode, str(r)))

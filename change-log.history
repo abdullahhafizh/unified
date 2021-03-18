@@ -2,6 +2,7 @@
 - Enhance BCA QRIS Payment Receipt,
 - Delete Cash Local Data After Collection (Previously Just Flagging),
 - Fix Trx Check Detail Inquiry,
+- Add Trx Pending Remove on PPOB TRX,
 - ... 
 
 12.0.H-GLOBAL:
