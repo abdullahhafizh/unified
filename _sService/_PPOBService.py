@@ -208,7 +208,7 @@ def do_trx_ppob(payload, mode='PAY'):
             LOGGER.debug((str(payload), mode, str(r)))
             # Remove TRX Failure Under This reff_no
             _DAO.delete_transaction_failure({
-                'reff_no': payload['product_id'],
+                'reff_no': payload['reff_no'],
                 'tid': _Common.TID,            
             })
         else:
