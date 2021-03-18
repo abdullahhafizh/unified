@@ -218,7 +218,7 @@ def parse_and_direct_store_notes(_result):
         LOGGER.warning((e))
     finally:
         # Insert Into Table Cashbox
-        _DAO.insert_cashbox(cash_in)
+        # _DAO.insert_cashbox(cash_in)
         return cash_in
 
 
