@@ -658,7 +658,7 @@ def insert_cashbox(amount='0'):
         'createdAt': _Helper.time_string()
     }
     sql = " INSERT INTO Cashbox (amount, createdAt) VALUES (:amount, :createdAt) "
-    return _Database.insert_update(sql=sql, parameter=param, log=True)
+    return _Database.insert_update(sql=sql, parameter=param, log=False)
 
 
 def cashbox_status():

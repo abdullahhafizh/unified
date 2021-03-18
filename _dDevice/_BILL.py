@@ -205,15 +205,21 @@ def start_bill_receive_note():
     _Helper.get_thread().apply_async(start_receive_note)
 
 
-def parse_notes(_result):
-    if BILL_TYPE == 'GRG':
-        # Received=IDR|Denomination=5000|Version=2|SerialNumber=1|Go=0
-        return _result.split('|')[1].split('=')[1]
-    elif BILL_TYPE == 'NV':
-        # Note in escrow, amount: 2000.00  IDR
-        return _result.split('amount: ')[1].split('.00')[0]
-    else:
-        return '0'
+def parse_and_direct_store_notes(_result):
+    cash_in = '0'
+    try:
+        if BILL_TYPE == 'GRG':
+            # Received=IDR|Denomination=5000|Version=2|SerialNumber=1|Go=0
+            cash_in = _result.split('|')[1].split('=')[1]
+        elif BILL_TYPE == 'NV':
+            # Note in escrow, amount: 2000.00  IDR
+            cash_in = _result.split('amount: ')[1].split('.00')[0]
+    except Exception as e:
+        LOGGER.warning((e))
+    finally:
+        # Insert Into Table Cashbox
+        _DAO.insert_cashbox(cash_in)
+        return cash_in
 
 
 def start_receive_note():
@@ -246,9 +252,7 @@ def start_receive_note():
                     # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
                     # break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
-                cash_in = parse_notes(_result)
-                # Insert Into Table Cashbox
-                _DAO.insert_cashbox(cash_in)
+                cash_in = parse_and_direct_store_notes(_result)
                 # -------------------------
                 # _Helper.dump(cash_in)
                 if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:

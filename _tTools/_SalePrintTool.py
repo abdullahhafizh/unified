@@ -1203,10 +1203,12 @@ def mark_sync_collected_data(s):
             operator = _UserService.USER['first_name']
         # Reset Cash Log
         collection_time = str(_Helper.now())
-        __update_cash_str = ' UPDATE Cash SET collectedAt = ' + collection_time + ', collectedUser = "' + str(operator) + \
-            '"  WHERE collectedAt = 19900901 '
+        # __update_cash_str = ' UPDATE Cash SET collectedAt = ' + collection_time + ', collectedUser = "' + str(operator) + \
+        # '"  WHERE collectedAt = 19900901 '
         # _KioskService.python_dump(str(__update_cash_str))
-        __exec_cash_update = _DAO.custom_update(__update_cash_str)
+        # __exec_cash_update = _DAO.custom_update(__update_cash_str)
+        _DAO.flush_table('Cash')
+        # Change Data Cash Mark To Deletion
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
         if not _Common.empty(s['all_cashbox_history']):
