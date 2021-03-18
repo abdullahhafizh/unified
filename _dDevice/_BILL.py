@@ -53,7 +53,7 @@ NV = {
     "STOP": "605",
     # "STATUS": "504",
     "RESET": "606",
-    "KEY_RECEIVED": "Note in escrow, amount:",
+    "KEY_RECEIVED": "IDR",
     "PORT": BILL_PORT,
     # TODO Must Define Below Property
     "CODE_JAM": 'Unsafe Jam',
