@@ -123,10 +123,8 @@ def new_cd_eject(port, attempt):
         output = output[0].split(";")
         response = json.loads(output[0])
         LOGGER.debug((command, 'output', output, 'response', response))
-        if response == 0:
-            CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
-        else:
-            set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'new_cd_eject')
+        sleep(1)
+        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
     except Exception as e:
         set_false_output(attempt, str(e)+'|'+attempt, 'new_cd_eject')
 

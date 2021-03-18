@@ -3,6 +3,7 @@
 - Delete Cash Local Data After Collection (Previously Just Flagging),
 - Fix Trx Check Detail Inquiry,
 - Add Trx Pending Remove on PPOB TRX,
+- Fix NEW CD Eject Response Status,
 - ... 
 
 12.0.H-GLOBAL:
