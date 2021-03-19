@@ -430,6 +430,39 @@ Base{
         }
     }
 
+    function parse_ppob_inquiry_status(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('parse_ppob_detail_status', now, r);
+        popup_loading.close();
+        var result = r.split('|')[1];
+        if (result=='ERROR'){
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Terjadi Kesalahan Saat Memeriksa Transaksi Anda. Silakan Coba Lagi.', 'backToMain', false );
+            return;
+        } 
+        var res = r.split('|')[2];
+        var data = JSON.parse(res);
+        if (result == 'OK'){
+            var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+            var rows = [
+                            {label: 'Tanggal', content: now},
+                            {label: 'Produk', content: product_name},
+                            {label: 'No Tujuan', content: data.msisdn},
+                            {label: 'Jumlah', content: '1'},
+                            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                        ]
+            ppobMode = 'non-tagihan';
+            generateConfirm(rows, true);
+            return;
+        } else {
+            var msisdn = data.payload.msisdn;
+            var product_id = selectedProduct.product_id;
+            var limit_daily = data.suspect.limit;
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Transaksi '+product_id+' Ke Nomor '+msisdn+' Dibatasi Maksimal ' + limit_daily + 'X Per Hari.', 'backToMain', false );
+            return;
+        }       
+    }
+
     function parse_ppob_detail_status(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('parse_ppob_detail_status', now, r);
@@ -465,6 +498,10 @@ Base{
     function get_trx_check_result(r){
         if (r.indexOf('CHECK_TRX_STATUS|') > -1){
             parse_ppob_detail_status(r);
+            return;
+        }
+        if (r.indexOf('TRX_INQUIRY|') > -1){
+            parse_ppob_inquiry_status(r);
             return;
         }
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -888,19 +925,37 @@ Base{
                             _SLOT.start_do_check_customer(JSON.stringify(payload), selectedProduct.operator);
                             popup_loading.open('Memeriksa Nomor Anda...')
                             return;
+                        } else {
+                            // 'product_id' => 'required',
+                            // 'product_category' => 'required',
+                            // 'operator' => 'required',
+                            // 'msisdn' => 'required',
+                            // 'amount' => 'required:numeric',
+                            console.log('Transaction Check', selectedProduct.operator, textInput);
+                            var payload = {
+                                msisdn: textInput,
+                                amount: selectedProduct.rs_price.toString(),
+                                reff_no: ppobDetails.shop_type + ppobDetails.epoch.toString(),
+                                operator: selectedProduct.operator,
+                                product_id: selectedProduct.product_id,
+                                product_category: selectedProduct.category,
+                            }
+                            _SLOT.start_do_inquiry_trx(JSON.stringify(payload));
+                            popup_loading.open('Memeriksa Transaksi Anda...')
+                            return;
                         }
-                        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
-                        var rows = [
-                            {label: 'Tanggal', content: now},
-                            {label: 'Produk', content: product_name},
-                            {label: 'No Tujuan', content: textInput},
-                            {label: 'Jumlah', content: '1'},
-                            {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-                            {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
-                        ]
-                        ppobMode = 'non-tagihan';
-                        generateConfirm(rows, true);
-                        return;
+                        // var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
+                        // var rows = [
+                        //     {label: 'Tanggal', content: now},
+                        //     {label: 'Produk', content: product_name},
+                        //     {label: 'No Tujuan', content: textInput},
+                        //     {label: 'Jumlah', content: '1'},
+                        //     {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                        //     {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                        // ]
+                        // ppobMode = 'non-tagihan';
+                        // generateConfirm(rows, true);
+                        // return;
                     }
                 case 'SEARCH_TRX':
                     console.log('Checking Transaction Number : ', now, textInput);

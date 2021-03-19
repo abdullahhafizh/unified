@@ -719,6 +719,10 @@ class SlotHandler(QObject):
     def start_check_detail_trx_status(self, payload, mode):
         _PPOBService.start_check_detail_trx_status(payload, mode)
     start_check_detail_trx_status = pyqtSlot(str, str)(start_check_detail_trx_status)
+    
+    def start_do_inquiry_trx(self, payload):
+        _PPOBService.start_do_inquiry_trx(payload)
+    start_do_inquiry_trx = pyqtSlot(str)(start_do_inquiry_trx)
 
 
 def s_handler():

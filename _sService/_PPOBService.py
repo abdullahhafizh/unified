@@ -299,6 +299,33 @@ def do_check_trx(reff_no):
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
 
 
+def start_do_inquiry_trx(payload):
+    _Helper.get_thread().apply_async(do_inquiry_trx, (payload,))
+
+
+def do_inquiry_trx(payload):
+    payload = json.loads(payload)
+    _Helper.dump(payload)
+    try:
+        url = _Common.BACKEND_URL+'ppob/trx/inquiry'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK':
+            data = payload
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_INQUIRY|OK|'+json.dumps(data))
+        elif s == 200 and r['result'] == 'SUSPECT':
+            data = {
+                'payload': payload,
+                'suspect': r['data']
+            }
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_INQUIRY|SUSPECT|'+json.dumps(data))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_INQUIRY|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_INQUIRY|ERROR')
+
+
 def validate_payment_history(payment_method='QR', trx_id=None, provider='shopeepay'):
     if _Helper.empty(trx_id) is True:
         return False, None
