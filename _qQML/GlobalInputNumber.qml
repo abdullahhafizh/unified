@@ -441,8 +441,8 @@ Base{
         } 
         var res = r.split('|')[2];
         var data = JSON.parse(res);
+        var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
         if (result == 'OK'){
-            var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
             var rows = [
                             {label: 'Tanggal', content: now},
                             {label: 'Produk', content: product_name},
@@ -455,10 +455,10 @@ Base{
             generateConfirm(rows, true);
             return;
         } else {
+            product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
             var msisdn = data.payload.msisdn;
-            var product_id = selectedProduct.product_id;
             var limit_daily = data.suspect.limit;
-            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Transaksi '+product_id+' Ke Nomor '+msisdn+' Dibatasi Maksimal ' + limit_daily + 'X Per Hari.', 'backToMain', false );
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Transaksi '+product_name+' Ke Nomor '+msisdn+' Maksimal ' + limit_daily + 'X Per Hari.', 'backToMain', false );
             return;
         }       
     }
