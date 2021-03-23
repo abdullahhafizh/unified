@@ -349,7 +349,7 @@ def store_cash_into_cashbox():
 def set_cashbox_full():
     _Common.BILL_ERROR = 'CASHBOX_FULL'
     # total_cash = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
-    # _Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
+    # #_Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
     _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
 
 

@@ -273,6 +273,9 @@ def do_check_trx(reff_no):
                         if not _Helper.empty(result.get('provider', None)):
                             r['payment_method'] = result['provider']
                     r['retry_able'] = _Common.check_retry_able(remarks)
+                else:
+                    if r['payment_method'].lower() in ['debit']:
+                        r['status'] = 'FAILED - Transaksi Debit Gagal'
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data

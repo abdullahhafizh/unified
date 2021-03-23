@@ -131,26 +131,27 @@ def sale_edc_mobile(amount, trxid=None):
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
                 sleep(.5)
                 GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('EDC_PAYMENT')
-                _KioskService.python_dump(EDC_PAYMENT_RESULT)
+                # _KioskService.python_dump(EDC_PAYMENT_RESULT)
                 try:
                     _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
                 except Exception as e:
                     LOGGER.warning(str(e))
                 store_settlement()
             else:
-                print('pyt: [ERROR] SALE_EDC_MOBILE - ' + str(sale_data))
+                # print('pyt: [ERROR] SALE_EDC_MOBILE - ' + str(sale_data))
                 _Common.EDC_ERROR = 'SALE_ERROR'
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
-                _Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
+                #_Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
         else:
-            _Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
+            #_Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
             _Common.EDC_ERROR = 'SALE_ERROR'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
     except Exception as e:
-        _Common.EDC_ERROR = 'SALE_ERROR'
-        E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
-        _Common.online_logger(['EDC Android Sale'], 'device')
-        LOGGER.warning(str(e))
+        if 'Invalid argument' not in e:
+            _Common.EDC_ERROR = 'SALE_ERROR'
+            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+            #_Common.online_logger(['EDC Android Sale'], 'device')
+            LOGGER.warning(str(e))
 
 
 def sale_edc(amount, trxid=None):
@@ -215,7 +216,7 @@ def sale_edc(amount, trxid=None):
                 EDC_PAYMENT_RESULT['batch_no'] = param[13].strip().replace('#', '')
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
                 # LOGGER.info(('DEBIT/CREDIT payment status', json.dumps(EDC_PAYMENT_RESULT)))
-                _KioskService.python_dump(EDC_PAYMENT_RESULT)
+                # _KioskService.python_dump(EDC_PAYMENT_RESULT)
                 # edc_settlement()
                 try:
                     _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
@@ -230,12 +231,12 @@ def sale_edc(amount, trxid=None):
             _Common.EDC_ERROR = 'PORT_NOT_OPENED'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
             LOGGER.warning(("OPEN_STATUS", str(OPEN_STATUS)))
-            _Common.online_logger(['EDC Android Port'], 'device')
+            #_Common.online_logger(['EDC Android Port'], 'device')
     except Exception as e:
         _Common.EDC_ERROR = 'SALE_ERROR'
         E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
         LOGGER.warning(str(e))
-        _Common.online_logger(['EDC UPT Sale'], 'device')
+        #_Common.online_logger(['EDC UPT Sale'], 'device')
 
 
 

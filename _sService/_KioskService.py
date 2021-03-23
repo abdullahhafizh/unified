@@ -867,7 +867,7 @@ def alter_table(a):
         _DAO.adjust_table(a)
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
-        _Common.online_logger(['Data Alter', a], 'general')
+        #_Common.online_logger(['Data Alter', a], 'general')
 
 
 def start_direct_alter_table(s):
@@ -1155,7 +1155,7 @@ def store_transaction_global(param, retry=False):
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-        _Common.online_logger(['Data TRX Store', str(e)], 'general')
+        #_Common.online_logger(['Data TRX Store', str(e)], 'general')
 
     # finally:
     #     if g['shop_type'] == 'topup':

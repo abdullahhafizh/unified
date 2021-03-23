@@ -92,7 +92,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         if _get_card_data is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
             _Common.upload_topup_error('FAILED_GET_CARD_INFO_BNI', slot, 'ADD')
-            _Common.online_logger(['BNI Card Data', _get_card_data], 'general')
+            #_Common.online_logger(['BNI Card Data', _get_card_data], 'general')
             return 'FAILED_GET_CARD_INFO_BNI'
         BNI_UPDATE_BALANCE_PROCESS = True
         # prev_balance = _Common.BNI_ACTIVE_WALLET
@@ -113,7 +113,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         if _result_pending is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_PENDING_BALANCE_BNI')
             _Common.upload_topup_error(slot, 'ADD')
-            # _Common.online_logger(['BNI Result Pending', _result_pending], 'general')
+            # #_Common.online_logger(['BNI Result Pending', _result_pending], 'general')
             return 'FAILED_PENDING_BALANCE_BNI'
         # Waiting Another Deposit Update Balance Process
         wait = 0
@@ -135,14 +135,14 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_UPDATE_BALANCE_BNI')
             _Common.upload_topup_error(slot, 'ADD')
             _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
-            # _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
+            # #_Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = _QPROX.bni_crypto_deposit(_result_ubal['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
             _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
             _Common.upload_topup_error(slot, 'ADD')
-            # _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
+            # #_Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
             BNI_UPDATE_BALANCE_PROCESS = False
@@ -204,7 +204,7 @@ def bni_reset_update_balance(slot=1, activation=True):
         })
         if _result_pending is False:
             _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Pending Result', _result_pending], 'general')
+            #_Common.online_logger(['BNI Pending Result', _result_pending], 'general')
             return False, 'ACTIVATION_PENDING_FAILED'
         # Waiting Another Deposit Update Balance Process
         # wait = 0
@@ -227,13 +227,13 @@ def bni_reset_update_balance(slot=1, activation=True):
         if _result_ubal is False:
             _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
+            #_Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             return False, 'UPDATE_BALANCE_FAILED'
         _send_crypto = _QPROX.bni_crypto_deposit(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
             _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
+            #_Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             return False, 'INJECT_CRYPTO_FAILED'
         else:
             _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
@@ -286,7 +286,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             # }
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -324,7 +324,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 # }
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -362,7 +362,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 # }
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -401,7 +401,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 # }
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -481,7 +481,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                         })
                         if _activation_pending is False:
                             _Common.upload_topup_error(_param['slot'], 'ADD')
-                            _Common.online_logger(['BNI Activation Pending Result', _activation_pending], 'general')
+                            #_Common.online_logger(['BNI Activation Pending Result', _activation_pending], 'general')
                             return False
                         return update_balance({
                             'card_no': _renew_card_data['card_no'],
@@ -493,11 +493,11 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                         response['data']['bni_activation_response'] = bni_act_resp
                         response['data']['bni_activation_result'] = bni_act_result
                         _Common.ALLOW_DO_TOPUP = False
-                        _Common.online_logger([response, bank, _param], 'general')
+                        #_Common.online_logger([response, bank, _param], 'general')
                         return False
                 else:
                     _Common.ALLOW_DO_TOPUP = False
-                    _Common.online_logger([response, bank, _param], 'general')
+                    #_Common.online_logger([response, bank, _param], 'general')
                     return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -518,7 +518,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     'last_balance': result.split('|')[2],
                 }
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning(str(e))
@@ -555,7 +555,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     reset_bca_session()
                     # Must Return Here To Stop Emit into Front
                     return 'BCA_PARTIAL_ERROR'
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning(str(e))
@@ -759,7 +759,7 @@ def remote_deposit_activation_bni(slot=1):
             activation_result = update_balance(_param, 'BNI', 'TOPUP', False)
         else:
             _Common.ALLOW_DO_TOPUP = False
-            _Common.online_logger([bni_act_result, 'BNI', _param], 'general')
+            #_Common.online_logger([bni_act_result, 'BNI', _param], 'general')
             activation_result = False
         LOGGER.debug((str(activation_result)))        
         sleep(1)
@@ -1313,7 +1313,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
             if not pending_result:
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|PENDING_ERROR')
-                _Common.online_logger([pending_result, bank, cardno, amount], 'general')
+                #_Common.online_logger([pending_result, bank, cardno, amount], 'general')
                 return False
             # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
             prev_balance = _Common.MANDIRI_ACTIVE_WALLET
@@ -1327,7 +1327,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
             if not update_result:
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
-                _Common.online_logger([update_result, bank, cardno, amount], 'general')
+                #_Common.online_logger([update_result, bank, cardno, amount], 'general')
                 return False
             if update_result['last_balance'] == update_result['topup_amount']:
                 update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))

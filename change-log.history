@@ -1,5 +1,8 @@
 12.0.J-GLOBAL:
 - Add FDS For PPOB Transaction,
+- Enhance Message Debit Failed in TRX Check,
+- Handle Invalid Argument in Sale Check Result,
+- Disable Online Logger to Sentry command,
 - ...
 
 12.0.I-GLOBAL:
