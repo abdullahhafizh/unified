@@ -184,8 +184,8 @@ def execute_console(command):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
     LOGGER.debug((command, response))
-    dump(command)
-    dump(response)
+    # dump(command)
+    # dump(response)
     return response
 
 
