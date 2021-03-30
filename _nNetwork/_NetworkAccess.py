@@ -163,11 +163,13 @@ def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
     return r.status_code, response
 
 
-def get_local(url, param=None, log=True):
+def get_local(url, param=None, log=True, __timeout=None):
     try:
         s = requests.session()
         s.keep_alive = False
-        r = requests.get(url, json=param, timeout=GLOBAL_TIMEOUT)
+        if __timeout is None:
+            __timeout = GLOBAL_TIMEOUT
+        r = requests.get(url, json=param, timeout=__timeout)
     except Exception as e:
         LOGGER.warning((url, SERVICE_NOT_RESPONDING, e))
         return -1, SERVICE_NOT_RESPONDING

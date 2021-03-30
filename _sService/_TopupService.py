@@ -1082,6 +1082,105 @@ def retry_topup_online_bca(amount, trxid):
         'last_balance': check_card_balance['balance']
     })
     
+
+def start_retry_topup_online_bri(amount, trxid):
+    _Helper.get_thread().apply_async(retry_topup_online_bri, (amount, trxid,))
+
+
+def retry_topup_online_bri(amount, trxid):
+    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+    previous_card_balance = _QPROX.LAST_BALANCE_CHECK['balance']
+    check_card_balance = _QPROX.direct_card_balance()
+    #  output = {
+    #     'balance': balance,
+    #     'card_no': card_no,
+    #     'bank_type': bank_type,
+    #     'bank_name': bank_name,
+    #     # 'able_topup': result.split('|')[3].replace('#', ''),
+    #     'able_check_log': able_check_log,
+    #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
+    # }
+    if not check_card_balance:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR')
+        return
+    if previous_card_no != check_card_balance['card_no']:
+        LOGGER.warning(('BRI_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        return
+    if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
+        # Success Topup Here
+        output = {
+                # 'prev_wallet': pending_result['prev_wallet'],
+                # 'last_wallet': pending_result['last_wallet'],
+                'last_balance': check_card_balance['balance'],
+                'topup_amount': amount,
+                'other_channel_topup': str(0),
+                'report_sam': 'N/A',
+                'card_no': check_card_balance['card_no'],
+                'report_ka': 'N/A',
+                'bank_id': '3',
+                'bank_name': 'BRI',
+            }
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+        _Common.remove_temp_data(trxid)
+        _Common.remove_temp_data(previous_card_no)
+    else:
+        # Call Reversal & Refund BRI
+        _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
+        response, result = _Command.send_request(param=_param, output=None)
+        # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
+        # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+        LOGGER.debug((response, result))
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        refund_bri_pending(LAST_BRI_PENDING_RESULT)
+    
+
+def start_retry_topup_online_dki(amount, trxid):
+    _Helper.get_thread().apply_async(retry_topup_online_dki, (amount, trxid,))
+
+
+def retry_topup_online_dki(amount, trxid):
+    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+    previous_card_balance = _QPROX.LAST_BALANCE_CHECK['balance']
+    check_card_balance = _QPROX.direct_card_balance()
+    #  output = {
+    #     'balance': balance,
+    #     'card_no': card_no,
+    #     'bank_type': bank_type,
+    #     'bank_name': bank_name,
+    #     # 'able_topup': result.split('|')[3].replace('#', ''),
+    #     'able_check_log': able_check_log,
+    #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
+    # }
+    if not check_card_balance:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+        return
+    if previous_card_no != check_card_balance['card_no']:
+        LOGGER.warning(('DKI_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        return
+    if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
+        # Success Topup Here
+        output = {
+                # 'prev_wallet': pending_result['prev_wallet'],
+                # 'last_wallet': pending_result['last_wallet'],
+                'last_balance': check_card_balance['balance'],
+                'topup_amount': amount,
+                'other_channel_topup': str(0),
+                'report_sam': 'N/A',
+                'card_no': check_card_balance['card_no'],
+                'report_ka': 'N/A',
+                'bank_id': '5',
+                'bank_name': 'DKI',
+            }
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+        _Common.remove_temp_data(trxid)
+        _Common.remove_temp_data(previous_card_no)
+    else:
+        # Call Reversal DKI
+        _QPROX.reversal_topup_dki_by_service(amount, trxid)
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+    
     
 def start_topup_online_dki(amount, trxid):
     if _Common.DKI_TOPUP_ONLINE_BY_SERVICE is True:
@@ -1103,10 +1202,11 @@ def start_topup_online_bca(cardno, amount, trxid):
 
 LAST_MANDIRI_C2C_SUCCESS_RESULT = None
 LAST_BCA_REFF_ID = ''
+LAST_BRI_PENDING_RESULT = None
 
 
 def topup_online(bank, cardno, amount, trxid=''):
-    global LAST_MANDIRI_C2C_SUCCESS_RESULT
+    global LAST_MANDIRI_C2C_SUCCESS_RESULT, LAST_BRI_PENDING_RESULT
     # if bank in ['BRI', 'BCA'] and _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
     #     sleep(2)
     #     output = {
@@ -1161,7 +1261,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             _param = QPROX['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
             update_result = update_balance(_param, bank='BRI', mode='TOPUP')
             if not update_result:
-                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+                # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR')
                 # Keep Push Data To MDS as Failure
                 # failed_data = {
                 #     "invoice_number": _param['invoice_no'],
@@ -1185,7 +1286,8 @@ def topup_online(bank, cardno, amount, trxid=''):
                     if not pending_result:
                         return
                     pending_result['trxid'] = trxid
-                    refund_bri_pending(pending_result)
+                    LAST_BRI_PENDING_RESULT = pending_result
+                    # refund_bri_pending(pending_result)
                 return
             # {
             #        'bank': bank,
@@ -1452,8 +1554,8 @@ def confirm_bca_topup(data):
         return False
 
 
-def refund_bri_pending(data):
-    if _Helper.empty(data):
+def refund_bri_pending(data=None):
+    if _Helper.empty(data) or data is None:
         return False
     LOGGER.info((str(data)))
     try:

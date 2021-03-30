@@ -1,6 +1,12 @@
+12.0.L-GLOBAL:
+- Validate Mandiri C2C Last Report VS Prev Transaction,
+- Add BRI Reversal After Partial Error,
+- Add DKI Reversal After Partial Error,
+- ...
+
 12.0.K-GLOBAL:
 - Enhance Message Debit Failed in TRX Check,
-- Handle Invalid Argument in Sale Check Result,
+- Handle Invalid Argument in Sale Check Result, 
 - ...
 
 12.0.J-GLOBAL:

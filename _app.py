@@ -704,6 +704,17 @@ class SlotHandler(QObject):
         _TopupService.start_retry_topup_online_bca(amount, trxid)
     start_retry_topup_online_bca = pyqtSlot(str, str)(start_retry_topup_online_bca)
     
+    
+    def start_retry_topup_online_bri(self, amount, trxid):
+        _TopupService.start_retry_topup_online_bri(amount, trxid)
+    start_retry_topup_online_bri = pyqtSlot(str, str)(start_retry_topup_online_bri)
+    
+    
+    def start_retry_topup_online_dki(self, amount, trxid):
+        _TopupService.start_retry_topup_online_dki(amount, trxid)
+    start_retry_topup_online_dki = pyqtSlot(str, str)(start_retry_topup_online_dki)
+    
+    
     def start_trigger_explorer(self):
         _KioskService.start_trigger_explorer()
     start_trigger_explorer = pyqtSlot()(start_trigger_explorer)

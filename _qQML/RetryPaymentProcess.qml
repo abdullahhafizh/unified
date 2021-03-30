@@ -531,6 +531,21 @@ Base{
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow|30', true );
             return
+        } else if (t=='BCA_PARTIAL_ERROR') {
+            modeButtonPopup = 'bca_correction';
+//            console.log('c2c_special_handler', modeButtonPopup);
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            return
+        } else if (t=='BRI_PARTIAL_ERROR') {
+            modeButtonPopup = 'bri_correction';
+//            console.log('c2c_special_handler', modeButtonPopup);
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            return
+        } else if (t=='DKI_PARTIAL_ERROR') {
+            modeButtonPopup = 'dki_correction';
+//            console.log('c2c_special_handler', modeButtonPopup);
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            return
         } else {
             // Trigger Deposit Update Balance Check
             if (cardNo.substring(0, 4) == '6032'){
@@ -1605,9 +1620,21 @@ Base{
                         popup_loading.open();
                         break;
                     case 'bca_correction':
-                        var topup_amount = getDenom.toString();
-                        var trxid = details.shop_type + details.epoch.toString();
-                        _SLOT.start_retry_topup_online_bca(topup_amount, trxid);
+                        var bca_topup_amount = getDenom.toString();
+                        var bca_trxid = details.shop_type + details.epoch.toString();
+                        _SLOT.start_retry_topup_online_bca(bca_topup_amount, bca_trxid);
+                        popup_loading.open();
+                        break;
+                    case 'bri_correction':
+                        var bri_topup_amount = getDenom.toString();
+                        var bri_trxid = details.shop_type + details.epoch.toString();
+                        _SLOT.start_retry_topup_online_bri(bri_topup_amount, bri_trxid);
+                        popup_loading.open();
+                        break;
+                    case 'dki_correction':
+                        var dki_topup_amount = getDenom.toString();
+                        var dki_trxid = details.shop_type + details.epoch.toString();
+                        _SLOT.start_retry_topup_online_dki(dki_topup_amount, dki_trxid);
                         popup_loading.open();
                         break;
                     }

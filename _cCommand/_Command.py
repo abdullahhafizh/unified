@@ -252,7 +252,23 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
         ___param = "0"
     else:
         ___param = set_output(param)
-    ___stat, ___resp = _NetworkAccess.get_local(LOCAL_URL + ___cmd + '&param=' + ___param)
+    special_timeout_command = {
+        "UPDATE_BALANCE_ONLINE_MANDIRI": "019", #Update Balance Online Mandiri
+        "UPDATE_BALANCE_ONLINE_BRI": "024", #BRI UBAL ONLINE
+        "UPDATE_BALANCE_C2C_MANDIRI": "035", #Update Balance Online Mandiri For C2C Deposit Slot, TID, MID, Token
+        "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
+        "UPDATE_BALANCE_ONLINE_BCA": "044", #BCA UBAL ONLINE TID, MID, Token
+        "REVERSAL_ONLINE_BCA": "045", #BCA REVERSAL TID, MID, Token
+        "REVERSAL_ONLINE_BRI": "049", #parameter sm dengan update balance bri nya
+        "REVERSAL_ONLINE_DKI": "050" #parameter sm dengan top up dki nya
+    }
+    base_timeout = 60
+    if ___cmd in special_timeout_command.values():
+        base_timeout = 180
+    ___stat, ___resp = _NetworkAccess.get_local(
+        url=LOCAL_URL + ___cmd + '&param=' + ___param,
+        __timeout=base_timeout
+        )
     if ___stat == 200:
         # {"Result":"0","Command":"000","Parameter":"com4","Response":null,"ErrorDesc":"Sukses"}
         if ___resp.get('Command') == ___cmd and ___resp.get('Result') in ['0', '0000'] and ___resp.get('ErrorDesc') != 'Gagal':
