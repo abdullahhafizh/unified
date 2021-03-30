@@ -124,6 +124,7 @@ MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
 MID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'mid^topup', '885000942678')
 TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
+DEV_MODE_TOPUP_BCA = True if TID_TOPUP_BCA == 'ELZSYB01' else False
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 
 
@@ -314,6 +315,8 @@ REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#'
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
 COLOR_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'white')
 COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
+
+DEV_HOST_APIV2 = 'http://apidev.mdd.co.id:28194/v1/'
 
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')

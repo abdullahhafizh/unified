@@ -341,7 +341,10 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bca/pending', param=_param)
+            _url = TOPUP_URL
+            if _Common.DEV_MODE_TOPUP_BCA:
+                _url = _Common.DEV_HOST_APIV2
+            status, response = _NetworkAccess.post_to_url(url=_url + 'topup-bca/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
