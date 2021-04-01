@@ -367,6 +367,7 @@ def init_config():
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
                         INIT_BNI = True
+                        sleep(1.5)
                         ka_info_bni(slot=_Common.BNI_ACTIVE)
                         sleep(1.5)
                         get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
