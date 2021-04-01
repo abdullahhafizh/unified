@@ -425,6 +425,10 @@ def mandiri_sam_status():
         else:
             return False
     else:
+        if '---' in C2C_MID:
+            return False
+        if '---' in C2C_TID:
+            return False
         return C2C_MODE
 
 

@@ -267,6 +267,12 @@ def get_card_info(slot=1, bank='BNI'):
             LOGGER.info((str(slot), bank, str(output)))
             return output
         else:
+            if slot == 1:
+                _Common.BNI_SAM_1_NO = ''
+                BNI_CARD_NO_SLOT_1 = '' 
+            if slot == 2:
+                _Common.BNI_SAM_2_NO = ''
+                BNI_CARD_NO_SLOT_2 = ''
             _Common.NFC_ERROR = 'CHECK_CARD_INFO_BNI_ERROR_SLOT_'+str(slot)
             return 
     elif bank == 'MANDIRI_C2C':
@@ -1249,6 +1255,11 @@ def c2c_balance_info():
         _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(_Common.MANDIRI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|' + str(result))
     else:
+        _Common.C2C_DEPOSIT_UID = 'N/A'
+        _Common.C2C_DEPOSIT_NO = ''
+        _Common.MANDIRI_SAM_NO_1 = ''
+        _Common.MANDIRI_ACTIVE_WALLET = -1
+        _Common.MANDIRI_WALLET_1 = -1
         _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
 
@@ -1303,6 +1314,12 @@ def ka_info_bni(slot=1):
         _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(_Common.BNI_ACTIVE_WALLET))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
+        if slot == 1:
+            _Common.BNI_SAM_1_WALLET = -1
+            _Common.BNI_ACTIVE_WALLET = -1
+        if slot == 2:
+            _Common.BNI_SAM_2_WALLET = -1
+            _Common.BNI_ACTIVE_WALLET = -1
         _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
