@@ -68,7 +68,7 @@ def sync_machine(url, param):
                 sleep(30)
                 _KioskService.execute_command('shutdown -r -f -t 0')
                 # _KioskService.kiosk_status()
-        sleep(61.61)
+        sleep(45.45)
 
 
 def send_daily_summary():
