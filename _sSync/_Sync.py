@@ -55,17 +55,20 @@ def sync_machine(url, param):
                 # LOGGER.info((__url, str(__param)))
                 # print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
+        except Exception as e:
+            LOGGER.debug(e)         
+        finally:
             if _Common.DAILY_SYNC_SUMMARY_TIME == _Helper.time_string('%H:%M'):
-                send_daily_summary()
+                while True:
+                    if send_daily_summary() is True:
+                        break
             # Add Daily Reboot Time Local Setting
             if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
                 LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
                 sleep(30)
                 _KioskService.execute_command('shutdown -r -f -t 0')
                 # _KioskService.kiosk_status()
-        except Exception as e:
-            LOGGER.debug(e)            
-        sleep(59.9)
+        sleep(61.61)
 
 
 def send_daily_summary():
@@ -89,6 +92,9 @@ def send_daily_summary():
         if s != 200 or r.get('result') != 'OK':
             payload['endpoint'] = 'sync/daily-summary'
             _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+        return True
+    else:
+        return False
 
 
 def start_idle_mode():
