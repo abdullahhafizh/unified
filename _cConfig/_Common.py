@@ -426,8 +426,10 @@ def mandiri_sam_status():
             return False
     else:
         if '---' in C2C_MID:
+            _ConfigParser.set_value('MANDIRI_C2C', 'mode', '0')
             return False
         if '---' in C2C_TID:
+            _ConfigParser.set_value('MANDIRI_C2C', 'mode', '0')
             return False
         return C2C_MODE
 
