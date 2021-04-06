@@ -4,10 +4,10 @@ import datetime
 import ctypes
 import time
 import sys
-from . import _CPrepaidLog as LOG
-from . import _CPrepaidUtils as utils
+from _lLib import _CPrepaidLog as LOG
+from _lLib import _CPrepaidUtils as utils
 from ctypes import *
-from ._CPrepaidDLLModel import *
+from _lLib._CPrepaidDLLModel import *
 from func_timeout import func_set_timeout
 
 """

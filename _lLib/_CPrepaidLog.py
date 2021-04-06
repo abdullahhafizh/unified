@@ -2,7 +2,7 @@ import pprint
 import os
 import sys
 import datetime
-from . import _CPrepaidUtils as utils
+from _lLib import _CPrepaidUtils as utils
 
 LOG_FILE = os.path.join(sys.path[0], "_lLib", "Logs")
 

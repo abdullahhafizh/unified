@@ -2,7 +2,7 @@ __author__ = 'fitrah.wahyudi.imam@gmail.com'
 import time
 import serial.tools.list_ports
 from _tTools import _Helper
-from . import _eSSPLib
+from _lLib import _eSSPLib
 import json
 import logging
 from _cConfig import _Common

@@ -1,5 +1,5 @@
-from . import _CPrepaidDLL as prepaid
-from . import _CPrepaidLog as LOG
+from _lLib import _CPrepaidDLL as prepaid
+from _lLib import _CPrepaidLog as LOG
 
 import datetime
 

@@ -1,7 +1,7 @@
-from . import _CPrepaidDLL as prepaid
-from . import _CPrepaidCommon as pr_common
-from . import _CPrepaidUtils as utils
-from . import _CPrepaidLog as LOG
+from _lLib import _CPrepaidDLL as prepaid
+from _lLib import _CPrepaidCommon as pr_common
+from _lLib import _CPrepaidUtils as utils
+from _lLib import _CPrepaidLog as LOG
 import requests
 import json
 import datetime
