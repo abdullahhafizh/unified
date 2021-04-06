@@ -37,7 +37,7 @@ from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
 from _lLib import _MainService
 import json
-import sentry_sdk
+# import sentry_sdk
 
 print("""
     App Ver: """ + _Common.VERSION + """

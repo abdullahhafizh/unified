@@ -1,6 +1,6 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
-from _lLib import _CPrepaidLog as LOG
+from . import _CPrepaidLog as LOG
 import re, string;
 
 pattern = re.compile('[\W_]+', re.UNICODE)

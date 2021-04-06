@@ -1,7 +1,7 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
-from _lLib import _CPrepaidDLL as prepaid
-from _lLib import _CPrepaidLog as LOG
+from . import _CPrepaidDLL as prepaid
+from . import _CPrepaidLog as LOG
 
 import datetime
 
