@@ -1,7 +1,6 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
 import traceback
-import _CPrepaidDLL as prepaid_dll
 from _mModule import _CPrepaidCommon as prepaid_common
 from _mModule import _CPrepaidBNI as prepaid_bni
 from _mModule import _CPrepaidMandiri as prepaid_mandiri
@@ -54,7 +53,6 @@ def send_command(cmd, param):
         elif cmd == "009":
             prepaid_common.balance(param, __global_response__)
         elif cmd == "010":
-            # prepaid_dll.topup_done(param, __global_response__)
             prepaid_common.done(param, __global_response__)
         elif cmd == "011":
             prepaid_bni.bni_terminal_update(param, __global_response__)

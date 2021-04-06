@@ -6,7 +6,7 @@ import sys
 import datetime
 from _mModule import _CPrepaidUtils as utils
 
-LOG_FILE = os.path.join(sys.path[0], "_lLib", "Logs")
+LOG_FILE = os.path.join(sys.path[0], "_mModule", "Logs")
 
 if not os.path.exists(LOG_FILE):
     os.makedirs(LOG_FILE)

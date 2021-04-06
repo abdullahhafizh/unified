@@ -1,6 +1,5 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
-from _mModule import _CPrepaidLog as LOG
 import re, string;
 
 pattern = re.compile('[\W_]+', re.UNICODE)
@@ -22,20 +21,13 @@ def get_balance_from_report(reportSAM, bank_type="MANDIRI"):
         balanceDepositStr = "".join(reversed([balanceDepositStr[i:i+2] for i in range(0, len(balanceDepositStr), 2)]))
         valueDeposit = int(balanceDepositStr, 16)
 
-        LOG.debuging("val Deposit: ", str(valueDeposit))
-
         balanceEmoneyStr = reportEMoney[62:70]
         balanceEmoneyStr = "".join(reversed([balanceEmoneyStr[i:i+2] for i in range(0, len(balanceEmoneyStr), 2)]))
         valueEMoney = int(balanceEmoneyStr, 16)
 
-        LOG.debuging("val EMoney: ", str(valueEMoney))
-
     return valueDeposit, valueEMoney, reportSAM
 
 def fix_report(reportSAM):
-    # LOG.fw("[UTILS] fix_report FROM: ", reportSAM)
-    # new_report = re.sub(pattern, "", reportSAM)
-    # LOG.fw("[UTILS] fix_report TO: ", new_report)
     return only_alpanum(reportSAM)
 
 def remove_special_character(data):
