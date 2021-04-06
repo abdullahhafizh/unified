@@ -1,3 +1,5 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 from _lLib import _CPrepaidDLL as prepaid
 from _lLib import _CPrepaidCommon as pr_common
 from _lLib import _CPrepaidUtils as utils

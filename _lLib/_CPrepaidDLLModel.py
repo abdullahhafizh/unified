@@ -1,3 +1,5 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 from ctypes import Structure, c_int, c_double, c_ubyte, c_char_p, c_byte, c_char, c_char_p, c_wchar, POINTER
 
 class ResponSamSaldo(Structure):

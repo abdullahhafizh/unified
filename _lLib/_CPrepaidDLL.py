@@ -1,3 +1,4 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
 
 import os.path
 import datetime

@@ -1,3 +1,5 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 import pprint
 import os
 import sys
