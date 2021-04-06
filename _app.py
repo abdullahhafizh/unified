@@ -35,7 +35,7 @@ from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
-from _lLib import _MainService
+from _mModule import _MainService
 import json
 # import sentry_sdk
 

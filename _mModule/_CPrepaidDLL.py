@@ -8,7 +8,7 @@ import sys
 from . import _CPrepaidLog as LOG
 from . import _CPrepaidUtils as utils
 from ctypes import *
-from _lLib._CPrepaidDLLModel import *
+from _mModule._CPrepaidDLLModel import *
 from func_timeout import func_set_timeout
 
 """

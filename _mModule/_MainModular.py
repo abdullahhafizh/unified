@@ -1,4 +1,4 @@
-from _lLib._InterfacePrepaidDLL import send_command
+from _mModule._InterfacePrepaidDLL import send_command
 
 """ 
 Tested Command:
