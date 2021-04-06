@@ -35,7 +35,7 @@ from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
-from _mModule import _MainService
+# from _mModule import _MainService
 import json
 # import sentry_sdk
 
@@ -1106,8 +1106,8 @@ def check_git_status(log=False):
             print(str(r))
             
             
-def start_webserver():
-    _MainService.start()
+# def start_webserver():
+#     _MainService.start()
 
 
 if __name__ == '__main__':
@@ -1195,9 +1195,9 @@ if __name__ == '__main__':
     print("pyt: Syncing PPOB Product...")
     _PPOBService.start_init_ppob_product()
     sleep(1)
-    print("pyt: Start Topup Service...")
-    _Helper.get_thread().apply_async(start_webserver)
-    sleep(1)
+    # print("pyt: Start Topup Service...")
+    # _Helper.get_thread().apply_async(start_webserver)
+    # sleep(1)
     if _Common.BILL['status'] is True:
         sleep(1)
         print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
