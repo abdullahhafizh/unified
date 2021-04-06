@@ -1,7 +1,7 @@
 __author__ = "fitrah.wahyudi.imam@gmail.com"
 
-from . import _CPrepaidDLL as dll
-from . import _InterfacePrepaidDLL as idll
+from _mModule import _CPrepaidDLL as dll
+from _mModule import _InterfacePrepaidDLL as idll
 import json
 from flask import Flask, request, jsonify
 

@@ -1,8 +1,8 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
-from . import _CPrepaidLog as LOG
-from . import _CPrepaidDLL as prepaid
-from . import _CPrepaidUtils as prepaid_utils
+from _mModule import _CPrepaidLog as LOG
+from _mModule import _CPrepaidDLL as prepaid
+from _mModule import _CPrepaidUtils as prepaid_utils
 import requests
 import time
 import json
