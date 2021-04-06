@@ -21,6 +21,7 @@ from _dDevice import _MEI
 from _dDevice import _QPROX
 from _dDevice import _CD
 from _tTools import _TicketTool
+from _tTools import _Helper
 from _dDevice import _Printer
 from _cCommand import _Command
 from time import sleep
@@ -34,6 +35,7 @@ from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
+from _lLib import _MainService
 import json
 import sentry_sdk
 
@@ -1102,6 +1104,10 @@ def check_git_status(log=False):
         print('pyt: check_git_status : ')
         for r in response:
             print(str(r))
+            
+            
+def start_webserver():
+    _MainService.start()
 
 
 if __name__ == '__main__':
@@ -1189,9 +1195,9 @@ if __name__ == '__main__':
     print("pyt: Syncing PPOB Product...")
     _PPOBService.start_init_ppob_product()
     sleep(1)
-    # print("pyt: Syncing Machine Status...")
-    # _Sync.start_sync_machine_status()
-    # sleep(1)
+    print("pyt: Start Topup Service...")
+    _Helper.get_thread().apply_async(start_webserver)
+    sleep(1)
     if _Common.BILL['status'] is True:
         sleep(1)
         print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")

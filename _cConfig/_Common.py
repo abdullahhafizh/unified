@@ -71,6 +71,12 @@ BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom',
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False
 
+AMQP_ENABLE = True if _ConfigParser.get_set_value('AMQP', 'active', '0') == '1' else False
+AMQP_HOST = _ConfigParser.get_set_value('AMQP', 'host', 'amqp.mdd.co.id')
+AMQP_PORT = _ConfigParser.get_set_value('AMQP', 'port', '5672')
+AMQP_USER = _ConfigParser.get_set_value('AMQP', 'user', 'kiosk')
+AMQP_PASS = _ConfigParser.get_set_value('AMQP', 'pass', 'kiosk')
+
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
 CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
@@ -411,6 +417,7 @@ ALLOW_DO_TOPUP = True
 EDC_SETTLEMENT_RUNNING = False
 
 SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
+FLASK_URL = 'http://localhost:5000/send_command?cmd='
 
 LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))

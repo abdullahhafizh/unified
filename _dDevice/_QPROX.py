@@ -88,7 +88,8 @@ QPROX = {
     "CONFIG_ONLINE_BCA": "046", #BCA REVERSAL TID Topup BCA, MID Topup BCA
     "BCA_CARD_INFO": "048",
     "REVERSAL_ONLINE_BRI": "049", #parameter sm dengan update balance bri nya
-    "REVERSAL_ONLINE_DKI": "050" #parameter sm dengan top up dki nya
+    "REVERSAL_ONLINE_DKI": "050", #parameter sm dengan top up dki nya,
+    "REVERSAL_ONLINE_BRI_2": "064"
 }
 
 

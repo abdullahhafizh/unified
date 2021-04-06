@@ -227,6 +227,7 @@ def send_command_with_handle(param=None, output=None, responding=True, flushing=
 
 
 LOCAL_URL = _Common.SERVICE_URL
+FLASK_URL = _Common.FLASK_URL
 # http://localhost:9000/Service/GET?type=json&cmd=000&param=com4
 
 
@@ -265,8 +266,11 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
     base_timeout = 60
     if ___cmd in special_timeout_command.values():
         base_timeout = 180
+    service_url = LOCAL_URL
+    if ___cmd[0] == '0':
+        service_url = FLASK_URL
     ___stat, ___resp = _NetworkAccess.get_local(
-        url=LOCAL_URL + ___cmd + '&param=' + ___param,
+        url=service_url + ___cmd + '&param=' + ___param,
         __timeout=base_timeout
         )
     if ___stat == 200:

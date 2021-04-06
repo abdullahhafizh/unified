@@ -1,3 +1,9 @@
+12.0.M-GLOBAL:
+- Add Cryptography Helper,
+- Add Embed Topup Service,
+- Add Listen AMQP Edc,
+- ...
+
 12.0.L-GLOBAL:
 - Validate Mandiri C2C Last Report VS Prev Transaction,
 - Add BRI Reversal After Partial Error,
