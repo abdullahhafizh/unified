@@ -1543,7 +1543,10 @@ def confirm_bca_topup(data):
             'card_no': data['card_no'],
             'last_balance': data['last_balance']
         }
-        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bca/confirm', param=param)
+        _url = TOPUP_URL
+        if _Common.DEV_MODE_TOPUP_BCA:
+            _url = _Common.DEV_HOST_APIV2
+        status, response = _NetworkAccess.post_to_url(url=_url + 'topup-bca/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             return True
