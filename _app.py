@@ -692,9 +692,9 @@ class SlotHandler(QObject):
     start_mandiri_c2c_force_settlement = pyqtSlot(str, str)(start_mandiri_c2c_force_settlement)
 
 
-    def start_topup_online_dki(self, amount, trxid):
-        _TopupService.start_topup_online_dki(amount, trxid)
-    start_topup_online_dki = pyqtSlot(str, str)(start_topup_online_dki)
+    def start_topup_online_dki(self, card_no, amount, trxid):
+        _TopupService.start_topup_online_dki(card_no, amount, trxid)
+    start_topup_online_dki = pyqtSlot(str, str, str)(start_topup_online_dki)
 
 
     def start_topup_online_bca(self, cardno, amount, trxid):

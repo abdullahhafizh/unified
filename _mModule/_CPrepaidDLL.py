@@ -87,6 +87,15 @@ def load_dll():
         DLL_LOAD =  windll.LoadLibrary(DLL_PATH)
         LOG.fw("DLL LOADED: ", DLL_PATH)
 
+def direct_load_dll():
+    global DLL_LOAD
+    if DLL_LOAD is None:
+        me = os.path.abspath(os.path.dirname(__file__))
+        DLL_PATH = os.path.join(me, "C_LIB", "Prepaid.dll")
+        print("pyt: DLL Path", DLL_PATH)
+        DLL_LOAD =  windll.LoadLibrary(DLL_PATH)
+        LOG.fw("DLL LOADED DIRECT MODE: ", DLL_PATH)
+
 #000
 @func_set_timeout(30)
 def open_only(PORT):

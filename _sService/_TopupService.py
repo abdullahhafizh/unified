@@ -409,6 +409,28 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
         except Exception as e:
             LOGGER.warning((bank, mode, e))
             return False
+    elif bank == 'DKI' and mode == 'TOPUP':
+        try:
+            # param must be
+            # "token":"<<YOUR API-TOKEN>>",
+            # "mid":"<<YOUR MERCHANT_ID>>",
+            # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
+            # "amount":"30000",
+            # "card_no":"7546990000025583"
+            # ---> Need Card Number And Amount
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
+            LOGGER.debug((str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                return response['data']
+            else:
+                #_Common.online_logger([response, bank, _param], 'general')
+                return False
+        except Exception as e:
+            LOGGER.warning((bank, mode, e))
+            return False
     else:
         LOGGER.warning(('Unknown', bank, mode))
         return False
@@ -656,6 +678,27 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 if trigger is not None:
                     TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|'+message_error)
             return response
+    elif bank == 'DKI' and mode == 'TOPUP':
+        try:
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/update', param=_param)
+            LOGGER.debug((str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                return {
+                    'bank': bank,
+                    'card_no': _param['card_no'],
+                    'topup_amount': _param['amount'],
+                    'last_balance': str(int(_param['prev_balance']) + int(_param['amount'])),
+                    'data_to_card': response['data']['data_to_card']
+                }
+            else:
+                #_Common.online_logger([response, bank, _param], 'general')
+                return False
+        except Exception as e:
+            LOGGER.warning(str(e))
+            return False
     else:
         LOGGER.warning(('Unknown', bank, mode))
         return False
@@ -677,6 +720,40 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/reversal', param=_param)
+            LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                # {
+                # "response":{
+                #   "code":200,
+                #   "message":"Reversal Balance Success",
+                #   "latency":2.8180389404297
+                # },
+                # "data":{
+                #   "card_no":"7546990000025583",
+                #   "amount":"30000"
+                #   }
+                # }
+                return response['data']
+            else:
+                return False
+        except Exception as e:
+            LOGGER.warning((bank, mode, e))
+            return False
+    elif bank == 'DKI' and mode == 'TOPUP':
+        try:
+            # param must be
+            # "token":"<<YOUR API-TOKEN>>",
+            # "mid":"<<YOUR MERCHANT_ID>>",
+            # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
+            # "card_no":"7546990000025583",
+            # "amount":"30000",
+            # "auth_id":"164094",
+            # "card_data":"06015F902D04C57100000000000000001C54522709845B42F240343E96F11041"
+            # ---> Need Card Number, Card Data, Amount, Auth ID
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/reversal', param=_param)
             LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -1159,6 +1236,14 @@ def retry_topup_online_dki(amount, trxid):
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
         return
     if previous_card_no != check_card_balance['card_no']:
+        # Call Reversal DKI
+        if _Common.DKI_TOPUP_ONLINE_BY_SERVICE is True:
+            _QPROX.reversal_topup_dki_by_service(amount, trxid)
+        else:
+            reversal_balance({
+            'card_no': previous_card_no,
+            'reff_no': trxid
+        },'DKI', 'TOPUP')
         LOGGER.warning(('DKI_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
         return
@@ -1179,18 +1264,28 @@ def retry_topup_online_dki(amount, trxid):
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
         _Common.remove_temp_data(trxid)
         _Common.remove_temp_data(previous_card_no)
+        output['reff_no'] = trxid
+        confirm_dki_topup(output)
     else:
         # Call Reversal DKI
-        _QPROX.reversal_topup_dki_by_service(amount, trxid)
+        if _Common.DKI_TOPUP_ONLINE_BY_SERVICE is True:
+            _QPROX.reversal_topup_dki_by_service(amount, trxid)
+        else:
+            reversal_balance({
+            'card_no': previous_card_no,
+            'reff_no': trxid
+        },'DKI', 'TOPUP')
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
     
     
-def start_topup_online_dki(amount, trxid):
+def start_topup_online_dki(card_no, amount, trxid):
     if _Common.DKI_TOPUP_ONLINE_BY_SERVICE is True:
         return _QPROX.start_topup_dki_by_service(amount, trxid)
     else:
-        LOGGER.warning(('NO AVAILABLE DKI TOPUP SERVICE DEFINED'))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        bank = 'DKI'
+        _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trxid,))
+        # LOGGER.warning(('NO AVAILABLE DKI TOPUP SERVICE DEFINED'))
+        # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
 
 def start_topup_online_bri(cardno, amount, trxid):
@@ -1490,6 +1585,68 @@ def topup_online(bank, cardno, amount, trxid=''):
             TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
             send_kiosk_status()
             return output        
+        elif bank == 'DKI':
+            _param = {
+                'card_no': cardno,
+                'amount': amount,
+                'reff_no': trxid,
+                'time': _Helper.epoch('MDS')
+            }
+            # pending_result = _MDSService.mds_online_topup(bank, _param)
+            pending_result = False
+            if not _Common.exist_temp_data(trxid):
+                pending_result = pending_balance(_param, bank='DKI', mode='TOPUP')
+                if not pending_result:
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+                    return
+                _Common.store_to_temp_data(trxid, json.dumps(_param))
+            # _Common.update_to_temp_data('bri-success-pending', trxid)
+            __param = QPROX['REQUEST_TOPUP_DKI'] + '|' + amount + '|'
+            response, result = _Command.send_request(param=__param, output=None)
+            LOGGER.debug((__param, bank, response, result))
+            if response == 0 and '|' in result:
+                card_info = result.split('|')[5] + result.split('|')[3] + result.split('|')[4]
+                _param['card_info'] = card_info
+                _param['prev_balance'] = _QPROX.LAST_BALANCE_CHECK['balance']
+                update_result = update_balance(_param, bank='DKI', mode='TOPUP')
+                if not update_result:
+                # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+                    return
+                ___param = QPROX['CONFIRM_TOPUP_DKI'] + '|' + update_result['data_to_card'] + '|'
+                response, result = _Command.send_request(param=___param, output=None)
+                LOGGER.debug((___param, bank, response, result))
+                # {
+                #     "Command": "052",
+                #     "ErrorDesc": "Sukses",
+                #     "Parameter": "112233445566778800000001B5DDB812",
+                #     "Response": "000007D08BB3B702",
+                #     "Result": "0000"
+                # }
+                if response == 0 and len(result) > 3:
+                    _Common.remove_temp_data(trxid)
+                    other_channel_topup = str(0)
+                    if str(amount) != str(update_result['topup_amount']):
+                        other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
+                    output = {
+                                # 'prev_wallet': pending_result['prev_wallet'],
+                                # 'last_wallet': pending_result['last_wallet'],
+                                'last_balance': update_result['last_balance'],
+                                'topup_amount': update_result['topup_amount'],
+                                'other_channel_topup': other_channel_topup,
+                                'report_sam': result,
+                                'card_no': update_result['card_no'],
+                                'report_ka': 'N/A',
+                                'bank_id': '5',
+                                'bank_name': 'DKI',
+                        }
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+                    _param['last_balance'] = update_result['last_balance']
+                    confirm_dki_topup(_param)
+                    # Must Stop Process Here As Success TRX
+                    return                    
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+            return
         else:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
     except Exception as e:
@@ -1554,6 +1711,34 @@ def confirm_bca_topup(data):
             if _Common.LIVE_MODE:
                 param['endpoint'] = 'topup-bca/confirm'
                 _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bca/confirm', payload=param)
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+    
+
+def confirm_dki_topup(data):
+    if _Helper.empty(data):
+        return False
+    LOGGER.info((str(data)))
+    try:
+        param = {
+            'token': TOPUP_TOKEN,
+            'mid': TOPUP_MID,
+            'tid': TOPUP_TID,
+            'card_no': data['card_no'],
+            'last_balance': data['last_balance'],
+            'reff_no': data['reff_no']
+        }
+        _url = TOPUP_URL
+        status, response = _NetworkAccess.post_to_url(url=_url + 'topup-dki/confirm', param=param)
+        LOGGER.debug((str(param), str(status), str(response)))
+        if status == 200 and response['response']['code'] == 200:
+            return True
+        else:
+            if _Common.LIVE_MODE:
+                param['endpoint'] = 'topup-dki/confirm'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-dki/confirm', payload=param)
             return False
     except Exception as e:
         LOGGER.warning(str(e))

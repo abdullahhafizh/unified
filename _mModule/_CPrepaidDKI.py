@@ -4,6 +4,7 @@ from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
 import datetime
+from time import sleep
 
 """
 1. SIGN-ON
@@ -105,8 +106,8 @@ ISOMessageBuilder
 
 """
 
-DKI_REK_SUMBER = "43216000114"
-DKI_REK_TUJUAN = "91192406095"
+# DKI_REK_SUMBER = "43216000114"
+# DKI_REK_TUJUAN = "91192406095"
 
 def DKI_RequestTopup(param, __global_response__):
     Param = param.split('|')
@@ -136,8 +137,8 @@ def DKI_RequestTopup(param, __global_response__):
         LOG.fw("051:Result = ", result_str, True)
         LOG.fw("051:Gagal", None, True)
 
+
 def DKI_RequestTopup_priv(Denom):
-    global DKI_REK_SUMBER, DKI_REK_TUJUAN
     ResultStr = ""
     DepositCard=""
     ExpireCardDate=""
@@ -146,9 +147,9 @@ def DKI_RequestTopup_priv(Denom):
     prepaid.topup_card_disconnect()
 
     ResultStr, BalValue, CardNo, SIGN = prepaid.topup_balance_with_sn()
-
+    sleep(.5)
     ResultStr, reportPurse, debErrorStr = prepaid.topup_pursedata()
-
+    sleep(.5)
     ResultStr, reportAPDU = prepaid.topup_apdusend("255", "00A4040008A0000005714E4A43")
 
     if ResultStr == "0000":
@@ -171,3 +172,40 @@ def DKI_RequestTopup_priv(Denom):
 
     return ResultStr, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report
 
+
+def DKI_Topup(param, __global_response__):
+    Param = param.split('|')
+    if len(Param) == 1:
+        C_DataToCard = Param[0]
+    else:
+        LOG.fw("052:Parameter tidak lengkap", param)
+        raise Exception("052:Parameter tidak lengkap: "+param)
+    
+    LOG.fw("052:Parameter = ", C_DataToCard)
+
+    result_str, report = DKI_Topup_priv(C_DataToCard)
+
+    __global_response__["Result"] = result_str
+    if result_str == "0000":
+        __global_response__["Response"] = report
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("052:Response = ", __global_response__["Response"])
+
+        LOG.fw("052:Result = ", result_str)
+        LOG.fw("052:Sukses")
+    else:
+        __global_response__["Response"] = report
+        __global_response__["ErrorDesc"] = "Gagal"
+
+        LOG.fw("052:Response = ", __global_response__["Response"], True)
+        LOG.fw("052:Result = ", result_str, True)
+        LOG.fw("052:Gagal", None, True)
+
+
+def DKI_Topup_priv(DataToCard):
+    LOG.fw("052:DATACARD SEND 2 = ", DataToCard)
+    DataToCard = "9042000010" + DataToCard
+    ResultStr, reportRAPDU = prepaid.topup_apdusend("255", DataToCard)
+    LOG.fw("052:DATACARD RECEIVE 2 = ", reportRAPDU)
+
+    return ResultStr, reportRAPDU
