@@ -418,6 +418,7 @@ EDC_SETTLEMENT_RUNNING = False
 
 SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
 FLASK_URL = 'http://localhost:5000/send_command?cmd='
+TOPUP_SERVICE_ENABLE = True if _ConfigParser.get_set_value('GENERAL', 'topup^service', '0') == '1' else False
 
 LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))

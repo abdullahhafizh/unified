@@ -267,7 +267,7 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
     if ___cmd in special_timeout_command.values():
         base_timeout = 180
     service_url = LOCAL_URL
-    if ___cmd[0] == '0':
+    if ___cmd[0] == '0' and _Common.TOPUP_SERVICE_ENABLE is True:
         service_url = FLASK_URL
     ___stat, ___resp = _NetworkAccess.get_local(
         url=service_url + ___cmd + '&param=' + ___param,
