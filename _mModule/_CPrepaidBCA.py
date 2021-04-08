@@ -9,10 +9,10 @@ import json
 import datetime
 
 BCA_ATD = "01BTESTDEVAOZ5L0LDraBjL9d5JKVhFR0RJ4dlZu0aWBs"
-UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
 if not _Common.DEV_MODE_TOPUP_BCA:
     BCA_ATD = "01SMUDAINACbIhPF92u0C38pOBKjQSFiZQHEQUZX0jWfA"
-    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
 BCA_ACCESS_CARD_NUMBER = "0145008000000025"
 BCA_ACCESS_CODE = "111111"
 TIMEOUT_REQUESTS = 50
@@ -568,7 +568,7 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
     global TIMEOUT_REQUESTS
 
     try:
-        sURL = URL_Server + "/internal/topup-bca/check-session"
+        sURL = URL_Server + "internal/topup-bca/check-session"
         payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no}
         LOG.fw(":CheckSessionBCA url = ", sURL)
         LOG.fw(":CheckSessionBCA json = ", payload)
@@ -590,7 +590,7 @@ def send_session_bca(URL_Server, token, tid, mid, card_no, session_data):
     global TIMEOUT_REQUESTS
 
     try:
-        sURL = URL_Server + "/internal/topup-bca/get-session"
+        sURL = URL_Server + "internal/topup-bca/get-session"
         payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "session_data": session_data}
         LOG.fw(":SessionBCA url = ", sURL)
         LOG.fw(":SessionBCA json = ", payload)
@@ -611,7 +611,7 @@ def send_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, last_ba
     global TIMEOUT_REQUESTS
 
     try:
-        sURL = URL_Server + "/internal/topup-bca/confirm"
+        sURL = URL_Server + "internal/topup-bca/confirm"
         payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "confirm_data": confirm_data, "last_balance":last_balance, "reference_id":reference_id}
         LOG.fw(":ConfirmBCA url = ", sURL)
         LOG.fw(":ConfirmBCA json = ", payload)
@@ -632,7 +632,7 @@ def send_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, last_
     global TIMEOUT_REQUESTS
 
     try:
-        sURL = URL_Server + "/internal/topup-bca/reversal"
+        sURL = URL_Server + "internal/topup-bca/reversal"
         payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "reversal_data": reversal_data, "last_balance":last_balance, "reference_id":reference_id}
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
@@ -653,7 +653,7 @@ def send_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_balan
     global TIMEOUT_REQUESTS
 
     try:
-        sURL = URL_Server + "/internal/topup-bca/update"
+        sURL = URL_Server + "internal/topup-bca/update"
         payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "topup_data": topup_data, "prev_balance":prev_balance, "reference_id":reference_id}
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
