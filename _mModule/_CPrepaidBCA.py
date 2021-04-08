@@ -395,25 +395,23 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             temp_json = dataJ["response"]
             if "code" in temp_json:
                 code = temp_json["code"]
+        if "data" in dataJ.keys():
+            temp_json = dataJ["data"]
+            if "topup_session" in temp_json.keys():
+                topup_session = temp_json["topup_session"]
+            if "reference_id" in temp_json.keys():
+                reference_id = temp_json["reference_id"]
+            if "topup_amount" in temp_json.keys():
+                topup_amount = temp_json["topup_amount"]
+            if "access_card" in temp_json.keys():
+                bcaAccessCardNumber = temp_json["access_card"]
+            if "topup_code" in temp_json.keys():
+                bcaAccessCode = temp_json["topup_code"]
 
         ErrorCode = code
 
         if code == "200" or code == 200:
             resultStr = "0000"
-            if "data" in dataJ.keys():
-                temp_json = dataJ["data"]
-                if "topup_session" in temp_json.keys():
-                    topup_session = temp_json["topup_session"]
-                if "reference_id" in temp_json.keys():
-                    reference_id = temp_json["reference_id"]
-                if "topup_amount" in temp_json.keys():
-                    topup_amount = temp_json["topup_amount"]
-
-                if "access_card" in temp_json.keys():
-                    bcaAccessCardNumber = temp_json["access_card"]
-                if "topup_code" in temp_json.keys():
-                    bcaAccessCode = temp_json["topup_code"]
-
         else:
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             resultStr, report = bca_topup_session(bcaStaticATD, datenow)
@@ -432,17 +430,14 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                     code = temp_json["code"]
                 if "message" in temp_json.keys():
                     message = temp_json["message"]
-                    
             if "data" in dataJ.keys():
                 temp_json = dataJ["data"]
-
                 if "topup_session" in temp_json.keys():
                     topup_session = temp_json["topup_session"]
                 if "reference_id" in temp_json.keys():
                     reference_id = temp_json["reference_id"]
                 if "topup_amount" in temp_json.keys():
                     topup_amount = temp_json["topup_amount"]
-
                 if "access_card" in temp_json.keys():
                     bcaAccessCardNumber = temp_json["access_card"]
                 if "topup_code" in temp_json.keys():
@@ -478,7 +473,6 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             temp_json = dataJ["response"]
                             if "code" in temp_json.keys():
                                 code = temp_json["code"]
-
                         if "data" in dataJ.keys():
                             temp_json = dataJ["data"]
                             if "confirm_data" in temp_json.keys():
