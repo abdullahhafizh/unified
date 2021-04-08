@@ -5,6 +5,7 @@ from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
 from _cConfig import _Common
 import requests
+import os
 import json
 import datetime
 
@@ -676,12 +677,15 @@ def bca_topup2(strconfirm):
     confirm2 = strconfirm[200:]
     res_str, balance, respon, debErrorStr = prepaid.topup_bca_topup2(confirm1, confirm2)
     report = utils.remove_special_character(respon)
-    LOG.fw("BCATopup2 respon = ", report)
+    LOG.fw("BCATopup2 Report Out SC = ", report)
     report = utils.fix_report_leave_space(report)
-    LOG.fw("BCATopup2 respon [AZ09S] = ", report)
+    report_length = len(report.split('\n'))
+    LOG.fw("BCATopup2 Report Length= ", report_length)
+    if len(report.split('\n')) > 1:
+        report = report[1]
     report = report.split(' ')[0][-512:]
+    LOG.fw("BCATopup2 Clean Report = ", report)
     lastbalance = balance
-
     return res_str, lastbalance, report
 
 def bca_topup_lastreport():
