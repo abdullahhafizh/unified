@@ -246,8 +246,8 @@ def reversal_bca_priv(TID, MID, TOKEN):
 
             amount = topup_amount
         
-        LOG.fw("045:bcaAccessCardNumber response= ", bcaAccessCardNumber)
-        LOG.fw("045:bcaAccessCode response= ", bcaAccessCode)
+        LOG.fw("045:bcaAccessCardNumber = ", bcaAccessCardNumber)
+        LOG.fw("045:bcaAccessCode = ", bcaAccessCode)
 
         if code == "200" or code == 200:
             resultStr = "0000"
@@ -255,7 +255,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             resultStr, report = bca_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
-            LOG.fw("044:BCATopupSession1 response= ",  { "resultStr":resultStr, "report": report})
+            LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
             valuetext,ErrMsg = send_session_bca(url, TOKEN, TID,MID, cardno, report)
 
             if valuetext == "1":
@@ -285,12 +285,12 @@ def reversal_bca_priv(TID, MID, TOKEN):
 
                 amount = topup_amount
 
-            LOG.fw("044:bcaAccessCardNumber response= ", bcaAccessCardNumber)
-            LOG.fw("044:bcaAccessCode response= ", bcaAccessCode)
+            LOG.fw("044:bcaAccessCardNumber = ", bcaAccessCardNumber)
+            LOG.fw("044:bcaAccessCode = ", bcaAccessCode)
 
             ErrorCode = code
             resultStr = bca_topup_session2(topup_session)
-            LOG.fw("044:BCATopupSession2 response= ", resultStr)
+            LOG.fw("044:BCATopupSession2 = ", resultStr)
             ErrorCode = resultStr
 
         resultStr, csn, uid = on_detect()
@@ -299,7 +299,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             topup_amount_hex = format(int(topup_amount), "x")
             resultStr, report = bca_topup1(bcaStaticATD, bcaAccessCardNumber, bcaAccessCode, datenow, topup_amount_hex)
-            LOG.fw("044:BCATopup1 response= ", { "resultStr":resultStr, "report": report})
+            LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
             ErrorCode = resultStr
             if resultStr == "0000":
                 valuetext, ErrMsg = send_update_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
@@ -321,7 +321,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
                 ErrorCode = code
                 if code == "200" or code == 200:
                     resultStr, report = bca_topup_reversal(bcaStaticATD)
-                    LOG.fw("044:BCATopupReversal response= ", { "resultStr":resultStr, "report": report})
+                    LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                     ErrorCode = resultStr
                     if resultStr == "0000":
                         valuetext, ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
@@ -354,7 +354,6 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     reporttopup = ""
     ErrMsg = ""
 
-    __global_response__ = 0
     resultStr = ""
     ErrorCode = ""
     resreport = ""
@@ -417,7 +416,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             resultStr, report = bca_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
-            LOG.fw("044:BCATopupSession1 response= ",  { "resultStr":resultStr, "report": report})
+            LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
             valuetext, ErrMsg = send_session_bca(url, TOKEN, TID,MID, cardno, report)
 
             if valuetext == "1":
@@ -444,11 +443,11 @@ def update_balance_bca_priv(TID, MID, TOKEN):
         
         if code == "200" or code == 200:
             amount = topup_amount
-            LOG.fw("044:bcaAccessCardNumber response= ", bcaAccessCardNumber)
-            LOG.fw("044:bcaAccessCode response= ", bcaAccessCode)
+            LOG.fw("044:bcaAccessCardNumber = ", bcaAccessCardNumber)
+            LOG.fw("044:bcaAccessCode = ", bcaAccessCode)
             
             resultStr = bca_topup_session2(topup_session)
-            LOG.fw("044:BCATopupSession2 response= ", resultStr)
+            LOG.fw("044:BCATopupSession2 = ", resultStr)
             ErrorCode = resultStr
             
             if resultStr == "0000":
@@ -457,7 +456,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                     datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                     topup_amount_hex = format(int(topup_amount), "x")
                     resultStr, report = bca_topup1(bcaStaticATD, bcaAccessCardNumber, bcaAccessCode, datenow, topup_amount_hex)
-                    LOG.fw("044:BCATopup1 response= ", { "resultStr":resultStr, "report": report})
+                    LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
                     ErrorCode = resultStr
                     if resultStr == "0000":
                         valuetext, ErrMsg = send_update_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
@@ -477,42 +476,42 @@ def update_balance_bca_priv(TID, MID, TOKEN):
 
                         ErrorCode = code
                         if code == "200" or code == 200:
-                            resultStr, balance_not_used, report = bca_topup2(confirm_data)
-                            LOG.fw("044:BCATopup2 response= ", { "resultStr":resultStr, "report": report})
+                            resultStr, last_balance, report = bca_topup2(confirm_data)
+                            LOG.fw("044:BCATopup2 = ", { "resultStr":resultStr, "report": report, "last_balance": last_balance})
                             ErrorCode = resultStr
 
-                            lastreportfailed = False
                             if resultStr == "0000":
                                 if report == "":
                                     LOG.fw("044:BCATopup2 report empty")
                                     report = bca_topup_lastreport()
                                     LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     if report == "":
-                                        lastreportfailed = True
                                         resultStr, report = topup_card_info(bcaStaticATD)
                                         LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
                                         if report == "":
-                                            ErrMsg = "BCATopup2_BCATopupLastReport_Failed"
-                                lastbalance = int(balance) + int(amount)
-                                reporttopup = report
-                                valuetext, ErrMsg = send_confirm_bca(url, TOKEN, TID, MID, cardno, report, lastbalance, reference_id)
-                                if valuetext == "1":
-                                    valuetext = ErrMsg
-                                
-                                dataJ = json.loads(valuetext)
-                                if "response" in dataJ.keys():
-                                    tempJ = dataJ["response"]
-                                    if "code" in tempJ.keys():
-                                        code = tempJ["code"]
-                                
-                                ErrorCode = code
-                                if code == "200" or code == 200:
-                                    ErrorCode = "0000"
+                                            ErrMsg = "BCATopup2_BCATopupCardInfo_Failed"
+                                if len(report) > 100:
+                                    lastbalance = int(balance) + int(amount)
+                                    reporttopup = report
+                                    valuetext, ErrMsg = send_confirm_bca(url, TOKEN, TID, MID, cardno, report, lastbalance, reference_id)
+                                    if valuetext == "1":
+                                        valuetext = ErrMsg
+                                    
+                                    dataJ = json.loads(valuetext)
+                                    if "response" in dataJ.keys():
+                                        tempJ = dataJ["response"]
+                                        if "code" in tempJ.keys():
+                                            code = tempJ["code"]
+                                    
+                                    ErrorCode = code
+                                    if code == "200" or code == 200:
+                                        ErrorCode = "0000"
+                                else:
+                                    ErrorCode = resultStr
                             else:
-                                # ErrMsg = 'BCA_TOPUP2_FAILED_'+resultStr
-                                resultStr, report = bca_topup_reversal(bcaStaticATD)
-                                LOG.fw("044:BCATopupReversal response= ", { "resultStr":resultStr, "report": report})
                                 ErrorCode = resultStr
+                                resultStr, report = bca_topup_reversal(bcaStaticATD)
+                                LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                                 if resultStr == "0000":
                                     valuetext,ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
                                     if valuetext == "1":
@@ -520,8 +519,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                     dataJ = json.loads(valuetext)
                                     if "response" in dataJ.keys():
                                         code = dataJ["response"]
-                                    
-                                    ErrorCode = code
+                                    # ErrorCode = code
                                     if code == "200" or code == 200:
                                         ErrMsg = "UpdateAPI_Failed_Reversal_Success"
                                     else:
@@ -531,7 +529,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 # valuetext = send_conde
                         else:
                             resultStr, report = bca_topup_reversal(bcaStaticATD)
-                            LOG.fw("044:BCATopupReversal response= ", { "resultStr":resultStr, "report": report})
+                            LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                             ErrorCode = resultStr
                             if resultStr == "0000":
                                 valuetext,ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
@@ -549,29 +547,16 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             else:
                                 ErrMsg = "UpdateAPI_Failed_Card_Reversal_Failed"
                     else:
-                        resultStr, report = bca_topup_reversal(bcaStaticATD)
-                        LOG.fw("044:BCATopupReversal response= ", { "resultStr":resultStr, "report": report})
-                        ErrorCode = resultStr
-                        if resultStr == "0000":
-                            valuetext, ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
-                            if valuetext == "1":
-                                valuetext = ErrMsg
-                            dataJ = json.loads(valuetext)
-                            if "response" in dataJ.keys():
-                                code = dataJ["response"]
-                            
-                            ErrorCode = code
-                            if code == "200" or code == 200:
-                                ErrMsg = "BCATopup1_Failed_Reversal_Success"
-                            else:
-                                ErrMsg = "BCATopup1_Failed_Reversal_Failed"
-                        else:
-                            ErrMsg = "BCATopup1_Failed_Card_Reversal_Failed"
+                        ErrMsg = "BCA_TOPUP_1_ERROR"
+                else:
+                    ErrMsg = 'BCA_CARD_DETECT_ERROR'
+            else:
+                ErrMsg = 'BCA_TOPUP_SESSION_2_ERROR'
         else:
             resultStr = '8309'
-            ErrMsg = 'BCA_TOPUP_SESSION_ERROR'
+            ErrMsg = 'BCA_TOPUP_SESSION_1_ERROR'
     
-    ErrorCode = resultStr
+    # ErrorCode = resultStr
 
     return ErrorCode, cardno, amount, lastbalance, reporttopup, ErrMsg
 
@@ -588,7 +573,7 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
 
         ValueText = r.text
 
-        LOG.fw(":CheckSessionBCA response= ", ValueText)
+        LOG.fw(":CheckSessionBCA = ", ValueText)
 
         errorcode = "0000"
 
@@ -610,7 +595,7 @@ def send_session_bca(URL_Server, token, tid, mid, card_no, session_data):
 
         ValueText = r.text
 
-        LOG.fw(":SessionBCA response= ", ValueText)
+        LOG.fw(":SessionBCA = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
@@ -631,7 +616,7 @@ def send_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, last_ba
 
         ValueText = r.text
 
-        LOG.fw(":ConfirmBCA response= ", ValueText)
+        LOG.fw(":ConfirmBCA = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
@@ -652,7 +637,7 @@ def send_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, last_
 
         ValueText = r.text
 
-        LOG.fw(":ReversalBCA response= ", ValueText)
+        LOG.fw(":ReversalBCA = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
@@ -673,7 +658,7 @@ def send_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_balan
 
         ValueText = r.text
 
-        LOG.fw(":UpdateBCA response= ", ValueText)
+        LOG.fw(":UpdateBCA = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode

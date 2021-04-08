@@ -427,7 +427,7 @@ def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token):
 
         ValueText = r.text
 
-        LOG.fw(":updatebalancebri response= ", ValueText)
+        LOG.fw(":updatebalancebri = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
@@ -448,7 +448,7 @@ def SendConfirmBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_h
 
         ValueText = r.text
 
-        LOG.fw(":confirmbri response= ", ValueText)
+        LOG.fw(":confirmbri = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
@@ -469,7 +469,7 @@ def SendReversalBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_
 
         ValueText = r.text
 
-        LOG.fw(":reversalbri response= ", ValueText)
+        LOG.fw(":reversalbri = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
@@ -490,7 +490,7 @@ def SendRefundBRI(URL_Server, token, tid, mid, card_no, reff_no_host):
 
         ValueText = r.text
 
-        LOG.fw(":refundbri response= ", ValueText)
+        LOG.fw(":refundbri = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode

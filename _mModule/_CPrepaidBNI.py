@@ -112,7 +112,7 @@ def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
         
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
         ValueText = r.text
-        LOG.fw(":UpdateBNI response= ", ValueText)
+        LOG.fw(":UpdateBNI = ", ValueText)
 
         return r.text, "0000"
     except Exception as ex:
