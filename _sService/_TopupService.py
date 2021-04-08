@@ -767,6 +767,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
                 #   "amount":"30000"
                 #   }
                 # }
+                _Common.remove_temp_data(_param['reff_no'])
                 return response['data']
             else:
                 return False
@@ -896,7 +897,7 @@ def get_topup_readiness():
             'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0) is True else 'N/A',
             'bri': 'N/A',
             'bca': 'N/A',
-            'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True) else 'N/A',
+            'dki': 'N/A',
             'emoney': _Common.TOPUP_AMOUNT_SETTING['emoney'],
             'tapcash': _Common.TOPUP_AMOUNT_SETTING['tapcash'],
             'brizzi': _Common.TOPUP_AMOUNT_SETTING['brizzi'],
@@ -912,6 +913,8 @@ def get_topup_readiness():
                 ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
             if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BCA':
                 ready['bca'] = 'AVAILABLE' if _Common.BCA_TOPUP_ONLINE is True else 'N/A'
+            if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'DKI':
+                ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE_ACTIVE is True) else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
         #     ready['balance_bni'] = '999002'
@@ -1677,6 +1680,7 @@ def confirm_bni_topup(data):
         status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
+            # _Common.remove_temp_data(data['reff_no'])
             return True
         else:
             param['endpoint'] = 'topup-bni/confirm'
@@ -1706,6 +1710,7 @@ def confirm_bca_topup(data):
         status, response = _NetworkAccess.post_to_url(url=_url + 'topup-bca/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
+            # _Common.remove_temp_data(data['reff_no'])
             return True
         else:
             if _Common.LIVE_MODE:
@@ -1734,6 +1739,7 @@ def confirm_dki_topup(data):
         status, response = _NetworkAccess.post_to_url(url=_url + 'topup-dki/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
+            _Common.remove_temp_data(data['reff_no'])
             return True
         else:
             if _Common.LIVE_MODE:

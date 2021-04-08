@@ -1327,6 +1327,7 @@ Base{
                 }
                 set_refund_channel('CS_ONLY');
                 do_refund_or_print('user_payment_timeout_qr');
+                qr_payment_frame.cancel(mode);
                 break;
             }
         }

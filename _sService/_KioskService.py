@@ -1263,7 +1263,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
 
 
 def reset_open_job():
-    open_request_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.process')]
+    open_request_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.process') or f.endswith('.failed')]
     if (len(open_request_jobs) > 0):
         LOGGER.info(('Reset Open Request Job', open_request_jobs))
         for request_job in open_request_jobs:

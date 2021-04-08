@@ -221,3 +221,10 @@ def hash_sha256_signature(key, message):
     byte_key = binascii.unhexlify(key)
     message = message.encode()
     return hmac.new(byte_key, message, hashlib.sha256).hexdigest().upper()
+
+
+def url_to_endpoint(url):
+    if empty(url):
+        return ''
+    new_url = url.split('://')[1].split('/')
+    return "/".join(new_url[1:])

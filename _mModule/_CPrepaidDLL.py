@@ -5,6 +5,7 @@ import datetime
 import ctypes
 import time
 import sys
+import struct
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidUtils as utils
 from ctypes import *
@@ -82,7 +83,11 @@ def load_dll():
     global DLL_LOAD
     if DLL_LOAD is None:
         # me = os.path.abspath(os.path.dirname(__file__))
-        DLL_PATH = os.path.join(sys.path[0], "_lLib", "C_LIB", "Prepaid.dll")
+        dll = "Prepaid_32.dll"
+        os_arch = struct.calcsize("P") * 8
+        if os_arch == 64:
+            dll = "Prepaid_64.dll"
+        DLL_PATH = os.path.join(sys.path[0], "_lLib", "C_LIB", dll)
         print("pyt: DLL Path", DLL_PATH)
         DLL_LOAD =  windll.LoadLibrary(DLL_PATH)
         LOG.fw("DLL LOADED: ", DLL_PATH)

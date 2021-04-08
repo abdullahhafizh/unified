@@ -167,9 +167,10 @@ def do_pending_request_job():
                     __param = job['payload']
                     __endpoint = job['payload'].get('endpoint')
                     if _Helper.empty(__endpoint):
-                        jobs_path_failed = jobs_path.replace('.request', '.failed')
-                        os.rename(jobs_path, jobs_path_failed)
-                        continue
+                        __endpoint = _Helper.url_to_endpoint(__url)
+                        # jobs_path_failed = jobs_path.replace('.request', '.failed')
+                        # os.rename(jobs_path, jobs_path_failed)
+                        # continue
                     jobs_path_process = jobs_path.replace('.request', '.process')
                     os.rename(jobs_path, jobs_path_process)
                     if 'header' in job:

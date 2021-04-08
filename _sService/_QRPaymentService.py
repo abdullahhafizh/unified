@@ -170,7 +170,6 @@ def start_do_check_linkaja_qr(payload):
     _Helper.get_thread().apply_async(do_check_qr, (payload, mode,))
 
 
-
 def do_check_qr(payload, mode, serialize=True):
     global CANCELLING_QR_FLAG
     payload = json.loads(payload)
