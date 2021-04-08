@@ -508,7 +508,26 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 ErrorCode = code
                                 if code == "200" or code == 200:
                                     ErrorCode = "0000"
-
+                            else:
+                                # ErrMsg = 'BCA_TOPUP2_FAILED_'+resultStr
+                                resultStr, report = bca_topup_reversal(bcaStaticATD)
+                                LOG.fw("044:BCATopupReversal response= ", { "resultStr":resultStr, "report": report})
+                                ErrorCode = resultStr
+                                if resultStr == "0000":
+                                    valuetext,ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
+                                    if valuetext == "1":
+                                        valuetext = ErrMsg
+                                    dataJ = json.loads(valuetext)
+                                    if "response" in dataJ.keys():
+                                        code = dataJ["response"]
+                                    
+                                    ErrorCode = code
+                                    if code == "200" or code == 200:
+                                        ErrMsg = "UpdateAPI_Failed_Reversal_Success"
+                                    else:
+                                        ErrMsg = "UpdateAPI_Failed_Reversal_Failed"
+                                else:
+                                    ErrMsg = "UpdateAPI_Failed_Card_Reversal_Failed"
                                 # valuetext = send_conde
                         else:
                             resultStr, report = bca_topup_reversal(bcaStaticATD)
