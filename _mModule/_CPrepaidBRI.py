@@ -3,12 +3,16 @@ __author__ = 'fitrah.wahyudi.imam@gmail.com'
 from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
+from _cConfig import _Common
 import pprint
 import requests
 import json
 from time import sleep
 
-UPDATE_BALANCE_URL = "http://apiv2.mdd.co.id:10107"
+UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
+if _Common.LIVE_MODE is True:
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+    
 TIMEOUT_REQUESTS = 50
 
 def update_balance_bri(param, __global_response__):

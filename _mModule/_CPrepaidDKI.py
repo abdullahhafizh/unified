@@ -3,6 +3,7 @@ __author__ = 'fitrah.wahyudi.imam@gmail.com'
 from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
+from _cConfig import _Common
 import datetime
 from time import sleep
 

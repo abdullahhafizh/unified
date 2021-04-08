@@ -3,15 +3,18 @@ __author__ = 'fitrah.wahyudi.imam@gmail.com'
 from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
+from _cConfig import _Common
 import requests
 import json
 import datetime
 
-# BCA_ATD = "01BTESTDEVAOZ5L0LDraBjL9d5JKVhFR0RJ4dlZu0aWBs"
-BCA_ATD = "01SMUDAINACbIhPF92u0C38pOBKjQSFiZQHEQUZX0jWfA"
+BCA_ATD = "01BTESTDEVAOZ5L0LDraBjL9d5JKVhFR0RJ4dlZu0aWBs"
+UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+if _Common.DEV_MODE_TOPUP_BCA is True:
+    BCA_ATD = "01SMUDAINACbIhPF92u0C38pOBKjQSFiZQHEQUZX0jWfA"
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
 BCA_ACCESS_CARD_NUMBER = "0145008000000025"
 BCA_ACCESS_CODE = "111111"
-UPDATE_BALANCE_URL = "http://apiv2.mdd.co.id:10107"
 TIMEOUT_REQUESTS = 50
 
 #046

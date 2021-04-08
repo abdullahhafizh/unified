@@ -4,6 +4,7 @@ from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidCommon as pr_common
 from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
+from _cConfig import _Common
 import requests
 import json
 import datetime

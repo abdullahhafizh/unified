@@ -3,12 +3,15 @@ __author__ = 'fitrah.wahyudi.imam@gmail.com'
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidUtils as prepaid_utils
+from _cConfig import _Common
 import requests
 import time
 import json
 import datetime
 
-UPDATE_BALANCE_URL = "http://apiv2.mdd.co.id:10107"
+UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
+if _Common.LIVE_MODE is True:
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
 TIMEOUT_REQUESTS = 50
 
 #019
