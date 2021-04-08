@@ -142,7 +142,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     res_str, resreport = prepaid.topup_apdusend(b"255", dataToCard)
                     ErrorCode = res_str
 
-                    LOG.fw("019:SendDataToCard update respon = ", ErrorCode)
+                    LOG.fw("019:SendDataToCard update response= ", ErrorCode)
 
                     if res_str == "0000":
                         res_str, resreport = prepaid.topup_apdusend(b"255", "00E0000000")
@@ -194,7 +194,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                         # res_str = prepaid_utils.to_4digit(res_w)
                                         ErrorCode = res_str
 
-                                        LOG.fw("019:SendDataToCard confirm respon = ", ErrorCode)
+                                        LOG.fw("019:SendDataToCard confirm response= ", ErrorCode)
 
                                         if res_str == "0000":
                                             dataToCardConfirm = resreport
@@ -297,7 +297,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     res_str, resreport = prepaid.topup_apdusend(b"255", dataToCard)
                     ErrorCode = res_str
 
-                    LOG.fw("019:SendDataToCard update respon = ", ErrorCode)
+                    LOG.fw("019:SendDataToCard update response= ", ErrorCode)
                     if res_str == "0000":
                         dataToCardConfirm = resreport
                         while res and updateStatusConfirm == "PENDING":
@@ -327,7 +327,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 else:
                                     res_str, resreport = prepaid.topup_apdusend("255", dataToCardConfirm)
                                     # res_str = prepaid_utils.to_4digit(res_w)
-                                    LOG.fw("019:SendDataToCard confirm respon = ", ErrorCode)
+                                    LOG.fw("019:SendDataToCard confirm response= ", ErrorCode)
 
                                     if res_str == "0000":
                                         dataToCardConfirm = resreport
@@ -348,7 +348,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     LOG.fw("019:Reversal OLD Start")
                     res_str, cardno, uid, data, attr = get_card_data()
                     ErrorCode = res_str
-                    LOG.fw("019:GetCardData respon = ", ErrorCode)
+                    LOG.fw("019:GetCardData response= ", ErrorCode)
                     if res_str == "0000":
                         ResReversal = True
                         codereversal = ""
@@ -415,7 +415,7 @@ def send_update_balance(url, TOKEN, TID, MID, card_no, approval_code, card_attri
         
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=headers)
         ValueText = r.text
-        LOG.fw(":UpdateMandiri respon = ", ValueText)
+        LOG.fw(":UpdateMandiri response= ", ValueText)
 
         return r.text, "0000"
     except Exception as ex:

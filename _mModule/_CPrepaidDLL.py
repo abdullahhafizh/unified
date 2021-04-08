@@ -1198,7 +1198,7 @@ def topup_bca_topup2(confirm1, confirm2):
     global DLL_LOAD
     res_str = ""
     balance = ""
-    respon = ""
+    response= ""
     debErrorStr = ""
     try:
 
@@ -1218,7 +1218,7 @@ def topup_bca_topup2(confirm1, confirm2):
 
         res = func(C_confirm1, C_confirm2, p_structTopUp)
 
-        respon = structTopUp.rep.decode("cp437")
+        response= structTopUp.rep.decode("cp437")
         balance = str(structTopUp.Balance)
         debErrorStr = structTopUp.c_error.decode("cp437")
 
@@ -1227,13 +1227,13 @@ def topup_bca_topup2(confirm1, confirm2):
     except Exception as ex:
         LOG.fw("CMD $topup_bca_topup2 ERROR: ", "{0}".format(ex))
 
-    LOG.fw("<-- response = ", respon)
+    LOG.fw("<-- response = ", response)
     LOG.fw("<-- balance = ", balance)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
 
     LOG.fw("<-- CMD RESULT = ",res_str)
 
-    return res_str, balance, respon, debErrorStr
+    return res_str, balance, response, debErrorStr
 
 @func_set_timeout(30)
 def topup_bca_lastreport():
