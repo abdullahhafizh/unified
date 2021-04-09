@@ -10,7 +10,7 @@ import os
 import sys
 import json
 import re
-from sentry_sdk import capture_exception
+# from sentry_sdk import capture_exception
 
 
 LOGGER = logging.getLogger()
@@ -239,7 +239,7 @@ UPDATE_ONLINE_FEATURE = _ConfigParser.get_set_value('GENERAL', 'allowed^ubal^onl
 ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 
 # Hardcoded Config For Bank Feature
-ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT', 'BCA']
+ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT', 'BCA', 'DKI']
 ALLOWED_BANK_CHECK_CARD_LOG = ['BRI', 'MANDIRI', 'BNI']
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False

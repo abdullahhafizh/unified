@@ -1337,6 +1337,7 @@ def topup_online(bank, cardno, amount, trxid=''):
     # }
     try:
         if bank is None or bank not in _Common.ALLOWED_BANK_PENDING_ONLINE:
+            LOGGER.warning((bank, 'NOT_ALLOWED_PENDING_ONLINE'))
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             return
         last_card_check = _QPROX.LAST_BALANCE_CHECK

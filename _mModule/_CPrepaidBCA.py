@@ -479,7 +479,6 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             resultStr, last_balance, report = bca_topup2(confirm_data)
                             LOG.fw("044:BCATopup2 = ", { "resultStr":resultStr, "report": report, "last_balance": last_balance})
                             ErrorCode = resultStr
-
                             if resultStr == "0000":
                                 if report == "":
                                     LOG.fw("044:BCATopup2 report empty")
@@ -496,13 +495,11 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                     valuetext, ErrMsg = send_confirm_bca(url, TOKEN, TID, MID, cardno, report, lastbalance, reference_id)
                                     if valuetext == "1":
                                         valuetext = ErrMsg
-                                    
                                     dataJ = json.loads(valuetext)
                                     if "response" in dataJ.keys():
                                         tempJ = dataJ["response"]
                                         if "code" in tempJ.keys():
                                             code = tempJ["code"]
-                                    
                                     ErrorCode = code
                                     if code == "200" or code == 200:
                                         ErrorCode = "0000"
