@@ -628,6 +628,7 @@ def get_sub_code(resp_json_data):
                 code = resp_json_temp["desc"]
     return code, resp_json_temp
 
+
 def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
     global UPDATE_BALANCE_URL
 
@@ -693,7 +694,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
                     dataToCardConfirm = resreport
                     while res and updateStatusConfirm == "PENDING":
                         dataToCardConfirm = dataToCardConfirm + "9000"
-                        valuetext,errmsg = send_confirm_update(url,C_Token, C_TID, C_MID, cardno, dataToCardConfirm, "COMPLETED", approvalcode)
+                        valuetext, errmsg = send_confirm_update(url,C_Token, C_TID, C_MID, cardno, dataToCardConfirm, "COMPLETED", approvalcode)
                         data_to_confirm = json.loads(valuetext)
                         codeConfirm = None
 
@@ -801,11 +802,12 @@ def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_st
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
         ValueText = r.text
-        LOG.fw(":ConfirmMandiri reponse = ", ValueText)
+        LOG.fw(":ConfirmMandiri response = ", ValueText)
         
         return ValueText, "0000"
     except Exception as ex:
         errorcode = "ConfirmMandiri error: {0}".format(ex)
+        LOG.fw(":ConfirmMandiri Exception = ", errorcode)
         return "1", errorcode
 
 def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, approval_code, amount, card_info, card_uid, mode, sam_data, card_attribute):
@@ -825,11 +827,12 @@ def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, appr
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
         ValueText = r.text
-        LOG.fw(":ReversalMandiri reponse = ", ValueText)
+        LOG.fw(":ReversalMandiri response = ", ValueText)
         
         return ValueText, "0000"
     except Exception as ex:
         errorcode = "ReversalMandiri error: {0}".format(ex)
+        LOG.fw(":ReversalMandiri Exception = ", errorcode)
         return "1", errorcode
 
 #026
