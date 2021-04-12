@@ -17,6 +17,11 @@ BNI_SAM_MAX_SALDO = ""
 BNI_CARD_NUMBER = ""
 BNI_CARD_SALDO = ""
 
+UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
+if _Common.LIVE_MODE is True:
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+    
+
 def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
     
     __global_response__ = {
@@ -99,8 +104,9 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
 
 def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
     TIMEOUT_REQUESTS = 50
+    
     try:
-        sURL = "http://apiv2.mdd.co.id:10107/v1/topup-bni/update"
+        sURL = UPDATE_BALANCE_URL + "/topup-bni/update"
 
         payload = { 
             "token":TOKEN, "tid": TID, "mid": MID, "card_no":card_no,"card_info": purse_data, 
