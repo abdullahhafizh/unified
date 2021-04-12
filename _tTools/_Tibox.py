@@ -242,7 +242,7 @@ def parse_flight_data(text):
 
 
 DEBUG_MODE = False
-IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
+PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 
 
 def new_parse_flight_data(text):

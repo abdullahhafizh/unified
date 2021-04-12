@@ -228,7 +228,7 @@ PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
 EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
-IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
+PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):

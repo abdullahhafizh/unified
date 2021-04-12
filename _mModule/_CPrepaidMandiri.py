@@ -12,6 +12,10 @@ import datetime
 UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
 if _Common.LIVE_MODE is True:
     UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+    
+if _Common.PTR_MODE is True:
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+    
 TIMEOUT_REQUESTS = 50
 
 #019

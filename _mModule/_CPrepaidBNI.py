@@ -21,6 +21,9 @@ UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL_DEV
 if _Common.LIVE_MODE is True:
     UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
     
+if _Common.PTR_MODE is True:
+    UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
+    
 
 def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
     

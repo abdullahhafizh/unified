@@ -74,7 +74,7 @@ def create_sale_edc_with_struct_id(amount, trxid):
         _Helper.get_thread().apply_async(sale_edc, (amount, trxid,))
 
 
-IS_PIR = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
+PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 INIT_AMOUNT = '0'
 
 
@@ -85,7 +85,7 @@ def sale_edc_mobile(amount, trxid=None):
         # _Command.clear_content_of(_Command.MO_REPORT, 'PRE_SALE|'+str(amount))
         amount = amount.replace('.00', '')
         INIT_AMOUNT = amount
-        if IS_PIR is True:
+        if PTR_MODE is True:
             amount = str(int(int(amount)/1000))
         result, sale_data = edc_mobile_do_payment(trxid, amount)
         if result is True:
@@ -113,7 +113,7 @@ def sale_edc_mobile(amount, trxid=None):
                 #     EDC_PAYMENT_RESULT['card_type'] = 'DEBIT'
                 EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = sale_data['amount']
-                if IS_PIR is True:
+                if PTR_MODE is True:
                     EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
                 EDC_PAYMENT_RESULT['res_code'] = sale_data['trace_no']
                 EDC_PAYMENT_RESULT['trace_no'] = sale_data['trace_no']
@@ -166,7 +166,7 @@ def sale_edc(amount, trxid=None):
         if OPEN_STATUS is True:
             amount = amount.replace('.00', '')
             INIT_AMOUNT = amount
-            if IS_PIR is True:
+            if PTR_MODE is True:
                 amount = str(int(int(amount)/1000))
             param = EDC["SALE"] + "|" + str(amount)
             response, result = _Command.send_request(param=param,
@@ -203,7 +203,7 @@ def sale_edc(amount, trxid=None):
                 else:
                     EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = param[3]
-                if IS_PIR is True:
+                if PTR_MODE is True:
                     EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
                 EDC_PAYMENT_RESULT['res_code'] = param[2]
                 EDC_PAYMENT_RESULT['inv_no'] = param[5]
@@ -319,7 +319,7 @@ def handling_card(amount, trxid=None):
                 else:
                     EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = param[3]
-                if IS_PIR is True:
+                if PTR_MODE is True:
                     EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
                 EDC_PAYMENT_RESULT['res_code'] = param[2]
                 EDC_PAYMENT_RESULT['inv_no'] = param[5]
