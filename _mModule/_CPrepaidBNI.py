@@ -109,7 +109,7 @@ def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
     TIMEOUT_REQUESTS = 50
     
     try:
-        sURL = UPDATE_BALANCE_URL + "/topup-bni/update"
+        sURL = UPDATE_BALANCE_URL + "topup-bni/update"
 
         payload = { 
             "token":TOKEN, "tid": TID, "mid": MID, "card_no":card_no,"card_info": purse_data, 

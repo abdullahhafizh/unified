@@ -405,7 +405,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
 def send_update_balance(url, TOKEN, TID, MID, card_no, approval_code, card_attribute, card_info, card_uid, last_balance):
     global TIMEOUT_REQUESTS
     try:
-        sURL = url + "/topup-mandiri/update"
+        sURL = url + "topup-mandiri/update"
 
         headers = {'Special-Case': 'TAPONBUSREADER'}
         payload = { 
@@ -789,7 +789,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
 def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_status, approval_code):
     global TIMEOUT_REQUESTS
     try:
-        sURL = URL_Server + "/topup-mandiri/confirm"
+        sURL = URL_Server + "topup-mandiri/confirm"
 
         # headers = {'Special-Case': 'TAPONBUSREADER'}
         payload = { 
@@ -811,7 +811,7 @@ def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_st
 def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, approval_code, amount, card_info, card_uid, mode, sam_data, card_attribute):
     global TIMEOUT_REQUESTS
     try:
-        sURL = URL_Server + "/topup-mandiri/reversal"
+        sURL = URL_Server + "topup-mandiri/reversal"
 
         # headers = {'Special-Case': 'TAPONBUSREADER'}
         payload = {

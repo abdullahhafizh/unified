@@ -421,7 +421,7 @@ def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
-        sURL = URL_Server + "/topup-bri/update"
+        sURL = URL_Server + "topup-bri/update"
         payload = {"token":token, "tid":tid, "mid":mid, "card_no":card_no, "random_token": random_token}
         LOG.fw(":updatebalancebri url = ", sURL)
         LOG.fw(":updatebalancebri json = ", payload)
@@ -442,7 +442,7 @@ def SendConfirmBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_h
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
-        sURL = URL_Server + "/topup-bri/confirm"
+        sURL = URL_Server + "topup-bri/confirm"
         payload = {"token":token, "tid":tid, "mid":mid, "card_no":card_no, "random_token": random_token, "reff_no_host": reff_no_host}
         LOG.fw(":confirmbri url = ", sURL)
         LOG.fw(":confirmbri json = ", payload)
@@ -463,7 +463,7 @@ def SendReversalBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
-        sURL = URL_Server + "/topup-bri/reversal"
+        sURL = URL_Server + "topup-bri/reversal"
         payload = {"token":token, "tid":tid, "mid":mid, "card_no":card_no, "random_token": random_token, "reff_no_host": reff_no_host}
         LOG.fw(":reversalbri url = ", sURL)
         LOG.fw(":reversalbri json = ", payload)
@@ -484,7 +484,7 @@ def SendRefundBRI(URL_Server, token, tid, mid, card_no, reff_no_host):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
-        sURL = URL_Server + "/topup-bri/refund"
+        sURL = URL_Server + "topup-bri/refund"
         payload = {"token":token, "tid":tid, "mid":mid, "card_no":card_no, "reff_no_host": reff_no_host}
         LOG.fw(":refundbri url = ", sURL)
         LOG.fw(":refundbri json = ", payload)
