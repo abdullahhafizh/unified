@@ -1163,7 +1163,7 @@ if __name__ == '__main__':
         _KioskService.start_restart_mdd_service()
         sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
-    _KioskService.house_keeping(age_month=12)
+    _KioskService.house_keeping(age_month=6)
     sleep(1)
     print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()

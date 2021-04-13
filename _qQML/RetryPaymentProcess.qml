@@ -1687,14 +1687,14 @@ Base{
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
-            button_text: 'TIDAK\nPUNYA'
+            button_text: 'CUSTOMER\nSERVICE'
             modeReverse: true
             forceColorButton: 'orange'
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                    _SLOT.user_action_log('Press "TIDAK PUNYA" in Input HP Number');
+                    _SLOT.user_action_log('Press "CUSTOMER SERVICE" in Input HP Number');
                     popup_refund.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';

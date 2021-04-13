@@ -1233,7 +1233,8 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                                     'TopupRecords', 'TransactionFailure', 'Transactions'],
                             key='createdAt',
                             age_month=age_month)
-    expired = time.time() - (age_month * 30 * 24 * 60 * 60)
+    expired_seconds = (age_month * 30 * 24 * 60 * 60)
+    expired = time.time() - expired_seconds
     paths = ['_pPDF', '_lLog', '_qQr', '_jJob|.done']
     LOGGER.info(('START FILES HOUSE_KEEPING', age_month, paths, expired, mode, _Helper.time_string()))
     print('pyt: [START] HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
@@ -1263,7 +1264,8 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
 
 
 def reset_open_job():
-    open_request_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.process') or f.endswith('.failed')]
+    extentions = ('.process', '.failed', '.failure')
+    open_request_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith(extentions)]
     if (len(open_request_jobs) > 0):
         LOGGER.info(('Reset Open Request Job', open_request_jobs))
         for request_job in open_request_jobs:
