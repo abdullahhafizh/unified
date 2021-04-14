@@ -770,6 +770,8 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
                 _Common.remove_temp_data(_param['reff_no'])
                 return response['data']
             else:
+                _param['endpoint'] = 'topup-dki/reversal'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-dki/reversal', payload=_param)
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
