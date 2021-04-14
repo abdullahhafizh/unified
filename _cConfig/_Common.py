@@ -1554,12 +1554,12 @@ PRINT_COMPANY_MAPPING = {
     'jmto': 'JMTO',
     'jmrb': 'JMRB',
     'lms': 'LMS',
-    'uns': 'UNS'
+    'uns': 'UNS',
 }
 
 def company_theme(theme):
     if theme not in PRINT_COMPANY_MAPPING.keys():
-        return 'TJ'
+        return theme.upper() #Add Default Theme To Name of Ereceipt
     return PRINT_COMPANY_MAPPING[theme]
 
 
