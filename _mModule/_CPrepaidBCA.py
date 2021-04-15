@@ -690,7 +690,7 @@ def bca_topup2(strconfirm):
     report_length = len(report_split)
     LOG.fw("BCATopup2 Report Length= ", report_length)
     for x in range(len(report_split)):
-        if report_split[x] >= 512:
+        if len(report_split[x]) >= 512:
             report = report_split[x]
             break    
     report = report[-512:]
