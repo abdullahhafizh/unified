@@ -684,7 +684,7 @@ def bca_topup2(strconfirm):
     confirm2 = strconfirm[200:]
     res_str, balance, response, debErrorStr = prepaid.topup_bca_topup2(confirm1, confirm2)
     report = utils.remove_special_character(response)
-    # LOG.fw("BCATopup2 Report Out SC = ", report)
+    LOG.fw("BCATopup2 Initial Report= ", report)
     report = utils.fix_report_leave_space(report)
     report_split = report.split(' ')
     report_length = len(report_split)
