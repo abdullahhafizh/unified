@@ -262,6 +262,7 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
     
     return resultStr, msg, cardno, amount, lastbalance, data, reffnohost, CodeStatus
 
+
 def reversal_bri(param, __global_response__):
     # LOG.fw("024:Mulai")
     Param = param.split('|')
@@ -306,6 +307,7 @@ def reversal_bri(param, __global_response__):
         LOG.fw("064:Response = ", errmsg, True)
         LOG.fw("064:Result = ", result_str, True)
         LOG.fw("064:Gagal", None, True)
+
 
 def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_token, reffnohost):
     global UPDATE_BALANCE_URL

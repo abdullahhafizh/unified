@@ -684,13 +684,16 @@ def bca_topup2(strconfirm):
     confirm2 = strconfirm[200:]
     res_str, balance, response, debErrorStr = prepaid.topup_bca_topup2(confirm1, confirm2)
     report = utils.remove_special_character(response)
-    LOG.fw("BCATopup2 Report Out SC = ", report)
+    # LOG.fw("BCATopup2 Report Out SC = ", report)
     report = utils.fix_report_leave_space(report)
-    report_length = len(report.split('\n'))
+    report_split = report.split(' ')
+    report_length = len(report_split)
     LOG.fw("BCATopup2 Report Length= ", report_length)
-    if len(report.split('\n')) > 1:
-        report = report[1]
-    report = report.split(' ')[0][-512:]
+    for x in range(len(report_split)):
+        if report_split[x] >= 512:
+            report = report_split[x]
+            break    
+    report = report[-512:]
     LOG.fw("BCATopup2 Clean Report = ", report)
     lastbalance = balance
     return res_str, lastbalance, report
