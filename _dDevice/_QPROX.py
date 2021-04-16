@@ -1170,7 +1170,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         __remarks = ''
         if _response == 0 and '|' in _result:
             # Add Recheck Deposit Balance
-            ka_info_bni(slot=_Common.BNI_ACTIVE)
+            # ka_info_bni(slot=_Common.BNI_ACTIVE)
             _result = _result.replace('#', '')
             __data = _result.split('|')
             __status = __data[0]

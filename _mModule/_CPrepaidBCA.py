@@ -701,6 +701,16 @@ def bca_topup2(strconfirm):
 def bca_topup_lastreport():
     res_str, response= prepaid.topup_bca_lastreport()
     report = utils.fix_report(response)
+    LOG.fw("BCALastReport Initial Report= ", report)
+    report_split = report.split(' ')
+    report_length = len(report_split)
+    LOG.fw("BCALastReport Report Length= ", report_length)
+    for x in range(len(report_split)):
+        if len(report_split[x]) >= 512:
+            report = report_split[x]
+            break    
+    report = report[-512:]
+    LOG.fw("BCALastReport Clean Report = ", report)
     return res_str, report
 
 def bca_topup_reversal(ATD):
