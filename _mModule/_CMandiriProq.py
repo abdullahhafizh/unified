@@ -59,7 +59,6 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     # print(result)
     LOG.fw("RESPONSE:", result)
 
-
     return result["code"], result["bal"], result["sn"], result["sign"]
 
 def GET_BALANCE(Ser):
@@ -115,7 +114,6 @@ def DEBIT(Ser, datetime, time_out, value):
     # print(result)
     LOG.fw("RESPONSE:", result)
 
-
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -162,7 +160,6 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
     # print(result)
     LOG.fw("RESPONSE:", result)
 
-
     return result["code"]
 
 def BNI_TERMINAL_UPDATE(Ser, terminal):
@@ -188,7 +185,6 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
     # print(result)
     LOG.fw("RESPONSE:", result)
 
-
     return result["code"]
 
 def PURSE_DATA_MULTI_SAM(Ser, slot):
@@ -212,7 +208,6 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -268,7 +263,6 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     return result["code"]
 
 def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
@@ -296,7 +290,6 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -328,7 +321,6 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -356,7 +348,6 @@ def PURSE_DATA(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -391,7 +382,6 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -424,7 +414,6 @@ def TOP_UP_C2C(Ser, value):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
     # for i in range(0, Len-1):
@@ -456,7 +445,6 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
     # for i in range(0, Len-1):
@@ -485,7 +473,6 @@ def TOPUP_C2C_CORRECTION(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -520,7 +507,6 @@ def GET_FEE_C2C(Ser, Flag):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
@@ -559,7 +545,6 @@ def SET_FEE_C2C(Ser, Flag, respon):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
     # for i in range(0, Len-1):
@@ -594,7 +579,6 @@ def TOPUP_FORCE_C2C(Ser, Flag):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
     # for i in range(0, Len-1):
@@ -623,7 +607,6 @@ def KM_BALANCE_TOPUP_C2C(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     if result["code"] == b"0000" or result["code"] == b"9000":
         saldo = result["rep"][0:10]
@@ -658,7 +641,6 @@ def APDU_SEND(Ser, slot, info):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -709,7 +691,6 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     return result["code"]
 
 def GET_SN(Ser):
@@ -732,7 +713,6 @@ def GET_SN(Ser):
     result = get_TSerialNumberres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
@@ -774,7 +754,6 @@ def BcaCardInfo(Ser, ATD):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -802,7 +781,6 @@ def GET_CARDDATA(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
     # rep = ''
@@ -875,7 +853,6 @@ def BcaSession1(Ser, ATD, datetimes):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -915,7 +892,6 @@ def BcaSession2(Ser, session):
     result = get_TDefaultResres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     return result["code"]
 
@@ -990,7 +966,6 @@ def BcaTopup1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-    
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -1058,7 +1033,6 @@ def BcaLastReport(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -1100,7 +1074,6 @@ def BcaReversal(Ser, ATD):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-    
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
     for i in range(0, Len):
@@ -1128,7 +1101,6 @@ def GET_TOKENBRI(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     CARDDATA = ''
