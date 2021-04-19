@@ -1,7 +1,7 @@
 import datetime
-import . import _CPrepaidLog as LOG
+from _mModule import _CPrepaidLog as LOG
+from _mModule import _CPrepaidProtocol as proto
 from serial import Serial
-from . import _CPrepaidProtocol as proto
 
 def SAM_init(Ser, PIN, INSTITUTION, TERMINAL
 # , PIN_Len, INSTITUTION_Len, TERMINAL_Len
