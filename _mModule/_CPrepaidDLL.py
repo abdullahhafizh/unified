@@ -6,10 +6,11 @@ import ctypes
 import time
 import sys
 import traceback
+import struct
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidUtils as utils
 from ctypes import *
-from ._CPrepaidDLLModel import *
+from _mModule._CPrepaidDLLModel import *
 from func_timeout import func_set_timeout
 from _mModule import _CPrepaidLib as lib
 
