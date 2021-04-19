@@ -56,7 +56,6 @@ def topup_init(PORT, SAMPIN, Institution, Terminal):
     #     return "FFFE"
     if not is_serial_valid():
         return "FFFE"
-    
 
     res_str = proq.SAM_init(COMPORT, SAMPIN, Institution, Terminal)
     
