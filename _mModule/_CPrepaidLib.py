@@ -23,7 +23,7 @@ def open_only(port):
             COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
             print('COMPORT is Not Then Re-OPEN', COMPORT.isOpen())
         else:
-            print('COMPORT is on Unknown State')
+            print('COMPORT is Already OPEN', COMPORT.isOpen())
     except Exception as ex:
         resultStr = "FFFF"
         msg = "{0}".format(ex)
