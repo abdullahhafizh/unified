@@ -188,6 +188,8 @@ def topup_balance_with_sn():
         # sign = str(signValue.value)
 
         res_str, balance, card_number, sign = lib.topup_balance_with_sn()
+        int_balance = int(balance)
+        balance = str(int_balance)
         
     except Exception as ex:
         LOG.fw("CMD $EF ERROR: ", "{0}".format(ex))

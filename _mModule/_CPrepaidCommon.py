@@ -7,12 +7,15 @@ import datetime
 
 SLOT_KA = ""
 COM_PORT = None
+LOAD_DLL = False
 
 #000
 def open_only(param=None, __global_response__=None):
     global COM_PORT
-    prepaid.load_dll()
-
+    
+    if LOAD_DLL is True:
+        prepaid.load_dll()
+    
     if param != None:
         C_PORT = param.encode('utf-8')
         LOG.fw("000:Parameter = ", C_PORT)
