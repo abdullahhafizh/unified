@@ -51,11 +51,12 @@ def topup_auth(C_PORT, C_Slot, C_PinSAM, C_Institution, C_Terminal, C_PinKA, C_P
 
 def topup_init(PORT, SAMPIN, Institution, Terminal):
     global COMPORT
-    res_str, msg = open_only(PORT)
-    if res_str != "0000":
-        return "FFFE"
+    # res_str, msg = open_only(PORT)
+    # if res_str != "0000":
+    #     return "FFFE"
     if not is_serial_valid():
         return "FFFE"
+    
 
     res_str = proq.SAM_init(COMPORT, SAMPIN, Institution, Terminal)
     
