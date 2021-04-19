@@ -6,8 +6,8 @@ import json
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-dll.load_dll()
 PORT = 5000
+LOAD_DLL = False
 
 @app.route('/')
 def hello_world():
@@ -16,11 +16,9 @@ def hello_world():
         'message': 'VM Kiosk Topup Service'
     })
 
-
 @app.route('/ping', methods=['GET'])
 def ping_me():
     return 'pong'
-
 
 @app.route('/send_command', methods=['GET'])
 def send_command():
@@ -29,10 +27,12 @@ def send_command():
     response = idll.send_command(cmd, param)
     return jsonify(response)
 
-
 def start():
+    if LOAD_DLL:
+        dll.load_dll()
     app.run(host='0.0.0.0', port=PORT)
 
-
 if __name__ == '__main__':
+    if LOAD_DLL:
+        dll.load_dll()
     app.run(host='0.0.0.0', port=PORT)

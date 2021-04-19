@@ -23,7 +23,7 @@ if _Common.LIVE_MODE is True:
     
 if _Common.PTR_MODE is True:
     UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
-    
+
 
 def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
     
@@ -64,6 +64,8 @@ def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
 
         if result_str != "0000":
             raise Exception("Error: "+result_str)
+        
+    return __global_response__
 
 def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
     
@@ -104,6 +106,7 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
 
         if result_str != "0000":
             raise Exception("Error: "+result_str)
+    return __global_response__
 
 def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
     TIMEOUT_REQUESTS = 50
@@ -159,7 +162,6 @@ def bni_terminal_update(param, __global_response__):
         LOG.fw("011:Result = ", res_str, True)
         LOG.fw("011:Gagal", None, True)
 
-
     return res_str
 
 #012
@@ -167,11 +169,15 @@ def bni_init_topup(param, __global_response__):
     global BNI_SAM_CARD_NUMBER, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO, BNI_CARD_NUMBER, BNI_CARD_SALDO
 
     Param = param.split('|')
-    C_Slot = Param[0].encode('utf-8')
-    C_Terminal = Param[1].encode('utf-8')
+    if len(Param) == 2:
+        C_Slot = Param[0].encode('utf-8')
+        C_Terminal = Param[1].encode('utf-8')
+    else:
+        LOG.fw("012:Parameter tidak lengkap", param)
+        raise Exception("012:Parameter tidak lengkap: "+param)
+
     LOG.fw("012:Parameter = ", C_Slot)
     LOG.fw("012:Parameter = ", C_Terminal)
-
 
     resP, report = prepaid.topup_pursedata_multi_sam(C_Slot)
     if len(report) >= 20:
@@ -193,7 +199,6 @@ def bni_init_topup(param, __global_response__):
         LOG.fw("012:Result = ", res_str, True)
         LOG.fw("012:Gagal", None, True)
 
-    
     return res_str
 
 #013
@@ -213,7 +218,7 @@ def bni_topup(param, __global_response__):
     LOG.fw("013:Parameter = ", C_Slot)
 
     res_str, card_number, reportSAM = prepaid.topupbni_credit_multi_sam(C_Slot, C_Denom, b"5")
-    sleep(1)
+    sleep(2)
     resS, sam_last_saldo, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
 
     __global_response__["Result"] = res_str
@@ -454,7 +459,6 @@ def bni_update_card_crypto(param, __global_response__):
 
     LOG.fw("021:Parameter = ", C_PurseData)
     LOG.fw("021:Parameter = ", C_Cryptogram)
-
 
     dtpurse = C_PurseData[36:52]
     dtcrypto = C_Cryptogram[-32:]

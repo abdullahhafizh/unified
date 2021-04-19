@@ -16,7 +16,7 @@ if _Common.LIVE_MODE is True:
 if _Common.PTR_MODE is True:
     UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
     
-TIMEOUT_REQUESTS = 50
+    TIMEOUT_REQUESTS = 50
 
 def update_balance_bri(param, __global_response__):
     # LOG.fw("024:Mulai")

@@ -353,10 +353,10 @@ def check_balance_C2C(param, __global_response__):
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
-        res_saldo = res_saldo.decode("cp437")
-        res_uid = res_uid.decode("cp437")
-        res_data = res_data.decode("cp437")
-        res_attr = res_attr.decode("cp437")
+        res_saldo = res_saldo
+        res_uid = res_uid
+        res_data = res_data
+        res_attr = res_attr
         
         __global_response__["ErrorDesc"] = "Sukses"
         __global_response__["Response"] = res_saldo + "|" + res_uid + "|" + res_data + "|" + res_attr

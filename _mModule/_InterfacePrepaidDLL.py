@@ -1,15 +1,18 @@
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
-
 import traceback
-from _mModule import _CPrepaidDLL as prepaid_dll
-from _mModule import _CPrepaidCommon as prepaid_common
-from _mModule import _CPrepaidBNI as prepaid_bni
-from _mModule import _CPrepaidMandiri as prepaid_mandiri
-from _mModule import _CPrepaidBCA as prepaid_bca
-from _mModule import _CPrepaidBRI as prepaid_bri
-from _mModule import _CPrepaidLog as LOG
-from _mModule import _CPrepaidDKI as prepaid_dki
+from . import _CPrepaidDLL as prepaid_dll
+from . import _CPrepaidCommon as prepaid_common
+from . import _CPrepaidBNI as prepaid_bni
+from . import _CPrepaidMandiri as prepaid_mandiri
+from . import _CPrepaidBCA as prepaid_bca
+from . import _CPrepaidBRI as prepaid_bri
+from . import _CPrepaidLog as LOG
+from . import _CPrepaidDKI as prepaid_dki
+# from func_timeout import func_set_timeout
 
+# @func_set_timeout(2.5)
+# def test_timeout():
+#     while True:
+#         print("1")
 
 def send_command(cmd, param):
     LOG.fw("LIB [{0}]: Param = ".format(cmd), param)
@@ -21,6 +24,8 @@ def send_command(cmd, param):
         "ErrorDesc": "",
         "Result": ""
     }
+
+    # LOG.debuging("I_send_command[START]: ", __global_response__)
     
     try:
         LOG.fw("{0}:Mulai".format(cmd))
@@ -100,6 +105,8 @@ def send_command(cmd, param):
             prepaid_mandiri.mandiri_get_log(param, __global_response__)
         elif cmd == "040":
             prepaid_bni.bni_get_log(param, __global_response__)
+        elif cmd == "041":
+            prepaid_mandiri.mandiri_get_last_report(param, __global_response__)
         elif cmd == "043":
             # TopUpDKI
             raise Exception("Deprecated, use 051 and 052")
@@ -111,12 +118,12 @@ def send_command(cmd, param):
             prepaid_bca.update_bca(param, __global_response__)
         elif cmd == "048":
             prepaid_bca.get_card_info_bca(param, __global_response__)
+        elif cmd == "049":
+            prepaid_bri.reversal_bri(param, __global_response__)
         elif cmd == "051":
             prepaid_dki.DKI_RequestTopup(param, __global_response__)
         elif cmd == "052":
             prepaid_dki.DKI_Topup(param, __global_response__)
-        elif cmd == "064":
-            prepaid_bri.reversal_bri(param, __global_response__)
         else:
             raise Exception("Command ["+cmd+"] not included in Service VM Command Sub [QPROX] ")
     except:
@@ -124,10 +131,14 @@ def send_command(cmd, param):
         formatted_lines = trace.splitlines()
         err_message = traceback._cause_message
         LOG.fw("LIB ERROR = ", formatted_lines[-1], True)
-        # print(trace)
+        print(trace)
         __global_response__["Result"] = "EXCP"
         __global_response__["ErrorDesc"] = trace
-    finally:
-        LOG.fw("LIB [{0}]: DONE".format(cmd))
-        return __global_response__
+
+    # LOG.fw("APP Result:", __global_response__)
+        
+    # LOG.debuging("I_send_command[STOP]: ", __global_response__)
+    LOG.fw("LIB [{0}]: DONE".format(cmd))
+
+    return __global_response__
 

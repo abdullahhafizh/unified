@@ -15,7 +15,7 @@ if _Common.LIVE_MODE is True:
     
 if _Common.PTR_MODE is True:
     UPDATE_BALANCE_URL = _Common.UPDATE_BALANCE_URL
-    
+
 TIMEOUT_REQUESTS = 50
 
 #019
@@ -645,10 +645,10 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
 
     if res_str == "0000":
         res_str, saldo, uidsam, data, attr  = prepaid.topup_C2C_km_balance()
-        saldo = saldo.decode("cp437")
-        uidsam = uidsam.decode("cp437")
-        data = data.decode("cp437")
-        attr = attr.decode("cp437")
+        saldo = saldo
+        uidsam = uidsam
+        data = data
+        attr = attr
 
         attr = "0606170759424D79687875"
 
@@ -802,12 +802,11 @@ def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_st
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
         ValueText = r.text
-        LOG.fw(":ConfirmMandiri response = ", ValueText)
+        LOG.fw(":ConfirmMandiri = ", ValueText)
         
         return ValueText, "0000"
     except Exception as ex:
         errorcode = "ConfirmMandiri error: {0}".format(ex)
-        LOG.fw(":ConfirmMandiri Exception = ", errorcode)
         return "1", errorcode
 
 def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, approval_code, amount, card_info, card_uid, mode, sam_data, card_attribute):
@@ -827,12 +826,11 @@ def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, appr
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
         ValueText = r.text
-        LOG.fw(":ReversalMandiri response = ", ValueText)
+        LOG.fw(":ReversalMandiri = ", ValueText)
         
         return ValueText, "0000"
     except Exception as ex:
         errorcode = "ReversalMandiri error: {0}".format(ex)
-        LOG.fw(":ReversalMandiri Exception = ", errorcode)
         return "1", errorcode
 
 #026
@@ -1000,9 +998,9 @@ def mandiri_C2C_setfee(param, __global_response__):
 #031
 def mandiri_C2C_force(param, __global_response__):
     Param = param.split('|')
- 
+
     if len(Param) == 1:
-        C_Flag = Param[0].encode('utf-8')
+        C_Flag = Param[0]
     else:
         LOG.fw("031:Parameter tidak lengkap", param)
         raise Exception("031:Parameter tidak lengkap: "+param)
@@ -1035,3 +1033,56 @@ def mandiri_C2C_force(param, __global_response__):
         LOG.fw("031:Gagal", None, True)
 
     return res_str
+
+def mandiri_get_last_report(param, __global_response__):
+    Param = param.split('|')
+
+    if len(Param) == 1:
+        C_Slot = Param[0].encode('utf-8')
+    else:
+        LOG.fw("041:Parameter tidak lengkap", param)
+        raise Exception("041:Parameter tidak lengkap: "+param)
+
+    LOG.fw("041:Parameter = ", C_Slot)
+
+    res_str, errmsg = mandiri_get_last_report_priv(C_Slot)
+
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["Response"] = errmsg
+        LOG.fw("041:Response = ", errmsg)
+
+        __global_response__["ErrorDesc"] = "Sukses"
+
+        LOG.fw("041:Result = ", res_str)
+        LOG.fw("041:Sukses", None)
+    else:
+        # __global_response__["Response"] = errmsg
+        LOG.fw("041:ErrMsg = ", errmsg, True)
+        
+        __global_response__["ErrorDesc"] = "Gagal"
+
+        LOG.fw("041:Result = ",res_str, True)
+        LOG.fw("041:Gagal", None, True)
+
+    return res_str
+
+def mandiri_get_last_report_priv(C_Slot):
+
+    resultStr = ""
+    msg = ""
+    report_1 = ""
+    report_2 = ""
+
+    try:
+        resultStr, report_1 = prepaid.topup_apdusend(C_Slot, "00C2180000")
+
+        if resultStr == "0000":
+            resultStr, report_2 = prepaid.topup_apdusend(C_Slot, "00C2040000")
+            msg = report_1 + report_2        
+                
+    except Exception as ex:
+        resultStr = "1"
+        msg = "{0}".format(ex)
+    
+    return resultStr, msg

@@ -148,9 +148,9 @@ def DKI_RequestTopup_priv(Denom):
     prepaid.topup_card_disconnect()
 
     ResultStr, BalValue, CardNo, SIGN = prepaid.topup_balance_with_sn()
-    sleep(.5)
+    sleep(1)
     ResultStr, reportPurse, debErrorStr = prepaid.topup_pursedata()
-    sleep(.5)
+    sleep(1)
     ResultStr, reportAPDU = prepaid.topup_apdusend("255", "00A4040008A0000005714E4A43")
 
     if ResultStr == "0000":

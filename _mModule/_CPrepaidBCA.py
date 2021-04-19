@@ -42,8 +42,8 @@ def update_bca(param, __global_response__):
 
     res_str = prepaid.topup_bca_update(C_TID, C_MID)
 
-    if res_str != "0000":
-        prepaid.topup_done()
+    # if res_str != "0000":
+    #     prepaid.topup_done()
 
     __global_response__["Result"] = res_str
     if res_str == "0000":

@@ -5,77 +5,13 @@ import datetime
 import ctypes
 import time
 import sys
-import struct
+import traceback
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidUtils as utils
 from ctypes import *
-from _mModule._CPrepaidDLLModel import *
+from ._CPrepaidDLLModel import *
 from func_timeout import func_set_timeout
-
-"""
-Prepaid.DLL exported function:
-    open_only [DONE]
-    topup_C2C_Correct [DONE]
-    topup_C2C_force [DONE]
-    topup_C2C_getfee [DONE]
-    topup_C2C_init [DONE]
-    topup_C2C_km_balance [DONE]
-    topup_C2C_refill [DONE]
-    topup_C2C_setfee [DONE]
-    topup_apdusend [DONE]
-    topup_auth
-    topup_balance
-    topup_balance_with_sn [DONE]
-    topup_bca_cardinfo
-    topup_bca_lastreport
-    topup_bca_reversal
-    topup_bca_session1
-    topup_bca_session2
-    topup_bca_topup1
-    topup_bca_topup2
-    topup_bca_update
-    topup_bni_married
-    topup_bni_update [DONE]
-    topup_bri_update
-    topup_card_disconnect
-    topup_debit
-    topup_debitnoinit
-    topup_debitnoinit_single
-    topup_done [DONE]
-    topup_generate_online_info
-    topup_generate_settlement
-    topup_get_carddata
-    topup_get_ka_info
-    topup_get_sn
-    topup_get_tokenbri
-    topup_getconfig
-    topup_getreport
-    topup_init [DONE]
-    topup_mime_read
-    topup_mime_write
-    topup_pursedata [DONE]
-    topup_pursedata_multi_sam [DONE]
-    topup_pursedata_sam
-    topup_read_ktme
-    topup_read_mifare
-    topup_read_unsecured
-    topup_refill
-    topup_refill_with_sn
-    topup_singletrip_activation
-    topup_singletrip_debit
-    topup_update_online_info
-    topup_write_mifare
-    topupbni_credit
-    topupbni_credit_multi_sam [DONE]
-    topupbni_init
-    topupbni_init_multi [DONE]
-    topupbni_inject
-    topupbni_km_balance
-    topupbni_km_balance_multi_sam [DONE]
-    topupbni_sam_refill
-    topupbni_sam_refill_multi [DONE]
-    topupbni_validation [DONE]
-"""
+from _mModule import _CPrepaidLib as lib
 
 DLL_LOAD = None
 
@@ -104,23 +40,32 @@ def direct_load_dll():
 #000
 @func_set_timeout(30)
 def open_only(PORT):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $open_only")
+                
+        LOG.fw("--> C_PORT = ",PORT)
 
-        C_PORT = utils.str_to_bytes(PORT)
+        # C_PORT = utils.str_to_bytes(PORT)
 
-        LOG.fw("--> C_PORT = ",C_PORT)
+        # LOG.fw("--> C_PORT = ", C_PORT)
 
-        func = DLL_LOAD.open_only
+        # func = DLL_LOAD.open_only
 
-        res = func(C_PORT)
+        # res = func(C_PORT)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+        
+        res_str, error_msg = lib.open_only(PORT.decode('utf-8'))
+
+        if res_str != "0000":
+            LOG.fw("CMD $open_only ERROR: ", error_msg)
 
     except Exception as ex:
         LOG.fw("CMD $open_only ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+
 
     LOG.fw("<-- CMD RESULT = ",res_str)
 
@@ -129,7 +74,7 @@ def open_only(PORT):
 #001
 @func_set_timeout(30)
 def topup_init(PORT, SAMPIN, Institution, Terminal, _serial, _passd):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $30")
@@ -138,24 +83,25 @@ def topup_init(PORT, SAMPIN, Institution, Terminal, _serial, _passd):
         C_SAMPIN = utils.str_to_bytes(SAMPIN)
         C_Institution = utils.str_to_bytes(Institution)
         C_Terminal = utils.str_to_bytes(Terminal)
-        serial = utils.str_to_bytes(_serial)
-        passd = utils.str_to_bytes(_passd)
+        # serial = utils.str_to_bytes(_serial)
+        # passd = utils.str_to_bytes(_passd)
 
         LOG.fw("--> C_PORT = ",C_PORT)
         LOG.fw("--> C_SAMPIN = ",C_SAMPIN)
         LOG.fw("--> C_Institution = ",C_Institution)
         LOG.fw("--> C_Terminal = ",C_Terminal)
-        LOG.fw("--> serial = ",serial)
-        LOG.fw("--> passd = ",passd)
+        # LOG.fw("--> serial = ",serial)
+        # LOG.fw("--> passd = ",passd)
 
-        func = DLL_LOAD.topup_init
+        # func = DLL_LOAD.topup_init
 
-        res = func(C_PORT, C_SAMPIN, C_Institution, C_Terminal, serial, passd)
+        # res = func(C_PORT, C_SAMPIN, C_Institution, C_Terminal, serial, passd)
 
-        res_str = utils.to_4digit(res)
+        res_str = lib.topup_init(C_PORT, C_SAMPIN, C_Institution, C_Terminal)
 
     except Exception as ex:
         LOG.fw("CMD $30 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- CMD RESULT = ",res_str)
 
@@ -205,6 +151,7 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
 
     except Exception as ex:
         LOG.fw("CMD $$34 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- NIKKL = " , NIKKL)
     LOG.fw("<-- CMD RESULT = ",res_str)
@@ -214,7 +161,7 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
 #003-1 / 012-3
 @func_set_timeout(30)
 def topup_balance_with_sn():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     balance = ""
     card_number = ""
@@ -223,48 +170,53 @@ def topup_balance_with_sn():
     try:
         LOG.fw("--> CMD READER = $EF")
 
-        balanceValue = c_int64(0)
-        structSN = ResponSN()
-        signValue = c_int64()
+        # balanceValue = c_int64(0)
+        # structSN = ResponSN()
+        # signValue = c_int64()
 
-        p_balanceValue = pointer(balanceValue)
-        p_structSN = pointer(structSN)
-        p_signValue = pointer(signValue)
+        # p_balanceValue = pointer(balanceValue)
+        # p_structSN = pointer(structSN)
+        # p_signValue = pointer(signValue)
 
-        func = DLL_LOAD.topup_balance_with_sn
-        res = func(p_balanceValue, p_structSN, p_signValue)
-        res_str = utils.to_4digit(res)
+        # func = DLL_LOAD.topup_balance_with_sn
+        # res = func(p_balanceValue, p_structSN, p_signValue)
+        # res_str = utils.to_4digit(res)
 
-        balance = str(balanceValue.value)
-        card_number = structSN.repSN.decode("cp437")
-        sign = str(signValue.value)
+        # balance = str(balanceValue.value)
+        # card_number = structSN.repSN.decode("cp437")
+        # sign = str(signValue.value)
+
+        res_str, balance, card_number, sign = lib.topup_balance_with_sn()
         
     except Exception as ex:
         LOG.fw("CMD $EF ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- balance = " , balance)
     LOG.fw("<-- card_number = " , card_number)
     LOG.fw("<-- sign = " , sign)
     LOG.fw("<-- CMD RESULT = ",res_str)
     
-    return res_str, balance, card_number, sign
+    return res_str, balance, card_number, str(sign)
 
 #003-2
 @func_set_timeout(30)
 def topupbni_validation(_timeout):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $67")
         timeout = utils.str_to_bytes(_timeout)
         LOG.fw("--> timeout = " , timeout)
 
-        func = DLL_LOAD.topupbni_validation
-        res = func(timeout)
+        # func = DLL_LOAD.topupbni_validation
+        # res = func(timeout)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+        res_str = lib.topupbni_validation(timeout)
     except Exception as ex:
         LOG.fw("CMD $67 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)
 
@@ -273,7 +225,7 @@ def topupbni_validation(_timeout):
 #008
 @func_set_timeout(30)
 def topup_debit(Denom, _date_now, _timeout):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     debErrorStr  = ""
     balance = ""
@@ -281,7 +233,7 @@ def topup_debit(Denom, _date_now, _timeout):
     typebank = "0"
 
     try:
-        LOG.fw("--> CMD READER = $topup_debit")
+        LOG.fw("--> CMD READER = $32")
         # LOG.tracing("DLL: ", "topup_debit")
         C_Denom = utils.str_to_bytes(Denom)
         date_now = utils.str_to_bytes(_date_now)
@@ -291,18 +243,21 @@ def topup_debit(Denom, _date_now, _timeout):
         LOG.fw("--> date_now = " , date_now)
         LOG.fw("--> timeout = " , timeout)
 
-        structDebit = ResponDebit()
-        p_structDebit = pointer(structDebit)
+        # structDebit = ResponDebit()
+        # p_structDebit = pointer(structDebit)
 
-        func = DLL_LOAD.topup_debit
-        res = func(C_Denom, date_now, timeout, p_structDebit)
-        res_str = utils.to_4digit(res)
+        # func = DLL_LOAD.topup_debit
+        # res = func(C_Denom, date_now, timeout, p_structDebit)
+        # res_str = utils.to_4digit(res)
 
-        balance = str(structDebit.Balance)
-        report = structDebit.rep.decode("cp437")
-        debErrorStr = structDebit.c_error.decode("cp437")
+        # balance = str(structDebit.Balance)
+        # report = structDebit.rep.decode("cp437")
+        # debErrorStr = structDebit.c_error.decode("cp437")
 
-        if res != 0:
+        res_str, balance, report = lib.topup_debit(C_Denom, date_now, timeout)
+        debErrorStr = res_str
+
+        if res_str != "0000":
             typebank = "0"
         else :
             if len(report) <= 99 | len(report.split('q')) > 1:
@@ -312,9 +267,11 @@ def topup_debit(Denom, _date_now, _timeout):
                 typebank = "2"
 
     except Exception as ex:
-        LOG.fw("CMD $topup_debit ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $32 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- report = ", report)
+    LOG.fw("<-- balance = ", balance)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
     LOG.fw("<--  = ", )
     LOG.fw("typebank = ", typebank)
@@ -326,41 +283,46 @@ def topup_debit(Denom, _date_now, _timeout):
 #009
 @func_set_timeout(30)
 def topup_balance():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     balance = "0"
     try:
-        LOG.fw("--> CMD READER = $topup_balance")
+        LOG.fw("--> CMD READER = $31")
 
-        balanceValue = c_int64()
+        # balanceValue = c_int64()
 
-        p_balanceValue = pointer(balanceValue)
+        # p_balanceValue = pointer(balanceValue)
 
-        func = DLL_LOAD.topup_balance
-        res = func(p_balanceValue)
-        res_str = utils.to_4digit(res)
-        balance = str(balanceValue.value)
+        # func = DLL_LOAD.topup_balance
+        # res = func(p_balanceValue)
+        # res_str = utils.to_4digit(res)
+        # balance = str(balanceValue.value)
+
+        res_str, balance = lib.topup_balance()
 
     except Exception as ex:
-        LOG.fw("CMD $topup_balance ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $31 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)
     
-    return res_str, balance
+    return res_str, str(balance)
 
 #010
 @func_set_timeout(30)
 def topup_done():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         # LOG.tracing("DLL: ", "topup_done")
         LOG.fw("--> CMD READER = $topup_done")
-        func = DLL_LOAD.topup_done
-        res = func()
-        res_str = utils.to_4digit(res)
+        # func = DLL_LOAD.topup_done
+        # res = func()
+        # res_str = utils.to_4digit(res)
+        res_str = lib.topup_done()
     except Exception as ex:
         LOG.fw("CMD $topup_done ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
     
     LOG.fw("<-- CMD RESULT = ",res_str)
     
@@ -369,7 +331,7 @@ def topup_done():
 #011
 @func_set_timeout(30)
 def topup_bni_update(Terminal):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         # LOG.tracing("DLL: ", "topup_bni_update")
@@ -377,13 +339,15 @@ def topup_bni_update(Terminal):
         C_Terminal = utils.str_to_bytes(Terminal)
         LOG.fw("--> C_Terminal = " , C_Terminal)
 
-        func = DLL_LOAD.topup_bni_update
+        # func = DLL_LOAD.topup_bni_update
 
-        res = func(C_Terminal)
+        # res = func(C_Terminal)
         
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+        res_str = lib.topup_bni_update(C_Terminal)        
     except Exception as ex:
         LOG.fw("CMD $17 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
     
     LOG.fw("<-- CMD RESULT = ",res_str)
 
@@ -392,7 +356,7 @@ def topup_bni_update(Terminal):
 #012-1
 @func_set_timeout(30)
 def topup_pursedata_multi_sam(_slot):
-    global DLL_LOAD
+    # global DLL_LOAD
     # LOG.tracing("DLL: ", "topup_pursedata_multi_sam")
     res_str = ""
     response = ""
@@ -401,18 +365,21 @@ def topup_pursedata_multi_sam(_slot):
         slot = utils.str_to_bytes(_slot)
         LOG.fw("--> slot = " , slot)
 
-        structPurse = ResponPurseData()
-        p_structPurse = pointer(structPurse)
+        # structPurse = ResponPurseData()
+        # p_structPurse = pointer(structPurse)
 
-        func = DLL_LOAD.topup_pursedata_multi_sam
+        # func = DLL_LOAD.topup_pursedata_multi_sam
 
-        res = func(slot, p_structPurse)
-        res_str = utils.to_4digit(res)
+        # res = func(slot, p_structPurse)
+        # res_str = utils.to_4digit(res)
 
-        response = structPurse.rep.decode("cp437")
+        # response = structPurse.rep.decode("cp437")
+
+        res_str, response = lib.topup_pursedata_multi_sam(slot)
 
     except Exception as ex:
         LOG.fw("CMD $76 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
     
     LOG.fw("<-- response = " , response)
     LOG.fw("<-- CMD RESULT = ",res_str)
@@ -422,7 +389,7 @@ def topup_pursedata_multi_sam(_slot):
 #012-2
 @func_set_timeout(30)
 def topupbni_km_balance_multi_sam(_slot):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     rep_saldo = ""
     saldo = 0
@@ -433,19 +400,23 @@ def topupbni_km_balance_multi_sam(_slot):
         slot = utils.str_to_bytes(_slot)
         LOG.fw("--> slot = " , slot)
 
-        structSaldo = ResponSamSaldo()
-        p_structSaldo = pointer(structSaldo)
+        # structSaldo = ResponSamSaldo()
+        # p_structSaldo = pointer(structSaldo)
 
-        func = DLL_LOAD.topupbni_km_balance_multi_sam
+        # func = DLL_LOAD.topupbni_km_balance_multi_sam
 
-        res = func(slot, p_structSaldo)
-        res_str = utils.to_4digit(res)
-        rep_saldo = structSaldo.repsaldo.decode("cp437")
+        # res = func(slot, p_structSaldo)
+        # res_str = utils.to_4digit(res)
+        # rep_saldo = structSaldo.repsaldo.decode("cp437")
+
+        res_str, rep_saldo = lib.topupbni_km_balance_multi_sam(slot)
+
         saldo = rep_saldo[0:10]
         maxSaldo = rep_saldo[-10:]
                 
     except Exception as ex:
         LOG.fw("CMD $74 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- rep_saldo = " , rep_saldo)
     LOG.fw("saldo = " , saldo)
@@ -457,7 +428,7 @@ def topupbni_km_balance_multi_sam(_slot):
 #012-4
 @func_set_timeout(30)
 def topupbni_init_multi(_slot, _terminal):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
 
@@ -469,13 +440,16 @@ def topupbni_init_multi(_slot, _terminal):
         LOG.fw("--> slot = " , slot)
         LOG.fw("--> terminal = " , terminal)
 
-        func = DLL_LOAD.topupbni_init_multi
+        # func = DLL_LOAD.topupbni_init_multi
 
-        res = func(slot, terminal)
+        # res = func(slot, terminal)
         
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+        res_str = lib.topupbni_init_multi(slot,terminal)
+        
     except Exception as ex:
         LOG.fw("CMD $70 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
@@ -483,7 +457,7 @@ def topupbni_init_multi(_slot, _terminal):
 #013-1
 @func_set_timeout(30)
 def topupbni_credit_multi_sam(_slot, _value, _timeOut):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -501,26 +475,27 @@ def topupbni_credit_multi_sam(_slot, _value, _timeOut):
         LOG.fw("--> value = " , value)
         LOG.fw("--> timeOut = " , timeOut)
 
-        structTopUp = ResponTopUpBNI()
-        p_structTopUp = pointer(structTopUp)
+        # structTopUp = ResponTopUpBNI()
+        # p_structTopUp = pointer(structTopUp)
 
-        func = DLL_LOAD.topupbni_credit_multi_sam
+        # func = DLL_LOAD.topupbni_credit_multi_sam
 
-        res = func(slot, value, timeOut, p_structTopUp)
+        # res = func(slot, value, timeOut, p_structTopUp)
 
-        reportSAM = structTopUp.rep.decode("cp437")
-        debErrorStr = structTopUp.c_error.decode("cp437")
+        # reportSAM = structTopUp.rep.decode("cp437")
+        # debErrorStr = structTopUp.c_error.decode("cp437")
 
-        if res == 0 :
+        res_str, reportSAM = lib.topupbni_credit_multi_sam(slot,value,timeOut)
+        debErrorStr = res_str
+        
+        if res_str == "0000" :
             card_number = reportSAM[0:16]        
 
-        res_str = utils.to_4digit(res)
-
-        reportSAM = structTopUp.rep.decode("cp437")
-        debErrorStr = structTopUp.c_error.decode("cp437")
+        # res_str = utils.to_4digit(res)
         
     except Exception as ex:
         LOG.fw("CMD $71 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
@@ -533,7 +508,7 @@ def topupbni_credit_multi_sam(_slot, _value, _timeOut):
 #018
 @func_set_timeout(30)
 def topupbni_sam_refill_multi(_slot, _terminal):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -547,20 +522,24 @@ def topupbni_sam_refill_multi(_slot, _terminal):
         LOG.fw("--> slot = " , slot)
         LOG.fw("--> terminal = " , terminal)
 
-        structTopUp = ResponTopUpBNI()
-        p_structTopUp = pointer(structTopUp)
+        # structTopUp = ResponTopUpBNI()
+        # p_structTopUp = pointer(structTopUp)
 
-        func = DLL_LOAD.topupbni_sam_refill_multi
+        # func = DLL_LOAD.topupbni_sam_refill_multi
 
-        res = func(slot, terminal, p_structTopUp)
+        # res = func(slot, terminal, p_structTopUp)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
 
-        reportSAM = structTopUp.rep.decode("cp437")
-        debErrorStr = structTopUp.c_error.decode("cp437")
+        # reportSAM = structTopUp.rep.decode("cp437")
+        # debErrorStr = structTopUp.c_error.decode("cp437")
+
+        res_str, reportSAM = lib.topupbni_sam_refill_multi(slot,terminal)
+        debErrorStr = res_str
         
     except Exception as ex:
         LOG.fw("CMD $72 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
@@ -572,26 +551,30 @@ def topupbni_sam_refill_multi(_slot, _terminal):
 #020
 @func_set_timeout(30)
 def topup_pursedata():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     reportPurse=""
     debErrorStr= ""
     try:
         LOG.fw("--> CMD READER = $65")
 
-        structPurse = ResponPurseData()
-        p_structPurse = pointer(structPurse)
+        # structPurse = ResponPurseData()
+        # p_structPurse = pointer(structPurse)
 
-        func = DLL_LOAD.topup_pursedata
+        # func = DLL_LOAD.topup_pursedata
 
-        res = func(p_structPurse)
-        res_str = utils.to_4digit(res)
+        # res = func(p_structPurse)
+        # res_str = utils.to_4digit(res)
 
-        reportPurse = structPurse.rep.decode("cp437")
-        debErrorStr = structPurse.c_error.decode("cp437")
+        # reportPurse = structPurse.rep.decode("cp437")
+        # debErrorStr = structPurse.c_error.decode("cp437")
+
+        res_str, reportPurse = lib.topup_pursedata()
+        debErrorStr = res_str
 
     except Exception as ex:
         LOG.fw("CMD $65 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- reportPurse = " , reportPurse)
     LOG.fw("<-- debErrorStr = " , debErrorStr)
@@ -601,7 +584,7 @@ def topup_pursedata():
 #022
 @func_set_timeout(30)
 def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
-    global DLL_LOAD
+    # global DLL_LOAD
     typebank = ""
     balance = 0
     report = ""
@@ -621,19 +604,22 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
         LOG.fw("--> date_now = " , date_now)
         LOG.fw("--> timeout = " , timeout)
 
-        structDebit = ResponDebitSingle()
-        p_structDebit = pointer(structDebit)
+        # structDebit = ResponDebitSingle()
+        # p_structDebit = pointer(structDebit)
 
-        func = DLL_LOAD.topup_debitnoinit_single
-        res = func(C_TID, date_now, timeout, C_Denom, p_structDebit)
-        res_str = utils.to_4digit(res)
+        # func = DLL_LOAD.topup_debitnoinit_single
+        # res = func(C_TID, date_now, timeout, C_Denom, p_structDebit)
+        # res_str = utils.to_4digit(res)
 
-        report = structDebit.rep.decode("cp437")
-        debErrorStr = structDebit.c_error.decode("cp437")
+        # report = structDebit.rep.decode("cp437")
+        # debErrorStr = structDebit.c_error.decode("cp437")
+
+        res_str, report = lib.topup_debitnoinit_single(C_TID, date_now, timeout, C_Denom)
+        debErrorStr = res_str
         
         report = report.split('q')[0]
 
-        if res != 0:
+        if res_str != "0000":
             typebank = "0"
         else :
             typebank = report[0:1]
@@ -654,6 +640,7 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
 
     except Exception as ex:
         LOG.fw("CMD $topup_debitnoinit_single ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("typebank = " , typebank)
     LOG.fw("balance = " , balance)
@@ -666,7 +653,7 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
 #026
 @func_set_timeout(30)
 def topup_C2C_refill(Value):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -676,20 +663,24 @@ def topup_C2C_refill(Value):
         C_Value = utils.str_to_bytes(Value)
         LOG.fw("--> C_Value = " , C_Value)
 
-        structTopUp = ResponTopUpC2C()
-        p_structTopUp = pointer(structTopUp)
+        # structTopUp = ResponTopUpC2C()
+        # p_structTopUp = pointer(structTopUp)
 
-        func = DLL_LOAD.topup_C2C_refill
+        # func = DLL_LOAD.topup_C2C_refill
 
-        res = func(C_Value, p_structTopUp)
+        # res = func(C_Value, p_structTopUp)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
 
-        reportSAM = structTopUp.rep.decode("cp437")
-        debErrorStr = structTopUp.c_error.decode("cp437")
+        # reportSAM = structTopUp.rep.decode("cp437")
+        # debErrorStr = structTopUp.c_error.decode("cp437")
+
+        res_str, reportSAM = lib.topup_C2C_refill(Value)
+        debErrorStr = res_str
         
     except Exception as ex:
         LOG.fw("CMD $81 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
@@ -701,7 +692,7 @@ def topup_C2C_refill(Value):
 #027
 @func_set_timeout(30)
 def topup_C2C_init(Terminal, MAC, Slot):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         # LOG.tracing("DLL: ", "topup_C2C_init")
@@ -715,14 +706,17 @@ def topup_C2C_init(Terminal, MAC, Slot):
         LOG.fw("--> C_MAC = ", C_MAC)
         LOG.fw("--> C_Slot = ", C_Slot)
 
-        func = DLL_LOAD.topup_C2C_init
+        # func = DLL_LOAD.topup_C2C_init
 
-        res = func(C_Terminal, C_MAC, C_Slot)
+        # res = func(C_Terminal, C_MAC, C_Slot)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+
+        res_str = lib.topup_C2C_init(C_Terminal, C_MAC, C_Slot)
 
     except Exception as ex:
         LOG.fw("CMD $80 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
@@ -730,26 +724,30 @@ def topup_C2C_init(Terminal, MAC, Slot):
 #028
 @func_set_timeout(30)
 def topup_C2C_Correct():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
     try:
         LOG.fw("--> CMD READER = $82")
 
-        structReport = ResponTopUpC2C()
-        p_structReport = pointer(structReport)
+        # structReport = ResponTopUpC2C()
+        # p_structReport = pointer(structReport)
 
-        func = DLL_LOAD.topup_C2C_Correct
+        # func = DLL_LOAD.topup_C2C_Correct
 
-        res = func(p_structReport)
-        res_str = utils.to_4digit(res)
+        # res = func(p_structReport)
+        # res_str = utils.to_4digit(res)
 
-        reportSAM = structReport.rep.decode("cp437")
-        debErrorStr = structReport.c_error.decode("cp437")
+        # reportSAM = structReport.rep.decode("cp437")
+        # debErrorStr = structReport.c_error.decode("cp437")
+
+        res_str, reportSAM = lib.topup_C2C_Correct()
+        debErrorStr = res_str
         
     except Exception as ex:
         LOG.fw("CMD $82 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
@@ -761,7 +759,7 @@ def topup_C2C_Correct():
 #029
 @func_set_timeout(30)
 def topup_C2C_getfee(Flag):
-    global DLL_LOAD
+    # global DLL_LOAD
     # LOG.tracing("DLL: ", "topup_C2C_getfee")
     res_str = ""
     reportSAM = ""
@@ -774,20 +772,24 @@ def topup_C2C_getfee(Flag):
 
         LOG.fw("--> C_Flag = ", C_Flag)
 
-        structReport = ResponTopUpC2C()
-        p_structReport = pointer(structReport)
+        # structReport = ResponTopUpC2C()
+        # p_structReport = pointer(structReport)
 
-        func = DLL_LOAD.topup_C2C_getfee
+        # func = DLL_LOAD.topup_C2C_getfee
 
-        res = func(C_Flag, p_structReport)
+        # res = func(C_Flag, p_structReport)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
 
-        reportSAM = structReport.rep.decode("cp437")
-        debErrorStr = structReport.c_error.decode("cp437")
+        # reportSAM = structReport.rep.decode("cp437")
+        # debErrorStr = structReport.c_error.decode("cp437")
+
+        res_str, reportSAM = lib.topup_C2C_getfee(C_Flag)
+        debErrorStr = res_str
         
     except Exception as ex:
         LOG.fw("CMD $85 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
@@ -799,7 +801,7 @@ def topup_C2C_getfee(Flag):
 #030
 @func_set_timeout(30)
 def topup_C2C_setfee(Flag, Response):
-    global DLL_LOAD
+    # global DLL_LOAD
     
     res_str = ""
     
@@ -811,13 +813,16 @@ def topup_C2C_setfee(Flag, Response):
         LOG.fw("--> C_Flag = ", C_Flag)
         LOG.fw("--> C_Response = ", C_Response)
 
-        func = DLL_LOAD.topup_C2C_setfee
+        # func = DLL_LOAD.topup_C2C_setfee
 
-        res = func(C_Flag, C_Response)
+        # res = func(C_Flag, C_Response)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+        res_str = lib.topup_C2C_setfee(C_Flag, C_Response)
+
     except Exception as ex:
         LOG.fw("CMD $86 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
     
     LOG.fw("<-- CMD RESULT = ",res_str)
 
@@ -826,29 +831,33 @@ def topup_C2C_setfee(Flag, Response):
 #031
 @func_set_timeout(30)
 def topup_C2C_force(Flag):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
     try:
         LOG.fw("--> CMD READER = $84")
         C_Flag = utils.str_to_bytes(Flag)
-        C_Flag = c_char(C_Flag)
+        # C_Flag = c_char(C_Flag)
         LOG.fw("--> C_Flag = ", C_Flag)
         
-        structReport = ResponTopUpC2C()
-        p_structReport = pointer(structReport)
+        # structReport = ResponTopUpC2C()
+        # p_structReport = pointer(structReport)
 
-        func = DLL_LOAD.topup_C2C_force
+        # func = DLL_LOAD.topup_C2C_force
 
-        res = func(C_Flag, p_structReport)
-        res_str = utils.to_4digit(res)
+        # res = func(C_Flag, p_structReport)
+        # res_str = utils.to_4digit(res)
 
-        reportSAM = structReport.rep.decode("cp437")
-        debErrorStr = structReport.c_error.decode("cp437")
+        # reportSAM = structReport.rep.decode("cp437")
+        # debErrorStr = structReport.c_error.decode("cp437")
+
+        res_str, reportSAM = lib.topup_C2C_force(C_Flag)
+        debErrorStr = res_str
         
     except Exception as ex:
         LOG.fw("CMD $84 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
@@ -860,7 +869,7 @@ def topup_C2C_force(Flag):
 #033
 @func_set_timeout(30)
 def topup_C2C_km_balance():
-    global DLL_LOAD
+    # global DLL_LOAD
     # LOG.tracing("DLL: ", "topup_C2C_km_balance")\
     res_str = ""
     repsaldo = ""
@@ -870,28 +879,31 @@ def topup_C2C_km_balance():
     try:        
         LOG.fw("--> CMD READER = $83")
 
-        structSaldo = ResponSamSaldo()
-        structUID = ResponUID()
-        structData = ResponCardData()
-        structAttr = ResponCardAttr()
+        # structSaldo = ResponSamSaldo()
+        # structUID = ResponUID()
+        # structData = ResponCardData()
+        # structAttr = ResponCardAttr()
 
-        p_structSaldo = pointer(structSaldo)
-        p_structUID = pointer(structUID)
-        p_structData = pointer(structData)
-        p_structAttr = pointer(structAttr)
+        # p_structSaldo = pointer(structSaldo)
+        # p_structUID = pointer(structUID)
+        # p_structData = pointer(structData)
+        # p_structAttr = pointer(structAttr)
 
-        func = DLL_LOAD.topup_C2C_km_balance
+        # func = DLL_LOAD.topup_C2C_km_balance
 
-        res = func(p_structSaldo, p_structUID, p_structData, p_structAttr)
-        res_str = utils.to_4digit(res)
+        # res = func(p_structSaldo, p_structUID, p_structData, p_structAttr)
+        # res_str = utils.to_4digit(res)
 
-        repsaldo = structSaldo.repsaldo
-        repUID = structUID.repUID
-        repData = structData.repData
-        repAttr = structAttr.repAttr
+        # repsaldo = structSaldo.repsaldo
+        # repUID = structUID.repUID
+        # repData = structData.repData
+        # repAttr = structAttr.repAttr
+
+        res_str, repsaldo, repUID, repData, repAttr = lib.topup_C2C_km_balance()
 
     except Exception as ex:
         LOG.fw("CMD $83 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- repsaldo = ", repsaldo)
     LOG.fw("<-- repUID = ", repUID)
@@ -905,7 +917,7 @@ def topup_C2C_km_balance():
 #034, #016
 @func_set_timeout(30)
 def topup_apdusend(Slot, APDU):
-    global DLL_LOAD
+    # global DLL_LOAD
     RAPDU = ""
     res_str = ""
     # C_Slot = b"\xFF"
@@ -921,23 +933,26 @@ def topup_apdusend(Slot, APDU):
         LOG.fw("--> C_Slot = ", C_Slot)
         LOG.fw("--> C_APDU = ", C_APDU)
 
-        structAPDU = ResponAPDU()
+        # structAPDU = ResponAPDU()
 
-        p_structAPDU = pointer(structAPDU)
+        # p_structAPDU = pointer(structAPDU)
 
-        func = DLL_LOAD.topup_apdusend
+        # func = DLL_LOAD.topup_apdusend
 
-        res = func(C_Slot, C_APDU, p_structAPDU)
+        # res = func(C_Slot, C_APDU, p_structAPDU)
         
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
 
-        RAPDU = structAPDU.repcek.decode("cp437")
+        # RAPDU = structAPDU.repcek.decode("cp437")
+        res_str, RAPDU = lib.topup_apdusend(C_Slot, C_APDU)
+
         LOG.fw("<-- RAPDU = ", RAPDU)
         RAPDU = utils.only_alpanum(RAPDU)
         LOG.fw("RAPDU = ", RAPDU)
 
     except Exception as ex:
         LOG.fw("CMD $B0 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str, RAPDU
@@ -945,7 +960,7 @@ def topup_apdusend(Slot, APDU):
 #046
 @func_set_timeout(30)
 def topup_bca_update(TID, MID):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     # LOG.tracing("DLL: ", "topup_bca_update")
     try:
@@ -958,13 +973,15 @@ def topup_bca_update(TID, MID):
         LOG.fw("--> C_TID = ", C_TID)
         LOG.fw("--> C_MID = ", C_MID)
 
-        func = DLL_LOAD.topup_bca_update
-        res = func(C_TID, C_MID)
+        # func = DLL_LOAD.topup_bca_update
+        # res = func(C_TID, C_MID)
         
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+        res_str = lib.topup_bca_update(C_TID,C_MID)
         
     except Exception as ex:
         LOG.fw("CMD $19 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)        
 
@@ -973,7 +990,7 @@ def topup_bca_update(TID, MID):
 #---
 @func_set_timeout(30)
 def topup_get_sn():
-    global DLL_LOAD
+    # global DLL_LOAD
     UID = ""
     SN = ""
     res_str = ""
@@ -982,23 +999,25 @@ def topup_get_sn():
         # LOG.tracing("DLL: ", "topup_get_sn")
         LOG.fw("--> CMD READER = $F7")
 
-        structUID = ResponUID()
+        # structUID = ResponUID()
 
-        p_structUID = pointer(structUID)
+        # p_structUID = pointer(structUID)
 
-        structSN = ResponSN()
+        # structSN = ResponSN()
 
-        p_structSN = pointer(structSN)
+        # p_structSN = pointer(structSN)
 
-        func = DLL_LOAD.topup_get_sn
+        # func = DLL_LOAD.topup_get_sn
 
-        res = func(p_structUID, p_structSN)
-        res_str = utils.to_4digit(res)
+        # res = func(p_structUID, p_structSN)
+        # res_str = utils.to_4digit(res)
 
-        UID = structUID.repUID.decode("cp437")
-        SN = structSN.repSN.decode("cp437")
+        # UID = structUID.repUID.decode("cp437")
+        # SN = structSN.repSN.decode("cp437")
+        res_str, UID, SN = lib.topup_get_sn()
     except Exception as ex:
         LOG.fw("CMD $F7 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
     
     LOG.fw("<-- UID = ", UID)
     LOG.fw("<-- SN = ", SN)
@@ -1011,38 +1030,41 @@ def topup_get_sn():
 #---
 @func_set_timeout(30)
 def topup_bca_cardinfo(ATD):
-    global DLL_LOAD
+    # global DLL_LOAD
     report = ""
-    res = 0
+    res_str = ""
 
     try:        
-        LOG.fw("--> CMD READER = $topup_bca_cardinfo")
+        LOG.fw("--> CMD READER = $97")
         
         C_ATD = utils.str_to_bytes(ATD)
         LOG.fw("--> ATD = ", C_ATD)
 
-        structReport = ResponBCATopup1()
+        # structReport = ResponBCATopup1()
 
-        p_structReport = pointer(structReport)
+        # p_structReport = pointer(structReport)
 
-        func = DLL_LOAD.topup_bca_cardinfo
+        # func = DLL_LOAD.topup_bca_cardinfo
 
-        res = func(C_ATD, p_structReport)
-        res_str = utils.to_4digit(res)
+        # res = func(C_ATD, p_structReport)
+        # res_str = utils.to_4digit(res)
 
-        report = structReport.repDATA.decode("cp437")
+        # report = structReport.repDATA.decode("cp437")
+
+        res_str, report = lib.topup_bca_cardinfo(C_ATD)
 
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_cardinfo ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $97 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- report = ", report)
     LOG.fw("<-- CMD RESULT = ",res_str)
-    return res, report
+    return res_str, report
 
 #---
 @func_set_timeout(30)
 def topup_get_carddata():
-    global DLL_LOAD
+    # global DLL_LOAD
     # LOG.tracing("DLL: ", "topup_get_carddata")
     repUID = ""
     repData = ""
@@ -1052,25 +1074,28 @@ def topup_get_carddata():
     try:
         LOG.fw("--> CMD READER = $F9")
 
-        structUID = ResponUID()
-        structData = ResponCardData()
-        structAttr = ResponCardAttr()
+        # structUID = ResponUID()
+        # structData = ResponCardData()
+        # structAttr = ResponCardAttr()
 
-        p_structUID = pointer(structUID)
-        p_structData = pointer(structData)
-        p_structAttr = pointer(structAttr)
+        # p_structUID = pointer(structUID)
+        # p_structData = pointer(structData)
+        # p_structAttr = pointer(structAttr)
 
-        func = DLL_LOAD.topup_get_carddata
+        # func = DLL_LOAD.topup_get_carddata
 
-        res = func(p_structUID, p_structData, p_structAttr)
-        res_str = utils.to_4digit(res)
+        # res = func(p_structUID, p_structData, p_structAttr)
+        # res_str = utils.to_4digit(res)
 
-        repUID = structUID.repUID.decode("cp437")
-        repData = structData.repData.decode("cp437")
-        repAttr = structAttr.repAttr.decode("cp437")
+        # repUID = structUID.repUID.decode("cp437")
+        # repData = structData.repData.decode("cp437")
+        # repAttr = structAttr.repAttr.decode("cp437")
+
+        res_str, repUID, repData, repAttr = lib.topup_get_carddata()
 
     except Exception as ex:
         LOG.fw("CMD $F9 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- repUID = ", repUID)
     LOG.fw("<-- repData = ", repData)
@@ -1081,31 +1106,34 @@ def topup_get_carddata():
 
 @func_set_timeout(30)
 def topup_card_disconnect():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $FA")
 
-        func = DLL_LOAD.topup_card_disconnect
+        # func = DLL_LOAD.topup_card_disconnect
 
-        res = func()
+        # res = func()
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+
+        res_str = lib.topup_card_disconnect()
 
     except Exception as ex:
         LOG.fw("CMD $FA ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
 @func_set_timeout(30)
 def topup_bca_session1(ATD, datetimes):
-    global DLL_LOAD
+    # global DLL_LOAD
     session = ""
     res_str = ""
     try:
 
-        LOG.fw("--> CMD READER = $topup_bca_session1")
+        LOG.fw("--> CMD READER = $91")
 
         C_ATD = utils.str_to_bytes(ATD)
         C_datetimes = utils.str_to_bytes(datetimes)
@@ -1113,20 +1141,23 @@ def topup_bca_session1(ATD, datetimes):
         LOG.fw("--> ATD = ", C_ATD)
         LOG.fw("--> datetimes = ", C_datetimes)
         
-        structSession = ResponBCASession1()
+        # structSession = ResponBCASession1()
 
-        p_structSession = pointer(structSession)
+        # p_structSession = pointer(structSession)
     
-        func = DLL_LOAD.topup_bca_session1
+        # func = DLL_LOAD.topup_bca_session1
 
-        res = func(C_ATD, C_datetimes, p_structSession)
+        # res = func(C_ATD, C_datetimes, p_structSession)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
 
-        session = structSession.repDATA.decode("cp437")
+        # session = structSession.repDATA.decode("cp437")
+
+        res_str, session = lib.topup_bca_session1(C_ATD, C_datetimes)
 
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_session1 ERROR: ", "{0}".format(ex))        
+        LOG.fw("CMD $91 ERROR: ", "{0}".format(ex))        
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- session = ", session)
     LOG.fw("<-- CMD RESULT = ",res_str)
@@ -1134,34 +1165,38 @@ def topup_bca_session1(ATD, datetimes):
 
 @func_set_timeout(30)
 def topup_bca_session2(session):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     try:        
-        LOG.fw("--> CMD READER = $topup_bca_session2")
+        LOG.fw("--> CMD READER = $92")
 
         C_session = utils.str_to_bytes(session)
 
         LOG.fw("--> session = ", C_session)
         
-        func = DLL_LOAD.topup_bca_session2
+        # func = DLL_LOAD.topup_bca_session2
 
-        res = func(C_session)
+        # res = func(C_session)
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+
+        res_str = lib.topup_bca_session2(session)
+
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_session2 ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $92 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
 @func_set_timeout(30)
 def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     session = ""
     try:
 
-        LOG.fw("--> CMD READER = $topup_bca_topup1")
+        LOG.fw("--> CMD READER = $93")
 
         C_ATD = utils.str_to_bytes(ATD)
         C_accescard = utils.str_to_bytes(accescard)
@@ -1175,18 +1210,21 @@ def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
         LOG.fw("--> datetimes = ", C_datetimes)
         LOG.fw("--> amounthex = ", C_amounthex)
         
-        structTopUp = ResponBCATopup1()
+        # structTopUp = ResponBCATopup1()
 
-        p_structTopUp = pointer(structTopUp)
+        # p_structTopUp = pointer(structTopUp)
     
-        func = DLL_LOAD.topup_bca_topup1
+        # func = DLL_LOAD.topup_bca_topup1
 
-        res = func(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex, p_structTopUp)
-        res_str = utils.to_4digit(res)
-        session = structTopUp.repDATA.decode("cp437")
+        # res = func(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex, p_structTopUp)
+        # res_str = utils.to_4digit(res)
+        # session = structTopUp.repDATA.decode("cp437")
+
+        res_str, session = lib.topup_bca_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex)
 
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_topup1 ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $93 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- session = ", session)
     LOG.fw("<-- CMD RESULT = ",res_str)
@@ -1195,14 +1233,14 @@ def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
 
 @func_set_timeout(30)
 def topup_bca_topup2(confirm1, confirm2):
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
-    balance = ""
-    response= ""
+    balance = "0"
+    respon = ""
     debErrorStr = ""
     try:
 
-        LOG.fw("--> CMD READER = $topup_bca_topup2")
+        LOG.fw("--> CMD READER = $94")
         
         C_confirm1 = utils.str_to_bytes(confirm1)
         C_confirm2 = utils.str_to_bytes(confirm2)
@@ -1210,51 +1248,56 @@ def topup_bca_topup2(confirm1, confirm2):
         LOG.fw("--> confirm1 = ", C_confirm1)
         LOG.fw("--> confirm2 = ", C_confirm2)
 
-        structTopUp = ResponBCATopup2()
+        # structTopUp = ResponBCATopup2()
 
-        p_structTopUp = pointer(structTopUp)
+        # p_structTopUp = pointer(structTopUp)
     
-        func = DLL_LOAD.topup_bca_topup2
+        # func = DLL_LOAD.topup_bca_topup2
 
-        res = func(C_confirm1, C_confirm2, p_structTopUp)
+        # res = func(C_confirm1, C_confirm2, p_structTopUp)
 
-        response= structTopUp.rep.decode("cp437")
-        balance = str(structTopUp.Balance)
-        debErrorStr = structTopUp.c_error.decode("cp437")
+        # respon = structTopUp.rep.decode("cp437")
+        # balance = str(structTopUp.Balance)
+        # debErrorStr = structTopUp.c_error.decode("cp437")
 
-        res_str = utils.to_4digit(res)
+        # res_str = utils.to_4digit(res)
+
+        res_str, respon = lib.topup_bca_topup2(C_confirm1, C_confirm2)
 
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_topup2 ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $94 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
-    LOG.fw("<-- response = ", response)
+    LOG.fw("<-- response = ", respon)
     LOG.fw("<-- balance = ", balance)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
 
     LOG.fw("<-- CMD RESULT = ",res_str)
 
-    return res_str, balance, response, debErrorStr
+    return res_str, balance, respon, debErrorStr
 
 @func_set_timeout(30)
 def topup_bca_lastreport():
-    global DLL_LOAD
+    # global DLL_LOAD
     res_str = ""
     session = ""
     try:
-        LOG.fw("--> CMD READER = $topup_bca_lastreport")
+        LOG.fw("--> CMD READER = $96")
         
-        structTopUp = ResponBCATopup1()
+        # structTopUp = ResponBCATopup1()
 
-        p_structTopUp = pointer(structTopUp)
+        # p_structTopUp = pointer(structTopUp)
     
-        func = DLL_LOAD.topup_bca_lastreport
+        # func = DLL_LOAD.topup_bca_lastreport
 
-        res = func(p_structTopUp)
-        res_str = utils.to_4digit(res)
-        session = structTopUp.repDATA.decode("cp437")
+        # res = func(p_structTopUp)
+        # res_str = utils.to_4digit(res)
+        # session = structTopUp.repDATA.decode("cp437")
+        res_str, session = lib.topup_bca_lastreport()
 
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_lastreport ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $96 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- session = ", session)
     LOG.fw("<-- CMD RESULT = ", res_str)
@@ -1263,27 +1306,30 @@ def topup_bca_lastreport():
 
 @func_set_timeout(30)
 def topup_bca_reversal(ATD):
-    global DLL_LOAD
+    # global DLL_LOAD
     session = ""
     res_str = ""
     try:           
-        LOG.fw("--> CMD READER = $topup_bca_reversal")
+        LOG.fw("--> CMD READER = $95")
         
         C_ATD = utils.str_to_bytes(ATD)
 
         LOG.fw("--> ATD = ", C_ATD)
         
-        structReversal = ResponBCAReversal()
+        # structReversal = ResponBCAReversal()
 
-        p_structReversal = pointer(structReversal)    
-        func = DLL_LOAD.topup_bca_reversal
+        # p_structReversal = pointer(structReversal)    
+        # func = DLL_LOAD.topup_bca_reversal
 
-        res = func(C_ATD, p_structReversal)
-        res_str = utils.to_4digit(res)
-        session = structReversal.repDATA.decode("cp437")
+        # res = func(C_ATD, p_structReversal)
+        # res_str = utils.to_4digit(res)
+        # session = structReversal.repDATA.decode("cp437")
+
+        res_str, session = lib.topup_bca_reversal(C_ATD)
 
     except Exception as ex:
-        LOG.fw("CMD $topup_bca_reversal ERROR: ", "{0}".format(ex))
+        LOG.fw("CMD $95 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- session = ", session)
     LOG.fw("<-- CMD RESULT = ", res_str)
@@ -1291,23 +1337,27 @@ def topup_bca_reversal(ATD):
     return res_str, session
 
 def topup_get_tokenbri():
-    global DLL_LOAD
+    # global DLL_LOAD
     CardData = ""
     res_str = ""
     try:           
         LOG.fw("--> CMD READER = $A4")
         
-        structToken = ResponTokenBRI()
+        # structToken = ResponTokenBRI()
 
-        p_structToken = pointer(structToken)    
-        func = DLL_LOAD.topup_get_tokenbri
+        # p_structToken = pointer(structToken)    
+        # func = DLL_LOAD.topup_get_tokenbri
 
-        res = func(p_structToken)
-        res_str = utils.to_4digit(res)
+        # res = func(p_structToken)
+        # res_str = utils.to_4digit(res)
 
-        CardData = structToken.repDATA.decode("cp437")
+        # CardData = structToken.repDATA.decode("cp437")
+
+        res_str, CardData = lib.topup_get_tokenbri()
+
     except Exception as ex:
         LOG.fw("CMD $A4 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
         raise ex
 
     LOG.fw("<-- CardData = ", CardData)

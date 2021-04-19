@@ -1,0 +1,353 @@
+import serial
+import traceback
+
+from . import _CMandiriProq as proq
+
+COMPORT = None
+
+def open_only(port):
+    global COMPORT
+    resultStr = "0000"
+    msg = ""
+
+    try:
+        if COMPORT == None:
+            COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        elif COMPORT.isOpen and COMPORT.name != port:
+            COMPORT.close
+            COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        elif not COMPORT.isOpen:
+            COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        
+    except Exception as ex:
+        resultStr = "FFFF"
+        msg = "{0}".format(ex)
+    
+    return resultStr, msg
+
+def is_serial_valid():
+    global COMPORT
+    if COMPORT == None:
+        return False
+    elif not COMPORT.isOpen:
+        return False
+    elif COMPORT.isOpen:
+        return True
+    else:
+        return False
+
+def topup_auth(C_PORT, C_Slot, C_PinSAM, C_Institution, C_Terminal, C_PinKA, C_PinKL, p_structNIK):
+    #Deprecated
+    return "FFFF"
+
+def topup_init(PORT, SAMPIN, Institution, Terminal):
+    global COMPORT
+    res_str, msg = open_only(PORT)
+    if res_str != "0000":
+        return "FFFE"
+    if not is_serial_valid():
+        return "FFFE"
+
+    res_str = proq.SAM_init(COMPORT, SAMPIN, Institution, Terminal)
+    
+    return res_str.decode("utf-8")
+    
+def topup_balance_with_sn():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", "", "", ""
+    
+    res_str, balance, card_number, sign = proq.GET_BALANCE_WITH_SN(COMPORT)
+
+    return res_str.decode("utf-8"), balance.decode("utf-8"), card_number.decode("utf-8"), sign
+
+def topup_debit(C_Denom, date_now, timeout):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", "", ""
+    
+    res_str, balance, report = proq.DEBIT(COMPORT,date_now,timeout,C_Denom)
+
+    return res_str.decode("utf-8"), balance, report
+
+def topupbni_validation(timeout):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.BNI_TOPUP_VALIDATION(COMPORT, timeout)
+
+    return res_str.decode("utf-8")
+
+def topup_balance():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, balance = proq.GET_BALANCE(COMPORT)
+
+    return res_str.decode("utf-8"), balance.decode("utf-8")
+
+def topup_bni_update(Terminal):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.BNI_TERMINAL_UPDATE(COMPORT, Terminal)
+
+    return res_str.decode("utf-8")
+
+def topup_pursedata_multi_sam(slot):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, response = proq.PURSE_DATA_MULTI_SAM(COMPORT, slot)
+
+    return res_str.decode("utf-8"), response
+
+def topupbni_km_balance_multi_sam(slot):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, balance = proq.BNI_KM_BALANCE_MULTI_SAM(COMPORT, slot)
+
+    return res_str.decode("utf-8"), balance.decode("cp437")
+
+def topupbni_init_multi(slot, terminal):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.BNI_TOPUP_INIT_MULTI(COMPORT, slot, terminal)
+
+    return res_str.decode("utf-8")
+
+def topupbni_credit_multi_sam(slot, value, timeOut):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.BNI_TOPUP_CREDIT_MULTI_SAM(COMPORT, slot, value, timeOut)
+
+    return res_str.decode("utf-8"), report
+
+def topupbni_sam_refill_multi(slot, tid):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.BNI_REFILL_SAM_MULTI(COMPORT, slot, tid)
+
+    return res_str.decode("utf-8"), report
+
+def topup_pursedata():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.PURSE_DATA(COMPORT)
+
+    return res_str.decode("utf-8"), report
+
+def topup_debitnoinit_single(tid, datetime, time_out, value):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.DEBIT_NOINIT_SINGLE(COMPORT, tid, datetime, time_out, value)
+
+    return res_str.decode("utf-8"), report
+
+def topup_C2C_refill(Value):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.TOP_UP_C2C(COMPORT, Value)
+
+    return res_str.decode("utf-8"), report.decode("utf-8")
+
+def topup_C2C_init(tidnew, tidold, C_Slot):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.INIT_TOPUP_C2C(COMPORT, tidnew, tidold, C_Slot)
+
+    return res_str.decode("utf-8")
+
+def topup_C2C_Correct():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.TOPUP_C2C_CORRECTION(COMPORT)
+
+    return res_str.decode("utf-8"), report
+
+def topup_C2C_getfee(C_Flag):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.GET_FEE_C2C(COMPORT, C_Flag)
+
+    return res_str.decode("utf-8"), report.decode("utf-8")
+
+def topup_C2C_setfee(C_Flag, C_Response):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.SET_FEE_C2C(COMPORT, C_Flag, C_Response)
+
+    return res_str.decode("utf-8")
+
+def topup_C2C_force(C_Flag):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.TOPUP_FORCE_C2C(COMPORT, C_Flag)
+
+    return res_str.decode("utf-8"), report.decode("utf-8")
+
+def topup_C2C_km_balance():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", "", "", "", ""
+    
+    res_str, saldo, uid, carddata, cardattr = proq.KM_BALANCE_TOPUP_C2C(COMPORT)
+
+    return res_str.decode("utf-8"), saldo.decode("utf-8"), uid.decode("utf-8"), carddata.decode("utf-8"), cardattr.decode("utf-8")
+
+def topup_apdusend(C_Slot, C_APDU):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.APDU_SEND(COMPORT, C_Slot, C_APDU)
+
+    return res_str.decode("utf-8"), report
+
+def topup_bca_update(C_TID, C_MID):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.BCA_TERMINAL_UPDATE(COMPORT, C_TID, C_MID)
+
+    return res_str.decode("utf-8")
+
+def topup_get_sn():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", "", ""
+    
+    res_str, uid, sn = proq.GET_SN(COMPORT)
+
+    return res_str.decode("utf-8"), uid.decode("utf-8"), sn.decode("utf-8")
+
+def topup_bca_cardinfo(C_ATD):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = proq.BcaCardInfo(COMPORT, C_ATD)
+
+    return res_str.decode("utf-8"), report
+
+def topup_get_carddata():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", "", "", ""
+    
+    res_str, uid, carddata, cardattr = proq.GET_CARDDATA(COMPORT)
+
+    return res_str.decode("utf-8"), uid, carddata, cardattr
+
+def topup_card_disconnect():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.CARD_DISCONNECT(COMPORT)
+
+    if res_str:
+        return "0000"
+    else:
+        return "FFFF"
+
+def topup_bca_session1(atd, datetimes):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, session = proq.BcaSession1(COMPORT, atd, datetimes)
+
+    return res_str.decode("utf-8"), session
+
+def topup_bca_session2(session):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    
+    res_str = proq.BcaSession2(COMPORT, session)
+
+    return res_str.decode("utf-8")
+
+def topup_bca_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, rep = proq.BcaTopup1(COMPORT, C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex)
+
+    return res_str.decode("utf-8"), rep
+
+def topup_bca_topup2(C_confirm1, C_confirm2):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, rep = proq.BcaTopup2(COMPORT, C_confirm1 + C_confirm2 )
+
+    return res_str.decode("utf-8"), rep    
+
+def topup_bca_lastreport():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, rep = proq.BcaLastReport(COMPORT)
+
+    return res_str.decode("utf-8"), rep    
+
+def topup_bca_reversal(ATD):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, rep = proq.BcaReversal(COMPORT, ATD)
+
+    return res_str.decode("utf-8"), rep
+
+def topup_get_tokenbri():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, rep = proq.GET_TOKENBRI(COMPORT)
+
+    return res_str.decode("utf-8"), rep
+
+def topup_done():
+    global COMPORT
+    if not COMPORT.isOpen():
+        COMPORT.close()
+    
+    COMPORT = None
+
+    return "0000"
