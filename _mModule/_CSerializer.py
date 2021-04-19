@@ -5,7 +5,7 @@ from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidProtocol as proto
 from serial import Serial
 
-def SAM_init(Ser, PIN, INSTITUTION, TERMINAL
+def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
 # , PIN_Len, INSTITUTION_Len, TERMINAL_Len
 ):
     tsam = {}
@@ -29,7 +29,6 @@ def SAM_init(Ser, PIN, INSTITUTION, TERMINAL
     result = get_TDefaultResres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
-
 
     return result["code"]
 
@@ -60,6 +59,7 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     LOG.fw("RESPONSE:", result)
 
     return result["code"], result["bal"], result["sn"], result["sign"]
+
 
 def GET_BALANCE(Ser):
     bal = {}
@@ -131,9 +131,11 @@ def EXTRACT_BALANCE_FROM_REPORT_BNI(report):
     balance = report[53:59]
     return int.from_bytes(balance, byteorder='big', signed=False)
 
+
 def EXTRACT_BALANCE_FROM_REPORT(report):
     balance = report[56:64]
     return int.from_bytes(balance, byteorder='big', signed=False)
+
 
 def BNI_TOPUP_VALIDATION(Ser, timeout):
     sam = {}
@@ -162,6 +164,7 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
 
     return result["code"]
 
+
 def BNI_TERMINAL_UPDATE(Ser, terminal):
     sam = {}
     sam["cmd"] = b"\x17"
@@ -186,6 +189,7 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
     LOG.fw("RESPONSE:", result)
 
     return result["code"]
+
 
 def PURSE_DATA_MULTI_SAM(Ser, slot):
     sam = {}
@@ -216,6 +220,7 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
 
     return result["code"], rep
 
+
 def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
     sam = {}
     sam["cmd"] = b"\x74"
@@ -239,6 +244,7 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
     LOG.fw("RESPONSE:", result)
 
     return result["code"], result["bal"]
+
 
 def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
     sam = {}
@@ -264,6 +270,7 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
     LOG.fw("RESPONSE:", result)
 
     return result["code"]
+
 
 def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
     sam = {}
@@ -298,6 +305,7 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
 
     return result["code"], rep
 
+
 def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
     sam = {}
     sam["cmd"] = b"\x72"
@@ -328,6 +336,7 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
 
     return result["code"], rep
 
+
 def PURSE_DATA(Ser):
     sam = {}
     sam["cmd"] = b"\x65"
@@ -355,6 +364,7 @@ def PURSE_DATA(Ser):
         rep = rep + chr(result["rep"][i])
 
     return result["code"], rep
+
 
 def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
     sam = {}
@@ -389,6 +399,7 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
 
     return result["code"], rep
 
+
 def TOP_UP_C2C(Ser, value):
     sam = {}
     sam["cmd"] = b"\x81"
@@ -421,6 +432,7 @@ def TOP_UP_C2C(Ser, value):
 
     return result["code"], result["rep"]
 
+
 def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
     sam = {}
     sam["cmd"] = b"\x80"
@@ -452,6 +464,7 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
 
     return result["code"]
 
+
 def TOPUP_C2C_CORRECTION(Ser):
     sam = {}
     sam["cmd"] = b"\x82"
@@ -480,6 +493,7 @@ def TOPUP_C2C_CORRECTION(Ser):
         rep = rep + chr(result["rep"][i])
 
     return result["code"], rep
+
 
 def GET_FEE_C2C(Ser, Flag):
     sam = {}
@@ -514,6 +528,7 @@ def GET_FEE_C2C(Ser, Flag):
     #     rep = rep + chr(result["rep"][i])
 
     return result["code"], result["rep"]
+
 
 def SET_FEE_C2C(Ser, Flag, respon):
     sam = {}
@@ -551,6 +566,7 @@ def SET_FEE_C2C(Ser, Flag, respon):
     #     rep = rep + chr(result["rep"][i])
 
     return result["code"]
+
 
 def TOPUP_FORCE_C2C(Ser, Flag):
     sam = {}
@@ -613,10 +629,10 @@ def KM_BALANCE_TOPUP_C2C(Ser):
         uid = result["rep"][10:24]
         carddata = result["rep"][24:150]        
         cardatr = result["rep"][150:len(result["rep"])]
-
         return b"0000", saldo, uid, carddata, cardatr
     else:
         return result["code"], b"", b"", b"", b""
+
 
 def APDU_SEND(Ser, slot, info):
     sam = {}
@@ -648,6 +664,7 @@ def APDU_SEND(Ser, slot, info):
         rep = rep + chr(result["rep"][i])
 
     return result["code"], rep
+
 
 def BCA_TERMINAL_UPDATE(Ser, TID, MID):
     sam = {}
@@ -693,6 +710,7 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
 
     return result["code"]
 
+
 def GET_SN(Ser):
     sam = {}
     sam["cmd"] = b"\xF7"
@@ -721,7 +739,8 @@ def GET_SN(Ser):
 
     return result["code"], result["uid"], result["SN"]
 
-def BcaCardInfo(Ser, ATD):
+
+def BCA_CARD_INFO(Ser, ATD):
     sam = {}
     sam["cmd"] = b"\x97"
 
@@ -760,6 +779,7 @@ def BcaCardInfo(Ser, ATD):
         rep = rep + chr(result["rep"][i])
 
     return result["code"], rep
+
 
 def GET_CARDDATA(Ser):
     sam = {}
@@ -801,6 +821,7 @@ def GET_CARDDATA(Ser):
     else:
         return result["code"], "", "", ""
 
+
 def CARD_DISCONNECT(Ser):
     sam = {}
     sam["cmd"] = b"\xFA"
@@ -818,7 +839,8 @@ def CARD_DISCONNECT(Ser):
     
     return True
 
-def BcaSession1(Ser, ATD, datetimes):
+
+def BCA_SESSION_1(Ser, ATD, datetimes):
     sam = {}
     sam["cmd"] = b"\x91"
 
@@ -860,7 +882,8 @@ def BcaSession1(Ser, ATD, datetimes):
 
     return result["code"], rep
 
-def BcaSession2(Ser, session):
+
+def BCA_SESSION_2(Ser, session):
     sam = {}
     sam["cmd"] = b"\x92"
 
@@ -895,7 +918,8 @@ def BcaSession2(Ser, session):
 
     return result["code"]
 
-def BcaTopup1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
+
+def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
     sam = {}
     sam["cmd"] = b"\x93"
 
@@ -973,7 +997,8 @@ def BcaTopup1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     return result["code"], rep
 
-def BcaTopup2(Ser, strConfirm):
+
+def BCA_TOPUP_2(Ser, strConfirm):
     sam = {}
     sam["cmd"] = b"\x94"
 
@@ -1013,7 +1038,8 @@ def BcaTopup2(Ser, strConfirm):
 
     return result["code"], rep
 
-def BcaLastReport(Ser):
+
+def BCA_LAST_REPORT(Ser):
     sam = {}
     sam["cmd"] = b"\x96"
     
@@ -1041,7 +1067,8 @@ def BcaLastReport(Ser):
 
     return result["code"], rep
 
-def BcaReversal(Ser, ATD):
+
+def BCA_REVERSAL(Ser, ATD):
     sam = {}
     sam["cmd"] = b"\x95"
     
@@ -1081,7 +1108,7 @@ def BcaReversal(Ser, ATD):
 
     return result["code"], rep
 
-def GET_TOKENBRI(Ser):
+def GET_TOKEN_BRI(Ser):
     sam = {}
     sam["cmd"] = b"\xA4"
 
@@ -1124,6 +1151,7 @@ def retrieve_rs232_data(Ser=Serial()):
 
     return read_1 + read_2
 
+
 def get_TDefaultRespons(data):
     '''
     TBalResponsws  = packed record
@@ -1148,6 +1176,7 @@ def get_TDefaultRespons(data):
 
     return result
 
+
 def get_TBalanceresws(data):
     '''
     TBalanceresws = packed record
@@ -1161,11 +1190,13 @@ def get_TBalanceresws(data):
     result = {}
     result["cmd"] = data[0]
     result["code"] = data[1:5]
-    result["sign"] = data[5]
+    result["sign"] = chr(int(data[5]))
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
 
     return result
+
+
 def get_TBalanceres(data):
     '''
     TBalanceres = packed record
@@ -1180,6 +1211,7 @@ def get_TBalanceres(data):
     result["bal"] = data[5:15]
 
     return result
+
 
 def get_TBNIKMMULTIBalanceres(data):
     '''
@@ -1196,6 +1228,7 @@ def get_TBNIKMMULTIBalanceres(data):
 
     return result
 
+
 def get_TDefaultResres(data):
     '''
     TSamInitres = packed record
@@ -1208,6 +1241,8 @@ def get_TDefaultResres(data):
     result["code"] = data[1:5]
 
     return result
+
+
 def get_TDefaultReportres(data):
     '''
     Tdebitres = packed record
@@ -1223,6 +1258,7 @@ def get_TDefaultReportres(data):
     result["rep"] = data[5:len(data)]
 
     return result
+
 
 def get_TSerialNumberres(data):
     '''
