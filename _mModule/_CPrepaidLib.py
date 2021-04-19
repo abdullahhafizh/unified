@@ -14,16 +14,16 @@ def open_only(port):
     try:
         if COMPORT is None:
             COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print('COMPORT is None Then OPEN', COMPORT.isOpen())
+            print('open_only: COMPORT is None Then OPEN', COMPORT.isOpen())
         elif COMPORT.isOpen() and COMPORT.name != port:
             COMPORT.close
             COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print('COMPORT is Not OPEN And Port Name Different Then Re-OPEN', COMPORT.isOpen())
+            print('open_only: COMPORT is Not OPEN And Port Name Different Then Re-OPEN', COMPORT.isOpen())
         elif not COMPORT.isOpen():
             COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print('COMPORT is Not Then Re-OPEN', COMPORT.isOpen())
+            print('open_only: COMPORT is Not Then Re-OPEN', COMPORT.isOpen())
         else:
-            print('COMPORT is Already OPEN', COMPORT.isOpen())
+            print('open_only: COMPORT is Already OPEN', COMPORT.isOpen())
     except Exception as ex:
         resultStr = "FFFF"
         msg = "{0}".format(ex)
@@ -33,12 +33,16 @@ def open_only(port):
 def is_serial_valid():
     global COMPORT
     if COMPORT is None:
+        print('is_serial_valid: COMPORT is None')
         return False
     elif not COMPORT.isOpen():
+        print('is_serial_valid: COMPORT is not OPEN')
         return False
     elif COMPORT.isOpen():
+        print('is_serial_valid: COMPORT is OPEN')
         return True
     else:
+        print('is_serial_valid: COMPORT is on unknown state')
         return False
 
 def topup_auth(C_PORT, C_Slot, C_PinSAM, C_Institution, C_Terminal, C_PinKA, C_PinKL, p_structNIK):

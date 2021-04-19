@@ -363,6 +363,7 @@ ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'cancel-payment',
     'do-settlement',
     'ereceipt/create',
+    'topup-dki/reversal',
     ]
 
 ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER = [
