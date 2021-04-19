@@ -49,7 +49,7 @@ def fw(message, fw_object=None,err=False):
     else:
         process_arrow = ""
 
-    if fw_object == None:
+    if fw_object is None:
         message_to_write = time_now + " "+info+" "+ process_arrow + message + "\r\n"
     else:
         pobject = pprint.pformat(fw_object)

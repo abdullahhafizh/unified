@@ -857,7 +857,7 @@ def start_check_online_topup(mode, payload):
 
 def ping_online_topup(mode, payload=None, trigger=True):
     if mode == 'BRI':
-        if payload == None:
+        if payload is None:
             payload = {
                 'card_no': '6013500100006619',
                 'auto_number': '1'

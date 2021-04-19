@@ -12,14 +12,18 @@ def open_only(port):
     msg = ""
 
     try:
-        if COMPORT == None:
+        if COMPORT is None:
             COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-        elif COMPORT.isOpen and COMPORT.name != port:
+            print('COMPORT is None Then OPEN', COMPORT.isOpen())
+        elif COMPORT.isOpen() and COMPORT.name != port:
             COMPORT.close
             COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-        elif not COMPORT.isOpen:
+            print('COMPORT is Not OPEN And Port Name Different Then Re-OPEN', COMPORT.isOpen())
+        elif not COMPORT.isOpen():
             COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-        
+            print('COMPORT is Not Then Re-OPEN', COMPORT.isOpen())
+        else:
+            print('COMPORT is on Unknown State')
     except Exception as ex:
         resultStr = "FFFF"
         msg = "{0}".format(ex)
@@ -28,11 +32,11 @@ def open_only(port):
 
 def is_serial_valid():
     global COMPORT
-    if COMPORT == None:
+    if COMPORT is None:
         return False
-    elif not COMPORT.isOpen:
+    elif not COMPORT.isOpen():
         return False
-    elif COMPORT.isOpen:
+    elif COMPORT.isOpen():
         return True
     else:
         return False
@@ -346,7 +350,7 @@ def topup_get_tokenbri():
 
 def topup_done():
     global COMPORT
-    if not COMPORT.isOpen():
+    if not COMPORT.isOpen()():
         COMPORT.close()
     
     COMPORT = None

@@ -25,7 +25,7 @@ def open_only(param=None, __global_response__=None):
         C_PORT = ""
 
     if C_PORT == "":
-        if COM_PORT == None:
+        if COM_PORT is None:
             raise Exception("No Global Configuration For COM_PORT")
         else:
             C_PORT = COM_PORT
