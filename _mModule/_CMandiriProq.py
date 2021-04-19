@@ -24,7 +24,7 @@ def SAM_init(Ser, PIN, INSTITUTION, TERMINAL
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
@@ -53,7 +53,7 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TBalanceresws(response["data"])
     # print(result)
@@ -81,7 +81,7 @@ def GET_BALANCE(Ser):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TBalanceres(response["data"])
     # print(result)
@@ -109,7 +109,7 @@ def DEBIT(Ser, datetime, time_out, value):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     # print(result)
@@ -156,7 +156,7 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     # print(result)
@@ -182,7 +182,7 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     # print(result)
@@ -207,7 +207,7 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -237,7 +237,7 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TBNIKMMULTIBalanceres(response["data"])
     # print(result)
@@ -262,7 +262,7 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
@@ -291,7 +291,7 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -322,7 +322,7 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -351,7 +351,7 @@ def PURSE_DATA(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -385,7 +385,7 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -418,7 +418,7 @@ def TOP_UP_C2C(Ser, value):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -450,7 +450,7 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
@@ -480,7 +480,7 @@ def TOPUP_C2C_CORRECTION(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -515,7 +515,7 @@ def GET_FEE_C2C(Ser, Flag):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -553,7 +553,7 @@ def SET_FEE_C2C(Ser, Flag, respon):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
@@ -588,7 +588,7 @@ def TOPUP_FORCE_C2C(Ser, Flag):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -618,7 +618,7 @@ def KM_BALANCE_TOPUP_C2C(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -653,7 +653,7 @@ def APDU_SEND(Ser, slot, info):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -703,7 +703,7 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
@@ -727,7 +727,7 @@ def GET_SN(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TSerialNumberres(response["data"])
     #print(result)
@@ -768,7 +768,7 @@ def BcaCardInfo(Ser, ATD):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -797,7 +797,7 @@ def GET_CARDDATA(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -869,7 +869,7 @@ def BcaSession1(Ser, ATD, datetimes):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -910,7 +910,7 @@ def BcaSession2(Ser, session):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
@@ -984,7 +984,7 @@ def BcaTopup1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -1025,7 +1025,7 @@ def BcaTopup2(Ser, strConfirm):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -1053,7 +1053,7 @@ def BcaLastReport(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -1094,7 +1094,7 @@ def BcaReversal(Ser, ATD):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
@@ -1123,7 +1123,7 @@ def GET_TOKENBRI(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECEIVE", response)
+    LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
