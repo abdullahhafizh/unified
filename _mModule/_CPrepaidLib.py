@@ -11,22 +11,22 @@ def open_only(port):
     resultStr = "0000"
     msg = ""
 
-    try:
-        if COMPORT is None:
-            COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print('open_only: COMPORT is None Then OPEN', COMPORT.isOpen())
-        elif COMPORT.isOpen() and COMPORT.name != port:
-            COMPORT.close
-            COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print('open_only: COMPORT is Not OPEN And Port Name Different Then Re-OPEN', COMPORT.isOpen())
-        elif not COMPORT.isOpen():
-            COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
-            print('open_only: COMPORT is Not Then Re-OPEN', COMPORT.isOpen())
-        else:
-            print('open_only: COMPORT is Already OPEN', COMPORT.isOpen())
-    except Exception as ex:
-        resultStr = "FFFF"
-        msg = "{0}".format(ex)
+    # try:
+    # except Exception as ex:
+    #     resultStr = "FFFF"
+    #     msg = "{0}".format(ex)
+    if COMPORT is None:
+        COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        print('open_only: COMPORT is None Then OPEN', COMPORT.isOpen())
+    elif COMPORT.isOpen() and COMPORT.name != port:
+        COMPORT.close
+        COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        print('open_only: COMPORT is Not OPEN And Port Name Different Then Re-OPEN', COMPORT.isOpen())
+    elif not COMPORT.isOpen():
+        COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        print('open_only: COMPORT is Not Then Re-OPEN', COMPORT.isOpen())
+    else:
+        print('open_only: COMPORT is Already OPEN', COMPORT.isOpen())
     
     return resultStr, msg
 

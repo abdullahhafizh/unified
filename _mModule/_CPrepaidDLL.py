@@ -98,7 +98,7 @@ def topup_init(PORT, SAMPIN, Institution, Terminal, _serial, _passd):
 
         # res = func(C_PORT, C_SAMPIN, C_Institution, C_Terminal, serial, passd)
 
-        res_str = lib.topup_init(C_PORT, C_SAMPIN, C_Institution, C_Terminal)
+        res_str = lib.topup_init(C_PORT.decode('utf-8'), C_SAMPIN, C_Institution, C_Terminal)
 
     except Exception as ex:
         LOG.fw("CMD $30 ERROR: ", "{0}".format(ex))
