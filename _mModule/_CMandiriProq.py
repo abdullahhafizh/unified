@@ -24,11 +24,11 @@ def SAM_init(Ser, PIN, INSTITUTION, TERMINAL
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"]
@@ -53,11 +53,11 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TBalanceresws(response["data"])
     # print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"], result["bal"], result["sn"], result["sign"]
@@ -81,11 +81,11 @@ def GET_BALANCE(Ser):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TBalanceres(response["data"])
     # print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
     return result["code"], result["bal"]
 
@@ -109,11 +109,11 @@ def DEBIT(Ser, datetime, time_out, value):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     # print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -156,11 +156,11 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     # print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"]
@@ -182,11 +182,11 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     # print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"]
@@ -207,11 +207,11 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -237,11 +237,11 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
 
     response = get_TDefaultRespons(data)
     # print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TBNIKMMULTIBalanceres(response["data"])
     # print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
     return result["code"], result["bal"]
 
@@ -262,11 +262,11 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"]
@@ -291,11 +291,11 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -322,11 +322,11 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -351,11 +351,11 @@ def PURSE_DATA(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -385,11 +385,11 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -418,11 +418,11 @@ def TOP_UP_C2C(Ser, value):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -450,11 +450,11 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -480,11 +480,11 @@ def TOPUP_C2C_CORRECTION(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -515,11 +515,11 @@ def GET_FEE_C2C(Ser, Flag):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -553,11 +553,11 @@ def SET_FEE_C2C(Ser, Flag, respon):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -588,11 +588,11 @@ def TOPUP_FORCE_C2C(Ser, Flag):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -618,11 +618,11 @@ def KM_BALANCE_TOPUP_C2C(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     if result["code"] == b"0000" or result["code"] == b"9000":
@@ -653,11 +653,11 @@ def APDU_SEND(Ser, slot, info):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -703,11 +703,11 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"]
@@ -727,11 +727,11 @@ def GET_SN(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TSerialNumberres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -768,11 +768,11 @@ def BcaCardInfo(Ser, ATD):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -797,11 +797,11 @@ def GET_CARDDATA(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -869,11 +869,11 @@ def BcaSession1(Ser, ATD, datetimes):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -910,11 +910,11 @@ def BcaSession2(Ser, session):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultResres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
 
     return result["code"]
@@ -984,11 +984,11 @@ def BcaTopup1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1025,12 +1025,11 @@ def BcaTopup2(Ser, strConfirm):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
-
+    LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -1054,11 +1053,11 @@ def BcaLastReport(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1095,11 +1094,11 @@ def BcaReversal(Ser, ATD):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1124,11 +1123,11 @@ def GET_TOKENBRI(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RECVS:", response)
+    LOG.fw("RAW_RECEIVE", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RECVE:", result)
+    LOG.fw("RESPONSE:", result)
 
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
