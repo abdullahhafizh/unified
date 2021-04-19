@@ -1,12 +1,14 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 import traceback
-from . import _CPrepaidDLL as prepaid_dll
-from . import _CPrepaidCommon as prepaid_common
-from . import _CPrepaidBNI as prepaid_bni
-from . import _CPrepaidMandiri as prepaid_mandiri
-from . import _CPrepaidBCA as prepaid_bca
-from . import _CPrepaidBRI as prepaid_bri
-from . import _CPrepaidLog as LOG
-from . import _CPrepaidDKI as prepaid_dki
+from _mModule import _CPrepaidDLL as prepaid_dll
+from _mModule import _CPrepaidCommon as prepaid_common
+from _mModule import _CPrepaidBNI as prepaid_bni
+from _mModule import _CPrepaidMandiri as prepaid_mandiri
+from _mModule import _CPrepaidBCA as prepaid_bca
+from _mModule import _CPrepaidBRI as prepaid_bri
+from _mModule import _CPrepaidLog as LOG
+from _mModule import _CPrepaidDKI as prepaid_dki
 # from func_timeout import func_set_timeout
 
 # @func_set_timeout(2.5)

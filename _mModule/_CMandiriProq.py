@@ -1,3 +1,5 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 import datetime
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidProtocol as proto

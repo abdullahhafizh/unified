@@ -1,7 +1,8 @@
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 import serial
 import traceback
-
-from . import _CMandiriProq as proq
+from _mModule import _CMandiriProq as proq
 
 COMPORT = None
 

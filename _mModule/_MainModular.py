@@ -1,3 +1,6 @@
+
+__author__ = 'fitrah.wahyudi.imam@gmail.com'
+
 from _mModule._InterfacePrepaidDLL import send_command
 
 """ 
