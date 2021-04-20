@@ -1145,11 +1145,13 @@ def retrieve_rs232_data(Ser=Serial()):
     start = b''
     end = b''
     while True:
+        seek_start = True
         start = start + Ser.read()
         LOG.fw("READ_START:", start)
-        if start.__contains__(b'\x10\x02'):
+        if start.__contains__(b'\x10\x02') and seek_start is True:
             i_start = start.index(b'\x10\x02')
             start = start[:i_start]
+            seek_start = False
         if start.__contains__(b'\x10\x03'):
             i_end = start.index(b'\x10\x03')
             read_byte = start[:i_end+2]
