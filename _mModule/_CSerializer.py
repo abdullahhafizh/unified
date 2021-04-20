@@ -896,7 +896,7 @@ def BCA_SESSION_2(Ser, session):
 
     sam["session"] = session
     i = len(sam["session"])
-    while i <= 499:
+    while i < 500:
         sam['session'] = sam['session'] + b"0" 
         i = len(sam["session"])
 
@@ -1011,7 +1011,7 @@ def BCA_TOPUP_2(Ser, strConfirm):
     
     sam["strConfirm"] =strConfirm
     i = len(sam["strConfirm"])
-    while i <= 1023:
+    while i < 1024:
         sam['strConfirm'] = sam['strConfirm'] + b"0" 
         i = len(sam["strConfirm"])
     
