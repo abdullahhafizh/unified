@@ -547,7 +547,8 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     'last_balance': result.split('|')[2],
                 }
             else:
-                error_result = result.split('|')
+                service_response = json.loads(result)
+                error_result = service_response['Response'].split('|')
                 if len(error_result) > 2:
                     LAST_BRI_ACCESS_TOKEN = error_result[1]
                     LOGGER.debug(('LAST_BRI_ACCESS_TOKEN', LAST_BRI_ACCESS_TOKEN))
