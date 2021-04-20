@@ -36,7 +36,7 @@ def update_balance_bri(param, __global_response__):
     LOG.fw("024:Parameter = ", C_SAMSLOT)
 
     cardno = ""
-    amount = ""
+    amount = "0"
     lastbalance = ""
 
     result_str, errmsg, cardno, amount, lastbalance, bri_token, reffnohost, CodeStatus = update_balance_bri_priv(C_TID, C_MID, C_TOKEN, C_SAMSLOT, cardno, amount, lastbalance)
@@ -285,7 +285,7 @@ def reversal_bri(param, __global_response__):
     LOG.fw("064:Parameter = ", C_REFFNOHost)
 
     cardno = ""
-    amount = ""
+    amount = "0"
     lastbalance = ""
 
     result_str, errmsg, cardno, amount, lastbalance = reversal_bri_priv(C_TID, C_MID, C_TOKEN, C_SAMSLOT, cardno, amount, lastbalance, C_BRI_TOKEN, C_REFFNOHost)

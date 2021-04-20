@@ -214,7 +214,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
     ErrorCode = resultStr
     topup_session = ""
     reference_id = ""
-    topup_amount = ""
+    topup_amount = "0"
     confirm_data = ""
     datenow = ""
     ErrMsg = ""
@@ -355,8 +355,8 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     bcaStaticATD = BCA_ATD
 
     cardno = ""
-    amount = ""
-    lastbalance = ""
+    amount = "0"
+    lastbalance = "0"
     reporttopup = ""
     ErrMsg = ""
 
@@ -379,14 +379,14 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     ErrorCode = resultStr
     topup_session = ""
     reference_id = ""
-    topup_amount = ""
+    topup_amount = "0"
     confirm_data = ""
     datenow = ""
     ErrMsg = ""
 
     if resultStr == "0000":
         LOG.fw("044:cardno = ", cardno)
-        # LOG.fw("044:uid = ", uid)
+        LOG.fw("044:uid = ", uid)
         valuetext, ErrMsg = send_check_session_bca(url, TOKEN, TID, MID,cardno)
         if valuetext == "1":
             valuetext = ErrMsg

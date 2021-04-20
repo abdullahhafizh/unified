@@ -673,7 +673,9 @@ Base{
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
-        back_button.visible = false;
+        transactionInProcess = true;
+        // Force Disable All Cancel Button
+        hide_all_cancel_button();
         abc.counter = 600;
         my_timer.restart();
 //        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
@@ -742,7 +744,6 @@ Base{
         global_frame.modeAction = "";
         press = '0';
         if (grgFunction == 'RECEIVE_BILL'){
-            back_button.visible = true;
             if (grgResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -779,6 +780,7 @@ Base{
             } else {
 // TODO: Back Button
 //                back_button.visible = true;
+                back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
                 abc.counter = 600;
@@ -1175,7 +1177,8 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
+//        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
+        visible: false
 
         MouseArea{
             anchors.fill: parent

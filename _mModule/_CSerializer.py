@@ -1190,7 +1190,10 @@ def get_TBalanceresws(data):
     result = {}
     result["cmd"] = data[0]
     result["code"] = data[1:5]
-    result["sign"] = chr(int(data[5]))
+    try:
+        result["sign"] = chr(int(data[5]))
+    except:
+        result["sign"] = ''
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
 

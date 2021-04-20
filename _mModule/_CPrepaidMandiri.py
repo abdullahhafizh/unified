@@ -68,7 +68,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
     approvalcode = int(time.time())
     url = UPDATE_BALANCE_URL
     cardno = ""
-    amount = ""
+    amount = "0"
     lastbalance = ""
     ErrMsg = ""
     dataToCard = ""
@@ -636,7 +636,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
     url = UPDATE_BALANCE_URL
     errmsg = ""
     cardno = ""
-    amount = ""
+    amount = "0"
     lastbalance = ""
     
     res_str, uid = prepaid.topup_apdusend(C_Slot, b"00B4000007")

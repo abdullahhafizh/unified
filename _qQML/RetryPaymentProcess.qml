@@ -677,10 +677,13 @@ Base{
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
+        details.use_pending_code = 1;
         delete details.pending_trx_code;
         delete details.payment_error;
         delete details.process_error;
-        back_button.visible = false;
+        transactionInProcess = true;
+        // Force Disable All Cancel Button
+        hide_all_cancel_button();
         abc.counter = 300;
         my_timer.restart();
 //        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
@@ -748,7 +751,6 @@ Base{
         global_frame.modeAction = "";
         press = '0';
         if (grgFunction == 'RECEIVE_BILL'){
-            back_button.visible = true;
             if (grgResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -784,6 +786,7 @@ Base{
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
+                back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
                 abc.counter = 600;
@@ -1173,7 +1176,8 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
+        visible: false
+//        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
 
         MouseArea{
             anchors.fill: parent
