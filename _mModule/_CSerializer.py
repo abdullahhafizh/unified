@@ -738,7 +738,7 @@ def GET_SN(Ser):
     # for i in range(0, Len-1):
     #     rep = rep + chr(response["data"][i])
 
-    return result["code"], result["uid"], result["SN"]
+    return result["code"], result["uid"], result["sn"]
 
 
 def BCA_CARD_INFO(Ser, ATD):
@@ -1284,4 +1284,6 @@ def get_TSerialNumberres(data):
     result["cmd"] = data[0]
     result["code"] = data[1:5]
     result["uid"] = data[5:13]
-    result["SN"] = data[13:29]
+    result["sn"] = data[13:29]
+    
+    return result
