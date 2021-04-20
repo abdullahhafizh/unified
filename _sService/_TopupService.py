@@ -447,8 +447,12 @@ def start_deposit_update_balance():
     _Helper.get_thread().apply_async(update_balance, (param, bank, mode, trigger))
 
 
+LAST_BRI_ACCESS_TOKEN = ''
+LAST_BRI_REFF_NO_HOST = ''
+
+
 def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
-    global LAST_BNI_TOPUP_PARAM, LAST_BCA_REFF_ID
+    global LAST_BNI_TOPUP_PARAM, LAST_BCA_REFF_ID, LAST_BRI_ACCESS_TOKEN, LAST_BRI_REFF_NO_HOST
     if bank == 'BNI' and mode == 'TOPUP':
         try:
             # param must be
@@ -543,6 +547,10 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     'last_balance': result.split('|')[2],
                 }
             else:
+                error_result = result.split('|')
+                if len(error_result) > 2:
+                    LAST_BRI_ACCESS_TOKEN = error_result[1]
+                    LAST_BRI_REFF_NO_HOST = error_result[2]
                 #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
@@ -1212,8 +1220,7 @@ def retry_topup_online_bri(amount, trxid):
         _Common.remove_temp_data(previous_card_no)
     else:
         # Call Reversal & Refund BRI
-        # TODO: Finalise Parameters (BRI RandomToken & BRI Reff No Host)
-        _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
+        _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|' + LAST_BRI_ACCESS_TOKEN + '|' + LAST_BRI_REFF_NO_HOST + '|'
         response, result = _Command.send_request(param=_param, output=None)
         # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
         # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}

@@ -126,6 +126,8 @@ def send_command(cmd, param):
             prepaid_dki.DKI_RequestTopup(param, __global_response__)
         elif cmd == "052":
             prepaid_dki.DKI_Topup(param, __global_response__)
+        elif cmd == "064":
+            prepaid_bri.reversal_bri(param, __global_response__)
         else:
             raise Exception("Command ["+cmd+"] not included in Service VM Command Sub [QPROX] ")
     except:
