@@ -1143,8 +1143,6 @@ def GET_TOKEN_BRI(Ser):
 
 def retrieve_rs232_data(Ser=Serial()):
     response = b''
-    start = b''
-    end = b''
     while True:
         response = response + Ser.read()
         # LOG.fw("READ_RAW:", response)
