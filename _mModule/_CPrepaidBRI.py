@@ -575,7 +575,7 @@ def get_log_bri_priv(SAMSLOT, msg):
                                             sapdu = "80B0000020" + cardno + uid + "FF0000030080000000" + rapdu
                                             resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, sapdu)
                                             if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                                sapdu = rapdu[-32:]
+                                                sapdu = rapdu[32:]
                                                 sapdu = "90AF000010" + sapdu + "00"
                                                 resultStr, rapdu = prepaid.topup_apdusend("255", sapdu)
                                                 if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
