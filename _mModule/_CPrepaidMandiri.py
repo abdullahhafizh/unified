@@ -452,7 +452,7 @@ def mandiri_get_log(param, __global_response__):
     else:
         __global_response__["Response"] = errmsg
         LOG.fw("039:Response = ", errmsg, True)
-     
+    
         __global_response__["ErrorDesc"] = "Gagal"
 
         LOG.fw("039:Result = ",res_str, True)
@@ -485,10 +485,10 @@ def mandiri_get_log_priv():
                             if i == 4:
                                 resultStr, rapdu = prepaid.topup_apdusend("255", "00D1050000")
                                 if resultStr == "0000":
-                                    dates = rapdu[12:]
+                                    dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[28:32])
+                                    types = prepaid_utils.getint2(rapdu[27:31])
                                     amount = prepaid_utils.getint(rapdu[32:40])
                                     balance = prepaid_utils.getint(rapdu[40:48])
 
@@ -501,10 +501,10 @@ def mandiri_get_log_priv():
                                 apdu = "00D10"+str(i)+"0000"
                                 resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                                 if resultStr == "0000":
-                                    dates = rapdu[12:]
+                                    dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[28:32])
+                                    types = prepaid_utils.getint2(rapdu[27:31])
                                     amount = prepaid_utils.getint(rapdu[32:40])
                                     balance = prepaid_utils.getint(rapdu[40:48])
 
@@ -520,10 +520,10 @@ def mandiri_get_log_priv():
                             if i == 10:
                                 resultStr, rapdu = prepaid.topup_apdusend("255", "00B20A001E")
                                 if resultStr == "0000":
-                                    dates = rapdu[12:]
+                                    dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[28:32])
+                                    types = prepaid_utils.getint2(rapdu[27:31])
                                     amount = prepaid_utils.getint(rapdu[32:40])
                                     balance = prepaid_utils.getint(rapdu[40:48])
 
@@ -536,10 +536,10 @@ def mandiri_get_log_priv():
                                 apdu = "00B20"+str(i)+"001E"
                                 resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                                 if resultStr == "0000":
-                                    dates = rapdu[12:]
+                                    dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[28:32])
+                                    types = prepaid_utils.getint2(rapdu[27:31])
                                     amount = prepaid_utils.getint(rapdu[32:40])
                                     balance = prepaid_utils.getint(rapdu[40:48])
 
