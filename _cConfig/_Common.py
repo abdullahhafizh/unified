@@ -840,6 +840,8 @@ MANDIRI_LOG_LEGEND = {
     '1500': 'TOPUP',
     '1000': 'TOPUP',
     '1100': 'TOPUP',
+    '4352': 'TOPUP',
+    '4608': 'PURCHASE'
 }
 # Actual From Mandiri
 # 0100 -> TOPUP
