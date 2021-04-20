@@ -550,7 +550,9 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 error_result = result.split('|')
                 if len(error_result) > 2:
                     LAST_BRI_ACCESS_TOKEN = error_result[1]
+                    LOGGER.debug(('LAST_BRI_ACCESS_TOKEN', LAST_BRI_ACCESS_TOKEN))
                     LAST_BRI_REFF_NO_HOST = error_result[2]
+                    LOGGER.debug(('LAST_BRI_REFF_NO_HOST', LAST_BRI_REFF_NO_HOST))
                 #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
