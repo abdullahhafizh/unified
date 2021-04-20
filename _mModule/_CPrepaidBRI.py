@@ -372,6 +372,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
                 resultStr = "1"
             
             if resultStr == "200":
+                resultStr = '0000'
                 msg = "SUCCESS REVERSAL\n" + jsonT
             else:
                 resultStr, ErrMsg = SendRefundBRI(url, TOKEN, TID, MID, cardno,reffnohost)
@@ -402,6 +403,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
                         resultStr = "1"
                     
                     if resultStr == "200":
+                        resultStr = '0000'
                         msg = "SUCCESS REFUND\n"+ jsonT
                     else:
                         msg = ErrMsg
