@@ -130,9 +130,9 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
                                 msg = "result don't have data: {0}".format(str(jsonD))
                                 resultStr = "1"
 
-                    except json.JSONDecodeError:
-                        msg = "Invalid JSON: {0}".format(str(resultStr))
-                        resultStr = "1"
+                    # except json.JSONDecodeError:
+                    #     msg = "Invalid JSON: {0}".format(str(resultStr))
+                    #     resultStr = "1"
                     except Exception as ex:
                         msg = "Error while parse: {0}".format(ex)                    
                         resultStr = "1"
@@ -158,7 +158,7 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
                                                     resultStr = ErrMsg
                                                 try:
                                                     jsonD = json.loads(resultStr)
-                                                except json.JSONDecodeError:
+                                                except:
                                                     jsonD = resultStr
 
                                                 if type(jsonD) is dict:
@@ -364,9 +364,9 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
                     resultStr = "1"
 
                 resultStr = str(code)
-            except json.JSONDecodeError:
-                msg = "Invalid JSON: {0}".format(str(resultStr))
-                resultStr = "1"
+            # except json.JSONDecodeError:
+            #     msg = "Invalid JSON: {0}".format(str(resultStr))
+            #     resultStr = "1"
             except Exception as ex:
                 msg = "Error while parse: {0}".format(ex)                    
                 resultStr = "1"
@@ -395,9 +395,9 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
                             resultStr = "1"
 
                         resultStr = str(code)
-                    except json.JSONDecodeError:
-                        ErrMsg = "Invalid JSON: {0}".format(str(resultStr))
-                        resultStr = "1"
+                    # except json.JSONDecodeError:
+                    #     ErrMsg = "Invalid JSON: {0}".format(str(resultStr))
+                    #     resultStr = "1"
                     except Exception as ex:
                         ErrMsg = "Error while parse: {0}".format(ex)                    
                         resultStr = "1"
