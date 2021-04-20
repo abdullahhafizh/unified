@@ -753,7 +753,7 @@ def BCA_CARD_INFO(Ser, ATD):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 45:
+    while i < 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])
 
@@ -853,7 +853,7 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 45:
+    while i < 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])
 
@@ -932,7 +932,7 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 45:
+    while i < 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])    
     
@@ -1081,7 +1081,7 @@ def BCA_REVERSAL(Ser, ATD):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 45:
+    while i < 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])
 
