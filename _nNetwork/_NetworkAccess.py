@@ -88,8 +88,8 @@ HEADER = None
 
 
 def get_from_url(url, param=None, header=None, log=True, force=False):
-    if is_online(source=url) is False and force is False:
-        return -1, NO_INTERNET
+    # if is_online(source=url) is False and force is False:
+    #     return -1, NO_INTERNET
     if header is None:
         header = HEADER
     try:
@@ -121,8 +121,8 @@ def get_from_url(url, param=None, header=None, log=True, force=False):
 
 
 def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
-    if is_online(source=url) is False and ('apidev.mdd.co.id' not in url or 'apiv2.mdd.co.id' not in url or 'v2/diva/' not in url or 'refund/' not in url):
-        return -1, NO_INTERNET
+    # if is_online(source=url) is False and ('apidev.mdd.co.id' not in url or 'apiv2.mdd.co.id' not in url or 'v2/diva/' not in url or 'refund/' not in url):
+    #     return -1, NO_INTERNET
     if header is None:
         header = HEADER
     try:

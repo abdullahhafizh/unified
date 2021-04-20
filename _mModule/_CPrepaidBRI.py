@@ -375,38 +375,39 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
                 resultStr = '0000'
                 msg = "SUCCESS REVERSAL\n" + jsonT
             else:
-                resultStr, ErrMsg = SendRefundBRI(url, TOKEN, TID, MID, cardno,reffnohost)
-                jsonT = resultStr
-                if resultStr == "1":
-                    msg = ErrMsg
-                else:
-                    try:
-                        jsonD = json.loads(resultStr)
-                        if "response" in jsonD.keys():
-                            code = str(jsonD["response"]["code"])
-                        else:
-                            ErrMsg = "result don't have response: {0}".format(str(jsonD))
-                            resultStr = "1"
+                msg = "FAILED REVERSAL\n" + jsonT 
+                # resultStr, ErrMsg = SendRefundBRI(url, TOKEN, TID, MID, cardno, reffnohost)
+                # jsonT = resultStr
+                # if resultStr == "1":
+                #     msg = ErrMsg
+                # else:
+                #     try:
+                #         jsonD = json.loads(resultStr)
+                #         if "response" in jsonD.keys():
+                #             code = str(jsonD["response"]["code"])
+                #         else:
+                #             ErrMsg = "result don't have response: {0}".format(str(jsonD))
+                #             resultStr = "1"
 
-                        if "data" in jsonD.keys():
-                            dataToCard = str(jsonD["data"])
-                        else:
-                            ErrMsg = "result don't have data: {0}".format(str(jsonD))
-                            resultStr = "1"
+                #         if "data" in jsonD.keys():
+                #             dataToCard = str(jsonD["data"])
+                #         else:
+                #             ErrMsg = "result don't have data: {0}".format(str(jsonD))
+                #             resultStr = "1"
 
-                        resultStr = str(code)
-                    # except json.JSONDecodeError:
-                    #     ErrMsg = "Invalid JSON: {0}".format(str(resultStr))
-                    #     resultStr = "1"
-                    except Exception as ex:
-                        ErrMsg = "Error while parse: {0}".format(ex)                    
-                        resultStr = "1"
+                #         resultStr = str(code)
+                #     # except json.JSONDecodeError:
+                #     #     ErrMsg = "Invalid JSON: {0}".format(str(resultStr))
+                #     #     resultStr = "1"
+                #     except Exception as ex:
+                #         ErrMsg = "Error while parse: {0}".format(ex)                    
+                #         resultStr = "1"
                     
-                    if resultStr == "200":
-                        resultStr = '0000'
-                        msg = "SUCCESS REFUND\n"+ jsonT
-                    else:
-                        msg = ErrMsg
+                #     if resultStr == "200":
+                #         resultStr = '0000'
+                #         msg = "SUCCESS REFUND\n"+ jsonT
+                #     else:
+                #         msg = ErrMsg
 
     except Exception as ex:
         resultStr = "1"
