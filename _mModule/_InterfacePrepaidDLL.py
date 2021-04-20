@@ -133,14 +133,11 @@ def send_command(cmd, param):
         formatted_lines = trace.splitlines()
         err_message = traceback._cause_message
         LOG.fw("LIB ERROR = ", formatted_lines[-1], True)
-        print(trace)
+        # print(trace)
         __global_response__["Result"] = "EXCP"
         __global_response__["ErrorDesc"] = trace
-
-    # LOG.fw("APP Result:", __global_response__)
-        
-    # LOG.debuging("I_send_command[STOP]: ", __global_response__)
-    LOG.fw("LIB [{0}]: DONE".format(cmd))
-
-    return __global_response__
-
+    finally:
+        # LOG.fw("APP Result:", __global_response__)
+        # LOG.debuging("I_send_command[STOP]: ", __global_response__)
+        LOG.fw("LIB [{0}]: DONE".format(cmd))
+        return __global_response__
