@@ -944,7 +944,7 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     sam["AccessCard"] = AccessCard
     i = len(sam["AccessCard"])
-    while i <= 15:
+    while i < 16:
         sam['AccessCard'] = sam['AccessCard'] + b"0" 
         i = len(sam["AccessCard"]) 
     
@@ -956,7 +956,7 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     sam["AccessCode"] = AccessCode
     i = len(sam["AccessCode"])
-    while i <= 5:
+    while i < 6:
         sam['AccessCode'] = sam['AccessCode'] + b"0" 
         i = len(sam["AccessCode"])
 
@@ -970,7 +970,7 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     sam["AmountHex"] = AmountHex
     i = len(sam["AmountHex"])
-    while i <= 15:
+    while i < 16:
         sam['AmountHex'] = sam['AmountHex'] + b"0" 
         i = len(sam["AmountHex"])
 
