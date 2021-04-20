@@ -1142,21 +1142,21 @@ def GET_TOKEN_BRI(Ser):
 '''
 
 def retrieve_rs232_data(Ser=Serial()):
+    response = b''
     start = b''
     end = b''
     while True:
         seek_start = True
-        start = start + Ser.read()
-        LOG.fw("READ_START:", start)
-        if start.__contains__(b'\x10\x02') and seek_start is True:
-            i_start = start.index(b'\x10\x02')
-            start = start[:i_start]
+        response = response + Ser.read()
+        LOG.fw("READ_RAW:", response)
+        if response.__contains__(b'\x10\x02') and seek_start is True:
             seek_start = False
-        if start.__contains__(b'\x10\x03'):
-            i_end = start.index(b'\x10\x03')
-            read_byte = start[:i_end+2]
-            LOG.fw("READ_BYTE:", read_byte)
-            return read_byte
+            start = b'\x10\x02'
+        if response.__contains__(b'\x10\x03'):
+            i_end = response.index(b'\x10\x03')
+            response = start + response[:i_end+2]
+            LOG.fw("READ_BYTE:", response)
+            return response
             break
     start =  Ser.read_until(b'\x10\x02')
     LOG.fw("READ_START:", start)
