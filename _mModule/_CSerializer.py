@@ -673,7 +673,7 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
 
     sam["TID"] = TID
     i = len(sam["TID"])
-    while i <= 8:
+    while i < 8:
         sam['TID'] = sam['TID'] + b"0" 
         i = len(sam["TID"])
 
@@ -681,16 +681,16 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
     # for i in range(0, len(TID)):
     #     sam["TID"][i] = TID[i+1]
 
-    sam["MID"] =MID
+    sam["MID"] = MID
     i = len(sam["MID"])
-    while i <= 9:
+    while i < 9:
         sam['MID'] = sam['MID'] + b"0" 
         i = len(sam["MID"])
     # sam["MID"] = "000000000"
     # for i in range(0, len(MID)):
     #     sam["MID"][i] = MID[i+1]
 
-    sam["MINBAL"] = b"00000"
+    sam["MINBAL"] = b"00001"
 
     bal_value = sam["cmd"] + sam["TID"] + sam["MID"] + sam["MINBAL"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
