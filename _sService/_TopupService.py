@@ -1213,7 +1213,7 @@ def retry_topup_online_bri(amount, trxid):
     else:
         # Call Reversal & Refund BRI
         # TODO: Finalise Parameters (BRI RandomToken & BRI Reff No Host)
-        _param = QPROX['REVERSAL_ONLINE_BRI_2'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
+        _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|'
         response, result = _Command.send_request(param=_param, output=None)
         # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
         # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
