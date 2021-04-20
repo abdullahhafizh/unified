@@ -72,7 +72,7 @@ def getint(data):
 
 def getint2(data):
     data_str = data.zfill(4)
-    data_str = "".join(reversed([data[i:i+2] for i in range(0, len(data), 2)]))
+    data_str = "".join(reversed([data_str[i:i+2] for i in range(0, len(data_str), 2)]))
     valueDeposit = int(data_str, 16)
     return valueDeposit
 

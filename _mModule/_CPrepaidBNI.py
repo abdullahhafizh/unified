@@ -527,7 +527,7 @@ def bni_get_log_priv():
                 if i == 4:
                     resultStr, rapdu = prepaid.topup_apdusend("255","90320300010410")
                     if resultStr == "0000":
-                        types = rapdu[2:]
+                        types = rapdu[:2]
                         amount = get_amount_for_log(rapdu[2:8])
                         dates = get_date(rapdu[8:16])
 
@@ -542,7 +542,7 @@ def bni_get_log_priv():
                     apdu = "90320300010" + str(i) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend("255",apdu)
                     if resultStr == "0000":
-                        types = rapdu[2:]
+                        types = rapdu[:2]
                         amount = get_amount_for_log(rapdu[2:8])
                         dates = get_date(rapdu[8:16])
 

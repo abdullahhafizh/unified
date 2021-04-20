@@ -517,7 +517,7 @@ def GetLogBRI(param, __global_response__):
 
     errmsg = ""
 
-    result_str, errmsg = GetLogBRIPriv(C_SAMSLOT, errmsg)
+    result_str, errmsg = get_log_bri_priv(C_SAMSLOT, errmsg)
 
     __global_response__["Result"] = result_str
     if result_str == "0000":
@@ -535,7 +535,7 @@ def GetLogBRI(param, __global_response__):
         LOG.fw("025:Result = ", result_str, True)
         LOG.fw("025:Gagal", None, True)
 
-def GetLogBRIPriv(SAMSLOT, msg):
+def get_log_bri_priv(SAMSLOT, msg):
     resultStr = ""
     ErrorCode = ""
     resreport = ""
@@ -575,7 +575,7 @@ def GetLogBRIPriv(SAMSLOT, msg):
                                             sapdu = "80B0000020" + cardno + uid + "FF0000030080000000" + rapdu
                                             resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, sapdu)
                                             if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                                sapdu = rapdu[32:]
+                                                sapdu = rapdu[-32:]
                                                 sapdu = "90AF000010" + sapdu + "00"
                                                 resultStr, rapdu = prepaid.topup_apdusend("255", sapdu)
                                                 if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
@@ -589,7 +589,7 @@ def GetLogBRIPriv(SAMSLOT, msg):
                 n = 64
                 result1 = [resreport[i:i+n] for i in range(0, len(resreport), n)]
                 for item in result1:
-                    MID = item[16:]
+                    MID = item[:16]
                     TID = item[16:32]
                     TRXDATE = item[32:38]
                     TRXTIME = item[38:44]

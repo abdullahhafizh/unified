@@ -4,6 +4,7 @@ import datetime
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidProtocol as proto
 from serial import Serial
+from time import sleep
 
 def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
 # , PIN_Len, INSTITUTION_Len, TERMINAL_Len
@@ -1141,15 +1142,26 @@ def GET_TOKEN_BRI(Ser):
 '''
 
 def retrieve_rs232_data(Ser=Serial()):
-    read_1 = Ser.read_until(b'\x10\x02')
-    # print(read)
-    LOG.fw("READ1:", read_1)
-
-    read_2 = Ser.read_until(b'\x10\x03')
-    # print(read)
-    LOG.fw("READ2:", read_2)
-
-    return read_1 + read_2
+    start = b''
+    end = b''
+    while True:
+        start = start + Ser.read()
+        LOG.fw("READ_START:", start)
+        if start.__contains__(b'\x10\x02'):
+            i_start = start.index(b'\x10\x02')
+            start = start[i_start]
+            if start.__contains__(b'\x10\x03'):
+                i_end = start.index(b'\x10\x03')
+                read_byte = start[:i_end+2]
+                LOG.fw("READ_BYTE:", read_byte)
+                return read_byte
+                break
+    start =  Ser.read_until(b'\x10\x02')
+    LOG.fw("READ_START:", start)
+    end = Ser.read_until(b'\x10\x03')
+    LOG.fw("READ_END:", end)
+    result = start + end
+    return result
 
 
 def get_TDefaultRespons(data):
