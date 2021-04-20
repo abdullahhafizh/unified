@@ -753,7 +753,7 @@ def BCA_CARD_INFO(Ser, ATD):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 44:
+    while i <= 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])
 
@@ -853,7 +853,7 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 44:
+    while i <= 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])
 
@@ -932,7 +932,7 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 44:
+    while i <= 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])    
     
@@ -1081,7 +1081,7 @@ def BCA_REVERSAL(Ser, ATD):
 
     sam["ATD"] = ATD
     i = len(sam["ATD"])
-    while i <= 44:
+    while i <= 45:
         sam['ATD'] = sam['ATD'] + b"0" 
         i = len(sam["ATD"])
 
@@ -1108,6 +1108,7 @@ def BCA_REVERSAL(Ser, ATD):
         rep = rep + chr(result["rep"][i])
 
     return result["code"], rep
+
 
 def GET_TOKEN_BRI(Ser):
     sam = {}
@@ -1152,12 +1153,12 @@ def retrieve_rs232_data(Ser=Serial()):
             LOG.fw("READ_BYTE:", response)
             return response
             break
-    start =  Ser.read_until(b'\x10\x02')
-    LOG.fw("READ_START:", start)
-    end = Ser.read_until(b'\x10\x03')
-    LOG.fw("READ_END:", end)
-    result = start + end
-    return result
+    # start =  Ser.read_until(b'\x10\x02')
+    # LOG.fw("READ_START:", start)
+    # end = Ser.read_until(b'\x10\x03')
+    # LOG.fw("READ_END:", end)
+    # result = start + end
+    # return result
 
 
 def get_TDefaultRespons(data):
