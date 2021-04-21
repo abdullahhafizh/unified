@@ -513,25 +513,24 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 lastbalance = int(balance) + int(amount)
                                 reporttopup = report
                                 valuetext, ErrMsg = send_confirm_bca(url, TOKEN, TID, MID, cardno, report, lastbalance, reference_id)
-                                if valuetext == "1":
-                                    valuetext = ErrMsg
+                                # if valuetext == "1":
+                                    # valuetext = ErrMsg
                                 
-                                dataJ = json.loads(valuetext)
-                                if "response" in dataJ.keys():
-                                    tempJ = dataJ["response"]
-                                    if "code" in tempJ.keys():
-                                        code = tempJ["code"]
+                                # dataJ = json.loads(valuetext)
+                                # if "response" in dataJ.keys():
+                                #     tempJ = dataJ["response"]
+                                #     if "code" in tempJ.keys():
+                                #         code = tempJ["code"]
                                 
-                                ErrorCode = code
-                                if code == "200" or code == 200:
-                                    ErrorCode = "0000"
-
+                                # ErrorCode = "0000"
+                                # ErrorCode = code
+                                # if code == "200" or code == 200:
                         else:
                             resultStr, report = bca_topup_reversal(bcaStaticATD)
                             LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                             ErrorCode = resultStr
                             if resultStr == "0000":
-                                valuetext,ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
+                                valuetext, ErrMsg = send_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
                                 if valuetext == "1":
                                     valuetext = ErrMsg
                                 dataJ = json.loads(valuetext)
@@ -545,7 +544,8 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                     ErrMsg = "UpdateAPI_Failed_Reversal_Failed"
                             else:
                                 ErrMsg = "UpdateAPI_Failed_Card_Reversal_Failed"
-                    
+                            
+                            resultStr = "FAIL" 
                     else:
                         ErrMsg = "BCATopup1_Failed_Card"
 
