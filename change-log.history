@@ -1,3 +1,8 @@
+13.0.D-GLOBAL:
+- Fix Missing Timeout Keys BRI,
+- Force Disable Old Service Topup DKI,
+- ...
+
 13.0.C-GLOBAL:
 - Fix Autoload When Using Multi Python Thread,
 - ...

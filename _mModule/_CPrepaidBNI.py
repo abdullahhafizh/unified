@@ -108,6 +108,7 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
             raise Exception("Error: "+result_str)
     return __global_response__
 
+
 def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
     TIMEOUT_REQUESTS = 50
     
