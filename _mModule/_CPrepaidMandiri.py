@@ -62,6 +62,7 @@ def update_balance_mandiri(param, __global_response__):
 
     return res_str
 
+
 def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
     global UPDATE_BALANCE_URL
 
@@ -73,13 +74,13 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
     ErrMsg = ""
     dataToCard = ""
 
-    res_str,Value = prepaid.topup_balance()
-    Value = int(Value)
+    res_str, card_prev_balance = prepaid.topup_balance()
+    card_prev_balance = int(card_prev_balance)
     
     LOG.fw("019:balance, response:", res_str)
 
     if res_str == "0000":
-        LOG.fw("019:balance:", Value)
+        LOG.fw("019:balance:", card_prev_balance)
         res_str, cardno, uid, data, attr = get_card_data()
 
         LOG.fw("019:GetCardData, response:", res_str)
@@ -95,7 +96,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
 
             if attr == "6A86":
                 LOG.fw("019:New Applet Found:")
-                valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, Value)
+                valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
                 if valuetext == "1":
                     valuetext = ErrMsg
@@ -118,7 +119,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     if code == "200" or code == 200:
                         dataToCard = temp_json["dataToCard"]
                         amount = temp_json["amount"]
-                        lastbalance = Value + int(amount)
+                        lastbalance = card_prev_balance + int(amount)
                         session = temp_json["session"]
                         pendingtopup = temp_json["pendingTopup"]
                     else:
@@ -129,6 +130,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                             code, resp_json_temp = get_sub_code(temp_json)
                 
                 code = str(code)
+                res_str = code
 
                 if code == "200" or code == 200:
                     res = True
@@ -219,9 +221,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
 
                         while ResReversal:
                             if StatusReversal == "":
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, Value, approvalcode, amount, data, uid, "", dataToCard, attr)
+                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
                             else:
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, Value, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
+                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
 
                             jsonReversal = json.loads(valuetext)
 
@@ -264,7 +266,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     ErrorCode = code
             else:
                 LOG.fw("019:OLD Applet Found")
-                valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, Value)
+                valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
                 if valuetext == "1":
                     valuetext = ErrMsg
@@ -278,8 +280,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                 if code == "200" or code == 200:
                     amount = resp_json_data["amount"]
                     dataToCard = resp_json_data["dataToCard"]
-                    lastbalance = Value + int(amount)
-
+                    lastbalance = card_prev_balance + int(amount)
                 elif "code" in resp_json_data.keys():
                     code = resp_json_data["code"]
                     resp_json_temp = resp_json_data
@@ -287,10 +288,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     code, resp_json_temp = get_sub_code(resp_json_data)
 
                 code = str(code)
-                
-                if code == "51099":
-                    amount = resp_json_temp["amount_reversal"]
-                    approvalcode = resp_json_temp["approval_code"]
+                res_str = code
 
                 if code == "200" or code == 200:
                     res = True
@@ -348,6 +346,8 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     ErrorCode = code
                     ErrMsg = "NO PENDING BALANCE"
                 elif code == "51099":
+                    amount = resp_json_temp["amount_reversal"]
+                    approvalcode = resp_json_temp["approval_code"]
                     prepaid.topup_card_disconnect()
                     LOG.fw("019:Reversal OLD Start")
                     res_str, cardno, uid, data, attr = get_card_data()
@@ -360,9 +360,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
 
                         while ResReversal:
                             if StatusReversal == "":
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, Value, approvalcode, amount, data, uid, "", dataToCard, attr)
+                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
                             else:
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, Value, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
+                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
 
                             jsonReversal = json.loads(valuetext)
 
@@ -401,6 +401,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     ErrorCode=code
 
     return res_str, cardno, amount, lastbalance, ErrMsg
+
 
 def send_update_balance(url, TOKEN, TID, MID, card_no, approval_code, card_attribute, card_info, card_uid, last_balance):
     global TIMEOUT_REQUESTS
@@ -462,6 +463,7 @@ def mandiri_get_log(param, __global_response__):
         LOG.fw("039:Gagal", None, True)
 
     return res_str
+
 
 def mandiri_get_log_priv():
     resultStr = ""
@@ -613,6 +615,7 @@ def mandiri_update_sam_balance(param, __global_response__):
 
     return res_str
 
+
 def get_sub_code(resp_json_data):
     code = ""
     if type(resp_json_data) == 'str':
@@ -658,8 +661,8 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
         if res_str == "0000":
             cardno = data[0:16]
             data = data + "9000"
-            Value = 0
-            response, status = send_update_balance(url,C_Token,C_TID,C_MID,cardno,approvalcode,attr,data,uid, Value)
+            card_prev_balance = 0
+            response, status = send_update_balance(url,C_Token,C_TID,C_MID,cardno,approvalcode,attr,data,uid, card_prev_balance)
 
             if response == "1":
                 response = status
@@ -673,7 +676,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             if code == "200" or code == 200:
                 amount = resp_json_data["amount"]
                 dataToCard = resp_json_data["dataToCard"]
-                lastbalance = Value + int(amount)
+                lastbalance = card_prev_balance + int(amount)
 
             elif "code" in resp_json_data.keys():
                 code = resp_json_data["code"]
@@ -747,9 +750,9 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
 
                     while ResReversal:
                         if StatusReversal == "":
-                            valuetext,errmsg = send_reversal_topup(url, C_Token, C_TID, C_MID, cardno, Value, approvalcode, amount, data, uid, "", dataToCard, attr)
+                            valuetext,errmsg = send_reversal_topup(url, C_Token, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
                         else:
-                            valuetext,errmsg = send_reversal_topup(url, C_Token, C_TID, C_MID, cardno, Value, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
+                            valuetext,errmsg = send_reversal_topup(url, C_Token, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
 
                         jsonReversal = json.loads(valuetext)
 
@@ -790,6 +793,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
 
     return res_str, cardno, amount, lastbalance, errmsg
 
+
 def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_status, approval_code):
     global TIMEOUT_REQUESTS
     try:
@@ -811,6 +815,7 @@ def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_st
     except Exception as ex:
         errorcode = "ConfirmMandiri error: {0}".format(ex)
         return "1", errorcode
+
 
 def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, approval_code, amount, card_info, card_uid, mode, sam_data, card_attribute):
     global TIMEOUT_REQUESTS
@@ -839,7 +844,6 @@ def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, appr
 #026
 def mandiri_C2C_refill(param, __global_response__):
     # LOG.tracing("MANDIRI: ", "topup_C2C_refill")
-
     Param = param.split('|')
     if len(Param) == 1:
         C_Value = int(Param[0].encode('utf-8'),10)
