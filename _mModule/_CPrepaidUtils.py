@@ -7,6 +7,7 @@ pattern2 = re.compile("(?:[^A-Za-z0-9 ]|(?<=['""])s)", re.UNICODE)
 pattern3 = re.compile("[^A-Z0-9 ]*", re.UNICODE)
 pattern4 = re.compile('[^A-Za-z0-9]')
 
+
 def get_balance_from_report(reportSAM, bank_type="MANDIRI"):
     if bank_type == "MANDIRI":
         if reportSAM[0:4] == "6308":
@@ -27,22 +28,27 @@ def get_balance_from_report(reportSAM, bank_type="MANDIRI"):
 
     return valueDeposit, valueEMoney, reportSAM
 
+
 def fix_report(reportSAM):
     return only_alpanum(reportSAM)
+
 
 def remove_special_character(data):
     new_data = re.sub(pattern2, "", data)
     return new_data
 
+
 def fix_report_leave_space(data):
     new_data = re.sub(pattern3, "", data)
     return new_data
+
 
 def to_4digit(res):
     res_str = format(res, 'x').upper()
     if len(res_str) < 4 :
         res_str = res_str.zfill(4)
     return res_str
+
 
 def str_to_bytes(instance):
     if type(instance) == str:
@@ -56,6 +62,7 @@ def str_to_bytes(instance):
     else:
         raise Exception("Invalid Instance: "+ str(type(instance)))
 
+
 def bytes_to_str(instance):
     if type(instance) == str:
         return instance
@@ -64,17 +71,20 @@ def bytes_to_str(instance):
     else:
         raise Exception("Invalid Instance: "+ str(type(instance)))
 
+
 def getint(data):
     data_str = data.zfill(8)
     data_str = "".join(reversed([data[i:i+2] for i in range(0, len(data), 2)]))
     valueDeposit = int(data_str, 16)
     return valueDeposit
 
+
 def getint2(data):
     data_str = data.zfill(4)
     data_str = "".join(reversed([data_str[i:i+2] for i in range(0, len(data_str), 2)]))
     valueDeposit = int(data_str, 16)
     return valueDeposit
+
 
 def only_alpanum(data):
     x =str(data)

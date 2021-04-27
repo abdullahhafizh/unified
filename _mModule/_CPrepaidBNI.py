@@ -67,6 +67,7 @@ def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
         
     return __global_response__
 
+
 def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
     
     __global_response__ = {
@@ -139,6 +140,7 @@ def bni_validation(param, __global_response__):
     __global_response__["Response"] = __global_response__["Response"] + "|" + res_str
 
     return res_str
+
 #011
 def bni_terminal_update(param, __global_response__):
     Param = param.split('|')
@@ -563,11 +565,13 @@ def bni_get_log_priv():
     
     return resultStr, msg
 
+
 def get_amount_for_log(data):
     if data[2:] == "FF":
         return 1
     else:        
         return int(data, 16)
+
 
 def get_date(data):
     epoch = int(data, 16)

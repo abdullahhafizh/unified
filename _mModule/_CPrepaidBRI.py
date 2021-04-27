@@ -18,6 +18,7 @@ if _Common.PTR_MODE is True:
     
 TIMEOUT_REQUESTS = 50
 
+
 def update_balance_bri(param, __global_response__):
     # LOG.fw("024:Mulai")
     Param = param.split('|')
@@ -58,7 +59,8 @@ def update_balance_bri(param, __global_response__):
         LOG.fw("024:Response = ", errmsg, True)
         LOG.fw("024:Result = ", result_str, True)
         LOG.fw("024:Gagal", None, True)
- 
+
+
 def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
     global UPDATE_BALANCE_URL
     msg = ""
@@ -415,12 +417,14 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
     
     return resultStr, msg, cardno, amount, lastbalance
 
+
 def GetTokenBRI():
     res_str, CardData = prepaid.topup_get_tokenbri()
     _CardData = utils.fix_report(CardData)
     LOG.fw("_CardData = ", _CardData)
     CardData = _CardData
     return res_str, CardData
+
 
 def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token):
     global TIMEOUT_REQUESTS
@@ -464,6 +468,7 @@ def SendConfirmBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_h
         errorcode = ":confirmbri error: {0}".format(ex)
         return "1", errorcode
 
+
 def SendReversalBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_host):
     global TIMEOUT_REQUESTS
     errorcode = ""
@@ -485,6 +490,7 @@ def SendReversalBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_
         errorcode = ":reversalbri error: {0}".format(ex)
         return "1", errorcode
 
+
 def SendRefundBRI(URL_Server, token, tid, mid, card_no, reff_no_host):
     global TIMEOUT_REQUESTS
     errorcode = ""
@@ -505,6 +511,7 @@ def SendRefundBRI(URL_Server, token, tid, mid, card_no, reff_no_host):
     except Exception as ex:
         errorcode = ":refundbri error: {0}".format(ex)
         return "1", errorcode
+
 
 def GetLogBRI(param, __global_response__):
     LOG.fw("025:Mulai")
@@ -537,6 +544,7 @@ def GetLogBRI(param, __global_response__):
         LOG.fw("025:Response = ", errmsg, True)
         LOG.fw("025:Result = ", result_str, True)
         LOG.fw("025:Gagal", None, True)
+
 
 def get_log_bri_priv(SAMSLOT, msg):
     resultStr = ""

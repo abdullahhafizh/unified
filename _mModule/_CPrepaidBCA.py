@@ -186,6 +186,7 @@ def reversal_bca(param, __global_response__):
     
     return res_str
 
+
 def reversal_bca_priv(TID, MID, TOKEN):
     global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL
     bcaAccessCardNumber = BCA_ACCESS_CARD_NUMBER
@@ -347,6 +348,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
         ErrorCode = code
 
     return ErrorCode, cardno, amount, lastbalance, report, ErrMsg
+
 
 def update_balance_bca_priv(TID, MID, TOKEN):
     global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL
@@ -552,6 +554,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     ErrorCode = resultStr
 
     return ErrorCode, cardno, amount, lastbalance, reporttopup, ErrMsg
+
 
 def update_balance_bca_priv_bak(TID, MID, TOKEN):
     global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL
@@ -768,6 +771,7 @@ def update_balance_bca_priv_bak(TID, MID, TOKEN):
 
     return ErrorCode, cardno, amount, lastbalance, reporttopup, ErrMsg
 
+
 def send_check_session_bca(URL_Server, token, tid, mid, card_no):
     global TIMEOUT_REQUESTS
 
@@ -790,6 +794,7 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
         errorcode = "CheckSessionBCA error: {0}".format(ex)
         return "1", errorcode
 
+
 def send_session_bca(URL_Server, token, tid, mid, card_no, session_data):
     global TIMEOUT_REQUESTS
 
@@ -810,6 +815,7 @@ def send_session_bca(URL_Server, token, tid, mid, card_no, session_data):
     except Exception as ex:
         errorcode = "SessionBCA error: {0}".format(ex)
         return "1", errorcode
+
 
 def send_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, last_balance, reference_id):
     global TIMEOUT_REQUESTS
@@ -832,6 +838,7 @@ def send_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, last_ba
         errorcode = "ConfirmBCA error: {0}".format(ex)
         return "1", errorcode
 
+
 def send_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, last_balance, reference_id):
     global TIMEOUT_REQUESTS
 
@@ -852,6 +859,7 @@ def send_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, last_
     except Exception as ex:
         errorcode = "ReversalBCA error: {0}".format(ex)
         return "1", errorcode
+
 
 def send_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_balance, reference_id):
     global TIMEOUT_REQUESTS
@@ -874,15 +882,19 @@ def send_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_balan
         errorcode = "UpdateBCA error: {0}".format(ex)
         return "1", errorcode
 
+
 def bca_topup_session(ATD, datetimes):
     return prepaid.topup_bca_session1(ATD.encode('utf-8'), datetimes.encode('utf-8'))
+
 
 def bca_topup_session2(session):
     return prepaid.topup_bca_session2(session.encode('utf-8'))
 
+
 def bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
     amounthex = amounthex.zfill(8)
     return prepaid.topup_bca_topup1(ATD.encode('utf-8'), accescard.encode('utf-8'), accescode.encode('utf-8'), datetimes.encode('utf-8'), amounthex.encode('utf-8'))
+
 
 def bca_topup2(strconfirm):
     confirm1 = strconfirm[0:200]
@@ -903,6 +915,7 @@ def bca_topup2(strconfirm):
     lastbalance = balance
     return res_str, lastbalance, report
 
+
 def bca_topup_lastreport():
     res_str, response= prepaid.topup_bca_lastreport()
     report = utils.fix_report(response)
@@ -917,6 +930,7 @@ def bca_topup_lastreport():
     report = report[-512:]
     LOG.fw("BCALastReport Clean Report = ", report)
     return res_str, report
+
 
 def bca_topup_reversal(ATD):
     res_str, report = prepaid.topup_bca_reversal(ATD)
