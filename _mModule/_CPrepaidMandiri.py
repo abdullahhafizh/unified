@@ -420,8 +420,11 @@ def send_update_balance(url, TOKEN, TID, MID, card_no, approval_code, card_attri
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=headers)
         ValueText = r.text
         LOG.fw(":UpdateMandiri = ", ValueText)
-
-        return r.text, "0000"
+        
+        if r.status_code != 200:
+            return '1', ValueText
+        else:
+            return ValueText, "0000"
     except Exception as ex:
         errorcode = "UpdateMandiri error: {0}".format(ex)
         return "1", errorcode
