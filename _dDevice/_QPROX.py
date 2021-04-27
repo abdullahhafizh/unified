@@ -661,11 +661,12 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         LOGGER.warning(('EMPTY/MISSMATCH REPORT LENGTH'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
         return
+    # Store To Memory Last Mandiri C2C Report
+    LAST_MANDIRI_C2C_REPORT = report
     if '|' not in report:
         report = '0|'+report
     # 603298180000003600030D706E8693EA7B051040100120D0070000007D0000160520174428270F0000BA0F03DC050000992DA3603298608319158400030D706E8693EA7B510401880110F40100003A5D0100160520174428270F0000C4030361F63B
     try:
-        LAST_MANDIRI_C2C_REPORT = report
         r = report.split('|')
         __data = r[1]
         if len(r[1]) > 196: 
@@ -773,7 +774,7 @@ def top_up_mandiri_correction(amount, trxid=''):
         last_balance = result.split('|')[0]
     if LAST_BALANCE_CHECK['card_no'] != check_card_no:
         LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
         # get_c2c_failure_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
@@ -781,11 +782,13 @@ def top_up_mandiri_correction(amount, trxid=''):
         param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
         _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
         if _ == 0 and len(report) >= 196:
-            if report == LAST_MANDIRI_C2C_REPORT:
+            if report in LAST_MANDIRI_C2C_REPORT:
                 LOGGER.debug('DUPLICATE LAST_MANDIRI_C2C_REPORT', LAST_MANDIRI_C2C_REPORT, 'DO_FORCE_SETTLEMENT')
                 get_c2c_failure_settlement(amount, trxid)
                 return
-            c2c_report = '|' + report
+            c2c_report = report
+            if report[0] != '|':
+                c2c_report = '|' + report
             parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
             return
     # Handle Old Applet Correction
@@ -843,7 +846,9 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
             _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if _ == 0 and len(report) >= 196:
-                c2c_report = '|' + report
+                c2c_report = report
+                if report[0] != '|':
+                    c2c_report = '|' + report
                 parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
                 return
         elif _result_json["Result"] in ["6208"]:
@@ -863,10 +868,10 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             LAST_C2C_APP_TYPE = '0'
         LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', _result, 'applet_type:', LAST_C2C_APP_TYPE ))
         # "6987", "100C", "10FC" Another Captured Error Code
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
     except Exception as e:
         LOGGER.warning((e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_C2C_CORRECTION')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):

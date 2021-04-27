@@ -525,7 +525,7 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )
-        }  else if (t=='TOPUP_C2C_CORRECTION'){
+        }  else if (t=='MANDIRI_C2C_PARTIAL_ERROR'){
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
