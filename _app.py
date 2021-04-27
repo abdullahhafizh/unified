@@ -1195,9 +1195,10 @@ if __name__ == '__main__':
     print("pyt: Syncing PPOB Product...")
     _PPOBService.start_init_ppob_product()
     sleep(1)
-    print("pyt: Start Topup Service...")
-    _Helper.get_thread().apply_async(start_webserver)
-    sleep(1)
+    # Disable Load As WebServer, Call as Direct Module Instead
+    # print("pyt: Start Topup Service...")
+    # _Helper.get_thread().apply_async(start_webserver)
+    # sleep(1)
     if _Common.BILL['status'] is True:
         sleep(1)
         print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")

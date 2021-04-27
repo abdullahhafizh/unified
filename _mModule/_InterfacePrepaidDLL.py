@@ -26,8 +26,6 @@ def send_command(cmd, param):
         "ErrorDesc": "",
         "Result": ""
     }
-
-    # LOG.debuging("I_send_command[START]: ", __global_response__)
     
     try:
         LOG.fw("{0}:Mulai".format(cmd))
@@ -139,7 +137,5 @@ def send_command(cmd, param):
         __global_response__["Result"] = "EXCP"
         __global_response__["ErrorDesc"] = trace
     finally:
-        # LOG.fw("APP Result:", __global_response__)
-        # LOG.debuging("I_send_command[STOP]: ", __global_response__)
         LOG.fw("LIB [{0}]: DONE".format(cmd))
         return __global_response__

@@ -1,3 +1,7 @@
+13.0.E-GLOBAL:
+- Load Library as Module,
+- ...
+
 13.0.D-GLOBAL:
 - Fix Missing Timeout Keys BRI,
 - Force Disable Old Service Topup DKI,

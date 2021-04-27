@@ -69,7 +69,7 @@ if __name__ == '__main__':
     # #CHECK CARD BALANCE
     # send_command("003", "")
     # #MANDIRI TOPUP 2000\
-    # print("helloworld!")
+    print("helloworld!")
     
     # send_command("000", "COM9")
     # send_command("025", "3")
@@ -85,12 +85,12 @@ if __name__ == '__main__':
     # prepaid_bni.test_update_balance_card("reff_no", "TOKEN", "TID", "MID", "card_no")
     # prepaid_bni.test_update_balance_sam("reff_no", "TOKEN", "TID", "MID", "card_no", "sam_slot")
 
-    date_1 = datetime.datetime(1995,1,1,0,0,0)
-    print(date_1.strftime("%Y%m%d%H%M%S"))
-    date_2 = date_1 + datetime.timedelta(0,50000)
-    print(date_2.strftime("%Y%m%d%H%M%S"))
-    data = '1'
-    print(data)
-    data = utils.str_to_bytes(data)
-    data_c = c_char(data)    
-    print(data_c.value)
+    # date_1 = datetime.datetime(1995,1,1,0,0,0)
+    # print(date_1.strftime("%Y%m%d%H%M%S"))
+    # date_2 = date_1 + datetime.timedelta(0,50000)
+    # print(date_2.strftime("%Y%m%d%H%M%S"))
+    # data = '1'
+    # print(data)
+    # data = utils.str_to_bytes(data)
+    # data_c = c_char(data)    
+    # print(data_c.value)

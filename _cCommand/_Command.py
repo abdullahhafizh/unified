@@ -14,6 +14,8 @@ from _cConfig import _Common
 import json
 import platform
 from _nNetwork import _NetworkAccess
+from _mModule._InterfacePrepaidDLL import send_command as module_command
+
 
 LOCK = threading.Lock()
 LOGGER = logging.getLogger()
@@ -268,11 +270,15 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
         base_timeout = 180
     service_url = LOCAL_URL
     if ___cmd[0] == '0' and _Common.TOPUP_SERVICE_ENABLE is True:
-        service_url = FLASK_URL
-    ___stat, ___resp = _NetworkAccess.get_local(
-        url=service_url + ___cmd + '&param=' + ___param,
-        __timeout=base_timeout
-        )
+        # service_url = FLASK_URL
+        # Call Module Instead or URL
+        ___stat, ___resp = 200, module_command(cmd=___cmd, param=___param)
+    else:
+        ___stat, ___resp = _NetworkAccess.get_local(
+            url=service_url + ___cmd + '&param=' + ___param,
+            __timeout=base_timeout
+            )
+    # Parse Result
     if ___stat == 200:
         # {"Result":"0","Command":"000","Parameter":"com4","Response":null,"ErrorDesc":"Sukses"}
         if ___resp.get('Command') == ___cmd and ___resp.get('Result') in ['0', '0000'] and ___resp.get('ErrorDesc') != 'Gagal':
