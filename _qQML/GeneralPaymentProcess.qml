@@ -68,6 +68,7 @@ Base{
                 initial_process();
             } else {
                 popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
+                cancel_button_input_number.visible = true;
             }
             modeButtonPopup = 'check_balance';
             abc.counter = timer_value;
@@ -353,7 +354,7 @@ Base{
     function hide_all_cancel_button(){
         cancel_button_global.visible = false;
         back_button.visible = false;
-        cancel_button_input_number.visible = false;
+        // cancel_button_input_number.visible = false;
         cancel_button_confirmation.visible = false;
         cancel_button_qr.visible = false;
     }
@@ -1699,7 +1700,7 @@ Base{
 
         CircleButton{
             id: cancel_button_input_number
-            visible: false
+            visible: popup_refund.visible
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
