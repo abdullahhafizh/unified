@@ -1446,21 +1446,28 @@ Base{
         }
 
         TextDetailRow{
-            id: row3
-            labelName: (details.shop_type=='topup') ? 'Biaya Admin' : 'Harga Satuan'
-            labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value)
+            id: row6
+            visible: (details.shop_type=='topup')
+            labelName: 'Nilai Topup'
+            labelContent: 'Rp ' + FUNC.insert_dot(parseInt(details.value) - parseInt(adminFee));
         }
 
         TextDetailRow{
-            id: row4
-            labelName: (details.payment=='cash') ? 'Uang Masuk' : 'Jumlah'
-            labelContent: (details.payment=='cash') ? 'Rp ' + FUNC.insert_dot(receivedPayment.toString()) : details.qty
+            id: row3
+            labelName: (details.shop_type=='topup') ? 'Biaya Admin' : 'Harga Satuan'
+            labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value);
         }
 
         TextDetailRow{
             id: row5
             labelName: 'Total Bayar'
             labelContent: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
+        }
+
+        TextDetailRow{
+            id: row4
+            labelName: (details.payment=='cash') ? 'Uang Masuk' : 'Jumlah'
+            labelContent: (details.payment=='cash') ? 'Rp ' + FUNC.insert_dot(receivedPayment.toString()) : details.qty
         }
 
     }

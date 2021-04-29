@@ -386,7 +386,8 @@ Base{
         popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
+            switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Silakan Hubungi Layanan Pelanggan Bank Penerbit Kartu Anda', 'backToMain', false );
+            // switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
             return;
         } else {
             var info = JSON.parse(result);
