@@ -992,7 +992,8 @@ Base{
         row2.labelContent = details.provider
         if (details.shop_type=='topup') {
             getDenom = parseInt(details.denom);
-            row2.labelContent = details.provider + ' - ' + details.value
+            row2.labelContent = details.provider + ' - ' + details.value;
+            row6.labelContent = 'Rp ' + FUNC.insert_dot(getDenom.toString());
         }
         initialPayment = receivedPayment;
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
