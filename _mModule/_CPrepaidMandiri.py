@@ -430,6 +430,7 @@ def send_update_balance(url, TOKEN, TID, MID, card_no, approval_code, card_attri
         errorcode = "UpdateMandiri error: {0}".format(ex)
         return "1", errorcode
 
+
 def get_card_data():
 
     res_str, uid, data, attr = prepaid.topup_get_carddata()
@@ -439,6 +440,7 @@ def get_card_data():
     attr = attr[0:22]
 
     return res_str, cardno, uid, data, attr
+
 
 def mandiri_get_log(param, __global_response__):
 
@@ -841,19 +843,25 @@ def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, appr
         errorcode = "ReversalMandiri error: {0}".format(ex)
         return "1", errorcode
 
+
+LAST_TIMESTAMP_MANDIRI = ''
 #026
 def mandiri_C2C_refill(param, __global_response__):
+    global LAST_TIMESTAMP_MANDIRI
     # LOG.tracing("MANDIRI: ", "topup_C2C_refill")
     Param = param.split('|')
     if len(Param) == 1:
         C_Value = int(Param[0].encode('utf-8'),10)
+        LOG.fw("026:Parameter Amount = ", C_Value)
     else:
         LOG.fw("026:Parameter tidak lengkap", param)
         raise Exception("026:Parameter tidak lengkap: "+param)
-
-    LOG.fw("026:Parameter = ", C_Value)
-
-    res_str, reportSAM, debErrorStr = prepaid.topup_C2C_refill(C_Value)
+    
+    C_Timestamp = datetime.datetime.now().strftime("%d%m%y%H%M%S")
+    LOG.fw("026:Parameter Timestamp = ", C_Timestamp)
+    LAST_TIMESTAMP_MANDIRI = C_Timestamp
+    
+    res_str, reportSAM, debErrorStr = prepaid.topup_C2C_refill(C_Value, C_Timestamp)
     reportSAM = prepaid_utils.fix_report(reportSAM)
 
     __global_response__["Result"] = res_str
@@ -1041,6 +1049,7 @@ def mandiri_C2C_force(param, __global_response__):
 
     return res_str
 
+
 def mandiri_get_last_report(param, __global_response__):
     Param = param.split('|')
 
@@ -1073,6 +1082,7 @@ def mandiri_get_last_report(param, __global_response__):
         LOG.fw("041:Gagal", None, True)
 
     return res_str
+
 
 def mandiri_get_last_report_priv(C_Slot):
 

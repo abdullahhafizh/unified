@@ -169,12 +169,12 @@ def topup_debitnoinit_single(tid, datetime, time_out, value):
 
     return res_str.decode("utf-8"), report
 
-def topup_C2C_refill(Value):
+def topup_C2C_refill(Value, Timestamp):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""
     
-    res_str, report = serializer.TOP_UP_C2C(COMPORT, Value)
+    res_str, report = serializer.TOP_UP_C2C(COMPORT, Value, Timestamp)
 
     return res_str.decode("utf-8"), report.decode("utf-8")
 

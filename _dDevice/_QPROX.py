@@ -657,7 +657,7 @@ LAST_MANDIRI_C2C_REPORT = ""
 
 def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
     global LAST_MANDIRI_C2C_REPORT
-    if _Common.empty(report) or len(report) < 100:
+    if _Common.empty(report) or len(report) < 196:
         LOGGER.warning(('EMPTY/MISSMATCH REPORT LENGTH'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
         return
@@ -669,7 +669,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
     try:
         r = report.split('|')
         __data = r[1]
-        if len(r[1]) > 196: 
+        if len(r[1]) >= 196: 
             if r[1][:4] == '6308':
                 #Trim Extra chars 4 in front, and get 196
                 # |6308603298180000003600030D706E8693EA7B051040100120D0070000606D0000140520103434130F0000680F03DC050000739F8D603298608319158400030D706E8693EA7B510401880110F401000012400000140520103434130F00009A0303434D3490D
@@ -775,16 +775,18 @@ def top_up_mandiri_correction(amount, trxid=''):
     if LAST_BALANCE_CHECK['card_no'] != check_card_no:
         LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
-        # get_c2c_failure_settlement(amount, trxid)
+        # get_force_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
+    # Below Condition under Transaction Success
     if (int(LAST_BALANCE_CHECK['balance']) + int(amount) - 1500) == int(last_balance):
         param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
         _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
         if _ == 0 and len(report) >= 196:
             if report in LAST_MANDIRI_C2C_REPORT:
                 LOGGER.debug('DUPLICATE LAST_MANDIRI_C2C_REPORT', LAST_MANDIRI_C2C_REPORT, 'DO_FORCE_SETTLEMENT')
-                get_c2c_failure_settlement(amount, trxid)
+                # Handle Force Settlement As Success TRX
+                get_force_settlement(amount, trxid, force_status='0000')
                 return
             c2c_report = report
             if report[0] != '|':
@@ -793,32 +795,35 @@ def top_up_mandiri_correction(amount, trxid=''):
             return
     # Handle Old Applet Correction
     if LAST_C2C_APP_TYPE == '0':
+        # Old Applet Doing Topup Offline
         return topup_offline_mandiri_c2c(amount, trxid)
-    param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
-    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    if _response == 0 and len(_result) > 100:
-        parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
     else:
-        LOGGER.warning((trxid, _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
-        get_c2c_failure_settlement(amount, trxid)
-
+        # New Applet Doing Correction
+        param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
+        _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        if _response == 0 and len(_result) >= 196:
+            parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
+        else:
+            LOGGER.warning((trxid, _result))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
+            get_force_settlement(amount, trxid)
 
 
 def start_mandiri_c2c_force_settlement(amount, trxid):
     if not _Common.C2C_MODE:
             return
     else:
-        _Helper.get_thread().apply_async(get_c2c_failure_settlement, (amount, trxid,))
+        _Helper.get_thread().apply_async(get_force_settlement, (amount, trxid,))
 
 
-
-def get_c2c_failure_settlement(amount, trxid):
+def get_force_settlement(amount, trxid, force_status=None):
     param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-    # TODO Check Force Settlement Result
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    if _response == 0 and len(_result) > 100:
-        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+    if _response == 0 and len(_result) >= 196:
+        if force_status is not None:
+            parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+        else:
+            parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=force_status)
     else:
         LOGGER.warning((trxid, _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
@@ -854,7 +859,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         elif _result_json["Result"] in ["6208"]:
             LAST_C2C_APP_TYPE = '1'
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
-            get_c2c_failure_settlement(amount, trxid)
+            get_force_settlement(amount, trxid)
             return
         elif _result_json["Response"] == '83':
             LAST_C2C_APP_TYPE = '1'
@@ -1115,7 +1120,6 @@ def topup_dki_by_service(amount, trxid):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
         return False
         
-
 
 def reversal_topup_dki_by_service(amount, trxid):
     dki_stan = _Common.LAST_DKI_STAN

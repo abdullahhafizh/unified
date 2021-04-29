@@ -319,6 +319,10 @@ THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
 
+MAX_PENDING_CODE_RETRY = int(_ConfigParser.get_set_value('TEMPORARY', 'max^pending^code^retry', '7'))
+MAX_PENDING_CODE_DURATION = int(_ConfigParser.get_set_value('TEMPORARY', 'max^pending^code^duration', '2'))
+CUSTOMER_SERVICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'customer^service^no', '08123123123')
+
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
 REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
@@ -678,6 +682,7 @@ def load_from_temp_config(section='test^section', default=''):
 
 def log_to_config(option='TEMPORARY', section='last^auth', content=''):
     content = str(content)
+    LOGGER.info((option, section, content))
     _ConfigParser.set_value(option, section, content)
     
 
@@ -1613,3 +1618,27 @@ LOGGED_OPERATOR = None
 
 LAST_BCA_ONLINE_PENDING = ''
 LAST_BRI_ONLINE_PENDING = ''
+
+
+def validate_duration_pending_code(time=0):
+    if _Helper.empty(time): 
+        return False
+    duration = (MAX_PENDING_CODE_DURATION * 24 * 60 * 60)
+    limit_timestamp = time + duration
+    LOGGER.info(('Time Duration Day - Epoch', MAX_PENDING_CODE_DURATION, duration))
+    LOGGER.info(('Limit Timestamp', limit_timestamp))
+    current_time = time.time()
+    LOGGER.info(('Current Timestamp', current_time))
+    if current_time >=  limit_timestamp:
+        return False
+    return True
+
+
+def validate_usage_pending_code(reff_no):
+    usage_attempt = int(load_from_temp_config(section=reff_no, default='0'))
+    if usage_attempt == 0:
+        return True
+    elif MAX_PENDING_CODE_RETRY > usage_attempt:
+        return True
+    else:
+        return False

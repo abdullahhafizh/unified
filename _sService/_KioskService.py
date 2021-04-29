@@ -59,6 +59,24 @@ K_SIGNDLER = KioskSignalHandler()
 LOGGER = logging.getLogger()
 
 
+def start_use_pending_code(reff_no):
+    _Helper.get_thread().apply_async(use_pending_code, (reff_no,))
+
+
+# def load_from_temp_config(section='test^section', default=''):
+#     return _ConfigParser.get_set_value('TEMPORARY', section, default)
+
+# def log_to_config(option='TEMPORARY', section='last^auth', content=''):
+#     content = str(content)
+#     _ConfigParser.set_value(option, section, content)
+
+
+def use_pending_code(reff_no):
+    usage_attempt = int(_Common.load_from_temp_config(section=reff_no, default='0'))
+    usage_attempt += 1
+    _Common.log_to_config(option='TEMPORARY', section=reff_no, content=str(usage_attempt))
+
+
 def get_kiosk_status():
     _Helper.get_thread().apply_async(kiosk_status)
 
@@ -70,7 +88,6 @@ def kiosk_status():
 
 def load_from_temp_data(section, selected_mode):
     return _Common.load_from_temp_data(temp=section, mode=selected_mode)
-
 
 def load_previous_kiosk_status():
     try:
@@ -191,6 +208,16 @@ def define_theme(d):
     _Common.store_to_temp_data('theme-setting', json.dumps(d))
     _Common.THEME_NAME = d['name']
     _Common.log_to_temp_config('theme^name', d['name'])
+    
+    # Additional Theme Setting
+    _Common.MAX_PENDING_CODE_DURATION = d.get('max_pending_code_duration', _Common.MAX_PENDING_CODE_DURATION)
+    _Common.log_to_temp_config('max^pending^code^duration', str(d['max_pending_code_duration']))
+    _Common.MAX_PENDING_CODE_RETRY = d.get('max_pending_code_retry', _Common.MAX_PENDING_CODE_RETRY)
+    _Common.log_to_temp_config('max^pending^code^retry', str(d['max_pending_code_retry']))
+    _Common.CUSTOMER_SERVICE_NO = d.get('customer_service_no', _Common.CUSTOMER_SERVICE_NO)
+    _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
+    # ===
+    
     config_js = sys.path[0] + '/_qQml/config.js'
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger

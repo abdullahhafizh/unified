@@ -263,6 +263,8 @@ Base{
                 _SLOT.user_action_log('Press "OK" in e-Receipt Activity');
                 var title = 'Terima Kasih';
                 var msg = 'Silakan Cek eReceipt Anda di Whatsapp';
+                if (details.shop_type == 'topup') msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Anda Dari Reader';
+                if (details.shop_type == 'shop') msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Baru Anda';
                 switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
             }
         }

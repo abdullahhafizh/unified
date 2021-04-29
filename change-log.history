@@ -1,3 +1,10 @@
+13.0.G-GLOBAL:
+- Limit Pending (Freq : 7X, Duration : 2 Days)
+- Enhance Message End TRX Success Between Manual Receipt VS eReceipt,
+- Add Customer Service No In Failure Receipt,
+- Add Mandiri C2C Force Settlement Success,
+- ...
+
 13.0.F-GLOBAL:
 - Enhance Message Card Balance Not Detected,
 - Enhance Summary Details in Payment Page,

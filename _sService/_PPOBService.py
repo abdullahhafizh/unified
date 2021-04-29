@@ -276,6 +276,15 @@ def do_check_trx(reff_no):
                 else:
                     if r['payment_method'].lower() in ['debit']:
                         r['status'] = 'FAILED - Transaksi Debit Gagal'
+            
+            # Add Validation Max Duration (_Common.MAX_PENDING_CODE_DURATION)
+            if not _Common.validate_duration_pending_code(time=time_stamp):
+                r['retry_able'] = 0
+                r['status'] = 'EXPIRED'
+            # Add Validation Max Retry Attempts (_Common.MAX_PENDING_CODE_RETRY)
+            if not _Common.validate_usage_pending_code(reff_no):
+                r['retry_able'] = 0
+                r['status'] = 'BLOCKED'
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data

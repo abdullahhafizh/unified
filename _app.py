@@ -736,6 +736,10 @@ class SlotHandler(QObject):
     def start_do_inquiry_trx(self, payload):
         _PPOBService.start_do_inquiry_trx(payload)
     start_do_inquiry_trx = pyqtSlot(str)(start_do_inquiry_trx)
+    
+    def start_use_pending_code(self, reff_no):
+        _KioskService.start_use_pending_code(reff_no)
+    start_use_pending_code = pyqtSlot(str)(start_use_pending_code)
 
 
 def s_handler():
