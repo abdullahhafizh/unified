@@ -1463,7 +1463,7 @@ Base{
             id: row6
             visible: (details.shop_type=='topup')
             labelName: 'Nilai Topup'
-            labelContent: 'Rp ' + FUNC.insert_dot(parseInt(details.value) - parseInt(adminFee));
+            labelContent: 'Rp ' + FUNC.insert_dot(getDenom.toString());
         }
 
         TextDetailRow{
