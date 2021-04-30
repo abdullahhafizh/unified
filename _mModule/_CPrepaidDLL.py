@@ -655,7 +655,7 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
 
 #026
 @func_set_timeout(30)
-def topup_C2C_refill(Value):
+def topup_C2C_refill(Value, Timestamp):
     # global DLL_LOAD
     res_str = ""
     reportSAM = ""
@@ -664,7 +664,8 @@ def topup_C2C_refill(Value):
 
         LOG.fw("--> CMD READER = $81")
         C_Value = utils.str_to_bytes(Value)
-        LOG.fw("--> C_Value = " , C_Value)
+        LOG.fw("--> Value = " , C_Value)
+        LOG.fw("--> Timestamp = " , Timestamp)
 
         # structTopUp = ResponTopUpC2C()
         # p_structTopUp = pointer(structTopUp)
@@ -678,7 +679,7 @@ def topup_C2C_refill(Value):
         # reportSAM = structTopUp.rep.decode("cp437")
         # debErrorStr = structTopUp.c_error.decode("cp437")
 
-        res_str, reportSAM = lib.topup_C2C_refill(Value)
+        res_str, reportSAM = lib.topup_C2C_refill(Value, Timestamp)
         debErrorStr = res_str
         
     except Exception as ex:

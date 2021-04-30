@@ -235,6 +235,7 @@ def do_check_trx(reff_no):
     }
     try:
         pending_record = _DAO.get_transaction_failure(param=payload)
+        LOGGER.debug(('pending_record', str(pending_record)))
         if len(pending_record) > 0:
             data = pending_record.__getitem__(0)
             time_stamp = data.get('createdAt')/1000
@@ -284,7 +285,7 @@ def do_check_trx(reff_no):
             # Add Validation Max Retry Attempts (_Common.MAX_PENDING_CODE_RETRY)
             if not _Common.validate_usage_pending_code(reff_no):
                 r['retry_able'] = 0
-                r['status'] = 'BLOCKED'
+                r['status'] = 'MAX_ATTEMPT_EXCEEDED'
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data

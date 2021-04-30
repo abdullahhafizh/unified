@@ -1286,7 +1286,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                     LOGGER.debug(('Removing', file, file_modification_time, expired))
                     os.remove(file)
     LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
-    print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
+    print('pyt: [FINISH] DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
     return 'HOUSE_KEEPING_' + str(age_month) + '_SUCCESS'
 
 

@@ -857,11 +857,11 @@ def mandiri_C2C_refill(param, __global_response__):
         LOG.fw("026:Parameter tidak lengkap", param)
         raise Exception("026:Parameter tidak lengkap: "+param)
     
-    C_Timestamp = datetime.datetime.now().strftime("%d%m%y%H%M%S")
-    LOG.fw("026:Parameter Timestamp = ", C_Timestamp)
-    LAST_TIMESTAMP_MANDIRI = C_Timestamp
+    Timestamp = datetime.datetime.now().strftime("%d%m%y%H%M%S")
+    LOG.fw("026:Parameter Timestamp = ", Timestamp)
+    LAST_TIMESTAMP_MANDIRI = Timestamp
     
-    res_str, reportSAM, debErrorStr = prepaid.topup_C2C_refill(C_Value, C_Timestamp)
+    res_str, reportSAM, debErrorStr = prepaid.topup_C2C_refill(C_Value, Timestamp)
     reportSAM = prepaid_utils.fix_report(reportSAM)
 
     __global_response__["Result"] = res_str
