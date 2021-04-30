@@ -1621,10 +1621,10 @@ LAST_BRI_ONLINE_PENDING = ''
 
 
 def validate_duration_pending_code(time=0):
-    if _Helper.empty(time): 
-        return False
+    # if _Helper.empty(time): 
+    #     return False
     duration = (MAX_PENDING_CODE_DURATION * 24 * 60 * 60)
-    limit_timestamp = time + duration
+    limit_timestamp = int(time) + duration
     LOGGER.info(('Time Duration Day - Epoch', MAX_PENDING_CODE_DURATION, duration))
     LOGGER.info(('Limit Timestamp', limit_timestamp))
     current_time = time.time()
