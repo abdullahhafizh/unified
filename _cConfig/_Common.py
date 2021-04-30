@@ -1620,14 +1620,14 @@ LAST_BCA_ONLINE_PENDING = ''
 LAST_BRI_ONLINE_PENDING = ''
 
 
-def validate_duration_pending_code(time=0):
+def validate_duration_pending_code(timestamp):
     # if _Helper.empty(time): 
     #     return False
     duration = (MAX_PENDING_CODE_DURATION * 24 * 60 * 60)
-    limit_timestamp = int(time) + duration
+    limit_timestamp = int(timestamp) + duration
     LOGGER.info(('Time Duration Day - Epoch', MAX_PENDING_CODE_DURATION, duration))
     LOGGER.info(('Limit Timestamp', limit_timestamp))
-    current_time = time.time()
+    current_time = time()
     LOGGER.info(('Current Timestamp', current_time))
     if current_time >=  limit_timestamp:
         return False

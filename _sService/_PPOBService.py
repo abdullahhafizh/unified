@@ -281,7 +281,7 @@ def do_check_trx(reff_no):
             
             LOGGER.info(('START CHECK DURATION'))
             # Add Validation Max Duration (_Common.MAX_PENDING_CODE_DURATION)
-            if not _Common.validate_duration_pending_code(time=time_stamp):
+            if not _Common.validate_duration_pending_code(time_stamp):
                 r['retry_able'] = 0
                 r['status'] = 'ALREADY EXPIRED'
             LOGGER.info(('START CHECK USAGE'))
@@ -293,6 +293,7 @@ def do_check_trx(reff_no):
             del remarks
             del data
             return
+        # Do check TRX server-side
         url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK':
