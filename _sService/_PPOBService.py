@@ -283,12 +283,12 @@ def do_check_trx(reff_no):
             # Add Validation Max Duration (_Common.MAX_PENDING_CODE_DURATION)
             if not _Common.validate_duration_pending_code(time=time_stamp):
                 r['retry_able'] = 0
-                r['status'] = 'EXPIRED'
+                r['status'] = 'ALREADY EXPIRED'
             LOGGER.info(('START CHECK USAGE'))
             # Add Validation Max Retry Attempts (_Common.MAX_PENDING_CODE_RETRY)
             if not _Common.validate_usage_pending_code(reff_no):
                 r['retry_able'] = 0
-                r['status'] = 'MAX_ATTEMPT_EXCEEDED'
+                r['status'] = 'MAX ATTEMPT EXCEEDED'
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data
