@@ -255,6 +255,7 @@ def do_check_trx(reff_no):
                 'remarks': remarks,
                 'retry_able': _Common.check_retry_able(remarks)
             }
+            LOGGER.info(('START VALIDATE PAYMENT'))
             # Add Debit & QR Payment Check
             if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris']:
                 r['retry_able'] = 0
