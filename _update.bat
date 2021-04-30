@@ -1,4 +1,5 @@
 @echo off
+pip install playsound
 pip install pika
 pip install pycryptodome
 pip install Flask
