@@ -1005,16 +1005,16 @@ def start_update_usage_retry_code(trxid):
 
 def update_usage_retry_code(trxid):
     try:
-        param = {
+        __param = {
             "trx_id": trxid,
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/usage-pending-code', param)
-        LOGGER.info((response, str(param)))
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/usage-pending-code', __param)
+        LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
             __param['endpoint'] = 'sync/usage-pending-code'
-            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/usage-pending-code', payload=param)
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/usage-pending-code', payload=__param)
             return False
     except Exception as e:
         LOGGER.warning((e))
