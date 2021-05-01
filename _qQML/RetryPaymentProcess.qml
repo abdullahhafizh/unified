@@ -48,7 +48,7 @@ Base{
     property var preloadNotif
     property var customerPhone: ''
 
-    property var pendingCodeReffNo: ''
+    property var pendingCode: ''
 
     property var notifTitle: ''
     property var notifMessage: ''
@@ -681,7 +681,7 @@ Base{
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
         details.use_pending_code = 1;
-        pendingCodeReffNo = details.pending_trx_code;
+        pendingCode = details.pending_trx_code;
         delete details.pending_trx_code;
         delete details.payment_error;
         delete details.process_error;
@@ -702,7 +702,8 @@ Base{
         }
         transactionInProcess = true;
         // Log Usage Pending Code
-        _SLOT.start_use_pending_code(pendingCodeReffNo);
+        var reff_no = details.shop_type + details.epoch.toString();
+        _SLOT.start_use_pending_code(pendingCode, reff_no);
         // Force Disable All Cancel Button
         hide_all_cancel_button();
         var trx_type = details.shop_type;

@@ -997,6 +997,28 @@ def upload_device_state(device, status):
     except Exception as e:
         LOGGER.warning((e))
         return False
+    
+    
+def start_update_usage_retry_code(trxid):
+    _Helper.get_thread().apply_async(update_usage_retry_code, (trxid, ))
+
+
+def update_usage_retry_code(trxid):
+    try:
+        param = {
+            "trx_id": trxid,
+        }
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/usage-pending-code', param)
+        LOGGER.info((response, str(param)))
+        if status == 200 and response['result'] == 'OK':
+            return True
+        else:
+            __param['endpoint'] = 'sync/usage-pending-code'
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/usage-pending-code', payload=param)
+            return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
 
 
 def start_upload_mandiri_wallet():
@@ -1095,6 +1117,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             # _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
             return True
         else:
+            __param['endpoint'] = 'sync/transaction-failure'
             store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/transaction-failure', payload=__param)
             return False
     except Exception as e:

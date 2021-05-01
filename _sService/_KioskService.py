@@ -59,8 +59,8 @@ K_SIGNDLER = KioskSignalHandler()
 LOGGER = logging.getLogger()
 
 
-def start_use_pending_code(reff_no):
-    _Helper.get_thread().apply_async(use_pending_code, (reff_no,))
+def start_use_pending_code(pending_code, reff_no):
+    _Helper.get_thread().apply_async(use_pending_code, (pending_code, reff_no,))
 
 
 # def load_from_temp_config(section='test^section', default=''):
@@ -71,10 +71,13 @@ def start_use_pending_code(reff_no):
 #     _ConfigParser.set_value(option, section, content)
 
 
-def use_pending_code(reff_no):
-    usage_attempt = int(_Common.load_from_temp_config(section=reff_no, default='0'))
+def use_pending_code(pending_code, reff_no):
+    usage_attempt = int(_Common.load_from_temp_config(section=pending_code, default='0'))
     usage_attempt += 1
-    _Common.log_to_config(option='TEMPORARY', section=reff_no, content=str(usage_attempt))
+    # Update Usage To Local
+    _Common.log_to_config(option='TEMPORARY', section=pending_code, content=str(usage_attempt))
+    # Send Update Usage To Server
+    _Common.update_usage_retry_code(reff_no)
 
 
 def get_kiosk_status():
