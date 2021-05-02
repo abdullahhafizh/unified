@@ -721,10 +721,10 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             # Emit Topup Success Record Into Local DB
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
+            # Update Detail TRX Detail Attribute
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
             # Renew C2C Deposit Balance Info
             c2c_balance_info()
-            # Close Double Whatsapp When Failure
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
