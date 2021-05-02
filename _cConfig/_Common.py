@@ -212,8 +212,10 @@ INFOS = [
     '[EDC]-serial^no -> Define Serial No of Mobile Android EDC',
 ] 
 
-for i in range(len(INFOS)):
-    _ConfigParser.set_value('INFO', str(i+1), INFOS[i])
+
+# Disable This Unised Info (never Read) On Setting.ini
+# for i in range(len(INFOS)):
+#     _ConfigParser.set_value('INFO', str(i+1), INFOS[i])
 
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
