@@ -724,7 +724,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             # Renew C2C Deposit Balance Info
             c2c_balance_info()
             # Close Double Whatsapp When Failure
-            # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
@@ -778,9 +778,12 @@ def top_up_mandiri_correction(amount, trxid=''):
     if response == 0 and '|' in result:
         check_card_no = result.split('|')[1].replace('#', '')
         last_balance = result.split('|')[0]
-    
+    else:
+        LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
+        return
     if LAST_BALANCE_CHECK['card_no'] != check_card_no:
-        LOGGER.warning(('CARD_NO MISMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
+        LOGGER.warning(('MDR_CARD_MISSMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
         # get_force_settlement(amount, trxid)
         return
@@ -814,7 +817,7 @@ def top_up_mandiri_correction(amount, trxid=''):
             # parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
         # else:
             # LOGGER.warning((trxid, _result))
-        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('C2C_FORCE_SETTLEMENT')
+        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
         get_force_settlement(amount, trxid)
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
@@ -836,7 +839,7 @@ def get_force_settlement(amount, trxid, force_status=None):
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=force_status)
     else:
         LOGGER.warning((trxid, _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store

@@ -1143,6 +1143,7 @@ def retry_topup_online_bca(amount, trxid):
     #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
     # }
     if not check_card_balance:
+        LOGGER.warning(('CARD_NO NOT DETECTED', check_card_balance, previous_card_no, trxid))
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
         return
     if previous_card_no != check_card_balance['card_no']:
@@ -1198,6 +1199,7 @@ def retry_topup_online_bri(amount, trxid):
     #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
     # }
     if not check_card_balance:
+        LOGGER.warning(('CARD_NO NOT DETECTED', check_card_balance, previous_card_no, trxid))
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR')
         return
     if previous_card_no != check_card_balance['card_no']:
@@ -1250,6 +1252,7 @@ def retry_topup_online_dki(amount, trxid):
     #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
     # }
     if not check_card_balance:
+        LOGGER.warning(('CARD_NO NOT DETECTED', check_card_balance, previous_card_no, trxid))
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
         return
     if previous_card_no != check_card_balance['card_no']:

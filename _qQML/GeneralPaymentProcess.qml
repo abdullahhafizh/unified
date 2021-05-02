@@ -545,6 +545,10 @@ Base{
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             return
+        } else if (t=='MDR_C2C_FORCE_SETTLEMENT') {
+            details.force_settlement = 1;
+            // Must Return Here to Stop Executing Receipt
+            return
         } else {
             // Trigger Deposit Update Balance Check
             if (cardNo.substring(0, 4) == '6032'){
@@ -574,7 +578,6 @@ Base{
             }
             // Do not return here to handle refund for failed topup response
         }
-        if (t=='C2C_FORCE_SETTLEMENT') details.force_settlement = 1;
         details.process_error = 1;
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
