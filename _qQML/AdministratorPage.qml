@@ -193,7 +193,7 @@ Base{
 
         } else if (a.indexOf('TOPUP_ONLINE_DEPOSIT') > -1){
             var topup_result = a.split('|')[1]
-            false_notif('Dear '+operatorName+'|Status Topup Deposit C2C Mandiri..\n['+topup_result+']');
+            false_notif('Dear '+operatorName+'|Status Topup Deposit..\n['+topup_result+']');
         } else if (a=='CHANGE_PRODUCT|CONNECTION_ERROR'){
 //            actionChangeList = [];
             false_notif('Dear '+operatorName+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
