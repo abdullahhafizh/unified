@@ -45,6 +45,8 @@ ERROR_TOPUP = _QPROX.ERROR_TOPUP
 BNI_UPDATE_BALANCE_PROCESS = False
 LAST_BNI_TOPUP_PARAM = None
 
+BANKS = _Common.BANKS
+
 # ==========================================================
 
 
@@ -440,6 +442,11 @@ BNI_REMOTE_ACTIVATION = _Common.BNI_REMOTE_ACTIVATION
 
 
 def start_deposit_update_balance(bank):
+    for __bank in BANKS:
+        if __bank == bank:
+            if not __bank['STATUS']:
+                LOGGER.warning(('DEPOSIT BANK ', bank, ' NOT ACTIVE FOR UPDATE BALANCE'))
+                return
     if bank == 'MANDIRI':
         mode = 'TOPUP_DEPOSIT'
         param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'

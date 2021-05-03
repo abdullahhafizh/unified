@@ -504,7 +504,7 @@ Base{
         AdminPanelButton{
             id: update_balance_deposit_bni
             z: 10
-            button_text: 'topup bni\ndeposit'
+            button_text: 'ubal\nc2c bni'
             visible: !popup_loading.visible
             modeReverse: true
             MouseArea{
