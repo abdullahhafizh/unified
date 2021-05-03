@@ -1503,7 +1503,7 @@ LAST_PPOB_TRX = None
 def check_retry_able(data):
     if _Helper.empty(data) is True:
         return 0
-    # Topup BRI & BCA Retry Validation Also User Connection Status
+    # Topup DKI, BRI & BCA Retry Validation Also User Connection Status
     if not _Helper.is_online(_Helper.whoami()):
         return 0
     if data.get('shop_type') == 'ppob':
@@ -1528,8 +1528,8 @@ def check_retry_able(data):
                 return 1
             if BNI_ACTIVE_WALLET > topup_value:
                 return 1
-            if DKI_TOPUP_ONLINE_BY_SERVICE is True:
-                return 1
+            # if DKI_TOPUP_ONLINE_BY_SERVICE is True:
+            #     return 0
         except Exception as e:
             LOGGER.warning((e))
             return 0
