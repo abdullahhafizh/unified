@@ -822,12 +822,14 @@ def auto_refill_zero_bni(slot):
     if bni_act_resp == 0:
         reset_result, result_message = bni_reset_update_balance(slot=1, activation=True)
         if reset_result is True:
-            _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|AUTO_ACTIVATION_SUCCESS')
+            # _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|AUTO_ACTIVATION_SUCCESS')
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|SUCCESS')
         else:
-            _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|'+result_message)  
+            # _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|'+result_message)  
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|'+result_message)
     else:
         _Common.ALLOW_DO_TOPUP = True
-        _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|ERROR_AUTO_ACTIVATION')
+        # _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|ERROR_AUTO_ACTIVATION')
         TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
 
 
