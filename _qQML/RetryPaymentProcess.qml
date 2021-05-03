@@ -393,7 +393,7 @@ Base{
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
         } else {
             //Do Print If Only Status Payment is Changed Or Force Settlement
-             if (parseInt(receivedPayment) > parseInt(initialPayment) || details.force_settlement == 1)
+             if (parseInt(receivedPayment) > parseInt(initialPayment))
                  _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
         }
@@ -525,9 +525,9 @@ Base{
 //                _SLOT.start_do_topup_deposit_bni(slot_topup);
 //                console.log('Trigger Manual Topup BNI By Failed TRX : ', now, slot_topup)
 //            }
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true );
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true );
         }  else if (t=='MANDIRI_C2C_PARTIAL_ERROR'){
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
