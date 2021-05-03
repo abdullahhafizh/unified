@@ -324,7 +324,7 @@ THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
 
 MAX_PENDING_CODE_RETRY = int(_ConfigParser.get_set_value('TEMPORARY', 'max^pending^code^retry', '7'))
 MAX_PENDING_CODE_DURATION = int(_ConfigParser.get_set_value('TEMPORARY', 'max^pending^code^duration', '2'))
-CUSTOMER_SERVICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'customer^service^no', '08123123123')
+CUSTOMER_SERVICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'customer^service^no', '082124999951')
 
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
 REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
