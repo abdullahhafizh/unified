@@ -397,7 +397,8 @@ Base{
             id: ka_login_button
             z: 10
             button_text: (CONF.c2c_mode==1) ? 'update\nc2c fee' : 'ka login'
-            visible: !popup_loading.visible
+            // visible: !popup_loading.visible
+            visible: false
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
@@ -443,10 +444,30 @@ Base{
         }
 
         AdminPanelButton{
+            id: update_balance_deposit_mandiri
+            z: 10
+            button_text: 'ubal\nc2c mdr'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Update Balance Deposit Mandiri"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('update_balance_deposit_mandiri is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_deposit_update_balance('MANDIRI');
+                }
+            }
+        }
+
+        AdminPanelButton{
             id: activation_bni_button
             z: 10
             button_text: 'activate\nbni'
-            visible: !popup_loading.visible
+            // visible: !popup_loading.visible
+            visible: false
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
@@ -476,6 +497,26 @@ Base{
                     console.log('topup_bni_deposit_button is pressed..!');
                     popup_loading.open();
                     _SLOT.start_do_force_topup_bni();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: update_balance_deposit_bni
+            z: 10
+            button_text: 'topup bni\ndeposit'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Update Balance Deposit BNI"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('update_balance_deposit_bni is pressed..!');
+                    popup_loading.open();
+                    // _SLOT.start_master_activation_bni();
+                    _SLOT.start_deposit_update_balance('BNI');
                 }
             }
         }

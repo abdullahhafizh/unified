@@ -749,6 +749,10 @@ class SlotHandler(QObject):
     def start_update_usage_retry_code(self, trxid):
         _Common.start_update_usage_retry_code(trxid)
     start_update_usage_retry_code = pyqtSlot(str)(start_update_usage_retry_code)
+    
+    def start_deposit_update_balance(self, bank):
+        _TopupService.start_deposit_update_balance(bank)
+    start_deposit_update_balance = pyqtSlot(str)(start_deposit_update_balance)
 
 
 def s_handler():

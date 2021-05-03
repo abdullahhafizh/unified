@@ -439,12 +439,15 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
 BNI_REMOTE_ACTIVATION = _Common.BNI_REMOTE_ACTIVATION
 
 
-def start_deposit_update_balance():
-    bank = 'MANDIRI'
-    mode = 'TOPUP_DEPOSIT'
-    param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
-    trigger = 'ADMIN'
-    _Helper.get_thread().apply_async(update_balance, (param, bank, mode, trigger))
+def start_deposit_update_balance(bank):
+    if bank == 'MANDIRI':
+        mode = 'TOPUP_DEPOSIT'
+        param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
+        trigger = 'ADMIN'
+        _Helper.get_thread().apply_async(update_balance, (param, bank, mode, trigger))
+    elif bank == 'BNI':
+        slot = 1
+        _Helper.get_thread().apply_async(auto_refill_zero_bni, (slot,))
 
 
 LAST_BRI_ACCESS_TOKEN = ''
@@ -1846,3 +1849,5 @@ def reset_bca_session():
         LOGGER.debug((str(status), str(response)))
     except Exception as e:
         LOGGER.warning((e))
+
+
