@@ -721,8 +721,6 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             # Emit Topup Success Record Into Local DB
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
-            # Update Detail TRX Detail Attribute
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
             # Renew C2C Deposit Balance Info
             c2c_balance_info()
         # Ensure The C2C_DEPOSIT_NO same with Report
@@ -834,6 +832,8 @@ def get_force_settlement(amount, trxid, force_status=None):
     _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
     LOGGER.debug((_param, _response, _result))
     if _response == 0 and len(_result) >= 196:
+        # Update Detail TRX Detail Attribute
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
         if force_status is not None:
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
         else:
