@@ -1503,12 +1503,12 @@ LAST_PPOB_TRX = None
 def check_retry_able(data):
     if _Helper.empty(data) is True:
         return 0
-    # Topup DKI, BRI & BCA Retry Validation Also User Connection Status
-    if not _Helper.is_online(_Helper.whoami()):
-        return 0
     if data.get('shop_type') == 'ppob':
-        return 1
-    if data.get('shop_type') == 'shop':
+        if _Helper.is_online(_Helper.whoami()+'_ppob'):
+            return 1
+        else:
+            return 0
+    elif data.get('shop_type') == 'shop':
         try:
             slot_cd = data.get('raw').get('status')
             check_stock = _DAO.get_product_stock_by_slot_status(slot_cd)
@@ -1520,9 +1520,12 @@ def check_retry_able(data):
         except Exception as e:
             LOGGER.warning((e))
             return 0
-    if data.get('shop_type') == 'topup':
+    elif data.get('shop_type') == 'topup':
         # Can Change Topup Provider
         try:
+            # Topup DKI, BRI & BCA Retry Validation Also User Connection Status
+            if _Helper.is_online(_Helper.whoami()+'_topup'):
+                return 1
             topup_value = int(data.get('value', '0'))
             if MANDIRI_ACTIVE_WALLET > topup_value:
                 return 1
@@ -1533,7 +1536,8 @@ def check_retry_able(data):
         except Exception as e:
             LOGGER.warning((e))
             return 0
-    return 0
+    else:
+        return 0
 
 
 LAST_QR_PAYMENT_HOST_TRX_ID = None
