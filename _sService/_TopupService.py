@@ -446,13 +446,20 @@ def start_deposit_update_balance(bank):
         if __bank == bank:
             if not __bank['STATUS']:
                 LOGGER.warning(('DEPOSIT BANK ', bank, ' NOT ACTIVE FOR UPDATE BALANCE'))
+                TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|DEPOSIT_BANK_NOT_ACTIVE')
                 return
     if bank == 'MANDIRI':
+        if not _Common.mandiri_sam_status():
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|DEPOSIT_MDR_NOT_ACTIVE')
+            return
         mode = 'TOPUP_DEPOSIT'
         param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
         trigger = 'ADMIN'
         _Helper.get_thread().apply_async(update_balance, (param, bank, mode, trigger))
     elif bank == 'BNI':
+        if not ('---' not in _Common.MID_BNI and len(_Common.MID_BNI) > 3):
+            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|DEPOSIT_BNI_NOT_ACTIVE')
+            return
         slot = 1
         _Helper.get_thread().apply_async(auto_refill_zero_bni, (slot,))
 
@@ -821,6 +828,7 @@ def auto_refill_zero_bni(slot):
     else:
         _Common.ALLOW_DO_TOPUP = True
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|ERROR_AUTO_ACTIVATION')
+        TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
 
 
 def start_slave_activation_bni():
