@@ -830,8 +830,9 @@ def start_mandiri_c2c_force_settlement(amount, trxid):
 
 
 def get_force_settlement(amount, trxid, force_status=None):
-    param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+    _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+    LOGGER.debug((_param, _response, _result))
     if _response == 0 and len(_result) >= 196:
         if force_status is not None:
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
