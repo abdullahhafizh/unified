@@ -840,6 +840,7 @@ def get_force_settlement(amount, trxid, force_status=None):
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=force_status)
     else:
         LOGGER.warning((trxid, _result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
         # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
 
