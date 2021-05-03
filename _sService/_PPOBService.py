@@ -255,6 +255,7 @@ def do_check_trx(reff_no):
                 'remarks': remarks,
                 'retry_able': _Common.check_retry_able(remarks)
             }
+            LOGGER.info(('INITIAL RETRY_ABLE', r['retry_able']))
             LOGGER.info(('START VALIDATE PAYMENT'))
             # Add Debit & QR Payment Check
             if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris']:
@@ -279,16 +280,19 @@ def do_check_trx(reff_no):
                     if r['payment_method'].lower() in ['debit']:
                         r['status'] = 'FAILED - Transaksi Debit Gagal'
             
-            LOGGER.info(('START CHECK DURATION'))
+            valid_duration = _Common.validate_duration_pending_code(time_stamp)
+            LOGGER.info(('START CHECK DURATION', valid_duration))
             # Add Validation Max Duration (_Common.MAX_PENDING_CODE_DURATION)
             if not _Common.validate_duration_pending_code(time_stamp):
                 r['retry_able'] = 0
                 r['status'] = 'ALREADY EXPIRED'
-            LOGGER.info(('START CHECK USAGE'))
+            valid_usage = _Common.validate_usage_pending_code(reff_no)
+            LOGGER.info(('START CHECK USAGE', valid_usage))
             # Add Validation Max Retry Attempts (_Common.MAX_PENDING_CODE_RETRY)
-            if not _Common.validate_usage_pending_code(reff_no):
+            if not valid_usage:
                 r['retry_able'] = 0
                 r['status'] = 'MAX ATTEMPT EXCEEDED'
+            LOGGER.info(('CHECK_TRX_DATA', json.dumps(r)))
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
             del data
