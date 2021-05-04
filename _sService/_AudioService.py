@@ -27,7 +27,7 @@ LOGGER = logging.getLogger()
 
 # TODO: Register All Audio Files Here
 AUDIO_MAPPING = {
-    'welcome': os.path.join(AUDIO_PATH, 'welcome.mp3')
+    'welcome': os.path.join(AUDIO_PATH, 'intro.wav')
 }
 
 
