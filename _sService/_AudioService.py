@@ -50,4 +50,19 @@ def play_audio(track):
     except Exception as e:
         LOGGER.warning((e))
         AUD_SIGNDLER.SIGNAL_START_AUDIO.emit('START_AUDIO|ERROR')
+        
+
+def start_trigger_stop_audio():
+    _Helper.get_thread().apply_async(trigger_stop_audio,)
     
+    
+def trigger_stop_audio():
+    global SOUND
+    try:
+        if SOUND is not None:
+            SOUND.terminate()
+        SOUND = None
+        AUD_SIGNDLER.SIGNAL_START_AUDIO.emit('STOP_AUDIO|SUCCESS')
+    except Exception as e:
+        LOGGER.warning((e))
+        AUD_SIGNDLER.SIGNAL_START_AUDIO.emit('STOP_AUDIO|ERROR')

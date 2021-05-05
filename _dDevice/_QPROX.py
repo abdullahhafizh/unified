@@ -884,10 +884,16 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
         LOGGER.info(('PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
         LOGGER.info(('LAST_BALANCE_DEPOSIT', last_deposit_balance ))
+        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', _result, 'applet_type:', LAST_C2C_APP_TYPE ))
+        
         if prev_deposit_balance == last_deposit_balance:
+            # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
+            if _result_json["Result"] in ["6208"] and LAST_C2C_APP_TYPE == '1':
+                get_force_settlement(amount, trxid)
+                sleep(1)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             return
-        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', _result, 'applet_type:', LAST_C2C_APP_TYPE ))
+        
         # "6987", "100C", "10FC" Another Captured Error Code
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
     except Exception as e:
