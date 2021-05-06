@@ -1003,8 +1003,8 @@ def get_tpid(string):
 def get_payment(string):
     if string == 'debit' or string == 'credit':
         return 'EDC'
-    elif string == 'cash':
-        return 'MEI'
+    else:
+        return string
 
 
 MEI_HISTORY = ''
