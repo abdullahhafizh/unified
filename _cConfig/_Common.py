@@ -277,8 +277,10 @@ def get_cash_activity():
                 output['total'] += int(notes)
             if notes not in output['notes']:
                 output['notes'].append(notes)
+        summary = {}
         for note in output['notes']:
-            output['summary'][note] = cash_status.count(note)
+            summary.update({note:cash_status.count(note)})
+        output['summary']= summary
         LOGGER.info(('CASH_STATUS', str(output)))
     except Exception as e:
         LOGGER.warning((e))
