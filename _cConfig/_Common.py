@@ -882,6 +882,17 @@ FW_BANK = {
     '7': 'DKI'
 }
 
+CODE_BANK = {
+    '1': 'MANDIRI',
+    '2': 'BNI',
+    '3': 'BRI',
+    '4': 'BCA',
+    '5': 'DKI',
+    '6': 'MEGA',
+    '7': 'NOBU',
+    '8': 'BTN'
+}
+
 BRI_LOG_LEGEND = {
     'EB': 'PURCHASE', # Payment
     'EC': 'TOPUP', # Topup Online

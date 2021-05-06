@@ -1042,6 +1042,12 @@ def update_summary_report(data):
         return False
     _DAO.create_today_report(_Common.TID)
     bank = _Common.get_bank_name(data.get('provider', ''))
+    # Handle Empty Bank name From Bank Id
+    if bank == '':
+        if 'raw' in data.keys():
+            bank_id = data['raw'].get('bid', 0)
+            if bank_id != 0 and str(bank_id) in _Common.CODE_BANK.keys():
+                bank = _Common.CODE_BANK[str(bank_id)].lower()
     if data['shop_type'] == 'shop':
         _DAO.update_today_summary_multikeys([bank+'_shop_freq', bank+'_card_trx_count'], 1)
         _DAO.update_today_summary(bank+'_card_trx_amount', int(data.get('value', 0)))  
