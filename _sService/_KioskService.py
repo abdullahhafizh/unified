@@ -514,6 +514,7 @@ def machine_summary():
         'theme': str(_Common.THEME_NAME),
         'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A'),
         'current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
+        # 'current_cash': _Common.get_cash_activity()['total']
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
     }
@@ -1203,11 +1204,13 @@ def store_transaction_global(param, retry=False):
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
             # Must Stop The Logic Here
             return
+        
         # Update Daily Summary Data
         update_summary_report(g)
         trx_id = TRX_ID_SALE = _Helper.get_uuid()
         product_id = PID_SALE = g['shop_type'] + str(g['epoch'])
         bank_id = _Common.get_bid(g['provider'])
+        
         # Delete Failure/Pending TRX Local Records
         _DAO.delete_transaction_failure({
             'reff_no': product_id,
@@ -1217,6 +1220,7 @@ def store_transaction_global(param, retry=False):
         payment_type = get_payment(g['payment'])
         admin_fee = _Common.C2C_ADMIN_FEE[0]
         target_card_no = g['raw'].get('card_no', '')
+        
         # Update Product Stock
         if g['shop_type'] == 'shop':
             admin_fee = 0
@@ -1263,28 +1267,22 @@ def store_transaction_global(param, retry=False):
         # _______________________________________________________________________________________________________
         
         check_trx = _DAO.check_trx_new(trx_id)
+        # Store To Local If Empty
         if len(check_trx) == 0:
-            _DAO.insert_transaction(trx_data)
+            trx_data['createdAt'] = _Helper.now()
+            _DAO.insert_transaction_new(trx_data)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + trx_id)
-            __param['createdAt'] = _Helper.now()
-            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-new', param=trx_data)
-            if status == 200 and response['id'] == trx_id:
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + trx_id)
-            else:
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + trx_id)
+        # Push To Server
+        status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-new', param=trx_data)
+        if status == 200 and response['id'] == trx_id:
+            trx_data['key'] = trx_data['trxId']
+            _DAO.mark_sync(param=trx_data, _table='TransactionsNew', _key='trxId')
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + trx_id)
+        else:
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + trx_id)
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-        #_Common.online_logger(['Data TRX Store', str(e)], 'general')
-
-    # finally:
-    #     if g['shop_type'] == 'topup':
-    #         sleep(1.5)
-    #         store_topup_transaction(param)
-    # This Topup Record Only Store Locally To Provide Settlement Data
-    # Moved Into Each Topup Offline Transaction Function
-
-     
             
 def start_kiosk_get_topup_amount():
     _Helper.get_thread().apply_async(kiosk_get_topup_amount)

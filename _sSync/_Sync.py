@@ -355,6 +355,32 @@ def start_sync_data_transaction():
 
 
 def sync_data_transaction():
+    url = _Common.BACKEND_URL + 'sync/transaction-new'
+    _table_ = 'TransactionsNew'
+    while True:
+        try:
+            if _Helper.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
+                transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
+                if len(transactions) > 0:
+                    # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
+                    for t in transactions:
+                        status, response = _NetworkAccess.post_to_url(url=url, param=t)
+                        if status == 200 and response['id'] == t['trxId']:
+                            LOGGER.info(response)
+                            t['key'] = t['trxId']
+                            _DAO.mark_sync(param=t, _table=_table_, _key='trxId')
+                        else:
+                            LOGGER.warning(response)
+        except Exception as e:
+            LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
+        sleep(88.99)
+        
+
+def sync_data_transaction_old():
     url = _Common.BACKEND_URL + 'sync/transaction-topup'
     _table_ = 'Transactions'
     while True:

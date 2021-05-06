@@ -65,6 +65,33 @@ def insert_transaction(param):
     return _Database.insert_update(sql=sql, parameter=param)
 
 
+def insert_transaction_new(param):
+    """
+      trxId           VARCHAR(100) PRIMARY KEY NOT NULL,
+      tid             VARCHAR(100)             NOT NULL,
+      mid             VARCHAR(100),
+      amount          BIGINT,
+      baseAmount      BIGINT,
+      adminFee        BIGINT,
+      trxType         VARCHAR(100),
+      cardNo          VARCHAR(100),
+      paymentType     VARCHAR(150),
+      paymentNotes    TEXT,
+      productName     VARCHAR(100),
+      productId       VARCHAR(100),
+      traceNo         VARCHAR(100),
+      targetCard      VARCHAR(100),
+      bankId          VARCHAR(2)
+      syncFlag        INT,
+      createdAt       BIGINT
+    """
+    param["syncFlag"] = 0
+    sql = "INSERT INTO TransactionsNew ( trxId, tid, mid, amount, baseAmount, adminFee, trxType, cardNo, paymentType, " \
+          "paymentNotes, productName, productId, traceNo, targetCard, bankId, syncFlag, createdAt ) VALUES ( :trxId, :tid, :mid, :amount, :baseAmount, :adminFee, :trxType, " \
+          ":cardNo, :paymentType, :paymentNotes, :productName, :productId, :traceNo, :targetCard, :bankId, :syncFlag, :createdAt )"
+    return _Database.insert_update(sql=sql, parameter=param)
+
+
 def insert_transaction_failure(param):
     """
       trxid           VARCHAR(100) PRIMARY KEY NOT NULL,
@@ -422,6 +449,11 @@ def search_receipt(param):
 
 def check_table(param):
     sql = " SELECT count(*) FROM {} ".format(param['table'])
+    return _Database.get_query(sql=sql, parameter={})
+
+
+def check_trx_new(trxid):
+    sql = " SELECT * FROM TransactionsNew WHERE trxid = '{}' ".format(trxid)
     return _Database.get_query(sql=sql, parameter={})
 
 
