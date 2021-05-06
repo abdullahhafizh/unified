@@ -259,26 +259,31 @@ def store_notes_activity(notes, trxid):
 
 
 def get_cash_activity():
-    cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
-    cash_status = open(cash_status_file, 'r').readlines()
     output = {
         'total': 0,
         'notes': [],
         'summary': {}
     }
-    if len(cash_status) == 0:
-        LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
+    try:
+        cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+        cash_status = open(cash_status_file, 'r').readlines()
+        if len(cash_status) == 0:
+            LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
+            return output
+        for cash in cash_status:
+            notes = cash.split(',')[2]
+            if digit_in(notes) is True:
+                output['total'] += int(notes)
+            if notes not in output['notes']:
+                output['notes'].append(notes)
+        for note in output['notes']:
+            output['summary'][note] = cash_status.count(note)
+        LOGGER.info(('CASH_STATUS', str(output)))
+    except Exception as e:
+        LOGGER.warning((e))
+    finally:
         return output
-    for cash in cash_status:
-        notes = cash.split(',')[2]
-        if digit_in(notes) is True:
-            output['total'] += int(notes)
-        if notes not in output['notes']:
-            output['notes'].append(notes)
-    for note in output['notes']:
-        output['summary'][note] = cash_status.count(note)
-    LOGGER.info(('CASH_STATUS', str(output)))
-    return output
+    
 
 
 def backup_cash_activity(collection_id):
