@@ -274,14 +274,16 @@ def get_cash_activity():
         for cash in cash_status:
             cash = cash.rstrip()
             notes = cash.split(',')[2]
+            all_notes.append(notes)
             if digit_in(notes) is True:
                 output['total'] += int(notes)
             if notes not in output['notes']:
                 output['notes'].append(notes)
-            all_notes.append(notes)
         summary = {}
-        for x in range(len(output['notes'])):
-            summary.update({output['notes'][x]:all_notes.count(output['notes'][x])})
+        # for x in range(len(output['notes'])):
+            # summary.update({output['notes'][x]:all_notes.count(output['notes'][x])})
+        for n in output['notes']:
+            summary[n] = all_notes.count(n)
         output['summary'] = summary
         LOGGER.info(('CASH_STATUS', str(output)))
     except Exception as e:
