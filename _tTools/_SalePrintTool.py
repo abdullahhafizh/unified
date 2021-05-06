@@ -1319,7 +1319,7 @@ def mark_sync_collected_data(s):
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
         # Reset Cash Log
-        collection_time = str(_Helper.now())
+        # collection_time = str(_Helper.now())
         # __update_cash_str = ' UPDATE Cash SET collectedAt = ' + collection_time + ', collectedUser = "' + str(operator) + \
         # '"  WHERE collectedAt = 19900901 '
         # _KioskService.python_dump(str(__update_cash_str))
@@ -1329,7 +1329,7 @@ def mark_sync_collected_data(s):
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
         if not _Common.empty(s['all_cashbox']):
-            collection_code = _Helper.time_string(f='%Y%m%d%H%M%S___') + operator + collection_time
+            collection_code = _Helper.time_string(f='%Y%m%d%H%M%S_') + operator
             _Common.backup_cash_activity(collection_code)
             # _Common.log_to_file(
             #     content= s['all_cashbox_history'],
@@ -1337,7 +1337,7 @@ def mark_sync_collected_data(s):
             #     filename=collection_code,
             #     default_ext='.cashbox_history'
             # )
-        _DAO.truncate_cashbox()
+        # _DAO.flush_table('CashBox')
         return True
     else:
         return False

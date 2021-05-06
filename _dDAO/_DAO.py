@@ -513,9 +513,9 @@ def clean_old_data(tables, key='', age_month=0):
     expired = _Helper.now()
     if age_month > 0:
         expired = _Helper.now() - (age_month * 30 * 24 * 60 * 60 * 1000)
-    for _table in tables:
-        _where = str(key) + ' < ' + str(expired)
-        flush_table(_table=_table, _where=_where)
+    for t in tables:
+        w = str(key) + ' < ' + str(expired)
+        flush_table(_table=t, _where=w)
     return True
 
 # CREATE TABLE PendingRefund
