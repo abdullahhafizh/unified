@@ -15,7 +15,7 @@ CREATE TABLE TransactionsNew
       productId       VARCHAR(100),
       traceNo         VARCHAR(100),
       targetCard      VARCHAR(100),
-      bankId          VARCHAR(2)
+      bankId          VARCHAR(2),
       syncFlag        INT,
       createdAt       BIGINT
 );
