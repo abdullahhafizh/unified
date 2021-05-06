@@ -284,7 +284,8 @@ def get_cash_activity():
         # for x in range(len(output['notes'])):
             # summary.update({output['notes'][x]:all_notes.count(output['notes'][x])})
         for n in output['notes']:
-            summary[n] = all_notes.count(n)
+            # summary[n] = all_notes.count(n)
+            summary.update({n:all_notes.count(n)})
             LOGGER.debug((n, summary[n]))
         output['summary'] = summary
         LOGGER.info(('CASH_STATUS', str(output)))
