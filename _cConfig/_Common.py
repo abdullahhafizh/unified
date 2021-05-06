@@ -271,15 +271,15 @@ def get_cash_activity():
             LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
             return output
         all_notes = []
-        for cash in cash_status:
-            cash = cash.rstrip()
-            notes = cash.split(',')[2]
+        for data in cash_status:
+            row = data.rstrip()
+            notes = row.split(',')[2]
             all_notes.append(notes)
             if digit_in(notes) is True:
                 output['total'] += int(notes)
             if notes not in output['notes']:
                 output['notes'].append(notes)
-                LOGGER.debug((notes, output['notes']))
+                LOGGER.debug((row, notes, output['notes']))
         summary = {}
         # for x in range(len(output['notes'])):
             # summary.update({output['notes'][x]:all_notes.count(output['notes'][x])})
