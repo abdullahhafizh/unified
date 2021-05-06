@@ -394,9 +394,9 @@ class SlotHandler(QObject):
         _ProductService.start_change_product_stock(port, stock)
     start_change_product_stock = pyqtSlot(str, str)(start_change_product_stock)
 
-    def start_bill_receive_note(self):
-        _BILL.start_bill_receive_note()
-    start_bill_receive_note = pyqtSlot()(start_bill_receive_note)
+    def start_bill_receive_note(self, trxid):
+        _BILL.start_bill_receive_note(trxid)
+    start_bill_receive_note = pyqtSlot(str)(start_bill_receive_note)
 
     def stop_bill_receive_note(self):
         _BILL.stop_bill_receive_note()

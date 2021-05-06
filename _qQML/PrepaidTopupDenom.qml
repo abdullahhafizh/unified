@@ -1097,7 +1097,7 @@ Base{
                     press = '1'
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
-                        _SLOT.start_bill_receive_note();
+                        _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
                         break;
 //                    case 'do_topup':
 //                        perform_do_topup();

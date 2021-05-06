@@ -1040,7 +1040,7 @@ Base{
 //            getDenom = totalPrice - adminFee;
             _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
 //            _SLOT.start_accept_mei();
-            _SLOT.start_bill_receive_note();
+            _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
             back_button.visible = false;
             return;
         }
@@ -1320,7 +1320,7 @@ Base{
             switch(action){
             case 'RETRIGGER_BILL':
                 if (details.payment=='cash'){
-                    _SLOT.start_bill_receive_note();
+                    _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
                     back_button.visible = false;
                 }
                 modeButtonPopup = undefined;
@@ -1527,7 +1527,7 @@ Base{
                     perform_do_topup();
                 }
                 if (modeButtonPopup=='retrigger_bill') {
-                    _SLOT.start_bill_receive_note();
+                    _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
                     back_button.visible = false;
                 }
                 if (modeButtonPopup=='reprint') {
@@ -1610,7 +1610,7 @@ Base{
                     press = '1'
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
-                        _SLOT.start_bill_receive_note();
+                        _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
                         modeButtonPopup = undefined;
                         back_button.visible = false;
                         global_frame.modeAction = "";

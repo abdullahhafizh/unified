@@ -195,17 +195,17 @@ def set_direct_price_with_current(current, price):
     CASH_HISTORY.append(current)
 
 
-def start_bill_receive_note():
+def start_bill_receive_note(trxid):
     # Add Billing Initiation En Every Note Receive For NV Only
     # if IS_RECEIVING is True:
     #     return
     # if BILL_TYPE == 'NV' and _Helper.empty(CASH_HISTORY):
     if not OPEN_STATUS:
         init_bill()
-    _Helper.get_thread().apply_async(start_receive_note)
+    _Helper.get_thread().apply_async(start_receive_note, (trxid,))
 
 
-def parse_and_direct_store_notes(_result):
+def parse_notes(_result):
     cash_in = '0'
     try:
         if BILL_TYPE == 'GRG':
@@ -222,9 +222,9 @@ def parse_and_direct_store_notes(_result):
         return cash_in
 
 
-def start_receive_note():
+def start_receive_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
-    LOGGER.info(('Trigger Bill To Receive Money...'))
+    LOGGER.info(('Trigger Bill To Receive Money...', trxid))
     try:
         attempt = 0
         IS_RECEIVING = True
@@ -252,7 +252,7 @@ def start_receive_note():
                     # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
                     # break
             if _response == 0 and BILL["KEY_RECEIVED"] in _result:
-                cash_in = parse_and_direct_store_notes(_result)
+                cash_in = parse_notes(_result)
                 # -------------------------
                 # _Helper.dump(cash_in)
                 if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
@@ -271,6 +271,7 @@ def start_receive_note():
                                                                             'COLLECTED': COLLECTED_CASH,
                                                                             'TARGET': DIRECT_PRICE_AMOUNT})))
                         break
+                _Common.store_notes_activity(cash_in, trxid)
                 update_cash_result, store_result = update_cash_status(str(cash_in), store_cash_into_cashbox())
                 LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
@@ -313,6 +314,7 @@ def start_receive_note():
             sleep(_Common.BILL_STORE_DELAY)
     except Exception as e:
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
+        _Common.store_notes_activity('ERROR', trxid)
         if 'Invalid argument' in e:
             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
             LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))

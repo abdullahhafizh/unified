@@ -250,6 +250,52 @@ ALLOWED_BANK_CHECK_CARD_LOG = ['MANDIRI', 'BNI']
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'blocked^bin^card', '6032984098').split('|')
 
+CASH_PATH = os.path.join(sys.path[0], '_cCash')
+if not os.path.exists(CASH_PATH):
+    os.makedirs(CASH_PATH)
+
+
+def store_notes_activity(notes, trxid):
+    cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
+    LOGGER.info((cash_status_file, trxid, notes))
+    with open(cash_status_file, 'a') as c:
+        c.write(','.join([_Helper.time_string(), trxid, notes]))
+        c.close()
+
+
+def get_cash_activity():
+    cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
+    cash_status = open(cash_status_file, 'r').readlines()
+    output = {
+        'total': 0,
+        'notes': [],
+        'summary': {}
+    }
+    if len(cash_status) == 0:
+        LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
+        return output
+    for cash in cash_status:
+        notes = cash.split(',')[2]
+        if digit_in(notes) is True:
+            output['total'] += int(notes)
+        if notes not in output['notes']:
+            output['notes'].append(notes)
+    for note in output['notes']:
+        output['summary'][note] = cash_status.count(note)
+    LOGGER.info(('CASH_STATUS', str(output)))
+    return output
+
+
+def backup_cash_activity(collection_id):
+    cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
+    if not os.path.exists(cash_status_file):
+        LOGGER.warning(('CASH_STATUS_FILE_NOT_FOUND', CASH_PATH))
+        return False
+    collection_file = cash_status_file.replace('status', collection_id)
+    os.rename(cash_status_file, collection_file)
+    LOGGER.info(('BACKUP_CASH_ACTIVITY', cash_status_file, collection_file))
+    return True
+
 
 def init_temp_data():
     global TEMP_FOLDER
@@ -1403,13 +1449,16 @@ def generate_collection_data():
         __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         # ' current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
 
-        __['all_cashbox'] = _DAO.cashbox_status()    
-        __['all_cashbox_history'] = ''
-        if int(__['all_cashbox']) > 0:
-            cashbox_history = _DAO.cashbox_history()  
-            if len(cashbox_history) > 0:
-                if '__' in cashbox_history[0].keys():
-                    __['all_cashbox_history'] = cashbox_history[0]['__']
+        # __['all_cashbox'] = _DAO.cashbox_status()    
+        cash_activity = get_cash_activity()
+        __['all_cashbox'] = cash_activity['total']
+        __['cash_activity'] = cash_activity
+        # __['all_cashbox_history'] = ''
+        # if int(__['all_cashbox']) > 0:
+        #     cashbox_history = _DAO.cashbox_history()  
+        #     if len(cashbox_history) > 0:
+        #         if '__' in cashbox_history[0].keys():
+        #             __['all_cashbox_history'] = cashbox_history[0]['__']
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
         __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '

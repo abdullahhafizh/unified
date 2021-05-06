@@ -984,7 +984,7 @@ def start_admin_print_global(struct_id):
     _Helper.get_thread().apply_async(admin_print_global, (struct_id,))
 
 
-def admin_print_global(struct_id, ext='.pdf'):
+def admin_print_global_old(struct_id, ext='.pdf'):
     global GENERAL_TITLE
     pdf = None
     # Init Variables
@@ -1133,6 +1133,105 @@ def admin_print_global(struct_id, ext='.pdf'):
         del pdf
 
 
+def admin_print_global(struct_id, ext='.pdf'):
+    global GENERAL_TITLE
+    pdf = None
+    # Init Variables
+    tiny_space = 3
+    line_size = 7
+    padding_left = 0
+    print_copy = 2
+    user = 'mdd_operator'
+    s = False
+    if _UserService.USER is not None:
+        user = _UserService.USER['username']
+    try:
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        GENERAL_TITLE = 'VM COLLECTION REPORT'
+        pdf = GeneralPDF('P', 'mm', (80, 140))
+        s = _Common.COLLECTION_DATA
+        LOGGER.debug(('COLLECTION_DATA', str(s)))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        pdf.add_page()
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+user
+        # Layouting
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        prev_collect_time = _Common.load_from_temp_config('last^collection', 'N/A')
+        pdf.cell(padding_left, 0, 'Periode : '+ prev_collect_time, 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        collect_time = datetime.strftime(datetime.now(), '%d-%m-%Y %H:%M:%S')
+        pdf.cell(padding_left, 0, 'Hingga  : '+ collect_time, 0, 0, 'L')
+        _Common.log_to_temp_config('last^collection', collect_time)
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, 'Operator : ' + user + ' | ' + struct_id, 0, 0, 'L')
+        # pdf.ln(tiny_space)
+        # pdf.set_font(USED_FONT, 'B', line_size)
+        # pdf.cell(padding_left, 0, 'TRX ID : '+struct_id, 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(tiny_space*2)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, 'NOTES SUMMARY', 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        # qty_card = s['trx_card']
+        # total_card = str(int(qty_card) * CARD_SALE)
+        error_count = 0
+        for note in s['cash_activity']['notes']:
+            if 'ERROR' in note:
+                error_count += 1
+                continue
+            qty = s['cash_activity']['summary'][note]
+            sub_total = int(qty) * int(note)
+            pdf.cell(padding_left, 0,
+                    ' -- '+clean_number(str(note))+' x '+str(qty)+'  = Rp. '+clean_number(str(sub_total)), 0, 0, 'L')
+            pdf.ln(tiny_space)
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, '=' * MAX_LENGTH, 0, 0, 'C')
+        if error_count > 0:
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, 'B', line_size)
+            pdf.cell(padding_left, 0, '*Potentially Amount Missmatch*', 0, 0, 'C')
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, 'B', line_size)
+            pdf.cell(padding_left, 0, 'Error TRX Count : ' + str(error_count), 0, 0, 'C')
+        else:
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, 'B', line_size)
+            pdf.cell(padding_left, 0, 'STATUS NORMAL', 0, 0, 'C')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, '=' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(tiny_space*2)
+        # total_amount = str(int(s['all_amount']) + int(s['failed_amount']))
+        # if total_amount == '0':
+        #     total_amount = str(s['failed_amount'])
+        pdf.cell(padding_left, 0, 'TOTAL CASH = Rp. ' + clean_number(str(s['cash_activity']['total'])), 0, 0, 'L')
+        # End Layouting
+        pdf_file = get_path(file_name+ext)
+        pdf.output(pdf_file, 'F')
+        # Print-out to printer
+        for i in range(print_copy):
+            print_result = _Printer.do_printout(pdf_file)
+            LOGGER.debug((file_name, i+1, print_result))
+            sleep(1)
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
+    finally:
+        # Send To Backend
+        _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
+        mark_sync_collected_data(s)
+        # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
+        del pdf
+
 def start_admin_change_stock_print(struct_id):
     _Helper.get_thread().apply_async(admin_change_stock_print, (struct_id,))
 
@@ -1229,14 +1328,15 @@ def mark_sync_collected_data(s):
         # Change Data Cash Mark To Deletion
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
-        if not _Common.empty(s['all_cashbox_history']):
+        if not _Common.empty(s['all_cashbox']):
             collection_code = _Helper.time_string(f='%Y%m%d%H%M%S___') + operator + collection_time
-            _Common.log_to_file(
-                content= s['all_cashbox_history'],
-                path=_Common.CASHBOX_PATH,
-                filename=collection_code,
-                default_ext='.cashbox_history'
-            )
+            _Common.backup_cash_activity(collection_code)
+            # _Common.log_to_file(
+            #     content= s['all_cashbox_history'],
+            #     path=_Common.CASHBOX_PATH,
+            #     filename=collection_code,
+            #     default_ext='.cashbox_history'
+            # )
         _DAO.truncate_cashbox()
         return True
     else:

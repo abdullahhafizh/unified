@@ -434,7 +434,7 @@ Base{
             notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
             _SLOT.start_set_direct_price(totalPrice.toString());
 //            _SLOT.start_accept_mei();
-            _SLOT.start_bill_receive_note()
+            _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString())
         }
         if (details.payment == 'debit') {
             getDenom = parseInt(details.value);
@@ -900,7 +900,7 @@ Base{
                     perform_do_topup();
                 }
                 if (modeButtonPopup=='retrigger_bill') {
-                    _SLOT.start_bill_receive_note();
+                    _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
                 }
                 if (modeButtonPopup=='reprint') {
                     _SLOT.start_reprint_global();
