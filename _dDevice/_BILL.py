@@ -224,7 +224,7 @@ def parse_notes(_result):
 
 def start_receive_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
-    LOGGER.info(('Trigger Bill To Receive Money...', trxid))
+    LOGGER.info(('Trigger Bill', trxid, DIRECT_PRICE_AMOUNT))
     try:
         attempt = 0
         IS_RECEIVING = True
@@ -241,6 +241,7 @@ def start_receive_note(trxid):
                 set_cashbox_full()
                 IS_RECEIVING = False
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
+                _Common.store_notes_activity('ERROR', trxid)
                 break
             if _response == -1:
                 if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':

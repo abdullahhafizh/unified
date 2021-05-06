@@ -48,7 +48,8 @@ def sync_machine(url, param):
                 s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                 _KioskService.update_kiosk_status(s, r)
                 _DAO.create_today_report(_Common.TID)
-            if attempt > 1:
+            # if attempt > 1:
+            if attempt > 1 and IDLE_MODE is True:
                 __url = _Common.BACKEND_URL + 'kiosk/status'
                 __param = _KioskService.machine_summary()
                 __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'

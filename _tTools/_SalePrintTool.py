@@ -1138,7 +1138,7 @@ def admin_print_global(struct_id, ext='.pdf'):
     pdf = None
     # Init Variables
     tiny_space = 3
-    line_size = 7
+    line_size = 7.5
     padding_left = 0
     print_copy = 2
     user = 'mdd_operator'
@@ -1318,8 +1318,9 @@ def mark_sync_collected_data(s):
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
+            operator = operator.replace(' ', '_').lower()
         # Reset Cash Log
-        # collection_time = str(_Helper.now())
+        collection_time = str(_Helper.now())
         # __update_cash_str = ' UPDATE Cash SET collectedAt = ' + collection_time + ', collectedUser = "' + str(operator) + \
         # '"  WHERE collectedAt = 19900901 '
         # _KioskService.python_dump(str(__update_cash_str))
@@ -1329,7 +1330,7 @@ def mark_sync_collected_data(s):
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
         if not _Common.empty(s['all_cashbox']):
-            collection_code = _Helper.time_string(f='%Y%m%d%H%M%S_') + operator
+            collection_code = operator + collection_time + _Helper.time_string(f='_%Y%m%d%H%M%S') + '.history'
             _Common.backup_cash_activity(collection_code)
             # _Common.log_to_file(
             #     content= s['all_cashbox_history'],

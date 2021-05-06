@@ -284,12 +284,10 @@ def get_cash_activity():
                     output['notes'].append(notes)
                     # LOGGER.debug((row, notes, output['notes']))
         summary = {}
-        # for x in range(len(output['notes'])):
-            # summary.update({output['notes'][x]:all_notes.count(output['notes'][x])})
         for n in output['notes']:
             # summary[n] = all_notes.count(n)
             summary.update({n:all_notes.count(n)})
-            LOGGER.debug((n, summary[n]))
+            # LOGGER.debug((n, summary[n]))
         output['summary'] = summary
         LOGGER.info(('CASH_STATUS', str(output)))
     except Exception as e:
@@ -299,12 +297,12 @@ def get_cash_activity():
     
 
 
-def backup_cash_activity(collection_id):
+def backup_cash_activity(collection_file):
     cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
     if not os.path.exists(cash_status_file):
         LOGGER.warning(('CASH_STATUS_FILE_NOT_FOUND', CASHBOX_PATH))
         return False
-    collection_file = cash_status_file.replace('status', collection_id)
+    # collection_file = cash_status_file.replace('status', collection_id)
     os.rename(cash_status_file, collection_file)
     LOGGER.info(('BACKUP_CASH_ACTIVITY', cash_status_file, collection_file))
     return True

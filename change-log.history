@@ -1,3 +1,11 @@
+13.0.G4-GLOBAL:
+- Enhance TRX GLobal Data Store & Push,
+- Enhance Store Activity To File Directly,
+- Enhance Collection Receipt,
+- Enhance Current Cash Status,
+- Enhance Sync Machine Status When Idle Only,
+- ...
+
 13.0.G3-GLOBAL:
 - Add Feature Deposit Update Balance For Operator,
 - ...
