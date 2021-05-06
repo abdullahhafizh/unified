@@ -1073,8 +1073,7 @@ def store_transaction_mds(param):
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR|STORE_TRX')
 
 
-
-def store_transaction_global(param, retry=False):
+def store_transaction_global_old(param, retry=False):
     global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
     g = GLOBAL_TRANSACTION_DATA = json.loads(param)
     LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
@@ -1194,6 +1193,112 @@ def store_transaction_global(param, retry=False):
     # This Topup Record Only Store Locally To Provide Settlement Data
     # Moved Into Each Topup Offline Transaction Function
 
+
+def store_transaction_global(param, retry=False):
+    global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
+    g = GLOBAL_TRANSACTION_DATA = json.loads(param)
+    LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
+    try:
+        if 'payment_error' in g.keys() or 'process_error' in g.keys():
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
+            # Must Stop The Logic Here
+            return
+        # Update Daily Summary Data
+        update_summary_report(g)
+        trx_id = TRX_ID_SALE = _Helper.get_uuid()
+        product_id = PID_SALE = g['shop_type'] + str(g['epoch'])
+        bank_id = _Common.get_bid(g['provider'])
+        # Delete Failure/Pending TRX Local Records
+        _DAO.delete_transaction_failure({
+            'reff_no': product_id,
+            'tid': _Common.TID
+        })
+        total_amount = int(g['value']) * int(g['qty'])
+        payment_type = get_payment(g['payment'])
+        admin_fee = _Common.C2C_ADMIN_FEE[0]
+        # Update Product Stock
+        if g['shop_type'] == 'shop':
+            admin_fee = 0
+            bank_id = g['raw'].get('bid', 0)
+            PID_STOCK_SALE = g['raw']['pid']
+            stock_update = {
+                'pid': PID_STOCK_SALE,
+                'stock': int(g['raw']['stock']) - int(g['qty'])
+            }
+            _DAO.update_product_stock(stock_update)
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid'])
+            product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
+            
+        # Insert DKI TRX STAN For Topup Jakcard Using Cash
+        if g['shop_type'] == 'topup' and g['payment'] == 'cash':
+            if g['raw']['bank_name'] == 'DKI':
+                g['payment_details']['stan_no'] = _Common.LAST_DKI_STAN
+        payment_notes = json.dumps(g['payment_details'])
+        
+        # _______________________________________________________________________________________________________
+        trx_data = {
+            "trxId" : trx_id,
+            "tid" : _Common.TID,
+            "amount" : total_amount,
+            "createdAt" : _Helper.time_string(),
+            "paymentType" : payment_type.upper(),
+            "trxType" : g['shop_type'].upper(),
+            "paymentNotes" : payment_notes,
+            "cardNo" : g['payment_details'].get('card_no', ''),
+            "mid" : "",
+            "productName" : g['provider'],
+            "productId" : product_id,
+            "traceNo" : "",
+            "adminFee" : admin_fee,
+            "baseAmount" : total_amount if admin_fee == 0 else (total_amount - admin_fee),
+            "targetCard" : "",
+            "bankId" : bank_id,
+        }
+        # _______________________________________________________________________________________________________
+        
+        
+        
+        __param = {
+            'trxid': trx_id,
+            'tid': TID,
+            'mid': '',
+            'pid': __pid,
+            'tpid': PID_STOCK_SALE if g['shop_type'] == 'shop' else bank_id,
+            'sale': total_amount,
+            'amount': total_amount,
+            'cardNo': g['payment_details'].get('card_no', ''),
+            'paymentType': payment_type,
+            'paymentNotes': payment_notes,
+            'isCollected': 0,
+            'pidStock': PID_STOCK_SALE if g['shop_type'] == 'shop' else ''
+        }
+        g['pid'] = PID_SALE
+        g['trxid'] = trx_id
+        check_trx = _DAO.check_trx(trx_id)
+        if len(check_trx) == 0:
+            _DAO.insert_transaction(__param)
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + trx_id)
+            __param['createdAt'] = _Helper.now()
+            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-topup', param=__param)
+            if status == 200 and response['id'] == __param['trxid']:
+                __param['key'] = __param['trxid']
+                _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
+                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + trx_id)
+            else:
+                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + trx_id)
+    except Exception as e:
+        LOGGER.warning((str(retry), str(e)))
+        K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
+        #_Common.online_logger(['Data TRX Store', str(e)], 'general')
+
+    # finally:
+    #     if g['shop_type'] == 'topup':
+    #         sleep(1.5)
+    #         store_topup_transaction(param)
+    # This Topup Record Only Store Locally To Provide Settlement Data
+    # Moved Into Each Topup Offline Transaction Function
+
+     
             
 def start_kiosk_get_topup_amount():
     _Helper.get_thread().apply_async(kiosk_get_topup_amount)

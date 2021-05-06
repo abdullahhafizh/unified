@@ -259,7 +259,7 @@ def store_notes_activity(notes, trxid):
     cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
     LOGGER.info((cash_status_file, trxid, notes))
     with open(cash_status_file, 'a') as c:
-        c.write(','.join([_Helper.time_string(), trxid, notes]))
+        c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
         c.close()
 
 
