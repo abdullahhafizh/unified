@@ -270,8 +270,11 @@ def get_cash_activity():
         if len(cash_status) == 0:
             LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
             return output
+        _Helper.dump(cash_status)
         for cash in cash_status:
+            _Helper.dump(cash)
             notes = cash.split(',')[2]
+            _Helper.dump(notes)
             if digit_in(notes) is True:
                 output['total'] += int(notes)
             if notes not in output['notes']:
