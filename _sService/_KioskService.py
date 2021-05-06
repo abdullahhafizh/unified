@@ -1216,6 +1216,7 @@ def store_transaction_global(param, retry=False):
         total_amount = int(g['value']) * int(g['qty'])
         payment_type = get_payment(g['payment'])
         admin_fee = _Common.C2C_ADMIN_FEE[0]
+        target_card_no = g['raw'].get('card_no', '')
         # Update Product Stock
         if g['shop_type'] == 'shop':
             admin_fee = 0
@@ -1228,13 +1229,18 @@ def store_transaction_global(param, retry=False):
             _DAO.update_product_stock(stock_update)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid'])
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
+        
+        trace_no = g['payment_details'].get('trx_id', '')
+        if trace_no == '':
+            trace_no = g['payment_details'].get('invoice_no', '')
             
         # Insert DKI TRX STAN For Topup Jakcard Using Cash
         if g['shop_type'] == 'topup' and g['payment'] == 'cash':
             if g['raw']['bank_name'] == 'DKI':
                 g['payment_details']['stan_no'] = _Common.LAST_DKI_STAN
+                trace_no = _Common.LAST_DKI_STAN
+                
         payment_notes = json.dumps(g['payment_details'])
-        
         # _______________________________________________________________________________________________________
         trx_data = {
             "trxId" : trx_id,
@@ -1248,41 +1254,21 @@ def store_transaction_global(param, retry=False):
             "mid" : "",
             "productName" : g['provider'],
             "productId" : product_id,
-            "traceNo" : "",
+            "traceNo" : trace_no,
             "adminFee" : admin_fee,
             "baseAmount" : total_amount if admin_fee == 0 else (total_amount - admin_fee),
-            "targetCard" : "",
+            "targetCard" : target_card_no,
             "bankId" : bank_id,
         }
         # _______________________________________________________________________________________________________
         
-        
-        
-        __param = {
-            'trxid': trx_id,
-            'tid': TID,
-            'mid': '',
-            'pid': __pid,
-            'tpid': PID_STOCK_SALE if g['shop_type'] == 'shop' else bank_id,
-            'sale': total_amount,
-            'amount': total_amount,
-            'cardNo': g['payment_details'].get('card_no', ''),
-            'paymentType': payment_type,
-            'paymentNotes': payment_notes,
-            'isCollected': 0,
-            'pidStock': PID_STOCK_SALE if g['shop_type'] == 'shop' else ''
-        }
-        g['pid'] = PID_SALE
-        g['trxid'] = trx_id
-        check_trx = _DAO.check_trx(trx_id)
+        check_trx = _DAO.check_trx_new(trx_id)
         if len(check_trx) == 0:
-            _DAO.insert_transaction(__param)
+            _DAO.insert_transaction(trx_data)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + trx_id)
             __param['createdAt'] = _Helper.now()
-            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-topup', param=__param)
-            if status == 200 and response['id'] == __param['trxid']:
-                __param['key'] = __param['trxid']
-                _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
+            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-new', param=trx_data)
+            if status == 200 and response['id'] == trx_id:
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + trx_id)
             else:
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + trx_id)

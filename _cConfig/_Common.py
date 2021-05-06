@@ -250,13 +250,8 @@ ALLOWED_BANK_CHECK_CARD_LOG = ['MANDIRI', 'BNI']
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'blocked^bin^card', '6032984098').split('|')
 
-CASH_PATH = os.path.join(sys.path[0], '_cCash')
-if not os.path.exists(CASH_PATH):
-    os.makedirs(CASH_PATH)
-
-
 def store_notes_activity(notes, trxid):
-    cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
+    cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
     LOGGER.info((cash_status_file, trxid, notes))
     with open(cash_status_file, 'a') as c:
         c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
@@ -264,7 +259,7 @@ def store_notes_activity(notes, trxid):
 
 
 def get_cash_activity():
-    cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
+    cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
     cash_status = open(cash_status_file, 'r').readlines()
     output = {
         'total': 0,
@@ -287,9 +282,9 @@ def get_cash_activity():
 
 
 def backup_cash_activity(collection_id):
-    cash_status_file = os.path.join(CASH_PATH, 'cashbox.status')
+    cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
     if not os.path.exists(cash_status_file):
-        LOGGER.warning(('CASH_STATUS_FILE_NOT_FOUND', CASH_PATH))
+        LOGGER.warning(('CASH_STATUS_FILE_NOT_FOUND', CASHBOX_PATH))
         return False
     collection_file = cash_status_file.replace('status', collection_id)
     os.rename(cash_status_file, collection_file)
