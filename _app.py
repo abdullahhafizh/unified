@@ -35,7 +35,7 @@ from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
-from _sService import _AudioService
+# from _sService import _AudioService
 from _mModule import _MainService
 import json
 # import sentry_sdk
@@ -742,13 +742,13 @@ class SlotHandler(QObject):
         _KioskService.start_use_pending_code(pending_code, reff_no)
     start_use_pending_code = pyqtSlot(str, str)(start_use_pending_code)
 
-    def start_play_audio(self, track):
-        _AudioService.start_play_audio(track)
-    start_play_audio = pyqtSlot(str)(start_play_audio)
+    # def start_play_audio(self, track):
+    #     _AudioService.start_play_audio(track)
+    # start_play_audio = pyqtSlot(str)(start_play_audio)
     
-    def start_trigger_stop_audio(self):
-        _AudioService.start_trigger_stop_audio()
-    start_trigger_stop_audio = pyqtSlot()(start_trigger_stop_audio)
+    # def start_trigger_stop_audio(self):
+    #     _AudioService.start_trigger_stop_audio()
+    # start_trigger_stop_audio = pyqtSlot()(start_trigger_stop_audio)
     
     def start_update_usage_retry_code(self, trxid):
         _Common.start_update_usage_retry_code(trxid)
