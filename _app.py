@@ -1222,6 +1222,9 @@ if __name__ == '__main__':
     # print("pyt: Start Topup Service...")
     # _Helper.get_thread().apply_async(start_webserver)
     # sleep(1)
+    print("pyt: Start Init Cash Activity...")
+    _Common.init_cash_activity()
+    sleep(1)
     if _Common.BILL['status'] is True:
         sleep(1)
         print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")

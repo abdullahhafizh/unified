@@ -250,12 +250,43 @@ ALLOWED_BANK_CHECK_CARD_LOG = ['MANDIRI', 'BNI']
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'blocked^bin^card', '6032984098').split('|')
 
+
 def store_notes_activity(notes, trxid):
     cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
     LOGGER.info((cash_status_file, trxid, notes))
     with open(cash_status_file, 'a') as c:
         c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
         c.close()
+
+
+def store_bulk_notes_activity(rows=[]):
+    if len(rows) == 0:
+        LOGGER.warning(('NO_DATA_FOUND'))
+        return
+    cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+    # LOGGER.info((cash_status_file, trxid, notes))
+    with open(cash_status_file, 'a') as c:
+        for row in rows:
+            c.write(row + os.linesep)
+        c.close()
+    
+
+def init_cash_activity():
+    cash_activity = get_cash_activity()['total']
+    cash_trx = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    if cash_activity == 0 and cash_trx > 0:
+        LOGGER.info(('START INITIATING CASH ACTIVITY', cash_activity, cash_trx))
+        rows = _DAO.custom_query(" SELECT pid as trxid,  DATETIME(ROUND(createdAt / 1000), 'unixepoch') as date, amount as note FROM Cash WHERE collectedAt is null ")
+        init_data = []
+        total_amount = 0
+        for row in rows:
+            total_amount += int(row['note'])
+            init_data.append(",".join(row['date'], row['trxid'], row['note']))
+        LOGGER.info(('TOTAL INITIATING CASH DATA', len(init_data), total_amount))
+        store_bulk_notes_activity(init_data)
+    else:
+        LOGGER.info(('CASH ACTIVITY ALREADY EXIST', cash_activity, cash_trx))
+
 
 
 def get_cash_activity():
@@ -1452,6 +1483,7 @@ def generate_collection_data():
     global COLLECTION_DATA, LAST_UPDATED_STOCK
     __ = dict()
     try:
+        # Old Data Query Will be no longer valid after full implementing New TRX Model
         __['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
@@ -1491,6 +1523,7 @@ def generate_collection_data():
         __['amt_card'] = 0
         __['trx_card'] = 0
         __['card_trx_summary'] = []
+        # Old Data Query Will be no longer valid after full implementing New TRX Model
         if len(__['all_cards']) > 0:
             for card in __['all_cards']:
                 pid = card['pid']
@@ -1525,6 +1558,7 @@ def generate_collection_data():
         __['trx_list'] = []
         __['total_notes'] = 0
         __notes = []
+        # Old Data Query Will be no longer valid after full implementing New TRX Model
         # {'trx_top20k': 187, 'slot3': 25, 'all_cash': 14930000, 'amt_xdenom': 0, 'slot4': 0, 'amt_top50k': 4400000, 'amt_top20k': 3740000, 'trx_xdenom': 0, 'trx_top200k': 0, 'trx_top50k': 88, 'trx_top10k': 307, 'amt_top200k': 0, 'slot1': 19, 'amt_top10k': 3070000, 'amt_top100k': 2700000, 'trx_top100k': 27, 'slot2': 14, 'all_cashbox': 0}
         __all_payment_notes = _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 ')
         if len(__all_payment_notes) > 0:
