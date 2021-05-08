@@ -30,6 +30,9 @@ def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
     result = get_TDefaultResres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"]
 
@@ -58,6 +61,9 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     result = get_TBalanceresws(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"], result["bal"], result["sn"], result["sign"]
 
@@ -86,6 +92,9 @@ def GET_BALANCE(Ser):
     result = get_TBalanceres(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"], result["bal"]
 
@@ -125,6 +134,9 @@ def DEBIT(Ser, datetime, time_out, value):
     else:
         balance = EXTRACT_BALANCE_FROM_REPORT(result["rep"])
 
+    del data
+    del response
+    
     return result["code"], balance, rep
 
 
@@ -162,6 +174,9 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
     result = get_TDefaultReportres(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"]
 
@@ -188,6 +203,9 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
     result = get_TDefaultResres(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"]
 
@@ -219,6 +237,9 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -243,6 +264,9 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
     result = get_TBNIKMMULTIBalanceres(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"], result["bal"]
 
@@ -270,6 +294,9 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
     #print(result)
     LOG.fw("RESPONSE:", result)
 
+    del data
+    del response
+    
     return result["code"]
 
 
@@ -304,6 +331,9 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -335,6 +365,9 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+    
     return result["code"], rep
 
 
@@ -364,6 +397,9 @@ def PURSE_DATA(Ser):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+    
     return result["code"], rep
 
 
@@ -398,6 +434,9 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -431,6 +470,9 @@ def TOP_UP_C2C(Ser, amount, timestamp):
     # for i in range(0, Len-1):
     #     rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], result["rep"]
 
 
@@ -463,6 +505,9 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
     # for i in range(0, Len-1):
     #     rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"]
 
 
@@ -492,6 +537,9 @@ def TOPUP_C2C_CORRECTION(Ser):
     rep = ''
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
+
+    del data
+    del response
 
     return result["code"], rep
 
@@ -527,6 +575,9 @@ def GET_FEE_C2C(Ser, Flag):
     # rep = ''
     # for i in range(0, Len-1):
     #     rep = rep + chr(result["rep"][i])
+    
+    del data
+    del response
 
     return result["code"], result["rep"]
 
@@ -565,6 +616,9 @@ def SET_FEE_C2C(Ser, Flag, respon):
     # rep = ''
     # for i in range(0, Len-1):
     #     rep = rep + chr(result["rep"][i])
+    
+    del data
+    del response
 
     return result["code"]
 
@@ -601,6 +655,9 @@ def TOPUP_FORCE_C2C(Ser, Flag):
     # for i in range(0, Len-1):
     #     rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], result["rep"]
 
 
@@ -624,6 +681,9 @@ def KM_BALANCE_TOPUP_C2C(Ser):
     result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     if result["code"] == b"0000" or result["code"] == b"9000":
         saldo = result["rep"][0:10]
@@ -663,6 +723,9 @@ def APDU_SEND(Ser, slot, info):
     rep = ''
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
+
+    del data
+    del response
 
     return result["code"], rep
 
@@ -708,6 +771,9 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
     result = get_TDefaultResres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
 
     return result["code"]
 
@@ -737,6 +803,9 @@ def GET_SN(Ser):
     # rep = ''
     # for i in range(0, Len-1):
     #     rep = rep + chr(response["data"][i])
+
+    del data
+    del response
 
     return result["code"], result["uid"], result["sn"]
 
@@ -779,6 +848,9 @@ def BCA_CARD_INFO(Ser, ATD):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -807,6 +879,9 @@ def GET_CARDDATA(Ser):
     # rep = ''
     # for i in range(0, Len-1):
     #     rep = rep + chr(response["rep"][i])
+
+    del data
+    del response
 
     if result["code"] == b"0000" or result["code"] == b"9000":
         UID = ""
@@ -837,6 +912,9 @@ def CARD_DISCONNECT(Ser):
     data = retrieve_rs232_data(Ser)
 
     response = get_TDefaultRespons(data)
+    
+    del data
+    del response
     
     return True
 
@@ -881,6 +959,9 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -916,6 +997,9 @@ def BCA_SESSION_2(Ser, session):
     result = get_TDefaultResres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
+
+    del data
+    del response
 
     return result["code"]
 
@@ -996,6 +1080,9 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -1037,6 +1124,9 @@ def BCA_TOPUP_2(Ser, strConfirm):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+
     return result["code"], rep
 
 
@@ -1066,6 +1156,9 @@ def BCA_LAST_REPORT(Ser):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+    
     return result["code"], rep
 
 
@@ -1107,6 +1200,9 @@ def BCA_REVERSAL(Ser, ATD):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
+    del data
+    del response
+    
     return result["code"], rep
 
 
@@ -1135,6 +1231,9 @@ def GET_TOKEN_BRI(Ser):
     CARDDATA = ''
     for i in range(0, Len):
         CARDDATA = CARDDATA + chr(result["rep"][i])
+
+    del data
+    del response
 
     return result["code"], CARDDATA
 
