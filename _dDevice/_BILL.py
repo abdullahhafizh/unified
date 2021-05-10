@@ -469,11 +469,11 @@ def log_book_cash(pid, amount, mode='normal'):
     check_cash = _DAO.get_query_from('Cash', 'csid = "{}"'.format(param['csid']))
     if len(check_cash) > 0:
         for i in range(len(check_cash)):
-            LOGGER.debug(('INITIAL_PARAM', param, check_cash[i]))
+            LOGGER.debug(('PREV_CASH_DATA', param, check_cash[i]))
             prev_amount = int(check_cash[i]['amount'])
-            param['csid'] = '_'.join(['ret', str(i+1), pid[::1]])
+            param['csid'] = '_'.join(['ret', str(i+1), pid])
             param['amount'] = int(param['amount']) - prev_amount
-            LOGGER.debug(('UPDATE_CASHBOX_RETRY_TRX', param['csid'], prev_amount, param['amount']))
+            LOGGER.debug(('UPDATE_CASH_DATA_RETRY_TRX', param['csid'], prev_amount, param['amount']))
     # 10/05 13:08:33 WARNING log_book_cash:483: ('FAILED', 'shop', {'csid': '0_5639399714260261pohs', 'tid': '17092001', 'createdAt': 1620626913000, 'pid': 'shop1620624179939365', 'amount': 10000}, 'UNIQUE constraint failed: Cash.csid')
     try:
         _DAO.insert_cash(param=param)
