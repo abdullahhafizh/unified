@@ -289,11 +289,12 @@ def init_cash_activity():
 
 
 
-def get_cash_activity():
+def get_cash_activity(keyword=None, trx_output=False):
     output = {
         'total': 0,
         'notes': [],
-        'summary': {}
+        'summary': {},
+        'trx_list': []
     }
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
@@ -307,12 +308,25 @@ def get_cash_activity():
             row = data.rstrip()
             rows = row.split(',')
             if len(rows) >= 2:
+                trx_type = rows[1]
+                if trx_output is True:
+                    if trx_type not in output['trx_list']:
+                        output['trx_list'].append(trx_type)
                 notes = rows[2]
-                all_notes.append(notes)
-                if digit_in(notes) is True:
-                    output['total'] += int(notes)
-                if notes not in output['notes']:
-                    output['notes'].append(notes)
+                if keyword is None:
+                    all_notes.append(notes)
+                    if digit_in(notes) is True:
+                        output['total'] += int(notes)
+                    if notes not in output['notes']:
+                        output['notes'].append(notes)
+                else:
+                    output['keyword'] = keyword
+                    if keyword in trx_type:
+                        all_notes.append(notes)
+                        if digit_in(notes) is True:
+                            output['total'] += int(notes)
+                        if notes not in output['notes']:
+                            output['notes'].append(notes)
                     # LOGGER.debug((row, notes, output['notes']))
         summary = {}
         for n in output['notes']:
@@ -1501,11 +1515,12 @@ def generate_collection_data():
         __['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
         __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
         __['slot4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
-        __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
+        # __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         # ' current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
 
         # __['all_cashbox'] = _DAO.cashbox_status()    
-        cash_activity = get_cash_activity()
+        cash_activity = get_cash_activity(trx_output=True)
+        __['all_cash'] = cash_activity['total']
         __['all_cashbox'] = cash_activity['total']
         __['cash_activity'] = cash_activity
         # __['all_cashbox_history'] = ''
@@ -1515,7 +1530,8 @@ def generate_collection_data():
         #         if '__' in cashbox_history[0].keys():
         #             __['all_cashbox_history'] = cashbox_history[0]['__']
         __['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
-        __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
+        # __['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" AND collectedAt = 19900901 ')[0]['__']    
+        __['ppob_cash'] =  get_cash_activity(keyword='ppob')['total']
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
         #                                        ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
         #                                        ' AND  pid like "shop%" ')[0]['__']
@@ -1567,11 +1583,12 @@ def generate_collection_data():
                 __notes.append(json.loads(money['note'])['history'])
             __['notes_summary'] = '|'.join(__notes)
             __['total_notes'] = len(__['notes_summary'].split('|'))
-        __all_cash_trx_list = _DAO.custom_query(' SELECT pid FROM Cash WHERE collectedAt = 19900901 ')
-        if len(__all_cash_trx_list) > 0:
-            for trx_list in __all_cash_trx_list:
-                __['trx_list'].append(trx_list['pid'])
-            __['trx_list'] = ','.join(__['trx_list'])    
+        # __all_cash_trx_list = _DAO.custom_query(' SELECT pid FROM Cash WHERE collectedAt = 19900901 ')
+        # if len(__all_cash_trx_list) > 0:
+        #     for trx_list in __all_cash_trx_list:
+        #         __['trx_list'].append(trx_list['pid'])
+        #     __['trx_list'] = ','.join(__['trx_list'])    
+        __['trx_list'] = cash_activity['trx_list']
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
         __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)

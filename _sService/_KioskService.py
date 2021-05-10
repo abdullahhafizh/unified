@@ -454,9 +454,12 @@ def get_machine_summary():
         result['edc_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "EDC" ')
         result['edc_not_settle'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Settlement '
                                                      'WHERE status="EDC|OPEN" ')[0]['__']
-        result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
-                                                     'WHERE collectedAt is null ')[0]['__']
-        result['all_cashbox'] = _DAO.cashbox_status()
+        # result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
+        #                                              'WHERE collectedAt is null ')[0]['__']
+        # result['all_cashbox'] = _DAO.cashbox_status()        
+        result['all_cashbox'] = _Common.get_cash_activity()['total']
+        result['cash_available'] = result['all_cashbox']
+
         # Add Denom Setting
         # result['first_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'first^denom', '10000')
         # result['second_denom'] = _ConfigParser.get_set_value('TEMPORARY', 'second^denom', '20000')
@@ -472,8 +475,8 @@ def get_machine_summary():
         # result['mdr_topup_amount'] = _ConfigParser.get_set_value('MANDIRI_C2C', 'amount^topup', '100000')
         # result['bni_treshold'] = _ConfigParser.get_set_value('BNI', 'amount^minimum', '50000')
         # result['bni_topup_amount'] = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
-        if int(result['all_cashbox']) >= int(result['cash_available']):
-            result['cash_available'] = result['all_cashbox']
+        # if int(result['all_cashbox']) >= int(result['cash_available']):
+        #     result['cash_available'] = result['all_cashbox']
         LOGGER.info(('SUCCESS', str(result)))
         K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.emit(json.dumps(result))
     except Exception as e:
@@ -830,7 +833,8 @@ def begin_collect_cash():
     if not _Helper.is_online('begin_collect_cash'):
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|CONNECTION_ERROR')
         return
-    count_uncollected_cash = _DAO.custom_query(' SELECT IFNULL(count(*), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    # count_uncollected_cash = _DAO.custom_query(' SELECT IFNULL(count(*), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+    count_uncollected_cash = _Common.get_cash_activity()['total']
     if count_uncollected_cash == 0:
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')
         return
