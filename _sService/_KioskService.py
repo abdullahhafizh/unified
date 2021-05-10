@@ -1290,6 +1290,7 @@ def store_transaction_global(param, retry=False):
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
             
+            
 def start_kiosk_get_topup_amount():
     _Helper.get_thread().apply_async(kiosk_get_topup_amount)
 
