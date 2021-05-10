@@ -1197,10 +1197,10 @@ def admin_print_global(struct_id, ext='.pdf'):
         if error_count > 0:
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
-            pdf.cell(padding_left, 0, '*Potentially Amount Missmatch*', 0, 0, 'C')
+            pdf.cell(padding_left, 0, '*SUSPECT AMOUNT NOT MATCH*', 0, 0, 'C')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
-            pdf.cell(padding_left, 0, 'Error TRX Count : ' + str(error_count), 0, 0, 'C')
+            pdf.cell(padding_left, 0, 'ERROR TRX COUNT : ' + str(error_count), 0, 0, 'C')
         else:
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
@@ -1209,6 +1209,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, 'B', line_size)
         pdf.cell(padding_left, 0, '=' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(tiny_space*2)
+        pdf.set_font(USED_FONT, 'B', line_size+2.5)
         # total_amount = str(int(s['all_amount']) + int(s['failed_amount']))
         # if total_amount == '0':
         #     total_amount = str(s['failed_amount'])

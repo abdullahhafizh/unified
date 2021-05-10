@@ -462,7 +462,7 @@ def start_log_book_cash(pid, amount):
 def log_book_cash(pid, amount, mode='normal'):
     disabled = True
     if disabled:
-        return True
+        return disabled
     param = {
         'csid': pid[::-1],
         'pid': pid,
@@ -477,7 +477,6 @@ def log_book_cash(pid, amount, mode='normal'):
             param['csid'] = '_'.join(['ret', str(i+1), pid])
             # param['amount'] = int(param['amount']) - prev_amount
             LOGGER.debug(('UPDATE_CASH_DATA_RETRY_TRX', param['csid'], prev_amount, param['amount']))
-    # 10/05 13:08:33 WARNING log_book_cash:483: ('FAILED', 'shop', {'csid': '0_5639399714260261pohs', 'tid': '17092001', 'createdAt': 1620626913000, 'pid': 'shop1620624179939365', 'amount': 10000}, 'UNIQUE constraint failed: Cash.csid')
     try:
         _DAO.insert_cash(param=param)
         LOGGER.info(('SUCCESS', mode, param))
