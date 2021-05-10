@@ -334,6 +334,7 @@ def backup_cash_activity(collection_file):
         LOGGER.warning(('CASH_STATUS_FILE_NOT_FOUND', CASHBOX_PATH))
         return False
     # collection_file = cash_status_file.replace('status', collection_id)
+    collection_file = os.path.join(CASHBOX_PATH, collection_file)
     os.rename(cash_status_file, collection_file)
     LOGGER.info(('BACKUP_CASH_ACTIVITY', cash_status_file, collection_file))
     return True
@@ -1566,10 +1567,10 @@ def generate_collection_data():
                 __notes.append(json.loads(money['note'])['history'])
             __['notes_summary'] = '|'.join(__notes)
             __['total_notes'] = len(__['notes_summary'].split('|'))
-        __all_cash_trx_list = _DAO.custom_query(' SELECT csid FROM Cash WHERE collectedAt = 19900901 ')
+        __all_cash_trx_list = _DAO.custom_query(' SELECT pid FROM Cash WHERE collectedAt = 19900901 ')
         if len(__all_cash_trx_list) > 0:
             for trx_list in __all_cash_trx_list:
-                __['trx_list'].append(trx_list['csid'][::-1])
+                __['trx_list'].append(trx_list['pid'])
             __['trx_list'] = ','.join(__['trx_list'])    
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
