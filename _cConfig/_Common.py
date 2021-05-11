@@ -1499,18 +1499,31 @@ def generate_collection_data():
     __ = dict()
     try:
         # Old Data Query Will be no longer valid after full implementing New TRX Model
-        __['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']        
-        __['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
-        __['trx_xdenom'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale NOT IN (10000, 20000, 50000, 100000, 200000) AND isCollected = 0 AND pid like "topup%" ')[0]['__']        
-        __['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
-        __['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
-        __['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
-        __['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
-        __['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
-        __['amt_xdenom'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale NOT IN (10000, 20000, 50000, 100000, 200000) AND pid like "topup%" ')[0]['__']
+        # __['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        # __['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        # __['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        # __['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']        
+        # __['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
+        # __['trx_xdenom'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale NOT IN (10000, 20000, 50000, 100000, 200000) AND isCollected = 0 AND pid like "topup%" ')[0]['__']        
+        # __['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
+        # __['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
+        # __['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
+        # __['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
+        # __['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
+        # __['amt_xdenom'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0 AND sale NOT IN (10000, 20000, 50000, 100000, 200000) AND pid like "topup%" ')[0]['__']
+        __['trx_top10k'] = 0
+        __['trx_top20k'] = 0
+        __['trx_top50k'] = 0
+        __['trx_top100k'] = 0    
+        __['trx_top200k'] = 0
+        __['trx_xdenom'] = 0 
+        __['amt_top10k'] = 0
+        __['amt_top20k'] = 0
+        __['amt_top50k'] = 0
+        __['amt_top100k'] = 0
+        __['amt_top200k'] = 0
+        __['amt_xdenom'] = 0
+
         __['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
         __['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
         __['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
@@ -1577,18 +1590,23 @@ def generate_collection_data():
         __notes = []
         # Old Data Query Will be no longer valid after full implementing New TRX Model
         # {'trx_top20k': 187, 'slot3': 25, 'all_cash': 14930000, 'amt_xdenom': 0, 'slot4': 0, 'amt_top50k': 4400000, 'amt_top20k': 3740000, 'trx_xdenom': 0, 'trx_top200k': 0, 'trx_top50k': 88, 'trx_top10k': 307, 'amt_top200k': 0, 'slot1': 19, 'amt_top10k': 3070000, 'amt_top100k': 2700000, 'trx_top100k': 27, 'slot2': 14, 'all_cashbox': 0}
-        __all_payment_notes = _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 ')
-        if len(__all_payment_notes) > 0:
-            for money in __all_payment_notes:
-                __notes.append(json.loads(money['note'])['history'])
-            __['notes_summary'] = '|'.join(__notes)
-            __['total_notes'] = len(__['notes_summary'].split('|'))
+        # __all_payment_notes = _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI"  AND isCollected = 0 ')
+        # if len(__all_payment_notes) > 0:
+        #     for money in __all_payment_notes:
+        #         __notes.append(json.loads(money['note'])['history'])
+        #     __['notes_summary'] = '|'.join(__notes)
+        #     __['total_notes'] = len(__['notes_summary'].split('|'))
         # __all_cash_trx_list = _DAO.custom_query(' SELECT pid FROM Cash WHERE collectedAt = 19900901 ')
         # if len(__all_cash_trx_list) > 0:
         #     for trx_list in __all_cash_trx_list:
         #         __['trx_list'].append(trx_list['pid'])
         #     __['trx_list'] = ','.join(__['trx_list'])    
-        __['trx_list'] = cash_activity['trx_list']
+        for n in cash_activity['summary'].keys():
+            q = int(cash_activity['summary'][n])
+            __notes.extend([n]*q)
+        __['notes_summary'] = '|'.join(__notes)
+        __['total_notes'] = len(__['notes_summary'].split('|'))
+        __['trx_list'] = ','.join(cash_activity['trx_list'])
         # Status Bank BNI in Global
         __['sam_1_balance'] = str(MANDIRI_ACTIVE_WALLET)
         __['sam_2_balance'] = str(BNI_ACTIVE_WALLET)

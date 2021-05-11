@@ -446,12 +446,12 @@ def kiosk_get_machine_summary():
 def get_machine_summary():
     try:
         result = machine_summary()
-        result['total_trx'] = _DAO.get_total_count('Transactions')
-        result['today_trx'] = _DAO.get_total_count('Transactions',
+        result['total_trx'] = _DAO.get_total_count('TransactionsNew')
+        result['today_trx'] = _DAO.get_total_count('TransactionsNew',
                                                    ' strftime("%Y-%m-%d", datetime(createdAt/1000, "unixepoch")) = '
                                                    'date("now") ')
-        result['cash_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "MEI" ')
-        result['edc_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "EDC" ')
+        result['cash_trx'] = _DAO.get_total_count('TransactionsNew', ' paymentType = "CASH" ')
+        result['edc_trx'] = _DAO.get_total_count('TransactionsNew', ' paymentType = "DEBIT" ')
         result['edc_not_settle'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Settlement '
                                                      'WHERE status="EDC|OPEN" ')[0]['__']
         # result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
@@ -1360,7 +1360,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
         LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
-                                    'TopupRecords', 'TransactionFailure', 'Transactions'],
+                                    'TopupRecords', 'TransactionFailure', 'Transactions', 'TransactionsNew'],
                             key='createdAt',
                             age_month=age_month)
     expired_seconds = (age_month * 30 * 24 * 60 * 60)
