@@ -281,7 +281,7 @@ def init_cash_activity():
         total_amount = 0
         for row in rows:
             total_amount += int(row['note'])
-            init_data.append(",".join([row['date'], row['trxid'], row['note']]))
+            init_data.append(",".join([str(row['date']), str(row['trxid']), str(row['note'])]))
         LOGGER.info(('TOTAL INITIATING CASH DATA', len(init_data), total_amount))
         store_bulk_notes_activity(init_data)
     else:
