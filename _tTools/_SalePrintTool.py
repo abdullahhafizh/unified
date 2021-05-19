@@ -1318,6 +1318,7 @@ def admin_change_stock_print(struct_id, ext='.pdf'):
 
 def mark_sync_collected_data(s):
     try:
+        LOGGER.info(('START'))
         _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
@@ -1343,6 +1344,7 @@ def mark_sync_collected_data(s):
             #     default_ext='.cashbox_history'
             # )
         # _DAO.flush_table('CashBox')
+        LOGGER.info(('FINISHED'))
         return True
     except Exception as e:
         LOGGER.warning((e))
