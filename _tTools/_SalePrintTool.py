@@ -1116,6 +1116,8 @@ def admin_print_global_old(struct_id, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
+        # Mark Sync Collected Data
+        mark_sync_collected_data(s)
         # Print-out to printer
         for i in range(print_copy):
             print_result = _Printer.do_printout(pdf_file)
@@ -1128,7 +1130,6 @@ def admin_print_global_old(struct_id, ext='.pdf'):
     finally:
         # Send To Backend
         _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
-        mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf
 
@@ -1217,6 +1218,8 @@ def admin_print_global(struct_id, ext='.pdf'):
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
+        # Mark Sync Collected Data
+        mark_sync_collected_data(s)
         # Print-out to printer
         for i in range(print_copy):
             print_result = _Printer.do_printout(pdf_file)
@@ -1229,9 +1232,9 @@ def admin_print_global(struct_id, ext='.pdf'):
     finally:
         # Send To Backend
         _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
-        mark_sync_collected_data(s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf
+
 
 def start_admin_change_stock_print(struct_id):
     _Helper.get_thread().apply_async(admin_change_stock_print, (struct_id,))
@@ -1314,13 +1317,13 @@ def admin_change_stock_print(struct_id, ext='.pdf'):
 
 
 def mark_sync_collected_data(s):
-    if not _Common.empty(s):
+    try:
         _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
             operator = operator.replace(' ', '_').lower()
-        # Reset Cash Log
+            # Reset Cash Log
         collection_time = str(_Helper.now())
         # __update_cash_str = ' UPDATE Cash SET collectedAt = ' + collection_time + ', collectedUser = "' + str(operator) + \
         # '"  WHERE collectedAt = 19900901 '
@@ -1330,7 +1333,7 @@ def mark_sync_collected_data(s):
         # Change Data Cash Mark To Deletion
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
-        if not _Common.empty(s['all_cashbox']):
+        if s.get('all_cashbox', 0) > 0:
             collection_code = operator + collection_time + _Helper.time_string(f='_%Y%m%d%H%M%S') + '.history'
             _Common.backup_cash_activity(collection_code)
             # _Common.log_to_file(
@@ -1341,7 +1344,8 @@ def mark_sync_collected_data(s):
             # )
         # _DAO.flush_table('CashBox')
         return True
-    else:
+    except Exception as e:
+        LOGGER.warning((e))
         return False
 
 
