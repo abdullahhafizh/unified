@@ -335,7 +335,9 @@ def get_cash_activity(keyword=None, trx_output=False):
             summary.update({n:all_notes.count(n)})
             # LOGGER.debug((n, summary[n]))
         sorted_summary = {k : summary[k] for k in sorted(summary) if int(k) < 100000}
-        sorted_summary.update({'100000': summary.get('100000', 0)})
+        # Manual Add Denom 100.000 In Last Order
+        if summary.get('100000', 0) > 0:
+            sorted_summary.update({'100000': summary.get('100000', 0)})
         output['summary'] = sorted_summary
         LOGGER.info(('CASH_STATUS', str(output)))
     except Exception as e:
