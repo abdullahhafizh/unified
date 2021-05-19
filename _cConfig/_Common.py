@@ -276,12 +276,13 @@ def init_cash_activity():
     cash_trx = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
     if cash_activity == 0 and cash_trx > 0:
         LOGGER.info(('START INITIATING CASH ACTIVITY', cash_activity, cash_trx))
-        rows = _DAO.custom_query(" SELECT pid as trxid,  DATETIME(ROUND(createdAt / 1000), 'unixepoch') as date, amount as note FROM Cash WHERE collectedAt is null ")
+        rows = _DAO.custom_query(" SELECT DATETIME(ROUND(createdAt / 1000), 'unixepoch') as date, pid as trxid, amount as note FROM Cash WHERE collectedAt is null ")
         init_data = []
         total_amount = 0
         for row in rows:
             total_amount += int(row['note'])
             init_data.append(",".join([str(row['date']), str(row['trxid']), str(row['note'])]))
+            # init_data.append(",".join(row.values()))
         LOGGER.info(('TOTAL INITIATING CASH DATA', len(init_data), total_amount))
         store_bulk_notes_activity(init_data)
     else:
@@ -333,7 +334,8 @@ def get_cash_activity(keyword=None, trx_output=False):
             # summary[n] = all_notes.count(n)
             summary.update({n:all_notes.count(n)})
             # LOGGER.debug((n, summary[n]))
-        output['summary'] = summary
+        sorted_summary = {k : summary[k] for k in sorted(summary)}
+        output['summary'] = sorted_summary
         LOGGER.info(('CASH_STATUS', str(output)))
     except Exception as e:
         LOGGER.warning((e))
