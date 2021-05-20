@@ -28,7 +28,11 @@ class TopupSignalHandler(QObject):
 TP_SIGNDLER = TopupSignalHandler()
 LOGGER = logging.getLogger()
 
-TOPUP_URL = _Common.CORE_HOST
+TOPUP_URL = _Common.UPDATE_BALANCE_URL_DEV
+
+if _Common.LIVE_MODE is True or _Common.PTR_MODE is True:
+    TOPUP_URL = _Common.UPDATE_BALANCE_URL
+    
 TOPUP_TOKEN = _Common.CORE_TOKEN
 TOPUP_MID = _Common.CORE_MID
 TOPUP_TID = _Common.TID
