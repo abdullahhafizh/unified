@@ -70,6 +70,8 @@ BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug'
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False
+# Hardcoded Active Bill Notes
+BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
 
 AMQP_ENABLE = True if _ConfigParser.get_set_value('AMQP', 'active', '0') == '1' else False
 AMQP_HOST = _ConfigParser.get_set_value('AMQP', 'host', 'amqp.mdd.co.id')
@@ -336,11 +338,11 @@ def get_cash_activity(keyword=None, trx_output=False):
             # summary[n] = all_notes.count(n)
             summary.update({n:all_notes.count(n)})
             # LOGGER.debug((n, summary[n]))
-        sorted_summary = {k : summary[k] for k in sorted(summary) if int(k) < 100000}
+        # sorted_summary = {k : summary[k] for k in sorted(summary) if int(k) < 100000}
         # Manual Add Denom 100.000 In Last Order
-        if summary.get('100000', 0) > 0:
-            sorted_summary.update({'100000': summary.get('100000', 0)})
-        output['summary'] = sorted_summary
+        # if summary.get('100000', 0) > 0:
+            # sorted_summary.update({'100000': summary.get('100000', 0)})
+        output['summary'] = summary
         LOGGER.info(('CASH_STATUS', str(output)))
     except Exception as e:
         LOGGER.warning((e))

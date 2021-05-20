@@ -1183,11 +1183,12 @@ def admin_print_global(struct_id, ext='.pdf'):
         # qty_card = s['trx_card']
         # total_card = str(int(qty_card) * CARD_SALE)
         error_count = 0
-        for note in s['cash_activity']['notes']:
-            if 'ERROR' in note:
+        for activity_note in s['cash_activity']['notes']:
+            if 'ERROR' in activity_note:
                 error_count += 1
                 continue
-            qty = s['cash_activity']['summary'][note]
+        for note in _Common.BILL_ACTIVE_NOTES:
+            qty = s['cash_activity']['summary'].get(note, 0)
             sub_total = int(qty) * int(note)
             pdf.cell(padding_left, 0,
                     ' -- '+clean_number(str(note))+' x '+str(qty)+'  = Rp. '+clean_number(str(sub_total)), 0, 0, 'L')
