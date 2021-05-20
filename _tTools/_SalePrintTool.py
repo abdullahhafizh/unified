@@ -1191,7 +1191,7 @@ def admin_print_global(struct_id, ext='.pdf'):
             qty = s['cash_activity']['summary'].get(note, 0)
             sub_total = int(qty) * int(note)
             pdf.cell(padding_left, 0,
-                    ' -- '+clean_number(str(note))+' x '+str(qty)+'  = Rp. '+clean_number(str(sub_total)), 0, 0, 'L')
+                    ' -- '+clean_number(str(note).rjust(6, ' '))+' x '+str(qty).rjust(4, ' ')+'  = Rp. '+clean_number(str(sub_total)), 0, 0, 'L')
             pdf.ln(tiny_space)
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
