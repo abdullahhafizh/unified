@@ -1001,7 +1001,7 @@ def admin_print_global_old(struct_id, ext='.pdf'):
         GENERAL_TITLE = 'VM COLLECTION REPORT'
         pdf = GeneralPDF('P', 'mm', (80, 140))
         s = _Common.COLLECTION_DATA
-        LOGGER.debug(('COLLECTION_DATA', str(s)))
+        # LOGGER.debug(('COLLECTION_DATA', str(s)))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
         file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+user
@@ -1151,7 +1151,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         GENERAL_TITLE = 'VM COLLECTION REPORT'
         pdf = GeneralPDF('P', 'mm', (80, 140))
         s = _Common.COLLECTION_DATA
-        LOGGER.debug(('COLLECTION_DATA', str(s)))
+        # LOGGER.debug(('COLLECTION_DATA', str(s)))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
         file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+user
