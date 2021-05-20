@@ -98,7 +98,8 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             return 'FAILED_GET_CARD_INFO_BNI'
         BNI_UPDATE_BALANCE_PROCESS = True
         # prev_balance = _Common.BNI_ACTIVE_WALLET
-        _Common.BNI_ACTIVE_WALLET = 0
+        if not _Common.BNI_C2C_TRESHOLD_USAGE:
+            _Common.BNI_ACTIVE_WALLET = 0
         _result_pending = pending_balance({
             'card_no': _get_card_data['card_no'],
             'amount': _Common.BNI_TOPUP_AMOUNT,
@@ -1562,7 +1563,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             # LAST_MANDIRI_C2C_SUCCESS_RESULT = {**param, **pending_result}
             LAST_MANDIRI_C2C_SUCCESS_RESULT = param.update(pending_result)
             # LOGGER.debug(('LAST_MANDIRI_C2C_SUCCESS_RESULT', str(LAST_MANDIRI_C2C_SUCCESS_RESULT)))
-            _Common.MANDIRI_ACTIVE_WALLET = 0
+            if not _Common.MDR_C2C_TRESHOLD_USAGE:
+                _Common.MANDIRI_ACTIVE_WALLET = 0
             send_kiosk_status()
             _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
             update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')

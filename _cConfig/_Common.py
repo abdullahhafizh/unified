@@ -119,6 +119,7 @@ if LIVE_MODE is True:
     _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
     BNI_REMOTE_ACTIVATION = True
     _ConfigParser.set_value('BNI', 'remote^activation', '1')
+BNI_C2C_TRESHOLD_USAGE = True if _ConfigParser.get_set_value('BNI', 'treshold^usage', '0') == '1' else False
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
 TID_BRI = _ConfigParser.get_set_value('BRI', 'tid', '---')
@@ -182,6 +183,7 @@ C2C_DEPOSIT_UPDATE_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposi
 C2C_DEPOSIT_UPDATE_MAX_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^max^loop', '10'))
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
+MDR_C2C_TRESHOLD_USAGE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'treshold^usage', '0') == '1' else False
 
 # GENERATE INFO
 INFOS = [
