@@ -1003,6 +1003,7 @@ Base{
 //        _SLOT.start_set_payment(details.payment);
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
+        //Validate Action By Payment
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca-qris'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             main_title.show_text = 'Ringkasan Transaksi Anda';
@@ -1019,8 +1020,7 @@ Base{
 //            _SLOT.python_dump(JSON.stringify(qrPayload));
             popup_loading.open();
             return;
-        }
-        if (details.payment == 'cash') {
+        } else if (details.payment == 'cash') {
             open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
@@ -1029,8 +1029,7 @@ Base{
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
             back_button.visible = false;
             return;
-        }
-        if (details.payment == 'debit') {
+        } else if (details.payment == 'debit') {
             main_title.show_text = 'Ringkasan Transaksi Anda';
             var edc_waiting_time = '150';
             if (CONF.edc_waiting_time != undefined) edc_waiting_time = CONF.edc_waiting_time;
@@ -1118,8 +1117,7 @@ Base{
                         set_refund_channel('CS_ONLY');
                         do_refund_or_print('user_payment_timeout_debit');
                         return;
-                    }
-                    if (details.payment=='cash') {
+                    } else if (details.payment=='cash') {
                         proceedAble = false;
                         _SLOT.stop_bill_receive_note();
                     }
