@@ -806,11 +806,15 @@ Base{
         } else if (grgFunction == 'STOP_BILL'){
             if(grgResult.indexOf('SUCCESS') > -1){
                 if (receivedPayment >= totalPrice){
-                    var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
-                    details.payment_details = cashResponse;
-                    details.payment_received = cashResponse.total;
-                    // Overwrite receivedPayment from STOP_BILL result
-                    receivedPayment = parseInt(cashResponse.total);
+                    details.payment_received = receivedPayment;
+                    details.payment_details = receivedPayment.toString();
+                    if (r!='STOP_BILL|SUCCESS'){
+                        var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
+                        details.payment_details = cashResponse;
+                        details.payment_received = cashResponse.total;
+                        // Overwrite receivedPayment from STOP_BILL result
+                        receivedPayment = parseInt(cashResponse.total);
+                    }
                     console.log("bill_payment_result STOP_SUCCESS : ", now, 'receivedPayment', receivedPayment, 'totalPrice', totalPrice, 'proceedAble', proceedAble);
                     if (proceedAble) payment_complete('bill_acceptor');
                 }

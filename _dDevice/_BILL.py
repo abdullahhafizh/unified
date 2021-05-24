@@ -193,6 +193,7 @@ def set_direct_price_with_current(current, price):
     COLLECTED_CASH = int(current)
     CASH_HISTORY = []
     CASH_HISTORY.append(current)
+    LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'DIRECT_PRICE_AMOUNT', DIRECT_PRICE_AMOUNT, 'CASH_HISTORY', CASH_HISTORY))
 
 
 def start_bill_receive_note(trxid):
@@ -405,6 +406,7 @@ def stop_receive_note():
         param = BILL["STOP"] + '|'
         response, result = send_command_to_bill(param=param, output=None)
         if response == 0:
+            LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'DIRECT_PRICE_AMOUNT', DIRECT_PRICE_AMOUNT))
             if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                 cash_received = {
                     'history': get_cash_history(),
