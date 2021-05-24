@@ -739,9 +739,10 @@ Base{
                 var provider = details.provider;
                 var amount = getDenom.toString();
                 var structId = details.shop_type + details.epoch.toString();
-                var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda'
-                var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
+                var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda';
+                var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai';
+                var trx_counter_notif = abc.counter.toString();
+                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|'+trx_counter_notif, false );
                 console.log('DO_TOPUP_TRX', now, channel, provider, amount, structId);
                 perform_do_topup();
                 break;
