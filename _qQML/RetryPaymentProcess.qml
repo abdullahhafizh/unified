@@ -1017,6 +1017,7 @@ Base{
         // Handle if Payment is completely done before
         console.log('Check Received Payment', now, receivedPayment, totalPrice);
         if (receivedPayment >= totalPrice){
+            _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             payment_complete(details.payment);
             execute_transaction('RETRY_TRANSACTION');
             return;
