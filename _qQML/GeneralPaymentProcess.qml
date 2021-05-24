@@ -218,7 +218,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var message_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
-        abc.counter = 300;
+        abc.counter = 120;
         my_timer.restart();
         // Validation To Get This Condition, payment received, refund feature disabled and not a success trx
         // While success trx must keep using refund, NAHLOH..!
@@ -680,7 +680,7 @@ Base{
         transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
-        abc.counter = 600;
+        abc.counter = 300;
         my_timer.restart();
 //        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
     }
@@ -787,19 +787,19 @@ Base{
                 back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
-                abc.counter = 600;
+                abc.counter = 300;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
         } else if (grgFunction == 'STOP_BILL'){
             if(grgResult.indexOf('SUCCESS') > -1){
                 if (receivedPayment >= totalPrice){
-                    console.log("bill_payment_result STOP_SUCCESS : ", now, receivedPayment, totalPrice, proceedAble);
                     var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
                     details.payment_details = cashResponse;
                     details.payment_received = cashResponse.total;
                     // Overwrite receivedPayment from STOP_BILL result
                     receivedPayment = parseInt(cashResponse.total);
+                    console.log("bill_payment_result STOP_SUCCESS : ", now, 'receivedPayment', receivedPayment, 'totalPrice', totalPrice, 'proceedAble', proceedAble);
                     if (proceedAble) payment_complete('bill_acceptor');
                 }
             }

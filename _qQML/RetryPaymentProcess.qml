@@ -799,19 +799,19 @@ Base{
                 back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
-                abc.counter = 600;
+                abc.counter = 300;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
         } else if (grgFunction == 'STOP_BILL'){
             if(grgResult.indexOf('SUCCESS') > -1){
                 if (receivedPayment >= totalPrice){
-                    console.log("bill_payment_result STOP_SUCCESS : ", now, receivedPayment, totalPrice, proceedAble);
                     var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
                     details.payment_details = cashResponse;
                     details.payment_received = cashResponse.total;
                     // Overwrite receivedPayment from STOP_BILL result
                     receivedPayment = parseInt(cashResponse.total);
+                    console.log("bill_payment_result STOP_SUCCESS : ", now, 'receivedPayment', receivedPayment, 'totalPrice', totalPrice, 'proceedAble', proceedAble);
                     if (proceedAble) payment_complete('bill_acceptor');
                 }
             }
@@ -1082,7 +1082,7 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                console.log('[RETRY-PAYMENT]', abc.counter);
+                console.log('[RETRY-PAYMENT]', 'receivedPayment', receivedPayment, 'initialPayment', initialPayment, abc.counter);
                 abc.counter -= 1;
                 //Force Allowed Back Button For Cash after 240 seconds
                 if (details.payment=='cash'){
@@ -1142,6 +1142,8 @@ Base{
                                 release_print('Waktu Transaksi Habis', 'Silakan Ulangi Transaksi Dalam Beberapa Saat');
                                 return;
                             }
+                        } else {
+                            details.receipt_title = 'Transaksi Sukses';
                         }
                         refundChannel = 'CUSTOMER-SERVICE';
                         details.refund_channel = refundChannel;
@@ -1166,7 +1168,7 @@ Base{
                         _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
                         if (popup_refund.visible) popup_refund.close();
                         console.log('start_trigger_global_refund caused by timeout', JSON.stringify(refundPayload));
-                        release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
+                        release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                     }
                 }
                 if (abc.counter == 0){
