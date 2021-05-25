@@ -1017,7 +1017,7 @@ Base{
         _SLOT.start_get_refunds();
         // Handle if Payment is completely done before
         console.log('Check Received Payment', now, receivedPayment, totalPrice);
-        if (receivedPayment >= totalPrice){
+        if (initialPayment >= totalPrice){
 //            _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             payment_complete(details.payment);
             execute_transaction('RETRY_TRANSACTION');
@@ -1127,7 +1127,7 @@ Base{
                         return;
                     } else if (details.payment=='cash') {
                         proceedAble = false;
-                        _SLOT.stop_bill_receive_note();
+                        if (initialPayment < totalPrice) _SLOT.stop_bill_receive_note();
                     }
                     if (receivedPayment == initialPayment){
                         exit_with_message(3);
