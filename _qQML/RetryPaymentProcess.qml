@@ -1378,7 +1378,7 @@ Base{
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!');
             proceedAble = false;
-            _SLOT.stop_bill_receive_note();
+            if (initialPayment < totalPrice) _SLOT.stop_bill_receive_note();
             if (receivedPayment > initialPayment){
                 console.log('[CANCELLATION] User Payment', receivedPayment);
                 details.process_error = 1;
