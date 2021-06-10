@@ -877,7 +877,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         #     get_force_settlement(amount, trxid)
         #     return
         LAST_C2C_APP_TYPE = '0'
-        if _result_json["Response"] == '83':
+        if _result_json["Response"] == '83' or _result_json["Result"] in ["6208"]:
             LAST_C2C_APP_TYPE = '1'
         # validate if deposit balance is deducted
         c2c_balance_info()
@@ -888,7 +888,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         
         if prev_deposit_balance == last_deposit_balance:
             # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
-            if _result_json["Result"] in ["6208"] and LAST_C2C_APP_TYPE == '1':
+            if _result_json["Result"] in ["6208"]:
+                LAST_C2C_APP_TYPE == '1'
                 get_force_settlement(amount, trxid)
                 sleep(1)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
