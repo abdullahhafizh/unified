@@ -364,7 +364,7 @@ Base{
         my_timer.stop();
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
-        if (QRProvider.indexOf(details.payment) > -1){
+        if (allQRProvider.indexOf(details.payment) > -1){
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         if (successTransaction) {
@@ -392,7 +392,7 @@ Base{
         popup_loading.close();
         transactionInProcess = false;
         var result = p.split('|')[1];
-        if (QRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
+        if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1;
             details.payment_error = 1;
@@ -508,7 +508,7 @@ Base{
         global_frame.close();
         popup_loading.close();
         transactionInProcess = false;
-        if (QRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
+        if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
         //========
@@ -629,7 +629,7 @@ Base{
         global_frame.close();
         popup_loading.close();
         transactionInProcess = false;
-        if (QRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
+        if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){
@@ -1003,7 +1003,7 @@ Base{
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
         //Validate Action By Payment
-        if (QRProvider.indexOf(details.payment) > -1){
+        if (allQRProvider.indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             main_title.show_text = 'Ringkasan Transaksi Anda';
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
@@ -1423,7 +1423,7 @@ Base{
             do_refund_or_print('user_cancellation_debit');
             return;
         }
-        if (QRProvider.indexOf(details.payment) > -1){
+        if (allQRProvider.indexOf(details.payment) > -1){
             qr_payment_frame.cancel('USER_CANCEL');
         }
         my_timer.stop();
@@ -2003,7 +2003,7 @@ Base{
                     cancel_confirmation.close();
                     press = '0';
                     my_timer.start();
-                    if (QRProvider.indexOf(details.payment) > -1){
+                    if (allQRProvider.indexOf(details.payment) > -1){
                         qr_payment_frame.qrTimer.start();
                     }
                 }
