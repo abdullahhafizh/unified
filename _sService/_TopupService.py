@@ -85,7 +85,10 @@ def start_do_force_topup_bni():
 def do_topup_deposit_bni(slot=1, force=False, activation=False):
     global BNI_UPDATE_BALANCE_PROCESS
     try:
-        _QPROX.ka_info_bni(slot=_Common.BNI_ACTIVE)
+        slot = _Common.BNI_ACTIVE
+        if _Common.BNI_SINGLE_SAM is True:
+            slot = 1
+        _QPROX.ka_info_bni(slot=slot)
         if _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD:
             LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', slot, _Common.BNI_ACTIVE_WALLET, _Common.BNI_THRESHOLD))
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_DEPOSIT_STILL_SUFFICIENT')
@@ -200,6 +203,9 @@ def bni_reset_update_balance_slave():
 
 def bni_reset_update_balance(slot=1, activation=True):
     try:
+        slot = _Common.BNI_ACTIVE
+        if _Common.BNI_SINGLE_SAM is True:
+            slot = 1
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             return False, 'GET_CARD_DATA_FAILED'

@@ -181,7 +181,9 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
         #Getting Previous samBalance
         samPrevBalance = _Common.BNI_SAM_1_WALLET if slot == 1 else _Common.BNI_SAM_2_WALLET
         # Converting Default Slot into Actual Slot
-        alias_slot = BNI_SAM_SLOT[str(slot)]
+        alias_slot = BNI_SAM_SLOT.get(str(slot))
+        if alias_slot == '---' or _Common.BNI_SINGLE_SAM is True:
+            alias_slot = SLOT_SAM1_BNI
         if len(card_info) == 0 or card_info is None:
             LOGGER.warning((str(card_info), 'WRONG_VALUE'))
             return False
