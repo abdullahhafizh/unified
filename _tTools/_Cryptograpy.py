@@ -64,9 +64,9 @@ def convert_to_iv(clue='0', length=16):
     return iv[:16][::-1]
 
 
-BLOCK_SIZE = 32;
-BLOCK_SZ = 14;
-PADDING = '^';
+BLOCK_SIZE = 32
+BLOCK_SZ = 14
+PADDING = '^'
 
 
     # private static function padString($string){
