@@ -1230,7 +1230,6 @@ def store_transaction_global(param, retry=False):
         payment_type = get_payment(g['payment'])
         admin_fee = _Common.C2C_ADMIN_FEE[0]
         target_card_no = g['raw'].get('card_no', '')
-        
         # Update Product Stock
         if g['shop_type'] == 'shop':
             admin_fee = 0
@@ -1240,9 +1239,13 @@ def store_transaction_global(param, retry=False):
                 'pid': PID_STOCK_SALE,
                 'stock': int(g['raw']['stock']) - int(g['qty'])
             }
+            trx_notes = g['raw']
+            trx_notes['stock_details'] = stock_update
             _DAO.update_product_stock(stock_update)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid'])
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
+        else:
+            trx_notes = g['topup_details']
         
         trace_no = g['payment_details'].get('trx_id', '')
         if trace_no == '':
@@ -1273,6 +1276,7 @@ def store_transaction_global(param, retry=False):
             "baseAmount" : total_amount if admin_fee == 0 else (total_amount - admin_fee),
             "targetCard" : target_card_no,
             "bankId" : bank_id,
+            "trxNotes" : trx_notes
         }
         # _______________________________________________________________________________________________________
         

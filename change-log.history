@@ -1,3 +1,9 @@
+13.0.G7-GLOBAL:
+- Alter Topup Transaction Data With Topup Details,
+- Add BNI Qris,
+- Fix Loop Pending Job For DKI/BNI Confirmation,
+- ...
+
 13.0.G6-GLOBAL:
 - Enhance BNI Actual Slot Validation,
 - ...

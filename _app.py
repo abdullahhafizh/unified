@@ -1181,6 +1181,8 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.alter_table('_TransactionsNew.sql')
     sleep(1)
+    _KioskService.alter_table('_AlterTransactionNew.sql')
+    sleep(1)
     if INITIAL_SETTING['reloadService'] is True:
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()

@@ -1461,6 +1461,15 @@ def topup_online(bank, cardno, amount, trxid=''):
                         'bank_id': '3',
                         'bank_name': 'BRI',
                 }
+            extra = {
+                    'prev_balance': last_card_check['balance'],
+                    'deposit_no': 'N/A',
+                    'deposit_prev_balance': 'N/A',
+                    'deposit_last_balance': 'N/A',
+                    'topup_report': 'N/A'
+                }
+            output = output.update(extra)
+            LOGGER.info((str(output)))
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
         elif bank == 'BCA':
             # last_check = _QPROX.LAST_BALANCE_CHECK            
@@ -1553,6 +1562,15 @@ def topup_online(bank, cardno, amount, trxid=''):
                         'bank_id': '4',
                         'bank_name': 'BCA',
                 }
+            extra = {
+                    'prev_balance': last_card_check['balance'],
+                    'deposit_no': 'N/A',
+                    'deposit_prev_balance': 'N/A',
+                    'deposit_last_balance': 'N/A',
+                    'topup_report': 'N/A'
+                }
+            output = output.update(extra)
+            LOGGER.info((str(output)))
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
         elif bank == 'MANDIRI_C2C_DEPOSIT':
             param = {
@@ -1693,6 +1711,15 @@ def topup_online(bank, cardno, amount, trxid=''):
                                 'bank_id': '5',
                                 'bank_name': 'DKI',
                         }
+                    extra = {
+                            'prev_balance': last_card_check['balance'],
+                            'deposit_no': 'N/A',
+                            'deposit_prev_balance': 'N/A',
+                            'deposit_last_balance': 'N/A',
+                            'topup_report': 'N/A'
+                        }
+                    output = output.update(extra)
+                    LOGGER.info((str(output)))
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
                     _param['last_balance'] = update_result['last_balance']
                     confirm_dki_topup(_param)

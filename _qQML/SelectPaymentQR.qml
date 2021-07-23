@@ -19,6 +19,7 @@ Rectangle{
     property bool _qrShopeeEnable: false
     property bool _qrJakoneEnable: false
     property bool _qrBcaEnable: false
+    property bool _qrBniEnable: false
     property bool _qrMultiEnable: false
     property var totalEnable: 6
     visible: false
@@ -155,22 +156,58 @@ Rectangle{
             }
         }
 
+        // SmallSimplyItem {
+        //     id: button_ovo
+        //     width: 200
+        //     height: 183
+        //     anchors.verticalCenter: parent.verticalCenter
+        //     sourceImage: "source/qr_logo/ovo_white_logo.png"
+        //     itemName: "O V O"
+        //     isActivated: _qrOvoEnable
+        //     modeReverse: false
+        //     MouseArea{
+        //         enabled: _qrOvoEnable
+        //         anchors.fill: parent
+        //         onClicked: {
+        //             _SLOT.user_action_log('choose "OVO" Payment Method');
+        //             var payment = 'ovo';
+        //             do_release_all_set_active(button_ovo);
+        //             if (calledFrom=='prepaid_topup_denom'){
+        //                 if (prepaid_topup_denom.press != '0') return;
+        //                 prepaid_topup_denom.press = '1';
+        //                 prepaid_topup_denom.get_payment_method_signal(payment);
+        //             }
+        //             if (calledFrom=='general_shop_card'){
+        //                 if (general_shop_card.press != '0') return;
+        //                 general_shop_card.press = '1';
+        //                 general_shop_card.get_payment_method_signal(payment);
+        //             }
+        //             if (calledFrom=='global_input_number'){
+        //                 if (global_input_number.press != '0') return;
+        //                 global_input_number.press = '1';
+        //                 global_input_number.get_payment_method_signal(payment);
+        //             }
+
+        //         }
+        //     }
+        // }
+
         SmallSimplyItem {
-            id: button_ovo
+            id: button_bni
             width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/qr_logo/ovo_white_logo.png"
-            itemName: "O V O"
-            isActivated: _qrOvoEnable
+            sourceImage: "source/qr_logo/bni_white_logo.png"
+            itemName: "B N I"
+            isActivated: _qrBniEnable
             modeReverse: false
             MouseArea{
-                enabled: _qrOvoEnable
+                enabled: _qrBniEnable
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "OVO" Payment Method');
-                    var payment = 'ovo';
-                    do_release_all_set_active(button_ovo);
+                    _SLOT.user_action_log('choose "BNI" Payment Method');
+                    var payment = 'bni-qris';
+                    do_release_all_set_active(button_bca);
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
@@ -414,7 +451,8 @@ Rectangle{
         button_cash.do_release();
         button_debit.do_release();
         button_multi_qr.do_release();
-        button_ovo.do_release();
+        // button_ovo.do_release();
+        button_bni.do_release();
         button_bca.do_release();
         button_linkaja.do_release();
         button_gopay.do_release();
