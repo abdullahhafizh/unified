@@ -1263,7 +1263,7 @@ def store_transaction_global(param, retry=False):
             "trxId" : trx_id,
             "tid" : _Common.TID,
             "amount" : total_amount,
-            "createdAt" : _Helper.time_string(),
+            "createdAt" : _Helper.now(),
             "paymentType" : payment_type.upper(),
             "trxType" : g['shop_type'].upper(),
             "paymentNotes" : payment_notes,
@@ -1283,7 +1283,7 @@ def store_transaction_global(param, retry=False):
         check_trx = _DAO.check_trx_new(trx_id)
         # Store To Local If Empty
         if len(check_trx) == 0:
-            trx_data['createdAt'] = _Helper.now()
+            # trx_data['createdAt'] = _Helper.now()
             _DAO.insert_transaction_new(trx_data)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + trx_id)
         # Push To Server

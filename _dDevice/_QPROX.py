@@ -217,7 +217,6 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
                 'topupLastBalance': samLastBalance,
                 'status': 'REFILL_SUCCESS',
                 'remarks': result,
-                "createdAt" : _Helper.time_string(),
             }
             bni_topup_amount = int(samLastBalance) - int(samPrevBalance)
             # Update Audit Summary
@@ -748,7 +747,6 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'status': status,
             'remarks': __data,
             'c2c_mode': '1',
-            "createdAt" : _Helper.time_string(),
         }
         _Common.store_upload_sam_audit(param)
         # Update to server
@@ -1001,7 +999,6 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
             'topupLastBalance': __data[8].lstrip('0'),
             'status': __status,
             'remarks': __remarks,            
-            "createdAt" : _Helper.time_string(),
         }
         _Common.set_mandiri_uid(slot, __card_uid)
         _Common.store_upload_sam_audit(param)
@@ -1275,7 +1272,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 'topupLastBalance': __card_last_balance,
                 'status': __status,
                 'remarks': __remarks,
-                "createdAt" : _Helper.time_string(),
             }
             _Common.store_upload_sam_audit(param)
         else:

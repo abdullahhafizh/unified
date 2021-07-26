@@ -1322,6 +1322,7 @@ def store_upload_sam_audit(param):
             'topupLastBalance': param['topupLastBalance'],
             'status': param['status'],
             'remarks': param['remarks'],
+            'createdAt': _Helper.now()
         }
         # _DAO.insert_sam_audit(param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
