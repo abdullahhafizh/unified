@@ -35,7 +35,7 @@ Rectangle{
     property var imgPanelScale: .9
     property var show_img: (mode_!='normal') ? "source/logo/logo_white_.png" : "source/logo/logo_red_.png"
     property var top_color: (mode_!='normal') ? "#f03838" : "white"
-
+// Define All QR Provider Here
     property variant QRProvider: ['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca-qris', 'bni-qris']
 
 
