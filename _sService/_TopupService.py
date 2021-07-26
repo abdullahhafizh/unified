@@ -1450,25 +1450,22 @@ def topup_online(bank, cardno, amount, trxid=''):
             if str(amount) != str(update_result['topup_amount']):
                 other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
             output = {
-                        # 'prev_wallet': pending_result['prev_wallet'],
-                        # 'last_wallet': pending_result['last_wallet'],
-                        'last_balance': update_result['last_balance'],
-                        'topup_amount': update_result['topup_amount'],
-                        'other_channel_topup': other_channel_topup,
-                        'report_sam': 'N/A',
-                        'card_no': update_result['card_no'],
-                        'report_ka': 'N/A',
-                        'bank_id': '3',
-                        'bank_name': 'BRI',
-                }
-            extra = {
+                    # 'prev_wallet': pending_result['prev_wallet'],
+                    # 'last_wallet': pending_result['last_wallet'],
+                    'last_balance': update_result['last_balance'],
+                    'topup_amount': update_result['topup_amount'],
+                    'other_channel_topup': other_channel_topup,
+                    'report_sam': 'N/A',
+                    'card_no': update_result['card_no'],
+                    'report_ka': 'N/A',
+                    'bank_id': '3',
+                    'bank_name': 'BRI',
                     'prev_balance': last_card_check['balance'],
                     'deposit_no': 'N/A',
                     'deposit_prev_balance': 'N/A',
                     'deposit_last_balance': 'N/A',
                     'topup_report': 'N/A'
                 }
-            output = output.update(extra)
             LOGGER.info((str(output)))
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
         elif bank == 'BCA':
@@ -1551,25 +1548,22 @@ def topup_online(bank, cardno, amount, trxid=''):
             if str(amount) != str(update_result['topup_amount']):
                 other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
             output = {
-                        # 'prev_wallet': pending_result['prev_wallet'],
-                        # 'last_wallet': pending_result['last_wallet'],
-                        'last_balance': update_result['last_balance'],
-                        'topup_amount': update_result['topup_amount'],
-                        'other_channel_topup': other_channel_topup,
-                        'report_sam': 'N/A',
-                        'card_no': update_result['card_no'],
-                        'report_ka': 'N/A',
-                        'bank_id': '4',
-                        'bank_name': 'BCA',
-                }
-            extra = {
+                    # 'prev_wallet': pending_result['prev_wallet'],
+                    # 'last_wallet': pending_result['last_wallet'],
+                    'last_balance': update_result['last_balance'],
+                    'topup_amount': update_result['topup_amount'],
+                    'other_channel_topup': other_channel_topup,
+                    'report_sam': 'N/A',
+                    'card_no': update_result['card_no'],
+                    'report_ka': 'N/A',
+                    'bank_id': '4',
+                    'bank_name': 'BCA',
                     'prev_balance': last_card_check['balance'],
                     'deposit_no': 'N/A',
                     'deposit_prev_balance': 'N/A',
                     'deposit_last_balance': 'N/A',
                     'topup_report': 'N/A'
                 }
-            output = output.update(extra)
             LOGGER.info((str(output)))
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
         elif bank == 'MANDIRI_C2C_DEPOSIT':
@@ -1700,25 +1694,22 @@ def topup_online(bank, cardno, amount, trxid=''):
                     if str(amount) != str(update_result['topup_amount']):
                         other_channel_topup = str(int(update_result['topup_amount']) - int(amount))
                     output = {
-                                # 'prev_wallet': pending_result['prev_wallet'],
-                                # 'last_wallet': pending_result['last_wallet'],
-                                'last_balance': update_result['last_balance'],
-                                'topup_amount': update_result['topup_amount'],
-                                'other_channel_topup': other_channel_topup,
-                                'report_sam': result,
-                                'card_no': update_result['card_no'],
-                                'report_ka': 'N/A',
-                                'bank_id': '5',
-                                'bank_name': 'DKI',
-                        }
-                    extra = {
+                            # 'prev_wallet': pending_result['prev_wallet'],
+                            # 'last_wallet': pending_result['last_wallet'],
+                            'last_balance': update_result['last_balance'],
+                            'topup_amount': update_result['topup_amount'],
+                            'other_channel_topup': other_channel_topup,
+                            'report_sam': result,
+                            'card_no': update_result['card_no'],
+                            'report_ka': 'N/A',
+                            'bank_id': '5',
+                            'bank_name': 'DKI',
                             'prev_balance': last_card_check['balance'],
                             'deposit_no': 'N/A',
                             'deposit_prev_balance': 'N/A',
                             'deposit_last_balance': 'N/A',
                             'topup_report': 'N/A'
                         }
-                    output = output.update(extra)
                     LOGGER.info((str(output)))
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
                     _param['last_balance'] = update_result['last_balance']

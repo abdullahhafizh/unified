@@ -721,14 +721,11 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         _Common.local_store_topup_record(output)
         if status == '0000':
             # Emit Topup Success Record Into Local DB
-            extra = {
-                'prev_balance': __card_prev_balance,
-                'deposit_no': __report_deposit[:16],
-                'deposit_prev_balance': __deposit_prev_balance,
-                'deposit_last_balance': __deposit_last_balance,
-                'topup_report': __data
-            }
-            output = output.update(extra)
+            output['prev_balance'] = __card_prev_balance
+            output['deposit_no'] = __report_deposit[:16]
+            output['deposit_prev_balance'] = __deposit_prev_balance
+            output['deposit_last_balance'] = __deposit_last_balance
+            output['topup_report'] = __data
             LOGGER.info((str(output)))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
@@ -1260,14 +1257,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 LOGGER.debug(('TOPUP_TIMEOUT', attempt, __status, _result))
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             else:
-                extra = {
-                    'prev_balance': __card_prev_balance,
-                    'deposit_no': __data[1],
-                    'deposit_prev_balance': __deposit_prev_balance,
-                    'deposit_last_balance': __deposit_last_balance,
-                    'topup_report': __report_sam
-                }
-                output = output.update(extra)
+                output['prev_balance'] = __card_prev_balance
+                output['deposit_no'] = __data[1]
+                output['deposit_prev_balance'] = __deposit_prev_balance
+                output['deposit_last_balance'] = __deposit_last_balance
+                output['topup_report'] = __report_sam
                 LOGGER.info((str(output)))
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
             param = {
