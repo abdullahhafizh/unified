@@ -207,7 +207,7 @@ Rectangle{
                 onClicked: {
                     _SLOT.user_action_log('choose "BNI" Payment Method');
                     var payment = 'bni-qris';
-                    do_release_all_set_active(button_bca);
+                    do_release_all_set_active(button_bni);
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
