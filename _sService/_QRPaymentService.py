@@ -223,7 +223,7 @@ def do_check_qr(payload, mode, serialize=True):
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             if mode in _Common.QRIS_RECEIPT:
                 r['data']['trx_reff_no'] = payload['refference']
-                _QRPrintTool.generate_qr_receipt(r['data'])
+                _QRPrintTool.generate_qr_receipt(r['data'], mode.lower())
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))

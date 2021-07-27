@@ -1225,7 +1225,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris']:
+        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris', 'bni-qris']:
             remarks = json.loads(remarks)
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)

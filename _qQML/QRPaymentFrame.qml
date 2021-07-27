@@ -21,7 +21,7 @@ Base{
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
 
-    property variant qrisProvider: ['linkaja', 'dana', 'bca-qris', 'shopeepay', 'jakone']
+    property variant qrisProvider: ['linkaja', 'dana', 'bca-qris', 'shopeepay', 'jakone', 'bni-qris']
 
     property alias qrTimer: show_timer
     property var calledFrom
