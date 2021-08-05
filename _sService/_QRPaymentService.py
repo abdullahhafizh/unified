@@ -83,7 +83,7 @@ def do_get_qr(payload, mode, serialize=True):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
-    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']:
+    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
         payload['reff_no'] = payload['trx_id']
     if serialize is True:
         param = serialize_payload(payload)
@@ -105,11 +105,12 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_DIRECT_PAY:
                 r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']:
+            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
+            sleep(5)
             handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
@@ -223,7 +224,7 @@ def do_check_qr(payload, mode, serialize=True):
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             if mode in _Common.QRIS_RECEIPT:
                 r['data']['trx_reff_no'] = payload['refference']
-                _QRPrintTool.generate_qr_receipt(r['data'])
+                _QRPrintTool.generate_qr_receipt(r['data'], mode.lower())
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
@@ -284,7 +285,7 @@ def check_payment_result(result, mode):
         return False
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA', 'BCA-QRIS'] and result['status'] in ['SUCCESS', 'PAID']:
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA', 'BCA-QRIS', 'BNI-QRIS'] and result['status'] in ['SUCCESS', 'PAID']:
         return True
     return False
 

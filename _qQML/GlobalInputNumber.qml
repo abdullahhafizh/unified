@@ -34,6 +34,7 @@ Base{
     property bool qrShopeeEnable: false
     property bool qrJakoneEnable: false
     property bool qrBcaEnable: false
+    property bool qrBniEnable: false
     property var totalPaymentEnable: 0
 
     property bool retryAbleTransaction: false
@@ -785,6 +786,10 @@ Base{
             qrBcaEnable = true;
             totalPaymentEnable += 1;
         }
+        if (device.QR_BNI == 'AVAILABLE') {
+            qrBniEnable = true;
+            totalPaymentEnable += 1;
+        }
         //================================
 //        isConfirm = true;
 
@@ -1127,6 +1132,7 @@ Base{
         _qrShopeeEnable: qrShopeeEnable
         _qrJakoneEnable: qrJakoneEnable
         _qrBcaEnable: qrBcaEnable
+        _qrBniEnable: qrBniEnable
         totalEnable: totalPaymentEnable
         z: 99
     }

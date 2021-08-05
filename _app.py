@@ -671,9 +671,9 @@ class SlotHandler(QObject):
         _SettlementService.start_do_c2c_update_fee()
     start_do_c2c_update_fee = pyqtSlot()(start_do_c2c_update_fee)
 
-    def start_do_topup_c2c_deposit(self):
-        _TopupService.start_do_topup_c2c_deposit()
-    start_do_topup_c2c_deposit = pyqtSlot()(start_do_topup_c2c_deposit)
+    def start_do_topup_deposit_mandiri(self):
+        _TopupService.start_do_topup_deposit_mandiri()
+    start_do_topup_deposit_mandiri = pyqtSlot()(start_do_topup_deposit_mandiri)
 
     def start_get_card_history(self, bank):
         _QPROX.start_get_card_history(bank)
@@ -1181,6 +1181,8 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.alter_table('_TransactionsNew.sql')
     sleep(1)
+    _KioskService.alter_table('_AlterTransactionNew.sql')
+    sleep(1)
     if INITIAL_SETTING['reloadService'] is True:
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
@@ -1246,17 +1248,21 @@ if __name__ == '__main__':
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
     if _QPROX.INIT_MANDIRI is True:
-        sleep(2)
-        print("pyt: Triggering Mandiri KA/C2C Deposit Balance Update Check...")
-        _SettlementService.start_validate_update_balance()    
+        sleep(1)
+        print("pyt: Check Mandiri Deposit Update Balance...")
+        _TopupService.check_mandiri_deposit_update_balance()
+        sleep(1)
+        print("pyt: Resync Data Mandiri Card Blacklist...")
+        # _SettlementService.start_check_c2c_deposit()    
         _TopupService.get_mandiri_card_blocked_list()
     if _QPROX.INIT_BNI is True:
         sleep(.5)
         print("pyt: Triggering BNI Settlement Sync...")
         _Sync.start_sync_settlement_bni()
-        sleep(2)
-        print("pyt: Triggering BNI Balance Update Check...")
-        _TopupService.start_define_topup_slot_bni()
+        #Disable Automation
+        # sleep(2)
+        # print("pyt: Triggering BNI Balance Update Check...")
+        # _TopupService.start_define_topup_slot_bni()
     if _QPROX.INIT_BRI is True:
         # TODO Add Special Handler For BRI Initiation
         # sleep(.5)

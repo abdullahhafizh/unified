@@ -465,10 +465,11 @@ if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)
 
 
-QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']
 QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
+    'BNI-QRIS': False,
     'BCA-QRIS': False,
     'JAKONE': True,
     'GOPAY': True,
@@ -485,6 +486,8 @@ ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'do-settlement',
     'ereceipt/create',
     'topup-dki/reversal',
+    'topup-dki/confirm',
+    'topup-bni/confirm',
     ]
 
 ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER = [
@@ -1013,6 +1016,7 @@ def get_payments():
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
         "QR_BCA": "AVAILABLE" if check_payment('bca-qris') is True else "NOT_AVAILABLE",
+        "QR_BNI": "AVAILABLE" if check_payment('bni-qris') is True else "NOT_AVAILABLE",
     }
     
 
@@ -1061,7 +1065,8 @@ def get_refunds():
 FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA", "CUSTOMER-SERVICE"]
 
 MANDIRI_CARD_BLOCKED_LIST = load_from_temp_data('mandiri_card_blocked_list', 'text').split('\n')
-MANDIRI_CHECK_CARD_BLOCKED = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked', '0') == '1' else False
+MANDIRI_CHECK_CARD_BLOCKED = True 
+_ConfigParser.set_value('GENERAL', 'mandiri^card^blocked', '1')
 MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
 if '---' in MANDIRI_CARD_BLOCKED_URL:
     _ConfigParser.set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
@@ -1221,7 +1226,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris']:
+        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris', 'bni-qris']:
             remarks = json.loads(remarks)
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)
@@ -1318,6 +1323,7 @@ def store_upload_sam_audit(param):
             'topupLastBalance': param['topupLastBalance'],
             'status': param['status'],
             'remarks': param['remarks'],
+            'createdAt': _Helper.now()
         }
         # _DAO.insert_sam_audit(param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
