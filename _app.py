@@ -1249,6 +1249,9 @@ if __name__ == '__main__':
         _CD.reinit_v2_config()
     if _QPROX.INIT_MANDIRI is True:
         sleep(1)
+        print("pyt: Check Mandiri Deposit Update Balance...")
+        _TopupService.check_mandiri_deposit_update_balance()
+        sleep(1)
         print("pyt: Resync Data Mandiri Card Blacklist...")
         # _SettlementService.start_check_c2c_deposit()    
         _TopupService.get_mandiri_card_blocked_list()

@@ -1793,6 +1793,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             # _MDSService.start_push_trx_deposit(topup_deposit_data)
             TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
             send_kiosk_status()
+            # Additional Action Update Balance Mandiri
+            _Helper.get_thread().apply_async(check_mandiri_deposit_update_balance,)
             return output        
         elif bank == 'DKI':
             _param = {
@@ -2065,3 +2067,56 @@ def do_topup_deposit_mandiri(override_amount=0):
     _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id,),)
     return 'TASK_EXECUTED_IN_MACHINE'
 
+
+def check_mandiri_deposit_update_balance():
+    try:
+        prev_balance = _Common.MANDIRI_ACTIVE_WALLET
+        if not _Common.MDR_C2C_TRESHOLD_USAGE:
+            _Common.MANDIRI_ACTIVE_WALLET = 0
+        # send_kiosk_status()
+        _param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
+        update_result = update_balance(_param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
+        if not update_result:
+            print("pyt: check_mandiri_deposit_update_balance "+ str(update_result))
+            LOGGER.debug(('UPDATE_BALANCE', str(update_result)))
+            return False
+        if update_result['last_balance'] == update_result['topup_amount']:
+            update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
+        output = {
+            # 'prev_wallet': pending_result['prev_wallet'],
+            # 'last_wallet': pending_result['last_wallet'],
+            'prev_balance': prev_balance,
+            'last_balance': update_result['last_balance'],
+            'report_sam': 'N/A',
+            'card_no': update_result['card_no'],
+            'report_ka': 'N/A',
+            'bank_id': '1',
+            'bank_name': 'MANDIRI',
+        }
+        # Do Update Deposit Balance Value in Memory
+        _Common.MANDIRI_ACTIVE_WALLET = int(update_result['last_balance'])
+        _Common.MANDIRI_WALLET_1 = int(update_result['last_balance'])
+        # Do Upload SAM Refill Status Into BE Asyncronous
+        sam_audit_data = {
+            'trxid': 'REFILL_SAM',
+            'samCardNo': _Common.C2C_DEPOSIT_NO,
+            'samCardSlot': _Common.C2C_SAM_SLOT,
+            'samPrevBalance': output['prev_balance'],
+            'samLastBalance': output['last_balance'],
+            'topupCardNo': '',
+            'topupPrevBalance': output['prev_balance'],
+            'topupLastBalance': output['last_balance'],
+            'status': 'REFILL_SUCCESS',
+            'remarks': output,
+        }
+        _DAO.create_today_report(_Common.TID)
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(update_result['topup_amount']))
+        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))
+        _Common.store_upload_sam_audit(sam_audit_data)   
+        send_kiosk_status()
+        return True    
+    except Exception as e:
+        print("pyt: check_mandiri_deposit_update_balance "+ str(e))
+        LOGGER.warning((e))
+        return False

@@ -14,6 +14,7 @@
 - Add New Remote Command Handler For TRIGGER_TOPUP_1_BNI,
 - Add New Remote Command Handler For UPDATE_BALANCE_MANDIRI,
 - Add New Remote Command Handler For UPDATE_BALANCE_BNI,
+- Add Additional Mandiri Deposit Update Balance,
 - ...
 
 13.0.G7-GLOBAL:
