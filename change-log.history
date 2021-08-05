@@ -8,12 +8,12 @@
 - Re-adjust Flow Update Balance Deposit MANDIRI,
 - Set Force Enable Mandiri Topup Blacklist Check,
 - Send BNI Force Settlement Data,
-- Add New Remote Command Handler For TOPUP_DEPOSIT_MANDIRI
-- Add New Remote Command Handler For TOPUP_DEPOSIT_BNI
-- Add New Remote Command Handler For TRIGGER_TOPUP_1_MANDIRI
-- Add New Remote Command Handler For TRIGGER_TOPUP_1_BNI
-- Add New Remote Command Handler For UPDATE_BALANCE_MANDIRI
-- Add New Remote Command Handler For UPDATE_BALANCE_BNI
+- Add New Remote Command Handler For TOPUP_DEPOSIT_MANDIRI,
+- Add New Remote Command Handler For TOPUP_DEPOSIT_BNI,
+- Add New Remote Command Handler For TRIGGER_TOPUP_1_MANDIRI,
+- Add New Remote Command Handler For TRIGGER_TOPUP_1_BNI,
+- Add New Remote Command Handler For UPDATE_BALANCE_MANDIRI,
+- Add New Remote Command Handler For UPDATE_BALANCE_BNI,
 - ...
 
 13.0.G7-GLOBAL:
