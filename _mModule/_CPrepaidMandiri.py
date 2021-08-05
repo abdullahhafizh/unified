@@ -77,10 +77,10 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
     res_str, card_prev_balance = prepaid.topup_balance()
     card_prev_balance = int(card_prev_balance)
     
-    LOG.fw("019:balance, response:", res_str)
+    LOG.fw("019:GetCardBalance, response:", res_str)
 
     if res_str == "0000":
-        LOG.fw("019:balance:", card_prev_balance)
+        LOG.fw("019:GetCardBalance:", card_prev_balance)
         res_str, cardno, uid, data, attr = get_card_data()
 
         LOG.fw("019:GetCardData, response:", res_str)
@@ -94,7 +94,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
             LOG.fw("019:data:", data)
             LOG.fw("019:attr:", attr)
 
-            if attr == "6A86":
+            if attr == "6A86": #New Applet
                 LOG.fw("019:New Applet Found:")
                 valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
@@ -265,6 +265,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                 else:
                     ErrorCode = code
             else:
+                #Old Applet
                 LOG.fw("019:OLD Applet Found")
                 valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
@@ -360,9 +361,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
 
                         while ResReversal:
                             if StatusReversal == "":
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
+                                valuetext, errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
                             else:
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
+                                valuetext, errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
 
                             jsonReversal = json.loads(valuetext)
 
@@ -410,10 +411,17 @@ def send_update_balance(url, TOKEN, TID, MID, card_no, approval_code, card_attri
 
         headers = {'Special-Case': 'TAPONBUSREADER'}
         payload = { 
-            "token":TOKEN.decode("utf-8"), "tid": TID.decode("utf-8"), "mid": MID.decode("utf-8"), "card_no":str(card_no),"approval_code": str(approval_code), 
-            "card_attribute":str(card_attribute), "card_info":str(card_info),"card_uid":str(card_uid), 
+            "token":TOKEN.decode("utf-8"), 
+            "tid": TID.decode("utf-8"), 
+            "mid": MID.decode("utf-8"), 
+            "card_no":str(card_no),
+            "approval_code": str(approval_code), 
+            "card_attribute":str(card_attribute), 
+            "card_info":str(card_info),
+            "card_uid":str(card_uid), 
+            "prev_balance":str(last_balance),
             "last_balance":str(last_balance)
-            }
+        }
 
         LOG.fw(":UpdateMandiri url = ", sURL)
         LOG.fw(":UpdateMandiri json = ", payload)
@@ -646,14 +654,15 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
     cardno = ""
     amount = "0"
     lastbalance = ""
+    dataToCard = ""
+
     
     res_str, uid = prepaid.topup_apdusend(C_Slot, b"00B4000007")
 
     # res_str = prepaid_utils.to_4digit(res)
 
     if res_str == "0000":
-        res_str, saldo, uidsam, data, attr  = prepaid.topup_C2C_km_balance()
-        saldo = saldo
+        res_str, lastbalance, uidsam, data, attr  = prepaid.topup_C2C_km_balance()
         uidsam = uidsam
         data = data
         attr = attr
@@ -663,8 +672,8 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
         if res_str == "0000":
             cardno = data[0:16]
             data = data + "9000"
-            card_prev_balance = 0
-            response, status = send_update_balance(url,C_Token,C_TID,C_MID,cardno,approvalcode,attr,data,uid, card_prev_balance)
+            card_prev_balance = lastbalance
+            response, status = send_update_balance(url, C_Token, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
             if response == "1":
                 response = status
@@ -744,7 +753,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
                 errmsg = "NO PENDING BALANCE"
             elif code == "51099":
                 #start reversal
-                res_str, saldo, uidsam, data, attr  = prepaid.topup_C2C_km_balance()
+                res_str, card_prev_balance, uidsam, data, attr  = prepaid.topup_C2C_km_balance()
                 if res_str == "0000":
                     ResReversal = True
                     codereversal = ""
@@ -803,9 +812,14 @@ def send_confirm_update(URL_Server, TOKEN, TID, MID, card_no, sam_data, write_st
 
         # headers = {'Special-Case': 'TAPONBUSREADER'}
         payload = { 
-            "token":TOKEN.decode("utf-8"), "tid": TID.decode("utf-8"), "mid": MID.decode("utf-8"), "card_no":str(card_no),"approval_code": str(approval_code), 
-            "sam_data":str(sam_data), "write_status":str(write_status)
-            }
+            "token":TOKEN.decode("utf-8"), 
+            "tid": TID.decode("utf-8"), 
+            "mid": MID.decode("utf-8"), 
+            "card_no":str(card_no),
+            "approval_code": str(approval_code), 
+            "sam_data":str(sam_data), 
+            "write_status":str(write_status)
+        }
         LOG.fw(":ConfirmMandiri url = ", sURL)
         LOG.fw(":ConfirmMandiri json = ", payload)
 
@@ -826,10 +840,19 @@ def send_reversal_topup(URL_Server, token, tid, mid, card_no, last_balance, appr
 
         # headers = {'Special-Case': 'TAPONBUSREADER'}
         payload = {
-            "token":token.decode("utf-8"), "tid": tid.decode("utf-8"), "mid": mid.decode("utf-8"),"card_no":str(card_no),"card_uid":str(card_uid),
-            "last_balance":str(last_balance),"approval_code":str(approval_code),"amount":str(amount),"card_attribute":str(card_attribute),
-            "card_info":str(card_info),"mode": str(mode), "sam_data":str(sam_data)
-            }
+            "token":token.decode("utf-8"), 
+            "tid": tid.decode("utf-8"), 
+            "mid": mid.decode("utf-8"),
+            "card_no":str(card_no),
+            "card_uid":str(card_uid),
+            "last_balance":str(last_balance),
+            "approval_code":str(approval_code),
+            "amount":str(amount),
+            "card_attribute":str(card_attribute),
+            "card_info":str(card_info),
+            "mode": str(mode), 
+            "sam_data":str(sam_data)
+        }
         LOG.fw(":ReversalMandiri url = ", sURL)
         LOG.fw(":ReversalMandiri json = ", payload)
 

@@ -6,6 +6,11 @@ import "config.js" as CONF
 
 Base{
     id: qr_payment_frame
+
+
+//                    property var globalScreenType: '1'
+//                    height: (globalScreenType=='2') ? 1024 : 1080
+//                    width: (globalScreenType=='2') ? 1280 : 1920
     isBoxNameActive: false
     property var modeQR: "linkaja"
     property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR
@@ -43,6 +48,20 @@ Base{
         scale: 1
         visible: (qrisProvider.indexOf(modeQR))
         source: "source/qr_logo/qris_logo_white.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+    AnimatedImage  {
+        id: gpn_logo
+        width: 300
+        height: 200
+        anchors.right: parent.right
+        anchors.rightMargin: 200
+        anchors.top: parent.top
+        anchors.topMargin: 100
+        scale: 1
+        visible: (qrisProvider.indexOf(modeQR))
+        source: "source/qr_logo/gpn_white_logo.png"
         fillMode: Image.PreserveAspectFit
     }
 

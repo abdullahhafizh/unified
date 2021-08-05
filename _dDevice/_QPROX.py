@@ -192,7 +192,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             return False
         param = QPROX['SEND_CRYPTO'] + '|' + str(alias_slot) + '|' + str(card_info) + '|' + str(cyptogram)
         response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        LOGGER.debug((result))
+        # LOGGER.debug((result))
         if response == 0 and len(result) > 10:
             result = result.replace('#', '')
             output = {
@@ -203,7 +203,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             sleep(1)
             ka_info_bni(slot=slot)
             # get_card_info(slot=slot)
-            LOGGER.info((str(slot), bank, str(output)))
+            # LOGGER.info((str(slot), bank, str(output)))
             samCardNo = _Common.BNI_SAM_1_NO if slot == 1 else _Common.BNI_SAM_2_NO
             samLastBalance = _Common.BNI_SAM_1_WALLET if slot == 1 else _Common.BNI_SAM_2_WALLET
             param = {
@@ -1213,16 +1213,33 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             _result = _result.replace('#', '')
             __data = _result.split('|')
             __status = __data[0]
+            if __status in ['6969', '6984']:
+                if __status == '6969':
+                    LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
+                    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
+                elif __status == '6984':
+                    LOGGER.warning(('BNI_SAM_BALANCE_NOT_SUFFICIENT', slot, _result))
+                    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_SAM_BALANCE_NOT_SUFFICIENT|'+str(slot))
+                deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
+                ka_info_bni(1)
+                if int(deposit_prev_balance) != int(_Common.BNI_ACTIVE_WALLET):
+                    param = {
+                        'trxid': trxid+'_'+__status,
+                        'samCardNo': _Common.BNI_SAM_1_NO,
+                        'samCardSlot': _Common.BNI_SINGLE_SAM,
+                        'samPrevBalance': deposit_prev_balance,
+                        'samLastBalance': _Common.BNI_ACTIVE_WALLET,
+                        'topupCardNo': LAST_BALANCE_CHECK['card_no'],
+                        'topupPrevBalance': LAST_BALANCE_CHECK['balance'],
+                        'topupLastBalance': LAST_BALANCE_CHECK['balance'],
+                        'status': 'FAILED',
+                        'remarks': _result,
+                    }
+                    _Common.store_upload_sam_audit(param)
+                # Must Stop Here Because Cannot Parse Topup Result
+                return
             if __status == '0000':
                 __remarks = __data[5]
-            if __status == '6984':
-                LOGGER.warning(('BNI_SAM_BALANCE_NOT_SUFFICIENT', slot, _result))
-                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_SAM_BALANCE_NOT_SUFFICIENT|'+str(slot))
-                return
-            if __status == '6969':
-                LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
-                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
-                return
             if __status in ERROR_TOPUP.keys():
                 __remarks = ERROR_TOPUP[__status]
             __report_sam = __data[5]
@@ -1276,6 +1293,22 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             _Common.store_upload_sam_audit(param)
         else:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
+            ka_info_bni(1)
+            if int(deposit_prev_balance) != int(_Common.BNI_ACTIVE_WALLET):
+                param = {
+                    'trxid': trxid+'_FAILED',
+                    'samCardNo': _Common.BNI_SAM_1_NO,
+                    'samCardSlot': _Common.BNI_SINGLE_SAM,
+                    'samPrevBalance': deposit_prev_balance,
+                    'samLastBalance': _Common.BNI_ACTIVE_WALLET,
+                    'topupCardNo': LAST_BALANCE_CHECK['card_no'],
+                    'topupPrevBalance': LAST_BALANCE_CHECK['balance'],
+                    'topupLastBalance': LAST_BALANCE_CHECK['balance'],
+                    'status': 'FAILED',
+                    'remarks': _result,
+                }
+                _Common.store_upload_sam_audit(param)
     else:
         LOGGER.warning(('INIT_BNI', result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')

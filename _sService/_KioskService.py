@@ -516,6 +516,8 @@ def machine_summary():
         'service_ver': str(_Common.SERVICE_VERSION),
         'theme': str(_Common.THEME_NAME),
         'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A'),
+        'mandiri_sam_threshold': str(_Common.MANDIRI_THRESHOLD),
+        'bni_sam_threshold': str(_Common.BNI_THRESHOLD),
         # 'current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
         'current_cash': _Common.get_cash_activity()['total']
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),

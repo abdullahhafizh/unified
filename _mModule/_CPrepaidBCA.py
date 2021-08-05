@@ -866,7 +866,15 @@ def send_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_balan
 
     try:
         sURL = URL_Server + "topup-bca/update"
-        payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "topup_data": topup_data, "prev_balance":prev_balance, "reference_id":reference_id}
+        payload = {
+            "token":token.decode('utf-8'), 
+            "tid":tid.decode('utf-8'), 
+            "mid":mid.decode('utf-8'), 
+            "card_no":card_no, 
+            "topup_data": topup_data, 
+            "prev_balance":prev_balance, 
+            "reference_id":reference_id
+            }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
 

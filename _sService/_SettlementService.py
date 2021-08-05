@@ -766,15 +766,17 @@ def do_prepaid_settlement(bank='BNI', force=False):
         send_settlement_data = push_settlement_data(_param_sett)
         if not send_settlement_data:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
-        topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
-                                            _Common.C2C_DEPOSIT_NO, 
-                                            _Common.C2C_TOPUP_AMOUNT
-                                            )
-        if not topup_result:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
-            return
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
+        # Disable Topup Automation
+        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
+        # topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
+        #                                     _Common.C2C_DEPOSIT_NO, 
+        #                                     _Common.C2C_TOPUP_AMOUNT
+        #                                     )
+        # if not topup_result:
+        #     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
+        #     return
+        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
     elif bank == 'MANDIRI_C2C_FEE':
         _SFTPAccess.HOST_BID = 0
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FEE_SETTLEMENT')
@@ -854,7 +856,7 @@ def validate_update_balance_c2c():
 
 def start_check_c2c_deposit():
     if _Common.C2C_MODE:
-        _Helper.get_thread().apply_async(start_check_c2c_deposit)
+        _Helper.get_thread().apply_async(check_c2c_deposit)
     else:
         print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
         
@@ -869,6 +871,7 @@ def check_c2c_deposit():
         # do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
         # Set Mandiri C2C Force Settlement Delivery to FALSE 
         do_prepaid_settlement(bank='MANDIRI_C2C', force=False)
+        # _TopupService.job_retry_reload_mandiri_deposit(first_run=False)
 
 
 def validate_update_balance():
