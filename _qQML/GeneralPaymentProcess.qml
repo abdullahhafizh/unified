@@ -551,7 +551,7 @@ Base{
         } else {
             // Trigger Deposit Update Balance Check
             if (cardNo.substring(0, 4) == '6032'){
-                if (CONF.c2c_mode == 1) _SLOT.start_check_c2c_deposit();
+                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
             } else if (cardNo.substring(0, 4) == '7546'){
                 _SLOT.start_check_bni_deposit();
             }

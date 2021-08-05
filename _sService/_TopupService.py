@@ -174,8 +174,11 @@ def start_do_force_topup_bni():
     _Helper.get_thread().apply_async(do_topup_deposit_bni, (int(slot), force, ))
 
 
+BNI_DEPOSIT_RELOAD_IN_PROGRES = []
+
+
 def do_topup_deposit_bni(slot=1, force=False, activation=False):
-    global BNI_DEPOSIT_UPDATE_BALANCE_PROCESS
+    global BNI_DEPOSIT_UPDATE_BALANCE_PROCESS, BNI_DEPOSIT_RELOAD_IN_PROGRES
     try:
         slot = _Common.BNI_ACTIVE
         if _Common.BNI_SINGLE_SAM is True:
@@ -185,13 +188,21 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', slot, _Common.BNI_ACTIVE_WALLET, _Common.BNI_THRESHOLD))
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_DEPOSIT_STILL_SUFFICIENT')
             return 'DEPOSIT_STILL_SUFFICIENT'
+        if len(BNI_DEPOSIT_RELOAD_IN_PROGRES) > 0:
+            LOGGER.warning(('ANOTHER BNI_DEPOSIT_RELOAD_IN_PROGRES', str(BNI_DEPOSIT_RELOAD_IN_PROGRES)))
+            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_ANOTHER_BNI_DEPOSIT_RELOAD_IN_PROGRES')
+            return 'BNI_DEPOSIT_RELOAD_IN_PROGRES'
         # if force is False and _Common.ALLOW_DO_TOPUP is False:
         #     LOGGER.warning(('TOPUP_NOT_ALLOWED', slot, _Common.ALLOW_DO_TOPUP))
         #     TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_TOPUP_NOT_ALLOWED')
         #     return 'TOPUP_NOT_ALLOWED'
+        invoice_no = 'refill'+str(_Helper.epoch())
+        BNI_DEPOSIT_RELOAD_IN_PROGRES.append(invoice_no)
+        LOGGER.debug(('BNI_DEPOSIT_RELOAD_IN_PROGRES', str(BNI_DEPOSIT_RELOAD_IN_PROGRES)))
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
+            BNI_DEPOSIT_RELOAD_IN_PROGRES = []
             # _Common.upload_topup_error('FAILED_GET_CARD_INFO_BNI', slot, 'ADD')
             #_Common.online_logger(['BNI Card Data', _get_card_data], 'general')
             return 'FAILED_GET_CARD_INFO_BNI'
@@ -201,7 +212,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         _result_pending = pending_balance({
             'card_no': _get_card_data['card_no'],
             'amount': _Common.BNI_TOPUP_AMOUNT,
-            'invoice_no': 'refill'+str(_Helper.epoch()),
+            'invoice_no': invoice_no,
             'card_tid': _Common.TID_BNI
         })
         # _param_pending = {
@@ -214,6 +225,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         # _result_pending = _MDSService.mds_online_topup('BNI', _param_pending)
         if _result_pending is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_PENDING_BALANCE_BNI')
+            BNI_DEPOSIT_RELOAD_IN_PROGRES = []
             # _Common.upload_topup_error(slot, 'ADD')
             # #_Common.online_logger(['BNI Result Pending', _result_pending], 'general')
             return 'FAILED_PENDING_BALANCE_BNI'
@@ -240,6 +252,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             # _Common.upload_topup_error(slot, 'ADD')
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             # #_Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
+            BNI_DEPOSIT_RELOAD_IN_PROGRES = []
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = False
         attempt = 0
@@ -260,6 +273,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
             # _Common.upload_topup_error(slot, 'ADD')
             # #_Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
+            BNI_DEPOSIT_RELOAD_IN_PROGRES = []
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
@@ -290,6 +304,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             }
             confirm_bni_topup(output)
             send_kiosk_status()
+            BNI_DEPOSIT_RELOAD_IN_PROGRES = []
             return 'SUCCESS_TOPUP_BNI'
     except Exception as e:
         # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
@@ -1484,10 +1499,11 @@ def start_topup_online_bca(cardno, amount, trxid):
 LAST_MANDIRI_C2C_SUCCESS_RESULT = None
 LAST_BCA_REFF_ID = ''
 LAST_BRI_PENDING_RESULT = None
+MANDIRI_DEPOSIT_RELOAD_IN_PROGRES = []
 
 
 def topup_online(bank, cardno, amount, trxid=''):
-    global LAST_MANDIRI_C2C_SUCCESS_RESULT, LAST_BRI_PENDING_RESULT, MDR_DEPOSIT_UPDATE_POSTPONED
+    global LAST_MANDIRI_C2C_SUCCESS_RESULT, LAST_BRI_PENDING_RESULT, MDR_DEPOSIT_UPDATE_POSTPONED, MANDIRI_DEPOSIT_RELOAD_IN_PROGRES
     # if bank in ['BRI', 'BCA'] and _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
     #     sleep(2)
     #     output = {
@@ -1701,16 +1717,21 @@ def topup_online(bank, cardno, amount, trxid=''):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
             return True
         elif bank == 'MANDIRI_C2C_DEPOSIT':
+            invoice_no = 'refill'+str(_Helper.epoch())
+            if len(trxid) > 0:
+                invoice_no = trxid
+            MANDIRI_DEPOSIT_RELOAD_IN_PROGRES.append(invoice_no)
             param = {
                 'card_no': cardno,
                 'amount': amount,
-                'invoice_no': 'refill'+str(_Helper.epoch()),
+                'invoice_no': invoice_no,
                 'time': _Helper.epoch('MDS')
             }
             # pending_result = _MDSService.mds_online_topup(bank, param)
             pending_result = pending_balance(param, bank='MANDIRI', mode='TOPUP_DEPOSIT')
             if not pending_result:
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|PENDING_ERROR')
+                MANDIRI_DEPOSIT_RELOAD_IN_PROGRES = []
                 #_Common.online_logger([pending_result, bank, cardno, amount], 'general')
                 return False
             # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
@@ -1736,6 +1757,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                 LOGGER.info(('MDR_DEPOSIT_UPDATE_POSTPONED', str(MDR_DEPOSIT_UPDATE_POSTPONED)))
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
                 _Helper.get_thread().apply_async(job_retry_reload_mandiri_deposit, (True,))
+                MANDIRI_DEPOSIT_RELOAD_IN_PROGRES = []
                 #_Common.online_logger([update_result, bank, cardno, amount], 'general')
                 return False
             if update_result['last_balance'] == update_result['topup_amount']:
@@ -1794,6 +1816,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|REFILL_SUCCESS')
             send_kiosk_status()
             # Additional Action Update Balance Mandiri
+            MANDIRI_DEPOSIT_RELOAD_IN_PROGRES = []
             _Helper.get_thread().apply_async(check_mandiri_deposit_update_balance,)
             return output        
         elif bank == 'DKI':
@@ -1875,6 +1898,12 @@ def topup_online(bank, cardno, amount, trxid=''):
     
 
 def start_do_topup_deposit_mandiri():
+    if len(MANDIRI_DEPOSIT_RELOAD_IN_PROGRES) > 0:
+        LOGGER.warning(('ANOTHER MANDIRI_DEPOSIT_RELOAD_IN_PROGRES', str(MANDIRI_DEPOSIT_RELOAD_IN_PROGRES)))
+        return
+    if len(MDR_DEPOSIT_UPDATE_POSTPONED) > 0:
+        LOGGER.warning(('FOUND MDR_DEPOSIT_UPDATE_POSTPONED', str(MDR_DEPOSIT_UPDATE_POSTPONED)))
+        return
     if _Common.MANDIRI_ACTIVE_WALLET > _Common.MANDIRI_THRESHOLD:
         LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.MANDIRI_THRESHOLD))
         return
@@ -2051,6 +2080,14 @@ def reset_bca_session():
 
 
 def do_topup_deposit_mandiri(override_amount=0):
+    global MANDIRI_DEPOSIT_RELOAD_IN_PROGRES
+    # Handle Single Attempt For Auto Reload
+    if len(MANDIRI_DEPOSIT_RELOAD_IN_PROGRES) > 0:
+        LOGGER.warning(('ANOTHER MANDIRI_DEPOSIT_RELOAD_IN_PROGRES', str(MANDIRI_DEPOSIT_RELOAD_IN_PROGRES)))
+        return 'FAILED_ANOTHER_MANDIRI_DEPOSIT_RELOAD_IN_PROGRES'
+    if len(MDR_DEPOSIT_UPDATE_POSTPONED) > 0:
+        LOGGER.warning(('FOUND MDR_DEPOSIT_UPDATE_POSTPONED', str(MDR_DEPOSIT_UPDATE_POSTPONED)))
+        return 'FOUND_MDR_DEPOSIT_UPDATE_POSTPONED'
     _amount = _Common.C2C_TOPUP_AMOUNT
     if override_amount > 0:
         _amount = int(override_amount)

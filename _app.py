@@ -683,9 +683,9 @@ class SlotHandler(QObject):
         _SalePrintTool.start_print_card_history(payload)
     start_print_card_history = pyqtSlot(str)(start_print_card_history)
 
-    def start_check_c2c_deposit(self):
-        _SettlementService.start_check_c2c_deposit()
-    start_check_c2c_deposit = pyqtSlot()(start_check_c2c_deposit)
+    def start_check_mandiri_deposit(self):
+        _SettlementService.start_check_mandiri_deposit()
+    start_check_mandiri_deposit = pyqtSlot()(start_check_mandiri_deposit)
 
 
     def start_mandiri_c2c_force_settlement(self, amount, trxid):
@@ -1253,7 +1253,7 @@ if __name__ == '__main__':
         _TopupService.check_mandiri_deposit_update_balance()
         sleep(1)
         print("pyt: Resync Data Mandiri Card Blacklist...")
-        # _SettlementService.start_check_c2c_deposit()    
+        # _SettlementService.start_check_mandiri_deposit()    
         _TopupService.get_mandiri_card_blocked_list()
     if _QPROX.INIT_BNI is True:
         sleep(.5)

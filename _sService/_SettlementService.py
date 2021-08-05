@@ -766,17 +766,25 @@ def do_prepaid_settlement(bank='BNI', force=False):
         send_settlement_data = push_settlement_data(_param_sett)
         if not send_settlement_data:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
-        # Disable Topup Automation
-        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
-        # topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
-        #                                     _Common.C2C_DEPOSIT_NO, 
-        #                                     _Common.C2C_TOPUP_AMOUNT
-        #                                     )
-        # if not topup_result:
-        #     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
-        #     return
-        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
+        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
+        # Handle Single Attempt For Auto Reload
+        # Deposit Mandiri Must Seen From Postpone Update Balance And Reload Process
+        if len(_TopupService.MANDIRI_DEPOSIT_RELOAD_IN_PROGRES) > 0:
+            LOGGER.warning(('ANOTHER MANDIRI_DEPOSIT_RELOAD_IN_PROGRES', str(_TopupService.MANDIRI_DEPOSIT_RELOAD_IN_PROGRES)))
+            return
+        if len(_TopupService.MDR_DEPOSIT_UPDATE_POSTPONED) > 0:
+            LOGGER.warning(('FOUND MDR_DEPOSIT_UPDATE_POSTPONED', str(_TopupService.MDR_DEPOSIT_UPDATE_POSTPONED)))
+            return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
+        topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
+                                            _Common.C2C_DEPOSIT_NO, 
+                                            _Common.C2C_TOPUP_AMOUNT,
+                                            'auto_refill'+str(_Helper.epoch())
+                                            )
+        if not topup_result:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
+            return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
     elif bank == 'MANDIRI_C2C_FEE':
         _SFTPAccess.HOST_BID = 0
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FEE_SETTLEMENT')
@@ -854,16 +862,16 @@ def validate_update_balance_c2c():
         sleep(sync_time)
 
 
-def start_check_c2c_deposit():
+def start_check_mandiri_deposit():
     if _Common.C2C_MODE:
-        _Helper.get_thread().apply_async(check_c2c_deposit)
+        _Helper.get_thread().apply_async(check_mandiri_deposit)
     else:
         print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
         
 
-def check_c2c_deposit():
-    # FYI: Triggered After Success Transaction
-    LOGGER.info(('CHECK_C2C_TOPUP_DEPOSIT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
+def check_mandiri_deposit():
+    # Triggered After Success Transaction
+    LOGGER.info(('MANDIRI DEPOSIT', _Common.MANDIRI_ACTIVE_WALLET, 'MANDIRI THRESHOLD', _Common.C2C_THRESHOLD))
     if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         # _Common.MANDIRI_ACTIVE_WALLET = 0
