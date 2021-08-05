@@ -769,11 +769,11 @@ def do_prepaid_settlement(bank='BNI', force=False):
         # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
         # Handle Single Attempt For Auto Reload
         # Deposit Mandiri Must Seen From Postpone Update Balance And Reload Process
-        if len(_TopupService.MANDIRI_DEPOSIT_RELOAD_IN_PROGRES) > 0:
-            LOGGER.warning(('ANOTHER MANDIRI_DEPOSIT_RELOAD_IN_PROGRES', str(_TopupService.MANDIRI_DEPOSIT_RELOAD_IN_PROGRES)))
+        if _Common.exist_temp_data('MANDIRI_DEPOSIT_RELOAD_IN_PROGRES'):
+            LOGGER.warning(('ANOTHER MANDIRI_DEPOSIT_RELOAD_IN_PROGRES', str(_Common.load_from_temp_data('MANDIRI_DEPOSIT_RELOAD_IN_PROGRES'))))
             return
-        if len(_TopupService.MDR_DEPOSIT_UPDATE_POSTPONED) > 0:
-            LOGGER.warning(('FOUND MDR_DEPOSIT_UPDATE_POSTPONED', str(_TopupService.MDR_DEPOSIT_UPDATE_POSTPONED)))
+        if _Common.exist_temp_data('MDR_DEPOSIT_UPDATE_POSTPONED'):
+            LOGGER.warning(('FOUND MDR_DEPOSIT_UPDATE_POSTPONED', str(_Common.load_from_temp_data('MDR_DEPOSIT_UPDATE_POSTPONED', 'json'))))
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_BALANCE')
         topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
