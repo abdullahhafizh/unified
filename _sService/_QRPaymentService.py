@@ -110,6 +110,7 @@ def do_get_qr(payload, mode, serialize=True):
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
+            sleep(5)
             handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
