@@ -905,25 +905,23 @@ def start_check_bni_deposit():
 
 
 def check_bni_deposit():
-    # Disable Topup BNI Automation
-    if _Helper.now() > 1: #Result Must Be True
-        # print("pyt: [FAILED] CHECK_BNI_TOPUP_DEPOSIT, DISABLED")
-        return
+    # Triggered After Success Transaction
+    LOGGER.info(('BNI DEPOSIT', _Common.BNI_SAM_1_WALLET, 'BNI THRESHOLD', _Common.BNI_THRESHOLD))
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
         _TopupService.do_topup_deposit_bni(slot=1)
-        if not _Common.BNI_SINGLE_SAM:
-            LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD), '1 >>> 2'))
-            _Common.BNI_ACTIVE = 2
-        else:
-            LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD)))
-    elif _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
-        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-        _TopupService.do_topup_deposit_bni(slot=2)
-        if not _Common.BNI_SINGLE_SAM:
-            LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD), '2 >>> 1'))
-            _Common.BNI_ACTIVE = 1
-        else:
-            LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD)))
-    _Common.save_sam_config()
+        # if not _Common.BNI_SINGLE_SAM:
+        #     LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD), '1 >>> 2'))
+        #     _Common.BNI_ACTIVE = 2
+        # else:
+        #     LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD)))
+    # elif _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
+    #     _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+    #     _TopupService.do_topup_deposit_bni(slot=2)
+    #     if not _Common.BNI_SINGLE_SAM:
+    #         LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD), '2 >>> 1'))
+    #         _Common.BNI_ACTIVE = 1
+    #     else:
+    #         LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD)))
+    # _Common.save_sam_config()
 

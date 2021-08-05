@@ -15,6 +15,8 @@
 - Add New Remote Command Handler For UPDATE_BALANCE_MANDIRI,
 - Add New Remote Command Handler For UPDATE_BALANCE_BNI,
 - Add Additional Mandiri Deposit Update Balance,
+- Add Automation Topup Deposit Mandiri For First Run,
+- Add Automation Topup Deposit BNI For First Run,
 - ...
 
 13.0.G7-GLOBAL:
