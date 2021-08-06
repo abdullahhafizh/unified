@@ -73,7 +73,7 @@ QR_DATA_RESPONSE = None
 
 
 def do_get_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD, QR_DATA_RESPONSE
+    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -119,7 +119,6 @@ def do_get_qr(payload, mode, serialize=True):
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
-            QR_DATA_RESPONSE = r['data']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
             QR_CHECK_PAYLOAD = json.dumps(param)
             # sleep(10)
@@ -190,7 +189,7 @@ def start_do_check_linkaja_qr(payload):
 
 
 def do_check_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG
+    global CANCELLING_QR_FLAG, QR_DATA_RESPONSE
     payload = json.loads(payload)
     if mode in _Common.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -237,6 +236,7 @@ def do_check_qr(payload, mode, serialize=True):
             # break;
         if success is True:
             # trigger_success_qr_payment(mode, r['data'])
+            QR_DATA_RESPONSE = r.get('data')
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r.get('data')))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
