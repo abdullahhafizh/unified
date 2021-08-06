@@ -159,6 +159,7 @@ def normalize_details_data(data, source='bni-qris'):
         data['detail']['transaction_detail']['payer_name'] = data['detail']['customer_name']
         data['detail']['transaction_detail']['customer_pan'] = data['detail']['customer_pan']
         data['detail']['transaction_detail']['payer_phone_number'] = 'N/A'
+        data['detail']['transaction_detail']['merchant_info'] = {}
         data['detail']['transaction_detail']['merchant_info']['merchant_id'] = data['detail']['merchant_id']
         data['detail']['transaction_detail']['merchant_info']['merchant_pan'] = data['detail']['merchant_pan']
         data['detail']['transaction_detail']['merchant_info']['name'] = data['detail']['merchant_name']
