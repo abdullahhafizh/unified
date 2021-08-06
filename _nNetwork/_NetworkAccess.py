@@ -130,7 +130,7 @@ def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
         __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
-        if '/v2/ppob' in url or 'http://apiv2.mdd.co.id:10107' in url or 'http://apidev.mdd.co.id:28194' in url:
+        if '/v2/ppob' in url:
             __timeout = 180 if custom_timeout is None else custom_timeout
             r = requests.post(url, headers=header, json=param, timeout=__timeout)
         elif 'https' in url and _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '0':
