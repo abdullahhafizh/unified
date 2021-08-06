@@ -110,7 +110,7 @@ def do_get_qr(payload, mode, serialize=True):
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
-            sleep(5)
+            sleep(10)
             handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
@@ -222,6 +222,7 @@ def do_check_qr(payload, mode, serialize=True):
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
+            LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
             if mode in _Common.QRIS_RECEIPT:
                 r['data']['trx_reff_no'] = payload['refference']
                 _QRPrintTool.generate_qr_receipt(r['data'], mode.lower())
