@@ -182,11 +182,9 @@ def generate_qr_receipt(data, mode='bca-qris'):
     if 'detail' not in data.keys():
         LOGGER.warning(('EMPTY_QR_DETAIL_DATA', str(data)))
         return
+    
     pdf = None
     pdf_file = None
-    data = normalize_details_data(data, mode)
-    trx = data['detail']
-
     # Init Variables
     large_space = 8
     tiny_space = 3.5
@@ -196,6 +194,8 @@ def generate_qr_receipt(data, mode='bca-qris'):
     padding_left = 0
 
     try:
+        data = normalize_details_data(data, mode)
+        trx = data['detail']
         # trans_date must have format = 20161003125804
         date_now = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
         file_name = date_now+'_'+data['trx_reff_no']+'_'+mode
