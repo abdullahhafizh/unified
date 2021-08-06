@@ -171,10 +171,10 @@ def normalize_details_data(data, source='bni-qris'):
 
 def generate_qr_receipt(data, mode='bca-qris'):
     if _Helper.empty(data):
-        LOGGER.warning(('EMPTY_RECEIPT_DATA'))
+        LOGGER.warning(('EMPTY_RECEIPT_DATA', str(data)))
         return
     if 'detail' not in data.keys():
-        LOGGER.warning(('EMPTY_QR_DETAIL_DATA'))
+        LOGGER.warning(('EMPTY_QR_DETAIL_DATA', str(data)))
         return
     pdf = None
     pdf_file = None
