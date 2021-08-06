@@ -500,6 +500,7 @@ Base{
         if (info.payment_time != undefined) qr_payment_frame.timerDuration = parseInt(info.payment_time);
         var qr_payment_id = details.shop_type+details.epoch.toString();
         qr_payment_frame.open(msg, qr_payment_id);
+        _SLOT.start_check_payment_status(qrMode);
     }
 
     function topup_result(t){

@@ -1,6 +1,7 @@
 __author__ = "fitrah.wahyudi.imam@gmail.com"
 
 import os
+from re import M
 import sys
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, QTranslator, Qt
 from PyQt5.QtGui import QGuiApplication
@@ -757,6 +758,10 @@ class SlotHandler(QObject):
     def start_deposit_update_balance(self, bank):
         _TopupService.start_deposit_update_balance(bank)
     start_deposit_update_balance = pyqtSlot(str)(start_deposit_update_balance)
+    
+    def start_check_payment_status(self, mode):
+        _QRPaymentService.start_check_payment_status(mode)
+    start_check_payment_status = pyqtSlot(str)(start_check_payment_status)
 
 
 def s_handler():

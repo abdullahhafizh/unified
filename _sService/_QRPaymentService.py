@@ -68,10 +68,11 @@ def start_get_qr_global(payload):
 
 
 HISTORY_GET_QR = []
+QR_CHECK_PAYLOAD = None
 
 
 def do_get_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG, HISTORY_GET_QR
+    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -118,8 +119,9 @@ def do_get_qr(payload, mode, serialize=True):
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
-            sleep(10)
-            handle_check_process(json.dumps(param), mode)
+            QR_CHECK_PAYLOAD = json.dumps(param)
+            # sleep(10)
+            # handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
             LOGGER.warning((str(param), str(r)))
@@ -138,6 +140,12 @@ def serialize_qr(qr_url, name, ext='.png'):
     if store is True:
         qr_url = '../_qQr/'+new_source
     return qr_url
+
+
+def start_check_payment_status(mode):
+    mode = mode.upper()
+    param = QR_CHECK_PAYLOAD
+    _Helper.get_thread().apply_async(handle_check_process, (param, mode,))
 
 
 def handle_check_process(param, mode):
