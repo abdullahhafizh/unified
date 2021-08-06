@@ -112,44 +112,49 @@ DUMMY_QR_DATA = {
     }
 
 DUMMY_QR_DATA_BNI = {
-        "provider": "QRIS BNI",
-        "tid": "17092001",
-        "mid": "000972721511382bf739669cce165808",
-        "trx_id": "VVD000202107271114559687",
-        "amount": 10000,
-        "status": "SUCCESS",
-        "reff_no": "topup1627359214014500",
-        "host_trx_date": "2021-07-27T11:16:25",
-        "detail": {
-            "code": "00",
-            "message": "success",
-            "request_id": "395624ca-b6ea-4f20-901d-01908d38e94b",
-            "customer_pan": "1234567890000000",
-            "amount": 10000,
-            "transaction_datetime": "2021-07-27T11:16:25",
-            "amount_fee": 0,
-            "rrn": "ABC464440145",
-            "bill_number": "3116182949",
-            "issuer_code": "93600009",
-            "customer_name": "Jhon Doe",
-            "terminal_id": "17092001",
-            "merchant_id": "123123413",
-            "stan": "ABC492",
-            "merchant_name": "MDD API 1",
-            "approval_code": "CB492C",
-            "merchant_pan": "9360000915000228526",
-            "mcc": "7230",
-            "merchant_city": "Jakarta Selatan",
-            "merchant_country": "ID",
-            "currency_code": "360",
-            "payment_status": "00",
-            "payment_description": "trx success"
-        }
+   "host_trx_date":"2021-08-06T15:50:45",
+   "detail":{
+      "customer_name":"Fadlian",
+      "merchant_id":"008800223497",
+      "merchant_name":"Sukses Makmur Bendungan Hilir",
+      "merchant_city":"Jakarta Pusat",
+      "currency_code":"360",
+      "bill_number":"12345678901234567890",
+      "code":"00",
+      "merchant_pan":"9360001316000000032",
+      "transaction_datetime":"2021-02-25T13:36:13",
+      "payment_description":"Payment Success",
+      "mcc":"5814",
+      "amount":10000,
+      "issuer_code":"93600013",
+      "message":"success",
+      "customer_pan":" 9360001110000000019",
+      "terminal_id":"00005771",
+      "payment_status":"00",
+      "stan":"210226",
+      "amount_fee":1000,
+      "request_id":"XwVjF5zfuHhrDZuw",
+      "approval_code":"00",
+      "merchant_country":"ID",
+      "rrn":"123456789012"
+   },
+   "reff_no":"shop1628239813483124",
+   "amount":10000,
+   "status":"PAID",
+   "trx_reff_no":"shop1628239813483124-17092001",
+   "provider":"QRIS BNI",
+   "trx_id":"MVM000202108061550131348",
+   "mid":"000972721511382bf739669cce165808",
+   "tid":"17092001"
 }
 
+
 def normalize_details_data(data, source='bni-qris'):
+    # Issue Index Found Here
     if source == 'bni-qris':
         data['trx_reff_no'] = data['reff_no']
+        data['detail']['data'] = []
+        data['detail']['transaction_detail'] = []
         data['detail']['data']['reference_number'] = data['detail']['bill_number']
         data['detail']['transaction_detail']['payer_name'] = data['detail']['customer_name']
         data['detail']['transaction_detail']['customer_pan'] = data['detail']['customer_pan']
@@ -178,8 +183,7 @@ def generate_qr_receipt(data, mode='bca-qris'):
         return
     pdf = None
     pdf_file = None
-    if mode =='bni-qris':
-        data = normalize_details_data(data)
+    data = normalize_details_data(data, mode)
     trx = data['detail']
 
     # Init Variables
