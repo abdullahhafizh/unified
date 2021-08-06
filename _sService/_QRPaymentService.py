@@ -240,11 +240,7 @@ def do_check_qr(payload, mode, serialize=True):
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
-            # LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
-            # if mode in _Common.QRIS_RECEIPT:
-            #     r['data']['trx_reff_no'] = payload['refference']
-            #     _QRPrintTool.generate_qr_receipt(r.get('data'), mode.lower())
-            # break
+            break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
