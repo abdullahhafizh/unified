@@ -37,7 +37,7 @@ Rectangle{
     property var top_color: (mode_!='normal') ? "#f03838" : "white"
 // Define All QR Provider Here
     property variant allQRProvider: ['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay', 'jakone', 'bca-qris', 'bni-qris']
-// =====-==
+// =========
 
 
     Image{
