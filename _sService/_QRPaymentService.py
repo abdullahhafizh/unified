@@ -67,9 +67,11 @@ def start_get_qr_global(payload):
     _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
+HISTORY_GET_QR = []
+
 
 def do_get_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG
+    global CANCELLING_QR_FLAG, HISTORY_GET_QR
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -83,8 +85,13 @@ def do_get_qr(payload, mode, serialize=True):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
+    if (mode+'_'+payload['trx_id']) in HISTORY_GET_QR:
+        # No Need To Emit Into View
+        LOGGER.warning((str(payload), mode, 'DUPLICATE_GET_QR_REQUEST'))
+        return
     if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
         payload['reff_no'] = payload['trx_id']
+    param = payload
     if serialize is True:
         param = serialize_payload(payload)
     # print('pyt: ' + str(_Helper.whoami()))
@@ -96,6 +103,7 @@ def do_get_qr(payload, mode, serialize=True):
         if not _Common.QR_PROD_STATE[mode]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=param, custom_timeout=60)
+        HISTORY_GET_QR.append(mode+'_'+param['trx_id'])
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
