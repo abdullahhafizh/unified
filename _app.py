@@ -762,6 +762,10 @@ class SlotHandler(QObject):
     def start_check_payment_status(self, mode):
         _QRPaymentService.start_check_payment_status(mode)
     start_check_payment_status = pyqtSlot(str)(start_check_payment_status)
+    
+    def start_do_print_qr_receipt(self, mode):
+        _QRPaymentService.start_do_print_qr_receipt(mode)
+    start_do_print_qr_receipt = pyqtSlot(str)(start_do_print_qr_receipt)
 
 
 def s_handler():

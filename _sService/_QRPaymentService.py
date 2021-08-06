@@ -69,10 +69,11 @@ def start_get_qr_global(payload):
 
 HISTORY_GET_QR = []
 QR_CHECK_PAYLOAD = None
+QR_GET_RESPONSE = None
 
 
 def do_get_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD
+    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD, QR_GET_RESPONSE
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -118,6 +119,7 @@ def do_get_qr(payload, mode, serialize=True):
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
+            QR_GET_RESPONSE = r['data']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
             QR_CHECK_PAYLOAD = json.dumps(param)
             # sleep(10)
@@ -238,16 +240,32 @@ def do_check_qr(payload, mode, serialize=True):
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r.get('data')))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
-            LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
-            if mode in _Common.QRIS_RECEIPT:
-                r['data']['trx_reff_no'] = payload['refference']
-                _QRPrintTool.generate_qr_receipt(r.get('data'), mode.lower())
-            break
+            # LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
+            # if mode in _Common.QRIS_RECEIPT:
+            #     r['data']['trx_reff_no'] = payload['refference']
+            #     _QRPrintTool.generate_qr_receipt(r.get('data'), mode.lower())
+            # break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
+
+
+def start_do_print_qr_receipt(mode):
+    mode = mode.upper()
+    payload = json.loads(QR_CHECK_PAYLOAD)
+    LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
+    if mode not in _Common.QRIS_RECEIPT:
+        print('[pyt] QR Mode Not Allowed For Printing')
+        return
+    data = QR_GET_RESPONSE
+    data['trx_reff_no'] = payload['refference']
+    _Helper.get_thread().apply_async(do_print_qr_receipt, (data, mode,))
+    
+
+def do_print_qr_receipt(data, mode):
+    _QRPrintTool.generate_qr_receipt(data, mode.lower())
 
 
 def one_time_check_qr(trx_id='', mode='shopeepay'):

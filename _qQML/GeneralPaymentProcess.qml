@@ -464,6 +464,8 @@ Base{
             details.payment_received = details.value.toString();
             receivedPayment = totalPrice;
             payment_complete('qr');
+            var qrMode = mode;
+            _SLOT.start_do_print_qr_receipt(qrMode);
 //            var qrMode = mode.toLowerCase();
 //            switch(qrMode){
 //            case 'ovo':
