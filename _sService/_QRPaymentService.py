@@ -214,7 +214,7 @@ def do_check_qr(payload, mode, serialize=True):
             # _Helper.dump([success, attempt])
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
-                success = check_payment_result(r['data'], mode)
+                success = check_payment_result(r.get('data'), mode)
                 # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
                 # LOGGER.debug((str(payload), str(r)))
             # else:
@@ -227,13 +227,13 @@ def do_check_qr(payload, mode, serialize=True):
             # break;
         if success is True:
             # trigger_success_qr_payment(mode, r['data'])
-            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
+            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r.get('data')))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
             if mode in _Common.QRIS_RECEIPT:
                 r['data']['trx_reff_no'] = payload['refference']
-                _QRPrintTool.generate_qr_receipt(r['data'], mode.lower())
+                _QRPrintTool.generate_qr_receipt(r.get('data'), mode.lower())
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
@@ -259,8 +259,8 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
             # _Helper.dump([success, attempt])
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
-            if check_payment_result(r['data'], mode.upper()) is True:
-                result = True, r['data']
+            if check_payment_result(r.get('data'), mode.upper()) is True:
+                result = True, r.get('data')
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
     finally:
