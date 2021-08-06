@@ -153,9 +153,9 @@ def normalize_details_data(data, source='bni-qris'):
     # Issue Index Found Here
     if source == 'bni-qris':
         data['trx_reff_no'] = data['reff_no']
-        data['detail']['data'] = []
-        data['detail']['transaction_detail'] = []
+        data['detail']['data'] = {}
         data['detail']['data']['reference_number'] = data['detail']['bill_number']
+        data['detail']['transaction_detail'] = {}
         data['detail']['transaction_detail']['payer_name'] = data['detail']['customer_name']
         data['detail']['transaction_detail']['customer_pan'] = data['detail']['customer_pan']
         data['detail']['transaction_detail']['payer_phone_number'] = 'N/A'
