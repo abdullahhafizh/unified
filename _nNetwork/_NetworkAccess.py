@@ -128,7 +128,7 @@ def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
     try:
         s = requests.session()
         s.keep_alive = False
-        # s.headers['Connection'] = 'close'
+        s.headers['Connection'] = 'close'
         __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
         if '/v2/ppob' in url:
             __timeout = 180 if custom_timeout is None else custom_timeout
