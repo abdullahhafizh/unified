@@ -236,8 +236,8 @@ def do_check_qr(payload, mode, serialize=True):
             # break;
         if success is True:
             # trigger_success_qr_payment(mode, r['data'])
-            QR_DATA_RESPONSE = r.get('data')
-            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r.get('data')))
+            QR_DATA_RESPONSE = r['data']
+            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
             # LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
@@ -264,9 +264,10 @@ def do_print_qr_receipt(mode):
         if mode not in _Common.QRIS_RECEIPT:
             print('[pyt] QR Mode Not Allowed For Printing')
             return
-        data = QR_DATA_RESPONSE
-        data['trx_reff_no'] = payload['refference']
-        _QRPrintTool.generate_qr_receipt(data, mode.lower())
+        qr_data = QR_DATA_RESPONSE
+        qr_data['trx_reff_no'] = payload['refference']
+        LOGGER.debug(('QR PRINT DATA', str(qr_data)))
+        _QRPrintTool.generate_qr_receipt(qr_data, mode.lower())
     except Exception as e:
         LOGGER.warning((e))
 
