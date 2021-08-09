@@ -1,6 +1,7 @@
 14.0.B-GLOBAL:
 - Add Sync Setting From Host,
 - Add Online Logger to sentry-logging.multidaya.id,
+- Add DSN Sentry To Host Setting,
 - ...
 
 14.0.A-GLOBAL:

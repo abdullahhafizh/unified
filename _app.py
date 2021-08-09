@@ -895,9 +895,10 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
+    sentry_dsn = _ConfigParser.get_set_value('GENERAL', 'sentry^dsn', "https://d1e7e31740c147b289ee1414b2d48874@sentry-logging.multidaya.id/3")
     try:
         sentry_sdk.init(
-            "https://d1e7e31740c147b289ee1414b2d48874@sentry-logging.multidaya.id/3",
+            sentry_dsn,
             max_breadcrumbs=15,
             debug=False,
             environment=_Common.APP_MODE,
