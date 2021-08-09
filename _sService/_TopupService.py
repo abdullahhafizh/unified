@@ -1910,7 +1910,8 @@ def start_do_topup_deposit_mandiri():
     bank = 'MANDIRI_C2C_DEPOSIT'
     card_no = _Common.C2C_DEPOSIT_NO
     amount = _Common.C2C_TOPUP_AMOUNT
-    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, ))
+    trx_id = 'refill'+str(_Helper.now())
+    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id,))
 
 
 def confirm_bni_topup(data):
@@ -2101,7 +2102,7 @@ def do_topup_deposit_mandiri(override_amount=0):
     card_no = _Common.C2C_DEPOSIT_NO, 
     amount = _amount,
     trx_id = 'refill'+str(_Helper.now())
-    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id,),)
+    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id,))
     return 'TASK_EXECUTED_IN_MACHINE'
 
 
