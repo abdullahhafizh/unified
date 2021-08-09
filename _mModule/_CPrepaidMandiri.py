@@ -400,7 +400,8 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 errmsg = "REVERSAL_FAILED"
                 else:
                     ErrorCode=code
-
+    
+    lastbalance = str(lastbalance)
     return res_str, cardno, amount, lastbalance, ErrMsg
 
 
@@ -802,6 +803,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             else:
                 res_str = code
 
+    lastbalance = str(lastbalance)
     return res_str, cardno, amount, lastbalance, errmsg
 
 
