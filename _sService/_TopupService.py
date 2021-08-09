@@ -391,6 +391,14 @@ def bni_reset_update_balance(slot=1, activation=True):
         else:
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             # _Common.upload_topup_error(slot, 'RESET')
+            output = {
+                'bank': 'BNI',
+                'card_no': _get_card_data['card_no'],
+                'topup_amount': str(_result_ubal['amount']),
+                'last_balance': str(_send_crypto.get('last_balance', 0)),
+                'reff_no': _result_ubal['reff_no']
+            }
+            confirm_bni_topup(output)
             _Common.ALLOW_DO_TOPUP = True
             return True, 'RESET_SUCCESS'
     except Exception as e:
