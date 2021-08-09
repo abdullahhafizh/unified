@@ -119,7 +119,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     if code == "200" or code == 200:
                         dataToCard = temp_json["dataToCard"]
                         amount = temp_json["amount"]
-                        lastbalance = card_prev_balance + int(amount)
+                        lastbalance = int(card_prev_balance) + int(amount)
                         session = temp_json["session"]
                         pendingtopup = temp_json["pendingTopup"]
                     else:
@@ -281,7 +281,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                 if code == "200" or code == 200:
                     amount = resp_json_data["amount"]
                     dataToCard = resp_json_data["dataToCard"]
-                    lastbalance = card_prev_balance + int(amount)
+                    lastbalance = int(card_prev_balance) + int(amount)
                 elif "code" in resp_json_data.keys():
                     code = resp_json_data["code"]
                     resp_json_temp = resp_json_data
@@ -687,7 +687,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             if code == "200" or code == 200:
                 amount = resp_json_data["amount"]
                 dataToCard = resp_json_data["dataToCard"]
-                lastbalance = card_prev_balance + int(amount)
+                lastbalance = int(card_prev_balance) + int(amount)
 
             elif "code" in resp_json_data.keys():
                 code = resp_json_data["code"]
