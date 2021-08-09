@@ -1482,19 +1482,19 @@ def start_topup_online_dki(card_no, amount, trxid):
         return _QPROX.start_topup_dki_by_service(amount, trxid)
     else:
         bank = 'DKI'
-        _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trxid,))
+        _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trxid))
         # LOGGER.warning(('NO AVAILABLE DKI TOPUP SERVICE DEFINED'))
         # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
 
 def start_topup_online_bri(cardno, amount, trxid):
     bank = 'BRI'
-    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, trxid,))
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, trxid))
 
 
 def start_topup_online_bca(cardno, amount, trxid):
     bank = 'BCA'
-    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, trxid,))
+    _Helper.get_thread().apply_async(topup_online, (bank, cardno, amount, trxid))
 
 
 LAST_MANDIRI_C2C_SUCCESS_RESULT = None
@@ -1911,7 +1911,7 @@ def start_do_topup_deposit_mandiri():
     card_no = _Common.C2C_DEPOSIT_NO
     amount = _Common.C2C_TOPUP_AMOUNT
     trx_id = 'refill'+str(_Helper.now())
-    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id,))
+    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id))
 
 
 def confirm_bni_topup(data):
@@ -2098,15 +2098,12 @@ def do_topup_deposit_mandiri(override_amount=0):
             return 'DEPOSIT_STILL_SUFFICIENT'
     if MDR_DEPOSIT_UPDATE_BALANCE_PROCESS:
         return 'ANOTHER_TOPUP_PROCESS_STILL_RUNNING'
-    bank = 'MANDIRI_C2C_DEPOSIT', 
-    card_no = _Common.C2C_DEPOSIT_NO, 
-    amount = _amount,
+    bank = 'MANDIRI_C2C_DEPOSIT'
+    card_no = _Common.C2C_DEPOSIT_NO
+    amount = _amount
     trx_id = 'refill'+str(_Helper.now())
-    result = topup_online(bank, card_no, amount, trx_id)
-    if result is False:
-        return 'SOMETHING_WENT_WRONG'
-    else:
-        return 'REMOTE_TOPUP_DEPOSIT_SUCCESS'
+    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id))
+    return 'TASK_EXECUTED_IN_MACHINE'
 
 
 def check_mandiri_deposit_update_balance():
