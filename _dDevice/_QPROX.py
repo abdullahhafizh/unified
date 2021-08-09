@@ -235,7 +235,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             output['last_balance'] = samLastBalance
             return output
         else:
-            #_Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
+            _Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
             _Common.NFC_ERROR = 'SEND_CRYPTO_BNI_ERROR_SLOT_'+str(slot)
             return False
     else:
@@ -1346,6 +1346,7 @@ def c2c_balance_info():
         _Common.MANDIRI_ACTIVE_WALLET = -1
         _Common.MANDIRI_WALLET_1 = -1
         _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
+        _Common.online_logger(['C2C INFO ERROR MANDIRI', result], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
 
 
@@ -1374,6 +1375,7 @@ def ka_info_mandiri(slot=None, caller=''):
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Common.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
+        _Common.online_logger(['KA INFO ERROR MANDIRI', result, slot], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 
@@ -1406,6 +1408,7 @@ def ka_info_bni(slot=1):
             _Common.BNI_SAM_2_WALLET = -1
             _Common.BNI_ACTIVE_WALLET = -1
         _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
+        _Common.online_logger(['KA INFO ERROR BNI', result, slot], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 

@@ -10,7 +10,7 @@ import os
 import sys
 import json
 import re
-# from sentry_sdk import capture_exception
+from sentry_sdk import capture_exception
 
 
 LOGGER = logging.getLogger()
@@ -1493,16 +1493,16 @@ def serialize_error_message(e):
 
 
 def online_logger(e='', mode='service'):
-    pass
-    # e = serialize_error_message(e)
-    # if mode == 'service':
-    #     capture_exception(KioskServiceErrorResponse(e))
-    # elif mode == 'connection':
-    #     capture_exception(KioskConnectionError(e))
-    # elif mode == 'device':
-    #     capture_exception(KioskDeviceError(e))
-    # else:
-    #     capture_exception(KioskGeneralError(e))
+    # pass
+    e = serialize_error_message(e)
+    if mode == 'service':
+        capture_exception(KioskServiceErrorResponse(e))
+    elif mode == 'connection':
+        capture_exception(KioskConnectionError(e))
+    elif mode == 'device':
+        capture_exception(KioskDeviceError(e))
+    else:
+        capture_exception(KioskGeneralError(e))
 
 
 LAST_UPDATED_STOCK = []

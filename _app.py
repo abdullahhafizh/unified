@@ -39,13 +39,14 @@ from _sService import _GeneralPaymentService
 # from _sService import _AudioService
 from _mModule import _MainService
 import json
-# import sentry_sdk
+import sentry_sdk
+
 
 print("""
+        Unik Vending Kiosk
     App Ver: """ + _Common.VERSION + """
-    Service Ver: """ + _Common.SERVICE_VERSION + """
 Powered By: PT. MultiDaya Dinamika
-              -2020-
+              -2021-
 """)
 
 # Set Default Screen Frame Size
@@ -895,15 +896,15 @@ def config_log():
     global LOGGER
     # Sentry Initiation
     try:
-        # sentry_sdk.init(
-        #     "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-        #     max_breadcrumbs=10,
-        #     debug=False,
-        #     environment=_Common.APP_MODE,
-        #     server_name='VM-ID '+_Common.TID,
-        #     release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
-        #     default_integrations=False,
-        # )
+        sentry_sdk.init(
+            "https://d1e7e31740c147b289ee1414b2d48874@sentry-logging.multidaya.id/3",
+            max_breadcrumbs=15,
+            debug=False,
+            environment=_Common.APP_MODE,
+            server_name='VM-ID '+_Common.TID,
+            release='APP-VER. '+_Common.VERSION,
+            default_integrations=False,
+        )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',
@@ -1058,7 +1059,7 @@ var tvc_waiting_time = 60;
 '''
 
 
-def init_setting():
+def init_local_setting():
     global INITIAL_SETTING
     qml_config = sys.path[0] + '/_qQML/config.js'
     if not os.path.exists(qml_config):
@@ -1135,6 +1136,21 @@ def check_git_status(log=False):
         for r in response:
             print(str(r))
             
+
+def init_local_setting_from_host():
+    url = _Common.BACKEND_URL + 'get/init-setting'
+    status, response = _NetworkAccess.get_from_url(url=url, force=True)
+    if status == 200 and response['result'] == 'OK':
+        if len(response['data']) > 0:
+            _Common.store_to_temp_data('host-setting', response['data'])
+            for set in response['data']:
+                LOGGER.debug(('SET TO LOCAL', str(set)))
+                sleep(.25)
+                _ConfigParser.set_value(set['section'], set['option'], set['value'])
+    else:
+        LOGGER.warning((status, response))
+        print("pyt: Failed Initiating Config From Host...")
+
             
 def start_webserver():
     _MainService.start()
@@ -1143,9 +1159,12 @@ def start_webserver():
 if __name__ == '__main__':
     print("pyt: Initiating Config...")
     config_log()
+    init_local_setting()
+    # sleep(1)
+    # print("pyt: Initiating Setting From Host...")
+    # init_local_setting_from_host()
     # update_module({})
     # install_font()
-    init_setting()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()
     if _Common.LIVE_MODE:

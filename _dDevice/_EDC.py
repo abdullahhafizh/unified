@@ -143,16 +143,16 @@ def sale_edc_mobile(amount, trxid=None):
                 # print('pyt: [ERROR] SALE_EDC_MOBILE - ' + str(sale_data))
                 _Common.EDC_ERROR = 'SALE_ERROR'
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
-                #_Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
+                _Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
         else:
-            #_Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
+            _Common.online_logger(['EDC Android Sale', result, sale_data], 'device')
             _Common.EDC_ERROR = 'SALE_ERROR'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
     except Exception as e:
         if 'Invalid argument' not in e:
             _Common.EDC_ERROR = 'SALE_ERROR'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
-            #_Common.online_logger(['EDC Android Sale'], 'device')
+            _Common.online_logger(['EDC Android Sale'], 'device')
             LOGGER.warning(str(e))
 
 
@@ -233,12 +233,12 @@ def sale_edc(amount, trxid=None):
             _Common.EDC_ERROR = 'PORT_NOT_OPENED'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
             LOGGER.warning(("OPEN_STATUS", str(OPEN_STATUS)))
-            #_Common.online_logger(['EDC Android Port'], 'device')
+            _Common.online_logger(['EDC Android Port'], 'device')
     except Exception as e:
         _Common.EDC_ERROR = 'SALE_ERROR'
         E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
         LOGGER.warning(str(e))
-        #_Common.online_logger(['EDC UPT Sale'], 'device')
+        _Common.online_logger(['EDC UPT Sale'], 'device')
 
 
 
