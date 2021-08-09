@@ -2102,8 +2102,11 @@ def do_topup_deposit_mandiri(override_amount=0):
     card_no = _Common.C2C_DEPOSIT_NO, 
     amount = _amount,
     trx_id = 'refill'+str(_Helper.now())
-    _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trx_id,))
-    return 'TASK_EXECUTED_IN_MACHINE'
+    result = topup_online(bank, card_no, amount, trx_id)
+    if result is False:
+        return 'SOMETHING_WENT_WRONG'
+    else:
+        return 'REMOTE_TOPUP_DEPOSIT_SUCCESS'
 
 
 def check_mandiri_deposit_update_balance():
