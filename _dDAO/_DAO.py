@@ -89,7 +89,7 @@ def insert_transaction_new(param):
     sql = "INSERT INTO TransactionsNew ( trxId, tid, mid, amount, baseAmount, adminFee, trxType, cardNo, paymentType, " \
           "paymentNotes, productName, productId, traceNo, targetCard, bankId, syncFlag, createdAt ) VALUES ( :trxId, :tid, :mid, :amount, :baseAmount, :adminFee, :trxType, " \
           ":cardNo, :paymentType, :paymentNotes, :productName, :productId, :traceNo, :targetCard, :bankId, :syncFlag, :createdAt )"
-    return _Database.insert_update(sql=sql, parameter=param)
+    return _Database.insert_update(sql=sql, parameter=param, log=True)
 
 
 def insert_transaction_failure(param):
