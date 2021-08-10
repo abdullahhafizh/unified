@@ -122,7 +122,7 @@ if __name__ == '__main__':
     if status == 200 and response['result'] == 'OK':
         if len(response['data']) > 0:
             print("pyt: Count Setting...", str(len(response['data'])))
-            store_to_temp_data('host-setting', response['data'])
+            store_to_temp_data('host-setting', json.dumps(response['data']))
             for set in response['data']:
                 print("pyt: Set Setting : " + str(set))
                 # LOGGER.debug(('SET TO LOCAL', str(set)))
