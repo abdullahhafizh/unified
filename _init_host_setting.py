@@ -116,7 +116,7 @@ if __name__ == '__main__':
     print("pyt: Initiating Setting From Host...")
 
     url = _ConfigParser.get_value('GENERAL', 'backend^server') + 'get/init-setting'
-    print("pyt: URL Host...", url)
+    print("pyt: URL Host : ", url)
 
     status, response = get_from_url(url)
     if status == 200 and response['result'] == 'OK':
