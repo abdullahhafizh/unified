@@ -5,10 +5,11 @@ import "screen.js" as SCREEN
 
 Rectangle{
     id:popup_update_stock
-    visible: false
+    visible: true
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     color: 'transparent'
+    property alias imageBody: imageBody
     property int max_count: 50
     property var press: "0"
     property var textInput: ""
@@ -49,12 +50,12 @@ Rectangle{
 
         TextRectangle{
             id: textRectangle
-            width: 300
-            height: 30
+            width: 357
+            height: 39
             radius: 2
             anchors.top: parent.top
-            anchors.horizontalCenterOffset: 0
-            anchors.topMargin: 79
+            anchors.horizontalCenterOffset: 1
+            anchors.topMargin: 72
             anchors.horizontalCenter: parent.horizontalCenter
         }
         
@@ -79,7 +80,7 @@ Rectangle{
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
-            font.pixelSize: 40
+            font.pixelSize: 20
             color: "darkblue"
             clip: true
             visible: true
@@ -159,10 +160,10 @@ Rectangle{
                 MouseArea{
                     width: 100
                     anchors.fill: parent
-                    anchors.rightMargin: -244
-                    anchors.bottomMargin: -69
-                    anchors.leftMargin: 244
-                    anchors.topMargin: 69
+                    anchors.rightMargin: 0
+                    anchors.bottomMargin: 0
+                    anchors.leftMargin: 0
+                    anchors.topMargin: 0
                     onClicked: close();
                 }
             }
@@ -180,10 +181,10 @@ Rectangle{
                     width: 100
                     height: 40
                     anchors.fill: parent
-                    anchors.rightMargin: -500
-                    anchors.bottomMargin: -221
-                    anchors.leftMargin: 500
-                    anchors.topMargin: 221
+                    anchors.rightMargin: 8
+                    anchors.bottomMargin: 0
+                    anchors.leftMargin: -8
+                    anchors.topMargin: 0
                     onClicked: {
                         if (textInput!='' && parseInt(textInput) > 0){
                             var _signal = JSON.stringify({
@@ -212,3 +213,9 @@ Rectangle{
     }
 
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.9}
+}
+##^##*/
