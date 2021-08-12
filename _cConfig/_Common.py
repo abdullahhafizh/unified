@@ -46,6 +46,8 @@ if TEST_MODE is True:
     _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
     os.system('git checkout ' +APP_MODE)
 
+PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
+
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
 REFUND_FEATURE = True if _ConfigParser.get_set_value('GENERAL', 'refund^feature', '1') == '1' else False
@@ -120,10 +122,12 @@ BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^ti
 URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://axa.mdd.co.id:5000/')
 BNI_REMOTE_ACTIVATION = _ConfigParser.get_set_value('BNI', 'remote^activation', '0')
 if LIVE_MODE is True:
-    URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
-    _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
+    if not PTR_MODE:
+        URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
+        _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
     BNI_REMOTE_ACTIVATION = True
     _ConfigParser.set_value('BNI', 'remote^activation', '1')
+    
 BNI_C2C_TRESHOLD_USAGE = True if _ConfigParser.get_set_value('BNI', 'treshold^usage', '0') == '1' else False
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
@@ -239,7 +243,6 @@ PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
 EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
-PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
