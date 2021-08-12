@@ -5,7 +5,7 @@ import "screen.js" as SCREEN
 
 Rectangle{
     id:popup_update_stock
-    visible: false
+    visible: true
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     color: 'transparent'
@@ -23,13 +23,13 @@ Rectangle{
     Rectangle{
         id: notif_rec
         width: 500
-        height: 587
+        height: 472
         color: "white"
         opacity: .8
         radius: 25
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: -5
+        anchors.verticalCenterOffset: 70
         anchors.horizontalCenterOffset: 0
 
         Text {
@@ -40,8 +40,8 @@ Rectangle{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.top: parent.top
-            anchors.topMargin: 102
-            anchors.horizontalCenterOffset: 35
+            anchors.topMargin: 35
+            anchors.horizontalCenterOffset: 33
             font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 16
@@ -53,14 +53,14 @@ Rectangle{
             height: 40
             anchors.top: parent.top
             anchors.horizontalCenterOffset: 0
-            anchors.topMargin: 173
+            anchors.topMargin: 92
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Image{
             id: imageBody
             anchors.top: parent.top
-            anchors.topMargin: 72
+            anchors.topMargin: 6
             scale: 0.7
             anchors.left: parent.left
             anchors.leftMargin: 38
@@ -86,7 +86,7 @@ Rectangle{
 
         NumKeyboard{
             id:virtual_numpad
-            anchors.verticalCenterOffset: 64
+            anchors.verticalCenterOffset: 22
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
