@@ -14,7 +14,7 @@ Base{
     property var imageSource: "source/qr_transjakarta_register_new.jpeg"
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
-    visible: false
+    visible: true
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
@@ -28,7 +28,8 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 133
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Fitur Baru : Kemudahan Transaksi Dari Whatsapp'
         size_: (globalScreenType == '1') ? 50 : 45
@@ -39,15 +40,16 @@ Base{
     Column{
         id: column
         width: parent.width
-        height: 500
-        anchors.verticalCenterOffset: 15
+        height: 350
+        anchors.verticalCenterOffset: 16
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        clip: true
         anchors.horizontalCenterOffset: 0
         spacing: 20
         AnimatedImage  {
-            width: 300
-            height: 300
+            width: 200
+            height: 200
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
@@ -124,3 +126,9 @@ Base{
         preload_whatasapp_voucher.visible = false
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.75}
+}
+##^##*/
