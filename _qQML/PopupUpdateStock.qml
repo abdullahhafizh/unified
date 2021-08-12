@@ -24,7 +24,7 @@ Rectangle{
     Rectangle{
         id: notif_rec
         width: 400
-        height: 400
+        height: 474
         color: "white"
         opacity: .8
         radius: 3
@@ -142,7 +142,7 @@ Rectangle{
             id: groupBox1
             flat: true
             x: 200
-            y: 543
+            y: 615
             width: parent.width
             anchors.bottom: parent.bottom
             anchors.bottomMargin: -200
