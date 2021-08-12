@@ -74,6 +74,7 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
     CodeStatus = ""
     CodeDesc = ""
     jsonD = []
+    lastbalance = 0
 
     try:
         rapdu = ""
@@ -98,10 +99,11 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
         resultStr, balance, cardno, SIGN = prepaid.topup_balance_with_sn()        
 
         if resultStr == "0000":
+            lastbalance = balance
             prepaid.topup_card_disconnect()
             resultStr, data = GetTokenBRI()
             if resultStr == "0000":
-                resultStr,ErrMsg = SendUpdateBalanceBRI(url, TOKEN, TID, MID, cardno, data, balance)
+                resultStr, ErrMsg = SendUpdateBalanceBRI(url, TOKEN, TID, MID, cardno, data, balance)
 
                 if resultStr == "1":
                     msg = ErrMsg
@@ -133,7 +135,6 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
                             else:
                                 msg = "result don't have data: {0}".format(str(jsonD))
                                 resultStr = "1"
-
                     # except json.JSONDecodeError:
                     #     msg = "Invalid JSON: {0}".format(str(resultStr))
                     #     resultStr = "1"
@@ -259,7 +260,6 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
             #                     msg = "SUCCESS REFUND\n"+ jsonT
             #                 else:
             #                     msg = ErrMsg
-
     except Exception as ex:
         resultStr = "1"
         msg = "{0}".format(ex)
@@ -324,6 +324,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
     CodeStatus = ""
     CodeDesc = ""
     jsonD = []
+    
 
     try:
         rapdu = ""
