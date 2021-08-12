@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
 import "base_function.js" as FUNC
@@ -8,9 +8,9 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-            property var globalScreenType: '2'
-            height: (globalScreenType=='2') ? 768 : 1080
-            width: (globalScreenType=='2') ? 1360 : 1920
+//            property var globalScreenType: '2'
+//            height: (globalScreenType=='2') ? 768 : 1080
+//            width: (globalScreenType=='2') ? 1360 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -200,7 +200,7 @@ Base{
         if (kiosk.refund_feature == '0') showCustomerInfo = true;
         else showCustomerInfo = false;
 
-        main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
+        main_title.show_text = 'Welcome : ';
 //        _SLOT.start_get_topup_readiness();
     }
 
@@ -262,8 +262,9 @@ Base{
         id: main_title
         width: 640
         height: 53
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 276
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 350 : 300
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
         visible: !popup_loading.visible
@@ -506,15 +507,15 @@ Base{
         anchors.topMargin: 186
         anchors.left: parent.left
         anchors.leftMargin: -15
-        width: 75
+        width: 95
         height: 60
         Image{
             id: login_button_img
             width: 100
             height: 50
-            anchors.verticalCenterOffset: 0
-            anchors.rightMargin: 7
-            anchors.horizontalCenterOffset: 3
+            anchors.verticalCenterOffset: -3
+            anchors.rightMargin: 11
+            anchors.horizontalCenterOffset: 0
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.horizontalCenter: parent.horizontalCenter
@@ -524,10 +525,10 @@ Base{
         }
 
         MouseArea{
-            anchors.rightMargin: -1
-            anchors.bottomMargin: 3
-            anchors.leftMargin: 1
-            anchors.topMargin: -3
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 0
+            anchors.topMargin: 0
             anchors.fill: parent
             onDoubleClicked: {
                 _SLOT.user_action_log('Press "Admin" Button');
