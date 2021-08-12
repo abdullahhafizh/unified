@@ -22,12 +22,13 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: (parent.width==1920) ? 1200 : parent.width
-        height: (parent.width==1920) ? 800 : 750
+        width: 400
+        height: 400
         color: "white"
         opacity: .8
-        radius: 25
-        anchors.verticalCenterOffset: (parent.width==1920) ? 50 : 35
+        radius: 3
+        anchors.verticalCenterOffset: -9
+        anchors.horizontalCenterOffset: 5
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
@@ -39,29 +40,34 @@ Rectangle{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.top: parent.top
-            anchors.topMargin: 60
-            anchors.horizontalCenterOffset: 5
+            anchors.topMargin: 28
+            anchors.horizontalCenterOffset: 22
             font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 40
+            font.pixelSize: 12
         }
 
         TextRectangle{
             id: textRectangle
-            width: 700
-            height: 80
+            width: 300
+            height: 30
+            radius: 2
             anchors.top: parent.top
-            anchors.topMargin: 180
+            anchors.horizontalCenterOffset: 0
+            anchors.topMargin: 79
             anchors.horizontalCenter: parent.horizontalCenter
         }
-
+        
         Image{
             id: imageBody
+            width: 60
+            height: 60
+            transformOrigin: Item.Center
             anchors.top: parent.top
-            anchors.topMargin: 20
+            anchors.topMargin: 6
             scale: 0.7
             anchors.left: parent.left
-            anchors.leftMargin: 20
+            anchors.leftMargin: 40
             source: titleImage
         }
 
@@ -82,11 +88,14 @@ Rectangle{
 
         NumKeyboard{
             id:virtual_numpad
-            anchors.verticalCenterOffset: 60
+            anchors.verticalCenterOffset: 33
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             property int count:0
-
+            width: 156
+            height: 218
+            anchors.horizontalCenterOffset: 0
+            
             Component.onCompleted: {
                 virtual_numpad.strButtonClick.connect(typeIn)
                 virtual_numpad.funcButtonClicked.connect(functionIn)
@@ -132,31 +141,49 @@ Rectangle{
             id: groupBox1
             flat: true
             x: 200
-            y: 472
+            y: 543
             width: parent.width
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            anchors.horizontalCenterOffset: 0
+            anchors.bottomMargin: -200
+            anchors.horizontalCenterOffset: -8
             anchors.horizontalCenter: parent.horizontalCenter
             NextButton{
                 id: cancel_button
-                width: 190
+                y: -196
+                width: 100
+                height: 40
                 anchors.left: parent.left
-                anchors.leftMargin: 250
+                fontSize: 15
+                anchors.leftMargin: 297
                 button_text: 'batal'
                 MouseArea{
+                    width: 100
                     anchors.fill: parent
+                    anchors.rightMargin: -244
+                    anchors.bottomMargin: -69
+                    anchors.leftMargin: 244
+                    anchors.topMargin: 69
                     onClicked: close();
                 }
             }
             NextButton{
                 id: update_button
-                width: 190
+                x: 0
+                y: -194
+                width: 100
+                height: 40
                 anchors.right: parent.right
-                anchors.rightMargin: 250
+                fontSize: 15
+                anchors.rightMargin: 280
                 button_text: 'update'
                 MouseArea{
+                    width: 100
+                    height: 40
                     anchors.fill: parent
+                    anchors.rightMargin: -500
+                    anchors.bottomMargin: -221
+                    anchors.leftMargin: 500
+                    anchors.topMargin: 221
                     onClicked: {
                         if (textInput!='' && parseInt(textInput) > 0){
                             var _signal = JSON.stringify({
