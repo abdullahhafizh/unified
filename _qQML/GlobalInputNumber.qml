@@ -63,6 +63,7 @@ Base{
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
+    property alias next_button: next_button
 
 
     Stack.onStatusChanged:{
@@ -795,12 +796,12 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: 7
-        anchors.topMargin: 138
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 162
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: wording_text
         visible: !popup_loading.visible
-        size_: 50
+        size_: 30
         color_: "white"
 
     }
@@ -814,7 +815,7 @@ Base{
         radius: 0
         anchors.top: parent.top
         anchors.horizontalCenterOffset: -12
-        anchors.topMargin: 208
+        anchors.topMargin: 233
         border.color: CONF.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }
