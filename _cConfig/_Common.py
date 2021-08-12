@@ -33,7 +33,7 @@ def clean_white_space(s):
     return re.sub(r'\s+', '', s)
 
 
-APP_MODE = _ConfigParser.get_set_value('GENERAL', 'mode', 'live')
+APP_MODE = _ConfigParser.get_set_value('GENERAL', 'mode', 'tablet-view')
 LIVE_MODE = True if APP_MODE == 'live' else False
 BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/')
 TEST_MODE = not LIVE_MODE
