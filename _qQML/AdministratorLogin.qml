@@ -95,15 +95,24 @@ Base{
 
     CircleButton{
         id:back_button
+        y: 641
+        width: 100
+        height: 100
+        fontSize: 26
+        baseSize: 120
         anchors.left: parent.left
         anchors.leftMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 27
         button_text: 'BATAL'
         z: 10
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
+            anchors.leftMargin: 0
+            anchors.topMargin: -4
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 4
             anchors.fill: parent
             onClicked: {
                 my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -133,15 +142,15 @@ Base{
 
         Label{
             id: username_label
-            width: 250
+            width: 180
             height: textRecHeigth
             text: 'Pengguna : '
+            font.pixelSize: 30
             anchors.top: parent.top
-            anchors.topMargin: 100
+            anchors.topMargin: 190
             anchors.left: parent.left
             anchors.leftMargin: 140
             textFormat: Text.PlainText
-            font.pixelSize: globalLabelSize
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
@@ -156,6 +165,7 @@ Base{
             y:150
             width: 600
             height: textRecHeigth
+            anchors.verticalCenterOffset: 0
             anchors.left: username_label.right
             anchors.leftMargin: 50
             anchors.verticalCenter: username_label.verticalCenter
@@ -163,6 +173,10 @@ Base{
             borderColor: "white"
             baseColor: "white"
             MouseArea{
+                anchors.rightMargin: 0
+                anchors.bottomMargin: -1
+                anchors.leftMargin: 0
+                anchors.topMargin: 1
                 anchors.fill: parent;
                 onClicked: {
                     stepInput = 0;
@@ -175,6 +189,8 @@ Base{
             id: inputUsernameText
             anchors.centerIn: textUsernameRectangle;
             text: usernameInput
+            anchors.verticalCenterOffset: 54
+            anchors.horizontalCenterOffset: 0
             cursorVisible: (stepInput==0) ? true : false
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
@@ -187,15 +203,15 @@ Base{
 
         Label{
             id: password_label
-            width: 250
-            height: textRecHeigth
+            width: 180
+            height: 50
             text: 'Kata Sandi : '
+            font.pixelSize: 30
             anchors.top: parent.top
-            anchors.topMargin: 250
+            anchors.topMargin: 304
             anchors.left: parent.left
             anchors.leftMargin: 140
             textFormat: Text.PlainText
-            font.pixelSize: globalLabelSize
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
@@ -228,6 +244,8 @@ Base{
             id: inputPasswordText
             anchors.centerIn: textPasswordRectangle;
             text: passwordInput
+            anchors.verticalCenterOffset: 54
+            anchors.horizontalCenterOffset: 0
             cursorVisible: (stepInput==1) ? true : false
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
@@ -242,10 +260,10 @@ Base{
         FullKeyboard{
             id:virtual_keyboard
             x:332;
-            width: 930; height: 371;
+            width: 913; height: 365
             anchors.top: parent.top
-            anchors.topMargin: 500
-            anchors.horizontalCenterOffset: 0
+            anchors.topMargin: 421
+            anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
             isShifted: false
             isHighlighted: false
@@ -343,6 +361,8 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
+        x: 0
+        y: 0
         withBackground: false
         modeReverse: true
         show_text: "Dear Customer"

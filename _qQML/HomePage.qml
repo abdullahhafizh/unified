@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
 import "base_function.js" as FUNC
@@ -262,9 +262,9 @@ Base{
         id: main_title
         width: 640
         height: 53
-        size_: 35
+        size_: 25
         anchors.horizontalCenterOffset: 0
-        anchors.topMargin: 162
+        anchors.topMargin: 136
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
@@ -276,12 +276,11 @@ Base{
     Row{
         id: row_button
         anchors.horizontalCenterOffset: 0
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: 27
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 60 : 30
-//        visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
-        visible: (!standard_notif_view.visible && !popup_loading.visible) ? true : false;
+        visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
 
         MasterButtonNew {
             id: check_saldo_button
@@ -297,10 +296,10 @@ Base{
             MouseArea{
                 width: 200
                 height: 200
-                anchors.rightMargin: -141
-                anchors.bottomMargin: -256
-                anchors.leftMargin: 141
-                anchors.topMargin: 256
+                anchors.rightMargin: 0
+                anchors.bottomMargin: 0
+                anchors.leftMargin: 0
+                anchors.topMargin: 0
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
@@ -418,9 +417,9 @@ Base{
             visible: false
 //            mode3d: 'gray'
             MouseArea{
-                anchors.rightMargin: -8
+                anchors.rightMargin: 0
                 anchors.bottomMargin: 0
-                anchors.leftMargin: 8
+                anchors.leftMargin: 0
                 anchors.topMargin: 0
                 anchors.fill: parent
                 onClicked: {
@@ -868,8 +867,8 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
-        x: -252
-        y: -309
+        x: 0
+        y: 1
         //        withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
@@ -879,8 +878,8 @@ Base{
 
     StandardNotifView{
         id: kalogin_notif_view
-        x: -252
-        y: -309
+        x: 0
+        y: 0
         withBackground: false
         buttonEnabled: false
         modeReverse: true
