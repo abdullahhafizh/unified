@@ -1352,7 +1352,6 @@ Base{
                 }
                 TextDetailRowNew{
                     id: _cd3_error
-                    height: 50
                     labelName: qsTr('Card Disp 3')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
