@@ -899,12 +899,12 @@ def config_log():
     try:
         sentry_sdk.init(
             sentry_dsn,
-            max_breadcrumbs=15,
+            max_breadcrumbs=10,
             debug=False,
             environment=_Common.APP_MODE,
             server_name='VM-ID '+_Common.TID,
             release='APP-VER. '+_Common.VERSION,
-            default_integrations=False,
+            # default_integrations=False,
         )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')

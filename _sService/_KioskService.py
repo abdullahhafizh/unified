@@ -1366,7 +1366,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
         LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
-                                    'TopupRecords', 'TransactionFailure', 'Transactions', 'TransactionsNew'],
+                                    'TopupRecords', 'TransactionFailure', 'Transactions'],
                             key='createdAt',
                             age_month=age_month)
     expired_seconds = (age_month * 30 * 24 * 60 * 60)
