@@ -31,7 +31,7 @@ Base{
     property var last_money_insert: 'N/A'
 
     property var selectedMenu: ''
-    property bool showCustomerInfo: true
+    property bool show: true
 //    width: globalWidth
 //    height: globalHeight
     isPanelActive: false
@@ -197,8 +197,8 @@ Base{
             preload_customer_info.whatsappNo = CONF.whatsapp_no;
         }
 
-        if (kiosk.refund_feature == '0') showCustomerInfo = true;
-        else showCustomerInfo = false;
+        if (kiosk.refund_feature == '0') show = true;
+        else show = false;
 
         main_title.show_text = 'Selamat Datang, Silahkan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
@@ -309,11 +309,11 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
 //                    selectedMenu = 'CHECK_BALANCE';
-//                    if (showCustomerInfo){
+//                    if (show){
 //                        preload_customer_info.open();
 //                        return;
 //                    }
-                    my_layer.push(check_balance, {showCustomerInfo: showCustomerInfo});
+                    my_layer.push(check_balance, {show: show});
                 }
             }
         }
@@ -339,7 +339,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
-                    if (showCustomerInfo){
+                    if (show){
                         preload_customer_info.open();
                         return;
                     }

@@ -188,9 +188,8 @@ Base{
         TextInput {
             id: inputUsernameText
             anchors.centerIn: textUsernameRectangle;
-            text: usernameInput
-            anchors.verticalCenterOffset: 54
-            anchors.horizontalCenterOffset: 0
+            anchors.verticalCenterOffset: 0
+            anchors.horizontalCenterOffset: -280
             cursorVisible: (stepInput==0) ? true : false
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
@@ -233,6 +232,10 @@ Base{
             borderColor: "white"
             baseColor: "white"
             MouseArea{
+                anchors.rightMargin: 0
+                anchors.bottomMargin: 0
+                anchors.leftMargin: 0
+                anchors.topMargin: 0
                 anchors.fill: parent;
                 onClicked: {
                     stepInput = 1;
@@ -244,8 +247,8 @@ Base{
             id: inputPasswordText
             anchors.centerIn: textPasswordRectangle;
             text: passwordInput
-            anchors.verticalCenterOffset: 54
-            anchors.horizontalCenterOffset: 0
+            anchors.verticalCenterOffset: 1
+            anchors.horizontalCenterOffset: -280
             cursorVisible: (stepInput==1) ? true : false
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
