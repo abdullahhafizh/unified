@@ -5,8 +5,8 @@ import QtGraphicalEffects 1.0
 
 Rectangle{
     id:full_numpad
-    width:320
-    height:420
+    width:200
+    height:300
     color:"transparent"
     signal strButtonClick(string str)
     signal funcButtonClicked(string str)
@@ -18,94 +18,119 @@ Rectangle{
 
 
     NumButtonCircle{
+        width: 60
+        height: 60
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: 8
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 4
         show_text:"1"
     }
     NumButtonCircle{
-        x:90
+        x:40
+        width: 60
+        height: 60
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 8
         anchors.horizontalCenter: parent.horizontalCenter
         show_text:"2"
     }
     NumButtonCircle{
-        x:180
+        x:136
+        width: 60
+        height: 60
         anchors.top: parent.top
-        anchors.topMargin: 0
+        anchors.topMargin: 8
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 4
         show_text:"3"
     }
     NumButtonCircle{
-        y:106
+        y:74
+        width: 60
+        height: 60
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 4
         show_text:"4"
     }
     NumButtonCircle{
         x:90
-        y:106
+        y:74
+        width: 60
+        height: 60
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         show_text:"5"
     }
     NumButtonCircle{
-        x:220
-        y:106
+        x:136
+        y:74
+        width: 60
+        height: 60
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 4
         show_text:"6"
     }
     NumButtonCircle{
-        y:212
-        height: 100
+        y:140
+        width: 60
+        height: 60
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 8
         show_text:"7"
     }
     NumButtonCircle{
         x:90
-        y:212
-        anchors.horizontalCenterOffset: 0
+        y:140
+        width: 60
+        height: 60
+        anchors.horizontalCenterOffset: 1
         anchors.horizontalCenter: parent.horizontalCenter
         show_text:"8"
     }
     NumButtonCircle{
-        x:220
-        y:212
+        x:136
+        y:140
+        width: 60
+        height: 60
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 4
         show_text:"9"
     }
     NumButtonCircle{
         x:90
-        y:270
+        y:206
+        width: 60
+        height: 60
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.horizontalCenterOffset: 2
+        anchors.bottomMargin: 34
         anchors.horizontalCenter: parent.horizontalCenter
         show_text:"0"
     }
     NumboardClearCircle{
-        y:270
+        y:206
+        width: 60
+        height: 60
         color: "#5a5a5a"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 34
         anchors.left: parent.left
-        anchors.leftMargin: 0
+        anchors.leftMargin: 8
         border.width: 0
         slot_text:"Clear"
     }
     NumboardBackCircle{
-        x:180
-        y:270
+        x:136
+        y:206
+        width: 60
+        height: 60
         color: "#ffc125"
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 34
         anchors.right: parent.right
-        anchors.rightMargin: 0
+        anchors.rightMargin: 4
         border.width: 0
         slot_text: "Back"
     }

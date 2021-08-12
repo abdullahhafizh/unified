@@ -5,7 +5,7 @@ import "screen.js" as SCREEN
 
 Rectangle{
     id:popup_update_stock
-    visible: true
+    visible: false
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     color: 'transparent'

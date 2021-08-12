@@ -795,7 +795,8 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.horizontalCenterOffset: 7
+        anchors.topMargin: 138
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: wording_text
         visible: !popup_loading.visible
@@ -808,11 +809,12 @@ Base{
     TextRectangle{
         id: textRectangle
         width: 650
-        height: 110
+        height: 60
         color: "white"
         radius: 0
         anchors.top: parent.top
-        anchors.topMargin: 325
+        anchors.horizontalCenterOffset: -12
+        anchors.topMargin: 208
         border.color: CONF.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -837,13 +839,15 @@ Base{
 
     NumKeyboardCircle{
         id:virtual_keyboard
-        width:320
-        height:420
+        width:215
+        height:311
         anchors.bottom: parent.bottom
+        anchors.horizontalCenterOffset: -11
         anchors.bottomMargin: 130
         anchors.horizontalCenter: parent.horizontalCenter
         visible: true
         property int count:0
+        y: 327
 
         Component.onCompleted: {
             virtual_keyboard.strButtonClick.connect(typeIn);
@@ -1097,6 +1101,8 @@ Base{
 
     SelectPaymentPopupNotif{
         id: select_payment
+        x: -11
+        y: -84
         visible: isConfirm
         calledFrom: 'global_input_number'
         _cashEnable: cashEnable
@@ -1115,6 +1121,8 @@ Base{
 
     SelectQRProviderPopupNotif{
         id: select_qr_provider
+        x: -12
+        y: -84
         visible: false
         calledFrom: 'global_input_number'
         _cashEnable: false
@@ -1177,3 +1185,9 @@ Base{
 
 }
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.75}
+}
+##^##*/
