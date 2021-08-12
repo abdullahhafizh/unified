@@ -9,7 +9,6 @@ Rectangle{
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     color: 'transparent'
-    property alias imageBody: imageBody
     property int max_count: 50
     property var press: "0"
     property var textInput: ""
@@ -23,15 +22,15 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: 400
-        height: 474
+        width: 500
+        height: 587
         color: "white"
         opacity: .8
-        radius: 3
-        anchors.verticalCenterOffset: -9
-        anchors.horizontalCenterOffset: 5
+        radius: 25
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -5
+        anchors.horizontalCenterOffset: 0
 
         Text {
             id: main_text
@@ -41,35 +40,33 @@ Rectangle{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.top: parent.top
-            anchors.topMargin: 28
-            anchors.horizontalCenterOffset: 22
+            anchors.topMargin: 102
+            anchors.horizontalCenterOffset: 35
             font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 12
+            font.pixelSize: 16
         }
 
         TextRectangle{
             id: textRectangle
-            width: 357
-            height: 39
-            radius: 2
+            width: 400
+            height: 40
             anchors.top: parent.top
-            anchors.horizontalCenterOffset: 1
-            anchors.topMargin: 72
+            anchors.horizontalCenterOffset: 0
+            anchors.topMargin: 173
             anchors.horizontalCenter: parent.horizontalCenter
         }
-        
+
         Image{
             id: imageBody
-            width: 60
-            height: 60
-            transformOrigin: Item.Center
             anchors.top: parent.top
-            anchors.topMargin: 6
+            anchors.topMargin: 72
             scale: 0.7
             anchors.left: parent.left
-            anchors.leftMargin: 40
+            anchors.leftMargin: 38
             source: titleImage
+            sourceSize.height: 80
+            sourceSize.width: 80
         }
 
         TextInput {
@@ -80,7 +77,7 @@ Rectangle{
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
-            font.pixelSize: 20
+            font.pixelSize: 40
             color: "darkblue"
             clip: true
             visible: true
@@ -89,14 +86,12 @@ Rectangle{
 
         NumKeyboard{
             id:virtual_numpad
-            anchors.verticalCenterOffset: 33
+            anchors.verticalCenterOffset: 64
             anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
             property int count:0
-            width: 156
-            height: 218
-            anchors.horizontalCenterOffset: 0
-            
+
             Component.onCompleted: {
                 virtual_numpad.strButtonClick.connect(typeIn)
                 virtual_numpad.funcButtonClicked.connect(functionIn)
@@ -142,49 +137,46 @@ Rectangle{
             id: groupBox1
             flat: true
             x: 200
-            y: 615
+            y: 489
             width: parent.width
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: -200
-            anchors.horizontalCenterOffset: -8
+            anchors.bottomMargin: 17
+            anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter
             NextButton{
                 id: cancel_button
-                y: -196
-                width: 100
-                height: 40
+                y: 4
+                width: 80
+                height: 60
                 anchors.left: parent.left
-                fontSize: 15
-                anchors.leftMargin: 297
+                fontSize: 20
+                anchors.leftMargin: 394
                 button_text: 'batal'
                 MouseArea{
-                    width: 100
                     anchors.fill: parent
-                    anchors.rightMargin: 0
-                    anchors.bottomMargin: 0
-                    anchors.leftMargin: 0
-                    anchors.topMargin: 0
+                    anchors.rightMargin: 2
+                    anchors.bottomMargin: 1
+                    anchors.leftMargin: -2
+                    anchors.topMargin: -1
                     onClicked: close();
                 }
             }
             NextButton{
                 id: update_button
-                x: 0
-                y: -194
-                width: 100
-                height: 40
+                x: 11
+                y: 8
+                width: 80
+                height: 60
                 anchors.right: parent.right
-                fontSize: 15
-                anchors.rightMargin: 280
+                fontSize: 20
+                anchors.rightMargin: 389
                 button_text: 'update'
                 MouseArea{
-                    width: 100
-                    height: 40
                     anchors.fill: parent
-                    anchors.rightMargin: 8
-                    anchors.bottomMargin: 0
-                    anchors.leftMargin: -8
-                    anchors.topMargin: 0
+                    anchors.rightMargin: 0
+                    anchors.bottomMargin: 2
+                    anchors.leftMargin: 0
+                    anchors.topMargin: -2
                     onClicked: {
                         if (textInput!='' && parseInt(textInput) > 0){
                             var _signal = JSON.stringify({
@@ -216,6 +208,6 @@ Rectangle{
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.9}
+    D{i:0;formeditorZoom:0.75}
 }
 ##^##*/
