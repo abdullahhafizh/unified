@@ -40,13 +40,14 @@ Base{
         id: column
         width: parent.width
         height: 500
-        anchors.verticalCenterOffset: -20
+        anchors.verticalCenterOffset: 15
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenterOffset: 0
         spacing: 20
         AnimatedImage  {
-            width: 400
-            height: 400
+            width: 300
+            height: 300
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
