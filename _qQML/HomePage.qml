@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
 import "base_function.js" as FUNC
@@ -200,7 +200,7 @@ Base{
         if (kiosk.refund_feature == '0') showCustomerInfo = true;
         else showCustomerInfo = false;
 
-        main_title.show_text = 'Welcome : ';
+        main_title.show_text = 'Selamat Datang, Silahkan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }
 
@@ -262,24 +262,26 @@ Base{
         id: main_title
         width: 640
         height: 53
+        size_: 35
         anchors.horizontalCenterOffset: 0
-        anchors.topMargin: 276
+        anchors.topMargin: 162
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
         visible: !popup_loading.visible
-        size_: (globalScreenType == '1') ? 50 : 40
         color_: "white"
 
     }
 
     Row{
         id: row_button
-        anchors.verticalCenterOffset: 100
+        anchors.horizontalCenterOffset: 0
+        anchors.verticalCenterOffset: 0
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 60 : 30
-        visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
+//        visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
+        visible: (!standard_notif_view.visible && !popup_loading.visible) ? true : false;
 
         MasterButtonNew {
             id: check_saldo_button
@@ -293,6 +295,12 @@ Base{
             visible: false
 //            mode3d: 'gray'
             MouseArea{
+                width: 200
+                height: 200
+                anchors.rightMargin: -141
+                anchors.bottomMargin: -256
+                anchors.leftMargin: 141
+                anchors.topMargin: 256
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
@@ -410,6 +418,10 @@ Base{
             visible: false
 //            mode3d: 'gray'
             MouseArea{
+                anchors.rightMargin: -8
+                anchors.bottomMargin: 0
+                anchors.leftMargin: 8
+                anchors.topMargin: 0
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Bayar/Beli"');
@@ -502,11 +514,11 @@ Base{
     Rectangle{
         id: login_button_rec
         color: 'white'
-        radius: 3
+        radius: 5
         anchors.top: parent.top
-        anchors.topMargin: 186
+        anchors.topMargin: 180
         anchors.left: parent.left
-        anchors.leftMargin: -15
+        anchors.leftMargin: -17
         width: 95
         height: 60
         Image{
@@ -514,8 +526,8 @@ Base{
             width: 100
             height: 50
             anchors.verticalCenterOffset: -3
-            anchors.rightMargin: 11
-            anchors.horizontalCenterOffset: 0
+            anchors.rightMargin: 8
+            anchors.horizontalCenterOffset: 4
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.horizontalCenter: parent.horizontalCenter
@@ -525,10 +537,10 @@ Base{
         }
 
         MouseArea{
-            anchors.rightMargin: 0
-            anchors.bottomMargin: 0
-            anchors.leftMargin: 0
-            anchors.topMargin: 0
+            anchors.rightMargin: 1
+            anchors.bottomMargin: 1
+            anchors.leftMargin: -1
+            anchors.topMargin: -1
             anchors.fill: parent
             onDoubleClicked: {
                 _SLOT.user_action_log('Press "Admin" Button');
@@ -543,21 +555,23 @@ Base{
 
     Rectangle{
         id: search_trx_button
+        x: 1275
+        width: 65
+        height: 215
         color: 'white'
         radius: 20
+        anchors.rightMargin: 0
         anchors.right: parent.right
-        anchors.rightMargin: (globalScreenType == '1') ? -15 : -5
         anchors.top: parent.top
-        anchors.topMargin: 200
-        width: (globalScreenType == '1') ? 100 : 85
-        height: (globalScreenType == '1') ? 300 : 225
+        anchors.topMargin: 162
         visible: false
         Text{
+            y: 107
             text: 'CEK/LANJUT\nTRANSAKSI'
+            anchors.bottomMargin: 60
             font.pixelSize: (globalScreenType == '1') ? 30 : 20
-            anchors.horizontalCenterOffset: -10
+            anchors.horizontalCenterOffset: 0
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: (globalScreenType == '1') ? 80 : 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
@@ -566,17 +580,21 @@ Base{
             horizontalAlignment: Text.AlignHCenter
         }
         Image{
-            width: 80
-            height: 90
+            width: 85
+            height: 65
             anchors.top: parent.top
             anchors.topMargin: 5
-            anchors.horizontalCenterOffset: 0
+            anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
             scale: 0.75
             source: "source/find.png"
             fillMode: Image.PreserveAspectFit
         }
         MouseArea{
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 0
+            anchors.topMargin: 0
             anchors.fill: parent
             onClicked: {
                 if (press!="0") return;
@@ -593,21 +611,24 @@ Base{
 
     Rectangle{
         id: wa_voucher_button
+        x: 1295
+        y: 396
+        width: 65
+        height: 215
         color: 'white'
         radius: 20
+        anchors.rightMargin: 0
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 200
+        anchors.bottomMargin: 157
         anchors.right: parent.right
-        anchors.rightMargin:  (globalScreenType == '1') ? -15 : -5
-        width: (globalScreenType == '1') ? 100 : 85
-        height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
+            y: 110
             text: "WHATSAPP\nVOUCHER"
+            anchors.bottomMargin: 58
             font.pixelSize: (globalScreenType == '1') ? 28 : 20
-            anchors.horizontalCenterOffset: -10
+            anchors.horizontalCenterOffset: -1
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: (globalScreenType == '1') ? 80 : 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
@@ -617,8 +638,8 @@ Base{
         }
         Image{
             y: 0
-            width: 100
-            height: 100
+            width: 69
+            height: 76
             anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter
             scale: 0.75
@@ -627,6 +648,10 @@ Base{
         }
 
         MouseArea{
+            anchors.rightMargin: 0
+            anchors.bottomMargin: -1
+            anchors.leftMargin: 0
+            anchors.topMargin: 1
             anchors.fill: parent
             onClicked: {
                 if (press!="0") return;
@@ -843,7 +868,9 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
-//        withBackground: false
+        x: -252
+        y: -309
+        //        withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
         show_detail: "Please Ensure You have set Your plan correctly."
@@ -852,6 +879,8 @@ Base{
 
     StandardNotifView{
         id: kalogin_notif_view
+        x: -252
+        y: -309
         withBackground: false
         buttonEnabled: false
         modeReverse: true
