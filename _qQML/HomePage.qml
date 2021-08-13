@@ -398,7 +398,7 @@ Base{
                 color: "#ffffff"
                 border.width: 0
                 anchors.bottom: parent.bottom
-                anchors.horizontalCenterOffset: -8
+                anchors.horizontalCenterOffset: 0
                 anchors.bottomMargin: 22
                 anchors.horizontalCenter: parent.horizontalCenter
                 opacity: 0.8
@@ -412,9 +412,9 @@ Base{
                     font.bold: false
                     font.family:"Ubuntu"
                     verticalAlignment: Text.AlignVCenter
-                    anchors.rightMargin: 0
+                    anchors.rightMargin: -8
                     anchors.bottomMargin: 0
-                    anchors.leftMargin: 0
+                    anchors.leftMargin: 8
                     anchors.topMargin: 0
                     horizontalAlignment: Text.AlignHCenter
                 }
