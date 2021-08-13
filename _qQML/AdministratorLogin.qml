@@ -123,7 +123,7 @@ Base{
     Rectangle{
         id: rec_parent
         color: "transparent"
-        anchors.verticalCenterOffset: 50
+        anchors.verticalCenterOffset: 16
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -136,12 +136,12 @@ Base{
             width: 250
             height: textRecHeigth
             text: 'Pengguna : '
+            font.pixelSize: 30
             anchors.top: parent.top
-            anchors.topMargin: 100
+            anchors.topMargin: 197
             anchors.left: parent.left
             anchors.leftMargin: 140
             textFormat: Text.PlainText
-            font.pixelSize: globalLabelSize
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
@@ -156,6 +156,7 @@ Base{
             y:150
             width: 600
             height: textRecHeigth
+            anchors.verticalCenterOffset: 0
             anchors.left: username_label.right
             anchors.leftMargin: 50
             anchors.verticalCenter: username_label.verticalCenter
@@ -163,6 +164,10 @@ Base{
             borderColor: "white"
             baseColor: "white"
             MouseArea{
+                anchors.rightMargin: 0
+                anchors.bottomMargin: 1
+                anchors.leftMargin: 0
+                anchors.topMargin: -1
                 anchors.fill: parent;
                 onClicked: {
                     stepInput = 0;
@@ -190,12 +195,12 @@ Base{
             width: 250
             height: textRecHeigth
             text: 'Kata Sandi : '
+            font.pixelSize: 30
             anchors.top: parent.top
-            anchors.topMargin: 250
+            anchors.topMargin: 293
             anchors.left: parent.left
             anchors.leftMargin: 140
             textFormat: Text.PlainText
-            font.pixelSize: globalLabelSize
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
@@ -217,6 +222,10 @@ Base{
             borderColor: "white"
             baseColor: "white"
             MouseArea{
+                anchors.rightMargin: 0
+                anchors.bottomMargin: 0
+                anchors.leftMargin: 0
+                anchors.topMargin: 0
                 anchors.fill: parent;
                 onClicked: {
                     stepInput = 1;
@@ -244,7 +253,7 @@ Base{
             x:332;
             width: 930; height: 371;
             anchors.top: parent.top
-            anchors.topMargin: 500
+            anchors.topMargin: 407
             anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter
             isShifted: false
@@ -343,6 +352,8 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
+        x: -10
+        y: -31
         withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
