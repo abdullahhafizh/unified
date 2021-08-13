@@ -249,6 +249,13 @@ def merge_text(text=[]):
     if len(text) == 0:
         return ''
     return ' - '.join(text)
+    
+
+def get_retry_code_tnc():
+    # 7x percobaan / 2x24 jam
+    max_attempt = str(_Common.MAX_PENDING_CODE_RETRY)
+    day_duration = str(_Common.MAX_PENDING_CODE_DURATION)
+    return max_attempt+"x coba / "+day_duration+"x24 jam"
 
 
 
@@ -438,6 +445,9 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'BERLAKU : ' + get_retry_code_tnc(), 0, 0, 'L') # 7x percobaan / 2x24 jam
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -487,6 +497,9 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'BERLAKU : ' + get_retry_code_tnc(), 0, 0, 'L') # 7x percobaan / 2x24 jam
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -615,6 +628,9 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'BERLAKU : ' + get_retry_code_tnc(), 0, 0, 'L') # 7x percobaan / 2x24 jam
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -670,6 +686,9 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'BERLAKU : ' + get_retry_code_tnc(), 0, 0, 'L') # 7x percobaan / 2x24 jam
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -828,6 +847,9 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'BERLAKU : ' + get_retry_code_tnc(), 0, 0, 'L') # 7x percobaan / 2x24 jam
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -872,6 +894,9 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'BERLAKU : ' + get_retry_code_tnc(), 0, 0, 'L') # 7x percobaan / 2x24 jam
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'DAPAT MELANJUTKAN TRANSAKSI KEMBALI', 0, 0, 'L')
@@ -1586,6 +1611,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                         pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
                 elif 'pending_trx_code' in p.keys():
                     pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                    pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                     pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                     pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
                     pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
@@ -1602,6 +1628,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
             elif 'pending_trx_code' in p.keys():
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
                 pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
@@ -1671,6 +1698,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
             elif 'pending_trx_code' in p.keys():
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
                 pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
@@ -1689,6 +1717,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
             elif 'pending_trx_code' in p.keys():
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
                 pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
@@ -1780,6 +1809,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
             elif 'pending_trx_code' in p.keys():
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
                 pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
@@ -1800,6 +1830,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
             elif 'pending_trx_code' in p.keys():
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
+                pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
                 pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
