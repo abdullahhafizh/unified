@@ -64,7 +64,6 @@ Base{
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
-    property alias next_button: next_button
 
 
     Stack.onStatusChanged:{
@@ -807,12 +806,11 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: 0
-        anchors.topMargin: 162
+        anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: wording_text
         visible: !popup_loading.visible
-        size_: 30
+        size_: 50
         color_: "white"
 
     }
@@ -821,12 +819,11 @@ Base{
     TextRectangle{
         id: textRectangle
         width: 650
-        height: 60
+        height: 110
         color: "white"
         radius: 0
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: -12
-        anchors.topMargin: 233
+        anchors.topMargin: 325
         border.color: CONF.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }
@@ -851,15 +848,13 @@ Base{
 
     NumKeyboardCircle{
         id:virtual_keyboard
-        width:215
-        height:311
+        width:320
+        height:420
         anchors.bottom: parent.bottom
-        anchors.horizontalCenterOffset: -11
         anchors.bottomMargin: 130
         anchors.horizontalCenter: parent.horizontalCenter
         visible: true
         property int count:0
-        y: 327
 
         Component.onCompleted: {
             virtual_keyboard.strButtonClick.connect(typeIn);
@@ -1113,8 +1108,6 @@ Base{
 
     SelectPaymentPopupNotif{
         id: select_payment
-        x: -11
-        y: -84
         visible: isConfirm
         calledFrom: 'global_input_number'
         _cashEnable: cashEnable
@@ -1133,8 +1126,6 @@ Base{
 
     SelectQRProviderPopupNotif{
         id: select_qr_provider
-        x: -12
-        y: -84
         visible: false
         calledFrom: 'global_input_number'
         _cashEnable: false
@@ -1198,9 +1189,3 @@ Base{
 
 }
 
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.75}
-}
-##^##*/

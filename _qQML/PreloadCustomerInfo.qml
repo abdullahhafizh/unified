@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 
 
 Base{
@@ -33,24 +33,21 @@ Base{
 //    }
 
     MainTitle{
-        height: 25
-        size_: 30
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 150 : 125
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Syarat dan Ketentuan'
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
     }
 
     AnimatedImage  {
         id: mainImage
-        x: 70
-        y: 90
-        width: 180
-        height: 180
+        width: boxSize
+        height: boxSize
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: -200
+        anchors.verticalCenterOffset: -150
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -60,15 +57,13 @@ Base{
 
     Text{
         id: mainText
-        x: 340
-        y: 90
         text: textMain
         anchors.horizontalCenterOffset: 160
-        anchors.verticalCenterOffset: -200
+        anchors.verticalCenterOffset: -150
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
         width: 1000
-        height: 180
+        height: boxSize
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignLeft
         anchors.horizontalCenter: parent.horizontalCenter
@@ -80,12 +75,10 @@ Base{
 
     AnimatedImage  {
         id: slaveImage
-        x: 70
-        y: 110
-        width: 180
-        height: 180
+        width: boxSize
+        height: boxSize
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -97,12 +90,12 @@ Base{
         id: slaveText
         text: textSlave
         anchors.horizontalCenterOffset: 160
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: textSize
         width: 1000
-        height: 180
+        height: boxSize
         wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
@@ -113,10 +106,10 @@ Base{
 
     AnimatedImage  {
         id: thirdImage
-        width: 180
-        height: 180
+        width: boxSize
+        height: boxSize
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: 200
+        anchors.verticalCenterOffset: 350
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -128,12 +121,12 @@ Base{
         id: thirdText
         text: textThird
         anchors.horizontalCenterOffset: 160
-        anchors.verticalCenterOffset: 200
+        anchors.verticalCenterOffset: 350
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: textSize
         width: 1000
-        height: 180
+        height: boxSize
         wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
