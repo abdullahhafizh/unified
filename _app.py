@@ -1,6 +1,7 @@
 __author__ = "fitrah.wahyudi.imam@gmail.com"
 
 import os
+from re import M
 import sys
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, QTranslator, Qt
 from PyQt5.QtGui import QGuiApplication
@@ -38,13 +39,14 @@ from _sService import _GeneralPaymentService
 # from _sService import _AudioService
 from _mModule import _MainService
 import json
-# import sentry_sdk
+import sentry_sdk
+
 
 print("""
+        Unik Vending Kiosk
     App Ver: """ + _Common.VERSION + """
-    Service Ver: """ + _Common.SERVICE_VERSION + """
 Powered By: PT. MultiDaya Dinamika
-              -2020-
+              -2021-
 """)
 
 # Set Default Screen Frame Size
@@ -671,9 +673,9 @@ class SlotHandler(QObject):
         _SettlementService.start_do_c2c_update_fee()
     start_do_c2c_update_fee = pyqtSlot()(start_do_c2c_update_fee)
 
-    def start_do_topup_c2c_deposit(self):
-        _TopupService.start_do_topup_c2c_deposit()
-    start_do_topup_c2c_deposit = pyqtSlot()(start_do_topup_c2c_deposit)
+    def start_do_topup_deposit_mandiri(self):
+        _TopupService.start_do_topup_deposit_mandiri()
+    start_do_topup_deposit_mandiri = pyqtSlot()(start_do_topup_deposit_mandiri)
 
     def start_get_card_history(self, bank):
         _QPROX.start_get_card_history(bank)
@@ -683,9 +685,9 @@ class SlotHandler(QObject):
         _SalePrintTool.start_print_card_history(payload)
     start_print_card_history = pyqtSlot(str)(start_print_card_history)
 
-    def start_check_c2c_deposit(self):
-        _SettlementService.start_check_c2c_deposit()
-    start_check_c2c_deposit = pyqtSlot()(start_check_c2c_deposit)
+    def start_check_mandiri_deposit(self):
+        _SettlementService.start_check_mandiri_deposit()
+    start_check_mandiri_deposit = pyqtSlot()(start_check_mandiri_deposit)
 
 
     def start_mandiri_c2c_force_settlement(self, amount, trxid):
@@ -757,6 +759,14 @@ class SlotHandler(QObject):
     def start_deposit_update_balance(self, bank):
         _TopupService.start_deposit_update_balance(bank)
     start_deposit_update_balance = pyqtSlot(str)(start_deposit_update_balance)
+    
+    def start_check_payment_status(self, mode):
+        _QRPaymentService.start_check_payment_status(mode)
+    start_check_payment_status = pyqtSlot(str)(start_check_payment_status)
+    
+    def start_do_print_qr_receipt(self, mode):
+        _QRPaymentService.start_do_print_qr_receipt(mode)
+    start_do_print_qr_receipt = pyqtSlot(str)(start_do_print_qr_receipt)
 
 
 def s_handler():
@@ -885,16 +895,17 @@ def safely_shutdown(mode):
 def config_log():
     global LOGGER
     # Sentry Initiation
+    sentry_dsn = _ConfigParser.get_set_value('GENERAL', 'sentry^dsn', "https://d1e7e31740c147b289ee1414b2d48874@sentry-logging.multidaya.id/3")
     try:
-        # sentry_sdk.init(
-        #     "https://dbaba7abb38444e0a9c75eb0d783f7d3@o431445.ingest.sentry.io/5382538",
-        #     max_breadcrumbs=10,
-        #     debug=False,
-        #     environment=_Common.APP_MODE,
-        #     server_name='VM-ID '+_Common.TID,
-        #     release='APP-VER. '+_Common.VERSION+'|SERVICE-VER. '+_Common.SERVICE_VERSION,
-        #     default_integrations=False,
-        # )
+        sentry_sdk.init(
+            sentry_dsn,
+            max_breadcrumbs=10,
+            debug=False,
+            environment=_Common.APP_MODE,
+            server_name='VM-ID '+_Common.TID,
+            release='APP-VER. '+_Common.VERSION,
+            # default_integrations=False,
+        )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',
@@ -1049,7 +1060,7 @@ var tvc_waiting_time = 60;
 '''
 
 
-def init_setting():
+def init_local_setting():
     global INITIAL_SETTING
     qml_config = sys.path[0] + '/_qQML/config.js'
     if not os.path.exists(qml_config):
@@ -1126,6 +1137,21 @@ def check_git_status(log=False):
         for r in response:
             print(str(r))
             
+
+def init_local_setting_from_host():
+    url = _Common.BACKEND_URL + 'get/init-setting'
+    status, response = _NetworkAccess.get_from_url(url=url, force=True)
+    if status == 200 and response['result'] == 'OK':
+        if len(response['data']) > 0:
+            _Common.store_to_temp_data('host-setting', response['data'])
+            for set in response['data']:
+                LOGGER.debug(('SET TO LOCAL', str(set)))
+                sleep(.25)
+                _ConfigParser.set_value(set['section'], set['option'], set['value'])
+    else:
+        LOGGER.warning((status, response))
+        print("pyt: Failed Initiating Config From Host...")
+
             
 def start_webserver():
     _MainService.start()
@@ -1134,9 +1160,12 @@ def start_webserver():
 if __name__ == '__main__':
     print("pyt: Initiating Config...")
     config_log()
+    init_local_setting()
+    # sleep(1)
+    # print("pyt: Initiating Setting From Host...")
+    # init_local_setting_from_host()
     # update_module({})
     # install_font()
-    init_setting()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()
     if _Common.LIVE_MODE:
@@ -1180,6 +1209,8 @@ if __name__ == '__main__':
     _KioskService.alter_table('_SAMAudit.sql')
     sleep(1)
     _KioskService.alter_table('_TransactionsNew.sql')
+    sleep(1)
+    _KioskService.alter_table('_AlterTransactionNew.sql')
     sleep(1)
     if INITIAL_SETTING['reloadService'] is True:
         print("pyt: Restarting MDDTopUpService...")
@@ -1246,17 +1277,21 @@ if __name__ == '__main__':
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
     if _QPROX.INIT_MANDIRI is True:
-        sleep(2)
-        print("pyt: Triggering Mandiri KA/C2C Deposit Balance Update Check...")
-        _SettlementService.start_validate_update_balance()    
+        sleep(1)
+        print("pyt: Check Mandiri Deposit Update Balance...")
+        _TopupService.check_mandiri_deposit_update_balance()
+        sleep(1)
+        print("pyt: Resync Data Mandiri Card Blacklist...")
+        # _SettlementService.start_check_mandiri_deposit()    
         _TopupService.get_mandiri_card_blocked_list()
     if _QPROX.INIT_BNI is True:
         sleep(.5)
         print("pyt: Triggering BNI Settlement Sync...")
         _Sync.start_sync_settlement_bni()
-        sleep(2)
-        print("pyt: Triggering BNI Balance Update Check...")
-        _TopupService.start_define_topup_slot_bni()
+        #Disable Automation
+        # sleep(2)
+        # print("pyt: Triggering BNI Balance Update Check...")
+        # _TopupService.start_define_topup_slot_bni()
     if _QPROX.INIT_BRI is True:
         # TODO Add Special Handler For BRI Initiation
         # sleep(.5)

@@ -425,7 +425,8 @@ Base{
             id: mandiri_settlement_button
             z: 10
             button_text: (CONF.c2c_mode==1) ? 'topup c2c\ndeposit' : 'settle\nmanual'
-            visible: !popup_loading.visible
+            // visible: !popup_loading.visible
+            visible: false
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
@@ -437,12 +438,11 @@ Base{
                     if (CONF.c2c_mode==1){
                         console.log('topup_deposit_c2c mode is ON..!');
                         _SLOT.user_action_log(operatorName + '- Admin Page "Topup C2C Deposit Mandiri"');
-                        _SLOT.start_do_topup_c2c_deposit();
+                        _SLOT.start_do_topup_deposit_mandiri();
                     } else {
                         _SLOT.user_action_log(operatorName + '- Admin Page "Settlement Manual Mandiri"');
                         _SLOT.start_reset_mandiri_settlement();
                     }
-
                 }
             }
         }
@@ -490,7 +490,8 @@ Base{
             id: topup_bni_deposit_button
             z: 10
             button_text: 'topup bni\ndeposit'
-            visible: !popup_loading.visible
+            // visible: !popup_loading.visible
+            visible: false
             modeReverse: true
             MouseArea{
                 anchors.fill: parent

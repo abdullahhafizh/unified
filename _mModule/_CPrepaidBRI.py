@@ -40,7 +40,7 @@ def update_balance_bri(param, __global_response__):
     amount = "0"
     lastbalance = ""
 
-    result_str, errmsg, cardno, amount, lastbalance, bri_token, reffnohost, CodeStatus = update_balance_bri_priv(C_TID, C_MID, C_TOKEN, C_SAMSLOT, cardno, amount, lastbalance)
+    result_str, errmsg, cardno, amount, lastbalance, bri_token, reffnohost, CodeStatus = update_balance_bri_priv(C_TID, C_MID, C_TOKEN, C_SAMSLOT, cardno, amount)
 
     __global_response__["Result"] = result_str
     if result_str == "0000":
@@ -59,9 +59,11 @@ def update_balance_bri(param, __global_response__):
         LOG.fw("024:Response = ", errmsg, True)
         LOG.fw("024:Result = ", result_str, True)
         LOG.fw("024:Gagal", None, True)
+    
+    return __global_response__
 
 
-def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
+def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
     global UPDATE_BALANCE_URL
     msg = ""
     resultStr = ""
@@ -72,6 +74,7 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
     CodeStatus = ""
     CodeDesc = ""
     jsonD = []
+    lastbalance = 0
 
     try:
         rapdu = ""
@@ -96,10 +99,11 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
         resultStr, balance, cardno, SIGN = prepaid.topup_balance_with_sn()        
 
         if resultStr == "0000":
+            lastbalance = balance
             prepaid.topup_card_disconnect()
             resultStr, data = GetTokenBRI()
             if resultStr == "0000":
-                resultStr,ErrMsg = SendUpdateBalanceBRI(url, TOKEN, TID, MID, cardno, data)
+                resultStr, ErrMsg = SendUpdateBalanceBRI(url, TOKEN, TID, MID, cardno, data, balance)
 
                 if resultStr == "1":
                     msg = ErrMsg
@@ -131,7 +135,6 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
                             else:
                                 msg = "result don't have data: {0}".format(str(jsonD))
                                 resultStr = "1"
-
                     # except json.JSONDecodeError:
                     #     msg = "Invalid JSON: {0}".format(str(resultStr))
                     #     resultStr = "1"
@@ -257,7 +260,6 @@ def update_balance_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno,amount,lastbalance):
             #                     msg = "SUCCESS REFUND\n"+ jsonT
             #                 else:
             #                     msg = ErrMsg
-
     except Exception as ex:
         resultStr = "1"
         msg = "{0}".format(ex)
@@ -322,6 +324,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
     CodeStatus = ""
     CodeDesc = ""
     jsonD = []
+    
 
     try:
         rapdu = ""
@@ -426,12 +429,19 @@ def GetTokenBRI():
     return res_str, CardData
 
 
-def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token):
+def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token, last_balance):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
         sURL = URL_Server + "topup-bri/update"
-        payload = {"token":token, "tid":tid, "mid":mid, "card_no":card_no, "random_token": random_token}
+        payload = {
+            "token":token, 
+            "tid":tid, 
+            "mid":mid, 
+            "card_no":card_no, 
+            "random_token": random_token,
+            "prev_balance": last_balance
+            }
         LOG.fw(":updatebalancebri url = ", sURL)
         LOG.fw(":updatebalancebri json = ", payload)
 
@@ -446,6 +456,7 @@ def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token):
     except Exception as ex:
         errorcode = ":updatebalancebri error: {0}".format(ex)
         return "1", errorcode
+
 
 def SendConfirmBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_host):
     global TIMEOUT_REQUESTS

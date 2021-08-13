@@ -516,6 +516,8 @@ def machine_summary():
         'service_ver': str(_Common.SERVICE_VERSION),
         'theme': str(_Common.THEME_NAME),
         'last_money_inserted': _ConfigParser.get_set_value('BILL', 'last^money^inserted', 'N/A'),
+        'mandiri_sam_threshold': str(_Common.MANDIRI_THRESHOLD),
+        'bni_sam_threshold': str(_Common.BNI_THRESHOLD),
         # 'current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
         'current_cash': _Common.get_cash_activity()['total']
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
@@ -902,7 +904,7 @@ def alter_table(a):
         _DAO.adjust_table(a)
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
-        #_Common.online_logger(['Data Alter', a], 'general')
+        _Common.online_logger(['Data Alter', a], 'general')
 
 
 def start_direct_alter_table(s):
@@ -1195,7 +1197,7 @@ def store_transaction_global_old(param, retry=False):
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-        #_Common.online_logger(['Data TRX Store', str(e)], 'general')
+        _Common.online_logger(['Data TRX Store', str(e)], 'general')
 
     # finally:
     #     if g['shop_type'] == 'topup':
@@ -1230,7 +1232,6 @@ def store_transaction_global(param, retry=False):
         payment_type = get_payment(g['payment'])
         admin_fee = _Common.C2C_ADMIN_FEE[0]
         target_card_no = g['raw'].get('card_no', '')
-        
         # Update Product Stock
         if g['shop_type'] == 'shop':
             admin_fee = 0
@@ -1240,9 +1241,13 @@ def store_transaction_global(param, retry=False):
                 'pid': PID_STOCK_SALE,
                 'stock': int(g['raw']['stock']) - int(g['qty'])
             }
+            trx_notes = g['raw']
+            trx_notes['stock_details'] = stock_update
             _DAO.update_product_stock(stock_update)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid'])
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
+        else:
+            trx_notes = g['topup_details']
         
         trace_no = g['payment_details'].get('trx_id', '')
         if trace_no == '':
@@ -1260,7 +1265,7 @@ def store_transaction_global(param, retry=False):
             "trxId" : trx_id,
             "tid" : _Common.TID,
             "amount" : total_amount,
-            "createdAt" : _Helper.time_string(),
+            "createdAt" : _Helper.now(),
             "paymentType" : payment_type.upper(),
             "trxType" : g['shop_type'].upper(),
             "paymentNotes" : payment_notes,
@@ -1273,13 +1278,14 @@ def store_transaction_global(param, retry=False):
             "baseAmount" : total_amount if admin_fee == 0 else (total_amount - admin_fee),
             "targetCard" : target_card_no,
             "bankId" : bank_id,
+            "trxNotes" : trx_notes
         }
         # _______________________________________________________________________________________________________
         
         check_trx = _DAO.check_trx_new(trx_id)
         # Store To Local If Empty
         if len(check_trx) == 0:
-            trx_data['createdAt'] = _Helper.now()
+            # trx_data['createdAt'] = _Helper.now()
             _DAO.insert_transaction_new(trx_data)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + trx_id)
         # Push To Server
@@ -1360,7 +1366,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
         LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
-                                    'TopupRecords', 'TransactionFailure', 'Transactions', 'TransactionsNew'],
+                                    'TopupRecords', 'TransactionFailure', 'TransactionsNew'],
                             key='createdAt',
                             age_month=age_month)
     expired_seconds = (age_month * 30 * 24 * 60 * 60)

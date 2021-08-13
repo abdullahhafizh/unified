@@ -67,9 +67,13 @@ def start_get_qr_global(payload):
     _Helper.get_thread().apply_async(do_get_qr, (payload, mode,))
 
 
+HISTORY_GET_QR = []
+QR_CHECK_PAYLOAD = None
+QR_DATA_RESPONSE = None
+
 
 def do_get_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG
+    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -83,8 +87,13 @@ def do_get_qr(payload, mode, serialize=True):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
-    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']:
+    if (mode+'_'+payload['trx_id']) in HISTORY_GET_QR:
+        # No Need To Emit Into View
+        LOGGER.warning((str(payload), mode, 'DUPLICATE_GET_QR_REQUEST'))
+        return
+    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
         payload['reff_no'] = payload['trx_id']
+    param = payload
     if serialize is True:
         param = serialize_payload(payload)
     # print('pyt: ' + str(_Helper.whoami()))
@@ -96,6 +105,7 @@ def do_get_qr(payload, mode, serialize=True):
         if not _Common.QR_PROD_STATE[mode]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=param, custom_timeout=60)
+        HISTORY_GET_QR.append(mode+'_'+param['trx_id'])
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
@@ -105,12 +115,14 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_DIRECT_PAY:
                 r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']:
+            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
-            handle_check_process(json.dumps(param), mode)
+            QR_CHECK_PAYLOAD = json.dumps(param)
+            # sleep(10)
+            # handle_check_process(json.dumps(param), mode)
         elif s == -13:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
             LOGGER.warning((str(param), str(r)))
@@ -129,6 +141,12 @@ def serialize_qr(qr_url, name, ext='.png'):
     if store is True:
         qr_url = '../_qQr/'+new_source
     return qr_url
+
+
+def start_check_payment_status(mode):
+    mode = mode.upper()
+    param = QR_CHECK_PAYLOAD
+    _Helper.get_thread().apply_async(handle_check_process, (param, mode,))
 
 
 def handle_check_process(param, mode):
@@ -171,7 +189,7 @@ def start_do_check_linkaja_qr(payload):
 
 
 def do_check_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG
+    global CANCELLING_QR_FLAG, QR_DATA_RESPONSE
     payload = json.loads(payload)
     if mode in _Common.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -205,7 +223,7 @@ def do_check_qr(payload, mode, serialize=True):
             # _Helper.dump([success, attempt])
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
-                success = check_payment_result(r['data'], mode)
+                success = check_payment_result(r.get('data'), mode)
                 # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
                 # LOGGER.debug((str(payload), str(r)))
             # else:
@@ -218,18 +236,36 @@ def do_check_qr(payload, mode, serialize=True):
             # break;
         if success is True:
             # trigger_success_qr_payment(mode, r['data'])
+            QR_DATA_RESPONSE = r['data']
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             sleep(.5)
             GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('QR_PAYMENT')
-            if mode in _Common.QRIS_RECEIPT:
-                r['data']['trx_reff_no'] = payload['refference']
-                _QRPrintTool.generate_qr_receipt(r['data'])
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
+
+
+def start_do_print_qr_receipt(mode):
+    mode = mode.upper()
+    _Helper.get_thread().apply_async(do_print_qr_receipt, (mode,))
+    
+
+def do_print_qr_receipt(mode):
+    try:
+        payload = json.loads(QR_CHECK_PAYLOAD)
+        LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
+        if mode not in _Common.QRIS_RECEIPT:
+            print('[pyt] QR Mode Not Allowed For Printing')
+            return
+        qr_data = QR_DATA_RESPONSE
+        qr_data['trx_reff_no'] = payload['refference']
+        LOGGER.debug(('QR PRINT DATA', str(qr_data)))
+        _QRPrintTool.generate_qr_receipt(qr_data, mode.lower())
+    except Exception as e:
+        LOGGER.warning((e))
 
 
 def one_time_check_qr(trx_id='', mode='shopeepay'):
@@ -249,8 +285,8 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
             # _Helper.dump([success, attempt])
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
-            if check_payment_result(r['data'], mode.upper()) is True:
-                result = True, r['data']
+            if check_payment_result(r.get('data'), mode.upper()) is True:
+                result = True, r.get('data')
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
     finally:
@@ -284,7 +320,7 @@ def check_payment_result(result, mode):
         return False
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA', 'BCA-QRIS'] and result['status'] in ['SUCCESS', 'PAID']:
+    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA', 'BCA-QRIS', 'BNI-QRIS'] and result['status'] in ['SUCCESS', 'PAID']:
         return True
     return False
 

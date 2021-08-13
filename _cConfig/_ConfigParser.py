@@ -9,10 +9,10 @@ import threading
 LOCK = threading.Lock()
 
 FILE_SETTING = sys.path[0] + '/setting.ini'
-BACKUP_FILE = FILE_SETTING+'.bak'
+# BACKUP_FILE = FILE_SETTING+'.bak'
 
-if not os.path.exists(BACKUP_FILE) and os.stat(FILE_SETTING).st_size != 0:
-    copyfile(FILE_SETTING, BACKUP_FILE)
+# if not os.path.exists(BACKUP_FILE) and os.stat(FILE_SETTING).st_size != 0:
+#     copyfile(FILE_SETTING, BACKUP_FILE)
 
 TEMP_FOLDER = '_tTmp/'
 if not os.path.isdir(TEMP_FOLDER):
@@ -21,9 +21,9 @@ if not os.path.isdir(TEMP_FOLDER):
 TEMP_SETTING = sys.path[0] + '/_tTmp/temporary.ini'
 if not os.path.exists(TEMP_SETTING) and os.stat(FILE_SETTING).st_size != 0:
     copyfile(FILE_SETTING, TEMP_SETTING)
-BACKUP_TEMP_FILE = TEMP_SETTING+'.bak'
-if not os.path.exists(BACKUP_TEMP_FILE) and os.stat(TEMP_SETTING).st_size != 0:
-    copyfile(TEMP_SETTING, BACKUP_TEMP_FILE)
+# BACKUP_TEMP_FILE = TEMP_SETTING+'.bak'
+# if not os.path.exists(BACKUP_TEMP_FILE) and os.stat(TEMP_SETTING).st_size != 0:
+#     copyfile(TEMP_SETTING, BACKUP_TEMP_FILE)
 
 
 CONF = None
@@ -32,24 +32,24 @@ TEMP_CONF = None
 
 def init():
     global CONF
-    check_setting = open(FILE_SETTING, 'r').readlines()
-    if os.stat(FILE_SETTING).st_size == 0 or len(check_setting) < 10:
-        copyfile(BACKUP_FILE, FILE_SETTING)
-    else:
-        # Re-write Backup File
-        copyfile(FILE_SETTING, BACKUP_FILE)
+    # check_setting = open(FILE_SETTING, 'r').readlines()
+    # if os.stat(FILE_SETTING).st_size == 0 or len(check_setting) < 10:
+    #     copyfile(BACKUP_FILE, FILE_SETTING)
+    # else:
+    #     # Re-write Backup File
+    #     copyfile(FILE_SETTING, BACKUP_FILE)
     CONF = configparser.ConfigParser()
     CONF.read(FILE_SETTING)
 
 
 def init_temp():
     global TEMP_CONF
-    check_setting = open(TEMP_SETTING, 'r').readlines()
-    if os.stat(TEMP_SETTING).st_size == 0 or len(check_setting) < 10:
-        copyfile(BACKUP_TEMP_FILE, TEMP_SETTING)
-    else:
-        # Re-write Backup File
-        copyfile(TEMP_SETTING, BACKUP_TEMP_FILE)
+    # check_setting = open(TEMP_SETTING, 'r').readlines()
+    # if os.stat(TEMP_SETTING).st_size == 0 or len(check_setting) < 10:
+    #     copyfile(BACKUP_TEMP_FILE, TEMP_SETTING)
+    # else:
+    #     # Re-write Backup File
+    #     copyfile(TEMP_SETTING, BACKUP_TEMP_FILE)
     TEMP_CONF = configparser.ConfigParser()
     TEMP_CONF.read(TEMP_SETTING)
 

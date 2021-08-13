@@ -40,7 +40,7 @@ def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
     if __global_response__["Result"] == "0000":
         purse_data = __global_response__["Response"]
         print("purse_data:"+purse_data)
-        result_str, err_msg = send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no)
+        result_str, err_msg = send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no, "0")
         if result_str == "1":
             raise Exception(err_msg)
         dataJ = json.loads(result_str)
@@ -83,7 +83,7 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
     if __global_response__["Result"] == "0000":
         purse_data = __global_response__["Response"]
         print("purse_data:"+purse_data)
-        result_str, err_msg = send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no)
+        result_str, err_msg = send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no, "0")
         if result_str == "1":
             raise Exception(err_msg)
         dataJ = json.loads(result_str)
@@ -110,15 +110,20 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
     return __global_response__
 
 
-def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
+def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no, last_balance):
     TIMEOUT_REQUESTS = 50
     
     try:
         sURL = UPDATE_BALANCE_URL + "topup-bni/update"
 
         payload = { 
-            "token":TOKEN, "tid": TID, "mid": MID, "card_no":card_no,"card_info": purse_data, 
-            "reff_no":reff_no
+            "token":TOKEN, 
+            "tid": TID, 
+            "mid": MID, 
+            "card_no":card_no,
+            "card_info": purse_data, 
+            "reff_no":reff_no,
+            "prev_balance": last_balance
             }
 
         LOG.fw(":UpdateBNI url = ", sURL)
@@ -128,7 +133,7 @@ def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no):
         ValueText = r.text
         LOG.fw(":UpdateBNI = ", ValueText)
 
-        return r.text, "0000"
+        return ValueText, "0000"
     except Exception as ex:
         errorcode = "UpdateBNI error: {0}".format(ex)
         return "1", errorcode

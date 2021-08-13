@@ -10,7 +10,7 @@ import os
 import sys
 import json
 import re
-# from sentry_sdk import capture_exception
+from sentry_sdk import capture_exception
 
 
 LOGGER = logging.getLogger()
@@ -39,9 +39,14 @@ BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://v
 TEST_MODE = not LIVE_MODE
 if LIVE_MODE is True:
     BACKEND_URL = 'http://vm-service.mdd.co.id:471/kiosk-api/v2/'
+    _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
     os.system('git checkout master')
 if TEST_MODE is True:
+    BACKEND_URL = 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/'
+    _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
     os.system('git checkout ' +APP_MODE)
+
+PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service', '0') == '1' else False
@@ -117,10 +122,12 @@ BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^ti
 URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://axa.mdd.co.id:5000/')
 BNI_REMOTE_ACTIVATION = _ConfigParser.get_set_value('BNI', 'remote^activation', '0')
 if LIVE_MODE is True:
-    URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
-    _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
+    if not PTR_MODE:
+        URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
+        _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
     BNI_REMOTE_ACTIVATION = True
     _ConfigParser.set_value('BNI', 'remote^activation', '1')
+    
 BNI_C2C_TRESHOLD_USAGE = True if _ConfigParser.get_set_value('BNI', 'treshold^usage', '0') == '1' else False
 
 MID_BRI = _ConfigParser.get_set_value('BRI', 'mid', '---')
@@ -236,7 +243,6 @@ PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
 EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
-PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
@@ -465,10 +471,11 @@ if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)
 
 
-QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS']
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']
 QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
+    'BNI-QRIS': True,
     'BCA-QRIS': False,
     'JAKONE': True,
     'GOPAY': True,
@@ -485,6 +492,8 @@ ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'do-settlement',
     'ereceipt/create',
     'topup-dki/reversal',
+    'topup-dki/confirm',
+    'topup-bni/confirm',
     ]
 
 ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER = [
@@ -1013,6 +1022,7 @@ def get_payments():
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
         "QR_BCA": "AVAILABLE" if check_payment('bca-qris') is True else "NOT_AVAILABLE",
+        "QR_BNI": "AVAILABLE" if check_payment('bni-qris') is True else "NOT_AVAILABLE",
     }
     
 
@@ -1061,7 +1071,8 @@ def get_refunds():
 FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA", "CUSTOMER-SERVICE"]
 
 MANDIRI_CARD_BLOCKED_LIST = load_from_temp_data('mandiri_card_blocked_list', 'text').split('\n')
-MANDIRI_CHECK_CARD_BLOCKED = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked', '0') == '1' else False
+MANDIRI_CHECK_CARD_BLOCKED = True 
+_ConfigParser.set_value('GENERAL', 'mandiri^card^blocked', '1')
 MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
 if '---' in MANDIRI_CARD_BLOCKED_URL:
     _ConfigParser.set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
@@ -1221,7 +1232,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris']:
+        if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris', 'bni-qris']:
             remarks = json.loads(remarks)
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)
@@ -1318,6 +1329,7 @@ def store_upload_sam_audit(param):
             'topupLastBalance': param['topupLastBalance'],
             'status': param['status'],
             'remarks': param['remarks'],
+            'createdAt': _Helper.now()
         }
         # _DAO.insert_sam_audit(param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
@@ -1487,16 +1499,16 @@ def serialize_error_message(e):
 
 
 def online_logger(e='', mode='service'):
-    pass
-    # e = serialize_error_message(e)
-    # if mode == 'service':
-    #     capture_exception(KioskServiceErrorResponse(e))
-    # elif mode == 'connection':
-    #     capture_exception(KioskConnectionError(e))
-    # elif mode == 'device':
-    #     capture_exception(KioskDeviceError(e))
-    # else:
-    #     capture_exception(KioskGeneralError(e))
+    # pass
+    e = serialize_error_message(e)
+    if mode == 'service':
+        capture_exception(KioskServiceErrorResponse(e))
+    elif mode == 'connection':
+        capture_exception(KioskConnectionError(e))
+    elif mode == 'device':
+        capture_exception(KioskDeviceError(e))
+    else:
+        capture_exception(KioskGeneralError(e))
 
 
 LAST_UPDATED_STOCK = []

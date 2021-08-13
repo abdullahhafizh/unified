@@ -18,6 +18,7 @@ from _sService import _TopupService
 from _sService import _UpdateAppService
 from datetime import datetime
 from operator import itemgetter
+import subprocess
 
 
 LOGGER = logging.getLogger()
@@ -632,6 +633,7 @@ def handle_tasks(tasks):
     }
     '''
     for task in tasks:
+        LOGGER.debug(('GIVEN REMOTE TASK', task['taskName']))
         if task['taskName'] == 'REBOOT':
             if IDLE_MODE is True:
                 result = 'EXECUTED_INTO_MACHINE'
@@ -715,6 +717,27 @@ def handle_tasks(tasks):
             result = 'TRIGGERED_INTO_SYSTEM'
             _Common.log_to_temp_config('last^get^ppob', '0')
             update_task(task, result)
+        # New Task Here, Start Version 14.0.A-GLOBAL
+        if 'CONSOLE|' in task['taskName']:
+            command = task['taskName'].split('|')[1]
+            result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+            update_task(task, result)
+        if task['taskName'] == 'UPDATE_BALANCE_MANDIRI':
+            result = _TopupService.start_deposit_update_balance('MANDIRI')
+            update_task(task, result)
+        if task['taskName'] in ['UPDATE_BALANCE_BNI', 'TRIGGER_TOPUP_1_BNI']:
+            result = _TopupService.start_deposit_update_balance('BNI')
+            update_task(task, result)
+        if task['taskName'] == 'TRIGGER_TOPUP_1_MANDIRI':
+            result = _TopupService.do_topup_deposit_mandiri(override_amount=1)
+            update_task(task, result)
+        if task['taskName'] == 'TOPUP_DEPOSIT_MANDIRI':
+            result = _TopupService.do_topup_deposit_mandiri()
+            update_task(task, result)
+        if task['taskName'] == 'TOPUP_DEPOSIT_BNI':
+            result = _TopupService.do_topup_deposit_bni(slot=1)
+            update_task(task, result)
+        
 
     # Add Another TaskType
 
@@ -882,21 +905,23 @@ def start_check_bni_deposit():
 
 
 def check_bni_deposit():
+    # Triggered After Success Transaction
+    LOGGER.info(('BNI DEPOSIT', _Common.BNI_SAM_1_WALLET, 'BNI THRESHOLD', _Common.BNI_THRESHOLD))
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
         _TopupService.do_topup_deposit_bni(slot=1)
-        if not _Common.BNI_SINGLE_SAM:
-            LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD), '1 >>> 2'))
-            _Common.BNI_ACTIVE = 2
-        else:
-            LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD)))
-    elif _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
-        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-        _TopupService.do_topup_deposit_bni(slot=2)
-        if not _Common.BNI_SINGLE_SAM:
-            LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD), '2 >>> 1'))
-            _Common.BNI_ACTIVE = 1
-        else:
-            LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD)))
-    _Common.save_sam_config()
+        # if not _Common.BNI_SINGLE_SAM:
+        #     LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD), '1 >>> 2'))
+        #     _Common.BNI_ACTIVE = 2
+        # else:
+        #     LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD)))
+    # elif _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
+    #     _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+    #     _TopupService.do_topup_deposit_bni(slot=2)
+    #     if not _Common.BNI_SINGLE_SAM:
+    #         LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD), '2 >>> 1'))
+    #         _Common.BNI_ACTIVE = 1
+    #     else:
+    #         LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD)))
+    # _Common.save_sam_config()
 

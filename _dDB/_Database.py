@@ -37,6 +37,8 @@ def get_query(sql, parameter, log=True):
             LOGGER.info((sql, len(result)))
         if log is True and DEBUG is True:
             LOGGER.info(result)
+    except Exception as e:
+        print('pyt:[WARNING]' + str(e))
     finally:
         LOCK.release()
     return result
@@ -46,10 +48,12 @@ def delete_row(sql):
     try:
         LOCK.acquire()
         LOGGER.info(sql)
-        print('pyt: [WARNING]' + str(sql))
+        print('pyt:[INFO]' + str(sql))
         conn__ = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
         conn__.cursor().execute(sql)
         conn__.commit()
+    except Exception as e:
+        print('pyt:[WARNING]' + str(e))
     finally:
         LOCK.release()
 
@@ -57,11 +61,13 @@ def delete_row(sql):
 def insert_update(sql, parameter, log=True):
     try:
         LOCK.acquire()
-        if log is True and DEBUG is True:
+        if log is True or DEBUG is True:
             LOGGER.info((sql, str(parameter)))
         conn__ = get_conn()
         conn__.execute(sql, parameter)
         conn__.commit()
+    except Exception as e:
+        print('pyt:[WARNING]' + str(e))
     finally:
         LOCK.release()
 

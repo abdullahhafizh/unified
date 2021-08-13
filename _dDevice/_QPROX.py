@@ -192,7 +192,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             return False
         param = QPROX['SEND_CRYPTO'] + '|' + str(alias_slot) + '|' + str(card_info) + '|' + str(cyptogram)
         response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        LOGGER.debug((result))
+        # LOGGER.debug((result))
         if response == 0 and len(result) > 10:
             result = result.replace('#', '')
             output = {
@@ -203,7 +203,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             sleep(1)
             ka_info_bni(slot=slot)
             # get_card_info(slot=slot)
-            LOGGER.info((str(slot), bank, str(output)))
+            # LOGGER.info((str(slot), bank, str(output)))
             samCardNo = _Common.BNI_SAM_1_NO if slot == 1 else _Common.BNI_SAM_2_NO
             samLastBalance = _Common.BNI_SAM_1_WALLET if slot == 1 else _Common.BNI_SAM_2_WALLET
             param = {
@@ -235,7 +235,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             output['last_balance'] = samLastBalance
             return output
         else:
-            #_Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
+            _Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
             _Common.NFC_ERROR = 'SEND_CRYPTO_BNI_ERROR_SLOT_'+str(slot)
             return False
     else:
@@ -687,40 +687,45 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         __report_deposit = __data[:102]
         __report_emoney = __data[102:]
         # TODO: Check If Balance is Initial or after process topup
-        __deposit_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
-        if __deposit_balance > 0:
-            _Common.MANDIRI_WALLET_1 = __deposit_balance
+        __deposit_last_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
+        if __deposit_last_balance > 0:
+            _Common.MANDIRI_WALLET_1 = __deposit_last_balance
             _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
             MANDIRI_DEPOSIT_BALANCE = _Common.MANDIRI_ACTIVE_WALLET
         else:
-            __deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
+            __deposit_last_balance = _Common.MANDIRI_ACTIVE_WALLET
         # Update Local Mandiri Wallet
-        __sam_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
-        __emoney_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
+        __deposit_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
+        __card_last_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
         # Handle Force Settlement as Success TRX | Redefine Emoney Last Balance
-        if status == '0000' and __emoney_balance == 0:
-            __emoney_balance = int(LAST_BALANCE_CHECK['balance']) + (int(amount) - int(_Common.C2C_ADMIN_FEE[0]))
-            LOGGER.info(('REDEFINE EMONEY LAST BALANCE FROM FORCE_SETTLEMENT', __emoney_balance))
+        if status == '0000' and __card_last_balance == 0:
+            __card_last_balance = int(LAST_BALANCE_CHECK['balance']) + (int(amount) - int(_Common.C2C_ADMIN_FEE[0]))
+            LOGGER.info(('REDEFINE EMONEY LAST BALANCE FROM FORCE_SETTLEMENT', __card_last_balance))
         # if not _Helper.empty(r[0].strip()) or r[0] != '0':
-        #     __emoney_balance = r[0].strip()
+        #     __card_last_balance = r[0].strip()
         if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
-            __emoney_prev_balance = LAST_BALANCE_CHECK['balance']
+            __card_prev_balance = LAST_BALANCE_CHECK['balance']
         else:
-            __emoney_prev_balance = (int(__emoney_balance) - int(amount)) - int(_Common.C2C_ADMIN_FEE[0])
-            
+            __card_prev_balance = (int(__card_last_balance) - int(amount)) - int(_Common.C2C_ADMIN_FEE[0])
         output = {
-            'last_balance': __emoney_balance,
+            'last_balance': __card_last_balance,
             'report_sam': __report_emoney,
             'card_no': __report_emoney[:16],
             'report_ka': __report_deposit,
             'bank_id': '1',
             'bank_name': 'MANDIRI',
-            'c2c_mode': '1'
+            'c2c_mode': '1',
         }
         # Store Ouput Record Into Local DB
         _Common.local_store_topup_record(output)
         if status == '0000':
             # Emit Topup Success Record Into Local DB
+            output['prev_balance'] = __card_prev_balance
+            output['deposit_no'] = __report_deposit[:16]
+            output['deposit_prev_balance'] = __deposit_prev_balance
+            output['deposit_last_balance'] = __deposit_last_balance
+            output['topup_report'] = __data
+            LOGGER.info((str(output)))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
             # Renew C2C Deposit Balance Info
@@ -734,14 +739,14 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'trxid': reff_no,
             'samCardNo': _Common.C2C_DEPOSIT_NO,
             'samCardSlot': _Common.C2C_SAM_SLOT,
-            'samPrevBalance': __sam_prev_balance,
-            'samLastBalance': __deposit_balance,
+            'samPrevBalance': __deposit_prev_balance,
+            'samLastBalance': __deposit_last_balance,
             'topupCardNo': __report_emoney[:16],
-            'topupPrevBalance': __emoney_prev_balance,
-            'topupLastBalance': __emoney_balance,
+            'topupPrevBalance': __card_prev_balance,
+            'topupLastBalance': __card_last_balance,
             'status': status,
             'remarks': __data,
-            'c2c_mode': '1'
+            'c2c_mode': '1',
         }
         _Common.store_upload_sam_audit(param)
         # Update to server
@@ -957,10 +962,10 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
         # 8912| -> 7
         # 8913 -> 8
         # topup_last_balance = str(int(__data[2].lstrip('0')) + int(amount))
-        __samLastBalance = __data[3].lstrip('0')
+        __deposit_last_balance = __data[3].lstrip('0')
         __report_sam = __data[5]
         # if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
-        #     # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))
+        #     # __deposit_last_balance = str(int(__data[2].lstrip('0')) - int(amount))
         #     __report_sam = 'CARD_NOT_EXIST'
         output = {
             'last_balance': __data[8].lstrip('0'),
@@ -988,12 +993,12 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
             'samCardNo': __card_uid,
             'samCardSlot': slot,
             'samPrevBalance': __data[2].lstrip('0'),
-            'samLastBalance': __samLastBalance,
+            'samLastBalance': __deposit_last_balance,
             'topupCardNo': __data[6],
             'topupPrevBalance': __data[7].lstrip('0'),
             'topupLastBalance': __data[8].lstrip('0'),
             'status': __status,
-            'remarks': __remarks,
+            'remarks': __remarks,            
         }
         _Common.set_mandiri_uid(slot, __card_uid)
         _Common.store_upload_sam_audit(param)
@@ -1208,35 +1213,56 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             _result = _result.replace('#', '')
             __data = _result.split('|')
             __status = __data[0]
+            if __status in ['6969', '6984']:
+                if __status == '6969':
+                    LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
+                    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
+                elif __status == '6984':
+                    LOGGER.warning(('BNI_SAM_BALANCE_NOT_SUFFICIENT', slot, _result))
+                    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_SAM_BALANCE_NOT_SUFFICIENT|'+str(slot))
+                deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
+                ka_info_bni(1)
+                if int(deposit_prev_balance) != int(_Common.BNI_ACTIVE_WALLET):
+                    param = {
+                        'trxid': trxid+'_'+__status,
+                        'samCardNo': _Common.BNI_SAM_1_NO,
+                        'samCardSlot': _Common.BNI_SINGLE_SAM,
+                        'samPrevBalance': deposit_prev_balance,
+                        'samLastBalance': _Common.BNI_ACTIVE_WALLET,
+                        'topupCardNo': LAST_BALANCE_CHECK['card_no'],
+                        'topupPrevBalance': LAST_BALANCE_CHECK['balance'],
+                        'topupLastBalance': LAST_BALANCE_CHECK['balance'],
+                        'status': 'FAILED',
+                        'remarks': _result,
+                    }
+                    _Common.store_upload_sam_audit(param)
+                # Must Stop Here Because Cannot Parse Topup Result
+                return
             if __status == '0000':
                 __remarks = __data[5]
-            if __status == '6984':
-                LOGGER.warning(('BNI_SAM_BALANCE_NOT_SUFFICIENT', slot, _result))
-                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_SAM_BALANCE_NOT_SUFFICIENT|'+str(slot))
-                return
-            if __status == '6969':
-                LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
-                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
-                return
             if __status in ERROR_TOPUP.keys():
                 __remarks = ERROR_TOPUP[__status]
-            __samLastBalance = __data[3].lstrip('0')
-            if __samLastBalance != str(_Common.BNI_ACTIVE_WALLET):
-                LOGGER.info(('BNI_DEPOSIT_LAST_BALANCE_REPORT_NOT_MATCH', __samLastBalance, str(_Common.BNI_ACTIVE_WALLET)))
-                __samLastBalance = str(_Common.BNI_ACTIVE_WALLET)
             __report_sam = __data[5]
-            if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
-                # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))
+            __card_prev_balance = __data[7].lstrip('0')
+            __card_last_balance = __data[8].lstrip('0')
+            __deposit_last_balance = str(int(__report_sam[58:64], 16))
+            __deposit_prev_balance = str(int(__report_sam[52:58], 16))
+            _Common.BNI_ACTIVE_WALLET = int(__report_sam[58:64], 16)
+            # if __deposit_last_balance != str(_Common.BNI_ACTIVE_WALLET):
+            #     LOGGER.info(('BNI_DEPOSIT_LAST_BALANCE_REPORT_NOT_MATCH', __deposit_last_balance, str(_Common.BNI_ACTIVE_WALLET)))
+            #     __deposit_last_balance = str(_Common.BNI_ACTIVE_WALLET)
+            if __status == 'FFFE' and (__deposit_prev_balance == __deposit_last_balance):
+                # __deposit_last_balance = str(int(__data[2].lstrip('0')) - int(amount))
                 __report_sam = 'CARD_NOT_EXIST'
             output = {
-                'last_balance': __data[8].lstrip('0'),
+                'last_balance': __card_last_balance,
                 'report_sam': __report_sam,
                 'card_no': __data[6],
                 'report_ka': 'N/A',
                 'bank_id': '2',
                 'bank_name': 'BNI',
             }
-            update_bni_wallet(slot, amount, __samLastBalance)
+            update_bni_wallet(slot, amount, __deposit_last_balance)
             if __status == '0000':
                 # Store Topup Success Record Into Local DB
                 _Common.local_store_topup_record(output)
@@ -1245,23 +1271,44 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 LOGGER.debug(('TOPUP_TIMEOUT', attempt, __status, _result))
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             else:
+                output['prev_balance'] = __card_prev_balance
+                output['deposit_no'] = __data[1]
+                output['deposit_prev_balance'] = __deposit_prev_balance
+                output['deposit_last_balance'] = __deposit_last_balance
+                output['topup_report'] = __report_sam
                 LOGGER.info((str(output)))
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
             param = {
                 'trxid': trxid,
                 'samCardNo': __data[1],
                 'samCardSlot': slot,
-                'samPrevBalance': __data[2].lstrip('0'),
-                'samLastBalance': __samLastBalance,
+                'samPrevBalance': __deposit_prev_balance,
+                'samLastBalance': __deposit_last_balance,
                 'topupCardNo': __data[6],
-                'topupPrevBalance': __data[7].lstrip('0'),
-                'topupLastBalance': __data[8].lstrip('0'),
+                'topupPrevBalance': __card_prev_balance,
+                'topupLastBalance': __card_last_balance,
                 'status': __status,
                 'remarks': __remarks,
             }
             _Common.store_upload_sam_audit(param)
         else:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
+            ka_info_bni(1)
+            if int(deposit_prev_balance) != int(_Common.BNI_ACTIVE_WALLET):
+                param = {
+                    'trxid': trxid+'_FAILED',
+                    'samCardNo': _Common.BNI_SAM_1_NO,
+                    'samCardSlot': _Common.BNI_SINGLE_SAM,
+                    'samPrevBalance': deposit_prev_balance,
+                    'samLastBalance': _Common.BNI_ACTIVE_WALLET,
+                    'topupCardNo': LAST_BALANCE_CHECK['card_no'],
+                    'topupPrevBalance': LAST_BALANCE_CHECK['balance'],
+                    'topupLastBalance': LAST_BALANCE_CHECK['balance'],
+                    'status': 'FAILED',
+                    'remarks': _result,
+                }
+                _Common.store_upload_sam_audit(param)
     else:
         LOGGER.warning(('INIT_BNI', result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
@@ -1299,6 +1346,7 @@ def c2c_balance_info():
         _Common.MANDIRI_ACTIVE_WALLET = -1
         _Common.MANDIRI_WALLET_1 = -1
         _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
+        _Common.online_logger(['C2C INFO ERROR MANDIRI', result], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
 
 
@@ -1327,6 +1375,7 @@ def ka_info_mandiri(slot=None, caller=''):
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Common.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
+        _Common.online_logger(['KA INFO ERROR MANDIRI', result, slot], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 
@@ -1359,6 +1408,7 @@ def ka_info_bni(slot=1):
             _Common.BNI_SAM_2_WALLET = -1
             _Common.BNI_ACTIVE_WALLET = -1
         _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
+        _Common.online_logger(['KA INFO ERROR BNI', result, slot], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 

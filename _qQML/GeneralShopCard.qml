@@ -28,6 +28,7 @@ Base{
     property bool qrShopeeEnable: false
     property bool qrJakoneEnable: false
     property bool qrBcaEnable: false
+    property bool qrBniEnable: false
 
     property var cdReadiness: undefined
     property var totalPaymentEnable: 0
@@ -172,6 +173,10 @@ Base{
         }
         if (device.QR_BCA == 'AVAILABLE') {
             qrBcaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_BNI == 'AVAILABLE') {
+            qrBniEnable = true;
             totalPaymentEnable += 1;
         }
 
@@ -599,11 +604,10 @@ Base{
         _qrShopeeEnable: qrShopeeEnable
         _qrJakoneEnable: qrJakoneEnable
         _qrBcaEnable: qrBcaEnable
+        _qrBniEnable: qrBniEnable
 
         totalEnable: totalPaymentEnable
     }
-
-
 
 
     Text {

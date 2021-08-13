@@ -111,18 +111,80 @@ DUMMY_QR_DATA = {
         }
     }
 
+DUMMY_QR_DATA_BNI = {
+   "host_trx_date":"2021-08-06T15:50:45",
+   "detail":{
+      "customer_name":"Fadlian",
+      "merchant_id":"008800223497",
+      "merchant_name":"Sukses Makmur Bendungan Hilir",
+      "merchant_city":"Jakarta Pusat",
+      "currency_code":"360",
+      "bill_number":"12345678901234567890",
+      "code":"00",
+      "merchant_pan":"9360001316000000032",
+      "transaction_datetime":"2021-02-25T13:36:13",
+      "payment_description":"Payment Success",
+      "mcc":"5814",
+      "amount":10000,
+      "issuer_code":"93600013",
+      "message":"success",
+      "customer_pan":" 9360001110000000019",
+      "terminal_id":"00005771",
+      "payment_status":"00",
+      "stan":"210226",
+      "amount_fee":1000,
+      "request_id":"XwVjF5zfuHhrDZuw",
+      "approval_code":"00",
+      "merchant_country":"ID",
+      "rrn":"123456789012"
+   },
+   "reff_no":"shop1628239813483124",
+   "amount":10000,
+   "status":"PAID",
+   "trx_reff_no":"shop1628239813483124-17092001",
+   "provider":"QRIS BNI",
+   "trx_id":"MVM000202108061550131348",
+   "mid":"000972721511382bf739669cce165808",
+   "tid":"17092001"
+}
 
-def generate_qr_receipt(data):
+
+def normalize_details_data(data, source='bni-qris'):
+    # Issue Index Found Here
+    if source == 'bni-qris':
+        data['trx_reff_no'] = data['reff_no']
+        data['detail']['data'] = {}
+        data['detail']['data']['reference_number'] = data['detail']['bill_number']
+        data['detail']['transaction_detail'] = {}
+        data['detail']['transaction_detail']['payer_name'] = data['detail']['customer_name']
+        data['detail']['transaction_detail']['customer_pan'] = data['detail']['customer_pan']
+        data['detail']['transaction_detail']['payer_phone_number'] = 'N/A'
+        data['detail']['transaction_detail']['merchant_info'] = {}
+        data['detail']['transaction_detail']['merchant_info']['merchant_id'] = data['detail']['merchant_id']
+        data['detail']['transaction_detail']['merchant_info']['merchant_pan'] = data['detail']['merchant_pan']
+        data['detail']['transaction_detail']['merchant_info']['name'] = data['detail']['merchant_name']
+        data['detail']['transaction_detail']['batch_number'] = data['detail']['stan']
+        data['detail']['transaction_detail']['issuer_reference_number'] = data['detail']['rrn']
+        data['detail']['transaction_detail']['approval_code'] = data['detail']['approval_code']
+        data['detail']['transaction_detail']['issuer_name'] = data['detail']['issuer_code']
+        data['detail']['transaction_detail']['acquirer_name'] = data['detail']['merchant_pan'][:9]
+        data['detail']['transaction_detail']['convenience_fee'] = data['detail']['amount_fee']
+        data['detail']['transaction_detail']['amount'] = data['detail']['amount']
+        return data        
+    else:
+        return data
+
+
+def generate_qr_receipt(data, mode='bca-qris'):
     if _Helper.empty(data):
-        LOGGER.warning(('EMPTY_RECEIPT_DATA'))
+        LOGGER.warning(('EMPTY_RECEIPT_DATA', str(data)))
         return
     if 'detail' not in data.keys():
-        LOGGER.warning(('EMPTY_QR_DETAIL_DATA'))
+        LOGGER.warning(('EMPTY_QR_DETAIL_DATA', str(data)))
         return
+    
     pdf = None
     pdf_file = None
-    trx = data['detail']
-
     # Init Variables
     large_space = 8
     tiny_space = 3.5
@@ -132,9 +194,11 @@ def generate_qr_receipt(data):
     padding_left = 0
 
     try:
+        data = normalize_details_data(data, mode)
+        trx = data['detail']
         # trans_date must have format = 20161003125804
         date_now = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
-        file_name = date_now+'_'+data['trx_reff_no']+'_bca-qris'
+        file_name = date_now+'_'+data['trx_reff_no']+'_'+mode
 
         pdf = PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
@@ -158,9 +222,10 @@ def generate_qr_receipt(data):
         pdf.set_font('Courier', '', default_size)
         pdf.cell(padding_left, 0, 'Cust. PAN: '+trx['transaction_detail']['customer_pan'], 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.set_font('Courier', '', default_size)
-        pdf.cell(padding_left, 0, 'Cust. Phone: '+trx['transaction_detail']['payer_phone_number'], 0, 0, 'L')
-        pdf.ln(tiny_space)
+        if mode == 'bca-qris':
+            pdf.set_font('Courier', '', default_size)
+            pdf.cell(padding_left, 0, 'Cust. Phone: '+trx['transaction_detail']['payer_phone_number'], 0, 0, 'L')
+            pdf.ln(tiny_space)
         pdf.set_font('Courier', '', default_size)
         pdf.cell(padding_left, 0, 'Merc. ID: '+trx['transaction_detail']['merchant_info']['merchant_id'], 0, 0, 'L')
         pdf.ln(tiny_space)

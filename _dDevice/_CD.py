@@ -228,7 +228,7 @@ def set_false_output(attempt, error_message, method='eject_full_round'):
         _Common.CD3_ERROR = error_message
         _Common.upload_device_state('cd3', _Common.CD3_ERROR)
 
-    #_Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
+    _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
 
