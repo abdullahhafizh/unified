@@ -529,7 +529,8 @@ Base{
         }
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
         var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
-//        if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
+        // if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
+        // Build Remarks Object : shop_type, epoch, product_id, raw.provider, raw.card_no, provider, value, payment_received
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
         var rows = [
                     {label: 'No Transaksi', content: trx_id},
@@ -588,6 +589,11 @@ Base{
                 global_confirmation_frame.no_button();
             }
         }
+        if (i.show_info_cs !== undefined && i.show_info_cs === 1){
+            notice_retry_able.title_text = 'SILAKAN HUBUNGI CS DI NO WHATSAPP ' + CONF.whatsapp_no;
+            notice_retry_able.visible = true;
+        }
+
         // ---
     }
 

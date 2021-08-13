@@ -253,7 +253,8 @@ def do_check_trx(reff_no):
                 'status': 'PENDING',
                 'source': data.get('failureType'),
                 'remarks': remarks,
-                'retry_able': _Common.check_retry_able(remarks)
+                'retry_able': _Common.check_retry_able(remarks),
+                'show_info_cs': 0
             }
             LOGGER.info(('INITIAL RETRY_ABLE', r['retry_able']))
             LOGGER.info(('START VALIDATE PAYMENT'))
@@ -286,12 +287,14 @@ def do_check_trx(reff_no):
             if not _Common.validate_duration_pending_code(time_stamp):
                 r['retry_able'] = 0
                 r['status'] = 'ALREADY EXPIRED'
+                r['show_info_cs'] = 1
             valid_usage = _Common.validate_usage_pending_code(reff_no)
             LOGGER.info(('START CHECK USAGE', valid_usage))
             # Add Validation Max Retry Attempts (_Common.MAX_PENDING_CODE_RETRY)
             if not valid_usage:
                 r['retry_able'] = 0
                 r['status'] = 'MAX ATTEMPT EXCEEDED'
+                r['show_info_cs'] = 1
             LOGGER.info(('CHECK_TRX_DATA', json.dumps(r)))
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r))
             del remarks
