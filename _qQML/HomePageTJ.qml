@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 
 
@@ -19,9 +19,6 @@ Base{
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
-    width: 1360
-    height: 768
-    property alias mouseArea: mouseArea
     isPanelActive: false
 
 
@@ -205,18 +202,17 @@ Base{
 
     LoadingViewNew{
         id: slider
-        x: 0; y:0
+        x: 0; y:0;
         visible: withSlider
         show_caption: false
-        height: 760
+        height: 1080
         width: parseInt(SCREEN.size.width)
     }
 
 
     Row{
         id: row_button
-        anchors.horizontalCenterOffset: 0
-        anchors.verticalCenterOffset: 16
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 60
@@ -225,18 +221,12 @@ Base{
         MasterButtonNew {
             id: check_saldo_button
             x: 150
-            width: 250
-            height: 250
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
             text_: qsTr("Cek Saldo")
             text2_: qsTr("Balance Check")
             modeReverse: false
             MouseArea{
-                anchors.rightMargin: 1
-                anchors.bottomMargin: 1
-                anchors.leftMargin: -1
-                anchors.topMargin: -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
@@ -257,17 +247,12 @@ Base{
         MasterButtonNew {
             id: topup_saldo_button
             x: 150
-            width: 250
-            height: 250
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
             text_: qsTr("Topup Saldo")
             text2_: qsTr("Topup Balance")
             modeReverse: false
             MouseArea{
-                id: mouseArea
-                width: 250
-                height: 250
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
@@ -288,8 +273,6 @@ Base{
         MasterButtonNew {
             id: buy_saldo_button
             x: 150
-            width: 250
-            height: 250
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
             text_: qsTr("Beli Kartu")
@@ -316,11 +299,10 @@ Base{
             }
             Rectangle{
                 id: oos_overlay
-                width: 250
+                width: parent.width
                 height: 50
                 color: "#ffffff"
-                anchors.horizontalCenterOffset: 0
-                anchors.verticalCenterOffset: 78
+                anchors.verticalCenterOffset: 100
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 opacity: 0.8
@@ -328,10 +310,6 @@ Base{
                 Text {
                     id: text_oos
                     text: qsTr("HABIS")
-                    anchors.rightMargin: 0
-                    anchors.bottomMargin: 2
-                    anchors.leftMargin: 0
-                    anchors.topMargin: -2
                     anchors.fill: parent
                     font.pixelSize: 20
                     color: 'darkred'
@@ -346,8 +324,8 @@ Base{
 
     Rectangle{
         id: timer_tvc
-        width: 48
-        height: 14
+        width: 10
+        height: 10
         x:0
         y:0
         visible: false
@@ -380,20 +358,18 @@ Base{
     Rectangle{
         id: login_button_rec
         color: 'white'
-        radius: 3
+        radius: 20
         anchors.top: parent.top
-        anchors.topMargin: 166
+        anchors.topMargin: 150
         anchors.left: parent.left
-        anchors.leftMargin: -19
-        width: 74
-        height: 54
+        anchors.leftMargin: -30
+        width: 100
+        height: 80
         Image{
             id: login_button_img
             width: 80
-            height: 60
-            anchors.verticalCenterOffset: 0
-            anchors.rightMargin: -2
-            anchors.horizontalCenterOffset: 12
+            height: 90
+            anchors.horizontalCenterOffset: 10
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
             anchors.horizontalCenter: parent.horizontalCenter
@@ -403,10 +379,6 @@ Base{
         }
 
         MouseArea{
-            anchors.rightMargin: -4
-            anchors.bottomMargin: 2
-            anchors.leftMargin: 4
-            anchors.topMargin: -2
             anchors.fill: parent
             onDoubleClicked: {
                 _SLOT.user_action_log('Press "Admin" Button');
@@ -573,8 +545,6 @@ Base{
 
     NotifView{
         id: notif_view
-        x: 0
-        y: 0
         isSuccess: false
         z: 99
     }

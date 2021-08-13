@@ -22,15 +22,14 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: 500
-        height: 472
+        width: (parent.width==1920) ? 1200 : parent.width
+        height: (parent.width==1920) ? 800 : 750
         color: "white"
         opacity: .8
         radius: 25
+        anchors.verticalCenterOffset: (parent.width==1920) ? 50 : 35
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 70
-        anchors.horizontalCenterOffset: 0
 
         Text {
             id: main_text
@@ -40,33 +39,30 @@ Rectangle{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.top: parent.top
-            anchors.topMargin: 35
-            anchors.horizontalCenterOffset: 33
+            anchors.topMargin: 60
+            anchors.horizontalCenterOffset: 5
             font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
-            font.pixelSize: 16
+            font.pixelSize: 40
         }
 
         TextRectangle{
             id: textRectangle
-            width: 400
-            height: 40
+            width: 700
+            height: 80
             anchors.top: parent.top
-            anchors.horizontalCenterOffset: 0
-            anchors.topMargin: 92
+            anchors.topMargin: 180
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Image{
             id: imageBody
             anchors.top: parent.top
-            anchors.topMargin: 6
+            anchors.topMargin: 20
             scale: 0.7
             anchors.left: parent.left
-            anchors.leftMargin: 38
+            anchors.leftMargin: 20
             source: titleImage
-            sourceSize.height: 80
-            sourceSize.width: 80
         }
 
         TextInput {
@@ -86,9 +82,8 @@ Rectangle{
 
         NumKeyboard{
             id:virtual_numpad
-            anchors.verticalCenterOffset: 22
+            anchors.verticalCenterOffset: 60
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
             property int count:0
 
@@ -137,46 +132,31 @@ Rectangle{
             id: groupBox1
             flat: true
             x: 200
-            y: 489
+            y: 472
             width: parent.width
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 17
+            anchors.bottomMargin: 30
             anchors.horizontalCenterOffset: 0
             anchors.horizontalCenter: parent.horizontalCenter
             NextButton{
                 id: cancel_button
-                y: 4
-                width: 80
-                height: 60
+                width: 190
                 anchors.left: parent.left
-                fontSize: 20
-                anchors.leftMargin: 394
+                anchors.leftMargin: 250
                 button_text: 'batal'
                 MouseArea{
                     anchors.fill: parent
-                    anchors.rightMargin: 2
-                    anchors.bottomMargin: 1
-                    anchors.leftMargin: -2
-                    anchors.topMargin: -1
                     onClicked: close();
                 }
             }
             NextButton{
                 id: update_button
-                x: 11
-                y: 8
-                width: 80
-                height: 60
+                width: 190
                 anchors.right: parent.right
-                fontSize: 20
-                anchors.rightMargin: 389
+                anchors.rightMargin: 250
                 button_text: 'update'
                 MouseArea{
                     anchors.fill: parent
-                    anchors.rightMargin: 0
-                    anchors.bottomMargin: 2
-                    anchors.leftMargin: 0
-                    anchors.topMargin: -2
                     onClicked: {
                         if (textInput!='' && parseInt(textInput) > 0){
                             var _signal = JSON.stringify({
@@ -205,9 +185,3 @@ Rectangle{
     }
 
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.75}
-}
-##^##*/
