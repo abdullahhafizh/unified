@@ -378,6 +378,13 @@ Base{
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         if (successTransaction) {
+            //Trigger Confirm Promo Here
+            if (details.promo.use_id !== undefined){
+                var payload = {
+                        promo: details.promo
+                    }
+                _SLOT.start_do_confirm_promo(JSON.stringify(payload));
+            }
             if (CONF.printer_type=='whatsapp'){
                 hide_all_cancel_button();
                 reset_variables_to_default();
