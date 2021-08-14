@@ -62,9 +62,10 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             reset_variables_to_default();
-            if (details != undefined) console.log('product details', JSON.stringify(details));
+//            if (details != undefined) console.log('product details', JSON.stringify(details));
             if (preloadNotif==undefined){
-                initial_process();
+//                initial_process();
+                do_check_promo();
             } else {
                 popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
                 cancel_button_input_number.visible = true;
@@ -101,6 +102,7 @@ Base{
         base.result_global_refund_balance.connect(transfer_balance_result);
         base.result_get_refund.connect(get_refund_result);
         base.result_general_payment.connect(execute_transaction);
+        base.result_check_trx.connect(get_promo_result);
         framingSignal.connect(get_signal_frame);
     }
 
@@ -127,8 +129,47 @@ Base{
         base.result_global_refund_balance.disconnect(transfer_balance_result);
         base.result_get_refund.disconnect(get_refund_result);
         base.result_general_payment.disconnect(execute_transaction);
+        base.result_check_trx.disconnect(get_promo_result);
         framingSignal.disconnect(get_signal_frame);
 
+    }
+
+
+    function do_check_promo(){
+        popup_loading.open('Memeriksa Kode Promo...');
+        if (details === undefined) {
+            console.log('Failed To Get TRX Product Details');
+            initial_process();
+        } else {
+            console.log('do_check_promo', JSON.stringify(details));
+        }
+        var data = JSON.stringify(details);
+        _SLOT.start_do_inquiry_promo(data);
+    }
+
+
+    function get_promo_result(p){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_promo_result', now, p);
+        var result = p.split('|')[1];
+        var trx_data =  JSON.parse(p.split('|')[2]);
+        //Overwrite Transaction Data
+        details = trx_data;
+        if (result == 'AVAILABLE'){
+            popup_loading.imageSource = "source/success.png";
+            popup_loading.textMain = 'Yeay, Kode Promo Aktif Ditemukan';
+            popup_loading.textSlave = details.promo.remarks;
+            console.log('promo desc ', details.promo.remarks);
+            info_promo.visible = true;
+            info_promo.labelContent = details.promo.name;
+        } else {
+            popup_loading.imageSource = "source/smiley_down.png";
+            popup_loading.textMain = 'Mohon Maaf, Tidak Ditemukan Kode Promo Aktif';
+        }
+        delay(3*1000, function(){
+            popup_loading.close();
+            initial_process();
+        });
     }
 
     function set_refund_channel(channel){
@@ -368,6 +409,13 @@ Base{
             if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         if (successTransaction) {
+            //Trigger Confirm Promo Here
+            if (details.promo.use_id !== undefined){
+                var payload = {
+                        promo: details.promo
+                    }
+                _SLOT.start_do_confirm_promo(JSON.stringify(payload));
+            }
             if (CONF.printer_type=='whatsapp'){
                 hide_all_cancel_button();
                 reset_variables_to_default();
@@ -989,14 +1037,14 @@ Base{
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
         // Row 2 Confirmation Content
-        row2.labelContent = details.provider
+        info_trx_type.labelContent = details.provider
         if (details.shop_type=='topup') {
             getDenom = parseInt(details.denom);
-            row2.labelContent = details.provider + ' - ' + details.value
-            row6.labelContent = 'Rp ' + FUNC.insert_dot(getDenom.toString());
+            info_trx_type.labelContent = details.provider + ' - ' + details.value
+            info_trx_amount.labelContent = 'Rp ' + FUNC.insert_dot(getDenom.toString());
         }
         if (details.shop_type=='ppob') {
-            row3.labelName = 'Nilai Denom'
+            info_trx_price.labelName = 'Nilai Denom'
         }
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
@@ -1451,40 +1499,48 @@ Base{
         anchors.horizontalCenterOffset: 50
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 20
+        spacing: 17
 
         TextDetailRow{
-            id: row1
+            id: info_date
             labelName: 'Tanggal'
             labelContent: Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         }
 
         TextDetailRow{
-            id: row2
+            id: info_trx_type
             labelName: (details.shop_type=='topup') ? 'Isi Ulang' : 'Pembelian'
         }
 
         TextDetailRow{
-            id: row6
+            id: info_trx_amount
             visible: (details.shop_type=='topup')
             labelName: 'Nilai Topup'
             labelContent: 'Rp ' + FUNC.insert_dot(getDenom.toString());
         }
 
         TextDetailRow{
-            id: row3
+            id: info_trx_price
             labelName: (details.shop_type=='topup') ? 'Biaya Admin' : 'Harga Satuan'
             labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value);
         }
 
+
         TextDetailRow{
-            id: row5
+            id: info_promo
+            labelName: 'Promo Aktif'
+            visible: false
+            labelContent: ''
+        }
+
+        TextDetailRow{
+            id: info_total_payment
             labelName: 'Total Bayar'
             labelContent: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
         }
 
         TextDetailRow{
-            id: row4
+            id: info_payment_receive
             labelName: (details.payment=='cash') ? 'Uang Masuk' : 'Jumlah'
             labelContent: (details.payment=='cash') ? 'Rp ' + FUNC.insert_dot(receivedPayment.toString()) : details.qty
         }

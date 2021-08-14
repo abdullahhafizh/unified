@@ -284,7 +284,6 @@ def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION')
 
 
 # NEW LAYOUT =============
-# TODO: Adjust Below Layout
 
 def new_print_topup_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
@@ -371,6 +370,11 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'SALDO AKHIR: Rp. ' + clean_number(str(p['final_balance'])), 0, 0, 'L')
+                if not _Helper.empty(p.get('promo')):
+                    if int(p['receive_discount']) > 0:
+                        pdf.ln(small_space)
+                        pdf.set_font(USED_FONT, 'B', regular_space)
+                        pdf.cell(padding_left, 0, 'PROMO AKTIF: ' + p['promo']['code'], 0, 0, 'L')
                 if 'refund_status' in p.keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -601,6 +605,11 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             pdf.ln(small_space)
             pdf.set_font(USED_FONT, 'B', regular_space)
             pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
+            if not _Helper.empty(p.get('promo')):
+                if int(p['receive_discount']) > 0:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'PROMO AKTIF: ' + p['promo']['code'], 0, 0, 'L')
             # pdf.ln(small_space)
             # pdf.set_font(USED_FONT, 'B', regular_space)
             # pdf.cell(padding_left, 0, 'UANG MASUK  : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
@@ -823,6 +832,11 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                             pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
                     else:
                         pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
+            if not _Helper.empty(p.get('promo')):
+                if int(p['receive_discount']) > 0:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'PROMO AKTIF: ' + p['promo']['code'], 0, 0, 'L')
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1590,6 +1604,9 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                 pdf.set_line('NO. KARTU  : ' + p['topup_details']['card_no'])
                 pdf.set_line('SALDO AWAL : Rp. ' + clean_number(p['raw']['prev_balance']))
                 pdf.set_line('SALDO AKHIR: Rp. ' + clean_number(str(p['final_balance'])))
+                if not _Helper.empty(p.get('promo')):
+                    if int(p['receive_discount']) > 0:
+                        pdf.set_line('PROMO AKTIF: ' + p['promo']['code'])
                 if 'refund_status' in p.keys():
                     pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                     pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
@@ -1688,6 +1705,9 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
             pdf.set_line('TIPE KARTU  : ' + p['provider'])
             pdf.set_line('QTY KARTU   : ' + str(p['qty']))
             pdf.set_line(str(p['qty']) + ' x ' + clean_number(p['value']))
+            if not _Helper.empty(p.get('promo')):
+                if int(p['receive_discount']) > 0:
+                    pdf.set_line('PROMO AKTIF: ' + p['promo']['code'])
             if 'refund_status' in p.keys():
                 pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                 pdf.set_line('PENGEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
@@ -1799,6 +1819,9 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                             pdf.set_line(label_sn + str(p['ppob_details']['sn'][:24]))
                     else:
                         pdf.set_line(label_sn + str(p['ppob_details']['sn'][:24]))
+            if not _Helper.empty(p.get('promo')):
+                if int(p['receive_discount']) > 0:
+                    pdf.set_line('PROMO AKTIF: ' + p['promo']['code'])
             if 'refund_status' in p.keys():
                 pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                 pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))

@@ -527,3 +527,47 @@ def check_detail_trx_status(payload, mode='CASHIN OVO'):
     except Exception as e:
         LOGGER.warning((str(payload), mode, str(e)))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('CHECK_TRX_STATUS|ERROR')
+
+
+
+def start_do_inquiry_promo(payload):
+    _Helper.get_thread().apply_async(do_inquiry_promo, (payload,))
+
+
+def do_inquiry_promo(payload):
+    payload = json.loads(payload)
+    try:
+        url = _Common.BACKEND_URL+'promo/check'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload, custom_timeout=5)
+        if s == 200 and r['result'] == 'OK':
+            data = r['data']
+            if int(data.get('receive_discount', 0)) > 0:
+                PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PROMO_INQUIRY|AVAILABLE|'+json.dumps(data))
+            else:
+                PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PROMO_INQUIRY|NOT_FOUND|'+json.dumps(data))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PROMO_INQUIRY|ERROR|'+json.dumps(payload))
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PROMO_INQUIRY|ERROR|'+json.dumps(payload))
+        
+
+
+def start_do_confirm_promo(payload):
+    _Helper.get_thread().apply_async(do_confirm_promo, (payload,))
+
+
+def do_confirm_promo(payload):
+    payload = json.loads(payload)
+    try:
+        url = _Common.BACKEND_URL+'promo/use'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK':
+            LOGGER.info((str(payload), str(r)))
+        else:
+            LOGGER.warning((str(payload), str(r)))
+            payload['endpoint'] = 'promo/use'
+            _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+    except Exception as e:
+        LOGGER.warning((str(e)))

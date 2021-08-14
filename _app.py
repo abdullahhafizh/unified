@@ -768,6 +768,14 @@ class SlotHandler(QObject):
         _QRPaymentService.start_do_print_qr_receipt(mode)
     start_do_print_qr_receipt = pyqtSlot(str)(start_do_print_qr_receipt)
 
+    def start_do_inquiry_promo(self, payload):
+        _PPOBService.start_do_inquiry_promo(payload)
+    start_do_inquiry_promo = pyqtSlot(str)(start_do_inquiry_promo)
+    
+    def start_do_confirm_promo(self, payload):
+        _PPOBService.start_do_confirm_promo(payload)
+    start_do_confirm_promo = pyqtSlot(str)(start_do_confirm_promo)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

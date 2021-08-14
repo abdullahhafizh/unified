@@ -76,11 +76,14 @@ Base{
 
     function open(msg){
         if (msg!=undefined) textMain = msg;
-        popup_loading.visible = true
+        popup_loading.visible = true;
         forceCloseLoading = 0;
     }
 
     function close(){
-        popup_loading.visible = false
+        imageSource = "source/sand-clock-animated-2.gif";
+        textMain = 'Silakan Menunggu';
+        textSlave = '';
+        popup_loading.visible = false;
     }
 }
