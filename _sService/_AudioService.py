@@ -63,7 +63,7 @@ def play_audio(track):
         # if SOUND is not None:
         #     SOUND.terminate()
         audio = AUDIO_MAPPING.get(track)
-        if audio is None:
+        if audio is None or not os.path.exist(audio):
             AUD_SIGNDLER.SIGNAL_START_AUDIO.emit('START_AUDIO|NOT_FOUND')
             return
         # SOUND = multiprocessing.Process(target=playsound, args=(audio,))
