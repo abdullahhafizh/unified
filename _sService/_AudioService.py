@@ -31,12 +31,12 @@ SOUNDER = os.path.join(sys.path[0], 'sounder.exe')
 # TODO: Register All Audio Files Here
 AUDIO_MAPPING = {
     'welcome': os.path.join(AUDIO_PATH, 'intro.wav'),
-    # 'failed_read_qr': os.path.join(AUDIO_PATH, 'failed_read_qr.wav'),
-    # 'failed_validate_qr': os.path.join(AUDIO_PATH, 'failed_validate_qr.wav'),
-    # 'card_not_available': os.path.join(AUDIO_PATH, 'card_not_available.wav'),
-    # 'take_otp_card': os.path.join(AUDIO_PATH, 'take_otp_card.wav'),
-    # 'scan_vm_qr_to_mobile': os.path.join(AUDIO_PATH, 'scan_vm_qr_to_mobile.wav'),
-    # 'scan_phone_qr_to_vm': os.path.join(AUDIO_PATH, 'scan_phone_qr_to_vm.wav'),
+    'failed_read_qr': os.path.join(AUDIO_PATH, 'failed_read_qr.wav'),
+    'failed_validate_qr': os.path.join(AUDIO_PATH, 'failed_validate_qr.wav'),
+    'card_not_available': os.path.join(AUDIO_PATH, 'card_not_available.wav'),
+    'take_otp_card': os.path.join(AUDIO_PATH, 'take_otp_card.wav'),
+    'scan_vm_qr_to_mobile': os.path.join(AUDIO_PATH, 'scan_vm_qr_to_mobile.wav'),
+    'scan_phone_qr_to_vm': os.path.join(AUDIO_PATH, 'scan_phone_qr_to_vm.wav'),
 }
 
 
