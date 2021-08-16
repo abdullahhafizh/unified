@@ -451,7 +451,7 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 if (globalBoxName == ""){
-                    // _SLOT.start_play_audio('welcome');
+                    _SLOT.start_play_audio('welcome');
                     _SLOT.get_kiosk_status();
                 }
                 //Mandiri Auto Settlement Timer Trigger
