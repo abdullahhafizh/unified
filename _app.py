@@ -748,9 +748,9 @@ class SlotHandler(QObject):
         _AudioService.start_play_audio(track)
     start_play_audio = pyqtSlot(str)(start_play_audio)
     
-    def start_trigger_stop_audio(self):
-        _AudioService.start_trigger_stop_audio()
-    start_trigger_stop_audio = pyqtSlot()(start_trigger_stop_audio)
+    # def start_trigger_stop_audio(self):
+    #     _AudioService.start_trigger_stop_audio()
+    # start_trigger_stop_audio = pyqtSlot()(start_trigger_stop_audio)
     
     def start_update_usage_retry_code(self, trxid):
         _Common.start_update_usage_retry_code(trxid)
