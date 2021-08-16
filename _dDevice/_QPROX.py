@@ -1323,31 +1323,36 @@ MANDIRI_DEPOSIT_BALANCE = 0
 
 
 def c2c_balance_info():
-    param = QPROX['BALANCE_C2C'] + '|'
-    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    if response == 0 and '|' in result:
-        # 24000|CF8703D6|603298180000003627070120138508320065030106000000000003DB727BDF078EEDD1518ABD6FC1A678B42C4346DA84117374E4C96A17022003224070FFFF
-        res = result.split('|')
-        MANDIRI_DEPOSIT_BALANCE = int(res[0])
-        _Common.C2C_DEPOSIT_UID = res[1]
-        _Common.log_to_temp_config('c2c^card^uid', res[1])
-        _Common.C2C_DEPOSIT_NO = res[2][:16]
-        _Common.MANDIRI_SAM_NO_1 = _Common.C2C_DEPOSIT_NO
-        _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
-        _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
-        _Common.MANDIRI_ACTIVE = 1
-        _DAO.create_today_report(_Common.TID)
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(_Common.MANDIRI_ACTIVE_WALLET))
-        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|' + str(result))
-    else:
-        _Common.C2C_DEPOSIT_UID = 'N/A'
-        _Common.C2C_DEPOSIT_NO = ''
-        _Common.MANDIRI_SAM_NO_1 = ''
-        _Common.MANDIRI_ACTIVE_WALLET = -1
-        _Common.MANDIRI_WALLET_1 = -1
-        _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
-        _Common.online_logger(['C2C INFO ERROR MANDIRI', result], 'device')
-        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
+    try:
+        param = QPROX['BALANCE_C2C'] + '|'
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        if response == 0 and '|' in result:
+            # 24000|CF8703D6|603298180000003627070120138508320065030106000000000003DB727BDF078EEDD1518ABD6FC1A678B42C4346DA84117374E4C96A17022003224070FFFF
+            res = result.split('|')
+            MANDIRI_DEPOSIT_BALANCE = int(res[0])
+            _Common.C2C_DEPOSIT_UID = res[1]
+            _Common.log_to_temp_config('c2c^card^uid', res[1])
+            _Common.C2C_DEPOSIT_NO = res[2][:16]
+            _Common.MANDIRI_SAM_NO_1 = _Common.C2C_DEPOSIT_NO
+            _Common.MANDIRI_ACTIVE_WALLET = MANDIRI_DEPOSIT_BALANCE
+            _Common.MANDIRI_WALLET_1 = MANDIRI_DEPOSIT_BALANCE
+            _Common.MANDIRI_ACTIVE = 1
+            _DAO.create_today_report(_Common.TID)
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(_Common.MANDIRI_ACTIVE_WALLET))
+            QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|' + str(result))
+        else:
+            _Common.C2C_DEPOSIT_UID = 'N/A'
+            _Common.C2C_DEPOSIT_NO = ''
+            _Common.MANDIRI_SAM_NO_1 = ''
+            _Common.MANDIRI_ACTIVE_WALLET = -1
+            _Common.MANDIRI_WALLET_1 = -1
+            _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
+            _Common.online_logger(['C2C INFO ERROR MANDIRI', result], 'device')
+            QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
+    except Exception as e:
+        LOGGER.warning((e))
+    finally:
+        LOGGER.info((_Common.MANDIRI_ACTIVE_WALLET))
 
 
 def ka_info_mandiri(slot=None, caller=''):

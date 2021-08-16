@@ -2125,44 +2125,48 @@ def check_mandiri_deposit_update_balance():
         if not update_result:
             print("pyt: check_mandiri_deposit_update_balance "+ str(update_result))
             LOGGER.debug(('UPDATE_BALANCE', str(update_result)))
-            return False
-        if update_result['last_balance'] == update_result['topup_amount']:
-            update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
-        output = {
-            # 'prev_wallet': pending_result['prev_wallet'],
-            # 'last_wallet': pending_result['last_wallet'],
-            'prev_balance': prev_balance,
-            'last_balance': update_result['last_balance'],
-            'report_sam': 'N/A',
-            'card_no': update_result['card_no'],
-            'report_ka': 'N/A',
-            'bank_id': '1',
-            'bank_name': 'MANDIRI',
-        }
-        # Do Update Deposit Balance Value in Memory
-        _Common.MANDIRI_ACTIVE_WALLET = int(update_result['last_balance'])
-        _Common.MANDIRI_WALLET_1 = int(update_result['last_balance'])
-        # Do Upload SAM Refill Status Into BE Asyncronous
-        sam_audit_data = {
-            'trxid': 'REFILL_SAM',
-            'samCardNo': _Common.C2C_DEPOSIT_NO,
-            'samCardSlot': _Common.C2C_SAM_SLOT,
-            'samPrevBalance': output['prev_balance'],
-            'samLastBalance': output['last_balance'],
-            'topupCardNo': '',
-            'topupPrevBalance': output['prev_balance'],
-            'topupLastBalance': output['last_balance'],
-            'status': 'REFILL_SUCCESS',
-            'remarks': output,
-        }
-        _DAO.create_today_report(_Common.TID)
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(update_result['topup_amount']))
-        _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))
-        _Common.store_upload_sam_audit(sam_audit_data)   
-        send_kiosk_status()
-        return True    
+            result = False
+        else:
+            if update_result['last_balance'] == update_result['topup_amount']:
+                update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))
+            output = {
+                # 'prev_wallet': pending_result['prev_wallet'],
+                # 'last_wallet': pending_result['last_wallet'],
+                'prev_balance': prev_balance,
+                'last_balance': update_result['last_balance'],
+                'report_sam': 'N/A',
+                'card_no': update_result['card_no'],
+                'report_ka': 'N/A',
+                'bank_id': '1',
+                'bank_name': 'MANDIRI',
+            }
+            # Do Update Deposit Balance Value in Memory
+            _Common.MANDIRI_ACTIVE_WALLET = int(update_result['last_balance'])
+            _Common.MANDIRI_WALLET_1 = int(update_result['last_balance'])
+            # Do Upload SAM Refill Status Into BE Asyncronous
+            sam_audit_data = {
+                'trxid': 'REFILL_SAM',
+                'samCardNo': _Common.C2C_DEPOSIT_NO,
+                'samCardSlot': _Common.C2C_SAM_SLOT,
+                'samPrevBalance': output['prev_balance'],
+                'samLastBalance': output['last_balance'],
+                'topupCardNo': '',
+                'topupPrevBalance': output['prev_balance'],
+                'topupLastBalance': output['last_balance'],
+                'status': 'REFILL_SUCCESS',
+                'remarks': output,
+            }
+            _DAO.create_today_report(_Common.TID)
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_count'], 1)
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_refill_amount'], int(update_result['topup_amount']))
+            _DAO.update_today_summary_multikeys(['mandiri_deposit_last_balance'], int(output['last_balance']))
+            _Common.store_upload_sam_audit(sam_audit_data)   
+            send_kiosk_status()
+            result = True    
     except Exception as e:
         print("pyt: check_mandiri_deposit_update_balance "+ str(e))
         LOGGER.warning((e))
-        return False
+        result = False
+    finally:
+        _QPROX.c2c_balance_info()
+        return result
