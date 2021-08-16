@@ -1230,7 +1230,7 @@ def store_transaction_global(param, retry=False):
         })
         total_amount = int(g['value']) * int(g['qty'])
         payment_type = get_payment(g['payment'])
-        admin_fee = _Common.C2C_ADMIN_FEE[0]
+        admin_fee = int(g['admin_fee'])
         target_card_no = g['raw'].get('card_no', '')
         # Update Product Stock
         if g['shop_type'] == 'shop':
