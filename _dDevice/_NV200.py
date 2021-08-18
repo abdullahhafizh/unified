@@ -219,7 +219,10 @@ class NV200_BILL_ACCEPTOR(object):
 
     def parse_event(self, poll_data):
         if _Common.BILL_LIBRARY_DEBUG is True:
-            print('pyt: raw poll_data', str(poll_data))
+            try:
+                print('pyt: raw poll_data', str(poll_data))
+            except Exception as e:
+                traceback.format_exc()
         event = []
         event_data = []
         event_data.append(poll_data)
