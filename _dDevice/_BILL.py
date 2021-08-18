@@ -275,8 +275,9 @@ def start_receive_note(trxid):
                         break
                 # Process Store and Update Data Cash
                 if _Common.store_notes_activity(cash_in, trxid) is True:
-                    if store_cash_into_cashbox() is True:
-                        update_cash_result, store_result = update_cash_status(str(cash_in), True)
+                    store_result = store_cash_into_cashbox()
+                    if store_result is True:
+                        update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                         LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                         _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
             if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
