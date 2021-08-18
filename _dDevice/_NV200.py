@@ -231,9 +231,11 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][0])
             event.append(poll_data[1][1])
         else:
-            if len(poll_data) == 3:
-                del poll_data[1]
-            event = poll_data
+            event.append(poll_data[0])
+            event.append(poll_data[-1])
+            # if len(poll_data) == 3:
+            #     del poll_data[1]
+            # event = poll_data
             
         if event[1] == '0xf1':
             event_data.append("Slave reset")
