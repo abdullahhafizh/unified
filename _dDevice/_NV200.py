@@ -13,7 +13,7 @@ LOGGER = logging.getLogger()
 
 ERROR_COUNT = 0
 ERROR_FILE = "error_print_nv200_event_"
-SOCKET_TIMEOUT = 5
+SOCKET_TIMEOUT = 7
 
 
 class NV200_BILL_ACCEPTOR(object):
@@ -313,12 +313,11 @@ class NV200_BILL_ACCEPTOR(object):
                     event.append('')
                 if _Common.BILL_LIBRARY_DEBUG is True:
                     try:
-                        print('pyt: [NV200] Event :', str(caller), str(event))
+                        print('pyt: [NV200] Poll Event :', str(caller), str(event))
                     except Exception as e:
                         traceback.format_exc()
                 return event
-            else:
-                continue
+            time.sleep(.5)
 
 NV200 = None
 

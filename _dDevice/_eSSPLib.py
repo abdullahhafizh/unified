@@ -160,7 +160,7 @@ class eSSP(object):  # noqa
 
         Will resume to work only when beeing enable()'d again.
         """
-        result = self.send_only([self.getseq(), '0x1', '0x9'])
+        result = self.send([self.getseq(), '0x1', '0x9'])
         return result
 
     def enable(self):
