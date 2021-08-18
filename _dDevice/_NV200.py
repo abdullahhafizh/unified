@@ -402,7 +402,7 @@ def send_command(param=None, config=[], restricted=[]):
             while True:
                 pool = NV200.listen_poll()
                 LOOP_ATTEMPT += 1
-                if config['KEY_RECEIVED'] or config['KEY_STORED'] in pool[1]:
+                if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
                     return 0, pool[1]
                     break
                 if config['KEY_BOX_FULL'] in pool[1]:
