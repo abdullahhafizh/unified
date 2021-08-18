@@ -60,7 +60,7 @@ NV = {
     "TIMEOUT_BAD_NOTES": 'Invalid note',
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
-    "KEY_STORED": 'Note stacked',
+    "KEY_STORED": 'stacked',
     "MAX_STORE_ATTEMPT": 3,
     "KEY_BOX_FULL": 'Stacker full',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE

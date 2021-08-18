@@ -412,7 +412,7 @@ def send_command(param=None, config=[], restricted=[]):
                     NV200.disable_only()
                     return -1, pool[1]
                     break
-                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                if LOOP_ATTEMPT >= 2:
                     break
                 time.sleep(1)
             return -1, ""
