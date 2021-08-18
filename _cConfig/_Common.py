@@ -1499,6 +1499,10 @@ def serialize_error_message(e):
 
 
 def online_logger(e='', mode='service'):
+    _Helper.get_thread().apply_async(async_online_logger, (e, mode,))
+
+
+def async_online_logger(e='', mode='service'):
     # pass
     e = serialize_error_message(e)
     if mode == 'service':
