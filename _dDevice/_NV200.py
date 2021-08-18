@@ -418,7 +418,7 @@ def send_command(param=None, config=[], restricted=[]):
                 if LOOP_ATTEMPT >= 3: 
                     break
                 time.sleep(1)
-            return 0, "Noted Stacked Forcely"
+            return 0, "Noted stacked forcely"
         elif command == config['REJECT']:
             action = NV200.reject()
             LOOP_ATTEMPT = 0
