@@ -415,7 +415,7 @@ def send_command(param=None, config=[], restricted=[]):
                     break
                 # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                 # Set Harcoded only wait for 3 Seconds
-                if LOOP_ATTEMPT >= 3: 
+                if LOOP_ATTEMPT >= 2: 
                     break
                 time.sleep(1)
             return 0, "Noted stacked forcely"
