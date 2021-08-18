@@ -402,7 +402,7 @@ def send_command(param=None, config=[], restricted=[]):
             while True:
                 pool = NV200.listen_poll()
                 LOOP_ATTEMPT += 1
-                if config['KEY_STORED'] in pool[1]:
+                if config['KEY_RECEIVED'] or config['KEY_STORED'] in pool[1]:
                     return 0, pool[1]
                     break
                 if config['KEY_BOX_FULL'] in pool[1]:
@@ -412,7 +412,9 @@ def send_command(param=None, config=[], restricted=[]):
                     NV200.disable_only()
                     return -1, pool[1]
                     break
-                if LOOP_ATTEMPT >= 2:
+                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                # Set Harcoded ON ly Wait 3 Seconds
+                if LOOP_ATTEMPT >= 3: 
                     return -1, ""
                     break
                 time.sleep(1)
