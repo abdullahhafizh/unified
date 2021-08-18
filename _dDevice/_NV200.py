@@ -416,10 +416,9 @@ def send_command(param=None, config=[], restricted=[]):
                 # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                 # Set Harcoded only wait for 3 Seconds
                 if LOOP_ATTEMPT >= 3: 
-                    return -1, ""
                     break
                 time.sleep(1)
-            return -1, ""
+            return 0, "Noted Stacked Forcely"
         elif command == config['REJECT']:
             action = NV200.reject()
             LOOP_ATTEMPT = 0
