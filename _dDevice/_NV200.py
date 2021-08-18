@@ -290,19 +290,20 @@ class NV200_BILL_ACCEPTOR(object):
         event_data.append(0)
         return event_data
 
-    def listen_poll(self):
+    def listen_poll(self, caller):
         while True:
             poll = self.nv200.poll()      
             if len(poll) > 1:     
                 event = self.parse_event(poll)
                 if poll[1] == '0xed' or poll[1] == '0xec':
                     last_reject = self.nv200.last_reject()
-                    event.append(self.parse_reject_code(last_reject))
+                    # event.append(self.parse_reject_code(last_reject))
+                    event.append('')
                 else:
                     event.append('')
                 if _Common.BILL_LIBRARY_DEBUG is True:
                     try:
-                        print('pyt: [NV200] Event :', str(event))
+                        print('pyt: [NV200] Event :', str(caller), str(event))
                     except Exception as e:
                         traceback.format_exc()
                         continue
@@ -379,7 +380,7 @@ def send_command(param=None, config=[], restricted=[]):
             if action is True:
                 action = NV200.enable()
                 while True:
-                    pool = NV200.listen_poll()
+                    pool = NV200.listen_poll(command)
                     LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1]:
                         return 0, pool[1]
@@ -400,7 +401,7 @@ def send_command(param=None, config=[], restricted=[]):
         elif command == config['STORE']:
             LOOP_ATTEMPT = 0
             while True:
-                pool = NV200.listen_poll()
+                pool = NV200.listen_poll(command)
                 LOOP_ATTEMPT += 1
                 if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
                     return 0, pool[1]
@@ -423,7 +424,7 @@ def send_command(param=None, config=[], restricted=[]):
             action = NV200.reject()
             LOOP_ATTEMPT = 0
             while True:
-                pool = NV200.listen_poll()
+                pool = NV200.listen_poll(command)
                 LOOP_ATTEMPT += 1
                 if "Rejected" in pool[1]:
                     return 0, pool[1]
