@@ -61,7 +61,7 @@ NV = {
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
     "KEY_STORED": 'stacked',
-    "MAX_STORE_ATTEMPT": 3,
+    "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": 'Stacker full',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE
 }
@@ -335,26 +335,37 @@ def start_receive_note(trxid):
 
 def store_cash_into_cashbox():
     print("pyt: ", _Helper.whoami())
-    attempt = 0
     max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
-    while True:
-        sleep(1)
-        attempt += 1
-        # Assumming Positive Response When Stacking Note
-        # if _Common.BILL_DIRECT_READ_NOTE is True:
-        #     return True
-        _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
-        LOGGER.debug((str(attempt), str(_result_store)))
-        # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
-        if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
-            return True
-        if BILL['KEY_STORED'].lower() in _result_store.lower():
-            return True
-        if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
-            set_cashbox_full()
-            return True
-        if attempt == max_attempt:
-            return False
+    _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
+    LOGGER.debug((str(_result_store)))
+    # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
+    if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
+        return True
+    if BILL['KEY_STORED'].lower() in _result_store.lower():
+        return True
+    if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
+        set_cashbox_full()
+        return True
+    # attempt = 0
+    # max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
+    # while True:
+    #     sleep(1)
+    #     attempt += 1
+    #     # Assumming Positive Response When Stacking Note
+    #     # if _Common.BILL_DIRECT_READ_NOTE is True:
+    #     #     return True
+    #     _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
+    #     LOGGER.debug((str(attempt), str(_result_store)))
+    #     # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
+    #     if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
+    #         return True
+    #     if BILL['KEY_STORED'].lower() in _result_store.lower():
+    #         return True
+    #     if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
+    #         set_cashbox_full()
+    #         return True
+    #     if attempt == max_attempt:
+    #         return False
         
 
 def set_cashbox_full():
