@@ -386,9 +386,9 @@ class eSSP(object):  # noqa
         #prepedstring = prepedstring.decode('hex')
 
         self.__ser.write(prepedstring)
-        response = True
-        if process:
-            response = self.read(process)
+        # response = True
+        # if process:
+        response = self.read(process)
         return response
 
     def read(self, process=True):
