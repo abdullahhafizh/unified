@@ -273,10 +273,12 @@ def start_receive_note(trxid):
                                                                             'COLLECTED': COLLECTED_CASH,
                                                                             'TARGET': DIRECT_PRICE_AMOUNT})))
                         break
-                _Common.store_notes_activity(cash_in, trxid)
-                update_cash_result, store_result = update_cash_status(str(cash_in), store_cash_into_cashbox())
-                LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
-                _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                # Process Store and Update Data Cash
+                if _Common.store_notes_activity(cash_in, trxid) is True:
+                    if store_cash_into_cashbox() is True:
+                        update_cash_result, store_result = update_cash_status(str(cash_in), True)
+                        LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
+                        _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
             if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                 BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                 break

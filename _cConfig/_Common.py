@@ -262,11 +262,16 @@ MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'bloc
 
 
 def store_notes_activity(notes, trxid):
-    cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
-    LOGGER.info((cash_status_file, trxid, notes))
-    with open(cash_status_file, 'a') as c:
-        c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
-        c.close()
+    try:
+        cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+        LOGGER.info((cash_status_file, trxid, notes))
+        with open(cash_status_file, 'a') as c:
+            c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
+            c.close()
+        return True
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
 
 
 def store_bulk_notes_activity(rows=[]):
