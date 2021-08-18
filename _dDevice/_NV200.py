@@ -218,7 +218,8 @@ class NV200_BILL_ACCEPTOR(object):
 
 
     def parse_event(self, poll_data):
-        print('pyt: raw poll_data', str(poll_data))
+        if _Common.BILL_LIBRARY_DEBUG is True:
+            print('pyt: raw poll_data', str(poll_data))
         event = []
         event_data = []
         event_data.append(poll_data)
@@ -227,6 +228,8 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][0])
             event.append(poll_data[1][1])
         else:
+            if len(poll_data) == 3:
+                del poll_data[1]
             event = poll_data
             
         if event[1] == '0xf1':
@@ -432,8 +435,8 @@ def send_command(param=None, config=[], restricted=[]):
                     return -1, pool[1]
                     break
                 # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                # Set Harcoded only wait for 2 Seconds
-                if LOOP_ATTEMPT >= 2: 
+                # Set Harcoded only wait for 3 Seconds
+                if LOOP_ATTEMPT >= 3: 
                     break
                 time.sleep(1)
             return 0, "Noted stacked forcely"
