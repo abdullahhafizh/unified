@@ -13,7 +13,7 @@ LOGGER = logging.getLogger()
 
 ERROR_COUNT = 0
 ERROR_FILE = "error_print_nv200_event_"
-SOCKET_TIMEOUT = 30
+SOCKET_TIMEOUT = 5
 
 
 class NV200_BILL_ACCEPTOR(object):

@@ -160,7 +160,7 @@ class eSSP(object):  # noqa
 
         Will resume to work only when beeing enable()'d again.
         """
-        result = self.send([self.getseq(), '0x1', '0x9'], False)
+        result = self.send_only([self.getseq(), '0x1', '0x9'])
         return result
 
     def enable(self):
@@ -390,6 +390,27 @@ class eSSP(object):  # noqa
         # if process:
         response = self.read(process)
         return response
+    
+    def send_only(self, command):
+        crc = self.crc(command)
+        prepedstring = '7F'
+        command = command + crc
+        for i in range(0, len(command)):
+            if (len(command[i]) % 2 == 1):
+                prepedstring += '0'
+            prepedstring += command[i][2:]
+
+        # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
+        #                    for x in range(0, len(prepedstring), 2)]))
+
+        prepedstring = bytes.fromhex(prepedstring)
+        #prepedstring = prepedstring.decode('hex')
+
+        self.__ser.write(prepedstring)
+        # response = True
+        # if process:
+        # response = self.read(process)
+        return ['0xf0']
 
     def read(self, process=True):
         """Read the requested data from the serial port."""
