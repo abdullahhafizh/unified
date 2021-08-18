@@ -300,42 +300,24 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
 
     def listen_poll(self, caller):
-        poll = self.nv200.poll()      
-        event = []
-        if len(poll) > 1:     
-            event = self.parse_event(poll)
-            if poll[1] == '0xed' or poll[1] == '0xec':
-                last_reject = self.nv200.last_reject()
-                event.append(self.parse_reject_code(last_reject))
+        while True:
+            poll = self.nv200.poll()      
+            event = []
+            if len(poll) > 1:     
+                event = self.parse_event(poll)
+                if poll[1] == '0xed' or poll[1] == '0xec':
+                    last_reject = self.nv200.last_reject()
+                    event.append(self.parse_reject_code(last_reject))
+                else:
+                    event.append('')
+                if _Common.BILL_LIBRARY_DEBUG is True:
+                    try:
+                        print('pyt: [NV200] Event :', str(caller), str(event))
+                    except Exception as e:
+                        traceback.format_exc()
+                return event
             else:
-                event.append('')
-            if _Common.BILL_LIBRARY_DEBUG is True:
-                try:
-                    print('pyt: [NV200] Event :', str(caller), str(event))
-                except Exception as e:
-                    traceback.format_exc()
-                    # continue
-        else:
-            event.append('')
-        return event
-        # while True:
-        #     poll = self.nv200.poll()      
-        #     if len(poll) > 1:     
-        #         event = self.parse_event(poll)
-        #         if poll[1] == '0xed' or poll[1] == '0xec':
-        #             last_reject = self.nv200.last_reject()
-        #             event.append(self.parse_reject_code(last_reject))
-        #             event.append('')
-        #         else:
-        #             event.append('')
-        #         if _Common.BILL_LIBRARY_DEBUG is True:
-        #             try:
-        #                 print('pyt: [NV200] Event :', str(caller), str(event))
-        #             except Exception as e:
-        #                 traceback.format_exc()
-        #                 continue
-        #         return event
-        #     time.sleep(0.5)
+                continue
 
 NV200 = None
 
