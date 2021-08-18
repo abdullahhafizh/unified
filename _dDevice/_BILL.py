@@ -334,6 +334,7 @@ def start_receive_note(trxid):
 
 
 def store_cash_into_cashbox():
+    print("pyt: ", _Helper.whoami())
     attempt = 0
     max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
     while True:
@@ -366,6 +367,7 @@ def set_cashbox_full():
 
 def update_cash_status(cash_in, store_result=False):
     global CASH_HISTORY, COLLECTED_CASH
+    print("pyt: ", _Helper.whoami())
     try:
         if not store_result:
             LOGGER.warning(('Store Cash Failed', 'Update Cash Failed', store_result))

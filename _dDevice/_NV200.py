@@ -414,7 +414,7 @@ def send_command(param=None, config=[], restricted=[]):
                     return -1, pool[1]
                     break
                 # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                # Set Harcoded ON ly Wait 3 Seconds
+                # Set Harcoded only wait for 3 Seconds
                 if LOOP_ATTEMPT >= 3: 
                     return -1, ""
                     break
