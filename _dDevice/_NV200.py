@@ -307,7 +307,6 @@ class NV200_BILL_ACCEPTOR(object):
             if poll[1] == '0xed' or poll[1] == '0xec':
                 last_reject = self.nv200.last_reject()
                 event.append(self.parse_reject_code(last_reject))
-                # event.append('')
             else:
                 event.append('')
             if _Common.BILL_LIBRARY_DEBUG is True:
@@ -316,6 +315,8 @@ class NV200_BILL_ACCEPTOR(object):
                 except Exception as e:
                     traceback.format_exc()
                     # continue
+        else:
+            event.append('')
         return event
         # while True:
         #     poll = self.nv200.poll()      
