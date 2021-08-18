@@ -160,7 +160,7 @@ class eSSP(object):  # noqa
 
         Will resume to work only when beeing enable()'d again.
         """
-        result = self.send([self.getseq(), '0x1', '0x9'])
+        result = self.send([self.getseq(), '0x1', '0x9'], False)
         return result
 
     def enable(self):
@@ -386,7 +386,9 @@ class eSSP(object):  # noqa
         #prepedstring = prepedstring.decode('hex')
 
         self.__ser.write(prepedstring)
-        response = self.read(process)
+        response = True
+        if process:
+            response = self.read(process)
         return response
 
     def read(self, process=True):
