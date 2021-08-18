@@ -13,11 +13,12 @@ LOGGER = logging.getLogger()
 
 ERROR_COUNT = 0
 ERROR_FILE = "error_print_nv200_event_"
+SOCKET_TIMEOUT = 30
 
 
 class NV200_BILL_ACCEPTOR(object):
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000"]):
-        self.nv200 = _eSSPLib.eSSP(serial_port, 0, 10)
+        self.nv200 = _eSSPLib.eSSP(serial_port, 0, SOCKET_TIMEOUT)
         self.serial_port = serial_port
         self.default_channel = [0,0,1,1,1,1,1,1]
         if len(restricted_denom) == 3 and restricted_denom == ["1000", "2000", "5000"]:
