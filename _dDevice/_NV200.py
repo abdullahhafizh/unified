@@ -413,6 +413,7 @@ def send_command(param=None, config=[], restricted=[]):
                     return -1, pool[1]
                     break
                 if LOOP_ATTEMPT >= 2:
+                    return -1, ""
                     break
                 time.sleep(1)
             return -1, ""
