@@ -72,7 +72,7 @@ Base{
             reset_variables_to_default();
             if (details != undefined) console.log('product details', JSON.stringify(details));
             if (preloadNotif==undefined){
-                initial_process();
+                initial_process('stack_activation');
             } else {
                 popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
                 cancel_button_input_number.visible = true;
@@ -1003,9 +1003,9 @@ Base{
         if (i=='ppob') return 'Pembayaran/Pembelian';
     }
 
-    function initial_process(){
+    function initial_process(whoami){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-        console.log('initial_process', details.payment, now)
+        console.log('initial_process', details.payment, now, whoami);
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);

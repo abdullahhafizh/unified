@@ -139,7 +139,7 @@ Base{
         popup_loading.open('Memeriksa Kode Promo...');
         if (details === undefined) {
             console.log('Failed To Get TRX Product Details');
-            initial_process();
+            initial_process('do_check_promo');
         } else {
             console.log('do_check_promo', JSON.stringify(details));
         }
@@ -168,7 +168,7 @@ Base{
         }
         delay(3*1000, function(){
             popup_loading.close();
-            initial_process();
+            initial_process('get_promo_result');
         });
     }
 
@@ -1031,9 +1031,9 @@ Base{
         if (i=='ppob') return 'Pembayaran/Pembelian';
     }
 
-    function initial_process(){
+    function initial_process(whoami){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-        console.log('initial_process', details.payment, now)
+        console.log('initial_process', details.payment, now, whoami);
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
