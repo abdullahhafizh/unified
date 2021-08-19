@@ -1005,6 +1005,7 @@ Base{
 
     function initial_process(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('initial_process', detail.payment, now)
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
@@ -1022,7 +1023,7 @@ Base{
         // Change To Get Refunds Details
         _SLOT.start_get_refunds();
         // Handle if Payment is completely done before
-        console.log('Check Received Payment', now, receivedPayment, totalPrice);
+        console.log('Check Received Payment', receivedPayment, totalPrice);
         if (initialPayment >= totalPrice){
 //            _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             payment_complete(details.payment);
@@ -1031,7 +1032,7 @@ Base{
         }
         //Validate Action By Payment
         if (allQRProvider.indexOf(details.payment) > -1){
-            console.log('generating_qr', now, details.payment);
+            console.log('generating_qr', details.payment);
             main_title.show_text = 'Ringkasan Transaksi Anda';
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
             open_preload_notif_qr(msg, 'source/phone_qr.png');

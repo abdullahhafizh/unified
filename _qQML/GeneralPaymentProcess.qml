@@ -1033,6 +1033,7 @@ Base{
 
     function initial_process(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('initial_process', detail.payment, now)
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
@@ -1055,7 +1056,7 @@ Base{
         _SLOT.start_get_refunds();
         //Validate Action By Payment
         if (allQRProvider.indexOf(details.payment) > -1){
-            console.log('generating_qr', now, details.payment);
+            console.log('generating_qr', details.payment);
             main_title.show_text = 'Ringkasan Transaksi Anda';
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
             open_preload_notif_qr(msg, 'source/phone_qr.png');
