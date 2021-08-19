@@ -1209,6 +1209,7 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 if (receivedPayment == initialPayment){
+                    if (details.payment=='cash') _SLOT.stop_bill_receive_note();
                     exit_with_message(3);
                     return;
                 }
