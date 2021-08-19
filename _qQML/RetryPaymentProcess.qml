@@ -1093,8 +1093,8 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                console.log('[RETRY-PAYMENT]', 'receivedPayment', receivedPayment, 'initialPayment', initialPayment);
-                console.log(' --> totalPrice', totalPrice, 'successTransaction', successTransaction, abc.counter);
+                // console.log('[RETRY-PAYMENT]', 'receivedPayment', receivedPayment, 'initialPayment', initialPayment);
+                // console.log(' --> totalPrice', totalPrice, 'successTransaction', successTransaction, abc.counter);
                 abc.counter -= 1;
                 //Force Allowed Back Button For Cash after 240 seconds
                 if (details.payment=='cash'){

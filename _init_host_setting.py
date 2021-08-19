@@ -8,10 +8,27 @@ import json
 import requests
 import logging
 from _cConfig import _ConfigParser
+import pywin32
+import datetime
 
 
 LOGGER = logging.getLogger()
 
+
+def set_system_time(time_tuple):
+    # time_tuple = ( 2012, # Year
+            #       9, # Month
+            #       6, # Day
+            #       0, # Hour
+            #      38, # Minute
+            #       0, # Second
+            #       0, # Millisecond
+            #   )
+    # http://timgolden.me.uk/pywin32-docs/win32api__SetSystemTime_meth.html
+    # pywin32.SetSystemTime(year, month , dayOfWeek , day , hour , minute , second , millseconds )
+    dayOfWeek = datetime.datetime(time_tuple).isocalendar()[2]
+    pywin32.SetSystemTime( time_tuple[:2] + (dayOfWeek,) + time_tuple[2:])
+    
 
 def get_from_url(url):
     try:
@@ -113,8 +130,9 @@ def load_from_temp_data(temp, mode='text'):
 if __name__ == '__main__':
     print("pyt: Initiating Temporary Folder Data...")
     init_temp_data()
+    # print("pyt: Initiating Time Setting From NTP...")
+    # set_system_time()
     print("pyt: Initiating Setting From Host...")
-
     url = _ConfigParser.get_value('GENERAL', 'backend^server') + 'get/init-setting'
     # print("pyt: URL Host : ", url)
 
