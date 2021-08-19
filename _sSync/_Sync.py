@@ -50,10 +50,10 @@ def sync_machine(url, param):
                 _KioskService.update_kiosk_status(s, r)
                 _DAO.create_today_report(_Common.TID)
             # if attempt > 1:
-            if attempt > 1 and IDLE_MODE is True:
+            if attempt > 1 and _Common.IDLE_MODE is True:
                 __url = _Common.BACKEND_URL + 'kiosk/status'
                 __param = _KioskService.machine_summary()
-                __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
+                __param['on_usage'] = 'IDLE' if _Common.IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
                 # print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
@@ -128,9 +128,9 @@ def sync_machine_status():
     __param = dict()
     while True:
         try:
-            if _Helper.is_online(source='sync_machine_status') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_machine_status') is True and _Common.IDLE_MODE is True:
                 __param = _KioskService.machine_summary()
-                __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
+                __param['on_usage'] = 'IDLE' if _Common.IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
                 print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
@@ -154,7 +154,7 @@ def do_pending_request_job():
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         # LOGGER.info(('count', len(pending_jobs)))
-        if len(pending_jobs) > 0 and IDLE_MODE is True:
+        if len(pending_jobs) > 0 and _Common.IDLE_MODE is True:
             # pending_jobs = pending_jobs.sort()
             for p in pending_jobs:
                 try:
@@ -329,7 +329,7 @@ def sync_topup_records():
     _table_ = 'TopUpRecords'
     while True:
         try:
-            if _Helper.is_online(source='sync_topup_records') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_topup_records') is True and _Common.IDLE_MODE is True:
                 topup_records = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(topup_records) > 0:
                     print('pyt: sync_topup_records ' + _Helper.time_string() + ' Re-Sync Topup Records Data...')
@@ -360,7 +360,7 @@ def sync_data_transaction():
     _table_ = 'TransactionsNew'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_data_transaction') is True and _Common.IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
@@ -386,7 +386,7 @@ def sync_data_transaction_old():
     _table_ = 'Transactions'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_data_transaction') is True and _Common.IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
@@ -417,7 +417,7 @@ def sync_data_transaction_failure():
     _table_ = 'TransactionFailure'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction_failure') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_data_transaction_failure') is True and _Common.IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transaction_failures) > 0:
                     # print('pyt: sync_data_transaction_failure ' + _Helper.time_string() + ' Re-Sync Transaction Failure Data...')
@@ -447,7 +447,7 @@ def sync_product_data():
     _table_ = 'Product'
     while True:
         try:
-            if _Helper.is_online(source='sync_product_data') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_product_data') is True and _Common.IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(products) > 0:
                     # print('pyt: sync_product_data ' + _Helper.time_string() + ' Re-Sync Product Data...')
@@ -477,7 +477,7 @@ def sync_sam_audit():
     _table_ = 'SAMAudit'
     while True:
         try:
-            if _Helper.is_online(source='sync_sam_audit') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_sam_audit') is True and _Common.IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(audits) > 0:
                     # print('pyt: sync_sam_audit ' + _Helper.time_string() + ' Re-Sync SAM Audit...')
@@ -510,10 +510,10 @@ def sync_settlement_bni(bank):
     # _table_ = 'Settlement'
     while True:
         try:
-            if _Helper.is_online(source='sync_settlement_bni') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
                 _SettlementService.start_do_bni_topup_settlement()
             # Do BNI Settlement Creation Every +- 15 Minutes
-            # if _Helper.is_online(source='sync_settlement_bni') is True and IDLE_MODE is True:
+            # if _Helper.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
             #     settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
             #                                     ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
             #     if len(settlements) > 0:
@@ -554,7 +554,7 @@ def sync_task():
     _url = _Common.BACKEND_URL + 'task/check'
     while True:
         try:
-            if _Helper.is_online(source='sync_task') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_task') is True and _Common.IDLE_MODE is True:
                 status, response = _NetworkAccess.get_from_url(url=_url, log=False)
                 if status == 200 and response['result'] == 'OK':
                     if len(response['data']) > 0:
@@ -633,7 +633,7 @@ def handle_tasks(tasks):
     for task in tasks:
         LOGGER.debug(('GIVEN REMOTE TASK', task['taskName']))
         if task['taskName'] == 'REBOOT':
-            if IDLE_MODE is True:
+            if _Common.IDLE_MODE is True:
                 result = 'EXECUTED_INTO_MACHINE'
                 _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
                 update_task(task, result)
@@ -662,7 +662,7 @@ def handle_tasks(tasks):
             result = _EDC.backend_edc_settlement()
             update_task(task, result)
         if task['taskName'] in ['RESET_GRG', 'RESET_BILL']:
-            if IDLE_MODE is True:
+            if _Common.IDLE_MODE is True:
                 _BILL.start_reset_bill()
                 result = 'EXECUTED_INTO_BILL'
             else:
@@ -677,7 +677,7 @@ def handle_tasks(tasks):
             update_task(task, result)
         if task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
             result = 'FAILED_EXECUTED_VM_ON_USED'
-            if IDLE_MODE is True:
+            if _Common.IDLE_MODE is True:
                 _SettlementService.start_reset_mandiri_settlement()
                 result = 'TRIGGERED_INTO_SYSTEM'
             update_task(task, result)
@@ -790,7 +790,7 @@ def start_sync_topup_amount():
 def sync_topup_amount():
     _url = _Common.BACKEND_URL + 'get/topup-amount'
     while True:
-        if _Helper.is_online(source='sync_topup_amount') is True and IDLE_MODE is True:
+        if _Helper.is_online(source='sync_topup_amount') is True and _Common.IDLE_MODE is True:
             s, r = _NetworkAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
                 _Common.TOPUP_AMOUNT_SETTING = r['data']
@@ -855,7 +855,7 @@ def get_amount(idx, listx):
 #
 # def automate_topup_bni():
 #     while True:
-#         if IDLE_MODE is True and _Tools.is_online(source='automate_topup_bni') is True:
+#         if _Common.IDLE_MODE is True and _Tools.is_online(source='automate_topup_bni') is True:
 #             _QPROX.get_bni_wallet_status()
 #             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
@@ -879,7 +879,7 @@ def get_amount(idx, listx):
 #     while True:
 #         if _Common.TRIGGER_MANUAL_TOPUP is True:
 #             _Common.TRIGGER_MANUAL_TOPUP = False
-#             if IDLE_MODE is True:
+#             if _Common.IDLE_MODE is True:
 #                 _QPROX.get_bni_wallet_status()
 #             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
