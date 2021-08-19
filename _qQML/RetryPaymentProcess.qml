@@ -1005,7 +1005,7 @@ Base{
 
     function initial_process(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-        console.log('initial_process', detail.payment, now)
+        console.log('initial_process', details.payment, now)
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
