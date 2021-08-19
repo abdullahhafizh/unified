@@ -8,7 +8,7 @@ import json
 import requests
 import logging
 from _cConfig import _ConfigParser
-import pywin32
+# import pywin32
 import datetime
 
 
@@ -16,6 +16,7 @@ LOGGER = logging.getLogger()
 
 
 def set_system_time(time_tuple):
+    import win32api
     # time_tuple = ( 2012, # Year
             #       9, # Month
             #       6, # Day
@@ -27,7 +28,7 @@ def set_system_time(time_tuple):
     # http://timgolden.me.uk/pywin32-docs/win32api__SetSystemTime_meth.html
     # pywin32.SetSystemTime(year, month , dayOfWeek , day , hour , minute , second , millseconds )
     dayOfWeek = datetime.datetime(time_tuple).isocalendar()[2]
-    pywin32.SetSystemTime( time_tuple[:2] + (dayOfWeek,) + time_tuple[2:])
+    win32api.SetSystemTime( time_tuple[:2] + (dayOfWeek,) + time_tuple[2:])
     
 
 def get_from_url(url):
