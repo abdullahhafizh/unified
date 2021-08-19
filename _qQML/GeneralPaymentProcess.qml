@@ -52,6 +52,9 @@ Base{
     //Handle Cancel Confirmation
     property bool useCancelConfirmation: true
 
+    property bool closeTrxSession: false
+
+
     signal framingSignal(string str)
 
     idx_bg: 0
@@ -252,6 +255,7 @@ Base{
         modeButtonPopup = undefined;
         refundFeature = true;
         transactionInProcess = false;
+        closeTrxSession = false;
     }
 
     function do_refund_or_print(error){
@@ -820,7 +824,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note();
-                    wait_exit_message(3);
+                    exit_with_message(3);
                     return;
                 }
             } else if (grgResult == 'EXCEED'){
@@ -1033,6 +1037,10 @@ Base{
 
     function initial_process(whoami){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        if (closeTrxSession){
+            console.log('initial_process session', closeTrxSession, now, whoami);
+            return;
+        }
         console.log('initial_process', details.payment, now, whoami);
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
@@ -1266,7 +1274,8 @@ Base{
         timer_delay.start();
     }
 
-    function wait_exit_message(second){
+    function exit_with_message(second){
+        closeTrxSession = true;
         popup_loading.open();
         popup_loading.textMain = 'Harap Tunggu Sebentar';
         popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
@@ -1445,7 +1454,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                wait_exit_message(3);
+                exit_with_message(3);
                 return;
             }
         }

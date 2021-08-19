@@ -226,7 +226,7 @@ def parse_notes(_result):
 def start_receive_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
     if _Common.IDLE_MODE is True:
-        LOGGER.warning(('[INFO] Seems Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
+        LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
     LOGGER.info(('Trigger Bill', trxid, DIRECT_PRICE_AMOUNT))
     try:
@@ -235,7 +235,7 @@ def start_receive_note(trxid):
         while True:
             # Handle NV IS_RECEIVING Flagging
             if IS_RECEIVING is False:
-                LOGGER.warning(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
+                LOGGER.info(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
                 break
             attempt += 1
             param = BILL["RECEIVE"] + '|'
@@ -323,16 +323,15 @@ def start_receive_note(trxid):
     except Exception as e:
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
         _Common.store_notes_activity('ERROR', trxid)
+        IS_RECEIVING = False
+        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
         if 'Invalid argument' in e:
             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
             LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
-            _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
             return
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
-        IS_RECEIVING = False
         LOGGER.warning(e)
-        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
 
 
 

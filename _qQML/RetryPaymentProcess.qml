@@ -59,6 +59,8 @@ Base{
     //Handle Cancel Confirmation
     property bool useCancelConfirmation: true
 
+    property bool closeTrxSession: false
+
 
     signal framingSignal(string str)
 
@@ -220,6 +222,7 @@ Base{
         modeButtonPopup = undefined;
         refundFeature = true;
         transactionInProcess = false;
+        closeTrxSession = false;
     }
 
     function do_refund_or_print(error){
@@ -1005,6 +1008,10 @@ Base{
 
     function initial_process(whoami){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        if (closeTrxSession){
+            console.log('initial_process session', closeTrxSession, now, whoami);
+            return;
+        }
         console.log('initial_process', details.payment, now, whoami);
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
@@ -1234,6 +1241,7 @@ Base{
     }
 
     function exit_with_message(second){
+        closeTrxSession = true;
         popup_loading.open();
         popup_loading.textMain = 'Menutup Sesi Pembayaran Anda';
         popup_loading.textSlave = 'Anda Tetap Dapat Melanjutkan Transaksi Dari Kode Ulang Yang Tertera Pada Struk';

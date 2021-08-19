@@ -89,7 +89,7 @@ def insert_transaction_new(param):
     sql = "INSERT INTO TransactionsNew ( trxId, tid, mid, amount, baseAmount, adminFee, trxType, cardNo, paymentType, " \
           "paymentNotes, productName, productId, traceNo, targetCard, bankId, syncFlag, createdAt ) VALUES ( :trxId, :tid, :mid, :amount, :baseAmount, :adminFee, :trxType, " \
           ":cardNo, :paymentType, :paymentNotes, :productName, :productId, :traceNo, :targetCard, :bankId, :syncFlag, :createdAt )"
-    return _Database.insert_update(sql=sql, parameter=param, log=True)
+    return _Database.insert_update(sql=sql, parameter=param, log=False)
 
 
 def insert_transaction_failure(param):
@@ -511,7 +511,7 @@ def get_total_count(table, condition=None):
     sql = ' SELECT count(*) as total FROM ' + table
     if condition is not None:
         sql += ' WHERE ' + condition
-    result = _Database.get_query(sql=sql, parameter={}, log=True)
+    result = _Database.get_query(sql=sql, parameter={}, log=False)
     if len(result) > 0:
         return result[0].get('total', 0)
     else:
