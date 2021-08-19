@@ -38,8 +38,8 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            resetPopup();
             _SLOT.start_idle_mode();
+            resetPopup();
             _SLOT.user_action_log('[Homepage] Standby Mode');
             press = "0";
             resetMediaTimer();
