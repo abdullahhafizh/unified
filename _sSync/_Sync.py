@@ -109,15 +109,13 @@ def stop_idle_mode():
 
 
 def change_idle_mode(s):
-    global IDLE_MODE
     if s == 'START':
-        IDLE_MODE = True
+        _Common.IDLE_MODE = True
         _UserService.USER = None
     elif s == 'STOP':
-        IDLE_MODE = False
+        _Common.IDLE_MODE = False
 
 
-IDLE_MODE = True
 
 
 def start_sync_machine_status():

@@ -1843,3 +1843,6 @@ def validate_usage_pending_code(reff_no):
         return True
     else:
         return False
+
+
+IDLE_MODE = True

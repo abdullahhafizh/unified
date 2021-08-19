@@ -225,6 +225,9 @@ def parse_notes(_result):
 
 def start_receive_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
+    if _Common.IDLE_MODE is True:
+        LOGGER.warning(('[INFO] Seems Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
+        return
     LOGGER.info(('Trigger Bill', trxid, DIRECT_PRICE_AMOUNT))
     try:
         attempt = 0
