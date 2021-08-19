@@ -402,11 +402,9 @@ def send_command(param=None, config=[], restricted=[]):
                     if config['KEY_BOX_FULL'] in pool[1]:
                         NV200.disable()
                         return -1, pool[1]
-                        break
                     if config['CODE_JAM'] in pool[1]:
                         NV200.disable_only()
                         return -1, pool[1]
-                        break
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
@@ -420,14 +418,11 @@ def send_command(param=None, config=[], restricted=[]):
                 LOOP_ATTEMPT += 1
                 if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
                     return 0, pool[1]
-                    break
                 if config['KEY_BOX_FULL'] in pool[1]:
                     return -1, pool[1]
-                    break
                 if config['CODE_JAM'] in pool[1]:
                     NV200.disable_only()
                     return -1, pool[1]
-                    break
                 # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                 # Set Harcoded only wait for 3 Seconds
                 if LOOP_ATTEMPT >= 3: 
@@ -442,7 +437,6 @@ def send_command(param=None, config=[], restricted=[]):
                 LOOP_ATTEMPT += 1
                 if "Rejected" in pool[1]:
                     return 0, pool[1]
-                    break
                 if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                     break
                 time.sleep(1)
