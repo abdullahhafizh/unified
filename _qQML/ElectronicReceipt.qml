@@ -114,6 +114,7 @@ Base{
         imageQr.source = imageSource;
         console.log('ereceipt_qr', imageSource);
         popup_loading.close();
+        _SLOT.start_play_audio('scan_qr_ereceipt');
     }
 
     function print_result(p){
@@ -263,8 +264,13 @@ Base{
                 _SLOT.user_action_log('Press "OK" in e-Receipt Activity');
                 var title = 'Terima Kasih';
                 var msg = 'Silakan Cek eReceipt Anda di Whatsapp';
-                if (details.shop_type == 'topup') msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Anda Dari Reader';
-                if (details.shop_type == 'shop') msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Baru Anda';
+                if (details.shop_type == 'topup'){
+                    msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Anda Dari Reader';
+                }
+                if (details.shop_type == 'shop'){
+                    msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Baru Anda';
+                    _SLOT.start_play_audio('please_take_new_card_with_receipt');
+                }
                 switch_frame('source/take_receipt.png', title, msg, 'backToMain|5', true );
             }
         }

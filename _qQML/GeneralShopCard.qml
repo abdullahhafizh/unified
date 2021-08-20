@@ -126,6 +126,7 @@ Base{
         if (productData != undefined) {
             console.log('productData', JSON.stringify(productData));
             parseDataProduct(productData);
+            _SLOT.start_play_audio('choose_prepaid_card');
         }
     }
 

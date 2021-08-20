@@ -136,10 +136,11 @@ Base{
     }
 
     function open(){
-        preload_customer_info.visible = true
+        preload_customer_info.visible = true;
+        _SLOT.start_play_audio('read_tnc_press_proceed');
     }
 
     function close(){
-        preload_customer_info.visible = false
+        preload_customer_info.visible = false;
     }
 }

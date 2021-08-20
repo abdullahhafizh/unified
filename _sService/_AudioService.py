@@ -30,13 +30,31 @@ SOUNDER = os.path.join(sys.path[0], 'sounder.exe')
 
 # TODO: Register All Audio Files Here
 AUDIO_MAPPING = {
-    'welcome': os.path.join(AUDIO_PATH, 'intro.wav'),
-    'failed_read_qr': os.path.join(AUDIO_PATH, 'failed_read_qr.wav'),
-    'failed_validate_qr': os.path.join(AUDIO_PATH, 'failed_validate_qr.wav'),
-    'card_not_available': os.path.join(AUDIO_PATH, 'card_not_available.wav'),
-    'take_otp_card': os.path.join(AUDIO_PATH, 'take_otp_card.wav'),
-    'scan_vm_qr_to_mobile': os.path.join(AUDIO_PATH, 'scan_vm_qr_to_mobile.wav'),
-    'scan_phone_qr_to_vm': os.path.join(AUDIO_PATH, 'scan_phone_qr_to_vm.wav'),
+    # 'welcome': os.path.join(AUDIO_PATH, 'intro.wav'),
+    'cancel_transaction_confirmation': os.path.join(AUDIO_PATH, 'cancel_transaction_confirmation.wav'),
+    'card_not_detected': os.path.join(AUDIO_PATH, 'card_not_detected.wav'),
+    'choose_item_product': os.path.join(AUDIO_PATH, 'choose_item_product.wav'),
+    'choose_payment_press_proceed': os.path.join(AUDIO_PATH, 'choose_payment_press_proceed.wav'),
+    'choose_prepaid_card': os.path.join(AUDIO_PATH, 'choose_prepaid_card.wav'),
+    'choose_product_operator': os.path.join(AUDIO_PATH, 'choose_product_operator.wav'),
+    'choose_topup_denom': os.path.join(AUDIO_PATH, 'choose_topup_denom.wav'),
+    'follow_payment_instruction': os.path.join(AUDIO_PATH, 'follow_payment_instruction.wav'),
+    'homepage_greeting': os.path.join(AUDIO_PATH, 'homepage_greeting.wav'),
+    'insert_cash_with_good_condition': os.path.join(AUDIO_PATH, 'insert_cash_with_good_condition.wav'),
+    'keep_card_in_reader_untill_finished': os.path.join(AUDIO_PATH, 'keep_card_in_reader_untill_finished.wav'),
+    'open_app_scan_qr': os.path.join(AUDIO_PATH, 'open_app_scan_qr.wav'),
+    'please_input_register_no_press_proceed': os.path.join(AUDIO_PATH, 'please_input_register_no_press_proceed.wav'),
+    'please_input_retry_code': os.path.join(AUDIO_PATH, 'please_input_retry_code.wav'),
+    'please_input_voucher_code': os.path.join(AUDIO_PATH, 'please_input_voucher_code.wav'),
+    'please_input_wa_no': os.path.join(AUDIO_PATH, 'please_input_wa_no.wav'),
+    'please_insert_card_press_proceed': os.path.join(AUDIO_PATH, 'please_insert_card_press_proceed.wav'),
+    'please_pull_retap_card': os.path.join(AUDIO_PATH, 'please_pull_retap_card.wav'),
+    'please_take_new_card_with_receipt': os.path.join(AUDIO_PATH, 'please_take_new_card_with_receipt.wav'),
+    'put_card_and_press_proceed': os.path.join(AUDIO_PATH, 'put_card_and_press_proceed.wav'),
+    'read_tnc_press_proceed': os.path.join(AUDIO_PATH, 'read_tnc_press_proceed.wav'),
+    'scan_qr_ereceipt': os.path.join(AUDIO_PATH, 'scan_qr_ereceipt.wav'),
+    'summary_transaction_press_proceed': os.path.join(AUDIO_PATH, 'summary_transaction_press_proceed.wav'),
+    'transaction_failed': os.path.join(AUDIO_PATH, 'transaction_failed.wav'),
 }
 
 

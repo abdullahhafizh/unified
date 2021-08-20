@@ -22,10 +22,11 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            abc.counter = timer_value
-            my_timer.start()
-            popup_loading.open()
-            if (ppobData!=undefined) parse_item_category(selectedCategory)
+            abc.counter = timer_value;
+            my_timer.start();
+            popup_loading.open();
+            if (ppobData!=undefined) parse_item_category(selectedCategory);
+            _SLOT.start_play_audio('choose_item_product');
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()

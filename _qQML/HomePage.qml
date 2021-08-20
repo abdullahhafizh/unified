@@ -50,6 +50,7 @@ Base{
             selectedMenu = '';
             _SLOT.get_kiosk_status();
             _SLOT.kiosk_get_product_stock();
+            _SLOT.start_play_audio('homepage_greeting');
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();

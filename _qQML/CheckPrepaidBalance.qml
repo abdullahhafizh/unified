@@ -119,6 +119,7 @@ Base{
         }
         if (['GENERAL_ERROR'].indexOf(result) > -1){
             switch_frame('source/take_prepaid_white.png', 'Terjadi Kesalahan Saat Update Balance', 'Angkat Dan Tempelkan Kembali Kartu Anda', 'closeWindow', true )
+            _SLOT.start_play_audio('please_pull_retap_card');
             press = '0';
             return;
         }
@@ -194,6 +195,7 @@ Base{
             balance = 0;
             bankType = undefined;
             switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Silakan Hubungi Layanan Pelanggan Bank Penerbit Kartu Anda', 'backToMain', false );
+            _SLOT.start_play_audio('card_not_detected');
             return;
         }
 //            if (bankName == 'MANDIRI'){

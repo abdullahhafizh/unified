@@ -71,10 +71,11 @@ Base{
 //    }
 
     function open(){
-        preload_check_card.visible = true
+        preload_check_card.visible = true;
+        _SLOT.start_play_audio('put_card_and_press_proceed');
     }
 
     function close(){
-        preload_check_card.visible = false
+        preload_check_card.visible = false;
     }
 }

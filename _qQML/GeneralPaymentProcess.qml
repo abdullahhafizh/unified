@@ -449,6 +449,7 @@ Base{
             details.process_error = 1;
             details.payment_error = 1;
             details.receipt_title = 'Transaksi Anda Gagal';
+            _SLOT.start_play_audio('transaction_failed');
             if (!refundFeature){
             // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
@@ -583,21 +584,25 @@ Base{
             modeButtonPopup = 'c2c_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='BCA_PARTIAL_ERROR') {
             modeButtonPopup = 'bca_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='BRI_PARTIAL_ERROR') {
             modeButtonPopup = 'bri_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='DKI_PARTIAL_ERROR') {
             modeButtonPopup = 'dki_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='MDR_C2C_FORCE_SETTLEMENT') {
             details.force_settlement = 1;
@@ -635,6 +640,7 @@ Base{
         details.process_error = 1;
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
+        _SLOT.start_play_audio('transaction_failed');
         if (!refundFeature){
         // details.pending_trx_code = details.epoch.toString().substr(-6);
             details.payment_received = receivedPayment.toString();
@@ -699,6 +705,7 @@ Base{
             details.process_error = 1;
             details.payment_error = 1;
             details.receipt_title = 'Transaksi Anda Gagal';
+            _SLOT.start_play_audio('transaction_failed');
             if (!refundFeature){
             // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
@@ -784,6 +791,7 @@ Base{
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai';
                 var trx_counter_notif = abc.counter.toString();
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|'+trx_counter_notif, false );
+                _SLOT.start_play_audio('keep_card_in_reader_untill_finished');
                 console.log('DO_TOPUP_TRX', now, channel, provider, amount, structId);
                 perform_do_topup();
                 break;
@@ -1086,6 +1094,7 @@ Base{
             _SLOT.start_set_direct_price(totalPrice.toString());
 //            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
+            _SLOT.start_play_audio('insert_cash_with_good_condition');
             back_button.visible = false;
             return;
         } else if (details.payment == 'debit') {
@@ -1381,6 +1390,7 @@ Base{
                 global_frame.modeAction = "";
                 break;
             case 'PRINT_QR_TIMEOUT_RECEIPT':
+                // _SLOT.start_play_audio('transaction_failed');
                 if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                     details.process_error = 1;
@@ -1427,6 +1437,7 @@ Base{
         my_timer.stop();
         transaction_completeness.mainTitle = mode;
         transaction_completeness.open();
+        _SLOT.start_play_audio('please_input_wa_no');
     }
 
     function cancel_transaction(){

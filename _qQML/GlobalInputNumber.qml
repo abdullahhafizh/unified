@@ -606,11 +606,13 @@ Base{
         if (mode=='WA_VOUCHER'){
             wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
             min_count = 8;
+            _SLOT.start_play_audio('please_input_voucher_code');
             return;
         }
         if (mode=='SEARCH_TRX'){
             wording_text = 'Masukkan 9 Digit Kode Ulang Transaksi Anda';
             min_count = 6;
+            _SLOT.start_play_audio('please_input_retry_code');
             return;
         }
 //        if (mode=='PPOB' && selectedProduct==undefined){
@@ -641,9 +643,11 @@ Base{
                     console.log('selected_operator', selectedOperator);
                     wording_text = 'Masukkan Nomor HP Terdaftar Pada Aplikasi ' + selectedOperator;
                     min_count = 15;
+                    _SLOT.start_play_audio('please_input_register_no_press_proceed');
                 } else {
                     wording_text = 'Masukkan Nomor Kartu Prabayar Anda';
                     min_count = 15;
+                    _SLOT.start_play_audio('please_input_register_no_press_proceed');
                 }
             break;
             case 'voucher':

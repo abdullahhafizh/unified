@@ -437,6 +437,7 @@ Rectangle{
 
     function open(){
         select_payment_popup.visible = true;
+        _SLOT.start_play_audio('choose_item_product');
     }
 
 

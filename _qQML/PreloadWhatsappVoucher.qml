@@ -116,10 +116,12 @@ Base{
 //    }
 
     function open(){
-        preload_whatasapp_voucher.visible = true
+        preload_whatasapp_voucher.visible = true;
+        _SLOT.start_play_audio('open_app_scan_qr');
+
     }
 
     function close(){
-        preload_whatasapp_voucher.visible = false
+        preload_whatasapp_voucher.visible = false;
     }
 }

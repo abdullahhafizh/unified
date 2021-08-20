@@ -84,6 +84,7 @@ Base{
     function open(msg){
         if (msg!=undefined) mainDescription = msg;
         cancel_confirmation.visible = true;
+        _SLOT.start_play_audio('cancel_transaction_confirmation');
     }
 
     function close(){

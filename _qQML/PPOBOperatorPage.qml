@@ -24,6 +24,7 @@ Base{
             my_timer.start();
             popup_loading.open();
             if (ppobData!=undefined) parse_operator(ppobData);
+            _SLOT.start_play_audio('choose_product_operator');
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop();
