@@ -423,6 +423,12 @@ Base{
             if (CONF.printer_type=='whatsapp'){
                 hide_all_cancel_button();
                 reset_variables_to_default();
+                // Trigger Deposit Update Balance Check
+                if (cardNo.substring(0, 4) == '6032'){
+                    if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+                } else if (cardNo.substring(0, 4) == '7546'){
+                    _SLOT.start_check_bni_deposit();
+                }
                 my_layer.push(ereceipt_view, {details:details});
                 return;
             }
@@ -433,17 +439,15 @@ Base{
         _SLOT.start_direct_sale_print_global(JSON.stringify(details));
         console.log('release_print', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
-        if (successTransaction){
-            // Trigger Deposit Update Balance Check
-            if (cardNo.substring(0, 4) == '6032'){
-                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
-            } else if (cardNo.substring(0, 4) == '7546'){
-                _SLOT.start_check_bni_deposit();
-            }
-        }
         hide_all_cancel_button();
 //        abc.counter = 3;
         reset_variables_to_default();
+        // Trigger Deposit Update Balance Check
+        if (cardNo.substring(0, 4) == '6032'){
+            if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+        } else if (cardNo.substring(0, 4) == '7546'){
+            _SLOT.start_check_bni_deposit();
+        }
     }
 
     function ppob_trx_result(p){
