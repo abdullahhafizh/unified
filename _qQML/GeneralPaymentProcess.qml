@@ -429,6 +429,12 @@ Base{
             title = 'Transaksi Berhasil';
             if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
             if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
+            // Trigger Deposit Update Balance Check
+            if (cardNo.substring(0, 4) == '6032'){
+                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+            } else if (cardNo.substring(0, 4) == '7546'){
+                _SLOT.start_check_bni_deposit();
+            }
         }
         _SLOT.start_direct_sale_print_global(JSON.stringify(details));
         console.log('release_print', now, title, msg);
@@ -609,12 +615,6 @@ Base{
             // Must Return Here to Stop Executing Receipt
             return
         } else {
-            // Trigger Deposit Update Balance Check
-            if (cardNo.substring(0, 4) == '6032'){
-                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
-            } else if (cardNo.substring(0, 4) == '7546'){
-                _SLOT.start_check_bni_deposit();
-            }
             var output = t.split('|')
             var topupResponse = output[0]
             var result = JSON.parse(output[1]);

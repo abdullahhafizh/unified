@@ -181,6 +181,7 @@ def start_do_force_topup_bni():
 def do_topup_deposit_bni(slot=1, force=False, activation=False):
     global BNI_DEPOSIT_UPDATE_BALANCE_PROCESS
     try:
+        LOGGER.info(('TRIGGER BNI DEPOSIT RELOAD', _Common.BNI_SAM_1_WALLET, 'BNI THRESHOLD', _Common.BNI_THRESHOLD))
         slot = _Common.BNI_ACTIVE
         if _Common.BNI_SINGLE_SAM is True:
             slot = 1
@@ -1726,6 +1727,10 @@ def topup_online(bank, cardno, amount, trxid=''):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
             return True
         elif bank == 'MANDIRI_C2C_DEPOSIT':
+            if _Common.MANDIRI_ACTIVE_WALLET > _Common.C2C_THRESHOLD:
+                LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
+                return False
+            LOGGER.info(('TRIGGER MANDIRI DEPOSIT RELOAD', _Common.MANDIRI_ACTIVE_WALLET, 'MANDIRI THRESHOLD', _Common.C2C_THRESHOLD))
             invoice_no = 'refill'+str(_Helper.epoch())
             if len(trxid) > 0:
                 invoice_no = trxid

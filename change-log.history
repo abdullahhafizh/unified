@@ -1,5 +1,8 @@
 14.0.D-GLOBAL:
 - Enable Sound Notification,
+- UnRelease New Thread For Online Logging,
+- Change Bill Receive Error Sync Log,
+- Change Sequence Deposit Check After TRX,
 - ...
 
 14.0.C-GLOBAL:

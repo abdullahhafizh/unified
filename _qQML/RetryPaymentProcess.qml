@@ -400,6 +400,12 @@ Base{
             _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             console.log('release_print', now, title, msg);
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
+            // Trigger Deposit Update Balance Check
+            if (cardNo.substring(0, 4) == '6032'){
+                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+            } else if (cardNo.substring(0, 4) == '7546'){
+                _SLOT.start_check_bni_deposit();
+            }
         } else {
             //Do Print If Only Status Payment is Changed Or Force Settlement
             if (parseInt(receivedPayment) > parseInt(initialPayment))
@@ -568,12 +574,6 @@ Base{
             // Must Return Here to Stop Executing Receipt
             return
         } else {
-            // Trigger Deposit Update Balance Check
-            if (cardNo.substring(0, 4) == '6032'){
-                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
-            } else if (cardNo.substring(0, 4) == '7546'){
-                _SLOT.start_check_bni_deposit();
-            }
             var output = t.split('|')
             var topupResponse = output[0]
             var result = JSON.parse(output[1]);

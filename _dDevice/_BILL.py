@@ -324,14 +324,15 @@ def start_receive_note(trxid):
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
         _Common.store_notes_activity('ERROR', trxid)
         IS_RECEIVING = False
-        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
+        _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
+        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
         if 'Invalid argument' in e:
             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
             LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
             return
-        _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
-        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
         LOGGER.warning(e)
+        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
+
 
 
 
