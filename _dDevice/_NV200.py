@@ -241,7 +241,7 @@ class NV200_BILL_ACCEPTOR(object):
             for p in poll_data:
                 if type(p) != list:
                     if len(p) < 4:
-                        poll_data.pop(p)
+                        poll_data.remove(p)
                     continue
                 else:
                     if len(p) == 2:
