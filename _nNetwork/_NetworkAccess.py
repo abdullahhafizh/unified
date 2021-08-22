@@ -160,8 +160,8 @@ def post_to_url(url, param=None, header=None, log=False, custom_timeout=None):
             LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : [TRIM]" + str(response[:255])))
         else:
             LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : " + str(response)))
-    else:
-        print('pyt: ', str(url), str(param), str(response))
+    # else:
+        # print('pyt: ', str(url), str(param), str(response))
     return r.status_code, response
 
 
