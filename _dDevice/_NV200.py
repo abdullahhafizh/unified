@@ -224,11 +224,11 @@ class NV200_BILL_ACCEPTOR(object):
 
 
     def parse_event(self, poll_data):
-        # if _Common.BILL_LIBRARY_DEBUG is True:
-        #     try:
-        #         print('pyt: raw poll_data', str(poll_data))
-        #     except Exception as e:
-        #         traceback.format_exc()
+        if _Common.BILL_LIBRARY_DEBUG is True:
+            try:
+                print('pyt: raw poll_data', str(poll_data))
+            except Exception as e:
+                traceback.format_exc()
         event = []
         event_data = []
         event_data.append(poll_data)
@@ -238,8 +238,19 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][1])
         else:
             # TODO: ReCheck Pattern Loop Response
-            event.append(poll_data[0])
-            event.append(poll_data[-1])
+            for p in poll_data:
+                if type(p) != list:
+                    if len(p) < 4:
+                        poll_data.pop(p)
+                    continue
+                else:
+                    if len(p) == 2:
+                        event.append('0xff')
+                        event.append(p[0])
+                        event.append(p[1])
+            if len(event) == 0:
+                event.append(poll_data[0])
+                event.append(poll_data[-1])
             # if len(poll_data) == 3:
             #     del poll_data[1]
             # event = poll_data
