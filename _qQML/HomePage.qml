@@ -8,9 +8,9 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-//            property var globalScreenType: '1'
-//            height: (globalScreenType=='2') ? 1024 : 1080
-//            width: (globalScreenType=='2') ? 1280 : 1920
+//            property var globalScreenType: '2'
+//            height: (globalScreenType=='2') ? 768 : 1080
+//            width: (globalScreenType=='2') ? 1360 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -200,7 +200,7 @@ Base{
         if (kiosk.refund_feature == '0') showCustomerInfo = true;
         else showCustomerInfo = false;
 
-        main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
+        main_title.show_text = 'Selamat Datang, Silahkan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }
 
@@ -260,25 +260,24 @@ Base{
 
     MainTitle{
         id: main_title
+        width: 640
+        height: 53
+        size_: 30
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 136
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: 2
-        anchors.topMargin: 167
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
-//        visible: !popup_loading.visible
-        visible: true
-        size_: (globalScreenType == '1') ? 50 : 40
+        visible: !popup_loading.visible
         color_: "white"
 
     }
 
     Row{
         id: row_button
-        width: 1002
-        height: 250
-        anchors.verticalCenterOffset: 25
+        anchors.horizontalCenterOffset: 0
+        anchors.verticalCenterOffset: 27
         anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenterOffset: 1
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 60 : 30
         visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
@@ -287,23 +286,23 @@ Base{
             id: check_saldo_button
             size: (globalScreenType == '1') ? 350 : 250
             x: 150
-            width: 250
-            height: 250
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
             text_: qsTr("Cek/Update Saldo")
             text2_: qsTr("Check/Update Balance")
+            font_text_: 20
             modeReverse: false
-            visible: true
+            visible: false
 //            mode3d: 'gray'
             MouseArea{
-                width: 250
-                height: 250
-                anchors.fill: parent
+                width: 200
+                height: 200
                 anchors.rightMargin: 0
                 anchors.bottomMargin: 0
                 anchors.leftMargin: 0
                 anchors.topMargin: 0
+                anchors.fill: parent
+                drag.threshold: 10
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
                     if (press!="0") return;
@@ -312,7 +311,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
 //                    selectedMenu = 'CHECK_BALANCE';
-//                    if (showCustomerInfo){
+//                    if (show){
 //                        preload_customer_info.open();
 //                        return;
 //                    }
@@ -325,18 +324,15 @@ Base{
             id: topup_saldo_button
             size: (globalScreenType == '1') ? 350 : 250
             x: 150
-            width: 250
-            height: 250
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
             text_: qsTr("Topup Saldo")
             text2_: qsTr("Topup Balance")
+            font_text_: 20
             modeReverse: false
-            visible: true
+            visible: false
 //            mode3d: 'gray'
             MouseArea{
-                width: 250
-                height: 250
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
@@ -359,20 +355,17 @@ Base{
             id: buy_card_button
             size: (globalScreenType == '1') ? 350 : 250
             x: 150
-            width: 250
-            height: 250
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
             text_: qsTr("Beli Kartu")
             text2_: qsTr("Buy Card")
-            modeReverse: true
+            font_text_: 20
+            modeReverse: false
             color_: (productCountAll > 0) ? 'white' : 'gray'
             opacity: 1
-            visible: true
+            visible: false
 //            mode3d: 'gray'
             MouseArea{
-                width: 250
-                height: 250
                 enabled: (productCountAll > 0) ? true : false
                 anchors.fill: parent
                 onClicked: {
@@ -392,14 +385,13 @@ Base{
             }
             Rectangle{
                 id: oos_overlay
-                y: 178
+                y: 0
                 width: parent.width
                 height: 50
                 color: "#ffffff"
                 border.width: 0
                 anchors.bottom: parent.bottom
-                anchors.horizontalCenterOffset: 0
-                anchors.bottomMargin: 22
+                anchors.bottomMargin: 25
                 anchors.horizontalCenter: parent.horizontalCenter
                 opacity: 0.8
                 visible: (productCountAll > 0) ? false : true
@@ -412,10 +404,6 @@ Base{
                     font.bold: false
                     font.family:"Ubuntu"
                     verticalAlignment: Text.AlignVCenter
-                    anchors.rightMargin: -8
-                    anchors.bottomMargin: 0
-                    anchors.leftMargin: 8
-                    anchors.topMargin: 0
                     horizontalAlignment: Text.AlignHCenter
                 }
             }
@@ -424,24 +412,21 @@ Base{
         MasterButtonNew {
             id: ppob_button
             size: (globalScreenType == '1') ? 350 : 250
-            x: 160
-            width: 250
-            height: 250
+            x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/shop_cart.png"
             text_: qsTr("Bayar/Beli")
             text2_: qsTr("Pay/Buy")
+            font_text_: 20
             modeReverse: false
-            visible: true
+            visible: false
 //            mode3d: 'gray'
             MouseArea{
-                width: 250
-                height: 250
-                anchors.fill: parent
                 anchors.rightMargin: 0
                 anchors.bottomMargin: 0
                 anchors.leftMargin: 0
                 anchors.topMargin: 0
+                anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Bayar/Beli"');
                     if (press!="0") return;
@@ -531,160 +516,160 @@ Base{
     }
 
     Rectangle{
-            id: login_button_rec
-            color: 'white'
-            radius: 8
-            anchors.top: parent.top
-            anchors.topMargin: 162
-            anchors.left: parent.left
-            anchors.leftMargin: -42
-            width: 95
-            height: 60
-            Image{
-                id: login_button_img
-                width: 100
-                height: 50
-                anchors.verticalCenterOffset: -1
-                anchors.rightMargin: -6
-                anchors.horizontalCenterOffset: 18
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.right: parent.right
-                anchors.horizontalCenter: parent.horizontalCenter
-                scale: 0.75
-                source: 'source/adult-male.png'
-                fillMode: Image.PreserveAspectFit
-            }
-
-            MouseArea{
-                anchors.rightMargin: -1
-                anchors.bottomMargin: 0
-                anchors.leftMargin: 2
-                anchors.topMargin: 0
-                anchors.fill: parent
-                onDoubleClicked: {
-                    _SLOT.user_action_log('Press "Admin" Button');
-                    console.log('Admin Button is Pressed..!');
-                    // _SLOT.set_tvc_player("STOP");
-                    _SLOT.stop_idle_mode();
-                    resetMediaTimer();
-                    my_layer.push(admin_login);
-                }
-            }
-        }
-
-    Rectangle{
-           id: search_trx_button
-           x: 1275
-           width: 65
-           height: 215
-           color: 'white'
-           radius: 20
-           anchors.rightMargin: 0
-           anchors.right: parent.right
-           anchors.top: parent.top
-           anchors.topMargin: 162
-           visible: false
-           Text{
-               y: 107
-               text: 'CEK/LANJUT\nTRANSAKSI'
-               anchors.bottomMargin: 60
-               font.pixelSize: (globalScreenType == '1') ? 30 : 20
-               anchors.horizontalCenterOffset: 0
-               anchors.bottom: parent.bottom
-               anchors.horizontalCenter: parent.horizontalCenter
-               font.family:"Ubuntu"
-               font.bold: true
-               rotation: 270
-               verticalAlignment: Text.AlignVCenter
-               horizontalAlignment: Text.AlignHCenter
-           }
-           Image{
-               width: 85
-               height: 65
-               anchors.top: parent.top
-               anchors.topMargin: 5
-               anchors.horizontalCenterOffset: 1
-               anchors.horizontalCenter: parent.horizontalCenter
-               scale: 0.75
-               source: "source/find.png"
-               fillMode: Image.PreserveAspectFit
-           }
-           MouseArea{
-               anchors.rightMargin: 0
-               anchors.bottomMargin: 0
-               anchors.leftMargin: 0
-               anchors.topMargin: 0
-               anchors.fill: parent
-               onClicked: {
-                   if (press!="0") return;
-                   press = "1";
-                   _SLOT.user_action_log('Press "SEARCH_TRX" Button');
-                   console.log('Search Trx Button is Pressed..!');
-                   // _SLOT.set_tvc_player("STOP");
-                   _SLOT.stop_idle_mode();
-                   resetMediaTimer();
-                   my_layer.push(global_input_number, {mode: 'SEARCH_TRX'});
-               }
-           }
-       }
-
-    Rectangle{
-            id: wa_voucher_button
-            x: 1295
-            y: 396
-            width: 65
-            height: 215
-            color: 'white'
-            radius: 20
-            anchors.rightMargin: 0
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 157
+        id: login_button_rec
+        color: 'white'
+        radius: 5
+        anchors.top: parent.top
+        anchors.topMargin: 180
+        anchors.left: parent.left
+        anchors.leftMargin: -17
+        width: 95
+        height: 60
+        Image{
+            id: login_button_img
+            width: 100
+            height: 50
+            anchors.verticalCenterOffset: -3
+            anchors.rightMargin: 8
+            anchors.horizontalCenterOffset: 4
+            anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            visible: false
-            Text{
-                y: 110
-                text: "WHATSAPP\nVOUCHER"
-                anchors.bottomMargin: 58
-                font.pixelSize: (globalScreenType == '1') ? 28 : 20
-                anchors.horizontalCenterOffset: -1
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.family:"Ubuntu"
-                font.bold: true
-                rotation: 270
-                verticalAlignment: Text.AlignVCenter
-                horizontalAlignment: Text.AlignHCenter
-            }
-            Image{
-                y: 0
-                width: 69
-                height: 76
-                anchors.horizontalCenterOffset: 0
-                anchors.horizontalCenter: parent.horizontalCenter
-                scale: 0.75
-                source: "source/whatsapp_transparent_black.png"
-                fillMode: Image.PreserveAspectCrop
-            }
+            anchors.horizontalCenter: parent.horizontalCenter
+            scale: 0.75
+            source: 'source/adult-male.png'
+            fillMode: Image.PreserveAspectFit
+        }
 
-            MouseArea{
-                anchors.rightMargin: 0
-                anchors.bottomMargin: -1
-                anchors.leftMargin: 0
-                anchors.topMargin: 1
-                anchors.fill: parent
-                onClicked: {
-                    if (press!="0") return;
-                    press = "1";
-                    _SLOT.user_action_log('Press "WA_VOUCHER" Button');
-                    console.log('WA Voucher Button is Pressed..!');
-                    // _SLOT.set_tvc_player("STOP");
-                    _SLOT.stop_idle_mode();
-                    resetMediaTimer();
-    //                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
-                    preload_whatasapp_voucher.open()
-                }
+        MouseArea{
+            anchors.rightMargin: 1
+            anchors.bottomMargin: 1
+            anchors.leftMargin: -1
+            anchors.topMargin: -1
+            anchors.fill: parent
+            onDoubleClicked: {
+                _SLOT.user_action_log('Press "Admin" Button');
+                console.log('Admin Button is Pressed..!');
+                // _SLOT.set_tvc_player("STOP");
+                _SLOT.stop_idle_mode();
+                resetMediaTimer();
+                my_layer.push(admin_login);
             }
         }
+    }
+
+    Rectangle{
+        id: search_trx_button
+        x: 1275
+        width: 65
+        height: 215
+        color: 'white'
+        radius: 20
+        anchors.rightMargin: 0
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.topMargin: 162
+        visible: false
+        Text{
+            y: 107
+            text: 'CEK/LANJUT\nTRANSAKSI'
+            anchors.bottomMargin: 60
+            font.pixelSize: (globalScreenType == '1') ? 30 : 20
+            anchors.horizontalCenterOffset: 0
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.family:"Ubuntu"
+            font.bold: true
+            rotation: 270
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Image{
+            width: 85
+            height: 65
+            anchors.top: parent.top
+            anchors.topMargin: 5
+            anchors.horizontalCenterOffset: 1
+            anchors.horizontalCenter: parent.horizontalCenter
+            scale: 0.75
+            source: "source/find.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        MouseArea{
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 0
+            anchors.topMargin: 0
+            anchors.fill: parent
+            onClicked: {
+                if (press!="0") return;
+                press = "1";
+                _SLOT.user_action_log('Press "SEARCH_TRX" Button');
+                console.log('Search Trx Button is Pressed..!');
+                // _SLOT.set_tvc_player("STOP");
+                _SLOT.stop_idle_mode();
+                resetMediaTimer();
+                my_layer.push(global_input_number, {mode: 'SEARCH_TRX'});
+            }
+        }
+    }
+
+    Rectangle{
+        id: wa_voucher_button
+        x: 1295
+        y: 396
+        width: 65
+        height: 215
+        color: 'white'
+        radius: 20
+        anchors.rightMargin: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 157
+        anchors.right: parent.right
+        visible: false
+        Text{
+            y: 110
+            text: "WHATSAPP\nVOUCHER"
+            anchors.bottomMargin: 58
+            font.pixelSize: (globalScreenType == '1') ? 28 : 20
+            anchors.horizontalCenterOffset: -1
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.family:"Ubuntu"
+            font.bold: true
+            rotation: 270
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Image{
+            y: 0
+            width: 69
+            height: 76
+            anchors.horizontalCenterOffset: 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            scale: 0.75
+            source: "source/whatsapp_transparent_black.png"
+            fillMode: Image.PreserveAspectCrop
+        }
+
+        MouseArea{
+            anchors.rightMargin: 0
+            anchors.bottomMargin: -1
+            anchors.leftMargin: 0
+            anchors.topMargin: 1
+            anchors.fill: parent
+            onClicked: {
+                if (press!="0") return;
+                press = "1";
+                _SLOT.user_action_log('Press "WA_VOUCHER" Button');
+                console.log('WA Voucher Button is Pressed..!');
+                // _SLOT.set_tvc_player("STOP");
+                _SLOT.stop_idle_mode();
+                resetMediaTimer();
+//                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
+                preload_whatasapp_voucher.open()
+            }
+        }
+    }
 
     Rectangle{
         id: info_last_money
@@ -887,7 +872,9 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
-//        withBackground: false
+        x: 0
+        y: 1
+        //        withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
         show_detail: "Please Ensure You have set Your plan correctly."
@@ -896,6 +883,8 @@ Base{
 
     StandardNotifView{
         id: kalogin_notif_view
+        x: 0
+        y: 0
         withBackground: false
         buttonEnabled: false
         modeReverse: true
@@ -1030,6 +1019,6 @@ Base{
 
 /*##^##
 Designer {
-    D{i:0;formeditorZoom:0.66}
+    D{i:0;formeditorZoom:0.75}
 }
 ##^##*/

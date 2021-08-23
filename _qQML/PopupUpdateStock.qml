@@ -29,7 +29,7 @@ Rectangle{
         radius: 25
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: 70
+        anchors.verticalCenterOffset: 0
         anchors.horizontalCenterOffset: 0
 
         Text {
@@ -86,11 +86,13 @@ Rectangle{
 
         NumKeyboard{
             id:virtual_numpad
-            anchors.verticalCenterOffset: 22
+            anchors.verticalCenterOffset: 31
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenterOffset: 1
+            anchors.horizontalCenterOffset: 6
             anchors.horizontalCenter: parent.horizontalCenter
             property int count:0
+            width: 154
+            height: 212
 
             Component.onCompleted: {
                 virtual_numpad.strButtonClick.connect(typeIn)

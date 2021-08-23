@@ -17,10 +17,10 @@ Base{
     property var textSlave: 'Anda dapat melakukan transaksi ulang untuk transaksi yang gagal/batal setelah uang masuk ke dalam Bill Acceptor dengan memasukkan kode ulang.'
     property var textThird: 'Mesin ini akan menggunakan bukti elektronik via WhatsApps dan tidak mengeluarkan Struk Pembelian/Transaksi.'
     property bool smallerSlaveSize: true
-    property int textSize: (globalScreenType == '1') ? 40 : 35
+    property int textSize: 25
     property int boxSize: 200
 
-    visible: false
+    visible: true
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
@@ -34,7 +34,8 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 150 : 125
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Syarat dan Ketentuan'
         size_: (globalScreenType == '1') ? 50 : 45
@@ -44,10 +45,10 @@ Base{
 
     AnimatedImage  {
         id: mainImage
-        width: boxSize
-        height: boxSize
+        width: 150
+        height: 150
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: -150
+        anchors.verticalCenterOffset: -133
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -59,11 +60,11 @@ Base{
         id: mainText
         text: textMain
         anchors.horizontalCenterOffset: 160
-        anchors.verticalCenterOffset: -150
+        anchors.verticalCenterOffset: -133
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: textSize
         width: 1000
-        height: boxSize
+        height: 100
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignLeft
         anchors.horizontalCenter: parent.horizontalCenter
@@ -75,10 +76,10 @@ Base{
 
     AnimatedImage  {
         id: slaveImage
-        width: boxSize
-        height: boxSize
+        width: 150
+        height: 150
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 38
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -90,12 +91,12 @@ Base{
         id: slaveText
         text: textSlave
         anchors.horizontalCenterOffset: 160
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 38
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: textSize
         width: 1000
-        height: boxSize
+        height: 100
         wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
@@ -106,10 +107,10 @@ Base{
 
     AnimatedImage  {
         id: thirdImage
-        width: boxSize
-        height: boxSize
+        width: 150
+        height: 150
         anchors.horizontalCenterOffset: -500
-        anchors.verticalCenterOffset: 350
+        anchors.verticalCenterOffset: 212
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
@@ -121,12 +122,12 @@ Base{
         id: thirdText
         text: textThird
         anchors.horizontalCenterOffset: 160
-        anchors.verticalCenterOffset: 350
+        anchors.verticalCenterOffset: 212
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: textSize
         width: 1000
-        height: boxSize
+        height: 100
         wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
@@ -143,3 +144,9 @@ Base{
         preload_customer_info.visible = false
     }
 }
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.66}
+}
+##^##*/

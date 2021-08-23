@@ -13,7 +13,8 @@ Base{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
                 property var globalScreenType: '2'
-                height: (globalScreenType=='2') ? 768 : 1080
+    height: (globalScreenType=='2') ? 768 : 1080
+    property alias _online_status: _online_status
                 width: (globalScreenType=='2') ? 1360 : 1920
 
     property var press: '0'
@@ -730,14 +731,15 @@ Base{
                 TextDetailRowNew{
                     id: _online_status
                     height: 50
+                    labelSize: 20
                     paddingLeft: 9
                     leftMargin: 9
                     heightCell: 0
                     globalWidth: 270
+                    _font_size: 15
                     labelName: qsTr('Status Online')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 20 : 15
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -746,6 +748,7 @@ Base{
                     labelName: qsTr('CPU Temp')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -756,6 +759,7 @@ Base{
                     labelName: qsTr('Disk C: | D:')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -766,6 +770,7 @@ Base{
                     labelName: qsTr('Status RAM')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -776,6 +781,7 @@ Base{
                     labelName: qsTr('Theme Name')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -786,6 +792,7 @@ Base{
                     labelName: qsTr('App Ver.')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -796,6 +803,7 @@ Base{
                     labelName: qsTr('Service Ver.')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -806,6 +814,7 @@ Base{
                     labelName: qsTr('Last Sync')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -849,6 +858,7 @@ Base{
                     labelName: qsTr('Today TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -859,6 +869,7 @@ Base{
                     labelName: qsTr('Total TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -869,6 +880,7 @@ Base{
                     labelName: qsTr('Cash TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -879,6 +891,7 @@ Base{
                     labelName: qsTr('EDC TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -889,6 +902,7 @@ Base{
                     labelName: qsTr('Mandiri Wallet')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -899,6 +913,7 @@ Base{
                     labelName: qsTr('Mandiri Active')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -909,6 +924,7 @@ Base{
                     labelName: qsTr('BNI Wallet')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -919,6 +935,7 @@ Base{
                     labelName: qsTr('BNI Active')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -965,6 +982,7 @@ Base{
                     labelName: qsTr('Total Cash')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1010,6 +1028,7 @@ Base{
                     labelName: qsTr('Total EDC')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1054,6 +1073,7 @@ Base{
                     labelName: qsTr('COM 1 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1124,6 +1144,7 @@ Base{
                     labelName: qsTr('COM 2 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1190,6 +1211,7 @@ Base{
                     labelName: qsTr('COM 3 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1287,6 +1309,7 @@ Base{
                     labelName: qsTr('EDC UPT')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1297,6 +1320,7 @@ Base{
                     labelName: qsTr('Prepaid Reader')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1307,6 +1331,7 @@ Base{
                     labelName: qsTr('Bill Validator')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1317,6 +1342,7 @@ Base{
                     labelName: qsTr('Scanner Reader')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1327,6 +1353,7 @@ Base{
                     labelName: qsTr('Webcam')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1337,6 +1364,7 @@ Base{
                     labelName: qsTr('Card Disp 1')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1347,15 +1375,18 @@ Base{
                     labelName: qsTr('Card Disp 2')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd3_error
+                    height: 50
                     labelName: qsTr('Card Disp 3')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'

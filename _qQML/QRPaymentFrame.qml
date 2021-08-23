@@ -32,6 +32,7 @@ Base{
     property var calledFrom
 
     visible: false
+//    visible: true
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
@@ -39,12 +40,12 @@ Base{
 
     AnimatedImage  {
         id: qris_logo
-        width: 300
-        height: 200
+        width: 150
+        height: 150
         anchors.left: parent.left
-        anchors.leftMargin: 200
+        anchors.leftMargin: 8
         anchors.top: parent.top
-        anchors.topMargin: 100
+        anchors.topMargin: 156
         scale: 1
         visible: (qrisProvider.indexOf(modeQR))
         source: "source/qr_logo/qris_logo_white.png"
@@ -53,12 +54,13 @@ Base{
 
     AnimatedImage  {
         id: gpn_logo
-        width: 300
-        height: 200
+        x: 1202
+        width: 150
+        height: 100
         anchors.right: parent.right
-        anchors.rightMargin: 200
+        anchors.rightMargin: 8
         anchors.top: parent.top
-        anchors.topMargin: 100
+        anchors.topMargin: 181
         scale: 1
         visible: (qrisProvider.indexOf(modeQR))
         source: "source/qr_logo/gpn_white_logo.png"
@@ -67,16 +69,18 @@ Base{
 
     Column{
         width: parent.width
-        height: 500
+        height: 200
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 200 : 150
+        anchors.verticalCenterOffset: 125
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 125
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: (globalScreenType == '1') ? 30 : 25
         visible: !successPayment
         AnimatedImage  {
-            width: 400
-            height: 400
+            width: 350
+            height: 350
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
@@ -84,10 +88,10 @@ Base{
         }
         Text{
             text: textMain
+            font.pixelSize: 15
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
-            font.pixelSize: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: CONF.text_color
@@ -96,10 +100,10 @@ Base{
         }
         Text{
             text: textSlave
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
             wrapMode: Text.WordWrap
-            font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: CONF.text_color
@@ -132,6 +136,7 @@ Base{
         scale: 1
         spacing: 10
         visible: (CONF.general_qr=='1')
+//        visible: true
         Image{
             scale: 0.65
             source: "source/ovo_logo.png"
@@ -166,13 +171,15 @@ Base{
     }
 
     AnimatedImage  {
-        width: 100
-        height: 100
+        y: 649
+        width: 70
+        height: 70
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 25
+        anchors.bottomMargin: 49
         scale: 1
         anchors.horizontalCenter: parent.horizontalCenter
         source: 'source/blue_gradient_circle_loading.gif'
+        anchors.horizontalCenterOffset: 0
         fillMode: Image.PreserveAspectFit
         visible: !successPayment
         Text{
@@ -181,7 +188,11 @@ Base{
             text: showDuration
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
-            font.pixelSize: 20
+            anchors.rightMargin: 0
+            anchors.bottomMargin: 1
+            anchors.leftMargin: 0
+            anchors.topMargin: -1
+            font.pixelSize: 15
             color: 'yellow'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
@@ -193,7 +204,9 @@ Base{
         width: parent.width
         height: 500
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.verticalCenterOffset: -19
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 181
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         color: CONF.frame_color

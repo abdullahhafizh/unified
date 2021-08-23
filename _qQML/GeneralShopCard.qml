@@ -42,7 +42,7 @@ Base{
     property int boxSize: 80
     property var selectedPayment: undefined
 
-    property bool mainVisible: false
+    property bool mainVisible: true
 
     property var cashboxFull
 
@@ -418,29 +418,40 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.horizontalCenterOffset: 0
+        anchors.topMargin: 115
+        size_: 30
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kartu Tersedia'
-        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && mainVisible
-
     }
 
     Row{
         id: rec_card_images
-//        width: (availItems.length * 420)
-        height: 400
-        anchors.verticalCenterOffset: -100
+        width: 800
+        //        width: (availItems.length * 420)
+        height: 220
+        anchors.verticalCenterOffset: -105
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 20
         visible: main_title.visible
         PrepaidProductItemLite{
             id: card_show_1
-//            visible: true
+            width: 250
+            height: 200
+            visible: true
+            clip: true
             MouseArea{
+                width: 250
+                height: 250
                 anchors.fill: parent
+                anchors.rightMargin: 0
+                anchors.bottomMargin: -7
+                anchors.leftMargin: 0
+                anchors.topMargin: 2
                 onClicked: {
                     if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -453,9 +464,16 @@ Base{
         }
         PrepaidProductItemLite{
             id: card_show_2
+            width: 250
+            height: 200
 //            visible: true
             MouseArea{
+                width: 250
+                height: 250
                 anchors.fill: parent
+                anchors.bottomMargin: -7
+                anchors.rightMargin: 0
+                anchors.topMargin: 8
                 onClicked: {
                     if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -468,9 +486,18 @@ Base{
         }
         PrepaidProductItemLite{
             id: card_show_3
+            width: 250
+            height: 200
 //            visible: true
             MouseArea{
+                id: mouseArea
+                width: 250
+                height: 250
                 anchors.fill: parent
+                anchors.leftMargin: 0
+                anchors.topMargin: 0
+                anchors.rightMargin: 0
+                anchors.bottomMargin: 0
                 onClicked: {
                     if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -568,17 +595,24 @@ Base{
 
     SelectPaymentInline{
         id: select_payment
+        y: 387
+        width: 1684
+        height: 249
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        _qrDanaEnable: false
+        anchors.horizontalCenterOffset: 0
+        modeReverse: true
+        anchors.bottomMargin: 132
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: (productIdx > -1)
+                visible: (productIdx > -1)
 //        visible: true
         calledFrom: 'general_shop_card'
         _cashEnable: cashEnable
+//        _cashEnable: true
         _cardEnable: cardEnable
+//        _cardEnable: true
         _qrMultiEnable: true
         _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
         _qrGopayEnable: qrGopayEnable
         _qrLinkAjaEnable: qrLinkajaEnable
         _qrShopeeEnable: qrShopeeEnable
@@ -588,8 +622,12 @@ Base{
 
     SelectPaymentQR{
         id: select_qr_provider
+        y: 370
+        width: 1360
+        height: 250
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.horizontalCenterOffset: 0
+        anchors.bottomMargin: 148
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
 //        visible: true
@@ -812,6 +850,7 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
+        height: 768
         withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
@@ -933,3 +972,9 @@ Base{
 
 }
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.66}
+}
+##^##*/

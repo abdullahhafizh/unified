@@ -13,6 +13,7 @@ Rectangle{
     property bool withBackground: false
     property var theme: 'white'
     property int leftMargin: (globalWidth==400) ? 20 : 10
+    property var _font_size: contentSize/2
 
     color: 'transparent'
     width: globalWidth
@@ -52,7 +53,7 @@ Rectangle{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WrapAnywhere
-            font.pixelSize: contentSize/2
+            font.pixelSize: _font_size
             font.family: 'Microsoft YaHei'
             color: '#1D294D'
 
