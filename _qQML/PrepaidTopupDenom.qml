@@ -97,7 +97,6 @@ Base{
                 open_preload_notif();
             } else {
                 parse_cardData(cardData);
-                _SLOT.start_play_audio('choose_topup_denom');
             }
         }
         if(Stack.status==Stack.Deactivating){
@@ -448,6 +447,7 @@ Base{
         if (bank_name=='DKI') provider = 'JakCard DKI';
         if (bank_name=='BRI') provider = 'Brizzi BRI';
         mainVisible = true;
+        _SLOT.start_play_audio('choose_topup_denom');
         if (topupData!=undefined) topup_readiness(topupData);
         else _SLOT.start_get_topup_readiness();
         popup_loading.close();
