@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 import "config.js" as CONF
 
@@ -11,6 +11,11 @@ Base{
 //    property var globalScreenType: '2'
 //    height: (globalScreenType=='2') ? 1024 : 1080
 //    width: (globalScreenType=='2') ? 1280 : 1920
+
+                property var globalScreenType: '2'
+    height: (globalScreenType=='2') ? 768 : 1080
+    property alias _online_status: _online_status
+                width: (globalScreenType=='2') ? 1360 : 1920
 
     property var press: '0'
     property int timer_value: 600
@@ -702,6 +707,10 @@ Base{
                 anchors.fill: parent
                 color: '#1D294D'
                 radius: 25
+                anchors.rightMargin: 0
+                anchors.bottomMargin: -1
+                anchors.leftMargin: 0
+                anchors.topMargin: 1
                 opacity: .97
             }
             BoxTitle{
@@ -717,76 +726,95 @@ Base{
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
-                anchors.topMargin: 80
+                anchors.topMargin: 54
                 spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _online_status
+                    height: 50
+                    labelSize: 20
+                    paddingLeft: 9
+                    leftMargin: 9
+                    heightCell: 0
+                    globalWidth: 270
+                    _font_size: 15
                     labelName: qsTr('Status Online')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 20 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cpu_temp
+                    height: 50
                     labelName: qsTr('CPU Temp')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _disk_c
+                    height: 50
                     labelName: qsTr('Disk C: | D:')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _ram_status
+                    height: 50
                     labelName: qsTr('Status RAM')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _theme_status
+                    height: 50
                     labelName: qsTr('Theme Name')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _version_status
+                    height: 50
                     labelName: qsTr('App Ver.')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _service_status
+                    height: 50
                     labelName: qsTr('Service Ver.')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _last_sync
+                    height: 50
                     labelName: qsTr('Last Sync')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -822,76 +850,92 @@ Base{
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
-                anchors.topMargin: 80
+                anchors.topMargin: 47
                 spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _today_trx
+                    height: 50
                     labelName: qsTr('Today TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _total_trx
+                    height: 50
                     labelName: qsTr('Total TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cash_trx
+                    height: 50
                     labelName: qsTr('Cash TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _edc_trx
+                    height: 50
                     labelName: qsTr('EDC TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _mandiri_wallet
+                    height: 50
                     labelName: qsTr('Mandiri Wallet')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _mandiri_active_slot
+                    height: 50
                     labelName: qsTr('Mandiri Active')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _bni_wallet
+                    height: 50
                     labelName: qsTr('BNI Wallet')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _bni_active_slot
+                    height: 50
                     labelName: qsTr('BNI Active')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -911,6 +955,10 @@ Base{
                 anchors.fill: parent
                 color: '#1D294D'
                 radius: 25
+                anchors.rightMargin: 0
+                anchors.bottomMargin: -1
+                anchors.leftMargin: 0
+                anchors.topMargin: 1
                 opacity: .97
             }
             BoxTitle{
@@ -926,13 +974,15 @@ Base{
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
-                anchors.topMargin: 80
+                anchors.topMargin: 53
                 spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _total_cash_available
+                    height: 45
                     labelName: qsTr('Total Cash')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -940,7 +990,7 @@ Base{
                 NextButton{
                    id: button_collect_cash
                    width: 110
-                   height: 40
+                   height: 30
                    anchors.right: _total_cash_available.right
                    anchors.rightMargin: 0
                    fontSize: 15
@@ -948,6 +998,11 @@ Base{
                    button_text: 'do-collect'
                    modeReverse: true
                    MouseArea{
+                       height: 30
+                       anchors.rightMargin: 0
+                       anchors.bottomMargin: 0
+                       anchors.leftMargin: 0
+                       anchors.topMargin: 0
                        anchors.fill: parent
                        enabled: (parseInt(_total_cash_available.labelContent) > 0) ? true : false
                        onClicked: {
@@ -969,9 +1024,11 @@ Base{
                 }
                 TextDetailRowNew{
                     id: _total_edc_available
+                    height: 45
                     labelName: qsTr('Total EDC')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -979,7 +1036,7 @@ Base{
                 NextButton{
                    id: button_settle_edc
                    width: 110
-                   height: 40
+                   height: 30
                    anchors.right: _total_edc_available.right
                    anchors.rightMargin: 0
                    fontSize: 15
@@ -987,6 +1044,10 @@ Base{
                    button_text: 'settle edc'
                    modeReverse: true
                    MouseArea{
+                       anchors.rightMargin: 154
+                       anchors.bottomMargin: -1
+                       anchors.leftMargin: -154
+                       anchors.topMargin: 1
                        anchors.fill: parent
                        enabled: (parseInt(_total_edc_available.labelContent) > 0) ? true : false
                        onClicked: {
@@ -1008,9 +1069,11 @@ Base{
 
                 TextDetailRowNew{
                     id: _total_stock_101
+                    height: 40
                     labelName: qsTr('COM 1 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1026,11 +1089,15 @@ Base{
                        enabled: (_total_stock_101!='---') ? true : false
                        button_text: 'test'
                        width: 80
-                       height: 40
+                       height: 30
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
                        MouseArea{
+                           anchors.rightMargin: 0
+                           anchors.bottomMargin: 0
+                           anchors.leftMargin: 0
+                           anchors.topMargin: 0
                            anchors.fill: parent
                            onClicked: {
                                _SLOT.user_action_log('Admin Page "Test Slot 1"');
@@ -1045,11 +1112,15 @@ Base{
                        enabled: (_total_stock_101!='---') ? true : false
                        button_text: 'update'
                        width: 80
-                       height: 40
+                       height: 30
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
                        MouseArea{
+                           anchors.rightMargin: 0
+                           anchors.bottomMargin: 0
+                           anchors.leftMargin: 0
+                           anchors.topMargin: 0
                            anchors.fill: parent
                            onClicked: {
                                _SLOT.user_action_log('Admin Page "Update Slot 1"');
@@ -1069,9 +1140,11 @@ Base{
 
                 TextDetailRowNew{
                     id: _total_stock_102
+                    height: 40
                     labelName: qsTr('COM 2 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1086,11 +1159,15 @@ Base{
                        enabled: (_total_stock_102!='---') ? true : false
                        button_text: 'test'
                        width: 80
-                       height: 40
+                       height: 30
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
                        MouseArea{
+                           anchors.rightMargin: 0
+                           anchors.bottomMargin: 0
+                           anchors.leftMargin: 0
+                           anchors.topMargin: 0
                            anchors.fill: parent
                            onClicked: {
                                _SLOT.user_action_log('Admin Page "Test Slot 2"');
@@ -1104,11 +1181,16 @@ Base{
                        enabled: (_total_stock_102!='---') ? true : false
                        button_text: 'update'
                        width: 80
-                       height: 40
+                       height: 30
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
                        MouseArea{
+                           height: 30
+                           anchors.rightMargin: 0
+                           anchors.bottomMargin: 0
+                           anchors.leftMargin: 0
+                           anchors.topMargin: 0
                            anchors.fill: parent
                            onClicked: {
                                _SLOT.user_action_log('Admin Page "Update Slot 2"');
@@ -1125,9 +1207,11 @@ Base{
                 }
                 TextDetailRowNew{
                     id: _total_stock_103
+                    height: 40
                     labelName: qsTr('COM 3 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
@@ -1142,11 +1226,15 @@ Base{
                        enabled: (_total_stock_103!='---') ? true : false
                        button_text: 'test'
                        width: 80
-                       height: 40
+                       height: 30
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
                        MouseArea{
+                           anchors.rightMargin: 0
+                           anchors.bottomMargin: 0
+                           anchors.leftMargin: 0
+                           anchors.topMargin: 0
                            anchors.fill: parent
                            onClicked: {
                                _SLOT.user_action_log('Admin Page "Test Slot 3"');
@@ -1161,11 +1249,15 @@ Base{
                        enabled: (_total_stock_103!='---') ? true : false
                        button_text: 'update'
                        width: 80
-                       height: 40
+                       height: 30
                        fontSize: 15
                        modeRadius: false
                        modeReverse: true
                        MouseArea{
+                           anchors.rightMargin: 0
+                           anchors.bottomMargin: 0
+                           anchors.leftMargin: 0
+                           anchors.topMargin: 0
                            anchors.fill: parent
                            onClicked: {
                                _SLOT.user_action_log('Admin Page "Update Slot 3"');
@@ -1209,76 +1301,92 @@ Base{
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
-                anchors.topMargin: 80
+                anchors.topMargin: 50
                 spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _edc_error
+                    height: 50
                     labelName: qsTr('EDC UPT')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _nfc_error
+                    height: 50
                     labelName: qsTr('Prepaid Reader')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _bill_error
+                    height: 50
                     labelName: qsTr('Bill Validator')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _scanner_error
+                    height: 50
                     labelName: qsTr('Scanner Reader')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _webcam_error
+                    height: 50
                     labelName: qsTr('Webcam')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd1_error
+                    height: 50
                     labelName: qsTr('Card Disp 1')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd2_error
+                    height: 50
                     labelName: qsTr('Card Disp 2')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd3_error
+                    height: 50
                     labelName: qsTr('Card Disp 3')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
+                    _font_size: 15
                     labelSize: (globalScreenType == '1') ? 20 : 15
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'

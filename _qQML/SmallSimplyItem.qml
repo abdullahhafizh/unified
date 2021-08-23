@@ -10,8 +10,8 @@ Rectangle {
     property bool isSelected: false
     property bool isActivated: true
 
-    width: 359
-    height: 183
+    width: 300
+    height: 170
     color: 'transparent'
     visible: true
 
@@ -23,6 +23,8 @@ Rectangle {
     }
 
     Rectangle {
+        width: 325
+        height: 183
         visible: isSelected
         anchors.fill: parent
         color: "black"
@@ -31,7 +33,8 @@ Rectangle {
 
     Image{
         id: raw_image
-        width: (imageMaxMode) ? 200 : 120
+        width: 100
+        height: 70
         anchors.topMargin: (imageMaxMode) ? 25 : 10
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -41,14 +44,19 @@ Rectangle {
     }
 
     ColorOverlay {
+        width: 100
+        height: 70
         visible: modeReverse
         anchors.fill: raw_image
         source: raw_image
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
         scale: raw_image.scale
         color: "#ffffff"
     }
 
     Text{
+        y: 132
         color: "white"
         text: itemName
         style: Text.Sunken
@@ -56,21 +64,23 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         font.bold: true
-        font.pixelSize: 25
+        font.pixelSize: 20
         verticalAlignment: Text.AlignBottom
+        anchors.horizontalCenterOffset: 0
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"
     }
 
     Rectangle {
         id: closed_rectangle
-        height: 50
+        height: 30
         width: parent.width
         visible: !isActivated
         color: "white"
-        anchors.verticalCenterOffset: 25
+        anchors.verticalCenterOffset: 21
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenterOffset: 0
         opacity: .8
     }
 
@@ -78,11 +88,15 @@ Rectangle {
         visible: closed_rectangle.visible
         anchors.fill: closed_rectangle
         text: qsTr("CLOSED")
-        font.pixelSize: 35
+        font.pixelSize: 20
         color: "black"
         font.bold: true
         font.family:"Ubuntu"
         verticalAlignment: Text.AlignVCenter
+        anchors.rightMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
+        anchors.bottomMargin: 0
         horizontalAlignment: Text.AlignHCenter
     }
 
@@ -98,3 +112,9 @@ Rectangle {
 
 }
 
+
+/*##^##
+Designer {
+    D{i:0;formeditorZoom:0.75}
+}
+##^##*/
