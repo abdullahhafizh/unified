@@ -40,7 +40,7 @@ TEST_MODE = not LIVE_MODE
 if LIVE_MODE is True:
     BACKEND_URL = 'http://vm-service.mdd.co.id:471/kiosk-api/v2/'
     _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
-    os.system('git checkout master')
+    os.system('git checkout live')
 if TEST_MODE is True:
     BACKEND_URL = 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/'
     _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
