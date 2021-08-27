@@ -61,6 +61,8 @@ Base{
 
     property bool closeTrxSession: false
 
+    property bool promoCodeActive: false
+
 
     signal framingSignal(string str)
 
@@ -1045,6 +1047,8 @@ Base{
         _SLOT.start_get_refunds();
         // Handle if Payment is completely done before
         console.log('Check Received Payment', receivedPayment, totalPrice);
+        //Handle Check Promo active
+        if (details.promo_code_active === true) promoCodeActive = true;
         if (initialPayment >= totalPrice){
 //            _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             payment_complete(details.payment);

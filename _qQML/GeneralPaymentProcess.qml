@@ -167,6 +167,7 @@ Base{
             console.log('promo desc ', details.promo.remarks);
             info_promo.visible = true;
             info_promo.labelContent = details.promo.name;
+            details.promo_code_active = true;
             promoCodeActive = true;
         } else {
             // popup_loading.imageSource = "source/smiley_down.png";
