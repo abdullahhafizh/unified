@@ -382,7 +382,7 @@ Base{
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         if (successTransaction) {
             //Trigger Confirm Promo Here
-            if (details.promo.use_id !== undefined){
+            if (promoCodeActive){
                 var payload = {
                         promo: details.promo
                     }
@@ -1048,6 +1048,14 @@ Base{
         if (initialPayment >= totalPrice){
 //            _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             payment_complete(details.payment);
+            if (details.payment_details == undefined){
+                var payment_details = {
+                    total: initialPayment.toString(),
+                    history: initialPayment.toString()
+                };
+                details.payment_details = payment_details;
+                details.payment_received = initialPayment.toString();
+            }
             execute_transaction('RETRY_TRANSACTION');
             return;
         }

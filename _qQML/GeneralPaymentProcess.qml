@@ -54,6 +54,8 @@ Base{
 
     property bool closeTrxSession: false
 
+    property bool promoCodeActive: false
+
 
     signal framingSignal(string str)
 
@@ -165,8 +167,9 @@ Base{
             console.log('promo desc ', details.promo.remarks);
             info_promo.visible = true;
             info_promo.labelContent = details.promo.name;
+            promoCodeActive = true;
         } else {
-            popup_loading.imageSource = "source/smiley_down.png";
+            // popup_loading.imageSource = "source/smiley_down.png";
             popup_loading.textMain = 'Mohon Maaf, Tidak Ditemukan Kode Promo Aktif';
         }
         delay(3*1000, function(){
@@ -256,6 +259,7 @@ Base{
         refundFeature = true;
         transactionInProcess = false;
         closeTrxSession = false;
+        promoCodeActive = false;
     }
 
     function do_refund_or_print(error){
@@ -414,7 +418,7 @@ Base{
         }
         if (successTransaction) {
             //Trigger Confirm Promo Here
-            if (details.promo.use_id !== undefined){
+            if (promoCodeActive){
                 var payload = {
                         promo: details.promo
                     }
