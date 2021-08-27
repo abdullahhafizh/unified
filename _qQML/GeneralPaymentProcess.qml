@@ -171,7 +171,7 @@ Base{
             promoCodeActive = true;
         } else {
             // popup_loading.imageSource = "source/smiley_down.png";
-            popup_loading.textMain = 'Mohon Maaf, Tidak Ditemukan Kode Promo Aktif';
+            // popup_loading.textMain = 'Mohon Maaf, Tidak Ditemukan Kode Promo Aktif';
         }
         delay(3*1000, function(){
             popup_loading.close();
