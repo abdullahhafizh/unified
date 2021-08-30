@@ -260,14 +260,17 @@ ALLOWED_BANK_CHECK_CARD_LOG = ['MANDIRI', 'BNI']
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'blocked^bin^card', '6032984098').split('|')
 
+LAST_INSERT_CASH_TIMESTAMP = None
 
 def store_notes_activity(notes, trxid):
+    global LAST_INSERT_CASH_TIMESTAMP
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
         LOGGER.info((cash_status_file, trxid, notes))
         with open(cash_status_file, 'a') as c:
             c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
             c.close()
+        LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
         return True
     except Exception as e:
         LOGGER.warning((e))

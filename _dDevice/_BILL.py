@@ -328,14 +328,15 @@ def start_receive_note(trxid):
             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
             LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
             return
+        if _Common.LAST_INSERT_CASH_TIMESTAMP == _Helper.time_string(f='%Y%m%d%H%M%S'):
+            LOGGER.info(('DUPLICATE_TRXID_WHEN_STORE_CASH_ACTIVITY', _Common.LAST_INSERT_CASH_TIMESTAMP))
+            return # Must Stop Here
         IS_RECEIVING = False
         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
         _Common.store_notes_activity('ERROR', trxid)
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
         _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
-
-
 
 
 def store_cash_into_cashbox():
