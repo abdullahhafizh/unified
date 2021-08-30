@@ -271,14 +271,14 @@ Base{
         my_timer.restart();
         // Validation To Get This Condition, payment received, refund feature disabled and not a success trx
         // While success trx must keep using refund, NAHLOH..!
-//                if (receivedPayment > 0 && !refundFeature && !successTransaction){
-//                    details.pending_trx_code = details.epoch.toString().substr(-6);
-//                    details.pending_trx_code = uniqueCode;
-//                    console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
-//                    release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi');
-//                    return;
-//                }
-// Handle Success Transaction With Exceed Payment
+        //                if (receivedPayment > 0 && !refundFeature && !successTransaction){
+        //                    details.pending_trx_code = details.epoch.toString().substr(-6);
+        //                    details.pending_trx_code = uniqueCode;
+        //                    console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
+        //                    release_print('Terjadi Kesalahan/Pembatalan Transaksi', 'Silakan Ambil Struk Transaksi Anda Dan Ulangi Transaksi');
+        //                    return;
+        //                }
+        // Handle Success Transaction With Exceed Payment
         if (!refundFeature){
             if (details.payment=='cash') set_refund_channel('WHATSAPP_ONLY');
         }
@@ -327,6 +327,7 @@ Base{
             if (receivedPayment == 0) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain|5', false);
+                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
             }
@@ -339,6 +340,7 @@ Base{
             if (receivedPayment == 0) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain|5', false);
+                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED')
                 abc.counter = 5;
                 return;
             }
@@ -823,7 +825,7 @@ Base{
         press = '0';
         if (grgFunction == 'RECEIVE_BILL'){
             if (grgResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
-            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
+            if (grgResult == "ERROR" || grgResult == "TIMEOUT" || grgResult == "JAMMED"){
                 details.process_error = 1;
                 do_refund_or_print('cash_device_error');
                 return;

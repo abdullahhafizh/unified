@@ -291,6 +291,7 @@ Base{
             if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
+                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
             }
@@ -303,6 +304,7 @@ Base{
             if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain', false);
+                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
             }
