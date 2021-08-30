@@ -61,6 +61,8 @@ Base{
 
     property bool closeTrxSession: false
 
+    property bool promoCodeActive: false
+
 
     signal framingSignal(string str)
 
@@ -289,6 +291,7 @@ Base{
             if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
+                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
             }
@@ -301,6 +304,7 @@ Base{
             if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain', false);
+                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
             }
@@ -382,7 +386,7 @@ Base{
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         if (successTransaction) {
             //Trigger Confirm Promo Here
-            if (details.promo.use_id !== undefined){
+            if (promoCodeActive){
                 var payload = {
                         promo: details.promo
                     }
@@ -1045,9 +1049,19 @@ Base{
         _SLOT.start_get_refunds();
         // Handle if Payment is completely done before
         console.log('Check Received Payment', receivedPayment, totalPrice);
+        //Handle Check Promo active
+        if (details.promo_code_active === true) promoCodeActive = true;
         if (initialPayment >= totalPrice){
 //            _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             payment_complete(details.payment);
+            if (details.payment_details == undefined){
+                var payment_details = {
+                    total: initialPayment.toString(),
+                    history: initialPayment.toString()
+                };
+                details.payment_details = payment_details;
+                details.payment_received = initialPayment.toString();
+            }
             execute_transaction('RETRY_TRANSACTION');
             return;
         }

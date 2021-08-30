@@ -1,3 +1,12 @@
+14.0.F-GLOBAL:
+- Debug Print Anomali Stack Cash Event,
+- ...
+
+14.0.E-GLOBAL:
+- Fix Bug Transaction Freeze When Offline,
+- Fix Bug Retry Code Missing Payment Details,
+- ...
+
 14.0.D-GLOBAL:
 - Enable Sound Notification,
 - UnRelease New Thread For Online Logging,

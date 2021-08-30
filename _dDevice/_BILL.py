@@ -42,7 +42,8 @@ GRG = {
     "KEY_STORED": None,
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": '!@#$%^&UI',
-    "DIRECT_MODULE": False
+    "DIRECT_MODULE": False,
+    "TYPE": "GRG_08"
 }
 
 NV = {
@@ -63,7 +64,8 @@ NV = {
     "KEY_STORED": 'stacked',
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": 'Stacker full',
-    "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE
+    "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
+    "TYPE": "NV_200"
 }
 
 
@@ -321,34 +323,41 @@ def start_receive_note(trxid):
             #     break
             sleep(_Common.BILL_STORE_DELAY)
     except Exception as e:
-        _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-        _Common.store_notes_activity('ERROR', trxid)
-        IS_RECEIVING = False
-        _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
-        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
+        LOGGER.warning(e)
         if 'Invalid argument' in e:
             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
             LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
             return
-        LOGGER.warning(e)
+        IS_RECEIVING = False
+        _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
+        _Common.store_notes_activity('ERROR', trxid)
+        _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
+        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
         _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
 
 
 
 
 def store_cash_into_cashbox():
-    print("pyt: ", _Helper.whoami())
-    max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
-    _, _result_store = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
-    LOGGER.debug((str(_result_store)))
-    # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
-    if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
-        return True
-    if BILL['KEY_STORED'].lower() in _result_store.lower():
-        return True
-    if BILL['KEY_BOX_FULL'].lower() in _result_store.lower():
-        set_cashbox_full()
-        return True
+    try:
+        print("pyt: ", _Helper.whoami())
+        max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
+        sleep(1)
+        _resp, _res = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
+        LOGGER.debug((BILL['TYPE'], _resp, _res))
+        # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
+        if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
+            return True
+        if BILL['KEY_STORED'].lower() in _res.lower():
+            return True
+        if BILL['KEY_BOX_FULL'].lower() in _res.lower():
+            set_cashbox_full()
+            return True
+        LOGGER.info(('FAILED'))
+        return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
     # attempt = 0
     # max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
     # while True:
