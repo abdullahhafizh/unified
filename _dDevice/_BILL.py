@@ -322,12 +322,18 @@ def start_receive_note(trxid):
             #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
             #     break
             sleep(_Common.BILL_STORE_DELAY)
+    except OSError as o:
+        LOGGER.warning(('ANOMALY_FOUND_HERE', o))
+        # Do you need recall same function ???
+        # start_receive_note(trxid)
+        # [Errno 22] Invalid argument
+        # if 'Invalid argument' in o:
+        #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+        #     LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
+        #     return
+        pass
     except Exception as e:
         LOGGER.warning(e)
-        if 'Invalid argument' in e:
-            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
-            LOGGER.warning(('RECEIVE_BILL|BAD_NOTES'))
-            return
         if _Common.LAST_INSERT_CASH_TIMESTAMP == _Helper.time_string(f='%Y%m%d%H%M%S'):
             LOGGER.info(('DUPLICATE_TRXID_WHEN_STORE_CASH_ACTIVITY', _Common.LAST_INSERT_CASH_TIMESTAMP))
             return # Must Stop Here
@@ -341,13 +347,13 @@ def start_receive_note(trxid):
 
 def store_cash_into_cashbox():
     try:
-        print("pyt: ", _Helper.whoami())
+        # print("pyt: ", _Helper.whoami())
         max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
         sleep(1)
         _resp, _res = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((BILL['TYPE'], _resp, _res))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
-        if _Helper.empty(BILL['KEY_STORED']) or max_attempt == 1:
+        if BILL['KEY_STORED'] is None or max_attempt == 1:
             return True
         if BILL['KEY_STORED'].lower() in _res.lower():
             return True
@@ -356,6 +362,9 @@ def store_cash_into_cashbox():
             return True
         LOGGER.info(('FAILED'))
         return False
+    except OSError as o:
+        LOGGER.warning(('ANOMALY_FOUND_HERE', o))
+        return True
     except Exception as e:
         LOGGER.warning((e))
         return False
@@ -391,7 +400,7 @@ def set_cashbox_full():
 
 def update_cash_status(cash_in, store_result=False):
     global CASH_HISTORY, COLLECTED_CASH
-    print("pyt: ", _Helper.whoami())
+    # print("pyt: ", _Helper.whoami())
     try:
         if not store_result:
             LOGGER.warning(('Store Cash Failed', 'Update Cash Failed', store_result))
