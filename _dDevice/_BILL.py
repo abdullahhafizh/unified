@@ -234,93 +234,109 @@ def start_receive_note(trxid):
     try:
         attempt = 0
         IS_RECEIVING = True
+        _result = None
         while True:
-            # Handle NV IS_RECEIVING Flagging
-            if IS_RECEIVING is False:
-                LOGGER.info(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
-                break
-            attempt += 1
-            param = BILL["RECEIVE"] + '|'
-            _response, _result = send_command_to_bill(param=param, output=None)
-            # _Helper.dump([_response, _result])
-            if BILL['KEY_BOX_FULL'].lower() in _result.lower():
-                set_cashbox_full()
-                IS_RECEIVING = False
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
-                _Common.store_notes_activity('ERROR', trxid)
-                break
-            if _response == -1:
-                if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
-                    stop_receive_note()
-                    sleep(2.5)
-                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
+            try:
+                # Handle NV IS_RECEIVING Flagging
+                if IS_RECEIVING is False:
+                    LOGGER.info(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
                     break
-                # else: 
-                    # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
-                    # break
-            if _response == 0 and BILL["KEY_RECEIVED"] in _result:
-                cash_in = parse_notes(_result)
-                # -------------------------
-                # _Helper.dump(cash_in)
-                if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
-                    if cash_in in SMALL_NOTES_NOT_ALLOWED:
-                        sleep(1.5)
-                        param = BILL["REJECT"] + '|'
-                        send_command_to_bill(param=param, output=None)
-                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                attempt += 1
+                param = BILL["RECEIVE"] + '|'
+                _response, _result = send_command_to_bill(param=param, output=None)
+                # _Helper.dump([_response, _result])
+                if BILL['KEY_BOX_FULL'].lower() in _result.lower():
+                    set_cashbox_full()
+                    IS_RECEIVING = False
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
+                    _Common.store_notes_activity('ERROR', trxid)
+                    break
+                if _response == -1:
+                    if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
+                        stop_receive_note()
+                        sleep(2.5)
+                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
                         break
-                    if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
-                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
-                        sleep(1.5)
-                        param = BILL["REJECT"] + '|'
-                        send_command_to_bill(param=param, output=None)
-                        LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
-                                                                            'COLLECTED': COLLECTED_CASH,
-                                                                            'TARGET': DIRECT_PRICE_AMOUNT})))
-                        break
-                # Process Store and Update Data Cash
-                if _Common.store_notes_activity(cash_in, trxid) is True:
-                    store_result = store_cash_into_cashbox()
-                    if store_result is True:
-                        update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
-                        LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
-                        _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-            if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
-                break
-            if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
-                if BILL_TYPE == 'GRG':
+                    # else: 
+                        # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
+                        # break
+                if _response == 0 and BILL["KEY_RECEIVED"] in _result:
+                    cash_in = parse_notes(_result)
+                    # -------------------------
+                    # _Helper.dump(cash_in)
+                    if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
+                        if cash_in in SMALL_NOTES_NOT_ALLOWED:
+                            sleep(1.5)
+                            param = BILL["REJECT"] + '|'
+                            send_command_to_bill(param=param, output=None)
+                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                            break
+                        if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
+                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                            sleep(1.5)
+                            param = BILL["REJECT"] + '|'
+                            send_command_to_bill(param=param, output=None)
+                            LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
+                                                                                'COLLECTED': COLLECTED_CASH,
+                                                                                'TARGET': DIRECT_PRICE_AMOUNT})))
+                            break
+                    # Process Store and Update Data Cash
+                    if _Common.store_notes_activity(cash_in, trxid) is True:
+                        # Somehow, Trigger OSError accidetally
+                        store_result = store_cash_into_cashbox()
+                        if store_result is True:
+                            update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
+                            LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
+                            _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
+                    break
+                if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
+                    if BILL_TYPE == 'GRG':
+                        _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
+                        # send_command_to_bill(param=BILL["STOP"]+'|', output=None)
+                        send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                    # if BILL_TYPE == 'NV':
+                    #     stop_receive_note()
+                    break
+                if BILL["UNKNOWN_ITEM"] is not None and BILL["UNKNOWN_ITEM"] in _result:
                     _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                    # send_command_to_bill(param=BILL["STOP"]+'|', output=None)
-                    send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
-                # if BILL_TYPE == 'NV':
-                #     stop_receive_note()
-                break
-            if BILL["UNKNOWN_ITEM"] is not None and BILL["UNKNOWN_ITEM"] in _result:
-                _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
-                break
-            if BILL["CODE_JAM"] is not None and BILL["CODE_JAM"] in _result:
-                _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                _Common.BILL_ERROR = 'BILL_DEVICE_JAM'
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
-                LOGGER.warning(('BILL Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
-                                                                    'COLLECTED': COLLECTED_CASH,
-                                                                    'TARGET': DIRECT_PRICE_AMOUNT})))
-                # Call API To Force Update Into Server
-                _Common.upload_device_state('mei', _Common.BILL_ERROR)
-                # sleep(1.5)
-                # init_bill()
-                break
-            if attempt == MAX_EXECUTION_TIME:
-                LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
-                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
-                break
-            # if IS_RECEIVING is False:
-            #     LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
-            #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
-            #     break
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                    break
+                if BILL["CODE_JAM"] is not None and BILL["CODE_JAM"] in _result:
+                    _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
+                    _Common.BILL_ERROR = 'BILL_DEVICE_JAM'
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
+                    LOGGER.warning(('BILL Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
+                                                                        'COLLECTED': COLLECTED_CASH,
+                                                                        'TARGET': DIRECT_PRICE_AMOUNT})))
+                    # Call API To Force Update Into Server
+                    _Common.upload_device_state('mei', _Common.BILL_ERROR)
+                    # sleep(1.5)
+                    # init_bill()
+                    break
+                if attempt == MAX_EXECUTION_TIME:
+                    LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
+                    BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
+                    break
+                # if IS_RECEIVING is False:
+                #     LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
+                #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
+                #     break
+                # sleep(_Common.BILL_STORE_DELAY)
+            except OSError as o:
+                LOGGER.warning(('ANOMALY_FOUND_HERE', o))
+                # Dangerous Zone Here
+                if _result is not None:
+                    cash_in = parse_notes(_result)
+                    if int(cash_in) > 0:
+                        store_result = store_cash_into_cashbox()
+                        if store_result is True:
+                            update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
+                            LOGGER.debug(('#2 Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
+                            _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                pass
             sleep(_Common.BILL_STORE_DELAY)
     except OSError as o:
         LOGGER.warning(('ANOMALY_FOUND_HERE', o))
