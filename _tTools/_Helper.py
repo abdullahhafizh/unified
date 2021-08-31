@@ -1,4 +1,4 @@
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
+__author__ = 'wahyudi@multidaya.id'
 
 import logging
 from multiprocessing.dummy import Pool as ThreadPool

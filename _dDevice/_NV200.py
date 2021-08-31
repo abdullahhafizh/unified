@@ -1,4 +1,4 @@
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
+__author__ = 'wahyudi@multidaya.id'
 import time
 import serial.tools.list_ports
 from _tTools import _Helper

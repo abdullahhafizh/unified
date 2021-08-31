@@ -1,5 +1,5 @@
 
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
+__author__ = 'wahyudi@multidaya.id'
 
 from _mModule._InterfacePrepaidDLL import send_command
 

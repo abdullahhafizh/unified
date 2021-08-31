@@ -1,4 +1,4 @@
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
+__author__ = 'wahyudi@multidaya.id'
 
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidDLL as prepaid
