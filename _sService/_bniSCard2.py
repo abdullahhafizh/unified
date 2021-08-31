@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 """ Untuk Python 3 keatas """
 import logging
 import binascii

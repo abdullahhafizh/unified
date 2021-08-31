@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 import requests
 import json
 import time

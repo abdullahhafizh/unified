@@ -1,6 +1,5 @@
 __author__ = 'wahyudi@multidaya.id'
 
-
 from _cConfig import _ConfigParser, _Common
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal

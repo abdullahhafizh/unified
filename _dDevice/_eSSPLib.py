@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 import datetime
 import serial
 

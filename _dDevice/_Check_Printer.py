@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 import win32print
 import os
 import json
