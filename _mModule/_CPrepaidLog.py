@@ -14,14 +14,16 @@ if not os.path.exists(LOG_FILE):
 
 def tracing(func, message):
     pp = pprint.PrettyPrinter(indent=2)
-    prefix = "PREPAID_TRACE > " + func
+    pass
+    # prefix = "PREPAID_TRACE > " + func
     # print(prefix)
     # pp.pprint(message)
     # print("------------------------------")
 
 def debuging(func, message):
     pp = pprint.PrettyPrinter(indent=2)
-    prefix = "PREPAID_DEBUG > " + func
+    pass
+    # prefix = "PREPAID_DEBUG > " + func
     # print(prefix)
     # pp.pprint(message)
     # print("----------")
