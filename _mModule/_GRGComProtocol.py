@@ -189,7 +189,11 @@ class GRGReponseData():
             iHandle = "0"
             isNormal = True
         
-        return isNormal, "acDevReturn:|acReserve:|iHandle:"+iHandle+"|iLogicCode:"+code+"|iPhyCode:"+code+"|iType:"+iHandle, self.getStatusMessage(code)
+        statusMessage = self.getStatusMessage(code)
+        print('iHandle', type(iHandle), str(iHandle))
+        print('code', type(code), str(code))
+        print('statusMessage', type(statusMessage), str(statusMessage))
+        return isNormal, "acDevReturn:|acReserve:|iHandle:"+iHandle+"|iLogicCode:"+code+"|iPhyCode:"+code+"|iType:"+iHandle, statusMessage
 
     def getStatusMessage(self, code=""):
         if code.startswith("02"):
