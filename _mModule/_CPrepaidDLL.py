@@ -4,6 +4,7 @@ import os.path
 import sys
 import traceback
 import struct
+from binascii import hexlify, unhexlify
 from ctypes import *
 from func_timeout import func_set_timeout
 from _mModule import _CPrepaidLib as lib
@@ -131,7 +132,7 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
         LOG.fw("--> C_PinKA = ",C_PinKA)
         LOG.fw("--> C_PinKL = ",C_PinKL)
 
-        C_PinKL = C_PinKL.hex()
+        C_PinKL = hexlify(C_PinKL)
         C_PinKL = C_PinKL.encode("utf-8")
 
         LOG.fw("C_PinKL = ",C_PinKL)
