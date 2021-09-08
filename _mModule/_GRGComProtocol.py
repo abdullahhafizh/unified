@@ -139,8 +139,9 @@ class GRGReponseData():
         else:
             self.responseData = b""
 
+
     def toString(self):
-        code = hexlify(self.statusCode)
+        code = self.statusCode.decode("utf-8")
         codeMessage = self.getStatusMessage(code)
         try:   
             cmdDat = str(CMD(self.cmdCode.to_bytes(1, byteorder="big")))
@@ -148,9 +149,11 @@ class GRGReponseData():
             cmdDat = str(self.cmdCode)
 
         strData = "Len["+str(self.length)+"], "+cmdDat+", STATUS["+str(self.statusWord)+"], STATE["+str(self.state)+"], "
-        strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+hexlify(self.sensorStatus)+"], MODULE["+hexlify(self.statusModule)+"]\r\n"
+        # strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+hexlify(self.sensorStatus)+"], MODULE["+hexlify(self.statusModule)+"]\r\n"
+        strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+self.sensorStatus.decode("utf-8")+"], MODULE["+self.statusModule.decode("utf-8")+"]\r\n"
         strData = strData + "DATA:" + str(self.responseData) + "\r\n"
         return strData
+    
     
     def getCashInfo(self):
         dataCash = hexlify(self.responseData).upper()
@@ -170,13 +173,14 @@ class GRGReponseData():
         LOG.grglog("[LIB] iDen: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, iDen)
 
         denom = DENOM_LIST.get(iDen, "0")
-
         return True, "Received="+iCur+"|Denomination="+denom+"|Version=1|SerialNumber=1|Go=0", "OK"
+    
     
     def getResponse(self):
         isNormal = True
         iHandle = "0"
-        code = hexlify(self.statusCode)
+        # code = hexlify(self.statusCode)
+        code = self.statusCode.decode("utf-8")
         if code != "0000":
             iHandle = "1"
             isNormal = False
@@ -189,11 +193,12 @@ class GRGReponseData():
             iHandle = "0"
             isNormal = True
         
-        statusMessage = self.getStatusMessage(code)
         print('iHandle', type(iHandle), str(iHandle))
         print('code', type(code), str(code))
+        statusMessage = self.getStatusMessage(code)
         print('statusMessage', type(statusMessage), str(statusMessage))
         return isNormal, "acDevReturn:|acReserve:|iHandle:"+iHandle+"|iLogicCode:"+code+"|iPhyCode:"+code+"|iType:"+iHandle, statusMessage
+
 
     def getStatusMessage(self, code=""):
         if code.startswith("02"):
