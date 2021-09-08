@@ -141,7 +141,7 @@ class GRGReponseData():
 
 
     def toString(self):
-        code = self.statusCode.decode("utf-8")
+        code = hexlify(self.statusCode).decode("utf-8")
         codeMessage = self.getStatusMessage(code)
         try:   
             cmdDat = str(CMD(self.cmdCode.to_bytes(1, byteorder="big")))
@@ -180,7 +180,7 @@ class GRGReponseData():
         isNormal = True
         iHandle = "0"
         # code = hexlify(self.statusCode)
-        code = self.statusCode.decode("utf-8")
+        code = hexlify(self.statusCode).decode("utf-8")
         if code != "0000":
             iHandle = "1"
             isNormal = False
