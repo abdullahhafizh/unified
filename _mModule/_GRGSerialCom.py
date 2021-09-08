@@ -35,8 +35,8 @@ class GRGSerial():
     def startDeposit(self):
         self.IS_START_DEPOSIT_ACTIVE = True
         try:
-            isNormal, returnMessage, messsage = _GRGComProtocol.CM_StartDeposit(self.ser)
-            LOG.grglog("[LIB] startDeposit: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, (isNormal, returnMessage, messsage))
+            isNormal, returnMessage, rawMessage = _GRGComProtocol.CM_StartDeposit(self.ser)
+            LOG.grglog("[LIB] startDeposit: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, (isNormal, returnMessage, rawMessage))
 
             self.IS_START_DEPOSIT_ACTIVE = False
             if not isNormal:
@@ -46,7 +46,7 @@ class GRGSerial():
             _GRGComProtocol.CM_CancelDeposit(self.ser, False)
             raise ex
 
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
     
     def cancelDeposit(self):
         result = _GRGComProtocol.CM_CancelDeposit(self.ser, self.IS_START_DEPOSIT_ACTIVE)
