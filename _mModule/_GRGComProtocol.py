@@ -308,31 +308,31 @@ def CM_Init(ser=Serial()):
     getVersionMessage = createMessage(CMD.QUERY_VERSION, [b'0'])
     responseData = writeAndRead(ser, getVersionMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getResponse()
+    isNormal, returnMessage, rawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     clearNotesMessage = createMessage(CMD.CLEAR_NOTES, [b'1'])
     responseData = writeAndRead(ser, clearNotesMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getResponse()
+    isNormal, returnMessage, rawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getResponse()
+    isNormal, returnMessage, rawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
-    return isNormal, returnMessage, messsage
+    return isNormal, returnMessage, rawMessage
 
 
 CANCEL_EVENT = Event()
@@ -345,26 +345,26 @@ def CM_StartDeposit(ser=Serial()):
     prepareDepositMessage = createMessage(CMD.DEPOSIT_PREP)
     responseData = writeAndRead(ser, prepareDepositMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getResponse()
+    isNormal, returnMessage, rawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
-  
+        return isNormal, returnMessage, rawMessage
+
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+    isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getResponse()
+    isNormal, returnMessage, rawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     LOG.grglog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
 
@@ -373,59 +373,59 @@ def CM_StartDeposit(ser=Serial()):
         getNotesInfo = createMessage(CMD.NOTE_INFO)
         responseData = writeAndRead(ser, getNotesInfo)
         responseMessage = GRGReponseData(responseData)
-        isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+        isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
         LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
         if not isNormal:
             cancelNotesMessage = createMessage(CMD.DEPOSIT_CANCEL)
             responseData = writeAndRead(ser, cancelNotesMessage)
             responseMessage = GRGReponseData(responseData)
-            isxNormal, returnxMessage, xmesssage = responseMessage.getResponse()
+            isxNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
             LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
             if not isxNormal:
-                return isxNormal, returnxMessage, xmesssage
+                return isxNormal, returnxMessage, xrawMessage
 
-            return isNormal, returnMessage, messsage
+            return isNormal, returnMessage, rawMessage
 
         getStatusMessage = createMessage(CMD.QUERY_STATUS)
         responseData = writeAndRead(ser, getStatusMessage)
         responseMessage = GRGReponseData(responseData)
-        isNormal, returnMessage, messsage = responseMessage.getResponse()
+        isNormal, returnMessage, rawMessage = responseMessage.getResponse()
         LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
         if not isNormal:
-            return isNormal, returnMessage, messsage
+            return isNormal, returnMessage, rawMessage
 
         LOG.grglog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
         if responseMessage.state == 3:
             currentTime = time.time()
             if (currentTime - startTime) >= 30:
                 isNormal = False        
-                messsage = "TimeOut Receive Bill Note 30S Achieved"            
-                return isNormal, returnMessage, messsage
+                rawMessage = "TimeOut Receive Bill Note 30S Achieved"            
+                return isNormal, returnMessage, rawMessage
             if CANCEL_EVENT.isSet():
                 CANCEL_EVENT.clear()
-                return isNormal, returnMessage, messsage
+                return isNormal, returnMessage, rawMessage
 
             time.sleep(1)
     
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+    isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnxMessage, xmesssage = responseMessage.getCashInfo()
+    isNormal, returnxMessage, xrawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnxMessage, xmesssage
+        return isNormal, returnxMessage, xrawMessage
     
-    return isNormal, returnMessage, messsage
+    return isNormal, returnMessage, rawMessage
     
 
 def CM_CancelDeposit(ser=Serial(), needCancelStart=False):
@@ -443,76 +443,76 @@ def CM_CancelDeposit(ser=Serial(), needCancelStart=False):
     stopDepositMessage = createMessage(CMD.STOP_RECEIVE)
     responseData = writeAndRead(ser, stopDepositMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+    isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
 
-    return isNormal, returnMessage, messsage
+    return isNormal, returnMessage, rawMessage
 
 
 def CM_AcceptNote(ser=Serial()):  
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+    isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnxMessage, xmesssage = responseMessage.getResponse()
+    isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnxMessage, xmesssage
+        return isNormal, returnxMessage, xrawMessage
 
     confirmNotesMessage = createMessage(CMD.DEPOSIT_CONFIRM)
     responseData = writeAndRead(ser, confirmNotesMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnxMessage, xmesssage = responseMessage.getResponse()
+    isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnxMessage, xmesssage
+        return isNormal, returnxMessage, xrawMessage
 
-    return isNormal, returnMessage, messsage
+    return isNormal, returnMessage, rawMessage
 
 
 def CM_CancelNote(ser=Serial()):  
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+    isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnxMessage, xmesssage = responseMessage.getResponse()
+    isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnxMessage, xmesssage
+        return isNormal, returnxMessage, xrawMessage
 
     cancelNotesMessage = createMessage(CMD.DEPOSIT_CANCEL)
     responseData = writeAndRead(ser, cancelNotesMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnxMessage, xmesssage = responseMessage.getResponse()
+    isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnxMessage, xmesssage
+        return isNormal, returnxMessage, xrawMessage
 
-    return isNormal, returnMessage, messsage
+    return isNormal, returnMessage, rawMessage
 
 
 def CM_GetStatus(ser=Serial()):  
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
-    isNormal, returnMessage, messsage = responseMessage.getCashInfo()
+    isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
-        return isNormal, returnMessage, messsage
+        return isNormal, returnMessage, rawMessage
 
-    return isNormal, returnMessage, messsage
+    return isNormal, returnMessage, rawMessage
