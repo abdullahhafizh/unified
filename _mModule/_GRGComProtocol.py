@@ -149,7 +149,7 @@ class GRGReponseData():
             cmdDat = str(self.cmdCode)
 
         strData = "Len["+str(self.length)+"], "+cmdDat+", STATUS["+str(self.statusWord)+"], STATE["+str(self.state)+"], "
-        strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+self.sensorStatus.decode("utf-8")+"], MODULE["+self.statusModule.decode("utf-8")+"]\r\n"
+        strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+hexlify(self.sensorStatus).decode("utf-8")+"], MODULE["+hexlify(self.statusModule).decode("utf-8")+"]\r\n"
         strData = strData + "DATA:" + str(self.responseData) + "\r\n"
         return strData
     
