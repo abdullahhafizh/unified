@@ -457,7 +457,6 @@ def CM_CancelDeposit(ser=Serial(), needCancelStart=False):
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
-
     return isNormal, returnMessage, rawMessage
 
 
