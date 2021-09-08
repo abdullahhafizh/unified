@@ -15,6 +15,7 @@ import json
 import platform
 from _nNetwork import _NetworkAccess
 from _mModule._InterfacePrepaidDLL import send_command as module_command
+from _mModule._InterfaceGRG import send_command as grg_command
 
 
 LOCK = threading.Lock()
@@ -273,6 +274,9 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
         # service_url = FLASK_URL
         # Call Module Instead or URL
         ___stat, ___resp = 200, module_command(cmd=___cmd, param=___param)
+    elif ___cmd[0] == '5':
+        # Call GRG Interface Command
+        ___stat, ___resp = 200, grg_command(cmd=___cmd, param=___param)
     else:
         ___stat, ___resp = _NetworkAccess.get_local(
             url=service_url + ___cmd + '&param=' + ___param,
