@@ -71,15 +71,13 @@ STATUS_CODE = {
 }
 
 DENOM_LIST={
-    "2A": "1000",
-    "2B": "2000",
-    "2C": "5000",
-    "A1": "10000",
-    "A2": "20000",
-    "A3": "50000",
-    "A4": "100000",
-    "92": "20000",
-
+    "A": "1000",
+    "B": "2000",
+    "C": "5000",
+    "1": "10000",
+    "2": "20000",
+    "3": "50000",
+    "4": "100000",
 }
 
 class PROTO_FUNC(Enum):
@@ -171,7 +169,8 @@ class GRGReponseData():
         iDen = dataCash[iD+4] + dataCash[iD+5]
         LOG.grglog("[LIB] iDen: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, iDen)
 
-        denom = DENOM_LIST.get(iDen, "0")
+        # Get The Money Index From Last
+        denom = DENOM_LIST.get(iDen[1], "0")
         return True, "Received="+iCur+"|Denomination="+denom+"|Version=1|SerialNumber=1|Go=0", "OK"
     
     
@@ -352,6 +351,8 @@ def CM_StartDeposit(ser=Serial()):
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
+    time.sleep(.5)
+
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
@@ -360,6 +361,8 @@ def CM_StartDeposit(ser=Serial()):
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
+    time.sleep(.5)
+
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
@@ -367,6 +370,8 @@ def CM_StartDeposit(ser=Serial()):
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
+
+    time.sleep(.5)
 
     LOG.grglog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
 
@@ -389,6 +394,8 @@ def CM_StartDeposit(ser=Serial()):
 
             return isNormal, returnMessage, rawMessage
 
+        time.sleep(.5)
+
         getStatusMessage = createMessage(CMD.QUERY_STATUS)
         responseData = writeAndRead(ser, getStatusMessage)
         responseMessage = GRGReponseData(responseData)
@@ -409,7 +416,7 @@ def CM_StartDeposit(ser=Serial()):
                 CANCEL_EVENT.clear()
                 return isNormal, returnMessage, rawMessage
 
-        time.sleep(.5)
+        time.sleep(1)
     
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)
@@ -418,6 +425,8 @@ def CM_StartDeposit(ser=Serial()):
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
+
+    time.sleep(.5)
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
