@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 from serial import Serial
 from enum import Enum
 import time

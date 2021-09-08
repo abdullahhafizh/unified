@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 from serial import Serial
 from _mModule import _GRGComProtocol
 from _mModule import _CPrepaidLog as LOG

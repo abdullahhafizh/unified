@@ -1,9 +1,11 @@
+__author__ = 'wahyudi@multidaya.id'
+
 # This lib not used, for documentation only
 from ctypes import *
 import os.path
-import datetime
-import time
-import sys
+# import datetime
+# import time
+# import sys
 
 DLL_LOAD = None
 

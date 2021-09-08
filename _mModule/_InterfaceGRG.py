@@ -1,7 +1,8 @@
+__author__ = 'wahyudi@multidaya.id'
+
 import traceback
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _GRGSerialCom
-
 
 GRG = None
 
