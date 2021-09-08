@@ -149,14 +149,13 @@ class GRGReponseData():
             cmdDat = str(self.cmdCode)
 
         strData = "Len["+str(self.length)+"], "+cmdDat+", STATUS["+str(self.statusWord)+"], STATE["+str(self.state)+"], "
-        # strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+hexlify(self.sensorStatus)+"], MODULE["+hexlify(self.statusModule)+"]\r\n"
         strData = strData + "CODE["+code+"]: "+codeMessage+", SENSOR["+self.sensorStatus.decode("utf-8")+"], MODULE["+self.statusModule.decode("utf-8")+"]\r\n"
         strData = strData + "DATA:" + str(self.responseData) + "\r\n"
         return strData
     
     
     def getCashInfo(self):
-        dataCash = hexlify(self.responseData).upper()
+        dataCash = hexlify(self.responseData).decode('utf-8').upper()
         iD = dataCash.find("44")
         if(iD == -1):
             return self.getResponse()
@@ -179,7 +178,6 @@ class GRGReponseData():
     def getResponse(self):
         isNormal = True
         iHandle = "0"
-        # code = hexlify(self.statusCode)
         code = hexlify(self.statusCode).decode("utf-8")
         if code != "0000":
             iHandle = "1"
@@ -193,10 +191,10 @@ class GRGReponseData():
             iHandle = "0"
             isNormal = True
         
-        print('iHandle', type(iHandle), str(iHandle))
-        print('code', type(code), str(code))
+        # print('iHandle', type(iHandle), str(iHandle))
+        # print('code', type(code), str(code))
         statusMessage = self.getStatusMessage(code)
-        print('statusMessage', type(statusMessage), str(statusMessage))
+        # print('statusMessage', type(statusMessage), str(statusMessage))
         return isNormal, "acDevReturn:|acReserve:|iHandle:"+iHandle+"|iLogicCode:"+code+"|iPhyCode:"+code+"|iType:"+iHandle, statusMessage
 
 
