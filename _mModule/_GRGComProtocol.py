@@ -315,6 +315,8 @@ def CM_Init(ser=Serial()):
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
+    time.sleep(.5)
+
     clearNotesMessage = createMessage(CMD.CLEAR_NOTES, [b'1'])
     responseData = writeAndRead(ser, clearNotesMessage)
     responseMessage = GRGReponseData(responseData)
@@ -323,6 +325,8 @@ def CM_Init(ser=Serial()):
 
     if not isNormal:
         return isNormal, returnMessage, rawMessage
+
+    time.sleep(.5)
 
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
@@ -469,6 +473,8 @@ def CM_AcceptNote(ser=Serial()):
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
+    time.sleep(.5)
+
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
@@ -476,6 +482,8 @@ def CM_AcceptNote(ser=Serial()):
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
+
+    time.sleep(.5)
 
     confirmNotesMessage = createMessage(CMD.DEPOSIT_CONFIRM)
     responseData = writeAndRead(ser, confirmNotesMessage)
@@ -497,6 +505,8 @@ def CM_CancelNote(ser=Serial()):
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
+    time.sleep(.5)
+
     getStatusMessage = createMessage(CMD.QUERY_STATUS)
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
@@ -504,6 +514,8 @@ def CM_CancelNote(ser=Serial()):
     LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
+
+    time.sleep(.5)
 
     cancelNotesMessage = createMessage(CMD.DEPOSIT_CANCEL)
     responseData = writeAndRead(ser, cancelNotesMessage)
