@@ -278,7 +278,6 @@ def writeAndRead(ser=Serial(), wByte=b""):
             ser.write(wByte)
             LOG.grglog("[LIB] write: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
 
-
             rByte = ser.read_until(PROTO_FUNC.EXT.value)
             crc = ser.read(1)
             LOG.grglog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
@@ -410,7 +409,7 @@ def CM_StartDeposit(ser=Serial()):
                 CANCEL_EVENT.clear()
                 return isNormal, returnMessage, rawMessage
 
-            time.sleep(1)
+        time.sleep(.5)
     
     getNotesInfo = createMessage(CMD.NOTE_INFO)
     responseData = writeAndRead(ser, getNotesInfo)

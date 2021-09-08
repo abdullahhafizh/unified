@@ -1,3 +1,8 @@
+14.0.G1-GLOBAL:
+- Embed GRG Module into App,
+- Disable SFTP FS Send,
+- ...
+
 14.0.G-GLOBAL:
 - Catch Anomali Stack Cash Event #2,
 - ...
