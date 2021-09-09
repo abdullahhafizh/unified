@@ -115,7 +115,7 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_DIRECT_PAY:
                 r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in _Common._Common.QR_NON_DIRECT_PAY:
+            if mode in _Common.QR_NON_DIRECT_PAY:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
