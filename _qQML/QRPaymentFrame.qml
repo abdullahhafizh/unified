@@ -157,11 +157,11 @@ Base{
             source: "source/shopeepay_logo.png"
             fillMode: Image.PreserveAspectFit
         }
-        Image{
-            scale: 0.9
-            source: "source/jakone_logo.png"
-            fillMode: Image.PreserveAspectFit
-        }
+        // Image{
+        //     scale: 0.9
+        //     source: "source/jakone_logo.png"
+        //     fillMode: Image.PreserveAspectFit
+        // }
 
     }
 
