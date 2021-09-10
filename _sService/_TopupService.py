@@ -69,8 +69,8 @@ def job_retry_reload_mandiri_deposit(first_run=False):
     for mdr in [ mdr_deposit_update_postponed ]:
         # 'reff_no'   : param['invoice_no'],
         # 'expirity'  : _Helper.epoch() + (60*60)
-        update_balance_result = False
-        while not update_balance_result:
+        # update_balance_result = False
+        while True:
             if MDR_DEPOSIT_UPDATE_BALANCE_PROCESS is True:
                 LOGGER.debug(('ANOTHER MDR_DEPOSIT_UPDATE_BALANCE_PROCESS', 'STILL RUNNING'))
                 continue
@@ -81,7 +81,7 @@ def job_retry_reload_mandiri_deposit(first_run=False):
             LOGGER.debug(('PROCESSING', str(mdr)))
             if not _Common.mandiri_sam_status():
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|DEPOSIT_MDR_NOT_ACTIVE')
-                break
+                continue
             param = QPROX['UPDATE_BALANCE_C2C_MANDIRI'] + '|' +  str(_Common.C2C_DEPOSIT_SLOT) + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|'
             # trigger = 'SYSTEM_RETRY_'+mdr['reff_no'].upper()
             update_balance_result = update_balance(param, 'MANDIRI', 'TOPUP_DEPOSIT')
