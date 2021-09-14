@@ -1,6 +1,7 @@
 14.0.G1-GLOBAL:
 - Embed GRG Module into App,
 - Disable SFTP FS Send,
+- Fix SAM Prev Balance C2C Report,
 - ...
 
 14.0.G-GLOBAL:

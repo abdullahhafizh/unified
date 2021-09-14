@@ -685,6 +685,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
                 __data = r[1][2:198]
         __report_deposit = __data[:102]
         __report_emoney = __data[102:]
+        # Update Local Mandiri Wallet
+        __deposit_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         # TODO: Check If Balance is Initial or after process topup
         __deposit_last_balance = _Helper.reverse_hexdec(__report_deposit[54:62])
         if __deposit_last_balance > 0:
@@ -692,9 +694,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             _Common.MANDIRI_ACTIVE_WALLET = _Common.MANDIRI_WALLET_1
             MANDIRI_DEPOSIT_BALANCE = _Common.MANDIRI_ACTIVE_WALLET
         else:
+            __deposit_prev_balance = _Common.MANDIRI_ACTIVE_WALLET + int(amount)
             __deposit_last_balance = _Common.MANDIRI_ACTIVE_WALLET
-        # Update Local Mandiri Wallet
-        __deposit_prev_balance = _Common.MANDIRI_ACTIVE_WALLET
         __card_last_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
         # Handle Force Settlement as Success TRX | Redefine Emoney Last Balance
         if status == '0000' and __card_last_balance == 0:
