@@ -3,6 +3,7 @@
 - Disable SFTP FS Send,
 - Fix SAM Prev Balance C2C Report,
 - Enable PTR_MODE for EDC ECR,
+- Disable PTR_MODE for Amounr EDC Mobile Sale,
 - ...
 
 14.0.G-GLOBAL:
