@@ -2,6 +2,7 @@
 - Embed GRG Module into App,
 - Disable SFTP FS Send,
 - Fix SAM Prev Balance C2C Report,
+- Enable PTR_MODE for EDC ECR,
 - ...
 
 14.0.G-GLOBAL:

@@ -472,6 +472,10 @@ CORE_TOKEN = QR_TOKEN
 CORE_MID = QR_MID
 EDC_ECR_URL = 'https://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
 
+if PTR_MODE:
+    EDC_ECR_URL = 'http://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
+
+
 STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
 QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
 QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
