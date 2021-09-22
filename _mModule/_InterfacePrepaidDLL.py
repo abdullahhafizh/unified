@@ -1,7 +1,7 @@
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
+__author__ = 'wahyudi@multidaya.id'
 
 import traceback
-from _mModule import _CPrepaidDLL as prepaid_dll
+# from _mModule import _CPrepaidDLL as prepaid_dll
 from _mModule import _CPrepaidCommon as prepaid_common
 from _mModule import _CPrepaidBNI as prepaid_bni
 from _mModule import _CPrepaidMandiri as prepaid_mandiri

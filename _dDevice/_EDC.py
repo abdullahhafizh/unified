@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
@@ -85,8 +85,8 @@ def sale_edc_mobile(amount, trxid=None):
         # _Command.clear_content_of(_Command.MO_REPORT, 'PRE_SALE|'+str(amount))
         amount = amount.replace('.00', '')
         INIT_AMOUNT = amount
-        if PTR_MODE is True:
-            amount = str(int(int(amount)/1000))
+        # if PTR_MODE is True:
+            # amount = str(int(int(amount)/1000))
         result, sale_data = edc_mobile_do_payment(trxid, amount)
         if result is True:
             if sale_data['status'] == "SUCCESS":

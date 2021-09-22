@@ -30,7 +30,7 @@ Base{
     property bool cardEnable: false
     property bool qrOvoEnable: false
     property bool qrDanaEnable: false
-    property bool qrGopayEnable: false
+    property bool qrDuwitEnable: false
     property bool qrLinkajaEnable: false
     property bool mainVisible: false
     property var totalPaymentEnable: 0
@@ -130,8 +130,8 @@ Base{
             qrDanaEnable = true;
             totalPaymentEnable += 1;
         }
-        if (device.QR_GOPAY == 'AVAILABLE') {
-            qrGopayEnable = true;
+        if (device.QR_DUWIT == 'AVAILABLE') {
+            qrDuwitEnable = true;
             totalPaymentEnable += 1;
         }
         if (device.QR_OVO == 'AVAILABLE') {
@@ -794,7 +794,7 @@ Base{
         _cardEnable: cardEnable
         _qrOvoEnable: qrOvoEnable
         _qrDanaEnable: qrDanaEnable
-        _qrGopayEnable: qrGopayEnable
+        _qrDuwitEnable: qrDuwitEnable
         _qrLinkAjaEnable: qrLinkajaEnable
         totalEnable: totalPaymentEnable
         z: 99

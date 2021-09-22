@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 import os
 from time import sleep

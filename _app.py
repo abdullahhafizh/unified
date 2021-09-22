@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 import os
 from re import M
@@ -1203,13 +1203,13 @@ if __name__ == '__main__':
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
     print("pyt: Table Adjustment...")
-    # _KioskService.direct_alter_table([
-    #     "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
-    #     "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
-    #     "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
-    #     "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
-    #     ])
-    # sleep(1)
+    _KioskService.direct_alter_table([
+        "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
+        "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
+        "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
+        "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
+        ])
+    sleep(1)
     _KioskService.alter_table('_CashBox.sql')
     sleep(1)
     _KioskService.alter_table('_DailySummary.sql')
@@ -1325,9 +1325,9 @@ if __name__ == '__main__':
     print("pyt: Do Pending Request Jobs...")
     sleep(1)
     _Sync.start_do_pending_request_job()
-    print("pyt: Do Pending Upload Jobs...")
-    sleep(1)
-    _Sync.start_do_pending_upload_job()
+    # print("pyt: Do Pending Upload Jobs...")
+    # sleep(1)
+    # _Sync.start_do_pending_upload_job()
     view.show()
     app.exec_()
     del view

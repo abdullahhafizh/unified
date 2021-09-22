@@ -16,7 +16,7 @@ Rectangle{
     property bool _qrMultiEnable: false
     property bool _qrOvoEnable: false
     property bool _qrDanaEnable: false
-    property bool _qrGopayEnable: false
+    property bool _qrDuwitEnable: false
     property bool _qrLinkAjaEnable: false
     property bool _qrShopeeEnable: false
     property bool _qrJakoneEnable: false
@@ -288,14 +288,14 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Gopay")
-            text2_: qsTr("QR Gopay")
-            visible: _qrGopayEnable
+            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Duwit")
+            text2_: qsTr("QR Duwit")
+            visible: _qrDuwitEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "GOPAY" Payment Method');
-                    var payment = 'gopay';
+                    _SLOT.user_action_log('choose "DUWIT" Payment Method');
+                    var payment = 'duwit';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';

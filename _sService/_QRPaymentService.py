@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 import json
 import logging
@@ -91,7 +91,7 @@ def do_get_qr(payload, mode, serialize=True):
         # No Need To Emit Into View
         LOGGER.warning((str(payload), mode, 'DUPLICATE_GET_QR_REQUEST'))
         return
-    if  mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
+    if  mode in _Common.QR_NON_DIRECT_PAY:
         payload['reff_no'] = payload['trx_id']
     param = payload
     if serialize is True:
@@ -115,7 +115,7 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_DIRECT_PAY:
                 r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']:
+            if mode in _Common.QR_NON_DIRECT_PAY:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
@@ -320,7 +320,7 @@ def check_payment_result(result, mode):
         return False
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
-    if mode in ['DANA', 'SHOPEEPAY', 'JAKONE', 'SHOPEE', 'LINKAJA', 'BCA-QRIS', 'BNI-QRIS'] and result['status'] in ['SUCCESS', 'PAID']:
+    if mode in _Common.QR_NON_DIRECT_PAY and result['status'] in ['SUCCESS', 'PAID']:
         return True
     return False
 

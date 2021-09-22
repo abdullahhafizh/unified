@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Common

@@ -1,3 +1,5 @@
+__author__ = 'wahyudi@multidaya.id'
+
 from _sService import _bniSCard2
 from _cConfig import _Common
 import traceback

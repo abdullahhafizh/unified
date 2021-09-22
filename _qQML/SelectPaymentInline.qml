@@ -14,7 +14,7 @@ Rectangle{
     property bool _cardEnable: false
     property bool _qrOvoEnable: false
     property bool _qrDanaEnable: false
-    property bool _qrGopayEnable: false
+    property bool _qrDuwitEnable: false
     property bool _qrLinkAjaEnable: false
     property bool _qrShopeeEnable: false
     property bool _qrJakoneEnable: false
@@ -221,20 +221,26 @@ Rectangle{
         }
 
         SmallSimplyItem {
+<<<<<<< HEAD
             id: button_gopay
             width: 300
             height: 150
+=======
+            id: button_duwit
+            width: 359
+            height: 183
+>>>>>>> develop
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Gopay"
+            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Duwit"
             modeReverse: true
-            visible: _qrGopayEnable && !_qrMultiEnable
+            visible: _qrDuwitEnable && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "GOPAY" Payment Method');
-                    var payment = 'gopay';
-                    do_release_all_set_active(button_gopay);
+                    _SLOT.user_action_log('choose "DUWIT" Payment Method');
+                    var payment = 'duwit';
+                    do_release_all_set_active(button_duwit);
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
@@ -364,7 +370,7 @@ Rectangle{
         button_multi_qr.do_release();
         button_ovo.do_release();
         button_linkaja.do_release();
-        button_gopay.do_release();
+        button_duwit.do_release();
         button_dana.do_release();
         button_shopeepay.do_release();
         button_jakone.do_release();

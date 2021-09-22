@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 import logging
 from _cConfig import _ConfigParser
@@ -260,14 +260,17 @@ ALLOWED_BANK_CHECK_CARD_LOG = ['MANDIRI', 'BNI']
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
 MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'blocked^bin^card', '6032984098').split('|')
 
+LAST_INSERT_CASH_TIMESTAMP = None
 
 def store_notes_activity(notes, trxid):
+    global LAST_INSERT_CASH_TIMESTAMP
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
         LOGGER.info((cash_status_file, trxid, notes))
         with open(cash_status_file, 'a') as c:
             c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
             c.close()
+        LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
         return True
     except Exception as e:
         LOGGER.warning((e))
@@ -469,6 +472,10 @@ CORE_TOKEN = QR_TOKEN
 CORE_MID = QR_MID
 EDC_ECR_URL = 'https://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
 
+if PTR_MODE:
+    EDC_ECR_URL = 'http://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
+
+
 STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
 QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
 QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
@@ -476,11 +483,12 @@ if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)
 
 
-QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS']
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS', 'DUWIT']
 QR_DIRECT_PAY = ['OVO']
 # Hardcoded Env Status
 QR_PROD_STATE = {
     'BNI-QRIS': True,
+    'DUWIT': False,
     'BCA-QRIS': False,
     'JAKONE': True,
     'GOPAY': True,
@@ -1023,6 +1031,7 @@ def get_payments():
         "QR_OVO": "AVAILABLE" if check_payment('ovo') is True else "NOT_AVAILABLE",
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
+        "QR_DUWIT": "AVAILABLE" if check_payment('duwit') is True else "NOT_AVAILABLE",
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",

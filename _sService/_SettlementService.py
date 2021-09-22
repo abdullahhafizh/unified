@@ -1,4 +1,4 @@
-__author__ = "fitrah.wahyudi.imam@gmail.com"
+__author__ = "wahyudi@multidaya.id"
 
 import json
 from datetime import datetime
@@ -198,6 +198,14 @@ def push_settlement_data(__param=None):
 
 
 def upload_settlement_file(filename, local_path, remote_path=None, protocol='SFTP'):
+    # Bypass Close Sending FS File By Manipulating Sending Result 14.0.G1-GLOBAL
+    if True:
+        return {
+            "success": True,
+            "host": 'tsf.mdd.co.id',
+            "remote_path": remote_path,
+            "local_path": local_path,
+        }
     if protocol == 'SFTP':
         return _SFTPAccess.send_file(filename, local_path=local_path, remote_path=remote_path)
     else:

@@ -1,18 +1,17 @@
-__author__ = 'fitrah.wahyudi.imam@gmail.com'
+__author__ = 'wahyudi@multidaya.id'
 
 import os.path
-import datetime
-import ctypes
-import time
 import sys
 import traceback
 import struct
-from _mModule import _CPrepaidLog as LOG
-from _mModule import _CPrepaidUtils as utils
+from binascii import hexlify, unhexlify
 from ctypes import *
-from _mModule._CPrepaidDLLModel import *
 from func_timeout import func_set_timeout
 from _mModule import _CPrepaidLib as lib
+from _mModule import _CPrepaidLog as LOG
+from _mModule import _CPrepaidUtils as utils
+from _mModule._CPrepaidDLLModel import *
+
 
 DLL_LOAD = None
 
@@ -133,7 +132,7 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
         LOG.fw("--> C_PinKA = ",C_PinKA)
         LOG.fw("--> C_PinKL = ",C_PinKL)
 
-        C_PinKL = C_PinKL.hex()
+        C_PinKL = hexlify(C_PinKL)
         C_PinKL = C_PinKL.encode("utf-8")
 
         LOG.fw("C_PinKL = ",C_PinKL)
