@@ -388,6 +388,10 @@ Base{
         console.log('set_selected_denom', d, now);
         selectedDenom = d;
         press = '0';
+        if (!select_payment.visible){
+            select_payment.open();
+            _SLOT.start_play_audio('choose_payment_press_proceed');
+        }
     }
 
     function get_balance(text){
@@ -974,7 +978,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: (selectedDenom > 0)
+//        visible: (selectedDenom > 0)
 //        visible: true
         calledFrom: 'prepaid_topup_denom'
         _cashEnable: cashEnable
