@@ -888,6 +888,39 @@ def check_mandiri_deposit():
         # Set Mandiri C2C Force Settlement Delivery to FALSE 
         do_prepaid_settlement(bank='MANDIRI_C2C', force=False)
         # _TopupService.job_retry_reload_mandiri_deposit(first_run=False)
+        
+        
+def start_check_mandiri_c2c_settlement():
+    if _Common.C2C_MODE:
+        _Helper.get_thread().apply_async(check_mandiri_c2c_settlement)
+    else:
+        print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
+        
+
+def check_mandiri_c2c_settlement():
+    _SFTPAccess.HOST_BID = 0
+    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
+    _param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C')
+    if _param_sett is False:
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
+        return
+    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
+    _file_ok = _param_sett['filename'].replace('.txt', '.ok')
+    _push_file_sett = upload_settlement_file(
+        filename=[_param_sett['filename'], _file_ok],
+        local_path=_param_sett['path_file'],
+        remote_path=_Common.SFTP_C2C['path_settlement']
+        )
+    _param_sett['settlement_uploaded_at'] = _Helper.time_string()
+    _param_sett['host'] = _push_file_sett['host']
+    _param_sett['remote_path'] = _push_file_sett['remote_path']
+    _param_sett['local_path'] = _push_file_sett['local_path']
+    # async_push_settlement_data(_param_sett)
+    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
+    send_settlement_data = push_settlement_data(_param_sett)
+    if not send_settlement_data:
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
+        return
 
 
 def validate_update_balance():
