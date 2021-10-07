@@ -406,7 +406,10 @@ Base{
             }
             title = 'Pengulangan Transaksi Berhasil';
             if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
-            if (details.shop_type == 'shop') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
+            if (details.shop_type == 'shop'){
+                msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
+                _SLOT.start_play_audio('please_take_new_card_with_receipt');
+            }
             _SLOT.start_direct_sale_print_global(JSON.stringify(details));
             console.log('release_print', now, title, msg);
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
