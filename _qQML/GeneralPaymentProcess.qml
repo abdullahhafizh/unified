@@ -857,11 +857,13 @@ Base{
                 }
             } else if (grgResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
+                _SLOT.start_play_audio('insert_cash_with_good_condition');
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (grgResult == 'BAD_NOTES'){
                 back_button.visible = false;
                 modeButtonPopup = 'retrigger_bill';
+                _SLOT.start_play_audio('insert_cash_with_good_condition');
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
