@@ -417,6 +417,10 @@ Base{
             card_show_3.set_select();
             break;
         }
+        if (!select_payment.visible){
+            select_payment.open();
+            _SLOT.start_play_audio('choose_payment_press_proceed');
+        }
     }
 
     //==============================================================
@@ -578,7 +582,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 100
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: (productIdx > -1)
+//        visible: (productIdx > -1)
 //        visible: true
         calledFrom: 'general_shop_card'
         _cashEnable: cashEnable
