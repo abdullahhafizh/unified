@@ -984,7 +984,7 @@ def start_master_activation_bni():
 def auto_refill_zero_bni(slot):
     bni = _BniActivationCommand.BniActivate()
     bni_act_resp, bni_act_result = bni.activate_bni_sequence()
-    LOGGER.debug(('remote_deposit_activation_bni', str(bni_act_resp), str(bni_act_result)))
+    LOGGER.debug(('remote_deposit_activation_bni', str(bni_act_resp), str(bni_act_result))) 
     if bni_act_resp == 0:
         reset_result, result_message = bni_reset_update_balance(slot=1, activation=True)
         if reset_result is True:

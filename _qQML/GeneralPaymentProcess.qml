@@ -733,7 +733,10 @@ Base{
         if (r == 'EJECT|SUCCESS') {
             // Move TRX Success Store Here
             successTransaction = true;
-            _SLOT.start_store_transaction_global(JSON.stringify(details));
+            //Delay Push Shop TRX For 10 Seconds.
+            delay(10*1000, function(){
+                _SLOT.start_store_transaction_global(JSON.stringify(details));
+            });
             if (useTransactionStatusFrame){
                 validate_transaction_success('Transaksi Sukses');
                 return;
@@ -744,6 +747,7 @@ Base{
         }
     }
 
+
     function payment_complete(mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
@@ -751,6 +755,7 @@ Base{
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
+        if (trx_type == 'shop') _SLOT.start_push_pending_trx_global(JSON.stringify(details));
         transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
@@ -758,6 +763,7 @@ Base{
         my_timer.restart();
 //        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
     }
+
 
     function execute_transaction(channel){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -814,6 +820,7 @@ Base{
                                 trx_type.toUpperCase()  + ' | ' +
                                 JSON.stringify(details), 'debug')
     }
+
 
     function bill_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")

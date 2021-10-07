@@ -30,6 +30,8 @@ Base{
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
     property var last_money_insert: 'N/A'
 
+    property bool printerAvailable: true
+
     property var selectedMenu: ''
     property bool showCustomerInfo: true
 //    width: globalWidth
@@ -109,14 +111,14 @@ Base{
         popup_loading.close()
         var result = t.split('|')[1]
         if (result == 'ERROR'){
-            kalog_notif();
+            show_message_notification();
             kalogButton = false;
         } else if (result == 'SUCCESS'){
-            kalog_notif('Selamat|Login KA Mandiri Berhasil');
+            show_message_notification('Selamat|Login KA Mandiri Berhasil');
             kalogin_notif_view._button_text = 'tutup';
             kalogButton = false;
         } else {
-            kalog_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
+            show_message_notification('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
             kalogButton = true;
         }
     }
@@ -125,7 +127,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('topup_readiness', now, t);
         if (t=='TOPUP_READY|ERROR'){
-            kalog_notif();
+            show_message_notification();
             return;
         }
         var tr = JSON.parse(t);
@@ -180,6 +182,7 @@ Base{
         ppob_button.visible = (kiosk.feature.ppob == 1)
         search_trx_button.visible = (kiosk.feature.search_trx == 1)
         wa_voucher_button.visible = (kiosk.feature.whatsapp_voucher == 1)
+        printerAvailable = (kiosk.printer_status == 'OK')
 
         if (kiosk.status == "ONLINE" || kiosk.status == "AVAILABLE") {
             kioskStatus = true;
@@ -235,18 +238,28 @@ Base{
         return;
     }
 
-    function kalog_notif(){
+    function show_message_notification(fm, sm){
         press = '0';
-        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
+        switch_frame('source/smiley_down.png', fm, sm, 'closeWindow', false )
         return;
     }
 
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        press = '0';
+        global_frame.modeAction = "";
+        global_frame.closeMode = closeMode;
+        global_frame.timerDuration = 5;
+        if (closeMode.indexOf('|') > -1){
+            var selectedCloseMode = closeMode.split('|')[0];
+            var frame_timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(frame_timer);
+            global_frame.closeMode = selectedCloseMode;
+        }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
-        global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = true;
         global_frame.open();
     }
 
@@ -326,6 +339,10 @@ Base{
                     _SLOT.user_action_log('Press "TopUp Saldo"');
                     if (press!="0") return;
                     press = "1";
+                    if (!printerAvailable){
+                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
+                        return
+                    }
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -359,6 +376,10 @@ Base{
                     _SLOT.user_action_log('Press "Beli Kartu"');
                     if (press!="0") return;
                     press = "1";
+                    if (!printerAvailable){
+                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
+                        return
+                    }
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -413,6 +434,10 @@ Base{
                     _SLOT.user_action_log('Press "Bayar/Beli"');
                     if (press!="0") return;
                     press = "1";
+                    if (!printerAvailable){
+                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
+                        return
+                    }
                     resetMediaTimer();
     //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();

@@ -705,10 +705,11 @@ CD2_ERROR = ''
 CD3_ERROR = ''
 
 RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
-RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '1800'))
+RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '750'))
 DELAY_MANUAL_PRINT = int(_ConfigParser.get_set_value('PRINTER', 'delay^manual^print', '10'))
 if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
     PRINTER_ERROR = 'PAPER_ROLL_WARNING (' + str(RECEIPT_PRINT_COUNT) + ')'
+    # PRINTER_STATUS = 'PAPER_ROLL_WARNING'
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
@@ -1020,6 +1021,15 @@ def get_devices():
     return {"QPROX": QPROX, "EDC": EDC, "MEI": MEI, "CD": CD, "BILL": BILL}
 
 
+def start_get_printer_status():
+    _Helper.get_thread().apply_async(get_printer_status)
+
+
+def get_printer_status():
+    # LOGGER.info(('[INFO] get_devices', DEVICES))
+    return 'WARNING' if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT else 'OK'
+
+
 def get_payments():
     # EDC : Still Need To Enable EDC From Backend Dashboard
     return {
@@ -1037,6 +1047,7 @@ def get_payments():
         "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
         "QR_BCA": "AVAILABLE" if check_payment('bca-qris') is True else "NOT_AVAILABLE",
         "QR_BNI": "AVAILABLE" if check_payment('bni-qris') is True else "NOT_AVAILABLE",
+        "PRINTER_STATUS": get_printer_status()
     }
     
 
@@ -1813,6 +1824,7 @@ def kiosk_status_data():
             # 'admin_include': _ConfigParser.get_set_value('TEMPORARY', 'admin^include', '1'),
             # 'printer_setting': '1' if _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default') == 'Default' else '0',
             'admin_fee': C2C_ADMIN_FEE[0],
+            'printer_status': get_printer_status()
             # 'operator_name': '' if LOGGED_OPERATOR is None else LOGGED_OPERATOR['first_name']
         }
         return data

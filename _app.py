@@ -652,6 +652,10 @@ class SlotHandler(QObject):
     def start_direct_sale_print_global(self, payload):
         _SalePrintTool.start_direct_sale_print_global(payload)
     start_direct_sale_print_global = pyqtSlot(str)(start_direct_sale_print_global)
+    
+    def start_push_pending_trx_global(self, payload):
+        _SalePrintTool.start_push_pending_trx_global(payload)
+    start_push_pending_trx_global = pyqtSlot(str)(start_push_pending_trx_global)
 
     def start_direct_sale_print_ereceipt(self, payload):
         _SalePrintTool.start_direct_sale_print_ereceipt(payload)

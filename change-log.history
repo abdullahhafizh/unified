@@ -1,3 +1,9 @@
+14.0.G3-GLOBAL:
+- Add Sound When TRX Finish (with/out Ereceipt),
+- Validate Printer Paper Status Before TRX,
+- Pending Push Data TRX For Shop,
+- ...
+
 14.0.G1-GLOBAL:
 - Embed GRG Module into App,
 - Disable SFTP FS Send,

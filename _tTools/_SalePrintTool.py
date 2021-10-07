@@ -173,6 +173,10 @@ def start_direct_sale_print_global(payload):
     _Helper.get_thread().apply_async(sale_print_global, )
 
 
+def start_push_pending_trx_global(payload):
+    _Helper.get_thread().apply_async(push_pending_trx_global, (payload,),)
+
+
 def start_direct_sale_print_ereceipt(payload):
     _KioskService.GLOBAL_TRANSACTION_DATA = json.loads(payload)
     _Helper.get_thread().apply_async(sale_print_global_ereceipt, )
@@ -190,6 +194,20 @@ def start_sale_print_global():
     # '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
     # "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},
     # "notes":"DEBUG_TEST - 1551970911187"}')
+
+
+def push_pending_trx_global(p):
+    if type(p) != dict:
+        p = json.loads(p)
+    trxid = p['shop_type']+str(p['epoch'])
+    cash = int(p.get('payment_received', 0))
+    result = _Common.store_upload_failed_trx(
+        trxid, p.get('pid', ''), 
+        cash, 
+        'PENDING_SHOP', 
+        p.get('payment', 'cash'),
+        json.dumps(p))
+    LOGGER.debug(('Result', result))
 
 
 def start_reprint_global():
