@@ -733,10 +733,7 @@ Base{
         if (r == 'EJECT|SUCCESS') {
             // Move TRX Success Store Here
             successTransaction = true;
-            //Delay Push Shop TRX For 10 Seconds.
-            delay(10*1000, function(){
-                _SLOT.start_store_transaction_global(JSON.stringify(details));
-            });
+            _SLOT.start_store_transaction_global(JSON.stringify(details));
             if (useTransactionStatusFrame){
                 validate_transaction_success('Transaksi Sukses');
                 return;

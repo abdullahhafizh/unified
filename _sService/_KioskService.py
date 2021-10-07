@@ -1209,8 +1209,14 @@ def store_transaction_global_old(param, retry=False):
 
 def store_transaction_global(param, retry=False):
     global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
+    
     g = GLOBAL_TRANSACTION_DATA = json.loads(param)
+    if g['shop_type'] == 'shop':
+        LOGGER.info(('PROCESS_DELAY 10 Seconds', g['shop_type']))
+        sleep(10)
+    
     LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
+
     try:
         if 'payment_error' in g.keys() or 'process_error' in g.keys():
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
