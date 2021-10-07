@@ -630,7 +630,7 @@ class SlotHandler(QObject):
     start_mandiri_update_schedule = pyqtSlot()(start_mandiri_update_schedule)
 
     def start_reset_receipt_count(self, count):
-        _Common.start_reset_receipt_count(count)
+        _KioskService.start_reset_receipt_count(count)
     start_reset_receipt_count = pyqtSlot(str)(start_reset_receipt_count)
 
     def start_trigger_edc_settlement(self):
@@ -884,7 +884,7 @@ def s_handler():
     _TopupService.TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
     _GeneralPaymentService.GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.connect(view.rootObject().result_general_payment)
-
+    _KioskService.K_SIGNDLER.SIGNAL_PANEL_SETTING.connect(view.rootObject().result_panel_setting)
 
 
 LOGGER = None

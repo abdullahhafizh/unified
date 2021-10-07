@@ -62,6 +62,7 @@ Base{
         base.result_do_online_topup.connect(get_admin_action);
         base.result_do_topup_deposit_bni.connect(get_topup_bni_result);
         base.result_topup_amount.connect(get_admin_action);
+        base.result_panel_setting.connect(get_admin_action);
     }
 
     Component.onDestruction:{
@@ -83,6 +84,7 @@ Base{
         base.result_do_online_topup.disconnect(get_admin_action);
         base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result);
         base.result_topup_amount.disconnect(get_admin_action);
+        base.result_panel_setting.disconnect(get_admin_action);
 
     }
 
@@ -613,8 +615,8 @@ Base{
                     console.log('reset_printer is pressed..!');
                     popup_loading.open();
                     _SLOT.start_reset_receipt_count('0');
-                    _SLOT.kiosk_get_machine_summary();
-                    _SLOT.kiosk_get_product_stock();
+                    // _SLOT.kiosk_get_machine_summary();
+                    // _SLOT.kiosk_get_product_stock();
                 }
             }
         }

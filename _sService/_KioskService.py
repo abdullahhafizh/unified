@@ -1475,3 +1475,11 @@ def trigger_explorer():
         LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('EXPLORER|ERROR')
         
+
+def start_reset_receipt_count(count):
+    _Helper.get_thread().apply_async(reset_receipt_count,(count,))
+
+
+def reset_receipt_count(count):
+    result = _Common.reset_receipt_count(count)
+    K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('RESET_PRINTER_PAPER|'+result)
