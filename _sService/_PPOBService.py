@@ -259,7 +259,9 @@ def do_check_trx(reff_no):
             LOGGER.info(('INITIAL RETRY_ABLE', r['retry_able']))
             LOGGER.info(('START VALIDATE PAYMENT'))
             # Add Debit & QR Payment Check
-            if r['payment_method'].lower() in ['debit', 'dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris', 'bni-qris']:
+            ext_channel = _Common.QR_PROD_STATE.keys()
+            ext_channel.append('DEBIT')
+            if r['payment_method'].upper() in ext_channel:
                 r['retry_able'] = 0
                 r['status'] = 'FAILED'
                 check_trx_id = remarks.get('host_trx_id', r['product_id'])
