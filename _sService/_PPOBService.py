@@ -259,7 +259,7 @@ def do_check_trx(reff_no):
             LOGGER.info(('INITIAL RETRY_ABLE', r['retry_able']))
             LOGGER.info(('START VALIDATE PAYMENT'))
             # Add Debit & QR Payment Check
-            ext_channel = _Common.QR_PROD_STATE.keys()
+            ext_channel = list(_Common.QR_PROD_STATE.keys())
             ext_channel.append('DEBIT')
             if r['payment_method'].upper() in ext_channel:
                 r['retry_able'] = 0
