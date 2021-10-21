@@ -267,6 +267,7 @@ def writeAndRead(ser=Serial(), wByte=b""):
     #GET ACK
     counter = 0
     while True:
+        counter = counter + 1
         rByte = ser.read_until(size=2)
         LOG.grglog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
 
@@ -296,11 +297,9 @@ def writeAndRead(ser=Serial(), wByte=b""):
             LOG.grglog("[LIB] resume: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
 
         else:
+            if counter > 20:
+                raise Exception("Timeout")
             continue
-                    
-        counter = counter + 1
-        if counter > 20:
-            raise Exception("Timeout")
 
     return rByte
 

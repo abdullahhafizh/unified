@@ -21,10 +21,11 @@ class GRGSerial():
             LOG.grglog("[LIB] initConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         else:
             if self.ser.isOpen():
-                self.ser.close()
-            self.ser = Serial(port=port, baudrate=19200, timeout=500)
+                # self.ser.close()
+                self.disconnect()
+                self.ser = Serial(port=port, baudrate=19200, timeout=500)
             result = _GRGComProtocol.CM_Init(self.ser)
-            LOG.grglog("[LIB] initConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+            LOG.grglog("[LIB] reInitConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
 
         return result
     
