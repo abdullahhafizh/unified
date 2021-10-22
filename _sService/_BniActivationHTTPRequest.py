@@ -25,7 +25,7 @@ class BniActivationHTTPRequest(object):
             if self.reff_no == -1: 
                 curTime = time.time()
                 if (curTime-startTime) > timeOut:
-                    raise Exception("BNI Get Reference Number Timeout: Started:" + str(startTime) + ", Ended: " + str(curTime))
+                    raise SystemError("BNI Get Reference Number Timeout: Started:" + str(startTime) + ", Ended: " + str(curTime))
                 else : time.sleep(10)
 
         self.sequence = self.sequence+1 

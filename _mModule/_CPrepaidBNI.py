@@ -42,7 +42,7 @@ def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
         print("purse_data:"+purse_data)
         result_str, err_msg = send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no, "0")
         if result_str == "1":
-            raise Exception(err_msg)
+            raise SystemError(err_msg)
         dataJ = json.loads(result_str)
         if "response" in dataJ.keys():
             tempJ = dataJ["response"]
@@ -63,7 +63,7 @@ def test_update_balance_card(reff_no, TOKEN, TID, MID, card_no):
                             bni_update_card_crypto(__global_response__["Parameter"], __global_response__)
 
         if result_str != "0000":
-            raise Exception("Error: "+result_str)
+            raise SystemError("Error: "+result_str)
         
     return __global_response__
 
@@ -85,7 +85,7 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
         print("purse_data:"+purse_data)
         result_str, err_msg = send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no, "0")
         if result_str == "1":
-            raise Exception(err_msg)
+            raise SystemError(err_msg)
         dataJ = json.loads(result_str)
         if "response" in dataJ.keys():
             tempJ = dataJ["response"]
@@ -106,7 +106,7 @@ def test_update_balance_sam(reff_no, TOKEN, TID, MID, card_no, sam_slot):
                             bni_update_sam_crypto(__global_response__["Parameter"], __global_response__)
 
         if result_str != "0000":
-            raise Exception("Error: "+result_str)
+            raise SystemError("Error: "+result_str)
     return __global_response__
 
 
@@ -153,7 +153,7 @@ def bni_terminal_update(param, __global_response__):
         C_Terminal = Param[0].encode('utf-8')
     else:
         LOG.fw("011:Parameter tidak lengkap", param)
-        raise Exception("011:Parameter tidak lengkap: "+param)
+        raise SystemError("011:Parameter tidak lengkap: "+param)
 
     LOG.fw("011:Parameter = ", C_Terminal)
 
@@ -182,7 +182,7 @@ def bni_init_topup(param, __global_response__):
         C_Terminal = Param[1].encode('utf-8')
     else:
         LOG.fw("012:Parameter tidak lengkap", param)
-        raise Exception("012:Parameter tidak lengkap: "+param)
+        raise SystemError("012:Parameter tidak lengkap: "+param)
 
     LOG.fw("012:Parameter = ", C_Slot)
     LOG.fw("012:Parameter = ", C_Terminal)
@@ -220,7 +220,7 @@ def bni_topup(param, __global_response__):
         C_Slot = Param[1].encode('utf-8')
     else:
         LOG.fw("013:Parameter tidak lengkap", param)
-        raise Exception("013:Parameter tidak lengkap: "+param)
+        raise SystemError("013:Parameter tidak lengkap: "+param)
 
     LOG.fw("013:Parameter = ", C_Denom)
     LOG.fw("013:Parameter = ", C_Slot)
@@ -281,7 +281,7 @@ def bni_sam_balance_multi(param, __global_response__):
     # LOG.tracing("BNI: ", "bni_sam_balance_multi")
     res_str = pr_common.open_only()
     if res_str != "0000":
-        raise Exception("COM Open Fail: "+res_str)
+        raise SystemError("COM Open Fail: "+res_str)
 
     Param = param.split('|')
 
@@ -289,7 +289,7 @@ def bni_sam_balance_multi(param, __global_response__):
         C_Slot = Param[0]
     else:
         LOG.fw("014:Parameter tidak lengkap", param)
-        raise Exception("014:Parameter tidak lengkap: "+param)
+        raise SystemError("014:Parameter tidak lengkap: "+param)
 
     LOG.fw("014:Parameter = ", C_Slot)
 
@@ -321,7 +321,7 @@ def bni_get_purse_data_sam_multi(param, __global_response__):
         C_Slot = Param[0]
     else:
         LOG.fw("015:Parameter tidak lengkap", param)
-        raise Exception("015:Parameter tidak lengkap: "+param)
+        raise SystemError("015:Parameter tidak lengkap: "+param)
 
     LOG.fw("015:Parameter = ", C_Slot)
 
@@ -355,7 +355,7 @@ def bni_update_sam_crypto(param, __global_response__):
         C_Cryptogram = Param[2].encode('utf-8')
     else:
         LOG.fw("016:Parameter tidak lengkap", param)
-        raise Exception("016:Parameter tidak lengkap: "+param)
+        raise SystemError("016:Parameter tidak lengkap: "+param)
 
     LOG.fw("016:Parameter = ", C_Slot)
     LOG.fw("016:Parameter = ", C_PurseData)
@@ -397,7 +397,7 @@ def bni_get_card_no_sam_multi(param, __global_response__):
         C_Slot = Param[0]
     else:
         LOG.fw("017:Parameter tidak lengkap", param)
-        raise Exception("017:Parameter tidak lengkap: "+param)
+        raise SystemError("017:Parameter tidak lengkap: "+param)
 
     LOG.fw("017:Parameter = ", C_Slot)
 
@@ -433,7 +433,7 @@ def bni_reset_count_sam_multi(param, __global_response__):
         C_TerminalID = Param[1]
     else:
         LOG.fw("018:Parameter tidak lengkap", param)
-        raise Exception("018:Parameter tidak lengkap: "+param)
+        raise SystemError("018:Parameter tidak lengkap: "+param)
 
     LOG.fw("018:Parameter = ", C_Slot)
     LOG.fw("018:Parameter = ", C_TerminalID)
@@ -463,7 +463,7 @@ def bni_update_card_crypto(param, __global_response__):
         C_Cryptogram = Param[1].encode('utf-8')
     else:
         LOG.fw("021:Parameter tidak lengkap", param)
-        raise Exception("021:Parameter tidak lengkap: "+param)
+        raise SystemError("021:Parameter tidak lengkap: "+param)
 
     LOG.fw("021:Parameter = ", C_PurseData)
     LOG.fw("021:Parameter = ", C_Cryptogram)

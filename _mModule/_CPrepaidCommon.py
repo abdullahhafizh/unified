@@ -26,7 +26,7 @@ def open_only(param=None, __global_response__=None):
 
     if C_PORT == "":
         if COM_PORT is None:
-            raise Exception("No Global Configuration For COM_PORT")
+            raise SystemError("No Global Configuration For COM_PORT")
         else:
             C_PORT = COM_PORT
 
@@ -54,7 +54,7 @@ def init_topup(param, __global_response__):
         C_Terminal = Param[3].encode('utf-8')
     else:
         LOG.fw("001:Parameter tidak lengkap", param)
-        raise Exception("001:Parameter tidak lengkap: "+param)
+        raise SystemError("001:Parameter tidak lengkap: "+param)
 
     LOG.fw("001:Parameter = ", C_PORT)
     LOG.fw("001:Parameter = ", C_SAMPIN)
@@ -123,14 +123,14 @@ def auth_ka(param, __global_response__):
 def balance_with_sn(param, __global_response__):
     res_str = open_only()
     if res_str != "0000":
-        raise Exception("COM Open Fail: "+res_str)
+        raise SystemError("COM Open Fail: "+res_str)
 
     Param = param.split('|')
     if len(Param) == 1:
         C_Denom = Param[0].encode('utf-8')
     else:
         LOG.fw("003:Parameter tidak lengkap", param)
-        raise Exception("003:Parameter tidak lengkap: "+param)
+        raise SystemError("003:Parameter tidak lengkap: "+param)
 
     LOG.fw("003:Parameter = ", C_Denom)
 
@@ -155,7 +155,7 @@ def balance_with_sn(param, __global_response__):
 
 #004
 def topup(param, __global_response__):
-    raise Exception("KA Type, deprecated")
+    raise SystemError("KA Type, deprecated")
 
     # res, balance_value, card_number, sign = prepaid.topup_balance_with_sn()
 
@@ -179,7 +179,7 @@ def debit(param, __global_response__):
         C_Denom = Param[0].encode('utf-8')
     else:
         LOG.fw("008:Parameter tidak lengkap", param)
-        raise Exception("008:Parameter tidak lengkap: "+param)
+        raise SystemError("008:Parameter tidak lengkap: "+param)
 
     LOG.fw("008:Parameter = ", C_Denom)
 
@@ -212,7 +212,7 @@ def balance(param, __global_response__):
     # LOG.tracing("Enter Common: ", "balance")
     res_str = open_only()
     if res_str != "0000":
-        raise Exception("COM Open Fail: "+res_str)
+        raise SystemError("COM Open Fail: "+res_str)
 
     res_str, C_Balance = prepaid.topup_balance()
 
@@ -280,7 +280,7 @@ def debit_no_init_single_report(param, __global_response__):
         C_TID = Param[1].encode('utf-8')
     else:
         LOG.fw("022:Parameter tidak lengkap", param)
-        raise Exception("022:Parameter tidak lengkap: "+param)
+        raise SystemError("022:Parameter tidak lengkap: "+param)
 
     LOG.fw("022:Parameter = ", C_Denom)
     LOG.fw("022:Parameter = ", C_TID)
@@ -319,7 +319,7 @@ def send_apdu(param, __global_response__):
         C_APDU = Param[1].encode('utf-8')
     else:
         LOG.fw("034:Parameter tidak lengkap", param)
-        raise Exception("034:Parameter tidak lengkap: "+param)
+        raise SystemError("034:Parameter tidak lengkap: "+param)
 
     LOG.fw("034:Parameter = ", C_Slot)
     LOG.fw("034:Parameter = ", C_APDU)
@@ -350,7 +350,7 @@ def check_balance_C2C(param, __global_response__):
     # LOG.tracing("COMMON: ", "check_balance_C2C")
     res_str = open_only()
     if res_str != "0000":
-        raise Exception("COM Open Fail: "+res_str)
+        raise SystemError("COM Open Fail: "+res_str)
 
     res_str, res_saldo, res_uid, res_data, res_attr  = prepaid.topup_C2C_km_balance()
 

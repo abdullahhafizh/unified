@@ -60,7 +60,7 @@ def str_to_bytes(instance):
         #int type will be ignored
         return instance
     else:
-        raise Exception("Invalid Instance: "+ str(type(instance)))
+        raise SystemError("Invalid Instance: "+ str(type(instance)))
 
 
 def bytes_to_str(instance):
@@ -69,7 +69,7 @@ def bytes_to_str(instance):
     elif type(instance) == bytes:
         return instance.decode("utf-8")
     else:
-        raise Exception("Invalid Instance: "+ str(type(instance)))
+        raise SystemError("Invalid Instance: "+ str(type(instance)))
 
 
 def getint(data):

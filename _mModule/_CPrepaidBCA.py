@@ -35,7 +35,7 @@ def update_bca(param, __global_response__):
         C_MID = Param[1].encode('utf-8')
     else:
         LOG.fw("045:Parameter tidak lengkap", param)
-        raise Exception("045:Parameter tidak lengkap: "+param)
+        raise SystemError("045:Parameter tidak lengkap: "+param)
 
     LOG.fw("046:Parameter = ", C_TID)
     LOG.fw("046:Parameter = ", C_MID)
@@ -117,7 +117,7 @@ def update_balance_bca(param, __global_response__):
         C_TOKEN = Param[2].encode('utf-8')
     else:
         LOG.fw("044:Parameter tidak lengkap", param)
-        raise Exception("044:Parameter tidak lengkap: "+param)
+        raise SystemError("044:Parameter tidak lengkap: "+param)
         
     LOG.fw("044:Parameter = ", C_TID)
     LOG.fw("044:Parameter = ", C_MID)
@@ -157,7 +157,7 @@ def reversal_bca(param, __global_response__):
         C_TOKEN = Param[2].encode('utf-8')
     else:
         LOG.fw("045:Parameter tidak lengkap", param)
-        raise Exception("045:Parameter tidak lengkap: "+param)
+        raise SystemError("045:Parameter tidak lengkap: "+param)
 
     LOG.fw("045:Parameter = ", C_TID)
     LOG.fw("045:Parameter = ", C_MID)

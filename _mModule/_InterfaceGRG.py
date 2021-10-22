@@ -33,7 +33,7 @@ def send_command(cmd, param):
         elif cmd == "506":
             doCancelNote(param, __global_response__)
         else:
-            raise Exception("Command ["+cmd+"] not Supported")
+            raise SystemError("Command ["+cmd+"] not Supported")
 
     except:
         trace = traceback.format_exc()
@@ -59,7 +59,7 @@ def doInit(param, __global_response__):
         GRG_PORT = "COM"+Param[0]
     else:
         LOG.grglog("[501]: Parameter tidak lengkap: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
-        raise Exception("Parameter tidak lengkap: "+param)
+        raise SystemError("Parameter tidak lengkap: "+param)
 
     LOG.grglog("[501]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, GRG_PORT)
 
@@ -93,7 +93,7 @@ def doStartDeposit(param, __global_response__):
 
     if GRG is None:
         LOG.grglog("[502]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
-        raise Exception("Lakukan init terlebih dulu")
+        raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.startDeposit()
 
@@ -122,7 +122,7 @@ def doCancelDeposit(param, __global_response__):
 
     if GRG is None:
         LOG.grglog("[503]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
-        raise Exception("Lakukan init terlebih dulu")
+        raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.cancelDeposit()
 
@@ -151,7 +151,7 @@ def doGetStatus(param, __global_response__):
 
     if GRG is None:
         LOG.grglog("[504]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
-        raise Exception("Lakukan init terlebih dulu")
+        raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.getStatus()
 
@@ -180,7 +180,7 @@ def doAcceptNote(param, __global_response__):
 
     if GRG is None:
         LOG.grglog("[505]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
-        raise Exception("Lakukan init terlebih dulu")
+        raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.confirmNote()
 
@@ -209,7 +209,7 @@ def doCancelNote(param, __global_response__):
 
     if GRG is None:
         LOG.grglog("[506]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
-        raise Exception("Lakukan init terlebih dulu")
+        raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.cancelNote()
 

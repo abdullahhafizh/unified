@@ -116,7 +116,7 @@ def DKI_RequestTopup(param, __global_response__):
         C_Denom = Param[0]
     else:
         LOG.fw("051:Parameter tidak lengkap", param)
-        raise Exception("051:Parameter tidak lengkap: "+param)
+        raise SystemError("051:Parameter tidak lengkap: "+param)
     
     LOG.fw("051:Parameter = ", C_Denom)
 
@@ -180,7 +180,7 @@ def DKI_Topup(param, __global_response__):
         C_DataToCard = Param[0]
     else:
         LOG.fw("052:Parameter tidak lengkap", param)
-        raise Exception("052:Parameter tidak lengkap: "+param)
+        raise SystemError("052:Parameter tidak lengkap: "+param)
     
     LOG.fw("052:Parameter = ", C_DataToCard)
 

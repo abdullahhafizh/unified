@@ -43,11 +43,11 @@ def send_command(cmd, param):
             #This is KA Type too, but try to raise exception under function
             prepaid_common.topup(param, __global_response__)
         elif cmd == "005":
-            raise Exception("KA Type, deprecated")
+            raise SystemError("KA Type, deprecated")
         elif cmd == "006":
-            raise Exception("KA Type, deprecated")
+            raise SystemError("KA Type, deprecated")
         elif cmd == "007":
-            raise Exception("KA Type, deprecated")
+            raise SystemError("KA Type, deprecated")
         elif cmd == "008":
             prepaid_common.debit(param, __global_response__)
         elif cmd == "009":
@@ -109,7 +109,7 @@ def send_command(cmd, param):
             prepaid_mandiri.mandiri_get_last_report(param, __global_response__)
         elif cmd == "043":
             # TopUpDKI
-            raise Exception("Deprecated, use 051 and 052")
+            raise SystemError("Deprecated, use 051 and 052")
         elif cmd == "044":
             prepaid_bca.update_balance_bca(param,__global_response__)
         elif cmd == "045":
@@ -127,7 +127,7 @@ def send_command(cmd, param):
         elif cmd == "064":
             prepaid_bri.reversal_bri(param, __global_response__)
         else:
-            raise Exception("Command ["+cmd+"] not included in Service VM Command Sub [QPROX] ")
+            raise SystemError("Command ["+cmd+"] not included in Service VM Command Sub [QPROX] ")
     except:
         trace = traceback.format_exc()
         formatted_lines = trace.splitlines()

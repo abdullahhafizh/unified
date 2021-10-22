@@ -110,13 +110,13 @@ class CMD(Enum):
 class GRGReponseData():
     def __init__(self, data=b""):
         if len(data) < 4:
-            raise Exception("Insufficent length")            
+            raise SystemError("Insufficent length")            
         self.rawData = data
         self.length = data[2] + (data[3] * 255)
         data = data[4:]
 
         if len(data) < self.length:
-            raise Exception("Insufficent data length")            
+            raise SystemError("Insufficent data length")            
 
         self.cmdCode = data[0]
         self.statusWord = data[1]
@@ -271,7 +271,10 @@ def writeAndRead(ser=Serial(), wByte=b""):
         rByte = ser.read_until(size=2)
         LOG.grglog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
 
-        proto = PROTO_FUNC(rByte[0:2])   
+        try:
+            proto = PROTO_FUNC(rByte[0:2])  
+        except ValueError:
+            continue 
         if proto == PROTO_FUNC.ACK:
             #OK Next Sequence
             wByte = PROTO_FUNC.ENQ.value
@@ -298,7 +301,7 @@ def writeAndRead(ser=Serial(), wByte=b""):
 
         else:
             if counter > 20:
-                raise Exception("Timeout")
+                raise SystemError("Timeout")
             continue
 
     return rByte

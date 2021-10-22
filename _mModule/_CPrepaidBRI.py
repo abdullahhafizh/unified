@@ -29,7 +29,7 @@ def update_balance_bri(param, __global_response__):
         C_SAMSLOT = Param[3]
     else:
         LOG.fw("024:Parameter tidak lengkap", param)
-        raise Exception("024:Parameter tidak lengkap: "+param)
+        raise SystemError("024:Parameter tidak lengkap: "+param)
     
     LOG.fw("024:Parameter = ", C_TID)
     LOG.fw("024:Parameter = ", C_MID)
@@ -170,7 +170,7 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
                                                     if "response" in jsonD.keys():
                                                         code = str(jsonD["response"]["code"])
                                                     else:
-                                                        raise Exception("result don't have response: {0}".format(jsonD))
+                                                        raise SystemError("result don't have response: {0}".format(jsonD))
                                                     
                                                     if code == "200":
                                                         dataToCard = str(jsonD["data"])
@@ -279,7 +279,7 @@ def reversal_bri(param, __global_response__):
         C_REFFNOHost = Param[5]
     else:
         LOG.fw("064:Parameter tidak lengkap", param)
-        raise Exception("064:Parameter tidak lengkap: "+param)
+        raise SystemError("064:Parameter tidak lengkap: "+param)
     
     LOG.fw("064:Parameter = ", C_TID)
     LOG.fw("064:Parameter = ", C_MID)
@@ -532,7 +532,7 @@ def GetLogBRI(param, __global_response__):
         C_SAMSLOT = Param[0]
     else:
         LOG.fw("025:Parameter tidak lengkap", param)
-        raise Exception("025:Parameter tidak lengkap: "+param)
+        raise SystemError("025:Parameter tidak lengkap: "+param)
     
     LOG.fw("025:Parameter = ", C_SAMSLOT)
 
