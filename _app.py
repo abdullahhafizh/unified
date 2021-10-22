@@ -1296,9 +1296,11 @@ if __name__ == '__main__':
         print("pyt: Resync Data Mandiri Card Blacklist...")
         # _SettlementService.start_check_mandiri_deposit()    
         _TopupService.get_mandiri_card_blocked_list()
-        sleep(1)
-        print("pyt: Check Mandiri C2C Settlement...")
-        _SettlementService.start_check_mandiri_c2c_settlement()    
+        # Below Handler Move into Sync
+        # if '02:3' in _Helper.time_string('%H:%M'):
+        #     sleep(1)
+        #     print("pyt: Check Mandiri C2C Settlement...")
+        #     _SettlementService.start_check_mandiri_c2c_settlement()    
     if _QPROX.INIT_BNI is True:
         sleep(.5)
         print("pyt: Triggering BNI Settlement Sync...")

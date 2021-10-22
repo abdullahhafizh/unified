@@ -1,3 +1,8 @@
+14.0.G4-GLOBAL:
+- Fix Bug GRG Reset #1,
+- Fix Daily Mandiri C2C Settlement (on 02:3X),
+- ...
+
 14.0.G3-GLOBAL:
 - Add Sound When TRX Finish (with/out Ereceipt),
 - Validate Printer Paper Status Before TRX,

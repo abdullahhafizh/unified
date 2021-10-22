@@ -61,6 +61,8 @@ def sync_machine(url, param):
             LOGGER.debug(e)         
         finally:
             if _Common.DAILY_SYNC_SUMMARY_TIME == _Helper.time_string('%H:%M'):
+                # print("pyt: Check Mandiri C2C Settlement...")
+                _SettlementService.start_check_mandiri_c2c_settlement()    
                 while True:
                     if send_daily_summary() is True:
                         break

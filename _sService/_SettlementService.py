@@ -532,9 +532,15 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 'status': 1,
                 'remarks': json.dumps(_result)
             })
+            # Panel For Removing Data Records Once Settlement Data is Created
+            removeData = False
             for settle in GLOBAL_SETTLEMENT:
-                settle['key'] = settle['rid']
-                _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=3)
+                if not removeData:
+                    settle['key'] = settle['rid']
+                    _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=3)
+                else:
+                    # _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
+                    _DAO.flush_table(_table='TopUpRecords', _where='rid = "'+settle['rid']+'"')
             # Update Sequence Settlement Record
             __new_seq = int(__seq) + 1
             if __new_seq == 100:
@@ -886,8 +892,17 @@ def check_mandiri_deposit():
         # _TopupService.send_kiosk_status()
         # do_prepaid_settlement(bank='MANDIRI_C2C', force=True)
         # Set Mandiri C2C Force Settlement Delivery to FALSE 
-        do_prepaid_settlement(bank='MANDIRI_C2C', force=False)
+        # do_prepaid_settlement(bank='MANDIRI_C2C', force=False)
         # _TopupService.job_retry_reload_mandiri_deposit(first_run=False)
+        topup_result = _TopupService.topup_online('MANDIRI_C2C_DEPOSIT', 
+                                            _Common.C2C_DEPOSIT_NO, 
+                                            _Common.C2C_TOPUP_AMOUNT,
+                                            'auto_refill'+str(_Helper.epoch())
+                                            )
+        if not topup_result:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_ERROR')
+            return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
         
         
 def start_check_mandiri_c2c_settlement():
