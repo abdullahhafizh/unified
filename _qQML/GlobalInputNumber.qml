@@ -307,7 +307,8 @@ Base{
             }
             if (r == 'EJECT|SUCCESS') {
                 if (vCollectionData!=undefined){
-                    switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+                    switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu Prabayar Anda', 'Terima Kasih', 'backToMain', false )
+                    //NOTICE: Dont Change Below Reff No
                     var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
                     _SLOT.start_use_voucher(textInput, reff_no_voucher);
                 }

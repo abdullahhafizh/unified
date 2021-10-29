@@ -1,6 +1,7 @@
 __author__ = "wahyudi@multidaya.id"
 
 import logging
+from time import sleep
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
@@ -25,41 +26,55 @@ LOGGER = logging.getLogger()
 BACKEND_URL = _Common.BACKEND_URL
 
 
-def start_change_product_stock(port, stock):
-    _Helper.get_thread().apply_async(change_product_stock, (port, stock,))
+def start_change_product_stock(payload):
+    _Helper.get_thread().apply_async(change_product_stock, (payload,))
 
 
-def change_product_stock(port, stock):
-    check_product = _DAO.custom_query(' SELECT * FROM ProductStock WHERE status='+port+' ')
-    if len(check_product) == 0:
-        PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|STID_NOT_FOUND')
-        return
+CARD_STOCK_UPDATE = []
+
+
+def change_product_stock(payload):
+    global CARD_STOCK_UPDATE
     if not _Helper.is_online('change_product_stock'):
         PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|CONNECTION_ERROR')
         return
     try:
+        payload = json.loads(payload)
+        check_product = _DAO.custom_query(' SELECT * FROM ProductStock WHERE status='+payload['port']+' ')
+        if len(check_product) == 0:
+            PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|STID_NOT_FOUND')
+            return
+        payload['stock'] = str(payload['last_stock'])
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
         _stid = check_product[0]['stid']
+        if _stid not in CARD_STOCK_UPDATE:
+            CARD_STOCK_UPDATE.append(_stid)
         _param = {
-            'stock': stock,
+            'port': payload['port'],
+            'stock': payload['stock'],
             'stid': _stid,
             'user': operator
         }
         # Record Local Change
         _Common.LAST_UPDATED_STOCK.append(check_product[0])
-        # Log Change To Local And Send Signal Into View
-        _DAO.custom_update(' UPDATE ProductStock SET stock=' + stock + ' WHERE stid="'+_stid+'" ')
+        # Log Change To Local
+        _DAO.custom_update(' UPDATE ProductStock SET stock=' + payload['stock'] + ' WHERE stid="'+_stid+'" ')
+        # Send Signal Into View&&
         _KioskService.kiosk_get_product_stock()
+        # Change Stock Updation To Backend
         status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'change/product-stock', param=_param)
-        LOGGER.info(('change_product_stock', str(_param), str(status), str(response)))
+        # LOGGER.info((str(_param), str(response)))
         if status == 200 and response['result'] == 'OK':
             # _KioskService.kiosk_get_product_stock()
-            PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|SUCCESS')
+            PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|SUCCESS|'+json.dumps(_param))
+            len_product = int(_DAO.custom_query(' SELECT count(*) AS __ FROM ProductStock WHERE stid IS NOT NULL ')[0]['__'])
+            if len_product == len(CARD_STOCK_UPDATE):
+                sleep(1)
+                PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|COMPLETE')
+                CARD_STOCK_UPDATE = []
         else:
-            # LOG REQUEST
-            # _Common.store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL + 'change/product-stock', payload=_param)
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|ERROR')
     except Exception as e:
         LOGGER.warning(('change_product_stock', e))
@@ -131,24 +146,32 @@ def use_voucher(voucher, reff_no):
         PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|MISSING_REFF_NO')
         return
     product_id = reff_no.split('-')[1]
+    __payload = {
+            'vcode': voucher,
+            'note_ref': reff_no,
+            'pid': product_id,
+        }
     check_product = _DAO.check_product_status_by_pid({'pid': product_id})
     if len(check_product) > 0:
+        last_stock = check_product[0]['stock'] - 1
         _DAO.update_product_stock({
                 'pid': product_id,
-                'stock': check_product[0]['stock'] - 1,
+                'stock': last_stock,
             })
-    payload = {
-        'vcode': voucher,
-        'note_ref': reff_no + '-' + _Common.TID
-    }
+        __payload['last_stock'] = last_stock
+        __payload['slot'] = check_product[0]['status']
+        # TODO: Check Log Slot Redeem Here
+        _Common.store_redeem_activity(voucher, check_product[0]['status'])
     try:
-        url = _Common.BACKEND_URL+'ppob/voucher/use'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        __url = _Common.BACKEND_URL+'ppob/voucher/use'
+        s, r = _NetworkAccess.post_to_url(url=__url, param=__payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|' + json.dumps(r['data']))
         else:
-            PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|ERROR')
-        LOGGER.debug((str(payload), str(r)))
+            # Add Retry Send If Got Issue When Sending Voucher Usage
+            _Common.store_request_to_job(name=_Helper.whoami(), url=__url, payload=__payload)
+            PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|PENDING')
+        LOGGER.debug((str(__payload), str(r)))
     except Exception as e:
-        LOGGER.warning((str(payload), str(e)))
+        LOGGER.warning((str(__payload), str(e)))
         PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|ERROR')

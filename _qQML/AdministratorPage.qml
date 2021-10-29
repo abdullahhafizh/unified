@@ -19,6 +19,8 @@ Base{
     property variant actionList: []
     property variant actionChangeList: []
 
+    property bool printChangeStockButton: false
+
     property var operatorName: ''
 
     isPanelActive: false
@@ -36,6 +38,7 @@ Base{
             _SLOT.kiosk_get_product_stock();
             actionList = [];
             actionChangeList = [];
+            printChangeStockButton = false;
             if (userData!=undefined) parse_user_data();
         }
         if(Stack.status==Stack.Deactivating){
@@ -94,8 +97,15 @@ Base{
         var action = JSON.parse(s)
         if (action.type=='changeStock'){
             popup_loading.open();
-            _SLOT.start_change_product_stock(action.port, action.stock);
-            actionChangeList.push(action);
+            // {
+            //  port: selectedSlot,
+            //  init_stock: initStockInput,
+            //  add_stock: addStockInput,
+            //  last_stock: parseInt(initStockInput) + parseInt(addStockInput),
+            //  type: 'changeStock'
+            // }
+            _SLOT.start_change_product_stock(s);
+            // actionChangeList.push(action);
         }
     }
 
@@ -105,11 +115,11 @@ Base{
         popup_loading.close();
         var result = t.split('|')[1]
         if (result == 'ERROR'){
-            false_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
+            switch_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
         } else if (result == 'SUCCESS'){
-            false_notif('Selamat|Login KA Mandiri Berhasil, Fitur Topup Mandiri Telah Diaktifkan');
+            switch_notif('Selamat|Login KA Mandiri Berhasil, Fitur Topup Mandiri Telah Diaktifkan');
         } else {
-            false_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
+            switch_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
         }
         press = '0';
         _SLOT.kiosk_get_machine_summary();
@@ -121,18 +131,18 @@ Base{
         console.log('get_topup_bni_result', now, r);
         popup_loading.close();
         if (r=='SUCCESS_TOPUP_BNI'){
-            false_notif('Dear '+operatorName+'|Selamat Proses Topup Deposit BNI Berhasil');
+            switch_notif('Dear '+operatorName+'|Selamat Proses Topup Deposit BNI Berhasil');
             press = '0';
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
         }
         if (r=='FAILED_UPDATE_BALANCE_BNI'){
-            false_notif('Dear '+operatorName+'|Gagal Memproses, Silakan Aktivasi Ulang Deposit');
+            switch_notif('Dear '+operatorName+'|Gagal Memproses, Silakan Aktivasi Ulang Deposit');
             press = '0';
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
         }
-        false_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+r);
+        switch_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+r);
     }
 
     function get_admin_action(a){
@@ -140,68 +150,80 @@ Base{
         console.log('get_admin_action', now, a);
         popup_loading.close();
         if (a=='CHANGE_PRODUCT|STID_NOT_FOUND'){
-            false_notif('Dear '+operatorName+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
+            switch_notif('Dear '+operatorName+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
         } else if (a=='COLLECT_CASH|DONE'){
-            false_notif('Dear '+operatorName+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
+            switch_notif('Dear '+operatorName+'|Pastikan Jumlah Uang Dalam Kaset Sama Dengan Tertera Di Layar');
             _SLOT.start_reset_bill();
         } else if (a=='COLLECT_CASH|CONNECTION_ERROR'){
             actionList = [];
-            false_notif('Dear '+operatorName+'|Koneksi Internet Tidak Stabil, Perbaiki Koneksi Terlebih Dahulu Sebelum Melakukan Pengambilan Cashbox');
+            switch_notif('Dear '+operatorName+'|Koneksi Internet Tidak Stabil, Perbaiki Koneksi Terlebih Dahulu Sebelum Melakukan Pengambilan Cashbox');
         } else if (a=='ADMIN_PRINT|DONE'){
-            false_notif('Dear '+operatorName+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
+            switch_notif('Dear '+operatorName+'|Ambil Dan Tunjukan Bukti Print Status Mesin Di Bawah Pada Koordinator Lapangan');
         } else if (a=='INIT_BILL|DONE'||a=='RESET_BILL|DONE'){
-            false_notif('Dear '+operatorName+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
+            switch_notif('Dear '+operatorName+'|Reset Bill Acceptor Selesai, Periksa Kembali Kondisi Aktual Mesin');
         } else if (a=='CHANGE_PRODUCT_STOCK|SUCCESS'){
-            false_notif('Dear '+operatorName+'|Memproses Perubahan Stok Di Peladen Pusat\nSilakan Tunggu Beberapa Saat');
+            switch_notif('Dear '+operatorName+'|Memproses Perubahan Stok Di Peladen Pusat\nSilakan Tunggu Beberapa Saat');
 //            actionChangeList.push(a);
         } else if (a=='REFILL_ZERO|SUCCESS'){
-            false_notif('Dear '+operatorName+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
+            switch_notif('Dear '+operatorName+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
         } else if (a=='REFILL_ZERO|AUTO_ACTIVATION_SUCCESS'){
-            false_notif('Dear '+operatorName+'|BNI Deposit Auto Activation Success');
+            switch_notif('Dear '+operatorName+'|BNI Deposit Auto Activation Success');
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
             var r = a.split('|')[1]
             if (r.indexOf('FAILED') > -1){
-                false_notif('Dear '+operatorName+'|Terjadi Kegagalan Pada Proses Settlement!\nKode Error ['+r+']');
+                switch_notif('Dear '+operatorName+'|Terjadi Kegagalan Pada Proses Settlement!\nKode Error ['+r+']');
             } else if (r=='SUCCESS') {
-                false_notif('Dear '+operatorName+'|Status Proses Settlement...\n['+r+']', true);
+                switch_notif('Dear '+operatorName+'|Status Proses Settlement...\n['+r+']', true);
             } else {
-                false_notif('Dear '+operatorName+'|Status Proses Settlement...\n['+r+']');
+                switch_notif('Dear '+operatorName+'|Status Proses Settlement...\n['+r+']');
                 if (r!='WAITING_RSP_UPDATE') return;
             }
         } else if (a.indexOf('APP_UPDATE') > -1){
             if (a == 'APP_UPDATE|SUCCESS'){
-                false_notif('Dear '+operatorName+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
+                switch_notif('Dear '+operatorName+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
                 _SLOT.user_action_log('Admin Page Notif Button "Reboot By Update"');
                 _SLOT.start_safely_shutdown('RESTART');
             } else {
                 var u = a.split('|')[1]
                 if (a.indexOf('APP_UPDATE|VER.') > -1){
-                    false_notif('Dear '+operatorName+'|Memproses Pembaharuan Aplikasi!\n\nKode Versi Pembaharuan ['+u+']\n\nAplikasi Akan Memuat Ulang.');
+                    switch_notif('Dear '+operatorName+'|Memproses Pembaharuan Aplikasi!\n\nKode Versi Pembaharuan ['+u+']\n\nAplikasi Akan Memuat Ulang.');
                 } else {
-                    false_notif('Dear '+operatorName+'|Memproses Pembaharuan Aplikasi!\n\nProses Eksekusi ['+u+']\n\nMohon Tunggu Hingga Semua Proses Selesai.');
+                    switch_notif('Dear '+operatorName+'|Memproses Pembaharuan Aplikasi!\n\nProses Eksekusi ['+u+']\n\nMohon Tunggu Hingga Semua Proses Selesai.');
                 }
             }
             return;
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
             var e = a.split('|')[1]
             if (e == 'PROCESSED' || e == 'SUCCESS_TRIGGERED_TO_HOST') {
-                false_notif('Dear '+operatorName+'|Status Proses EDC Settlement...\n['+e+']', true);
+                switch_notif('Dear '+operatorName+'|Status Proses EDC Settlement...\n['+e+']', true);
             } else {
-                false_notif('Dear '+operatorName+'|Status Proses EDC Settlement...\n['+e+']');
+                switch_notif('Dear '+operatorName+'|Status Proses EDC Settlement...\n['+e+']');
             }
         } else if (a.indexOf('SYNC_PRODUCT_STOCK') > -1){
             var s = a.split('|')[1]
-            false_notif('Dear '+operatorName+'|Status Proses Sync Product Stock..\n['+s+']');
-
+            switch_notif('Dear '+operatorName+'|Status Proses Sync Product Stock..\n['+s+']');
         } else if (a.indexOf('TOPUP_ONLINE_DEPOSIT') > -1){
             var topup_result = a.split('|')[1]
-            false_notif('Dear '+operatorName+'|Status Topup Deposit..\n['+topup_result+']');
-        } else if (a=='CHANGE_PRODUCT|CONNECTION_ERROR'){
+            switch_notif('Dear '+operatorName+'|Status Topup Deposit..\n['+topup_result+']');
+        } else if (a.indexOf('CHANGE_PRODUCT') > -1 ){
 //            actionChangeList = [];
-            false_notif('Dear '+operatorName+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
-            actionChangeList.pop()
+            var y = a.split('|')[1]
+            // Failed To Change Stock To Backend
+            if (y=='CONNECTION_ERROR' || y=='ERROR'){
+                switch_notif('Dear '+operatorName+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
+                actionChangeList.pop();
+            }
+            if (y=='SUCCESS'){
+                var cp = JSON.parse(a.split('|')[2]);
+                actionChangeList.push(cp);
+                switch_notif('Dear '+operatorName+'|Penambahan Stok Kartu Slot '+cp.port+' Berhasil\nSilakan Lanjutkan Slot Berikutnya');
+            }
+            if (y=='COMPLETE'){
+                printChangeStockButton = true;
+                switch_notif('Dear '+operatorName+'|Stok Opname Kartu Seluruh Slot Selesai\nSilakan Cetak Struk');
+            }            
         } else {
-            false_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+a);
+            switch_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+a);
         }
         press = '0';
         _SLOT.kiosk_get_machine_summary();
@@ -235,12 +257,12 @@ Base{
         console.log('parse_user_data', now, JSON.stringify(userData));
         operatorName = userData.first_name;
         if (userData.isAbleCollect==0){
-            false_notif('Selamat Datang '+operatorName+'|Akses Akun Anda Terbatas, Jika Anda Memerlukan Perubahan, Silakan Hubungi Master Admin')
+            switch_notif('Selamat Datang '+operatorName+'|Akses Akun Anda Terbatas, Jika Anda Memerlukan Perubahan, Silakan Hubungi Master Admin')
         } else {
             if (operatorName=='Offline'){
-                false_notif('Mode '+operatorName+'|Segala Aktifitas Perubahan Data Akan Disinkronisasi Setelah Terhubung Ke Internet')
+                switch_notif('Mode '+operatorName+'|Segala Aktifitas Perubahan Data Akan Disinkronisasi Setelah Terhubung Ke Internet')
             } else {
-                false_notif('Selamat Datang '+operatorName+'|Segala Aktifitas Perubahan Data Berikut Ini Akan Tercatat Di Peladen Pusat')
+                switch_notif('Selamat Datang '+operatorName+'|Segala Aktifitas Perubahan Data Berikut Ini Akan Tercatat Di Peladen Pusat')
             }
         }
     }
@@ -370,7 +392,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     console.log('reboot_button is pressed..!');
-                    false_notif('Dear User|Tekan Tombol "reboot" Untuk Melanjutkan Proses.', false);
+                    switch_notif('Dear User|Tekan Tombol "reboot" Untuk Melanjutkan Proses.', false);
                     standard_notif_view.buttonEnabled = false;
                 }
             }
@@ -642,7 +664,7 @@ Base{
                         actionList = [];
                         print_receipt_button.visible = false;
                     } else {
-                        false_notif('Dear '+operatorName+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
+                        switch_notif('Dear '+operatorName+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
                     }
                 }
             }
@@ -652,7 +674,7 @@ Base{
             id: print_stock_change_receipt_button
             z: 10
             button_text: 'change-stock\nprint'
-            visible: (!popup_loading.visible && actionChangeList.length > 0)
+            visible: (!popup_loading.visible && printChangeStockButton)
             modeReverse: false
             MouseArea{
                 anchors.fill: parent
@@ -661,15 +683,17 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     console.log('print_stock_change_receipt_button is pressed..!');
-                    if (actionChangeList.length > 0){
+                    if (printChangeStockButton){
                         popup_loading.open();
                         var epoch = new Date().getTime();
                         var struct_id = userData.username+epoch;
+                        // TODO: Change This Slot Function
                         _SLOT.start_admin_change_stock_print(struct_id);
+                        printChangeStockButton = false;
                         actionChangeList = [];
                         print_stock_change_receipt_button.visible = false;
                     } else {
-                        false_notif('Dear '+operatorName+'|Pastikan Anda Telah Melakukan Update Stok Kartu Dengan Benar');
+                        switch_notif('Dear '+operatorName+'|Pastikan Anda Melakukan Update Stok Kartu Di Semua Slot Dengan Benar');
                     }
                 }
             }
@@ -964,7 +988,7 @@ Base{
                                                    user: operatorName
                                                })
                            } else {
-                               false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                               switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                            }
                        }
                    }
@@ -1002,7 +1026,7 @@ Base{
 //                                                   user: operatorName
 //                                               })
                            } else {
-                               false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                               switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                            }
                        }
                    }
@@ -1060,7 +1084,7 @@ Base{
                                    popup_update_stock.selectedSlot = '101'
                                    popup_update_stock.open();
                                } else {
-                                   false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                                   switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                                }
                            }
                        }
@@ -1119,7 +1143,7 @@ Base{
                                    popup_update_stock.selectedSlot = '102'
                                    popup_update_stock.open();
                                } else {
-                                   false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                                   switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                                }
                            }
                        }
@@ -1176,7 +1200,7 @@ Base{
                                    popup_update_stock.selectedSlot = '103'
                                    popup_update_stock.open();
                                } else {
-                                   false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                                   switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                                }
                            }
                        }
@@ -1293,7 +1317,7 @@ Base{
     }
 
 
-    function false_notif(param, button){
+    function switch_notif(param, button){
         press = '0';
         standard_notif_view.z = 100;
         standard_notif_view._button_text = 'tutup';

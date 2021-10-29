@@ -392,9 +392,9 @@ class SlotHandler(QObject):
         _KioskService.kiosk_get_machine_summary()
     kiosk_get_machine_summary = pyqtSlot()(kiosk_get_machine_summary)
 
-    def start_change_product_stock(self, port, stock):
-        _ProductService.start_change_product_stock(port, stock)
-    start_change_product_stock = pyqtSlot(str, str)(start_change_product_stock)
+    def start_change_product_stock(self, payload):
+        _ProductService.start_change_product_stock(payload)
+    start_change_product_stock = pyqtSlot(str)(start_change_product_stock)
 
     def start_bill_receive_note(self, trxid):
         _BILL.start_bill_receive_note(trxid)

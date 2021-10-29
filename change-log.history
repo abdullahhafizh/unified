@@ -1,3 +1,10 @@
+14.0.G5-GLOBAL:
+- Set Stock Adjustment On Voucher Redeem,
+- New Card Preload Print Layouting
+- TDL: Send New Data Preload
+- TDL: Generate Preload Card Data,
+- ...
+
 14.0.G4-GLOBAL:
 - Fix Bug GRG Reset #1,
 - Fix Daily Mandiri C2C Settlement (on 02:3X),

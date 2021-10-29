@@ -262,6 +262,96 @@ MANDIRI_CLOSE_TOPUP_BIN_RANGE = _ConfigParser.get_set_value('MANDIRI_C2C', 'bloc
 
 LAST_INSERT_CASH_TIMESTAMP = None
 
+JOB_PATH = os.path.join(sys.path[0], '_jJob')
+if not os.path.exists(JOB_PATH):
+    os.makedirs(JOB_PATH)
+
+CASHBOX_PATH = os.path.join(sys.path[0], '_cCashbox')
+if not os.path.exists(CASHBOX_PATH):
+    os.makedirs(CASHBOX_PATH)
+
+REDEEM_PATH = os.path.join(sys.path[0], '_rRedeem')
+if not os.path.exists(REDEEM_PATH):
+    os.makedirs(REDEEM_PATH)
+
+
+def store_redeem_activity(voucher, slot):
+    try:
+        redeem_status_file = os.path.join(REDEEM_PATH, 'redeem.status')
+        LOGGER.info((redeem_status_file, voucher, slot))
+        with open(redeem_status_file, 'a') as c:
+            c.write(','.join([_Helper.time_string(), voucher, slot]) + os.linesep)
+            c.close()
+        return True
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
+
+
+def archive_redeem_activity(backup_file):
+    redeem_status_file = os.path.join(REDEEM_PATH, 'redeem.status')
+    if not os.path.exists(redeem_status_file):
+        LOGGER.warning(('REDEEM_STATUS_FILE_NOT_FOUND', REDEEM_PATH))
+        return False
+    backup_file = os.path.join(REDEEM_PATH, backup_file)
+    os.rename(redeem_status_file, backup_file)
+    LOGGER.info(('BACKUP_REDEEM_ACTIVITY', redeem_status_file, backup_file))
+    with open(redeem_status_file, 'w') as c:
+        LOGGER.info(('REINIT_REDEEM_ACTIVITY', redeem_status_file))
+        pass
+    return True
+
+
+def get_redeem_activity(keyword=None, trx_output=False):
+    output = {
+        'total': 0,
+        'slots': [],
+        'summary': {},
+        'voucher_list': []
+    }
+    try:
+        redeem_status_file = os.path.join(REDEEM_PATH, 'redeem.status')
+        redeem_status = open(redeem_status_file, 'r').readlines()
+        if len(redeem_status) == 0:
+            LOGGER.warning(('REDEEM_STATUS_NOT_FOUND', str(redeem_status)))
+            return output
+        # LOGGER.debug((cash_status))
+        output['total'] = len(redeem_status)
+        all_slots = []
+        for data in redeem_status:
+            row = data.rstrip()
+            rows = row.split(',')
+            if len(rows) >= 2:
+                trx_type = rows[1]
+                if trx_output is True:
+                    if trx_type not in output['voucher_list']:
+                        output['voucher_list'].append(trx_type)
+                slots = rows[2]
+                if keyword is None:
+                    all_slots.append(slots)
+                    if slots not in output['slots']:
+                        output['slots'].append(slots)
+                else:
+                    output['keyword'] = keyword
+                    if keyword in trx_type:
+                        all_slots.append(slots)
+                        if slots not in output['slots']:
+                            output['slots'].append(slots)
+                    # LOGGER.debug((row, slots, output['slots']))
+        summary = {}
+        for n in output['slots']:
+            # summary[n] = all_slots.count(n)
+            summary.update({n:all_slots.count(n)})
+            # LOGGER.debug((n, summary[n]))
+        # sorted_summary = {k : summary[k] for k in sorted(summary) if int(k) < 100000}
+        output['summary'] = summary
+        LOGGER.info(('REDEEM_STATUS', str(output)))
+    except Exception as e:
+        LOGGER.warning((e))
+    finally:
+        return output
+
+
 def store_notes_activity(notes, trxid):
     global LAST_INSERT_CASH_TIMESTAMP
     try:
@@ -305,7 +395,6 @@ def init_cash_activity():
         store_bulk_notes_activity(init_data)
     else:
         LOGGER.info(('CASH ACTIVITY ALREADY EXIST', cash_activity, cash_trx))
-
 
 
 def get_cash_activity(keyword=None, trx_output=False):
@@ -363,7 +452,6 @@ def get_cash_activity(keyword=None, trx_output=False):
     finally:
         return output
     
-
 
 def backup_cash_activity(collection_file):
     cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
@@ -733,18 +821,6 @@ ALLOWED_SYNC_TASK = [
     # 'validate_update_balance_c2c'
 
 ]
-
-
-JOB_PATH = os.path.join(sys.path[0], '_jJob')
-if not os.path.exists(JOB_PATH):
-    os.makedirs(JOB_PATH)
-
-
-CASHBOX_PATH = os.path.join(sys.path[0], '_cCashbox')
-if not os.path.exists(CASHBOX_PATH):
-    os.makedirs(CASHBOX_PATH)
-
-
 
 def store_request_to_job(name='', url='', payload=''):
     if empty(name) is True or empty(url) is True or empty(payload) is True:
@@ -1868,3 +1944,26 @@ def validate_usage_pending_code(reff_no):
 
 
 IDLE_MODE = True
+
+
+def generate_card_preload_data():
+    # TODO: Finalise This Function
+    # '- Init Stock : ' + str(s['init_stock_'+slot]), 0, 0, 'L')
+    # '- Card Sale  : ' + str(s['sale_stock_'+slot]), 0, 0, 'L')
+    # '- WA Redeem  : ' + str(s['wa_redeem_'+slot]), 0, 0, 'L')
+    # '- Last Stock : ' + str(s['last_stock_'+slot]), 0, 0, 'L')
+    # '- Add Stock  : ' + str(s['add_stock_'+slot]), 0, 0, 'L')
+    # '- Diff Stock : ' + str(s['diff_stock_'+slot]), 0, 0, 'L')
+    data = {}
+    products = _DAO.custom_query(' SELECT status FROM ProductStock WHERE stid IS NOT NULL ')
+    if len(products) > 0:
+        for p in products:
+            slot = str(p['status']).replace('10', '')
+            data['init_stock_'+slot] = load_from_temp_config('init^stock^'+slot, 0)
+            data['sale_stock_'+slot] = ''
+            data['wa_redeem_'+slot] = ''
+            data['last_stock_'+slot] = ''
+            data['add_stock_'+slot] = ''
+            data['diff_stock_'+slot] = ''
+    LOGGER.debug(('CARD_PRELOAD_DATA', str(data)))
+    return data

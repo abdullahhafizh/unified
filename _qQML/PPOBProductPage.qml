@@ -74,6 +74,7 @@ Base{
                             var formatted_denom = FUNC.insert_dot(denom.toString());
                             var formatted_admin = FUNC.insert_dot(adminFee.toString());
                             desc = 'Saldo Diterima (Rp. ' + formatted_denom + ',-) Dikurangi Biaya Admin (Rp. ' +formatted_admin+ ',-)';
+                            if (p[i]['operator']=='CASHIN OVO') desc = 'Saldo OVO Cash Anda Akan Dipotong Biaya Admin (Rp. ' +formatted_admin+ ',-)';
                         }
                     }
                     product_model.append({

@@ -11,9 +11,11 @@ Rectangle{
     color: 'transparent'
     property int max_count: 50
     property var press: "0"
-    property var textInput: ""
+    property var initStockInput: ""
+    property var addStockInput: ""
     property var titleImage: "source/plus_circle.png"
     property var selectedSlot: '1'
+    property var inputStep: 1
 
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
@@ -34,7 +36,7 @@ Rectangle{
         Text {
             id: main_text
             color: "darkblue"
-            text: 'Masukkan Stok Kartu Terbaru Pada Slot ' + selectedSlot
+            text: 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot
             font.bold: true
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -68,7 +70,7 @@ Rectangle{
         TextInput {
             id: inputText
             anchors.centerIn: textRectangle;
-            text: textInput
+            text: initStockInput
     //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
@@ -101,11 +103,13 @@ Rectangle{
                 }
                 if(str=="Back"){
                     count--
-                    textInput=textInput.substring(0,textInput.length-1);
+                    if (inputStep==1) initStockInput=initStockInput.substring(0,initStockInput.length-1);
+                    else if (inputStep==2) addStockInput=addStockInput.substring(0,addStockInput.length-1);
                 }
                 if(str=="Clear"){
                     count = 0;
-                    textInput = "";
+                    if (inputStep==1) initStockInput = "";
+                    else if (inputStep==2) addStockInput = "";
                 }
             }
 
@@ -115,7 +119,8 @@ Rectangle{
                         count=max_count
                     }
                     count--
-                    textInput=textInput.substring(0,count);
+                    if (inputStep==1) initStockInput=initStockInput.substring(0,count);
+                    else if (inputStep==2) addStockInput=addStockInput.substring(0,count);
                 }
                 if (str!=""&&count<max_count){
                     count++
@@ -123,7 +128,8 @@ Rectangle{
                 if (count>=max_count){
                     str=""
                 } else{
-                    textInput += str
+                    if (inputStep==1) initStockInput += str;
+                    else if (inputStep==2) addStockInput += str;
                 }
             }
         }
@@ -158,14 +164,22 @@ Rectangle{
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        if (textInput!='' && parseInt(textInput) > 0){
-                            var _signal = JSON.stringify({
-                                                             port: selectedSlot,
-                                                             stock: textInput,
-                                                             type: 'changeStock'
-                                                         });
-                            admin_page.update_product_stock(_signal);
-                            close();
+                        if (initStockInput!=''){
+                            inputStep = 2;
+                            inputText.text = addStockInput;
+                            if (addStockInput!='' && parseInt(addStockInput)>0){
+                                var __signal = JSON.stringify({
+                                                                port: selectedSlot,
+                                                                init_stock: initStockInput,
+                                                                add_stock: addStockInput,
+                                                                last_stock: parseInt(initStockInput) + parseInt(addStockInput),
+                                                                type: 'changeStock'
+                                                            });
+                                admin_page.update_product_stock(__signal);
+                                close();
+                            } else {
+                                main_text.text = 'Sisa Stok Awal ('+initStockInput+')\nMasukkan Penambahan Stok Kartu Pada Slot ' + selectedSlot
+                            }
                         }
                     }
                 }
@@ -176,7 +190,10 @@ Rectangle{
     }
 
     function open(){
-        textInput = '';
+        initStockInput = '';
+        addStockInput = '';
+        inputStep = 1;
+        inputText.text = initStockInput;
         popup_update_stock.visible = true;
     }
 
