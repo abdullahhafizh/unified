@@ -213,6 +213,19 @@ Base{
             {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
             {label: 'Total Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
         ]
+        if (selectedProduct.operator=='CASHIN OVO'){
+            rows = [
+            {label: 'Tanggal', content: now},
+            {label: 'Produk', content: product_name},
+            {label: 'Pelanggan', content: customer_name},
+            {label: 'No Tujuan', content: data.customer},
+//            {label: 'Jumlah', content: '1'},
+            // {label: 'Harga/Unit', content: FUNC.insert_dot(topup_denom.toString())},
+            // {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+            {label: 'Total Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+            {label: 'Deskripsi', content: 'Saldo OVO Cash Anda Akan Dipotong Biaya Admin Rp. FUNC.insert_dot(selectedProduct.rs_price.toString())},
+        ]
+        }
         ppobMode = 'non-tagihan';
         generateConfirm(rows, true);
     }

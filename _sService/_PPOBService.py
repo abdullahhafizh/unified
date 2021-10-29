@@ -191,6 +191,11 @@ def do_trx_ppob(payload, mode='PAY'):
             LOGGER.warning(('Duplicate PPOB TRX Payload', str(_Common.LAST_PPOB_TRX)))
             return
         _Helper.dump(payload)
+        # NOTICE: Handling OVO Include Admin Fee
+        if 'product_channel' in payload.keys():
+            if payload['product_channel'] == 'MDD' and payload['operator'] == 'CASHIN OVO':
+                payload['amount'] = str(int(payload['amount']) + 1500)
+        # =================================
         url = _Common.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
             url = _Common.BACKEND_URL+'ppob/topup'

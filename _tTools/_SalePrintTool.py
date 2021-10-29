@@ -830,14 +830,28 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'JUMLAH     : ' + str(p['qty']), 0, 0, 'L')
-                pdf.ln(small_space)
-                pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'HARGA/UNIT : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
-                if 'product_channel' in p.keys():
-                    if p['product_channel'] == 'MDD':
-                        pdf.ln(small_space)
-                        pdf.set_font(USED_FONT, 'B', regular_space)
-                        pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+                ovo_cashin = False
+                if _Common.LAST_PPOB_TRX is not None:
+                    if _Common.LAST_PPOB_TRX['payload']['product_channel'] == 'MDD':
+                        if _Common.LAST_PPOB_TRX['payload']['operator'] == 'CASHIN OVO':
+                            ovo_cashin = True
+                if not ovo_cashin:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'HARGA/UNIT : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                    if 'product_channel' in p.keys():
+                        if p['product_channel'] == 'MDD':
+                            pdf.ln(small_space)
+                            pdf.set_font(USED_FONT, 'B', regular_space)
+                            pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+                else:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'Saldo OVO Cash Anda Akan Dipotong', 0, 0, 'C')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'Biaya Admin Rp. '+clean_number(str(p['admin_fee'])), 0, 0, 'C')
+                    
                 if 'sn' in p['ppob_details'].keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
