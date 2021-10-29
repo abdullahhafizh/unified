@@ -499,12 +499,15 @@ Base{
                 lastPPOBDataCheck[i].content = payment_method + ' ' + lastPPOBDataCheck[i].content;
             }
         }
-        if (data.details.error.message !== undefined){
-            lastPPOBDataCheck.push({
-                                   label: 'Notes',
-                                   content: data.details.error.message
-                                   });
+        if (data.details !== undefined){
+            if (data.details.error.message !== undefined){
+                lastPPOBDataCheck.push({
+                                       label: 'Notes',
+                                       content: data.details.error.message
+                                       });
+            }
         }
+
         generateConfirm(lastPPOBDataCheck, false, 'backToMain');
         // Reset PPOB Data Check
         lastPPOBDataCheck = undefined;

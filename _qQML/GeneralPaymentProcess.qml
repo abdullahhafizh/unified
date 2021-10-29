@@ -1079,11 +1079,12 @@ Base{
         info_trx_type.labelContent = details.provider
         if (details.shop_type=='topup') {
             getDenom = parseInt(details.denom);
-            info_trx_type.labelContent = details.provider + ' - ' + details.value
+            info_trx_type.labelContent = details.provider + ' - ' + details.value;
             info_trx_amount.labelContent = 'Rp ' + FUNC.insert_dot(getDenom.toString());
         }
         if (details.shop_type=='ppob') {
-            info_trx_price.labelName = 'Nilai Denom'
+            info_trx_price.labelName = 'Nilai Denom';
+            if (details.product_channel == 'MDD' && details.operator == 'CASHIN OVO') info_trx_price.visible = false;
         }
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
