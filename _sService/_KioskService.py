@@ -1247,13 +1247,15 @@ def store_transaction_global(param, retry=False):
                 'pid': PID_STOCK_SALE,
                 'stock': int(g['raw']['stock']) - int(g['qty'])
             }
-            trx_notes = g['raw']
-            trx_notes['stock_details'] = stock_update
             _DAO.update_product_stock(stock_update)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid'])
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
+            # NOTICE: Need For Stock Opname Calculation
+            trx_notes = g['raw'].get('stid', '')
+            # trx_notes = g['raw']
+            # trx_notes['stock_details'] = stock_update
         else:
-            trx_notes = g['topup_details']
+            trx_notes = json.dumps(g['topup_details'])
         
         trace_no = g['payment_details'].get('trx_id', '')
         if trace_no == '':
@@ -1333,11 +1335,17 @@ def start_store_topup_transaction(param):
 def reset_db_record():
     LOGGER.info(('START_RESET_DB_RECORDS', _Helper.time_string()))
     try:
-        _DAO.flush_table('Cash', ' tid <> "'+_Common.TID+'" ')
-        time.sleep(1)
-        _DAO.flush_table('Transactions', ' tid <> "'+_Common.TID+'" ')
+        _DAO.flush_table('Cash')
         time.sleep(1)
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Common.TID+'" ')
+        time.sleep(1)
+        _DAO.flush_table('TopUpRecords', ' syncFlag = 9 AND cardNo LIKE "7546%" ')
+        time.sleep(1)
+        _DAO.flush_table('TopUpRecords', ' syncFlag = 3 AND cardNo LIKE "6032%" ')
+        time.sleep(1)
+        _DAO.flush_table('Product')
+        time.sleep(1)
+        _DAO.flush_table('Transactions')
         LOGGER.info(('FINISH_RESET_DB_RECORDS', _Helper.time_string()))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
@@ -1366,8 +1374,6 @@ def python_dump(log):
 
 
 def house_keeping(age_month=1, mode='DATA_FILES'):
-    # Add Flushing Data Which Not Belong To This Terminal ID
-    # reset_db_record()
     if mode == 'DATA_FILES':
         LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())

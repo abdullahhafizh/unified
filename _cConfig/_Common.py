@@ -273,6 +273,15 @@ if not os.path.exists(CASHBOX_PATH):
 REDEEM_PATH = os.path.join(sys.path[0], '_rRedeem')
 if not os.path.exists(REDEEM_PATH):
     os.makedirs(REDEEM_PATH)
+    
+STOCK_OPNAME_PATH = os.path.join(sys.path[0], '_sStockOpname')
+if not os.path.exists(STOCK_OPNAME_PATH):
+    os.makedirs(STOCK_OPNAME_PATH)
+    
+
+def first_do_card_opname():
+    files = [x for x in os.listdir(STOCK_OPNAME_PATH) if x.endswith('.stock')] 
+    return len(files) == 0
 
 
 def store_redeem_activity(voucher, slot):
@@ -482,6 +491,31 @@ def store_to_temp_data(temp, content):
     with open(temp_path, 'w+') as t:
         t.write(content)
         t.close()
+        
+
+def store_stock_opname(key, content):
+    LOGGER.info((key, content))
+    if '.stock' not in key:
+        key = key + '.stock'
+    key_path = os.path.join(STOCK_OPNAME_PATH, key)
+    if len(clean_white_space(content)) == 0:
+        content = '[]'
+    with open(key_path, 'w+') as t:
+        t.write(content)
+        t.close()
+    
+
+def load_stock_opname(key):
+    LOGGER.info((key))
+    if '.stock' not in key:
+        key = key + '.stock'
+    key_path = os.path.join(STOCK_OPNAME_PATH, key)
+    if not os.path.exists(key_path):
+        with open(key_path, 'w+') as t:
+            t.write('[]')
+            t.close()
+    content = open(key_path, 'r').read().strip()
+    return json.loads(content)
 
 
 def remove_temp_data(temp):
@@ -1946,8 +1980,14 @@ def validate_usage_pending_code(reff_no):
 IDLE_MODE = True
 
 
-def generate_card_preload_data():
-    # TODO: Finalise This Function
+def get_redeem_status_by_slot(slot_no):
+    if slot_no[:2] != '10':
+        slot_no = '10'+slot_no
+    redeem_status = get_redeem_activity()
+    return redeem_status['summary'].get(slot_no, 0)
+
+
+def generate_card_preload_data(operator, struct_id):
     # '- Init Stock : ' + str(s['init_stock_'+slot]), 0, 0, 'L')
     # '- Card Sale  : ' + str(s['sale_stock_'+slot]), 0, 0, 'L')
     # '- WA Redeem  : ' + str(s['wa_redeem_'+slot]), 0, 0, 'L')
@@ -1955,15 +1995,64 @@ def generate_card_preload_data():
     # '- Add Stock  : ' + str(s['add_stock_'+slot]), 0, 0, 'L')
     # '- Diff Stock : ' + str(s['diff_stock_'+slot]), 0, 0, 'L')
     data = {}
+    stock_opname = []
     products = _DAO.custom_query(' SELECT status FROM ProductStock WHERE stid IS NOT NULL ')
+    first_opname = first_do_card_opname()
     if len(products) > 0:
         for p in products:
             slot = str(p['status']).replace('10', '')
-            data['init_stock_'+slot] = load_from_temp_config('init^stock^'+slot, 0)
-            data['sale_stock_'+slot] = ''
-            data['wa_redeem_'+slot] = ''
-            data['last_stock_'+slot] = ''
-            data['add_stock_'+slot] = ''
-            data['diff_stock_'+slot] = ''
-    LOGGER.debug(('CARD_PRELOAD_DATA', str(data)))
+            data['id_stock_'+slot] = p['stid']
+            data['pid_stock_'+slot] = p['pid']
+            data['init_stock_'+slot] = 0
+            data['add_stock_'+slot] = load_from_temp_config('last^add^stock^slot^'+slot, 0)
+            data['sale_stock_'+slot] = 0
+            data['wa_redeem_'+slot] = 0
+            data['last_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0)
+            data['diff_stock_'+slot] = 0
+            if not first_opname:     
+                data['sale_stock_'+slot] = _DAO.custom_query(' SELECT count(*) AS __ FROM TransactionsNew WHERE trxType = "SHOP" AND mid = "" AND trxNotes = "' + p['stid'] + '" ')[0]['__']
+                data['wa_redeem_'+slot] = get_redeem_status_by_slot(slot)
+                data['last_stock_'+slot] = int(data['init_stock_'+slot]) - int(data['sale_stock_'+slot]) - int(data['wa_redeem_'+slot])
+                data['diff_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0) - int(data['last_stock_'+slot])
+            stock_opname.append({
+                "slot": p['status'],
+                "reload_id": struct_id,
+                "tid": TID,
+                "pid": p['pid'],
+                "init_stock": data['init_stock_'+slot],
+                "sale": data['sale_stock_'+slot],   
+                "redeem": data['wa_redeem_'+slot],
+                "last_stock": data['last_stock_'+slot],
+                "add_stock": data['add_stock_'+slot],
+                "diff": data['diff_stock_'+slot],
+                "preload_at": _Helper.time_string(),
+                "operator": operator,
+                "remarks": json.dumps(p),
+                "created_at": _Helper.now()
+            })
+    # Reset Flagging Calculation For Next Opname
+    _DAO.custom_update(' UPDATE TransactionsNew SET mid = "'+struct_id+'" WHERE trxType = "SHOP" AND mid = "" ')
+    LOGGER.debug(('CARD_STOCK_OPNAME_DATA', str(data)))
+    store_stock_opname(struct_id, json.dumps(stock_opname))
     return data
+
+
+def send_stock_opname(key):
+    data = load_stock_opname(key)
+    if len(data) == 0:
+        LOGGER.warning(('STOCK_OPNAME_DATA_NOT_FOUND', key))
+        return False
+    try:
+        param = {
+            'data': json.dumps(data)
+        }
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/card-preload', param)
+        LOGGER.info((response, str(param)))
+        if status == 200 and response['result'] == 'OK':
+            return True
+        else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/card-preload', payload=param)
+            return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False

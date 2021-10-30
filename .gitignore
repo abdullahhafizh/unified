@@ -2,6 +2,7 @@
 /.vscode/
 /venv/
 
+*.status
 *.log
 /_dDB/kiosk.db
 setting.ini
@@ -12,6 +13,9 @@ _qQML/source/logo
 _qQML/source/background
 _qQML/source/card
 
+/_rRedeem/
+/_cCashbox/
+/_sStockOpname/
 /_lLog/
 /_aAudio/
 /_vVideo/

@@ -367,6 +367,8 @@ def sync_data_transaction():
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
                     for t in transactions:
+                        # Revert Flag Validation mid for Sale Calculation If Not Synced Before
+                        t['mid'] = ''
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxId']:
                             LOGGER.info(response)

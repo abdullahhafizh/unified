@@ -40,6 +40,13 @@ def change_product_stock(payload):
         return
     try:
         payload = json.loads(payload)
+        # // {
+        # //  port: selectedSlot,
+        # //  init_stock: initStockInput,
+        # //  add_stock: addStockInput,
+        # //  last_stock: parseInt(initStockInput) + parseInt(addStockInput),
+        # //  type: 'changeStock'
+        # // }
         check_product = _DAO.custom_query(' SELECT * FROM ProductStock WHERE status='+payload['port']+' ')
         if len(check_product) == 0:
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|STID_NOT_FOUND')
@@ -61,6 +68,9 @@ def change_product_stock(payload):
         _Common.LAST_UPDATED_STOCK.append(check_product[0])
         # Log Change To Local
         _DAO.custom_update(' UPDATE ProductStock SET stock=' + payload['stock'] + ' WHERE stid="'+_stid+'" ')
+        _Common.log_to_temp_config('last^stock^slot^'+payload['port'].replace('10', ''), payload['stock'])
+        _Common.log_to_temp_config('last^add^stock^slot^'+payload['port'].replace('10', ''), payload['add_stock'])
+        _Common.log_to_temp_config('last^stock^opname^slot^'+payload['port'].replace('10', ''), payload['init_stock'])
         # Send Signal Into View&&
         _KioskService.kiosk_get_product_stock()
         # Change Stock Updation To Backend

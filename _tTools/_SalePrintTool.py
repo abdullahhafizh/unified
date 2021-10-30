@@ -1334,10 +1334,14 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
     # Preload Slot 1	50
     # Selisih Slot 1	1
     try:
+        product_count = int(_DAO.custom_query(' SELECT count(*) AS __ FROM ProductStock WHERE stid IS NOT NULL ')[0]['__'])
+        if product_count == 0:
+            SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR|EMPTY_PRODUCT')
+            return
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
         GENERAL_TITLE = 'CARD JOURNAL REPORT'
         pdf = GeneralPDF('P', 'mm', (80, 140))
-        s = _Common.generate_card_preload_data()
+        s = _Common.generate_card_preload_data(user, struct_id)
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -1355,14 +1359,10 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, 'B', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(tiny_space+1)
-        product_count = int(_DAO.custom_query(' SELECT count(*) AS __ FROM ProductStock WHERE stid IS NOT NULL ')[0]['__'])
-        if product_count == 0:
-            SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR|EMPTY_PRODUCT')
-            return
         for i in range(product_count):
             slot = str(i+1)
             pdf.set_font(USED_FONT, 'B', line_size)
-            pdf.cell(padding_left, 0, 'CARD SLOT '+slot+' : ', 0, 0, 'L') 
+            pdf.cell(padding_left, 0, 'CD SLOT '+slot+ ' ['+s.get('pid_stock_'+slot)+'] : ', 0, 0, 'L') 
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
@@ -1400,6 +1400,7 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
+        _Common.send_stock_opname(struct_id)
         del pdf
 
 

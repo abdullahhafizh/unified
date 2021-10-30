@@ -1212,6 +1212,7 @@ if __name__ == '__main__':
         "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
         "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
         "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
+        "ALTER TABLE TransactionsNew ADD COLUMN trxNotes TEXT;",	
         ])
     sleep(1)
     _KioskService.alter_table('_CashBox.sql')
@@ -1222,14 +1223,14 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.alter_table('_TransactionsNew.sql')
     sleep(1)
-    _KioskService.alter_table('_AlterTransactionNew.sql')
-    sleep(1)
     if INITIAL_SETTING['reloadService'] is True:
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
         sleep(1)
     print("pyt: HouseKeeping Old Local Data/Files...")
     _KioskService.house_keeping(age_month=6)
+    sleep(1)
+    _KioskService.reset_db_record()
     sleep(1)
     print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()

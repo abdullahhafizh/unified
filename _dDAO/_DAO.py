@@ -83,12 +83,13 @@ def insert_transaction_new(param):
       targetCard      VARCHAR(100),
       bankId          VARCHAR(2)
       syncFlag        INT,
+      trxNotes        TEXT,
       createdAt       BIGINT
     """
     param["syncFlag"] = 0
     sql = "INSERT INTO TransactionsNew ( trxId, tid, mid, amount, baseAmount, adminFee, trxType, cardNo, paymentType, " \
-          "paymentNotes, productName, productId, traceNo, targetCard, bankId, syncFlag, createdAt ) VALUES ( :trxId, :tid, :mid, :amount, :baseAmount, :adminFee, :trxType, " \
-          ":cardNo, :paymentType, :paymentNotes, :productName, :productId, :traceNo, :targetCard, :bankId, :syncFlag, :createdAt )"
+          "paymentNotes, productName, productId, traceNo, targetCard, bankId, syncFlag, trxNotes, createdAt ) VALUES ( :trxId, :tid, :mid, :amount, :baseAmount, :adminFee, :trxType, " \
+          ":cardNo, :paymentType, :paymentNotes, :productName, :productId, :traceNo, :targetCard, :bankId, :syncFlag, :trxNotes, :createdAt )"
     return _Database.insert_update(sql=sql, parameter=param, log=False)
 
 

@@ -1,8 +1,10 @@
 14.0.G5-GLOBAL:
 - Set Stock Adjustment On Voucher Redeem,
 - New Card Preload Print Layouting
-- TDL: Send New Data Preload
-- TDL: Generate Preload Card Data,
+- Send New Data Preload
+- Generate Preload Card Data,
+- Adjust TRX Notes For Card Opname,
+- Clean Up Old Unused Data Table,
 - ...
 
 14.0.G4-GLOBAL:
