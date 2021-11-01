@@ -164,10 +164,10 @@ Rectangle{
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        if (initStockInput!=''){
+                        if (initStockInput!='' && parseInt(initStockInput)>-1){
                             inputStep = 2;
                             inputText.text = addStockInput;
-                            if (addStockInput!='' && parseInt(addStockInput)>0){
+                            if (addStockInput!='' && parseInt(addStockInput)>-1){
                                 var __signal = JSON.stringify({
                                                                 port: selectedSlot,
                                                                 init_stock: initStockInput,
