@@ -1081,8 +1081,7 @@ Base{
                                _SLOT.user_action_log('Admin Page "Update Slot 1"');
                                console.log('Update Stock Button 1 is Pressed..!')
                                if (userData.isAbleCollect==1){
-                                   popup_update_stock.selectedSlot = '101'
-                                   popup_update_stock.open();
+                                   popup_update_stock.open('101');
                                } else {
                                    switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                                }
@@ -1140,8 +1139,7 @@ Base{
                                _SLOT.user_action_log('Admin Page "Update Slot 2"');
                                console.log('Update Stock Button 2 is Pressed..!')
                                if (userData.isAbleCollect==1){
-                                   popup_update_stock.selectedSlot = '102'
-                                   popup_update_stock.open();
+                                   popup_update_stock.open('102');
                                } else {
                                    switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                                }
@@ -1197,8 +1195,7 @@ Base{
                                _SLOT.user_action_log('Admin Page "Update Slot 3"');
                                console.log('Update Stock Button 3 is Pressed..!')
                                if (userData.isAbleCollect==1){
-                                   popup_update_stock.selectedSlot = '103'
-                                   popup_update_stock.open();
+                                    popup_update_stock.open('103');
                                } else {
                                    switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                                }

@@ -90,8 +90,8 @@ Rectangle{
             property int count:0
 
             Component.onCompleted: {
-                virtual_numpad.strButtonClick.connect(typeIn)
-                virtual_numpad.funcButtonClicked.connect(functionIn)
+                virtual_numpad.strButtonClick.connect(typeIn);
+                virtual_numpad.funcButtonClicked.connect(functionIn);
             }
 
             function functionIn(str){
@@ -152,7 +152,11 @@ Rectangle{
                 button_text: 'batal'
                 MouseArea{
                     anchors.fill: parent
-                    onClicked: close();
+                    onClicked: {
+                        console.log('cancel_button is pressed..!');
+                        reset();
+                        close();
+                    };
                 }
             }
             NextButton{
@@ -164,6 +168,9 @@ Rectangle{
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
+                        console.log('Init Stock : ' +initStockInput)
+                        console.log('Add Stock : ' +addStockInput)
+                        console.log('Input Step : ' +inputStep)
                         if (initStockInput!='' && parseInt(initStockInput)>-1){
                             inputStep = 2;
                             inputText.text = addStockInput;
@@ -189,11 +196,19 @@ Rectangle{
 
     }
 
-    function open(){
+
+    function reset(){
         initStockInput = '';
         addStockInput = '';
         inputStep = 1;
         inputText.text = initStockInput;
+        virtual_numpad.count = 0;
+    }
+
+    function open(p){
+        reset();
+        var slot = p.replace('10', '');
+        selectedSlot = slot;
         popup_update_stock.visible = true;
     }
 
