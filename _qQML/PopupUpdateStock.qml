@@ -9,7 +9,7 @@ Rectangle{
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     color: 'transparent'
-    property int max_count: 3
+    property int max_count: 4
     property var press: "0"
     property var initStockInput: ""
     property var addStockInput: ""
@@ -196,6 +196,7 @@ Rectangle{
                         if (initStockInput!='' && parseInt(initStockInput)>-1){
                             inputStep = 2;
                             virtual_numpad.count = 0;
+                            inputText.text = addStockInput;
                             if (addStockInput!='' && parseInt(addStockInput)>-1){
                                 var __signal = JSON.stringify({
                                                                 port: selectedSlot,
