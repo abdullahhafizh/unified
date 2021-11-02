@@ -9,7 +9,7 @@ Rectangle{
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     color: 'transparent'
-    property int max_count: 50
+    property int max_count: 3
     property var press: "0"
     property var initStockInput: ""
     property var addStockInput: ""
@@ -103,38 +103,56 @@ Rectangle{
                 }
                 if(str=="Back"){
                     count--
-                    if (inputStep==1) initStockInput=initStockInput.substring(0,initStockInput.length-1);
-                    else if (inputStep==2) addStockInput=addStockInput.substring(0,addStockInput.length-1);
+                    if (inputStep==1) {
+                        initStockInput = initStockInput.substring(0,initStockInput.length-1);
+                        inputText.text = initStockInput;
+                    }
+                    else if (inputStep==2) {
+                        addStockInput = addStockInput.substring(0,addStockInput.length-1);
+                        inputText.text = addStockInput;
+                    }
                 }
+
                 if(str=="Clear"){
                     count = 0;
-                    if (inputStep==1) initStockInput = "";
-                    else if (inputStep==2) addStockInput = "";
+                    if (inputStep==1) inputText.text = initStockInput = "";
+                    else if (inputStep==2) inputText.text = addStockInput = "";
                 }
             }
 
             function typeIn(str){
                 if (str == "" && count > 0){
                     if(count>=max_count){
-                        count=max_count
+                        count=max_count;
                     }
-                    count--
-                    if (inputStep==1) initStockInput=initStockInput.substring(0,count);
-                    else if (inputStep==2) addStockInput=addStockInput.substring(0,count);
+                    count--;
+                    if (inputStep==1) {
+                        initStockInput = initStockInput.substring(0,count);
+                        inputText.text = initStockInput;
+                    }
+                    else if (inputStep==2) {
+                        addStockInput = addStockInput.substring(0,count);
+                        inputText.text = addStockInput;
+                    }
+
                 }
+
                 if (str!=""&&count<max_count){
-                    count++
+                    count++;
                 }
+
                 if (count>=max_count){
-                    str=""
-                } else{
-                    if (inputStep==1) initStockInput += str;
-                    else if (inputStep==2) addStockInput += str;
+                    str="";
                 }
-                console.log('typeIn : ' + str );
-                console.log('Init Stock : ' +initStockInput)
-                console.log('Add Stock : ' +addStockInput)
-                console.log('Init Stock : ' +initStockInput)
+
+                if (inputStep==1) {
+                    initStockInput += str;
+                    inputText.text = initStockInput;
+                }
+                else if (inputStep==2) {
+                    addStockInput += str;
+                    inputText.text = addStockInput;
+                }
             }
         }
 
@@ -177,7 +195,7 @@ Rectangle{
                         console.log('Input Step : ' +inputStep)
                         if (initStockInput!='' && parseInt(initStockInput)>-1){
                             inputStep = 2;
-                            inputText.text = addStockInput;
+                            virtual_numpad.count = 0;
                             if (addStockInput!='' && parseInt(addStockInput)>-1){
                                 var __signal = JSON.stringify({
                                                                 port: selectedSlot,
@@ -195,9 +213,7 @@ Rectangle{
                     }
                 }
             }
-
         }
-
     }
 
 
@@ -205,8 +221,6 @@ Rectangle{
         initStockInput = '';
         addStockInput = '';
         inputStep = 1;
-        main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot;
-        inputText.text = initStockInput;
         virtual_numpad.count = 0;
     }
 
@@ -214,6 +228,8 @@ Rectangle{
         reset();
         var slot = p.replace('10', '');
         selectedSlot = slot;
+        // Must Put Here After Adjustment
+        main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot;
         popup_update_stock.visible = true;
     }
 
