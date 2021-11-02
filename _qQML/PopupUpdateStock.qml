@@ -190,9 +190,9 @@ Rectangle{
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
-                        console.log('Init Stock : ' +initStockInput)
-                        console.log('Add Stock : ' +addStockInput)
-                        console.log('Input Step : ' +inputStep)
+//                        console.log('Init Stock : ' +initStockInput)
+//                        console.log('Add Stock : ' +addStockInput)
+//                        console.log('Input Step : ' +inputStep)
                         if (initStockInput!='' && parseInt(initStockInput)>-1){
                             inputStep = 2;
                             virtual_numpad.count = 0;
@@ -208,7 +208,7 @@ Rectangle{
                                 admin_page.update_product_stock(__signal);
                                 close();
                             } else {
-                                main_text.text = 'Sisa Stok Awal ('+initStockInput+')\nMasukkan Penambahan Stok Kartu Pada Slot ' + selectedSlot
+                                main_text.text = 'Sisa Stok Awal ('+initStockInput+')\nMasukkan Penambahan Stok Kartu Pada Slot ' + selectedSlot.replace('10', '');
                             }
                         }
                     }
@@ -227,10 +227,8 @@ Rectangle{
 
     function open(p){
         reset();
-        var slot = p.replace('10', '');
-        selectedSlot = slot;
         // Must Put Here After Adjustment
-        main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot;
+        main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot.replace('10', '');
         popup_update_stock.visible = true;
     }
 
