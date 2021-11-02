@@ -131,6 +131,11 @@ Rectangle{
                     if (inputStep==1) initStockInput += str;
                     else if (inputStep==2) addStockInput += str;
                 }
+                console.log('typeIn : ' + str );
+                console.log('Init Stock : ' +initStockInput)
+                console.log('Add Stock : ' +addStockInput)
+                console.log('Init Stock : ' +initStockInput)
+                console.log('View Stock : ' +inputText.text)
             }
         }
 
