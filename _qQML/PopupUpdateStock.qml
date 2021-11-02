@@ -70,7 +70,7 @@ Rectangle{
         TextInput {
             id: inputText
             anchors.centerIn: textRectangle;
-            text: initStockInput
+//            text: initStockInput
     //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
@@ -135,7 +135,6 @@ Rectangle{
                 console.log('Init Stock : ' +initStockInput)
                 console.log('Add Stock : ' +addStockInput)
                 console.log('Init Stock : ' +initStockInput)
-                console.log('View Stock : ' +inputText.text)
             }
         }
 
@@ -206,6 +205,7 @@ Rectangle{
         initStockInput = '';
         addStockInput = '';
         inputStep = 1;
+        main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot;
         inputText.text = initStockInput;
         virtual_numpad.count = 0;
     }
