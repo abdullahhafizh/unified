@@ -156,7 +156,7 @@ Rectangle{
                         console.log('cancel_button is pressed..!');
                         reset();
                         close();
-                    };
+                    }
                 }
             }
             NextButton{
