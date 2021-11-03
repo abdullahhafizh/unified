@@ -320,6 +320,9 @@ def get_redeem_activity(keyword=None, trx_output=False):
     }
     try:
         redeem_status_file = os.path.join(REDEEM_PATH, 'redeem.status')
+        if not os.path.exists(redeem_status_file):
+            LOGGER.warning(('REDEEM_STATUS_FILE_NOT_FOUND', str(redeem_status_file)))
+            return output 
         redeem_status = open(redeem_status_file, 'r').readlines()
         if len(redeem_status) == 0:
             LOGGER.warning(('REDEEM_STATUS_NOT_FOUND', str(redeem_status)))
@@ -2013,7 +2016,7 @@ def generate_card_preload_data(operator, struct_id):
                 data['sale_stock_'+slot] = _DAO.custom_query(' SELECT count(*) AS __ FROM TransactionsNew WHERE trxType = "SHOP" AND mid = "" AND trxNotes = "' + p['stid'] + '" ')[0]['__']
                 data['wa_redeem_'+slot] = get_redeem_status_by_slot(slot)
                 data['last_stock_'+slot] = int(data['init_stock_'+slot]) - int(data['sale_stock_'+slot]) - int(data['wa_redeem_'+slot])
-                data['diff_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0) - int(data['last_stock_'+slot])
+                data['diff_stock_'+slot] = int(load_from_temp_config('last^stock^opname^slot^'+slot, 0)) - int(data['last_stock_'+slot])
             stock_opname.append({
                 "slot": p['status'],
                 "reload_id": struct_id,

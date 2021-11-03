@@ -1342,6 +1342,7 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         GENERAL_TITLE = 'CARD JOURNAL REPORT'
         pdf = GeneralPDF('P', 'mm', (80, 140))
         s = _Common.generate_card_preload_data(user, struct_id)
+        # print(str(s))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -1360,7 +1361,9 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(tiny_space+1)
         for i in range(product_count):
+            # print(i)
             slot = str(i+1)
+            # print(slot)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0, 'CD SLOT '+slot+ ' ['+s.get('pid_stock_'+slot)+'] : ', 0, 0, 'L') 
             pdf.ln(tiny_space)
