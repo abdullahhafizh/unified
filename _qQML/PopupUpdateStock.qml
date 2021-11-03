@@ -223,6 +223,7 @@ Rectangle{
         addStockInput = '';
         inputStep = 1;
         virtual_numpad.count = 0;
+        inputText.text = initStockInput;
     }
 
     function open(p){
