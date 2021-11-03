@@ -187,12 +187,13 @@ def get_local(url, param=None, log=True, __timeout=None):
 
 
 def item_download(url, path, name=None):
-    if 'mdd.co.id:11199' in url:
-        url = url.replace('11199', '2142')
+    if 'http://vm-api.mdd.co.id:11199' in url:
+        url = url.replace('http://vm-api.mdd.co.id:11199', 'https://dashboard-staging-vm.mdd.co.id')
     if name is None:
         item = url.split('/')[-1]
     else:
         item = name
+    LOGGER.debug((url, path, name))
     if not os.path.exists(path):
         os.makedirs(path)
     file = os.path.join(path, item)
