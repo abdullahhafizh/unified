@@ -228,9 +228,10 @@ Rectangle{
         inputText.text = initStockInput;
     }
 
-    function open(p){
+    function open(slot){
         reset();
-        // Must Put Here After Adjustment
+        // Must Put Here After Adjustment;
+        selectedSlot = slot;
         main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot.replace('10', '');
         popup_update_stock.visible = true;
     }
