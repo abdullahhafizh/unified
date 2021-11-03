@@ -1243,12 +1243,15 @@ def store_transaction_global(param, retry=False):
             admin_fee = 0
             bank_id = g['raw'].get('bid', 0)
             PID_STOCK_SALE = g['raw']['pid']
+            check_product = _DAO.check_product_status_by_pid({'pid': PID_STOCK_SALE})
+            last_stock = check_product[0]['stock'] - 1
             stock_update = {
                 'pid': PID_STOCK_SALE,
-                'stock': int(g['raw']['stock']) - int(g['qty'])
+                'stock': last_stock
             }
             _DAO.update_product_stock(stock_update)
-            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid'])
+            LOGGER.debug((trx_id, product_id, str(stock_update)))
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid']+'-'+str(last_stock))
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
             # NOTICE: Need For Stock Opname Calculation
             trx_notes = g['raw'].get('stid', '')

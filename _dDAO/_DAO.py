@@ -317,7 +317,7 @@ def update_product_stock(param):
     '''
     param["updatedAt"] = _Helper.now()
     sql = " UPDATE ProductStock SET stock = :stock WHERE pid = :pid "
-    return _Database.insert_update(sql=sql, parameter=param)
+    return _Database.insert_update(sql=sql, parameter=param, log=True)
 
 
 def get_product_stock():
