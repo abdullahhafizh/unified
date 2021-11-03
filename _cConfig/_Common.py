@@ -1996,7 +1996,7 @@ def generate_card_preload_data(operator, struct_id):
     # '- Diff Stock : ' + str(s['diff_stock_'+slot]), 0, 0, 'L')
     data = {}
     stock_opname = []
-    products = _DAO.custom_query(' SELECT status FROM ProductStock WHERE stid IS NOT NULL ')
+    products = _DAO.custom_query(' SELECT * FROM ProductStock WHERE stid IS NOT NULL ')
     first_opname = first_do_card_opname()
     if len(products) > 0:
         for p in products:
