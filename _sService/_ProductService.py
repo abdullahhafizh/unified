@@ -170,8 +170,7 @@ def use_voucher(voucher, reff_no):
             })
         __payload['last_stock'] = last_stock
         __payload['slot'] = check_product[0]['status']
-        # TODO: Check Log Slot Redeem Here
-        _Common.store_redeem_activity(voucher, check_product[0]['status'])
+        _Common.store_redeem_activity(voucher, str(__payload['slot']))
     try:
         __url = _Common.BACKEND_URL+'ppob/voucher/use'
         s, r = _NetworkAccess.post_to_url(url=__url, param=__payload)
