@@ -10,16 +10,17 @@ Rectangle{
     property real globalOpacity: .97
     property int fontSize: 30
     property bool modeRadius: true
+    property var color_set: '#1D294D'
 
     Rectangle{
         anchors.fill: parent
-        color: (modeReverse) ? 'white' : '#1D294D'
+        color: (modeReverse) ? 'white' : colorSet
         opacity: globalOpacity
         radius: (modeRadius) ? fontSize : 0
     }
 
     Text {
-        color: (modeReverse) ? '#1D294D' : 'white'
+        color: (modeReverse) ? colorSet : 'white'
         anchors.fill: parent
         text: button_text.toUpperCase()
         verticalAlignment: Text.AlignVCenter

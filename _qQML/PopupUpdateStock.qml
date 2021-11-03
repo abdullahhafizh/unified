@@ -172,6 +172,7 @@ Rectangle{
                 anchors.left: parent.left
                 anchors.leftMargin: 250
                 button_text: 'batal'
+                color_set: 'red'
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
@@ -186,7 +187,8 @@ Rectangle{
                 width: 190
                 anchors.right: parent.right
                 anchors.rightMargin: 250
-                button_text: 'update'
+                button_text: (inputStep == 2) ? 'update' : 'lanjut'
+                color_set: 'green'
                 MouseArea{
                     anchors.fill: parent
                     onClicked: {
