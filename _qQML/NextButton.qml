@@ -14,13 +14,13 @@ Rectangle{
 
     Rectangle{
         anchors.fill: parent
-        color: (modeReverse) ? 'white' : colorSet
+        color: (modeReverse) ? 'white' : color_set
         opacity: globalOpacity
         radius: (modeRadius) ? fontSize : 0
     }
 
     Text {
-        color: (modeReverse) ? colorSet : 'white'
+        color: (modeReverse) ? color_set : 'white'
         anchors.fill: parent
         text: button_text.toUpperCase()
         verticalAlignment: Text.AlignVCenter
