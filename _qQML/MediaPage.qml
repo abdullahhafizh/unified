@@ -107,6 +107,9 @@ Rectangle{
         console.log('get_result : ', result);
         if (result == "ERROR" || result == ""){
             console.log("No Media Files!");
+            moving_text.text = "Playlist Media File(s) Not Found";
+            mediaOnPlaying = false;
+            my_layer.pop();
         } else {
             var files = JSON.parse(result);
             media_files = files.result;
