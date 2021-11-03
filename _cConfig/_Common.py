@@ -2011,6 +2011,7 @@ def generate_card_preload_data(operator, struct_id):
             data['sale_stock_'+slot] = 0
             data['wa_redeem_'+slot] = 0
             data['last_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0)
+            data['last_input_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0)
             data['final_stock_'+slot] = int(data['last_stock_'+slot]) + int(data['add_stock_'+slot])
             data['diff_stock_'+slot] = 0
             if not first_opname:     
@@ -2018,7 +2019,7 @@ def generate_card_preload_data(operator, struct_id):
                 data['sale_stock_'+slot] = _DAO.custom_query(' SELECT count(*) AS __ FROM TransactionsNew WHERE trxType = "SHOP" AND mid = "" AND trxNotes = "' + p['stid'] + '" ')[0]['__']
                 data['wa_redeem_'+slot] = get_redeem_status_by_slot(slot)
                 data['last_stock_'+slot] = int(data['init_stock_'+slot]) - int(data['sale_stock_'+slot]) - int(data['wa_redeem_'+slot])
-                data['diff_stock_'+slot] = int(load_from_temp_config('last^stock^opname^slot^'+slot, 0)) - int(data['last_stock_'+slot])
+                data['diff_stock_'+slot] = int(data['last_stock_'+slot]) - int(data['last_input_stock_'+slot])
                 data['final_stock_'+slot] = int(data['last_stock_'+slot]) + int(data['add_stock_'+slot]) - int(data['diff_stock_'+slot])
             
             log_to_temp_config('stock^opname^slot^'+slot, str(data['final_stock_'+slot]))
@@ -2043,6 +2044,7 @@ def generate_card_preload_data(operator, struct_id):
     _DAO.custom_update(' UPDATE TransactionsNew SET mid = "'+struct_id+'" WHERE trxType = "SHOP" AND mid = "" ')
     LOGGER.debug(('CARD_STOCK_OPNAME_DATA', str(data)))
     store_stock_opname(struct_id, json.dumps(stock_opname))
+    archive_redeem_activity(struct_id+'.redeem')
     return data
 
 

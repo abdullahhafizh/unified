@@ -1381,11 +1381,11 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Stok Seharusnya  : ' + str(s.get('sale_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Stok Seharusnya  : ' + str(s.get('last_stock_'+slot, '-')), 0, 0, 'L')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Sisa Kartu       : ' + str(s.get('last_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Sisa Kartu       : ' + str(s.get('last_input_stock_'+slot, '-')), 0, 0, 'L')
             pdf.ln(1)
             pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
             pdf.ln(tiny_space)
