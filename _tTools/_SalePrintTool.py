@@ -1319,7 +1319,7 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
     pdf = None
     # Init Variables
     tiny_space = 2.5
-    line_size = 6.5
+    line_size = 7
     padding_left = 0
     print_copy = 2
     user = 'mdd_operator'
@@ -1369,27 +1369,42 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Init Stock : ' + str(s.get('init_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Stok Awal        : ' + str(s.get('init_stock_'+slot, '-')), 0, 0, 'L')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Card Sale  : ' + str(s.get('sale_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Penjualan        : ' + str(s.get('sale_stock_'+slot, '-')), 0, 0, 'L')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- WA Redeem  : ' + str(s.get('wa_redeem_'+slot, '-')), 0, 0, 'L')
+                    '- WA Redeem        : ' + str(s.get('wa_redeem_'+slot, '-')), 0, 0, 'L')
+            pdf.ln(1)
+            pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Last Stock : ' + str(s.get('last_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Stok Seharusnya  : ' + str(s.get('sale_stock_'+slot, '-')), 0, 0, 'L')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Add Stock  : ' + str(s.get('add_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Sisa Kartu       : ' + str(s.get('last_stock_'+slot, '-')), 0, 0, 'L')
+            pdf.ln(1)
+            pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Diff Stock : ' + str(s.get('diff_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Selisih          : ' + str(s.get('diff_stock_'+slot, '-')), 0, 0, 'L')
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, 'B', line_size)
+            pdf.cell(padding_left, 0,
+                    '- Penambahan       : ' + str(s.get('add_stock_'+slot, '-')), 0, 0, 'L')
+            pdf.ln(1)
+            pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, 'B', line_size)
+            pdf.cell(padding_left, 0,
+                    '- Stok Akhir       : ' + str(s.get('final_stock_'+slot, '-')), 0, 0, 'L')
+            
             pdf.ln(line_size)
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')

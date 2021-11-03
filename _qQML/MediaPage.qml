@@ -110,6 +110,7 @@ Rectangle{
             moving_text.text = "Playlist Media File(s) Not Found";
             mediaOnPlaying = false;
             my_layer.pop();
+            return
         } else {
             var files = JSON.parse(result);
             media_files = files.result;

@@ -1377,7 +1377,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
     if mode == 'DATA_FILES':
         LOGGER.info(('HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: [START] HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
-        _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
+        _DAO.clean_old_data(tables=['Receipts', 'Settlement', 'SAMAudit', 'SAMRecords',
                                     'TopupRecords', 'TransactionFailure', 'TransactionsNew'],
                             key='createdAt',
                             age_month=age_month)

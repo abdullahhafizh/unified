@@ -210,7 +210,7 @@ Rectangle{
                                 admin_page.update_product_stock(__signal);
                                 close();
                             } else {
-                                main_text.text = 'Sisa Stok Awal ('+initStockInput+')\nMasukkan Penambahan Stok Kartu Pada Slot ' + selectedSlot.replace('10', '');
+                                main_text.text = 'Sisa Stok Kartu ('+initStockInput+')\nMasukkan Penambahan Stok Kartu Pada Slot ' + selectedSlot.replace('10', '');
                             }
                         }
                     }
@@ -232,7 +232,7 @@ Rectangle{
         reset();
         // Must Put Here After Adjustment;
         selectedSlot = slot;
-        main_text.text = 'Masukkan Stok Kartu Awal Pada Slot ' + selectedSlot.replace('10', '');
+        main_text.text = 'Masukkan Sisa Stok Kartu Slot ' + selectedSlot.replace('10', '');
         popup_update_stock.visible = true;
     }
 
