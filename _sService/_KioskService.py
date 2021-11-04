@@ -87,6 +87,9 @@ def get_kiosk_status():
 def kiosk_status():
     data = _Common.kiosk_status_data()
     K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps(data))
+    sleep(1)
+    # Send Card Stock Within Kiosk Status
+    get_product_stock()
 
 
 def load_from_temp_data(section, selected_mode):
@@ -1224,20 +1227,7 @@ def store_transaction_global(param, retry=False):
         update_summary_report(g)
         trx_id = TRX_ID_SALE = _Helper.get_uuid()
         product_id = PID_SALE = g['shop_type'] + str(g['epoch'])
-        bank_id = _Common.get_bid(g['provider'])
-        
-        if g['shop_type'] == 'shop':
-            LOGGER.info(('PROCESS_DELAY 10 Seconds', g['shop_type']))
-            check_product = _DAO.check_product_status_by_pid({'pid': PID_STOCK_SALE})
-            last_stock = check_product[0]['stock'] - 1
-            stock_update = {
-                'pid': g['raw']['pid'],
-                'stock': last_stock
-            }
-            _DAO.update_product_stock(stock_update)
-            LOGGER.debug((trx_id, product_id, str(stock_update)))
-            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid']+'-'+str(last_stock))
-            sleep(10)
+        bank_id = _Common.get_bid(g['provider'])            
         
         # Delete Failure/Pending TRX Local Records
         _DAO.delete_transaction_failure({
@@ -1254,12 +1244,23 @@ def store_transaction_global(param, retry=False):
             admin_fee = 0
             bank_id = g['raw'].get('bid', 0)
             PID_STOCK_SALE = g['raw']['pid']
+            check_product = _DAO.check_product_status_by_pid({'pid': g['raw']['pid']})
+            last_stock = check_product[0]['stock'] - 1
+            stock_update = {
+                'pid': g['raw']['pid'],
+                'stock': last_stock
+            }
+            _DAO.update_product_stock(stock_update)
+            LOGGER.debug((trx_id, product_id, str(stock_update)))
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid']+'-'+str(last_stock))
             # This Product ID Builder For Update Stock in Backend
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
             # NOTICE: Need For Stock Opname Calculation
             trx_notes = g['raw'].get('stid', '')
             # trx_notes = g['raw']
             # trx_notes['stock_details'] = stock_update
+            LOGGER.info(('PROCESS_DELAY 10 Seconds', g['shop_type']))
+            sleep(10)
         else:
             trx_notes = json.dumps(g['topup_details'])
         
