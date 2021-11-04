@@ -903,8 +903,8 @@ def alter_table(a):
     try:
         _DAO.adjust_table(a)
     except Exception as e:
-        LOGGER.warning(('FAILED', str(e)))
-        _Common.online_logger(['Data Alter', a], 'general')
+        LOGGER.warning((e))
+        # _Common.online_logger(['Data Alter', a], 'general')
 
 
 def start_direct_alter_table(s):
@@ -1252,6 +1252,7 @@ def store_transaction_global(param, retry=False):
             _DAO.update_product_stock(stock_update)
             LOGGER.debug((trx_id, product_id, str(stock_update)))
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid']+'-'+str(last_stock))
+            # This Product ID Builder For Update Stock in Backend
             product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
             # NOTICE: Need For Stock Opname Calculation
             trx_notes = g['raw'].get('stid', '')

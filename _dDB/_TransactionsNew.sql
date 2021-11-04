@@ -1,4 +1,3 @@
--- DROP TABLE IF EXISTS TransactionsNew;
 CREATE TABLE TransactionsNew
 (
       trxId           VARCHAR(100) PRIMARY KEY NOT NULL,

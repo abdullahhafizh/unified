@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS TransactionFailure;
 CREATE TABLE TransactionFailure
 (
   trxid           VARCHAR(100) PRIMARY KEY NOT NULL,

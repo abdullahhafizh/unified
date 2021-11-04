@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS Receipts;
 CREATE TABLE Receipts
 (
   rid             VARCHAR(100) PRIMARY KEY NOT NULL,

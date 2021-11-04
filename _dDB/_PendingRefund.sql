@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS PendingRefund;
 CREATE TABLE PendingRefund
 (
   id              VARCHAR(100) PRIMARY KEY NOT NULL,

@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS CashBox;
 CREATE TABLE CashBox
 (
   id                          INTEGER PRIMARY KEY   AUTOINCREMENT,

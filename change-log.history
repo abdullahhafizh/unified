@@ -5,6 +5,7 @@
 - Generate Preload Card Data,
 - Adjust TRX Notes For Card Opname,
 - Clean Up Old Unused Data Table,
+- Fix Missing Data By Table Drop,
 - ...
 
 14.0.G4-GLOBAL:

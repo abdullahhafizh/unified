@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS DailySummary;
 CREATE TABLE DailySummary
 (
   id                                        INTEGER PRIMARY KEY   AUTOINCREMENT,
