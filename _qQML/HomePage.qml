@@ -51,7 +51,7 @@ Base{
             productCount3 = 0;
             selectedMenu = '';
             _SLOT.get_kiosk_status();
-//            _SLOT.kiosk_get_product_stock();
+            _SLOT.kiosk_get_product_stock();
             _SLOT.start_play_audio('homepage_greeting');
         }
         if(Stack.status==Stack.Deactivating){
@@ -913,7 +913,7 @@ Base{
 //                    _SLOT.user_action_log('Press "BATAL"');
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
-                    // _SLOT.kiosk_get_product_stock();
+                    _SLOT.kiosk_get_product_stock();
                     _SLOT.get_kiosk_status();
                     press = "0";
                     resetMediaTimer();
@@ -960,7 +960,7 @@ Base{
                     preload_customer_info.close();
                     selectedMenu = '';
                     _SLOT.start_idle_mode();
-                    // _SLOT.kiosk_get_product_stock();
+                    _SLOT.kiosk_get_product_stock();
                     _SLOT.get_kiosk_status();
                     press = "0";
                     resetMediaTimer();
