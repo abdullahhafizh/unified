@@ -87,6 +87,9 @@ def get_kiosk_status():
 def kiosk_status():
     data = _Common.kiosk_status_data()
     K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps(data))
+    sleep(1)
+    # Send Card Stock Within Kiosk Status
+    get_product_stock()
 
 
 def load_from_temp_data(section, selected_mode):
