@@ -1,16 +1,16 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
+//import QtGraphicalEffects 1.0
+//import "screen.js" as SCREEN
 import "config.js" as CONF
 import "base_function.js" as FUNC
 
 Base{
     id: base_page
 
-//            property var globalScreenType: '1'
-//            height: (globalScreenType=='2') ? 1024 : 1080
-//            width: (globalScreenType=='2') ? 1280 : 1920
+            property var globalScreenType: '1'
+            height: (globalScreenType=='2') ? 1024 : 1080
+            width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -34,6 +34,8 @@ Base{
 
     property var selectedMenu: ''
     property bool showCustomerInfo: true
+
+    property bool spvButton: false
 //    width: globalWidth
 //    height: globalHeight
     isPanelActive: false
@@ -161,12 +163,17 @@ Base{
             if (productData[2].status==103 && parseInt(productData[2].stock) > 0) productCount3 = parseInt(productData[2].stock);
         }
         productCountAll = productCount1 + productCount2 + productCount3;
+        product_stock_status1.color = get_card_stock_color(productCount1);
+        product_stock_status2.color = get_card_stock_color(productCount2);
+        product_stock_status3.color = get_card_stock_color(productCount3);
 //        console.log('product stock count : ', productCount1, productCount2, productCount3, productCountAll);
     }
 
     function get_kiosk_status(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("get_kiosk_status", now, r);
+
+        spvButton = true;
 
         var kiosk = JSON.parse(r);
         globalBoxName = kiosk.name;
@@ -455,6 +462,18 @@ Base{
     }
 
 
+    MouseArea {
+        id: buttonSpvActivation
+        x: 8
+        y: 8
+        width: 100
+        height: 100
+        onDoubleClicked: {
+            console.log('SPV Button Activated');
+            spvButton = true;
+        }
+    }
+
     Rectangle{
         id: timer_tvc
         width: 10
@@ -520,6 +539,8 @@ Base{
                 }
             }
         }
+
+
     }
 
     Rectangle{
@@ -532,6 +553,7 @@ Base{
         anchors.leftMargin: -30
         width: 100
         height: 80
+        visible: spvButton
         Image{
             id: login_button_img
             width: 80
@@ -749,7 +771,7 @@ Base{
 
     Rectangle{
         id: product_stock_status1
-        color: "#fff000"
+        color: "silver"
         anchors.leftMargin: 0
         opacity: 0.75
         border.width: 0
@@ -784,7 +806,7 @@ Base{
 
     Rectangle{
         id: product_stock_status2
-        color: "#ff0000"
+        color: "silver"
         anchors.leftMargin: 0
         opacity: 0.75
         border.width: 0
@@ -819,7 +841,7 @@ Base{
 
     Rectangle{
         id: product_stock_status3
-        color: "#00f00f"
+        color: "silver"
         anchors.leftMargin: 0
         opacity: 0.75
         border.width: 0
@@ -850,6 +872,12 @@ Base{
                 verticalAlignment: Text.AlignVCenter
             }
         }
+    }
+
+    function get_card_stock_color(i){
+        if (parseInt(i) > 20) return '#00f00f';
+        if (10 > parseInt(i) > 20) return '#fff000';
+        if (parseInt(i) < 10) return '#ff0000';
     }
 
 //    NotifView{
