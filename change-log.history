@@ -1,6 +1,8 @@
 14.0.G6-GLOBAL:
 - Adjust SPV Button Appearance,
 - Adjust BOX Color Card Stock,
+- Fix Option value must be string in Card Opname,
+- Disable CD Connection Check (Old Type),
 - ...
 
 14.0.G5-GLOBAL:

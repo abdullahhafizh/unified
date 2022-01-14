@@ -98,6 +98,10 @@ CD_NEW_TYPE = {
     CD_PORT3: True if CD_PORT3_TYPE == 'NEW' else False
 }
 
+# Disable CD Init For Old & New Type
+# CD Coneection Cannot Be Verified For Old Type
+CD_DISABLE_CHECK_STATUS = True
+
 LOGGER.info((CD_NEW_TYPE))
 
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
@@ -924,15 +928,18 @@ def log_to_temp_config(section='last^auth', content=''):
         content = str(__timestamp)
     else:
         content = str(content)
-    _ConfigParser.set_value('TEMPORARY', section, content)
+    log_to_config('TEMPORARY', section, content)
 
 
 def load_from_temp_config(section='test^section', default=''):
+    section = str(section)
+    default = str(default)
     return _ConfigParser.get_set_value('TEMPORARY', section, default)
 
 
 def log_to_config(option='TEMPORARY', section='last^auth', content=''):
     content = str(content)
+    section = str(section)
     LOGGER.info((option, section, content))
     _ConfigParser.set_value(option, section, content)
     

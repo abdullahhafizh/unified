@@ -126,8 +126,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                         if "code" in temp_json.keys():
                             code = temp_json["code"]
                             resp_json_temp = temp_json
-                        elif "data" in temp_json.keys():
-                            code, resp_json_temp = get_sub_code(temp_json)
+                        # TODO: Recheck This
+                        # elif "data" in temp_json.keys():
+                        #     code, resp_json_temp = get_sub_code(temp_json)
                 
                 code = str(code)
                 res_str = code
@@ -282,11 +283,12 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     amount = resp_json_data["amount"]
                     dataToCard = resp_json_data["dataToCard"]
                     lastbalance = int(card_prev_balance) + int(amount)
+                    
                 elif "code" in resp_json_data.keys():
                     code = resp_json_data["code"]
                     resp_json_temp = resp_json_data
-                elif "data" in resp_json_data.keys():
-                    code, resp_json_temp = get_sub_code(resp_json_data)
+                # elif "data" in resp_json_data.keys():
+                #     code, resp_json_temp = get_sub_code(resp_json_data)
 
                 code = str(code)
                 res_str = code
@@ -399,7 +401,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 ResReversal = False
                                 errmsg = "REVERSAL_FAILED"
                 else:
-                    ErrorCode=code
+                    ErrorCode = code
     
     lastbalance = str(lastbalance)
     return res_str, cardno, amount, lastbalance, ErrMsg
@@ -693,8 +695,11 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             elif "code" in resp_json_data.keys():
                 code = resp_json_data["code"]
                 resp_json_temp = resp_json_data
-            elif "data" in resp_json_data.keys():
-                code, resp_json_temp = get_sub_code(resp_json_data)
+            # # TODO: Recheck This
+            # elif "data" in resp_json_data.keys():
+            #     code, resp_json_temp = get_sub_code(resp_json_data)
+
+# {\"response\":{\"code\":200,\"message\":\"OLD Applet, Ready For Confirmation\",\"latency\":1.4948790073395,\"host\":\"172.31.253.203\"},\"data\":{\"appletType\":\"OLD\",\"dataToCard\":\"00C7000030A20F0D46F73F30C9F37E787643CC9046B3D43CA3FDA2A2491DEAE2C8DCA1DF859FF47F97A6B82D2E80DE149877BF9B51\",\"amount\":\"2000000\"}
 
             code = str(code)
 

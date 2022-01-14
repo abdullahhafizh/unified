@@ -83,6 +83,7 @@ def get_set_value(section, option, default=None):
         return get_set_value_temp(section, option, default)
     if CONF is None:
         init()
+    option = str(option)
     try:
         return CONF.get(section, option)
     except configparser.NoOptionError:
@@ -96,6 +97,7 @@ def get_set_value(section, option, default=None):
 def get_set_value_temp(section, option, default=None):
     if TEMP_CONF is None:
         init_temp()
+    option = str(option)
     try:
         return TEMP_CONF.get(section, option)
     except configparser.NoOptionError:

@@ -323,6 +323,6 @@ def get_cd_readiness():
 
 
 def check_init_cd(port):
-    if _Common.CD_NEW_TYPE.get(port, False) is True:
+    if _Common.CD_NEW_TYPE.get(port, False) is True or _Common.CD_DISABLE_CHECK_STATUS is True:
         return True
     return init_cd(port)
