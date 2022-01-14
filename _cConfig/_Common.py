@@ -2014,21 +2014,22 @@ def generate_card_preload_data(operator, struct_id):
             data['id_stock_'+slot] = p['stid']
             data['pid_stock_'+slot] = p['pid']
             data['init_stock_'+slot] = 0
-            data['add_stock_'+slot] = load_from_temp_config('last^add^stock^slot^'+slot, 0)
+            data['add_stock_'+slot] = load_from_temp_config('last^add^stock^slot^'+slot, '0')
             data['sale_stock_'+slot] = 0
             data['wa_redeem_'+slot] = 0
-            data['last_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0)
-            data['last_input_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, 0)
+            data['last_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, '0')
+            data['last_input_stock_'+slot] = load_from_temp_config('last^stock^opname^slot^'+slot, '0')
             data['final_stock_'+slot] = int(data['last_stock_'+slot]) + int(data['add_stock_'+slot])
             data['diff_stock_'+slot] = 0
             if not first_opname:     
-                data['init_stock_'+slot] = load_from_temp_config('stock^opname^slot^'+slot, 0)
+                data['init_stock_'+slot] = load_from_temp_config('stock^opname^slot^'+slot, '0')
                 data['sale_stock_'+slot] = _DAO.custom_query(' SELECT count(*) AS __ FROM TransactionsNew WHERE trxType = "SHOP" AND mid = "" AND trxNotes = "' + p['stid'] + '" ')[0]['__']
                 data['wa_redeem_'+slot] = get_redeem_status_by_slot(slot)
                 data['last_stock_'+slot] = int(data['init_stock_'+slot]) - int(data['sale_stock_'+slot]) - int(data['wa_redeem_'+slot])
                 data['diff_stock_'+slot] = int(data['last_stock_'+slot]) - int(data['last_input_stock_'+slot])
                 data['final_stock_'+slot] = int(data['last_stock_'+slot]) + int(data['add_stock_'+slot]) - int(data['diff_stock_'+slot])
             
+            sleep(.5)
             log_to_temp_config('stock^opname^slot^'+slot, str(data['final_stock_'+slot]))
             
             stock_opname.append({
