@@ -173,7 +173,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("get_kiosk_status", now, r);
 
-        spvButton = true;
+        spvButton = false;
 
         var kiosk = JSON.parse(r);
         globalBoxName = kiosk.name;
