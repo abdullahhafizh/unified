@@ -875,9 +875,11 @@ Base{
     }
 
     function get_card_stock_color(i){
+        if (i==undefined) return 'silver';
         if (parseInt(i) > 20) return '#00f00f';
         if (10 > parseInt(i) > 20) return '#fff000';
         if (parseInt(i) < 10) return '#ff0000';
+        return 'silver';
     }
 
 //    NotifView{
