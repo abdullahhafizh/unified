@@ -6,21 +6,18 @@ Rectangle {
     property var sourceImage:"source/ppob_category/pulsa.png"
     property bool modeReverse: true
     property var categoryName: 'Pulsa'
-    width: 250
+    width: 359
     height: 183
     color: 'transparent'
     visible: true
 
     Rectangle {
-        width: 200
         anchors.fill: parent
         color: (modeReverse) ? "white" : "black"
         opacity: .2
     }
 
     Image{
-        x: 154
-        width: 40
         anchors.top: parent.top
         anchors.topMargin: 25
         anchors.horizontalCenter: parent.horizontalCenter
@@ -37,7 +34,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         font.bold: true
-        font.pixelSize: 25
+        font.pixelSize: 28
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"
@@ -46,9 +43,3 @@ Rectangle {
 
 }
 
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.5}
-}
-##^##*/

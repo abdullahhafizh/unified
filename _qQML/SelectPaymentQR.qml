@@ -35,22 +35,19 @@ Rectangle{
     MainTitle{
         id: main_text
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: 0
-        size_: 28
-        anchors.topMargin: 8
+        anchors.topMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: title_text
+        size_: (parent.width==1920) ? 50 : 40
         color_: CONF.text_color
     }
 
     Row{
         id: row_button
-        width: 1311
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenterOffset: 1
-        height: 217
-        anchors.verticalCenterOffset: 33
+        height: 300
+        anchors.verticalCenterOffset: 50
         spacing: (parent.width==1920) ? 40 : 20
 
         SmallSimplyItem {
@@ -197,8 +194,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_bni
-            y: 20
-            width: 170
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/bni_white_logo.png"
@@ -206,14 +202,8 @@ Rectangle{
             isActivated: _qrBniEnable
             modeReverse: false
             MouseArea{
-                width: 170
-                height: 183
                 enabled: _qrBniEnable
                 anchors.fill: parent
-                anchors.rightMargin: 0
-                anchors.bottomMargin: 0
-                anchors.leftMargin: 0
-                anchors.topMargin: 0
                 onClicked: {
                     _SLOT.user_action_log('choose "BNI" Payment Method');
                     var payment = 'bni-qris';
@@ -240,7 +230,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_bca
-            width: 170
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/bca_white_logo.png"
@@ -248,8 +238,6 @@ Rectangle{
             isActivated: _qrBcaEnable
             modeReverse: false
             MouseArea{
-                width: 170
-                height: 183
                 enabled: _qrBcaEnable
                 anchors.fill: parent
                 onClicked: {
@@ -278,7 +266,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_linkaja
-            width: 170
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/linkaja_white_logo.png"
@@ -286,8 +274,6 @@ Rectangle{
             isActivated: _qrLinkAjaEnable
             modeReverse: false
             MouseArea{
-                width: 170
-                height: 183
                 enabled: _qrLinkAjaEnable
                 anchors.fill: parent
                 onClicked: {
@@ -315,13 +301,8 @@ Rectangle{
         }
 
         SmallSimplyItem {
-<<<<<<< HEAD
-            id: button_gopay
-            width: 170
-=======
             id: button_duwit
             width: 200
->>>>>>> develop
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/duwit_white_logo.png"
@@ -329,13 +310,7 @@ Rectangle{
             isActivated: _qrDuwitEnable
             modeReverse: false
             MouseArea{
-<<<<<<< HEAD
-                width: 170
-                height: 183
-                enabled: _qrGopayEnable
-=======
                 enabled: _qrDuwitEnable
->>>>>>> develop
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DUWIT" Payment Method');
@@ -363,7 +338,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_dana
-            width: 170
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/dana_white_logo.png"
@@ -371,8 +346,6 @@ Rectangle{
             isActivated: _qrDanaEnable
             modeReverse: false
             MouseArea{
-                width: 170
-                height: 183
                 enabled: _qrDanaEnable
                 anchors.fill: parent
                 onClicked: {
@@ -401,7 +374,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_shopeepay
-            width: 170
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/shopeepay_white_logo.png"
@@ -409,8 +382,6 @@ Rectangle{
             isActivated: _qrShopeeEnable
             modeReverse: false
             MouseArea{
-                width: 170
-                height: 183
                 enabled: _qrShopeeEnable
                 anchors.fill: parent
                 onClicked: {
@@ -439,7 +410,7 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_jakone
-            width: 170
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/jakone_white_logo.png"
@@ -447,8 +418,6 @@ Rectangle{
             isActivated: _qrJakoneEnable
             modeReverse: false
             MouseArea{
-                width: 170
-                height: 183
                 enabled: _qrJakoneEnable
                 anchors.fill: parent
                 onClicked: {
@@ -534,9 +503,3 @@ Rectangle{
 
 
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.66}
-}
-##^##*/

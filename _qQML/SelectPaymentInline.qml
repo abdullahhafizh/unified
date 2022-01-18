@@ -20,7 +20,7 @@ Rectangle{
     property bool _qrJakoneEnable: false
     property bool _qrMultiEnable: false
     property var totalEnable: 6
-    visible: true
+    visible: false
     color: 'transparent'
     height: 350
     width: parseInt(SCREEN.size.width)
@@ -32,28 +32,25 @@ Rectangle{
     MainTitle{
         id: main_text
         anchors.top: parent.top
-        anchors.horizontalCenterOffset: 0
-        size_: 28
-        anchors.topMargin: 0
+        anchors.topMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: title_text
+        size_: (parent.width==1920) ? 50 : 40
         color_: CONF.text_color
     }
 
     Row{
         id: row_button
-        width: 940
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenterOffset: 0
-        height: 183
-        anchors.verticalCenterOffset: 11
+        height: 300
+        anchors.verticalCenterOffset: 50
         spacing: (parent.width==1920) ? 50 : 20
 
         SmallSimplyItem {
             id: button_cash
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/cash black.png"
             itemName: "Tunai"
@@ -86,8 +83,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_debit
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/credit card black.png"
             itemName: "Kartu Debit"
@@ -120,8 +117,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_multi_qr
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: 'QRIS Payment'
@@ -154,8 +151,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_ovo
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' :"QR OVO"
@@ -188,8 +185,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_linkaja
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS LinkAja"
@@ -221,15 +218,9 @@ Rectangle{
         }
 
         SmallSimplyItem {
-<<<<<<< HEAD
-            id: button_gopay
-            width: 300
-            height: 150
-=======
             id: button_duwit
             width: 359
             height: 183
->>>>>>> develop
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Duwit"
@@ -262,8 +253,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_dana
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Dana"
@@ -296,8 +287,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_shopeepay
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
@@ -330,8 +321,8 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_jakone
-            width: 300
-            height: 150
+            width: 359
+            height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS JakOne"
@@ -418,9 +409,3 @@ Rectangle{
 
 
 }
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.66}
-}
-##^##*/

@@ -7,11 +7,9 @@ import "config.js" as CONF
 
 Rectangle{
     id: rectangle
-    width:250
-    height:261
+    width:400
+    height:380
     color:"transparent"
-    radius: 0
-    border.width: 0
     property var itemName: 'Product Name'
     property var itemImage: 'source/card/card_tj_original.png'
     property var itemPrice: '19000'
@@ -38,26 +36,19 @@ Rectangle{
     AnimatedImage {
         id: item_img
         source: itemImage
-        anchors.horizontalCenterOffset: 0
-        height: 128
+        height: 300
         anchors.top: parent.top
-        anchors.topMargin: 4
+        anchors.topMargin: 0
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         fillMode: Image.PreserveAspectFit
-        width: 200
+        width: 400
     }
 
     Rectangle{
         id: rec_empty_text
-        height: 261
         anchors.fill: parent
-        anchors.rightMargin: 0
-        anchors.bottomMargin: -7
-        anchors.leftMargin: 0
-        anchors.topMargin: 0
         color: CONF.background_color
-        border.width: 0
         opacity: .6
         visible: (itemStock == 0 || isSelected)
     }
@@ -72,24 +63,18 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
-        anchors.topMargin: 0
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
-        anchors.bottomMargin: -7
         font.pixelSize: 35
     }
 
     Text {
         id: item_name
-        y: 182
-        width: 230
+        width: 400
         color: CONF.text_color
         text: itemName
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 44
+        anchors.bottomMargin: 70
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
-        anchors.horizontalCenterOffset: 0
         font.bold: false
         font.pixelSize: 20
     }
@@ -110,12 +95,10 @@ Rectangle{
 
     Rectangle{
         id: base_button_price
-        y: 230
-        width: 230
         anchors.bottom: parent.bottom
-        anchors.horizontalCenterOffset: 1
         anchors.bottomMargin: 0
-        height: 20
+        width: parent.width
+        height: 60
         color: 'white'
         anchors.horizontalCenter: parent.horizontalCenter
         Text {
@@ -125,7 +108,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: 20
+            font.pixelSize: 30
             verticalAlignment: Text.AlignVCenter
         }
     }
@@ -133,12 +116,10 @@ Rectangle{
 
     Text {
         id: item_stock
-        x: 224
-        y: 232
         color: CONF.background_color
         text: itemStock
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.bottomMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
 //        visible: false
@@ -150,9 +131,3 @@ Rectangle{
 
 }
 
-
-/*##^##
-Designer {
-    D{i:0;formeditorZoom:0.75}
-}
-##^##*/

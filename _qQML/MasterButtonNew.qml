@@ -8,7 +8,6 @@ Rectangle {
     property var img_:"source/phone_qr.png"
     property var text_:"Tiket Pesawat"
     property var text2_:"Flight Ticket"
-    property var font_text_:30
     property var text_color: (modeReverse) ? "black" : "white"
     property var mode3d: undefined
     property int size: 350
@@ -50,7 +49,7 @@ Rectangle {
         color: 'white'
 //        text: text_.toUpperCase()
         text: text_
-        font.pixelSize: font_text_
+        font.pixelSize: 30
         anchors.bottomMargin: 30
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
@@ -76,7 +75,7 @@ Rectangle {
         visible: closed_rectangle.visible
         anchors.fill: closed_rectangle
         text: qsTr("CLOSED")
-        font.pixelSize: font_text_
+        font.pixelSize: 35
         color: "black"
         font.bold: true
         font.family:"Ubuntu"
@@ -86,9 +85,3 @@ Rectangle {
 
 }
 
-
-/*##^##
-Designer {
-    D{i:0;height:350;width:350}
-}
-##^##*/

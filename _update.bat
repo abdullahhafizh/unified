@@ -6,6 +6,6 @@ pip install Flask
 pip install func-timeout
 pip list
 git config http.sslVerify false
-git pull origin tablet-view
+git pull origin live
 exit
 
