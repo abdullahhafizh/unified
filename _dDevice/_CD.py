@@ -20,8 +20,8 @@ CD_PORT3 = _Common.CD_PORT3
 CD_MID = ''
 CD_TID = ''
 
-CD_EXEC = os.path.join(sys.path[0], '_lLib', 'cd', 'card_disp.exe')
-CD_EXEC_V2 = os.path.join(sys.path[0], '_lLib', 'cd', 'v2', 'card.exe')
+CMD_CD_NEW = os.path.join(sys.path[0], '_lLib', 'cd', 'card_disp.exe')
+CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'v2', 'card.exe')
 V2_PATH = os.path.join(sys.path[0], '_lLib', 'cd', 'v2')
 CD_INIT = os.path.join(sys.path[0], '_lLib', 'cd_init', 'start.exe')
 
@@ -111,26 +111,30 @@ def start_multiple_eject(attempt, multiply):
     if _Common.CD_NEW_TYPE.get(port, False) is True:
         _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
     else:
-        _Helper.get_thread().apply_async(simply_eject, (attempt, multiply,))
+        _Helper.get_thread().apply_async(old_cd_eject, (attempt, multiply,))
 
 
 
 def new_cd_eject(port, attempt):
     try:
-        command = CD_EXEC + " hold " + port
+        command = CMD_CD_NEW + " hold " + port
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
         response = json.loads(output[0])
         LOGGER.debug((command, 'output', output, 'response', response))
-        sleep(1)
-        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+        if int(response) > 0:
+            # Handle Failure Here
+            set_false_output(attempt, str(e)+'|'+attempt, 'new_cd_eject')
+        else:
+            sleep(1)
+            CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
     except Exception as e:
         set_false_output(attempt, str(e)+'|'+attempt, 'new_cd_eject')
 
 
 
-def simply_eject(attempt, multiply):
+def old_cd_eject(attempt, multiply):
     # _cd_selected_port = None
     # try:
     #     selected_port = CD_PORT_LIST[attempt]
@@ -144,27 +148,28 @@ def simply_eject(attempt, multiply):
     #     LOGGER.debug(('ByPassing Mode', str(_Common.TEST_MODE), attempt, multiply))
     #     return
     try:
-        # command = CD_EXEC + " hold " + selected_port
-        # Switch To V2
-        command = CD_EXEC_V2 + " card " + str(attempt)
+        # command = CMD_CD_NEW + " hold " + selected_port
+        # Switch Command For Old Type CD
+        command = CMD_CD_OLD + " card " + str(attempt)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
         response = json.loads(output[0])
         LOGGER.debug((command, 'output', output, 'response', response))
         if response.get('ec') is not None:
-            if response['ec'] > -1:
+            # ec 80 is Success, otherwise is failure
+            if response['ec'] != 80:
                 # Force Reply Success in TESTING MODE
                 if multiply == '1':
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
                 else:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
             else:
-                set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
+                set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
         else:
-            set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
+            set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
     except Exception as e:
-        set_false_output(attempt, str(e)+'|'+attempt, 'simply_eject')
+        set_false_output(attempt, str(e)+'|'+attempt, 'old_cd_eject')
 
 
 def eject_full_round(attempt):
@@ -219,15 +224,12 @@ def set_false_output(attempt, error_message, method='eject_full_round'):
     if attempt == '101':
         _Common.CD1_ERROR = error_message
         _Common.upload_device_state('cd1', _Common.CD1_ERROR)
-
     if attempt == '102':
         _Common.CD2_ERROR = error_message
         _Common.upload_device_state('cd2', _Common.CD2_ERROR)
-
     if attempt == '103':
         _Common.CD3_ERROR = error_message
         _Common.upload_device_state('cd3', _Common.CD3_ERROR)
-
     _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
