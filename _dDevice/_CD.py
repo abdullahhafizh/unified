@@ -126,12 +126,12 @@ def new_cd_eject(port, attempt):
         LOGGER.debug((command, 'output', output, 'response', response))
         if int(response) > 0:
             # Handle Failure Here
-            set_false_output(attempt, str(e)+'|'+attempt, 'new_cd_eject')
+            emit_eject_error(attempt, str(e)+'|'+attempt, 'new_cd_eject')
         else:
             sleep(1)
             CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
     except Exception as e:
-        set_false_output(attempt, str(e)+'|'+attempt, 'new_cd_eject')
+        emit_eject_error(attempt, str(e)+'|'+attempt, 'new_cd_eject')
 
 
 
@@ -167,11 +167,11 @@ def old_cd_eject(attempt, multiply):
                 else:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
             else:
-                set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
+                emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
         else:
-            set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
+            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
     except Exception as e:
-        set_false_output(attempt, str(e)+'|'+attempt, 'old_cd_eject')
+        emit_eject_error(attempt, str(e)+'|'+attempt, 'old_cd_eject')
 
 
 def eject_full_round(attempt):
@@ -205,7 +205,7 @@ def eject_full_round(attempt):
                 if response == 0:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
                 else:
-                    set_false_output(attempt, 'DEVICE_NOT_MOVE|'+attempt)
+                    emit_eject_error(attempt, 'DEVICE_NOT_MOVE|'+attempt)
                     return
                 # Stop/Close The Connection Session
                 sleep(1)
@@ -213,16 +213,16 @@ def eject_full_round(attempt):
                 response, result = _Command.send_request(param=param, output=None)
                 LOGGER.debug(("eject_full_round [STOP] : ", param, result))
             else:
-                set_false_output(attempt, 'DEVICE_NOT_INIT|'+attempt)
+                emit_eject_error(attempt, 'DEVICE_NOT_INIT|'+attempt)
                 return
         else:
-            set_false_output(attempt, 'DEVICE_NOT_OPEN|'+attempt)
+            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|'+attempt)
             return
     except Exception as e:
-        set_false_output(attempt, str(e) + '|' + attempt)
+        emit_eject_error(attempt, str(e) + '|' + attempt)
 
 
-def set_false_output(attempt, error_message, method='eject_full_round'):
+def emit_eject_error(attempt, error_message, method='eject_full_round'):
     if attempt == '101':
         _Common.CD1_ERROR = error_message
         _Common.upload_device_state('cd1', _Common.CD1_ERROR)
