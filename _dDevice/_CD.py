@@ -117,7 +117,8 @@ def start_multiple_eject(attempt, multiply):
 
 def new_cd_eject(port, attempt):
     try:
-        command = CMD_CD_NEW + " hold " + port
+        # command = CMD_CD_NEW + " hold " + port
+        command = " ".join([CMD_CD_NEW, "hold", port])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
@@ -150,7 +151,8 @@ def old_cd_eject(attempt, multiply):
     try:
         # command = CMD_CD_NEW + " hold " + selected_port
         # Switch Command For Old Type CD
-        command = CMD_CD_OLD + " card " + str(attempt)
+        # command = CMD_CD_OLD + " card " + str(attempt)
+        command = " ".join([CMD_CD_OLD, "card", str(attempt)])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
