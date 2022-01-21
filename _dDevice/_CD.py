@@ -126,12 +126,12 @@ def new_cd_eject(port, attempt):
         LOGGER.debug((command, 'output', output, 'response', response))
         if int(response) > 0:
             # Handle Failure Here
-            emit_eject_error(attempt, str(e)+'|'+attempt, 'new_cd_eject')
+            emit_eject_error(attempt, str(output), 'new_cd_eject')
         else:
             sleep(1)
             CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
     except Exception as e:
-        emit_eject_error(attempt, str(e)+'|'+attempt, 'new_cd_eject')
+        emit_eject_error(attempt, str(e), 'new_cd_eject')
 
 
 
@@ -171,7 +171,7 @@ def old_cd_eject(attempt, multiply):
         else:
             emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
     except Exception as e:
-        emit_eject_error(attempt, str(e)+'|'+attempt, 'old_cd_eject')
+        emit_eject_error(attempt, str(e), 'old_cd_eject')
 
 
 def eject_full_round(attempt):
