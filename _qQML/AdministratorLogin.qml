@@ -375,7 +375,7 @@ Base{
         id: popup_loading
     }
 
-    PopupInputOtp{
+    PopupInputOTP{
         id: popup_input_otp
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
@@ -418,7 +418,7 @@ Base{
                     if (popup_input_otp.numberInput == otpCode){
                         my_layer.push(admin_manage, {userData: _userData});
                     } else {
-                        false_notif('Mohon Maaf|Kode OTP Salah, Silakan Hubungi Master Admin');
+                        false_notif('Mohon Maaf|Kode OTP Salah, Silakan Hubungi Administrator');
                         press = '0';
                         popup_input_otp.reset_counter();
                     }
