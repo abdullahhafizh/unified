@@ -97,8 +97,9 @@ Base{
             onTriggered:{
                 abc.counter -= 1
                 if(abc.counter < 0){
-                    my_timer.stop()
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                    _SLOT.get_kiosk_logout();
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
         }

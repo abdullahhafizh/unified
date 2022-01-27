@@ -35,6 +35,22 @@ def check_user_offline_hash(user, password):
         return False
 
 
+def get_kiosk_logout():
+    _Helper.get_thread().apply_async(kiosk_logout,)
+
+
+def kiosk_logout():
+    global USER
+    try:
+        _param = {
+            'logout_time': _Helper.time_string(),
+        }
+        status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-logout', param=_param)
+        LOGGER.info((str(_param), str(status), str(response)))
+    except Exception as e:
+        LOGGER.warning((e))
+
+
 def get_kiosk_login(username, password):
     _Helper.get_thread().apply_async(kiosk_login, (username, password,))
 
@@ -47,7 +63,7 @@ def kiosk_login(username, password):
             'password': hashlib.md5((password.lower()+SALT).encode('utf-8')).hexdigest()
         }
         status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-login', param=_param)
-        LOGGER.info(('kiosk_login', str(_param), str(status)))
+        LOGGER.info((str(_param), str(status)))
         if status == 200 and response['result'] == 'OK':
             USER = response['data']
             # "data": {
@@ -87,7 +103,7 @@ def kiosk_login(username, password):
             else:
                 US_SIGNDLER.SIGNAL_USER_LOGIN.emit('LOGIN|ERROR')
     except Exception as e:
-        LOGGER.warning(('kiosk_login', e))
+        LOGGER.warning((e))
         US_SIGNDLER.SIGNAL_USER_LOGIN.emit('LOGIN|UNKNOWN_ERROR')
 
 
@@ -98,5 +114,5 @@ def reset_offline_user(hash_data):
             s.close()
         return 'CHANGE_OFFLINE_USER_SUCCESS'
     except Exception as e:
-        LOGGER.warning(('reset_offline_user', str(e)))
+        LOGGER.warning((e))
         return 'CHANGE_OFFLINE_USER_FAILED'

@@ -388,6 +388,10 @@ class SlotHandler(QObject):
         _UserService.get_kiosk_login(username, password)
     get_kiosk_login = pyqtSlot(str, str)(get_kiosk_login)
 
+    def get_kiosk_logout(self):
+        _UserService.get_kiosk_logout()
+    get_kiosk_logout = pyqtSlot()(get_kiosk_logout)
+
     def kiosk_get_machine_summary(self):
         _KioskService.kiosk_get_machine_summary()
     kiosk_get_machine_summary = pyqtSlot()(kiosk_get_machine_summary)
