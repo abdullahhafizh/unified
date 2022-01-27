@@ -47,8 +47,9 @@ def kiosk_login(username, password):
             'password': hashlib.md5((password.lower()+SALT).encode('utf-8')).hexdigest()
         }
         status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-login', param=_param)
-        LOGGER.info(('kiosk_login', str(_param), str(status), str(response)))
+        LOGGER.info(('kiosk_login', str(_param), str(status)))
         if status == 200 and response['result'] == 'OK':
+            otp = response['data'].get('otpCode').split('^')[1]
             USER = response['data']
             # "data": {
             #     "user_id": 6,
@@ -60,6 +61,7 @@ def kiosk_login(username, password):
             #     "isAbleCollect": 0,
             #     "last_activity": 1552546792
             #     }
+            USER['otpCode'] = otp
             US_SIGNDLER.SIGNAL_USER_LOGIN.emit('SUCCESS|'+json.dumps(USER))
             _Common.LAST_UPDATED_STOCK = []
             _Common.COLLECTION_DATA = []
@@ -75,7 +77,8 @@ def kiosk_login(username, password):
                             "active": 1,
                             "isAbleTerminal": 1,
                             "isAbleCollect": 1,
-                            "last_activity": _Helper.now()
+                            "last_activity": _Helper.now(),
+                            "otpCode": "000000"
                             }
                         US_SIGNDLER.SIGNAL_USER_LOGIN.emit('SUCCESS|' + json.dumps(USER))
                     else:

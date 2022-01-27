@@ -1,3 +1,7 @@
+14.0.G7-GLOBAL:
+- Add OTP Login For Operator Login,
+- ...
+
 14.0.G6-GLOBAL:
 - Adjust SPV Button Appearance,
 - Adjust BOX Color Card Stock,
@@ -6,7 +10,6 @@
 - Fix CD Failure Detection For OLD & NEW Applet,
 - Enhance CD Type Validation,
 - Hide CD Stock Count in Homepage,
-- 
 - ...
 
 14.0.G5-GLOBAL:

@@ -10,6 +10,10 @@ Base{
     property var passwordInput: ''
     property int stepInput: 0
     property var loginPurpose: 'adminPage'
+
+    property var otpCode: ''
+    property bool useOtpCode: true
+
     textPanel: "Masuk Mode Administrator"
     imgPanel: 'source/icon/lock_key.png'
 
@@ -19,6 +23,7 @@ Base{
             my_timer.start();
             usernameInput = '';
             passwordInput =  '';
+            otpCode = '';
             press = '0'
             stepInput = 0;
         }
@@ -36,7 +41,7 @@ Base{
     }
 
     function define_user_login(l){
-        console.log('define_user_login', l);
+        // console.log('define_user_login', l);
         popup_loading.close();
         if (l.indexOf('ERROR') > -1){
             false_notif('Mohon Maaf|Gagal Melakukan Login. Pastikan Username dan Password Anda Benar')
@@ -49,8 +54,14 @@ Base{
             return;
         }
         var _userData = JSON.parse(l.replace('SUCCESS|', ''));
+        otpCode = _userData.otpCode;
         if (_userData.active==1 && _userData.isAbleTerminal==1) {
-            my_layer.push(admin_manage, {userData: _userData});
+            // Add Handle OTP Code Before Redirect to Admin Page if Use OTP Code is ACTIVE
+            if (useOtpCode) {
+                popup_input_otp.open('');
+            } else {
+                my_layer.push(admin_manage, {userData: _userData});
+            }
         } else {
             false_notif('Mohon Maaf|Gagal Login, User Anda Tidak Aktif, Silakan Hubungi Master Admin')
             reset_input();
@@ -362,6 +373,59 @@ Base{
 
     PopupLoading{
         id: popup_loading
+    }
+
+    PopupInputNumber{
+        id: popup_input_otp
+//        calledFrom: 'general_payment_process'
+        handleButtonVisibility: next_button_input_number
+        z: 99
+
+        CircleButton{
+            id: cancel_button_input_number
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL" in Input OTP');
+                    popup_input_otp.close();
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_input_number
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            visible: false
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (press != '0') return;
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT" Input OTP Number ' + popup_input_otp.numberInput);
+                    if (popup_input_otp.numberInput == otpCode){
+                        my_layer.push(admin_manage, {userData: _userData});
+                    } else {
+                        false_notif('Mohon Maaf|Kode OTP Salah, Silakan Hubungi Master Admin');
+                        press = '0';
+                        popup_input_otp.reset_counter();
+                    }
+                    popup_input_otp.close();
+                }
+            }
+        }
     }
 
 }
