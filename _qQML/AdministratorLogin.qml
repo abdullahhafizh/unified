@@ -375,7 +375,7 @@ Base{
         id: popup_loading
     }
 
-    PopupInputOTP{
+    PopupInputOtp{
         id: popup_input_otp
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number

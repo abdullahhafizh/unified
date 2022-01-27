@@ -135,6 +135,7 @@ Rectangle{
                 } else {
                     numberInput += str
                 }
+                check_availability();
             }
         }
 
