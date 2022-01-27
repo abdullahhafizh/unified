@@ -16,7 +16,7 @@ Rectangle{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     color: 'transparent'
-    property var colorMode: "darkblue"
+    property var colorMode: "292F32"
     property bool withBackground: true
 
     property var calledFrom
@@ -160,14 +160,7 @@ Rectangle{
 
     function check_availability(){
 //        console.log('numberInput', numberInput, canProceed);
-        if (numberInput.length > minCountInput) {
-            if (calledFrom!=undefined) {
-                switch(calledFrom){
-                case 'general_payment_process':
-                    general_payment_process.framingSignal('PHONE_INPUT_FRAME|'+numberInput)
-                    break;
-                }
-            }
+        if (numberInput.length == minCountInput) {
             if (handleButtonVisibility!=undefined){
                 handleButtonVisibility.visible = true;
             }
