@@ -58,6 +58,7 @@ Base{
         if (_userData.active==1 && _userData.isAbleTerminal==1) {
             // Add Handle OTP Code Before Redirect to Admin Page if Use OTP Code is ACTIVE
             if (useOtpCode) {
+                press = '0';
                 popup_input_otp.open('');
             } else {
                 my_layer.push(admin_manage, {userData: _userData});
