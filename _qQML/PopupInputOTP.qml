@@ -16,7 +16,7 @@ Rectangle{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     color: 'transparent'
-    property var colorMode: "darkgray"
+    property var colorMode: "darkblue"
     property bool withBackground: true
 
     property var calledFrom
@@ -29,7 +29,6 @@ Rectangle{
     property int minCountInput: 6
     property int maxCountInput: 15
     property var numberInput: ""
-    property var pattern: '08'
 
     property string caseTitle: ""
     property var mainTitleMode: "normal" //normal/center
@@ -160,7 +159,7 @@ Rectangle{
 
     function check_availability(){
 //        console.log('numberInput', numberInput, canProceed);
-        if (numberInput.substring(0, 2)==pattern && numberInput.length > minCountInput) {
+        if (numberInput.length > minCountInput) {
             if (calledFrom!=undefined) {
                 switch(calledFrom){
                 case 'general_payment_process':
