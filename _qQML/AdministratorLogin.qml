@@ -118,7 +118,8 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                _SLOT.get_kiosk_logout();
+                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
             }
         }
     }
@@ -394,6 +395,7 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "BATAL" in Input OTP');
+                    _SLOT.get_kiosk_logout();
                     popup_input_otp.close();
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));

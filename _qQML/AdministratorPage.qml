@@ -324,6 +324,7 @@ Base{
             onTriggered:{
                 abc.counter -= 1
                 if(abc.counter < 0){
+                    _SLOT.get_kiosk_logout();
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
                 }
@@ -355,6 +356,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.get_kiosk_logout();
                     _SLOT.user_action_log(operatorName + ' - Admin Page "Cancel"');
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
                 }
