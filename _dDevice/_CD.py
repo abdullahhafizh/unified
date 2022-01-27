@@ -160,7 +160,7 @@ def old_cd_eject(attempt, multiply):
         LOGGER.debug((command, 'output', output, 'response', response))
         if response.get('ec') is not None:
             # ec 80 is Success, otherwise is failure
-            if response['ec'] != 80:
+            if response['ec'] == 80:
                 # Force Reply Success in TESTING MODE
                 if multiply == '1':
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
@@ -317,11 +317,11 @@ def kiosk_get_cd_readiness():
 
 def get_cd_readiness():
     if _Common.digit_in(_Common.CD_PORT1) is True:
-        _Common.CD_READINESS['port1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1) is True else 'N/A'
+        _Common.CD_READINESS['port1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1) is True and _Common.CD_PORT1_TYPE in ['OLD', 'NEW'] else 'N/A'
     if _Common.digit_in(_Common.CD_PORT2) is True:
-        _Common.CD_READINESS['port2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2) is True else 'N/A'
+        _Common.CD_READINESS['port2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2) is True and _Common.CD_PORT2_TYPE in ['OLD', 'NEW'] else 'N/A'
     if _Common.digit_in(_Common.CD_PORT3) is True:
-        _Common.CD_READINESS['port3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3) is True else 'N/A'
+        _Common.CD_READINESS['port3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3) is True and _Common.CD_PORT3_TYPE in ['OLD', 'NEW'] else 'N/A'
     CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Common.CD_READINESS))
     LOGGER.debug(('get_cd_readiness', json.dumps(_Common.CD_READINESS)))
 

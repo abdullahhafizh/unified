@@ -31,6 +31,7 @@ Base{
     property var last_money_insert: 'N/A'
 
     property bool printerAvailable: true
+    property bool showCardStock: false
 
     property var selectedMenu: ''
     property bool showCustomerInfo: true
@@ -796,7 +797,7 @@ Base{
             Text{
                 id: product_count
                 height: parent.height
-                text: productCount1
+                text: (showCardStock) ? productCount1 : ''
                 font.bold: true
                 color: 'blue'
                 verticalAlignment: Text.AlignVCenter
@@ -831,7 +832,7 @@ Base{
             Text{
                 id: product_count2
                 height: parent.height
-                text: productCount2
+                text: (showCardStock) ? productCount2 : ''
                 font.bold: true
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter
@@ -866,7 +867,7 @@ Base{
             Text{
                 id: product_count3
                 height: parent.height
-                text: productCount3
+                text: (showCardStock) ? productCount3 : ''
                 font.bold: true
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter

@@ -4,6 +4,9 @@
 - Fix Option value must be string in Card Opname,
 - Disable CD Connection Check (Old Type),
 - Fix CD Failure Detection For OLD & NEW Applet,
+- Enhance CD Type Validation,
+- Hide CD Stock Count in Homepage,
+- 
 - ...
 
 14.0.G5-GLOBAL:
