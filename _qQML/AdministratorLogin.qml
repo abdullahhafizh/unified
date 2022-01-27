@@ -11,7 +11,7 @@ Base{
     property int stepInput: 0
     property var loginPurpose: 'adminPage'
 
-    property var otpCode: ''
+    property var _userData
     property bool useOtpCode: true
 
     textPanel: "Masuk Mode Administrator"
@@ -23,7 +23,7 @@ Base{
             my_timer.start();
             usernameInput = '';
             passwordInput =  '';
-            otpCode = '';
+            _userData = undefined;
             press = '0'
             stepInput = 0;
         }
@@ -53,8 +53,7 @@ Base{
             reset_input();
             return;
         }
-        var _userData = JSON.parse(l.replace('SUCCESS|', ''));
-        otpCode = _userData.otpCode;
+        _userData = JSON.parse(l.replace('SUCCESS|', ''));
         if (_userData.active==1 && _userData.isAbleTerminal==1) {
             // Add Handle OTP Code Before Redirect to Admin Page if Use OTP Code is ACTIVE
             if (useOtpCode) {
@@ -416,7 +415,8 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" Input OTP Number ' + popup_input_otp.numberInput);
-                    if (popup_input_otp.numberInput == otpCode){
+                    if (popup_input_otp.numberInput == _userData.otpCode){
+                        console.log('User OTP Success : ' + _userData.otpCode)
                         my_layer.push(admin_manage, {userData: _userData});
                     } else {
                         false_notif('Mohon Maaf|Kode OTP Salah, Silakan Hubungi Administrator');
