@@ -101,7 +101,6 @@ Rectangle{
             anchors.verticalCenterOffset: 50
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            //TODO: Assign this into conditional view
             property int count:0
 
             Component.onCompleted: {
