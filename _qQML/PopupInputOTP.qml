@@ -78,7 +78,6 @@ Rectangle{
             anchors.topMargin: 160
             anchors.horizontalCenter: parent.horizontalCenter
             borderColor: CONF.text_color
-            visible: !manualMethod.isSelected
         }
 
         TextInput {
@@ -92,7 +91,6 @@ Rectangle{
             font.pixelSize: (popup_input_otp.width==1920) ? 50 : 45
             color: CONF.text_color
             clip: true
-            visible: !manualMethod.isSelected
             focus: true
         }
 
@@ -104,7 +102,6 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             //TODO: Assign this into conditional view
-            visible: !manualMethod.isSelected
             property int count:0
 
             Component.onCompleted: {
