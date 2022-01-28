@@ -16,7 +16,7 @@ Rectangle{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     color: 'transparent'
-    property var colorMode: "292F32"
+    // property var colorMode: "292F32"
     property bool withBackground: true
 
     property var calledFrom
@@ -32,7 +32,7 @@ Rectangle{
 
     property string caseTitle: ""
     property var mainTitleMode: "normal" //normal/center
-    property string mainTitle: "Masukkan Kode OTP (Konfirmasi) Dari Administrator"
+    property string mainTitle: "Masukkan Kode Konfirmasi OTP Dari Administrator"
 
     visible: false
     scale: visible ? 1.0 : 0.1
@@ -53,8 +53,8 @@ Rectangle{
         id: notif_rec
         width: parent.width
         height: parent.height - 100
-//        color: CONF.frame_color
-        color: colorMode
+        color: CONF.frame_color
+        // color: colorMode
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
