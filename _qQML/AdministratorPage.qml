@@ -213,6 +213,11 @@ Base{
                 switch_notif('Dear '+operatorName+'|Koneksi Terputus, Gagal Mengubah Stock Kartu Di Peladen Pusat\nSilakan Coba Lagi Hingga Berhasil');
                 actionChangeList.pop();
             }
+            if (y=='UPDATE_STOCK_DURATION_LIMIT'){
+                var limit_duration = a.split('|')[2]
+                switch_notif('Dear '+operatorName+'|Durasi Stock Opname Belum Sesuai\nPastikan Durasi Stock Opname Telah Melebihi '+limit_duration+' Jam Dari Sebelumnya');
+                actionChangeList.pop();
+            }
             if (y=='SUCCESS'){
                 var cp = JSON.parse(a.split('|')[2]);
                 actionChangeList.push(cp);

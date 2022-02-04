@@ -39,7 +39,14 @@ def change_product_stock(payload):
         PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|CONNECTION_ERROR')
         return
     try:
-        payload = json.loads(payload)
+        payload = json.loads(payload)    
+        #Add Handle Limit Update Stock Duration From Previous
+        last_port_update_time = _Common.load_from_temp_config('last^slot^'+payload['port'].replace('10', '')+'^update^time', '0')
+        if int(last_port_update_time) > 0 and _Common.LIMIT_CARD_OPNAME_DURATION_HOURS > 0:
+            allowed_update_port_time = int(last_port_update_time) + (_Common.LIMIT_CARD_OPNAME_DURATION_HOURS * 3600 * 1000)
+            if _Helper.now() < allowed_update_port_time:
+                PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|UPDATE_STOCK_DURATION_LIMIT|'+str(_Common.LIMIT_CARD_OPNAME_DURATION_HOURS))
+                return
         # // {
         # //  port: selectedSlot,
         # //  init_stock: initStockInput,
@@ -77,6 +84,7 @@ def change_product_stock(payload):
         status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'change/product-stock', param=_param)
         # LOGGER.info((str(_param), str(response)))
         if status == 200 and response['result'] == 'OK':
+            _Common.log_to_temp_config('last^slot^'+payload['port'].replace('10', '')+'^update^time', str(_Helper.now()))
             # _KioskService.kiosk_get_product_stock()
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|SUCCESS|'+json.dumps(_param))
             len_product = int(_DAO.custom_query(' SELECT count(*) AS __ FROM ProductStock WHERE stid IS NOT NULL ')[0]['__'])
