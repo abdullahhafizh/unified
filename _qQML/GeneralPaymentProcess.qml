@@ -765,6 +765,7 @@ Base{
                 var acquirer_provider = details.payment.toUpperCase();
                 acquirer_provider = acquirer_provider.replace('BANK', 'QRIS');
                 console.log("Validate QRIS Provider :", issuer_provider, acquirer_provider);
+                // Acquirer And Issuer have to be match
                 if (issuer_provider == acquirer_provider){
                     var prevData = details;
                     // Rewrite Details TRX Data From Previous Captured Promo
