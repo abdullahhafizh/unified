@@ -5,7 +5,7 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
     property var press: '0'
-    property int timer_value: 30
+    property int timer_value: 120
     property var usernameInput: ''
     property var passwordInput: ''
     property int stepInput: 0

@@ -46,7 +46,7 @@ Rectangle{
         visible: withBackground
         anchors.fill: parent
         color: CONF.background_color
-//        color: 'black'
+        // color: '#1A144A'
         opacity: 0.6
     }
 
@@ -54,8 +54,8 @@ Rectangle{
         id: notif_rec
         width: parent.width
         height: parent.height - 100
-        color: CONF.frame_color
-        // color: colorMode
+        // color: CONF.frame_color
+        color: '#1A144A'
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
