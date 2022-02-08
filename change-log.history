@@ -3,6 +3,7 @@
 - Add Background User Logout,
 - Adjust Last Stock If Diff Found,
 - Handle Limit New Update Stock Duration,
+- Adjust QR Payment Channel Validation on Promo,
 - ...
 
 14.0.G6-GLOBAL:
