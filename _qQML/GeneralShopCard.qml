@@ -204,7 +204,7 @@ Base{
         if (p=='MULTI_QR'){
             press = '0';
             if (activeQRISProvider.length == 1){
-                selectedPayment = activeQRISProvider[0];
+                p = activeQRISProvider[0];
             } else {
                 select_payment.close();
                 select_qr_provider.open();
