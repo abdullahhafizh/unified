@@ -723,8 +723,8 @@ Base{
     function process_selected_payment(channel){
         if (channel=='MULTI_QR'){
             press = '0';
-            select_payment.close();
             if (activeQRISProvider.length > 1){
+                select_payment.close();
                 select_qr_provider.open();
                 return;
             }

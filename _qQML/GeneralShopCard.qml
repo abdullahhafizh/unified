@@ -203,10 +203,10 @@ Base{
         console.log('process_selected_payment', p, now);
         if (p=='MULTI_QR'){
             press = '0';
-            select_payment.close();
             if (activeQRISProvider.length == 1){
                 selectedPayment = activeQRISProvider[0];
             } else {
+                select_payment.close();
                 select_qr_provider.open();
                 return;
             }
