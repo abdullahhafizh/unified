@@ -766,7 +766,13 @@ Base{
                 acquirer_provider = acquirer_provider.replace('BANK', 'QRIS');
                 console.log("Validate QRIS Provider :", issuer_provider, acquirer_provider);
                 if (issuer_provider == acquirer_provider){
+                    var prevData = details;
+                    // Rewrite Details TRX Data From Previous Captured Promo
                     details = promoData;
+                    details.payment_details = prevData.payment_details ;
+                    details.init_payment = prevData.init_payment;
+                    details.payment = prevData.payment;
+                    details.payment_received = prevData.payment_received;
                     details.promo_code_active = true;
                     adminFee = parseInt(details.admin_fee);
                     getDenom = parseInt(details.value) * parseInt(details.qty);
