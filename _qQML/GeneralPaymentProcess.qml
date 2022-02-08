@@ -763,6 +763,7 @@ Base{
             if (mode=='qr'){
                 var issuer_provider = FUNC.serialize_qris_provider(details.init_payment);
                 var acquirer_provider = details.payment.toUpperCase();
+                acquirer_provider = acquirer_provider.replace('BANK', 'QRIS');
                 console.log("Validate QRIS Provider :", issuer_provider, acquirer_provider);
                 if (issuer_provider == acquirer_provider){
                     details = promoData;
