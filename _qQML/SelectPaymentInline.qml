@@ -121,7 +121,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: 'QRIS Payment'
+            itemName: 'Q R I S'
             modeReverse: true
             visible: _qrMultiEnable
             MouseArea{
@@ -155,7 +155,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' :"QR OVO"
+            itemName: (CONF.general_qr=='1') ? 'Q R I S' :"QR OVO"
             modeReverse: true
             visible: _qrOvoEnable && !_qrMultiEnable
             MouseArea{
@@ -189,7 +189,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS LinkAja"
+            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS LinkAja"
             modeReverse: true
             visible: _qrLinkAjaEnable && !_qrMultiEnable
             MouseArea{
@@ -223,7 +223,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Duwit"
+            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS Duwit"
             modeReverse: true
             visible: _qrDuwitEnable && !_qrMultiEnable
             MouseArea{
@@ -257,7 +257,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS Dana"
+            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS Dana"
             modeReverse: true
             visible: _qrDanaEnable && !_qrMultiEnable
             MouseArea{
@@ -291,7 +291,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS ShopeePay"
+            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS ShopeePay"
             modeReverse: true
             visible: _qrShopeeEnable && !_qrMultiEnable
             MouseArea{
@@ -325,7 +325,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'QRIS Payment' : "QRIS JakOne"
+            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS JakOne"
             modeReverse: true
             visible: _qrJakoneEnable && !_qrMultiEnable
             MouseArea{

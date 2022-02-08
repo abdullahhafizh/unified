@@ -63,6 +63,7 @@ Base{
     property var buttonDenomWidth: 359
 
     property variant allowedBank: []
+    property variant activeQRISProvider: []
 
     // By Default Only Can Show 3 Denoms, Adjusted with below properties
     property int miniDenomValue: 10000
@@ -91,6 +92,7 @@ Base{
             totalPay = 0;
             denomTopup = undefined;
             provider = undefined;
+            activeQRISProvider = [];
             globalDetails = undefined;
             frameWithButton = false;
             if (cardData==undefined){
@@ -152,34 +154,42 @@ Base{
         if (device.QR_LINKAJA == 'AVAILABLE') {
             qrLinkajaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('linkaja')
         }
         if (device.QR_DANA == 'AVAILABLE') {
             qrDanaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('dana')
         }
         if (device.QR_DUWIT == 'AVAILABLE') {
             qrDuwitEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('duwit')
         }
         if (device.QR_OVO == 'AVAILABLE') {
             qrOvoEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('ovo')
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
             qrShopeeEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('shopeepay')
         }
         if (device.QR_JAKONE == 'AVAILABLE') {
             qrJakoneEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('jakone')
         }
         if (device.QR_BCA == 'AVAILABLE') {
             qrBcaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('bca-qris')
         }
         if (device.QR_BNI == 'AVAILABLE') {
             qrBniEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('bni-qris')
         }
     }
 
@@ -212,6 +222,7 @@ Base{
             qrJakoneEnable = false;
             totalPaymentEnable -= 1;
         }
+        activeQRISProvider = [];
 //        if (qrBcaEnable) {
 //            qrBcaEnable = false;
 //            totalPaymentEnable -= 1;
@@ -258,8 +269,12 @@ Base{
         if (method=='MULTI_QR'){
             press = '0';
             select_payment.close();
-            select_qr_provider.open();
-            return;
+            if (totalPaymentEnable == 1){
+                selectedPayment = activeQRISProvider[0];
+            } else {
+                select_qr_provider.open();
+                return;
+            }            
         }
         if (method=='cash' && cashboxFull){
             console.log('Cashbox Full Detected', method);

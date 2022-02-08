@@ -61,6 +61,7 @@ Base{
 
     property var adminFee: 1500
 
+    property variant activeQRISProvider: []
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -83,6 +84,7 @@ Base{
             pendingPayment = 0;
             cardData = undefined;
             cardBalance = 0;
+            activeQRISProvider = [];
             press = '0';
             abc.counter = timer_value;
             my_timer.start();
@@ -722,8 +724,11 @@ Base{
         if (channel=='MULTI_QR'){
             press = '0';
             select_payment.close();
-            select_qr_provider.open();
-            return;
+            if (totalPaymentEnable > 1){
+                select_qr_provider.open();
+                return;
+            }
+            channel = activeQRISProvider[0];
         }
         if (channel=='cash' && cashboxFull){
             console.log('Cashbox Full Detected', channel);
@@ -796,34 +801,42 @@ Base{
         if (device.QR_LINKAJA == 'AVAILABLE') {
             qrLinkajaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('linkaja')
         }
         if (device.QR_DANA == 'AVAILABLE') {
             qrDanaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('dana')
         }
         if (device.QR_DUWIT == 'AVAILABLE') {
             qrDuwitEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('duwit')
         }
         if (device.QR_OVO == 'AVAILABLE') {
             qrOvoEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('ovo')
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
             qrShopeeEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('shopeepay')
         }
         if (device.QR_JAKONE == 'AVAILABLE') {
             qrJakoneEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('jakone')
         }
         if (device.QR_BCA == 'AVAILABLE') {
             qrBcaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('bca-qris')
         }
         if (device.QR_BNI == 'AVAILABLE') {
             qrBniEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('bni-qris')
         }
         //================================
 //        isConfirm = true;

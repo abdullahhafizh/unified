@@ -34,6 +34,7 @@ Base{
     property var totalPaymentEnable: 0
 
     property variant availItems: []
+    property variant activeQRISProvider: []
 
     property bool frameWithButton: false
     property var modeButtonPopup: 'check_balance';
@@ -84,6 +85,7 @@ Base{
             selectedPayment = undefined;
             isConfirm = false;
             availItems = [];
+            activeQRISProvider = [];
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop();
@@ -157,36 +159,43 @@ Base{
         if (device.QR_LINKAJA == 'AVAILABLE') {
             qrLinkajaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('linkaja')
         }
         if (device.QR_DANA == 'AVAILABLE') {
             qrDanaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('dana')
         }
         if (device.QR_DUWIT == 'AVAILABLE') {
             qrDuwitEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('duwit')
         }
         if (device.QR_OVO == 'AVAILABLE') {
             qrOvoEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('ovo')
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
             qrShopeeEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('shopeepay')
         }
         if (device.QR_JAKONE == 'AVAILABLE') {
             qrJakoneEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('jakone')
         }
         if (device.QR_BCA == 'AVAILABLE') {
             qrBcaEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('bca-qris')
         }
         if (device.QR_BNI == 'AVAILABLE') {
             qrBniEnable = true;
             totalPaymentEnable += 1;
+            activeQRISProvider.push('bni-qris')
         }
-
     }
 
     function process_selected_payment(p){
@@ -195,8 +204,12 @@ Base{
         if (p=='MULTI_QR'){
             press = '0';
             select_payment.close();
-            select_qr_provider.open();
-            return;
+            if (totalPaymentEnable == 1){
+                selectedPayment = activeQRISProvider[0];
+            } else {
+                select_qr_provider.open();
+                return;
+            }
         }
         if (p=='cash' && cashboxFull){
             console.log('Cashbox Full Detected', p);

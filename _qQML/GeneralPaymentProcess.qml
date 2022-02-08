@@ -423,9 +423,9 @@ Base{
         my_timer.stop();
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
-        if (allQRProvider.indexOf(details.payment) > -1){
-            if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
-        }
+//        if (allQRProvider.indexOf(details.payment) > -1){
+//            if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
+//        }
         if (successTransaction) {
             //Trigger Confirm Promo Here
             if (promoCodeActive){
