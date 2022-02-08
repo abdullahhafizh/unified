@@ -170,10 +170,10 @@ Base{
             }
             popup_loading.imageSource = "source/success.png";
             popup_loading.textMain = 'Yeay, Kode Promo Aktif Ditemukan';
-            popup_loading.textSlave = details.promo.remarks;
-            console.log('promo desc ', details.promo.remarks);
+            popup_loading.textSlave = promoData.promo.remarks;
+            console.log('promo desc ', promoData.promo.remarks);
             info_promo.visible = true;
-            info_promo.labelContent = details.promo.name;
+            info_promo.labelContent = promoData.promo.name;
             promoCodeActive = true;
         } else {
             // popup_loading.imageSource = "source/smiley_down.png";
