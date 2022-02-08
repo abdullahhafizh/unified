@@ -110,7 +110,7 @@ Base{
     }
 
     Text{
-        text: 'Dapat Dibayar Dengan : '
+        text: 'Dapat Dibayar Dengan Lebih Dari 50 Channel Bayar QRIS'
         font.pixelSize: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 225

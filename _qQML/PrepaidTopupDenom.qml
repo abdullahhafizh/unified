@@ -269,7 +269,7 @@ Base{
         if (method=='MULTI_QR'){
             press = '0';
             select_payment.close();
-            if (totalPaymentEnable == 1){
+            if (activeQRISProvider.length == 1){
                 selectedPayment = activeQRISProvider[0];
             } else {
                 select_qr_provider.open();

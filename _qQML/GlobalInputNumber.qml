@@ -724,7 +724,7 @@ Base{
         if (channel=='MULTI_QR'){
             press = '0';
             select_payment.close();
-            if (totalPaymentEnable > 1){
+            if (activeQRISProvider.length > 1){
                 select_qr_provider.open();
                 return;
             }

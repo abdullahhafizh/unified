@@ -95,8 +95,9 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                abc.counter -= 1
-                if(abc.counter < 0){
+                abc.counter -= 1;
+                if (popup_input_otp.visible) popup_input_otp.showDuration = abc.counter.toString();
+                if (abc.counter < 0){
                     _SLOT.get_kiosk_logout();
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
