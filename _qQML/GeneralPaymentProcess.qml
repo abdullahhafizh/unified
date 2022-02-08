@@ -55,6 +55,7 @@ Base{
     property bool closeTrxSession: false
 
     property bool promoCodeActive: false
+    property var promoData
 
 
     signal framingSignal(string str)
@@ -158,16 +159,21 @@ Base{
         console.log('get_promo_result', now, p);
         var result = p.split('|')[1];
         var trx_data =  JSON.parse(p.split('|')[2]);
-        //Overwrite Transaction Data
-        details = trx_data;
+        //Store To Temp Promo Data
+        promoData = trx_data;
         if (result == 'AVAILABLE'){
+            // Promo Only Direct Impact With Cash Payment
+            // Otherwise will be impacted after payment for further validation on payment_channel
+            if (details.payment == 'cash'){
+                details = trx_data;
+                details.promo_code_active = true;
+            }
             popup_loading.imageSource = "source/success.png";
             popup_loading.textMain = 'Yeay, Kode Promo Aktif Ditemukan';
             popup_loading.textSlave = details.promo.remarks;
             console.log('promo desc ', details.promo.remarks);
             info_promo.visible = true;
             info_promo.labelContent = details.promo.name;
-            details.promo_code_active = true;
             promoCodeActive = true;
         } else {
             // popup_loading.imageSource = "source/smiley_down.png";
@@ -261,6 +267,7 @@ Base{
         transactionInProcess = false;
         closeTrxSession = false;
         promoCodeActive = false;
+        promoData = undefined;
     }
 
     function do_refund_or_print(error){
@@ -535,7 +542,9 @@ Base{
             console.log('qr_check_result', now, mode, result, JSON.stringify(info));
             qr_payment_frame.success(3)
             details.payment_details = info;
+            details.init_payment = info.provider;
             details.payment = info.provider;
+            if (info.payment_channel !== undefined) details.payment = info.payment_channel;
             details.payment_received = details.value.toString();
             receivedPayment = totalPrice;
             payment_complete('qr');
@@ -747,14 +756,34 @@ Base{
         }
     }
 
+    function do_promo_data_adjustment(mode){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        if (promoCodeActive) {
+            // Adjustment For QR Payment
+            if (mode=='qr'){
+                var issuer_provider = FUNC.serialize_qris_provider(details.init_payment);
+                var acquirer_provider = details.payment.toUpperCase();
+                console.log("Validate QRIS Provider :", issuer_provider, acquirer_provider);
+                if (issuer_provider == acquirer_provider){
+                    details = promoData;
+                    details.promo_code_active = true;
+                    adminFee = parseInt(details.admin_fee);
+                    getDenom = parseInt(details.value) * parseInt(details.qty);
+                }
+            }
+        }
+    }
+
 
     function payment_complete(mode){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
     //        popup_loading.close();
         var trx_type = details.shop_type;
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
         if (details.payment != 'cash') receivedPayment = totalPrice;
+        //Put Promo Data Adjustment Here
+        do_promo_data_adjustment(mode);
         if (trx_type == 'shop') _SLOT.start_push_pending_trx_global(JSON.stringify(details));
         transactionInProcess = true;
         // Force Disable All Cancel Button

@@ -273,4 +273,12 @@ function divide_thousand(n){
     return parseInt(n)/1000;
 }
 
+function serialize_qris_provider(p){
+    if (p==undefined) return '';
+    var op = p.split('-');
+    if (op.length==1) return p.toUpperCase();
+    var rop = op.reverse();
+    return rop.join(' ').toUpperCase();
+}
+
 
