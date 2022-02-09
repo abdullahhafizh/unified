@@ -53,9 +53,12 @@ Base{
                     var formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
                     var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
                     var desc = p[i]['description'];
+                    var product_channel = (channelMDD.indexOf(p[i]['operator']) > -1) ? 'MDD' : 'DIVA';
+                    if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
                     if (['COMBO SAKTI'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
                         prod_name = p[i]['operator'].toUpperCase();
                         desc = 'Siapkan Kode Pembayaran Telkomsel Anda';
+                        product_channel = 'DIVA';
                     }
                     if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
                         prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
@@ -69,8 +72,6 @@ Base{
                     var operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
                     var clean_category = FUNC.strip(p[i]['category'].toLowerCase());
                     var category_logo = 'source/ppob_category/'+clean_category+'.png';
-                    var product_channel = (channelMDD.indexOf(p[i]['operator']) > -1) ? 'MDD' : 'DIVA';
-                    if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
                     if (product_channel == 'MDD'){
                         desc = desc + ' - Admin Fee ' + adminFee.toString()+ ' IDR';
                         if (channelMDD.indexOf(p[i]['operator']) > -1){
@@ -82,20 +83,27 @@ Base{
                         }
                     }
                     product_model.append({
-                                         'ppob_name': prod_name,
-                                         'ppob_desc': desc,
-                                         'ppob_price': formated_price,
-                                         'ppob_operator_logo': operator_logo,
-                                         'ppob_category_logo': category_logo,
-                                         'ppob_product_channel': product_channel,
-                                         'raw': p[i]
-                                      });
+                                        'ppob_name': prod_name,
+                                        'ppob_desc': desc,
+                                        'ppob_price': formated_price,
+                                        'ppob_operator_logo': operator_logo,
+                                        'ppob_category_logo': category_logo,
+                                        'ppob_product_channel': product_channel,
+                                        'raw': p[i]
+                                    });
                 }
             } else {
                 if (p[i]['category']==c && p[i]['operator'] == selectedOperator){
                     formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
                     prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
                     desc = p[i]['description'];
+                    product_channel = (channelMDD.indexOf(p[i]['operator']) > -1) ? 'MDD' : 'DIVA';
+                    if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
+                    if (['COMBO SAKTI'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                        prod_name = p[i]['operator'].toUpperCase();
+                        desc = 'Siapkan Kode Pembayaran Telkomsel Anda';
+                        product_channel = 'DIVA';
+                    }
                     if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
                         prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
                         desc = 'Plus Biaya Admin ' + formated_price;
@@ -109,8 +117,6 @@ Base{
                     operator_logo = 'source/ppob_operator/'+clean_operator+'.png';
                     clean_category = FUNC.strip(p[i]['category'].toLowerCase());
                     category_logo = 'source/ppob_category/'+clean_category+'.png';
-                    product_channel = (channelMDD.indexOf(p[i]['operator']) > -1) ? 'MDD' : 'DIVA';
-                    if (p[i]['product_channel'] !== undefined) product_channel = p[i]['product_channel'];
                     if (product_channel == 'MDD'){
                         desc = desc + ' - Admin Fee ' + adminFee.toString()+ ' IDR';
                         if (channelMDD.indexOf(p[i]['operator']) > -1){
@@ -123,14 +129,14 @@ Base{
                     }
 
                     product_model.append({
-                                             'ppob_name': prod_name,
-                                             'ppob_desc': desc,
-                                             'ppob_price': formated_price,
-                                             'ppob_operator_logo': operator_logo,
-                                             'ppob_category_logo': category_logo,
-                                             'ppob_product_channel': product_channel,
-                                             'raw': p[i]
-                                          })
+                                            'ppob_name': prod_name,
+                                            'ppob_desc': desc,
+                                            'ppob_price': formated_price,
+                                            'ppob_operator_logo': operator_logo,
+                                            'ppob_category_logo': category_logo,
+                                            'ppob_product_channel': product_channel,
+                                            'raw': p[i]
+                                        })
                 }
             }
         }
