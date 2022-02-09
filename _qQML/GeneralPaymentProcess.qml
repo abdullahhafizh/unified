@@ -161,6 +161,7 @@ Base{
         var trx_data =  JSON.parse(p.split('|')[2]);
         //Store To Temp Promo Data
         promoData = trx_data;
+        var closeTime = 5;
         if (result == 'AVAILABLE'){
             // Promo Only Direct Impact With Cash Payment
             // Otherwise will be impacted after payment for further validation on payment_channel
@@ -171,15 +172,16 @@ Base{
             popup_loading.imageSource = "source/success.png";
             popup_loading.textMain = 'Yeay, Kode Promo Aktif Ditemukan';
             popup_loading.textSlave = promoData.promo.remarks;
-            console.log('promo desc ', promoData.promo.remarks);
             info_promo.visible = true;
             info_promo.labelContent = promoData.promo.name;
             promoCodeActive = true;
+            console.log("Active Promo :", promoData.promo.name, promoData.promo.remarks);
         } else {
+            closeTime = 1;
             // popup_loading.imageSource = "source/smiley_down.png";
             // popup_loading.textMain = 'Mohon Maaf, Tidak Ditemukan Kode Promo Aktif';
         }
-        delay(3*1000, function(){
+        delay((closeTime*1000), function(){
             popup_loading.close();
             initial_process('get_promo_result');
         });
@@ -785,7 +787,7 @@ Base{
 
     function payment_complete(mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-    //        popup_loading.close();
+        // popup_loading.close();
         var trx_type = details.shop_type;
         console.log('PAYMENT_COMPLETE', now, mode.toUpperCase(), trx_type.toUpperCase());
         //Re-Overwrite receivedPayment into totalPrice for non-cash transaction
@@ -798,7 +800,7 @@ Base{
         hide_all_cancel_button();
         abc.counter = 300;
         my_timer.restart();
-//        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
+        // _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
     }
 
 
