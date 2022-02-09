@@ -97,7 +97,7 @@ def check_ppob_product(msisdn='', product_id=''):
         param = {
             'msisdn': msisdn,
             'product_id': product_id,
-            'reff_no': "-".join(_Common.TID, _Helper.time_string('%Y%m%d%H%M%S'))
+            'reff_no': "-".join([_Common.TID, _Helper.time_string('%Y%m%d%H%M%S')])
         }
         s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL+'ppob/check', param=param)
         if s == 200 and r['result'] == 'OK':
