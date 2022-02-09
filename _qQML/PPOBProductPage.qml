@@ -53,6 +53,10 @@ Base{
                     var formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
                     var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
                     var desc = p[i]['description'];
+                    if (['COMBO SAKTI'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                        prod_name = p[i]['operator'].toUpperCase() + ' - ' + p[i]['category'];
+                        desc = 'Siapkan Kode Pembayaran Telkomsel Anda';
+                    }
                     if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
                         prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
                         desc = 'Plus Biaya Admin ' + formated_price;
