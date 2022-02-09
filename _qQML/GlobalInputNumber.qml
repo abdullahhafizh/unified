@@ -644,6 +644,11 @@ Base{
         var category = selectedProduct.category.toLowerCase();
         var operator = selectedProduct.operator;
         switch(category){
+            case 'combo sakti':
+                wording_text = 'Masukkan Kode Pambayaran Combo Sakti Anda';
+                checkMode = true;
+                min_count = 9;
+            break;
             case 'tagihan': case 'tagihan air':
                 wording_text = 'Masukkan Nomor Meter/ID Pelanggan Anda';
                 checkMode = true;
