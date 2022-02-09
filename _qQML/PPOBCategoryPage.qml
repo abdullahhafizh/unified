@@ -18,6 +18,8 @@ Base{
     property var category: []
     property bool frameWithButton: false
 
+    property var press: '0'
+
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             abc.counter = timer_value
@@ -43,7 +45,6 @@ Base{
         p = JSON.parse(p)
         for (var i=0;i < p.length;i++){
             var get_category = p[i]['category']
-//            console.log('>>>>>test parse_category', get_category, p[i]);
             if (category.indexOf(p[i]['category']) == -1) category.push(p[i]['category'])
         }
 //        console.log('category update', category);
