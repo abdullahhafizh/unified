@@ -282,7 +282,8 @@ def do_check_trx(reff_no):
                 'source': data.get('failureType'),
                 'remarks': remarks,
                 'retry_able': _Common.check_retry_able(remarks),
-                'show_info_cs': 0
+                'show_info_cs': 0,
+                'promo_data': get_promo_data(data.get('trxid'))
             }
             LOGGER.info(('INITIAL RETRY_ABLE', r['retry_able']))
             LOGGER.info(('START VALIDATE PAYMENT'))
@@ -565,7 +566,20 @@ def start_do_inquiry_promo(payload):
     _Helper.get_thread().apply_async(do_inquiry_promo, (payload,))
 
 
+LAST_PROMO = []
+
+
+def get_promo_data(trxid):
+    if len(LAST_PROMO) == 0:
+        return None
+    for promo in LAST_PROMO:
+        if promo['trx_id'] == trxid:
+            return promo
+    return None
+
+
 def do_inquiry_promo(payload):
+    global LAST_PROMO
     payload = json.loads(payload)
     try:
         url = _Common.BACKEND_URL+'promo/check'
@@ -573,6 +587,8 @@ def do_inquiry_promo(payload):
         if s == 200 and r['result'] == 'OK':
             data = r['data']
             if int(data.get('receive_discount', 0)) > 0:
+                data['trx_id'] = str(data.get('shop_type')) + str(data.get('epoch'))
+                LAST_PROMO.append(data)
                 PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PROMO_INQUIRY|AVAILABLE|'+json.dumps(data))
             else:
                 PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PROMO_INQUIRY|NOT_FOUND|'+json.dumps(data))

@@ -169,8 +169,6 @@ Base{
                 details = trx_data;
                 details.promo_code_active = true;
             }
-            // Put Promo Data, But Not Affection Transaction Details Data
-            details.promo_data = promoData;
             popup_loading.imageSource = "source/success.png";
             popup_loading.textMain = 'Yeay, Kode Promo Aktif Ditemukan';
             popup_loading.textSlave = promoData.promo.remarks;
@@ -782,8 +780,6 @@ Base{
                     details.payment = prevData.payment;
                     details.payment_received = prevData.payment_received;
                     details.promo_code_active = true;
-                    // Put Promo Data, But Not Affection Transaction Details Data
-                    details.promo_data = promoData;
                     adminFee = parseInt(details.admin_fee);
                     getDenom = parseInt(details.value) * parseInt(details.qty);
                 }

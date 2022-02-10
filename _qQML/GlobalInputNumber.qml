@@ -290,7 +290,7 @@ Base{
             // Adjusting Promo Data if Exist
             if (retryDetails.promo_data !== undefined){
                 console.log('Promo Data Found, Validating New Card Data VS Prev Card Data')
-                console.log(fcardData.bank_name, retryDetails.promo_data.raw.bank_name)
+                console.log(cardData.bank_name, retryDetails.promo_data.raw.bank_name)
                 if (cardData.bank_name == retryDetails.promo_data.raw.bank_name){
                     var trx_id = retryDetails.shop_type + retryDetails.epoch.toString();
                     console.log('Promo Code Re-Applied', trx_id, retryDetails.promo_data.promo.code)
@@ -519,9 +519,10 @@ Base{
         }
     }
 
-    function set_pending_trx_data(obj){
+    function set_pending_trx_data(details, promo){
         if (obj != undefined){
-            retryDetails = obj;
+            retryDetails = details;
+            if (promo !== undefined) retryDetails.promo_data = promo;
             delete retryDetails.payment_error;
             delete retryDetails.process_error;
             console.log('set_pending_trx_data', JSON.stringify(retryDetails));
@@ -683,7 +684,7 @@ Base{
         if (i.status=='PENDING') {
             receivedPayment = parseInt(i.receipt_amount);
             pendingPayment = parseInt(i.remarks.value) - receivedPayment;
-            set_pending_trx_data(i.remarks);
+            set_pending_trx_data(i.remarks, i.promo_data);
             if (i.retry_able == 1) {
                 retryAbleTransaction = true;
                 global_confirmation_frame.no_button();
