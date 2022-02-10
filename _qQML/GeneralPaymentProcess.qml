@@ -367,7 +367,7 @@ Base{
             break;
         }
         press = '0';
-        if (refundFeature) popup_refund.open(message_case_refund, refundAmount);
+        popup_refund.open(message_case_refund, refundAmount);
         // Set Waiting Time To IDLE
 //        my_timer.stop();
         console.log('do_refund_or_print', now, refundMode, refundAmount, message_case_refund);
@@ -517,7 +517,9 @@ Base{
     }
 
     function qr_check_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        // TODO Ignore Signal When Session is ended
+        if (qrPayload == undefined) return;
         console.log('qr_check_result', now, r);
         var mode = r.split('|')[1]
         var result = r.split('|')[2]
