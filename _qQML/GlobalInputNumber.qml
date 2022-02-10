@@ -290,8 +290,8 @@ Base{
             // Adjusting Promo Data if Exist
             if (retryDetails.promo_data !== undefined){
                 console.log('Promo Data Found, Validating New Card Data VS Prev Card Data')
-                console.log(cardData.bank_type, retryDetails.promo_data.raw.bank_name)
-                if (cardData.bank_type == retryDetails.promo_data.raw.bank_name){
+                console.log(cardData.bank_name, retryDetails.promo_data.raw.bank_name)
+                if (cardData.bank_name == retryDetails.promo_data.raw.bank_name){
                     var trx_id = retryDetails.shop_type + retryDetails.epoch.toString();
                     console.log('Promo Code Re-Applied', trx_id, retryDetails.promo_data.promo.code)
                     prev_admin_fee = retryDetails.promo_data.admin_fee;
