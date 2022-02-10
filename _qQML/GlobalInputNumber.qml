@@ -301,8 +301,16 @@ Base{
                     retryDetails.promo_code_active = true;
                     retryDetails.receive_discount = retryDetails.promo_data.receive_discount;
                     retryDetails.promo = retryDetails.promo_data.promo;
-                    delete retryDetails.promo_data;
+                } else {
+                    var init_denom = parseInt(prev_topup_denom) - parseInt(retryDetails.promo_data.receive_discount);
+                    prev_topup_denom = init_denom.toString();
+                    prev_admin_fee = retryDetails.promo_data.receive_discount;
+                    retryDetails.denom = prev_topup_denom;
+                    retryDetails.admin_fee = prev_admin_fee;
+                    retryDetails.promo_code_active = false;
+                    retryDetails.receive_discount = 0;
                 }
+                delete retryDetails.promo_data;
                 // Do Manipulation Data Topup
                 // {
                 //     "raw": {
