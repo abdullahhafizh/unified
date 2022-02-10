@@ -288,7 +288,7 @@ Base{
             var prev_admin_fee = retryDetails.raw.admin_fee;
             var prev_topup_denom = retryDetails.raw.value;
             // Adjusting Promo Data if Exist
-            if (retryDetails.promo_data !== undefined){
+            if (retryDetails.promo_data !== null){
                 console.log('Promo Data Found, Validating New Card Data VS Prev Card Data')
                 console.log(cardData.bank_name, retryDetails.promo_data.raw.bank_name)
                 if (cardData.bank_name == retryDetails.promo_data.raw.bank_name){
