@@ -520,7 +520,7 @@ Base{
     }
 
     function set_pending_trx_data(details, promo){
-        if (obj != undefined){
+        if (details != undefined){
             retryDetails = details;
             if (promo !== undefined) retryDetails.promo_data = promo;
             delete retryDetails.payment_error;
