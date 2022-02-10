@@ -299,6 +299,7 @@ Base{
                     retryDetails.denom = prev_topup_denom;
                     retryDetails.admin_fee = prev_admin_fee;
                     retryDetails.promo_code_active = true;
+                    retryDetails.receive_discount = retryDetails.promo_data.receive_discount;
                     retryDetails.promo = retryDetails.promo_data.promo;
                     delete retryDetails.promo_data;
                 }
