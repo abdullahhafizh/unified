@@ -388,7 +388,8 @@ Base{
             //Trigger Confirm Promo Here
             if (details.promo_code_active == true){
                 var payload = {
-                        promo: details.promo
+                        pid: details.shop_type + details.epoch.toString(),
+                        promo: details.promo,
                     }
                 _SLOT.start_do_confirm_promo(JSON.stringify(payload));
             }
