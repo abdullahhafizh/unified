@@ -246,7 +246,7 @@ Base{
         repeat: true
         running: parent.visible && withTimer
         onTriggered: {
-            console.log('[QR-PAYMENT]', showDuration);
+            // console.log('[QR-PAYMENT]', showDuration);
             showDuration -= 1;
             if (showDuration < 30) textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
             if (showDuration <= 7) {

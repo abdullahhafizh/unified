@@ -782,6 +782,8 @@ Base{
                     details.payment = prevData.payment;
                     details.payment_received = prevData.payment_received;
                     details.promo_code_active = true;
+                    // Put Promo Data, But Not Affection Transaction Details Data
+                    details.promo_data = promoData;
                     adminFee = parseInt(details.admin_fee);
                     getDenom = parseInt(details.value) * parseInt(details.qty);
                 }
@@ -1202,7 +1204,7 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                console.log('[GLOBAL-PAYMENT]', abc.counter);
+                // console.log('[GLOBAL-PAYMENT]', abc.counter);
                 abc.counter -= 1;
                 //Force Allowed Back Button For Cash after 240 seconds
                 if (details.payment=='cash'){

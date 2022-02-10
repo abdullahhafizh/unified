@@ -151,7 +151,7 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                console.log('[GLOBAL-INPUT]', abc.counter);
+                // console.log('[GLOBAL-INPUT]', abc.counter);
                 abc.counter -= 1;
                 notice_retry_able.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter == 0){
@@ -290,7 +290,7 @@ Base{
             // Adjusting Promo Data if Exist
             if (retryDetails.promo_data !== undefined){
                 console.log('Promo Data Found, Validating New Card Data VS Prev Card Data')
-                console.log(cardData.bank_name, retryDetails.promo_data.raw.bank_name)
+                console.log(fcardData.bank_name, retryDetails.promo_data.raw.bank_name)
                 if (cardData.bank_name == retryDetails.promo_data.raw.bank_name){
                     var trx_id = retryDetails.shop_type + retryDetails.epoch.toString();
                     console.log('Promo Code Re-Applied', trx_id, retryDetails.promo_data.promo.code)
@@ -474,10 +474,13 @@ Base{
             provider: 'Tagihan ' + i.category,
             billing_check: i,
         }
+        var detail_label = 'Pelanggan';
+        var detail_content = i.customer;
+        if (i.product_id == 'OMNITSEL') detail_label = 'Produk';
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'Tagihan', content: i.category.toUpperCase() + ' ' + i.msisdn},
-            {label: 'Pelanggan', content: i.customer},
+            {label: detail_label, content: detail_content},
             {label: 'Biaya', content: FUNC.insert_dot(i.ori_amount.toString())},
             {label: 'Biaya Admin', content: FUNC.insert_dot(i.admin_fee.toString())},
             {label: 'Total', content: FUNC.insert_dot(i.total.toString())}

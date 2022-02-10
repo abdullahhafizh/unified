@@ -103,18 +103,22 @@ def check_ppob_product(msisdn='', product_id=''):
         if s == 200 and r['result'] == 'OK':
             output = r['data']
             customer_name = ''
+            prod_desc = ''
             total_pay = 0
             payable = 0
             if 'BERHASIL' in output['msg']:
                 customer_name = extract_customer_name(msisdn, output['msg'])
+                if product_id == 'OMNITSEL':
+                    customer_name = extract_prod_desc(msisdn, output['msg'])
                 total_pay = int(output['ori_amount']) + int(output['admin_fee'])
                 payable = 1
+            output['product_id'] = product_id
             output['customer'] = customer_name
             output['total'] = total_pay
             output['payable'] = payable
             output['msisdn'] = msisdn
             output['category'] = product_id
-            _Helper.dump(output)
+            # _Helper.dump(output)
             PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|' + json.dumps(output))
         else:
             PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|ERROR')
@@ -140,6 +144,24 @@ def extract_customer_name(key, message):
             c.append(m)
     customer = ' '.join(c)
     return customer
+
+
+def extract_prod_desc(key, message):
+    desc = ''
+    if 'GAGAL' in message:
+        return desc
+    key = key[:-2]
+    idx = message.find(key)
+    if idx < 0:
+        return desc
+    clean_message = message[idx:].split(' adalah')[0]
+    messages = clean_message.split(' ')
+    c = []
+    for m in messages:
+        if m not in [' -a-n', 'adalah'] and messages[0] != m and len(m) > 1:
+            c.append(m)
+    desc = ' '.join(c)
+    return desc
 
 
 def start_do_pay_ppob(payload):
