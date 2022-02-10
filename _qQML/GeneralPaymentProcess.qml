@@ -227,6 +227,7 @@ Base{
         refundFeature = true;
         if (r=='REFUND_DISABLED'){
             refundFeature = false;
+            console.log('refund_status', refundFeature);
             return;
         }
         var refund = JSON.parse(r);
@@ -366,7 +367,7 @@ Base{
             break;
         }
         press = '0';
-        popup_refund.open(message_case_refund, refundAmount);
+        if (refundFeature) popup_refund.open(message_case_refund, refundAmount);
         // Set Waiting Time To IDLE
 //        my_timer.stop();
         console.log('do_refund_or_print', now, refundMode, refundAmount, message_case_refund);
