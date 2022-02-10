@@ -1143,7 +1143,7 @@ Base{
             console.log('generating_qr', details.payment);
             main_title.show_text = 'Ringkasan Transaksi Anda';
             var msg = 'Persiapkan Aplikasi Pembayaran QRIS Pada Gawai Anda!';
-            open_preload_notif_qr(msg, 'source/phone_qr.png');
+            open_preload_notif_qr(msg, 'source/phone_qr_white.png');
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;
             qrPayload = {
