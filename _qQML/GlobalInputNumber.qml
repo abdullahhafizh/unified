@@ -476,6 +476,7 @@ Base{
         }
         var detail_label = 'Pelanggan';
         var detail_content = i.customer;
+        if (detail_content.length > 45) detail_content = detail_content.substring(0, 45) + '...';
         if (i.product_id == 'OMNITSEL') detail_label = 'Produk';
         var rows = [
             {label: 'Tanggal', content: now},
