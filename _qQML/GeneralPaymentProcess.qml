@@ -430,7 +430,7 @@ Base{
 //        }
         if (successTransaction) {
             //Trigger Confirm Promo Here
-            if (promoCodeActive){
+            if (details.promo_code_active == true){
                 var payload = {
                         promo: details.promo
                     }

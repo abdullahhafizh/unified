@@ -386,7 +386,7 @@ Base{
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         if (successTransaction) {
             //Trigger Confirm Promo Here
-            if (promoCodeActive){
+            if (details.promo_code_active == true){
                 var payload = {
                         promo: details.promo
                     }
