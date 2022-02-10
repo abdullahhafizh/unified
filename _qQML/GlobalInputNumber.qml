@@ -303,7 +303,8 @@ Base{
                     retryDetails.promo = retryDetails.promo_data.promo;
                 } else {
                     var init_denom = parseInt(prev_topup_denom) - parseInt(retryDetails.promo_data.receive_discount);
-                    prev_topup_denom = init_denom.toString();
+                    if (provider == 'e-Money Mandiri') retryDetails.value = prev_topup_denom;
+                    else prev_topup_denom = init_denom.toString();
                     prev_admin_fee = retryDetails.promo_data.receive_discount;
                     retryDetails.denom = prev_topup_denom;
                     retryDetails.admin_fee = prev_admin_fee;
