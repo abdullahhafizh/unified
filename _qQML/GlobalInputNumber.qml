@@ -287,6 +287,71 @@ Base{
             //Define Data Card, Amount Button, Topup Availability
             var prev_admin_fee = retryDetails.raw.admin_fee;
             var prev_topup_denom = retryDetails.raw.value;
+            // Adjusting Promo Data if Exist
+            if (retryDetails.promo_data !== undefined){
+                console.log('Promo Data Found, Validating New Card Data VS Prev Card Data')
+                console.log(cardData.bank_type, retryDetails.promo_data.raw.bank_name)
+                if (cardData.bank_type == retryDetails.promo_data.raw.bank_name){
+                    var trx_id = retryDetails.shop_type + retryDetails.epoch.toString();
+                    console.log('Promo Code Re-Applied', trx_id, retryDetails.promo_data.promo.code)
+                    prev_admin_fee = retryDetails.promo_data.admin_fee;
+                    prev_topup_denom = retryDetails.promo_data.denom;
+                    retryDetails.denom = prev_topup_denom;
+                    retryDetails.admin_fee = prev_admin_fee;
+                    retryDetails.promo_code_active = true;
+                    retryDetails.promo = retryDetails.promo_data.promo;
+                    delete retryDetails.promo_data;
+                }
+                // Do Manipulation Data Topup
+                // {
+                //     "raw": {
+                //         "bank_type": "2",
+                //         "bank_name": "BNI",
+                //         "prev_balance": "106997",
+                //         "value": "2000",
+                //         "provider": "Tapcash BNI",
+                //         "card_no": "7546885001469081",
+                //         "admin_fee": 0
+                //     },
+                //     "admin_fee": 0,
+                //     "denom": "2000",
+                //     "payment": "bni-qris",
+                //     "status": "1",
+                //     "value": "2000",
+                //     "final_balance": "107497",
+                //     "epoch": 1632480451835161,
+                //     "date": "24/09/21",
+                //     "qty": 1,
+                //     "shop_type": "topup",
+                //     "receive_discount": 1500,
+                //     "promo": {
+                //         "mid": "f6f5ff767cc2dbcfac876aa863b20513",
+                //         "tid": "17092001",
+                //         "type": "TOPUP",
+                //         "code": "FREEADMINTAPCASH",
+                //         "name": "Topup Tapcash Free Admin",
+                //         "priority": 1,
+                //         "payment": "bni-qris",
+                //         "bid": "2",
+                //         "pid": null,
+                //         "admin_fee": 1,
+                //         "discount": 0,
+                //         "max_discount": 0,
+                //         "min_amount": 1000,
+                //         "percent": 1,
+                //         "quota": 10,
+                //         "limit_usage": "day",
+                //         "override_payment": null,
+                //         "start_at": "2022-02-07 00:00:00",
+                //         "end_at": "2022-03-07 23:55:59",
+                //         "status": 1,
+                //         "remarks": "Topup Tapcash Free Admin Fee With BNI QRIS",
+                //         "created_at": "2021-07-31 17:00:00",
+                //         "updated_at": "2022-02-08 11:25:55",
+                //         "use_id": 60
+                //     }
+                // }
+            }
             retryDetails.provider = provider;
             retryDetails.raw = {
                 value: prev_topup_denom,

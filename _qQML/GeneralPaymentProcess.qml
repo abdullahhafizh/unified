@@ -169,6 +169,8 @@ Base{
                 details = trx_data;
                 details.promo_code_active = true;
             }
+            // Put Promo Data, But Not Affection Transaction Details Data
+            details.promo_data = promoData;
             popup_loading.imageSource = "source/success.png";
             popup_loading.textMain = 'Yeay, Kode Promo Aktif Ditemukan';
             popup_loading.textSlave = promoData.promo.remarks;
@@ -429,6 +431,8 @@ Base{
 //            if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
 //        }
         if (successTransaction) {
+            // Delete Duplication Promo Data Record
+            if (details.promo_data !== undefined) delete details.promo_data;
             //Trigger Confirm Promo Here
             if (details.promo_code_active == true){
                 var payload = {
