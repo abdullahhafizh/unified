@@ -8,9 +8,9 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-            // property var globalScreenType: '1'
-            // height: (globalScreenType=='2') ? 1024 : 1080
-            // width: (globalScreenType=='2') ? 1280 : 1920
+//    property var globalScreenType: '1'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -37,6 +37,7 @@ Base{
     property bool showCustomerInfo: true
 
     property bool spvButton: false
+    property bool comboSaktiFeature: false
 //    width: globalWidth
 //    height: globalHeight
     isPanelActive: false
@@ -191,6 +192,9 @@ Base{
         search_trx_button.visible = (kiosk.feature.search_trx == 1)
         wa_voucher_button.visible = (kiosk.feature.whatsapp_voucher == 1)
         printerAvailable = (kiosk.printer_status == 'OK')
+
+        //Telkomsel Combo Sakti Feature Handle
+        comboSaktiFeature = (kiosk.feature.tsel_combo_sakti == 1)
 
         if (kiosk.status == "ONLINE" || kiosk.status == "AVAILABLE") {
             kioskStatus = true;
@@ -582,6 +586,36 @@ Base{
     }
 
     Rectangle{
+        id: combo_sakti_button
+        color: 'white'
+        radius: 25
+        anchors.verticalCenterOffset: -150
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: -radius
+        width: 180
+        height: 180
+        visible: comboSaktiFeature
+        Image{
+            anchors.fill: parent
+            scale: 0.75
+            source: 'source/combosakti.png'
+            fillMode: Image.PreserveAspectFit
+        }
+
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: {
+                _SLOT.user_action_log('Press "Combo Sakti" Button');
+                console.log('Combo Sakti Button is Pressed..!');
+                _SLOT.stop_idle_mode();
+                resetMediaTimer();
+                preload_combo_sakti.open();
+            }
+        }
+    }
+
+    Rectangle{
         id: search_trx_button
         color: 'white'
         radius: 20
@@ -926,6 +960,57 @@ Base{
 
     GlobalFrame{
         id: global_frame
+    }
+
+    PreloadComboSakti{
+        id: preload_combo_sakti
+        CircleButton{
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    preload_combo_sakti.close();
+                    _SLOT.start_idle_mode();
+                    _SLOT.get_kiosk_status();
+                    press = "0";
+                    resetMediaTimer();
+                }
+            }
+        }
+
+        CircleButton{
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    preload_combo_sakti.close();
+                    _SLOT.user_action_log('Press "LANJUT" Button For Combo Sakti Product');
+                    var details = {
+                        category: 'Combo Sakti',
+                        operator: 'Telkomsel',
+                        description: 'Telkomsel Combo Sakti',
+                        product_id: 'OMNITSEL',
+                        rs_price: 1,
+                        amount: 1,
+                        product_channel: 'DIVA',
+                    }
+                    console.log('Set Combo Sakti Product Into Input Layer: ', JSON.stringify(details));
+                    my_layer.push(global_input_number, {selectedProduct: details, mode: 'PPOB'});
+
+                }
+            }
+        }
     }
 
     PreloadWhatsappVoucher{
