@@ -1401,7 +1401,7 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
-                    '- Stok Akhir       : ' + str(s.get('final_stock_'+slot, '-')), 0, 0, 'L')
+                    '- Stok Akhir       : ' + str(s.get('last_input_stock_'+slot, '-')), 0, 0, 'L')
             pdf.ln(tiny_space)
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
