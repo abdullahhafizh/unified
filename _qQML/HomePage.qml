@@ -605,7 +605,7 @@ Base{
 
         MouseArea{
             anchors.fill: parent
-            onDoubleClicked: {
+            onClicked: {
                 _SLOT.user_action_log('Press "Combo Sakti" Button');
                 console.log('Combo Sakti Button is Pressed..!');
                 _SLOT.stop_idle_mode();
