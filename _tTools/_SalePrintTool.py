@@ -819,13 +819,18 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             if p['ppob_mode'] == 'tagihan':
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'PELANGGAN  : Rp. ' + str(p['customer']), 0, 0, 'L')
+                label_detail = 'DETIL PAKET'
+                admin_fee_text = 'TERMASUK BIAYA ADMIN'
+                if 'OMNITSEL' not in provider:
+                    label_detail = 'PELANGGAN  '
+                    admin_fee_text = 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])
+                pdf.cell(padding_left, 0, label_detail+': Rp. ' + str(p['customer']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'TAGIHAN    : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+                pdf.cell(padding_left, 0, admin_fee_text), 0, 0, 'L')
             else:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
