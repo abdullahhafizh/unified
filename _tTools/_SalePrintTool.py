@@ -825,7 +825,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, label_detail+': ' + str(p['customer']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'TAGIHAN    : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'TAGIHAN   : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
