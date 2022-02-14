@@ -1402,8 +1402,8 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
             pdf.set_font(USED_FONT, 'B', line_size)
             # Redefine Last Stock
             last_stock = int(s.get('final_stock_'+slot, '0'))
-            if int(s.get('diff_stock_'+slot, '0')) != 0:
-                last_stock = int(s.get('last_input_stock_'+slot, '0'))
+            # if int(s.get('diff_stock_'+slot, '0')) != 0:
+            #     last_stock = int(s.get('last_input_stock_'+slot, '0'))
             pdf.cell(padding_left, 0,
                     '- Stok Akhir       : ' + str(last_stock), 0, 0, 'L')
             pdf.ln(tiny_space)

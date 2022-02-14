@@ -2024,16 +2024,20 @@ def generate_card_preload_data(operator, struct_id):
             data['final_stock_'+slot] = int(data['last_stock_'+slot]) + int(data['add_stock_'+slot])
             data['diff_stock_'+slot] = 0
             if not first_opname:     
+                # a = init stock
+                # b = sale
+                # c = redeem
+                # d = last stock (a-b-c) seharusnya
+                # e = last input stock (actual)
+                # f = diff (d-e)
+                # g = add stock
+                # h = final stock (e + g)
                 data['init_stock_'+slot] = int(load_from_temp_config('stock^opname^slot^'+slot, '0'))
                 data['sale_stock_'+slot] = _DAO.custom_query(' SELECT count(*) AS __ FROM TransactionsNew WHERE trxType = "SHOP" AND mid = "" AND trxNotes = "' + p['stid'] + '" ')[0]['__']
                 data['wa_redeem_'+slot] = get_redeem_status_by_slot(slot)
                 data['last_stock_'+slot] = int(data['init_stock_'+slot]) - int(data['sale_stock_'+slot]) - int(data['wa_redeem_'+slot])
                 data['diff_stock_'+slot] = int(data['last_stock_'+slot]) - int(data['last_input_stock_'+slot])
-                # Adjust Last Stock If Diff Found
-                if data['diff_stock_'+slot] != 0:
-                    data['last_stock_'+slot] = data['last_input_stock_'+slot]
-                data['final_stock_'+slot] = int(data['last_stock_'+slot]) + int(data['add_stock_'+slot]) - int(data['diff_stock_'+slot])
-            
+                data['final_stock_'+slot] = int(data['last_input_stock_'+slot]) + int(data['add_stock_'+slot])            
             i = 0
             while True:
                 i += 1
