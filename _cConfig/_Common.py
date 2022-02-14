@@ -2054,7 +2054,8 @@ def generate_card_preload_data(operator, struct_id):
                 "init_stock": data['init_stock_'+slot],
                 "sale": data['sale_stock_'+slot],   
                 "redeem": data['wa_redeem_'+slot],
-                "last_stock": data['last_stock_'+slot],
+                # Re-define Last Stock
+                "last_stock": data['final_stock_'+slot],
                 "add_stock": data['add_stock_'+slot],
                 "diff": data['diff_stock_'+slot],
                 "preload_at": _Helper.time_string(),
