@@ -819,18 +819,16 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             if p['ppob_mode'] == 'tagihan':
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                label_detail = 'DETIL PAKET'
-                admin_fee_text = 'TERMASUK BIAYA ADMIN'
+                label_detail = 'INFO PAKET'
                 if 'OMNITSEL' not in provider:
                     label_detail = 'PELANGGAN  '
-                    admin_fee_text = 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee']))
-                pdf.cell(padding_left, 0, label_detail+': Rp. ' + str(p['customer']), 0, 0, 'L')
+                pdf.cell(padding_left, 0, label_detail+': ' + str(p['customer']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'TAGIHAN    : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, admin_fee_text, 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
             else:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -914,6 +912,8 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             if 'product_channel' in p.keys():
                 if p['product_channel'] == 'MDD':
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
+            if 'OMNITSEL' in provider:
+                total_pay = str(int(total_pay) + int(p['admin_fee']))
             pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
             # pdf.ln(small_space*2)
             # pdf.set_font(USED_FONT, 'B', regular_space-1)

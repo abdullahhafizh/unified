@@ -130,6 +130,7 @@ def post_to_url(url, param=None, header=None, log=False, custom_timeout=None):
         s.keep_alive = False
         s.headers['Connection'] = 'close'
         __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
+        # Handling Timeout
         if '/v2/ppob' in url:
             __timeout = 180 if custom_timeout is None else custom_timeout
             r = requests.post(url, headers=header, json=param, timeout=__timeout)
