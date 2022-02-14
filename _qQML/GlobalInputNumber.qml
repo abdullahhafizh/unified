@@ -477,14 +477,20 @@ Base{
         var detail_label = 'Pelanggan';
         var detail_content = i.customer;
         if (detail_content.length > 45) detail_content = detail_content.substring(0, 45) + '...';
-        if (i.product_id == 'OMNITSEL') detail_label = 'Produk';
+        var biaya = i.ori_amount;
+        var total = i.total;
+        if (i.product_id == 'OMNITSEL'){
+            detail_label = 'Produk';
+            biaya = i.amount;
+            total = parseInt(biaya) + parseInt(i.admin_fee);
+        }
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'Tagihan', content: i.category.toUpperCase() + ' ' + i.msisdn},
             {label: detail_label, content: detail_content},
-            {label: 'Biaya', content: FUNC.insert_dot(i.ori_amount.toString())},
+            {label: 'Biaya', content: FUNC.insert_dot(biaya.toString())},
             {label: 'Biaya Admin', content: FUNC.insert_dot(i.admin_fee.toString())},
-            {label: 'Total', content: FUNC.insert_dot(i.total.toString())}
+            {label: 'Total', content: FUNC.insert_dot(total.toString())}
         ]
         generateConfirm(rows, true);
     }
