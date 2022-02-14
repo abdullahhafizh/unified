@@ -362,7 +362,7 @@ def sync_data_transaction():
     _table_ = 'TransactionsNew'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction') is True and _Common.IDLE_MODE is True:
+            if _Helper.is_online(source='sync_data_transaction') is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
@@ -382,7 +382,7 @@ def sync_data_transaction():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(88.99)
+        sleep(10.10)
         
 
 def sync_data_transaction_old():
