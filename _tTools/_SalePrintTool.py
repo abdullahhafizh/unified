@@ -823,7 +823,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 admin_fee_text = 'TERMASUK BIAYA ADMIN'
                 if 'OMNITSEL' not in provider:
                     label_detail = 'PELANGGAN  '
-                    admin_fee_text = 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])
+                    admin_fee_text = 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee']))
                 pdf.cell(padding_left, 0, label_detail+': Rp. ' + str(p['customer']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
