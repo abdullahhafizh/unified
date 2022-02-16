@@ -22,10 +22,11 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            abc.counter = timer_value
-            my_timer.start()
-            popup_loading.open()
-            if (ppobData!=undefined) parse_category(ppobData)
+            abc.counter = timer_value;
+            my_timer.start();
+            popup_loading.open();
+            preload_combo_sakti.close();
+            if (ppobData!=undefined) parse_category(ppobData);
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -308,7 +309,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    preload_combo_sakti.close();
+                    // preload_combo_sakti.close();
                     _SLOT.user_action_log('Press "LANJUT" Button For Combo Sakti Product');
                     var details = {
                         category: 'Combo Sakti',
