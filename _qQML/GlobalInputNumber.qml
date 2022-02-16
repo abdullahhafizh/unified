@@ -288,25 +288,25 @@ Base{
             var prev_admin_fee = retryDetails.raw.admin_fee;
             var prev_topup_denom = retryDetails.raw.value;
             // Adjusting Promo Data if Exist
-            if (retryDetails.promo_data !== null){
-                console.log('prev_promo_data', JSON.stringify(retryDetails.promo_data));
+            if (retryDetails.promo !== undefined && retryDetails.promo !== null ){
+                console.log('prev_promo', JSON.stringify(retryDetails.promo));
                 console.log('Promo Data Found, Validating New Card Data VS Prev Card Data');
                 console.log(cardData.bank_name, retryDetails.raw.bank_name);
                 if (cardData.bank_name == retryDetails.raw.bank_name){
                     var trx_id = retryDetails.shop_type + retryDetails.epoch.toString();
-                    console.log('Promo Code Re-Applied', trx_id, retryDetails.promo_data.promo.code)
-                    prev_admin_fee = retryDetails.promo_data.admin_fee;
-                    prev_topup_denom = retryDetails.promo_data.denom;
+                    console.log('Promo Code Re-Applied', trx_id, retryDetails.promo.code)
+                    prev_admin_fee = retryDetails.admin_fee;
+                    prev_topup_denom = retryDetails.denom;
                     retryDetails.denom = prev_topup_denom;
                     retryDetails.admin_fee = prev_admin_fee;
                     retryDetails.promo_code_active = true;
-                    retryDetails.receive_discount = retryDetails.promo_data.receive_discount;
-                    retryDetails.promo = retryDetails.promo_data.promo;
+                    retryDetails.receive_discount = retryDetails.receive_discount;
+                    // retryDetails.promo = retryDetails.promo;
                 } else {
-                    var init_denom = parseInt(prev_topup_denom) - parseInt(retryDetails.promo_data.receive_discount);
+                    var init_denom = parseInt(prev_topup_denom) - parseInt(retryDetails.receive_discount);
                     if (provider == 'e-Money Mandiri') retryDetails.value = prev_topup_denom;
                     else prev_topup_denom = init_denom.toString();
-                    prev_admin_fee = retryDetails.promo_data.receive_discount;
+                    prev_admin_fee = retryDetails.receive_discount;
                     retryDetails.denom = prev_topup_denom;
                     retryDetails.admin_fee = prev_admin_fee;
                     retryDetails.promo_code_active = false;
