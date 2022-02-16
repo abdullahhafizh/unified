@@ -232,6 +232,7 @@ Base{
                         _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
                         //Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
                         if (category_text.toLowerCase()=='uang elektronik') my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
+                        else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
                         else my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text});
                     }
                 }
@@ -277,6 +278,53 @@ Base{
 
     GlobalFrame{
         id: global_frame
+    }
+
+    PreloadComboSakti{
+        id: preload_combo_sakti
+        CircleButton{
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    preload_combo_sakti.close();
+                }
+            }
+        }
+
+        CircleButton{
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            blinkingMode: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    preload_combo_sakti.close();
+                    _SLOT.user_action_log('Press "LANJUT" Button For Combo Sakti Product');
+                    var details = {
+                        category: 'Combo Sakti',
+                        operator: 'Telkomsel',
+                        description: 'Telkomsel Combo Sakti',
+                        product_id: 'OMNITSEL',
+                        rs_price: 1,
+                        amount: 1,
+                        product_channel: 'DIVA',
+                    }
+                    console.log('Set Combo Sakti Product Into Input Layer: ', JSON.stringify(details));
+                    my_layer.push(global_input_number, {selectedProduct: details, mode: 'PPOB'});
+
+                }
+            }
+        }
     }
 
 

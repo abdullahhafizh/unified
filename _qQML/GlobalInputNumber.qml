@@ -289,9 +289,10 @@ Base{
             var prev_topup_denom = retryDetails.raw.value;
             // Adjusting Promo Data if Exist
             if (retryDetails.promo_data !== null){
-                console.log('Promo Data Found, Validating New Card Data VS Prev Card Data')
-                console.log(cardData.bank_name, retryDetails.promo_data.raw.bank_name)
-                if (cardData.bank_name == retryDetails.promo_data.raw.bank_name){
+                console.log('prev_promo_data', JSON.stringify(retryDetails.promo_data));
+                console.log('Promo Data Found, Validating New Card Data VS Prev Card Data');
+                console.log(cardData.bank_name, retryDetails.raw.bank_name);
+                if (cardData.bank_name == retryDetails.raw.bank_name){
                     var trx_id = retryDetails.shop_type + retryDetails.epoch.toString();
                     console.log('Promo Code Re-Applied', trx_id, retryDetails.promo_data.promo.code)
                     prev_admin_fee = retryDetails.promo_data.admin_fee;
@@ -310,6 +311,7 @@ Base{
                     retryDetails.admin_fee = prev_admin_fee;
                     retryDetails.promo_code_active = false;
                     retryDetails.receive_discount = 0;
+                    delete retryDetails.promo;
                 }
                 delete retryDetails.promo_data;
                 // Do Manipulation Data Topup
