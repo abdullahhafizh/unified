@@ -28,7 +28,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Special Offer : Telkomsel Combo Sakti'
+        show_text: 'Special Offer : Telkomsel Paket Murah'
         size_: (globalScreenType == '1') ? 50 : 45
         color_: "yellow"
 

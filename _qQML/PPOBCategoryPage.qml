@@ -61,9 +61,12 @@ Base{
         gridViewPPOB.model = category_model;
         for (var _c=0; _c < category.length;_c++){
             var logo_category = FUNC.strip(category[_c].toLowerCase())
+            var alias_category = category[_c].toUpperCase();
+            if (alias_category == 'COMBO SAKTI') alias_category = 'TELKOMSEL PAKET MURAH';
             category_model.append({
-                                      'category_text': category[_c],
-                                      'category_url': 'source/ppob_category/'+logo_category+'.png'
+                                      'category_text'   : category[_c],
+                                      'category_alias'  : alias_category,
+                                      'category_url'    : 'source/ppob_category/'+logo_category+'.png'
                                   })
         }
         popup_loading.close();
@@ -224,7 +227,7 @@ Base{
                 id: item_ppob;
                 modeReverse: true
                 sourceImage: category_url
-                categoryName: category_text
+                categoryName: category_alias
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
@@ -314,7 +317,7 @@ Base{
                     var details = {
                         category: 'Combo Sakti',
                         operator: 'Telkomsel',
-                        description: 'Telkomsel Combo Sakti',
+                        description: 'Telkomsel Paket Murah',
                         product_id: 'OMNITSEL',
                         rs_price: 1,
                         amount: 1,

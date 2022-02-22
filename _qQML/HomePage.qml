@@ -193,7 +193,7 @@ Base{
         wa_voucher_button.visible = (kiosk.feature.whatsapp_voucher == 1)
         printerAvailable = (kiosk.printer_status == 'OK')
 
-        //Telkomsel Combo Sakti Feature Handle
+        //Telkomsel Paket Murah Feature Handle
         comboSaktiFeature = (kiosk.feature.tsel_combo_sakti == 1)
 
         if (kiosk.status == "ONLINE" || kiosk.status == "AVAILABLE") {
@@ -999,7 +999,7 @@ Base{
                     var details = {
                         category: 'Combo Sakti',
                         operator: 'Telkomsel',
-                        description: 'Telkomsel Combo Sakti',
+                        description: 'Telkomsel Paket Murah',
                         product_id: 'OMNITSEL',
                         rs_price: 1,
                         amount: 1,

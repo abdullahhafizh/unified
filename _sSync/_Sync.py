@@ -739,8 +739,15 @@ def handle_tasks(tasks):
         if task['taskName'] == 'TOPUP_DEPOSIT_BNI':
             result = _TopupService.do_topup_deposit_bni(slot=1)
             update_task(task, result)
-        
-
+        if 'FORCE_LAST_STOCK' in task['taskName']:
+            # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
+            result = 'INVALID_ARGUMENTS'
+            if len(task['taskName'].split('|') >= 3):
+                slot = task['taskName'].split('|')[1]
+                stock = task['taskName'].split('|')[2]
+                result = 'TRIGGERED_INTO_SYSTEM'
+                _Common.log_to_temp_config('stock^opname^slot^'+slot, stock)
+            update_task(task, result)
     # Add Another TaskType
 
 
