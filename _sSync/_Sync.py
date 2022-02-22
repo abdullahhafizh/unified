@@ -747,6 +747,8 @@ def handle_tasks(tasks):
                 stock = task['taskName'].split('|')[2]
                 result = 'TRIGGERED_INTO_SYSTEM'
                 _Common.log_to_temp_config('stock^opname^slot^'+slot, stock)
+                # Add Clear Data Product Stock -> In Order To Force Sync Card
+                _DAO.custom_update("UPDATE ProductStock SET stock = 0")
             update_task(task, result)
     # Add Another TaskType
 
