@@ -742,7 +742,7 @@ def handle_tasks(tasks):
         if 'FORCE_LAST_STOCK' in task['taskName']:
             # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
             result = 'INVALID_ARGUMENTS'
-            if len(task['taskName'].split('|') >= 3):
+            if len(task['taskName'].split('|')) >= 3:
                 slot = task['taskName'].split('|')[1]
                 stock = task['taskName'].split('|')[2]
                 result = 'TRIGGERED_INTO_SYSTEM'
