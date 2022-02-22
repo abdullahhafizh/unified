@@ -743,7 +743,7 @@ def handle_tasks(tasks):
             # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
             result = 'INVALID_ARGUMENTS'
             if len(task['taskName'].split('|')) >= 3:
-                slot = task['taskName'].split('|')[1]
+                slot = task['taskName'].split('|')[1].replace('10', '')
                 stock = task['taskName'].split('|')[2]
                 result = 'TRIGGERED_INTO_SYSTEM'
                 _Common.log_to_temp_config('stock^opname^slot^'+slot, stock)
