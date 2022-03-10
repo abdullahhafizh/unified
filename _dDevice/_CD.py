@@ -108,10 +108,12 @@ def get_multiple_eject_status():
 
 def start_multiple_eject(attempt, multiply):
     port = CD_PORT_LIST.get(attempt)
-    if _Common.CD_NEW_TYPE.get(port, False) is True:
-        _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
-    else:
-        _Helper.get_thread().apply_async(old_cd_eject, (attempt, multiply,))
+    # Generalise Command
+    _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply,))
+    # if _Common.CD_NEW_TYPE.get(port, False) is True:
+    #     _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
+    # else:
+    #     _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply,))
 
 
 
@@ -135,7 +137,7 @@ def new_cd_eject(port, attempt):
 
 
 
-def old_cd_eject(attempt, multiply):
+def general_cd_eject(attempt, multiply):
     # _cd_selected_port = None
     # try:
     #     selected_port = CD_PORT_LIST[attempt]
@@ -157,7 +159,7 @@ def old_cd_eject(attempt, multiply):
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
         response = json.loads(output[0])
-        LOGGER.debug((command, 'output', output, 'response', response))
+        LOGGER.debug((command, 'response', response))
         if response.get('ec') is not None:
             # ec 80 is Success, otherwise is failure
             if response['ec'] == 80:
@@ -167,11 +169,11 @@ def old_cd_eject(attempt, multiply):
                 else:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
             else:
-                emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
+                emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'general_cd_eject')
         else:
-            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'old_cd_eject')
+            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'general_cd_eject')
     except Exception as e:
-        emit_eject_error(attempt, str(e), 'old_cd_eject')
+        emit_eject_error(attempt, str(e), 'general_cd_eject')
 
 
 def eject_full_round(attempt):

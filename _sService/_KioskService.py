@@ -1259,9 +1259,10 @@ def store_transaction_global(param, retry=False):
             trx_notes = g['raw'].get('stid', '')
             # trx_notes = g['raw']
             # trx_notes['stock_details'] = stock_update
-            LOGGER.info(('PROCESS_DELAY 10 Seconds', g['shop_type']))
-            sleep(10)
-        else:
+            # Disable Delay Process
+            # LOGGER.info(('PROCESS_DELAY 1 Seconds', g['shop_type']))
+            # sleep(1)
+        if g['shop_type'] == 'topup':
             trx_notes = json.dumps(g['topup_details'])
         
         trace_no = g['payment_details'].get('trx_id', '')

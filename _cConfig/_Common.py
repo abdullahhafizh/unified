@@ -1806,6 +1806,8 @@ def generate_collection_data():
 
 LAST_PPOB_TRX = None
 
+DISABLE_CARD_RETRY_CODE = True if _ConfigParser.get_set_value('GENERAL', 'disable^card^retry^code', '1') == '1' else False
+
 # SHOP 
 # {'details': '{"date":"08/06/20","epoch":1591589266780,"payment":"cash","shop_type":"shop","time":"11:07:46","qty":1,"value":"5000","provider":"Test Card 2","admin_fee":"0","status":102,"raw":{"stock":74,"image":"source/card/20200306163800DF0FfQIKJ31s6ZEt33.png","remarks":"Test Card 2","init_price":5000,"pid":"dfaw2","stid":"dfaw2-102-001122334455","tid":"001122334455","syncFlag":1,"name":"Test Card 2","status":102,"createdAt":1591589169000,"sell_price":5000},"payment_details":{"total":"10000","history":"10000"},"payment_received":"10000"}', 'name': 'Test Card 2', 'price': 5000, 'syncFlag': 0, 'createdAt': 1591589279000, 'status': 1, 'pid': 'shop1591589266780'}
 
@@ -1823,6 +1825,8 @@ def check_retry_able(data):
             return 0
     elif data.get('shop_type') == 'shop':
         try:
+            if DISABLE_CARD_RETRY_CODE is True:
+                return 0
             slot_cd = data.get('raw').get('status')
             check_stock = _DAO.get_product_stock_by_slot_status(slot_cd)
             if len(check_stock) == 0:

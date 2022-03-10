@@ -1,5 +1,9 @@
 14.0.G8-GLOBAL:
 - Add Feature Telkomsel Paket Murah,
+- Add Panel Disable Shop Retry Code,
+- Change QR Telkomsel Paket Murah Asset,
+- Generalise CD Command,
+- Disable Shop TRX Delay Sync,
 - ...
 
 14.0.G7-GLOBAL:

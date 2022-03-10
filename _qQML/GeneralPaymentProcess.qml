@@ -801,6 +801,7 @@ Base{
         if (details.payment != 'cash') receivedPayment = totalPrice;
         //Put Promo Data Adjustment Here
         do_promo_data_adjustment(mode);
+        // Send TRX Shop Data Pending To Host
         if (trx_type == 'shop') _SLOT.start_push_pending_trx_global(JSON.stringify(details));
         transactionInProcess = true;
         // Force Disable All Cancel Button
