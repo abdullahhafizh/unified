@@ -342,7 +342,7 @@ Base{
                 return;
             }
             details.payment_error = error;
-            // details.error_history.push(error)
+            // details_error_history_push(error)
             details.payment_received = receivedPayment.toString();
             refundAmount = receivedPayment;
             message_case_refund = 'Terjadi Kesalahan Mesin,';
@@ -356,7 +356,7 @@ Base{
                 return;
             }
             details.payment_error = error;
-            // details.error_history.push(error)
+            // details_error_history_push(error)
             details.payment_received = receivedPayment.toString();
             refundAmount = receivedPayment;
             message_case_refund = 'Waktu Pembayaran Habis,';
@@ -369,7 +369,7 @@ Base{
             break;
         }
         // Add History Here, Perhaps Get Duplicate Message
-        if (error !== undefined) details.error_history.push(error)
+        if (error !== undefined) details_error_history_push(error)
         press = '0';
         popup_refund.open(message_case_refund, refundAmount);
         // Set Waiting Time To IDLE
@@ -486,7 +486,7 @@ Base{
         if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1;
-            details.error_history.push(p)
+            details_error_history_push(p)
             details.payment_error = 1;
             details.receipt_title = 'Transaksi Anda Gagal';
             _SLOT.start_play_audio('transaction_failed');
@@ -537,7 +537,7 @@ Base{
             if (!refundFeature){
 //              details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.process_error = 1;
-                details.error_history.push(r)
+                details_error_history_push(r)
                 details.payment_error = 1;
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
@@ -678,7 +678,7 @@ Base{
             // Do not return here to handle refund for failed topup response
         }
         details.process_error = 1;
-        details.error_history.push(t)
+        details_error_history_push(t)
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
         _SLOT.start_play_audio('transaction_failed');
@@ -714,7 +714,7 @@ Base{
         if (issue==undefined) issue = 'BILL_ERROR';
         if (channelPayment=='cash'){
             details.payment_error = issue;
-            details.error_history.push(issue)
+            details_error_history_push(issue)
             details.payment_received = receivedPayment.toString();
             if (customerPhone!=''){
 //                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
@@ -746,7 +746,7 @@ Base{
         }
         if (result == 'ERROR') {
             details.process_error = 1;
-            details.error_history.push(r.split('|')[2])
+            details_error_history_push(r.split('|')[2])
             details.payment_error = 1;
             details.receipt_title = 'Transaksi Anda Gagal';
             _SLOT.start_play_audio('transaction_failed');
@@ -1122,6 +1122,12 @@ Base{
         if (i=='ppob') return 'Pembayaran/Pembelian';
     }
 
+    function details_error_history_push(e){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        details.error_history = details.error_history + "#" + e;
+        console.log('Error History', details.error_history, now, whoami);
+    }
+
     function initial_process(whoami){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         if (closeTrxSession){
@@ -1131,7 +1137,7 @@ Base{
         console.log('initial_process', details.payment, now, whoami);
         proceedAble = true;
         // Add New Bucket to store history error in detail trx data
-        details.error_history = [];
+        details.error_history = '';
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
         // Row 2 Confirmation Content
@@ -1257,7 +1263,7 @@ Base{
                         if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                             details.process_error = 1;
-                            details.error_history.push('user_payment_timeout_debit')
+                            details_error_history_push('user_payment_timeout_debit')
                             details.payment_error = 1;
                             details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
@@ -1276,7 +1282,7 @@ Base{
                         //Disable Auto Manual Refund
                         if (!successTransaction){
                             details.process_error = 1;
-                            details.error_history.push('user_payment_timeout')
+                            details_error_history_push('user_payment_timeout')
                             details.payment_error = 1;
                             if (!refundFeature){
     //                            details.pending_trx_code = details.epoch.toString().substr(-6);
@@ -1478,7 +1484,7 @@ Base{
                 if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                     details.process_error = 1;
-                    details.error_history.push('user_payment_timeout_qr')
+                    details_error_history_push('user_payment_timeout_qr')
                     details.payment_error = 1;
                     details.payment_received = receivedPayment.toString();
                     details.pending_trx_code = uniqueCode;
@@ -1538,7 +1544,7 @@ Base{
             if (receivedPayment > 0){
                 console.log('[CANCELLATION] User Payment', receivedPayment);
                 details.process_error = 1;
-                details.error_history.push('user_cancellation')
+                details_error_history_push('user_cancellation')
                 details.payment_error = 1;
                 if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
@@ -1568,7 +1574,7 @@ Base{
 //                    release_print();
 //                    console.log('[CANCELLATION] User Payment Debit', receivedPayment);
             details.process_error = 1;
-            details.error_history.push('user_cancellation_debit')
+            details_error_history_push('user_cancellation_debit')
             details.payment_error = 1;
             if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
