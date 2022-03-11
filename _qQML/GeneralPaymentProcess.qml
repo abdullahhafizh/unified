@@ -336,7 +336,7 @@ Base{
         case 'cash_device_error':
             if (receivedPayment == 0) {
                 press = '0';
-                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain|5', false);
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain|10', false);
                 _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
@@ -349,7 +349,7 @@ Base{
         case 'cash_device_timeout':
             if (receivedPayment == 0) {
                 press = '0';
-                switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain|5', false);
+                switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain|10', false);
                 _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED')
                 abc.counter = 5;
                 return;
@@ -525,7 +525,7 @@ Base{
         var result = r.split('|')[2]
         popup_loading.close();
         if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|5', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|10', true )
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
@@ -574,7 +574,7 @@ Base{
         var result = r.split('|')[2]
         popup_loading.close();
         if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR', 'MODE_NOT_FOUND'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|5', true );
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|10', true );
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
@@ -937,7 +937,7 @@ Base{
             }
         } else if (grgFunction == 'STATUS_BILL'){
             if(grgResult=='ERROR') {
-                false_notif('backToMain|5', 'Terjadi Kegagalan Pada Bill Acceptor');
+                false_notif('backToMain|10', 'Terjadi Kegagalan Pada Bill Acceptor');
                 return;
             }
         }

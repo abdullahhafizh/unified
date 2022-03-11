@@ -20,10 +20,11 @@ CD_PORT3 = _Common.CD_PORT3
 CD_MID = ''
 CD_TID = ''
 
-CMD_CD_NEW = os.path.join(sys.path[0], '_lLib', 'cd', 'card_disp.exe')
-CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'v2', 'card.exe')
-V2_PATH = os.path.join(sys.path[0], '_lLib', 'cd', 'v2')
-CD_INIT = os.path.join(sys.path[0], '_lLib', 'cd_init', 'start.exe')
+CMD_CD_NEW = os.path.join(sys.path[0], '_lLib', 'cd', 'new', 'card.exe')
+CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'old', 'card.exe')
+
+V2_PATH = os.path.join(sys.path[0], '_lLib', 'cd', 'old')
+CD_INIT = os.path.join(sys.path[0], '_lLib', 'cd', 'init', 'start.exe')
 
 CD = {
     "OPEN": "101",
