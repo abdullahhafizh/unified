@@ -21,9 +21,9 @@ CD_MID = ''
 CD_TID = ''
 
 CMD_CD_NEW = os.path.join(sys.path[0], '_lLib', 'cd', 'new', 'card.exe')
-CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'old', 'card.exe')
+CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'general', 'card.exe')
 
-V2_PATH = os.path.join(sys.path[0], '_lLib', 'cd', 'old')
+GENERAL_PATH = os.path.join(sys.path[0], '_lLib', 'cd', 'general')
 CD_INIT = os.path.join(sys.path[0], '_lLib', 'cd', 'init', 'start.exe')
 
 CD = {
@@ -51,16 +51,16 @@ INIT_STATUS = False
 
 
 def reinit_v2_config():
-    with open(os.path.join(V2_PATH, 'card.ini'), 'w') as init:
-        init.write('path='+V2_PATH)
+    with open(os.path.join(GENERAL_PATH, 'card.ini'), 'w') as init:
+        init.write('path='+GENERAL_PATH)
         init.close()
-    with open(os.path.join(V2_PATH, '101.card.ini'), 'w') as cd1:
+    with open(os.path.join(GENERAL_PATH, '101.card.ini'), 'w') as cd1:
         cd1.write('com='+CD_PORT1+os.linesep+'baud=9600')
         cd1.close()
-    with open(os.path.join(V2_PATH, '102.card.ini'), 'w') as cd2:
+    with open(os.path.join(GENERAL_PATH, '102.card.ini'), 'w') as cd2:
         cd2.write('com='+CD_PORT2+os.linesep+'baud=9600')
         cd2.close()
-    with open(os.path.join(V2_PATH, '103.card.ini'), 'w') as cd3:
+    with open(os.path.join(GENERAL_PATH, '103.card.ini'), 'w') as cd3:
         cd3.write('com='+CD_PORT3+os.linesep+'baud=9600')
         cd3.close()
     
@@ -170,9 +170,9 @@ def general_cd_eject(attempt, multiply):
                 else:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
             else:
-                emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'general_cd_eject')
+                emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + output[0], 'general_cd_eject')
         else:
-            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'general_cd_eject')
+            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + output[0], 'general_cd_eject')
     except Exception as e:
         emit_eject_error(attempt, str(e), 'general_cd_eject')
 
@@ -237,7 +237,7 @@ def emit_eject_error(attempt, error_message, method='eject_full_round'):
         _Common.upload_device_state('cd3', _Common.CD3_ERROR)
     _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
-    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
+    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR|'+error_message)
 
 
 def move_card_disp(attempt):
