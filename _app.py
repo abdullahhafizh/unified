@@ -1292,7 +1292,7 @@ if __name__ == '__main__':
     if _Common.CD['status'] is True:
         sleep(1)
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
-        _CD.reinit_v2_config()
+        _CD.init_cd_library()
     if _QPROX.INIT_MANDIRI is True:
         sleep(1)
         print("pyt: Check Mandiri Deposit Update Balance...")

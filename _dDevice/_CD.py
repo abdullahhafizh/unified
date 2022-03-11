@@ -50,7 +50,7 @@ CD_SIGNDLER = CDSignalHandler()
 INIT_STATUS = False
 
 
-def reinit_v2_config():
+def init_cd_library():
     with open(os.path.join(GENERAL_PATH, 'card.ini'), 'w') as init:
         init.write('path='+GENERAL_PATH)
         init.close()

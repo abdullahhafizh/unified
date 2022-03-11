@@ -34,7 +34,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         font.bold: true
-        font.pixelSize: 28
+        font.pixelSize: 25
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"
