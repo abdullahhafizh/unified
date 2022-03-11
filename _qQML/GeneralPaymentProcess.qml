@@ -1125,7 +1125,7 @@ Base{
     function details_error_history_push(e){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         details.error_history = details.error_history + "#" + e;
-        console.log('Error History', details.error_history, now, whoami);
+        console.log('Error History', now, details.error_history);
     }
 
     function initial_process(whoami){
