@@ -170,9 +170,9 @@ def general_cd_eject(attempt, multiply):
                 else:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
             else:
-                emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + output[0], 'general_cd_eject')
+                emit_eject_error(attempt, output[0], 'general_cd_eject')
         else:
-            emit_eject_error(attempt, 'DEVICE_NOT_OPEN|' + output[0], 'general_cd_eject')
+            emit_eject_error(attempt, output[0], 'general_cd_eject')
     except Exception as e:
         emit_eject_error(attempt, str(e), 'general_cd_eject')
 
