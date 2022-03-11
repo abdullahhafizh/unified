@@ -1067,7 +1067,7 @@ CD = {
     "port1": CD_PORT1,
     "port2": CD_PORT2,
     "port3": CD_PORT3,
-    "status": True if CD_PORT1 is not None and digit_in(CD_PORT1) is True else False,
+    "status": True,
     "list_port": CD_PORT_LIST
 }
 
