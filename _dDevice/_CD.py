@@ -110,7 +110,11 @@ def get_multiple_eject_status():
 def start_multiple_eject(attempt, multiply):
     port = CD_PORT_LIST.get(attempt)
     # Generalise Command
-    _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply,))
+    false_ok = False
+    if not _Common.CD_NEW_TYPE.get(port, False):
+        # Old CD Treated to Allow False OK Response (80/78)
+        false_ok = True
+    _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply, false_ok,))
     # if _Common.CD_NEW_TYPE.get(port, False) is True:
     #     _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
     # else:
@@ -138,7 +142,7 @@ def new_cd_eject(port, attempt):
 
 
 
-def general_cd_eject(attempt, multiply):
+def general_cd_eject(attempt, multiply, false_ok=False):
     # _cd_selected_port = None
     # try:
     #     selected_port = CD_PORT_LIST[attempt]
@@ -163,7 +167,7 @@ def general_cd_eject(attempt, multiply):
         LOGGER.debug((command, 'response', response))
         if response.get('ec') is not None:
             # ec 80 is Success, otherwise is failure
-            if response['ec'] == 80:
+            if response['ec'] == 80 or false_ok is True:
                 # Force Reply Success in TESTING MODE
                 if multiply == '1':
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
@@ -227,13 +231,13 @@ def eject_full_round(attempt):
 
 def emit_eject_error(attempt, error_message, method='eject_full_round'):
     if attempt == '101':
-        _Common.CD1_ERROR = error_message
+        _Common.CD1_ERROR = 'DEVICE_RESPONSE_ERROR'
         _Common.upload_device_state('cd1', _Common.CD1_ERROR)
     if attempt == '102':
-        _Common.CD2_ERROR = error_message
+        _Common.CD2_ERROR = 'DEVICE_RESPONSE_ERROR'
         _Common.upload_device_state('cd2', _Common.CD2_ERROR)
     if attempt == '103':
-        _Common.CD3_ERROR = error_message
+        _Common.CD3_ERROR = 'DEVICE_RESPONSE_ERROR'
         _Common.upload_device_state('cd3', _Common.CD3_ERROR)
     _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
