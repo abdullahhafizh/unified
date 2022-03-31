@@ -1113,10 +1113,10 @@ BRI_LOG_LEGEND = {
 
 MANDIRI_LOG_LEGEND = {
     '1200': 'PURCHASE',
-    '1500': 'TOPUP',
-    '1000': 'TOPUP',
-    '1100': 'TOPUP',
-    '4352': 'TOPUP',
+    '1500': 'TOPUP', #150
+    '1000': 'TOPUP', #100
+    '1100': 'TOPUP', #110
+    '4352': 'TOPUP', #
     '4608': 'PURCHASE'
 }
 # Actual From Mandiri

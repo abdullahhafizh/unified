@@ -20,6 +20,7 @@ CD_PORT3 = _Common.CD_PORT3
 CD_MID = ''
 CD_TID = ''
 
+CMD_CD_EXEC = os.path.join(sys.path[0], '_lLib', 'cd', 'card_dispenser.exe')
 CMD_CD_NEW = os.path.join(sys.path[0], '_lLib', 'cd', 'new', 'card.exe')
 CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'general', 'card.exe')
 
@@ -110,16 +111,16 @@ def get_multiple_eject_status():
 def start_multiple_eject(attempt, multiply):
     port = CD_PORT_LIST.get(attempt)
     # Generalise Command
-    false_ok = False
-    if not _Common.CD_NEW_TYPE.get(port, False):
-        # Old CD Treated to Allow False OK Response (80/78)
-        false_ok = True
-    _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply, false_ok,))
+    # false_ok = False
+    # if not _Common.CD_NEW_TYPE.get(port, False):
+    #     # Old CD Treated to Allow False OK Response (80/78)
+    #     false_ok = True
+    slot = attempt
+    _Helper.get_thread().apply_async(trigger_card_dispenser, (port, slot, multiply,))
     # if _Common.CD_NEW_TYPE.get(port, False) is True:
     #     _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
     # else:
     #     _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply,))
-
 
 
 def new_cd_eject(port, attempt):
@@ -139,7 +140,28 @@ def new_cd_eject(port, attempt):
             CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
     except Exception as e:
         emit_eject_error(attempt, str(e), 'new_cd_eject')
+        
 
+def trigger_card_dispenser(port, slot, multiply='1'):
+    try:
+        command = " ".join([CMD_CD_EXEC, str(port), "9600", multiply])
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        output = process.communicate()[0].decode('utf-8').strip()
+        response = json.loads(output)
+        LOGGER.debug((command, 'response', response))
+        if response.get('code') is not None:
+            # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}
+            if response['code'] == '0000':
+                if multiply == '1':
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+                else:
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
+            else:
+                emit_eject_error(slot, output, 'trigger_card_dispenser')
+        else:
+            emit_eject_error(slot, output, 'trigger_card_dispenser')
+    except Exception as e:
+        emit_eject_error(slot, str(e), 'trigger_card_dispenser')
 
 
 def general_cd_eject(attempt, multiply, false_ok=False):

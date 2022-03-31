@@ -1289,10 +1289,11 @@ if __name__ == '__main__':
             _QPROX.init_config()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
-    if _Common.CD['status'] is True:
-        sleep(1)
-        print("pyt: [INFO] Re-Init CD Library Configuration...")
-        _CD.init_cd_library()
+    # Disabled, No Need Create Init 
+    # if _Common.CD['status'] is True:
+        # sleep(1)
+        # print("pyt: [INFO] Re-Init CD Library Configuration...")
+        # _CD.init_cd_library()
     if _QPROX.INIT_MANDIRI is True:
         sleep(1)
         print("pyt: Check Mandiri Deposit Update Balance...")
