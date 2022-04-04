@@ -66,6 +66,7 @@ Base{
         base.result_do_topup_deposit_bni.connect(get_topup_bni_result);
         base.result_topup_amount.connect(get_admin_action);
         base.result_panel_setting.connect(get_admin_action);
+        base.result_cd_move.connect(get_admin_action);
     }
 
     Component.onDestruction:{
@@ -88,7 +89,7 @@ Base{
         base.result_do_topup_deposit_bni.disconnect(get_topup_bni_result);
         base.result_topup_amount.disconnect(get_admin_action);
         base.result_panel_setting.disconnect(get_admin_action);
-
+        base.result_cd_move.disconnect(get_admin_action);
     }
 
     function do_action_signal(s){
@@ -1069,6 +1070,7 @@ Base{
                                _SLOT.user_action_log('Admin Page "Test Slot 1"');
                                console.log('Test Slot 1 Button is Pressed..!');
                                _SLOT.start_multiple_eject('101', '1');
+                               popup_loading.open();
                            }
                        }
                     }
@@ -1128,6 +1130,7 @@ Base{
                                _SLOT.user_action_log('Admin Page "Test Slot 2"');
                                console.log('Test Slot 2 Button is Pressed..!');
                                _SLOT.start_multiple_eject('102', '1');
+                               popup_loading.open();
                            }
                        }
                     }
@@ -1183,6 +1186,7 @@ Base{
                                _SLOT.user_action_log('Admin Page "Test Slot 3"');
                                console.log('Test Slot 3 Button is Pressed..!');
                                _SLOT.start_multiple_eject('103', '1');
+                               popup_loading.open();
                            }
                        }
                     }
