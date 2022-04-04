@@ -149,6 +149,7 @@ Base{
     function get_admin_action(a){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_admin_action', now, a);
+        var _message = a;
         popup_loading.close();
         if (a=='CHANGE_PRODUCT|STID_NOT_FOUND'){
             switch_notif('Dear '+operatorName+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
@@ -229,7 +230,7 @@ Base{
                 switch_notif('Dear '+operatorName+'|Stok Opname Kartu Seluruh Slot Selesai\nSilakan Cetak Struk');
             }            
         } else {
-            switch_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+a);
+            switch_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+_message);
         }
         press = '0';
         _SLOT.kiosk_get_machine_summary();

@@ -146,9 +146,10 @@ def trigger_card_dispenser(port, slot, multiply='1'):
     try:
         command = " ".join([CMD_CD_EXEC, str(port), "9600", multiply])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        # Multi replace below must be performed to get the response object
         output = process.communicate()[0].decode('utf-8').strip().replace('\\r\\n  ', '').replace("\'", "\"")
         response = json.loads(output)
-        LOGGER.debug((command, output, type(response), str(response)))
+        # LOGGER.debug((command, output, type(response), str(response)))
         if response.get('code') is not None:
             # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}
             if response['code'] == '0000':
