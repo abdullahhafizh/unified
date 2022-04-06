@@ -1354,7 +1354,7 @@ Base{
                     my_timer.stop();
                     return;
                 }
-                cancel_transaction();
+                cancel_transaction('MAIN_FRAME');
             }
         }
     }
@@ -1531,14 +1531,14 @@ Base{
         _SLOT.start_play_audio('please_input_wa_no');
     }
 
-    function cancel_transaction(){
+    function cancel_transaction(t){
         if (transactionInProcess){
-            console.log('[WARNING] Transaction In Process Not Allowed Cancellation');
+            console.log('[WARNING] Transaction In Process Not Allowed Cancellation', t);
             return;
         }
         details.receipt_title = 'Transaksi Anda Batal';
         if (details.payment=='cash') {
-            console.log('[CANCELLATION] Cash Method Payment Detected..!');
+            console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
             proceedAble = false;
             _SLOT.stop_bill_receive_note();
             if (receivedPayment > 0){
@@ -1562,7 +1562,7 @@ Base{
             }
         }
         if (details.payment=='debit') {
-            console.log('[CANCELLATION] Debit Method Payment Detected..!')
+            console.log('[CANCELLATION] Debit Method Payment Detected..!', t)
 //                    refundChannel = 'NONE';
 //                    details.refund_channel = refundChannel;
 //                    details.refund_status = 'N/A';
@@ -1592,7 +1592,7 @@ Base{
             qr_payment_frame.cancel('USER_CANCEL');
         }
         my_timer.stop();
-        console.log('[GLOBAL-PAYMENT]', 'CANCEL-TRANSACTION-FUNCTION', 'BACK-TO-HOMEPAGE');
+        console.log('[GLOBAL-PAYMENT]', 'CANCEL-TRANSACTION-FUNCTION', 'BACK-TO-HOMEPAGE', t);
         my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
     }
 
@@ -1747,7 +1747,7 @@ Base{
                         my_timer.stop();
                         return;
                     }
-                    cancel_transaction();
+                    cancel_transaction('GLOBAL_FRAME');
                 }
             }
         }
@@ -1854,7 +1854,7 @@ Base{
                         my_timer.stop();
                         return;
                     }
-                    cancel_transaction();
+                    cancel_transaction('QR_FRAME');
 //                    _SLOT.start_cancel_qr_global('CANCEL_'+details.shop_type+details.epoch.toString());
 //                    qr_payment_frame.cancel('USER_CANCEL');
 //                    my_timer.stop();
@@ -2200,7 +2200,7 @@ Base{
                     press = '1';
                     _SLOT.user_action_log('Press "Y A" in Cancel Confirmation');
                     cancel_confirmation.close();
-                    cancel_transaction();
+                    cancel_transaction('CONFIRM_FRAME');
                 }
             }
         }
