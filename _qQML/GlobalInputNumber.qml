@@ -287,6 +287,13 @@ Base{
             //Define Data Card, Amount Button, Topup Availability
             var prev_admin_fee = retryDetails.raw.admin_fee;
             var prev_topup_denom = retryDetails.raw.value;
+            var prev_card_no = retryDetails.raw.card_no;
+            // Add Check Validity Prev Card No Must Be Same With New Card
+            if (prev_card_no !== cardData.card_no){
+                console.log('Card No Mismatch', prev_card_no, cardData.card_no);
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Nomor Kartu Berbeda, Siakan Gunakan Kartu Dengan Nomor '+prev_card_no, 'backToMain', false );
+                return;
+            }
             // Adjusting Promo Data if Exist
             if (retryDetails.promo !== undefined && retryDetails.promo !== null ){
                 console.log('prev_promo', JSON.stringify(retryDetails.promo));
@@ -365,6 +372,7 @@ Base{
                 // }
             }
             retryDetails.provider = provider;
+            retryDetails.prev_card_no = prev_card_no;
             retryDetails.raw = {
                 value: prev_topup_denom,
                 provider: provider,
@@ -625,12 +633,14 @@ Base{
 //        console.log('get_trx_check_result', now, res);
         var i = JSON.parse(res);
         var trx_name = '';
+        var prev_card_no = '';
         var trx_id = FUNC.get_value(i.product_id);
         if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
         retryCategory = i.category;
         if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
         if (i.category == 'TOPUP')
             trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
+            prev_card_no = i.remarks.raw.card_no;
         var total_payment = i.amount.toString();
         if (i.category == 'SHOP'){
             trx_name = i.category + ' ' + i.remarks.provider;
@@ -695,6 +705,9 @@ Base{
             set_pending_trx_data(i.remarks, i.promo_data);
             if (i.retry_able == 1) {
                 retryAbleTransaction = true;
+                if (i.category == 'TOPUP'){
+                    notice_retry_able.title_text = 'TRANSAKSI ANDA DAPAT DILANJUTKAN DENGAN KARTU YANG SAMA\nSILAKAN TEKAN TOMBOL LANJUT'
+                }
                 global_confirmation_frame.no_button();
             }
         }

@@ -1,6 +1,7 @@
 14.0.G9-GLOBAL:
 - Change CD Library,
 - Disable CD Init on Start,
+- Disable Change Card on Topup Online Retry Code,
 - ...
 
 14.0.G8-GLOBAL:

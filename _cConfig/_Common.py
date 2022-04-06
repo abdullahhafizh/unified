@@ -1838,18 +1838,36 @@ def check_retry_able(data):
             LOGGER.warning((e))
             return 0
     elif data.get('shop_type') == 'topup':
-        # Can Change Topup Provider
+        #  globalCart = {
+        #     value: selectedDenom.toString(),
+        #     provider: provider,
+        #     admin_fee: adminFee,
+        #     card_no: cardData.card_no,
+        #     prev_balance: cardData.balance,
+        #     bank_type: cardData.bank_type,
+        #     bank_name: cardData.bank_name,
+        # }
+        # var final_balance = parseInt(cardData.balance) + parseInt(selectedDenom)
+        # details.qty = 1;
+        # details.value = selectedDenom.toString();
+        # details.provider = provider;
+        # details.admin_fee = adminFee;
+        # details.raw = globalCart;
+        # details.status = '1';
+        # details.final_balance = final_balance.toString();
+        # details.denom = selectedDenom.toString();
+        # Disabled Can Change Topup Provider | 2022-04-06
         try:
+            raw = data.get('raw')
             # Topup DKI, BRI & BCA Retry Validation Also User Connection Status
-            if _Helper.is_online(_Helper.whoami()+'_topup'):
+            if _Helper.is_online(_Helper.whoami()+'_topup') and raw.get('bank_name') in ['BRI', 'BCA', 'DKI']:
                 return 1
             topup_value = int(data.get('value', '0'))
-            if MANDIRI_ACTIVE_WALLET > topup_value:
+            if MANDIRI_ACTIVE_WALLET > topup_value and raw.get('bank_name') in ['MANDIRI']:
                 return 1
-            if BNI_ACTIVE_WALLET > topup_value:
+            if BNI_ACTIVE_WALLET > topup_value and raw.get('bank_name') in ['BNI']:
                 return 1
-            # if DKI_TOPUP_ONLINE_BY_SERVICE is True:
-            #     return 0
+            return 0
         except Exception as e:
             LOGGER.warning((e))
             return 0
