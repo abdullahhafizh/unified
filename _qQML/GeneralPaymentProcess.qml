@@ -1733,7 +1733,8 @@ Base{
             button_text: 'BATAL'
             modeReverse: true
             z:99
-            visible: frameWithButton && (details.payment != 'debit')
+//            visible: frameWithButton && (details.payment != 'debit')
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
