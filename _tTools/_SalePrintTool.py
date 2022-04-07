@@ -150,7 +150,7 @@ GET_PAYMENT_METHOD = None
 GET_CARD_NO = None
 GET_PAYMENT_NOTES = None
 GET_TOTAL_NOTES = 0
-MAX_LENGTH = 36
+MAX_LENGTH = 40
 
 
 def chunk_text(text, length=24, delimiter="\r\n"):
@@ -1579,7 +1579,7 @@ def print_card_history(payload):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
-        pdf.cell(padding_left, 0, 'NO|  TIME  |    TRX    |AMOUNT|BALANCE', 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO|   TIME   |     TRX     |  AMT  | BAL ', 0, 0, 'L')
         pdf.ln(1.5)
         pdf.set_font(USED_FONT, 'B', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
