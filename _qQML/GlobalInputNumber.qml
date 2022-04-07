@@ -239,7 +239,6 @@ Base{
         console.log('get_balance', text, now);
         press = '0';
         popup_loading.close();
-        preload_check_card.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
             switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
@@ -292,7 +291,7 @@ Base{
             // Add Check Validity Prev Card No Must Be Same With New Card
             if (prev_card_no !== cardData.card_no){
                 console.log('Card No Mismatch', prev_card_no, cardData.card_no);
-                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Nomor Kartu Berbeda, Silakan Gunakan Kartu Dengan Nomor '+prev_card_no, 'backToMain', false );
+                switch_frame('source/insert_card_new.png', 'Nomor Kartu Berbeda', 'Silakan Gunakan Kartu Dengan Nomor '+prev_card_no, 'backToMain', false );
                 return;
             }
             // Adjusting Promo Data if Exist
@@ -799,6 +798,7 @@ Base{
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = false;
         press = '0';
+        global_frame.modeAction = "";
         global_frame.closeMode = closeMode;
         global_frame.timerDuration = 5;
         if (closeMode.indexOf('|') > -1){
@@ -1162,14 +1162,6 @@ Base{
     //==============================================================
 
 
-    PopupLoading{
-        id: popup_loading
-    }
-
-    GlobalFrame{
-        id: global_frame
-    }
-
     LoadingView{
         id:loading_view
         z: 99
@@ -1334,5 +1326,12 @@ Base{
         }
     }
 
+    PopupLoading{
+        id: popup_loading
+    }
+
+    GlobalFrame{
+        id: global_frame
+    }
 }
 
