@@ -2194,6 +2194,7 @@ Base{
             button_text: 'Y A'
             modeReverse: true
             blinkingMode: true
+            visible: !transactionInProcess
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
