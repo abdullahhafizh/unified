@@ -2,6 +2,7 @@
 - Change CD Library,
 - Disable CD Init on Start,
 - Disable Change Card on Topup Online Retry Code,
+- Fix Mandiri Card Log Timestamp,
 - ...
 
 14.0.G8-GLOBAL:

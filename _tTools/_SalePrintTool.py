@@ -1579,7 +1579,7 @@ def print_card_history(payload):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
-        pdf.cell(padding_left, 0, ' NO | TIME | TRX | AMOUNT | BALANCE', 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO|  TIME  |    TRX    |AMOUNT|BALANCE', 0, 0, 'L')
         pdf.ln(1.5)
         pdf.set_font(USED_FONT, 'B', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'L')

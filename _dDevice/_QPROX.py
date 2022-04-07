@@ -1679,7 +1679,7 @@ def parse_card_history(bank, raw):
                 continue
             row = history.split('|')
             card_history.append({
-                'date': datetime.strptime(row[1][:6], '%y%m%d').strftime('%Y-%m-%d'),
+                'date': datetime.strptime(row[1][:6], '%d%m%y').strftime('%Y-%m-%d'),
                 'time': ':'.join(_Helper.strtolist(row[1][6:])),
                 'type': '-'.join([_Common.MANDIRI_LOG_LEGEND.get(row[4], ''), row[2]]),
                 'amount': row[5],
