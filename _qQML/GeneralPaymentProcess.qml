@@ -1771,7 +1771,7 @@ Base{
                     if (press!='0') return;
                     press = '1'
                     switch(modeButtonPopup){
-                    case 'retrigger_bill':                      
+                    case 'retrigger_bill':
                         _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
                         back_button.visible = false;
                         modeButtonPopup = undefined;
@@ -2193,7 +2193,7 @@ Base{
             button_text: 'Y A'
             modeReverse: true
             blinkingMode: true
-            visible: !transactionInProcess
+            visible: !transactionInProcess && receivedPayment < totalPrice
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
