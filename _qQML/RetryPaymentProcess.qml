@@ -1241,7 +1241,7 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !transactionInProcess
+        visible: !transactionInProcess && receivedPayment < totalPrice
 
 //        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
 

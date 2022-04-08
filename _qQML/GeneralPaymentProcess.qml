@@ -1337,7 +1337,7 @@ Base{
         modeReverse: true
         z: 10
 //        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
-        visible: !transactionInProcess || receivedPayment < totalPrice
+        visible: !transactionInProcess && receivedPayment < totalPrice
 
         MouseArea{
             anchors.fill: parent
@@ -1733,7 +1733,7 @@ Base{
             modeReverse: true
             z:99
 //            visible: frameWithButton && (details.payment != 'debit')
-            visible: !transactionInProcess && parent.visible
+            visible: !transactionInProcess && receivedPayment < totalPrice
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -1840,7 +1840,7 @@ Base{
             anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
-            visible: !transactionInProcess && parent.visible
+            visible: !transactionInProcess && receivedPayment < totalPrice
 
             MouseArea{
                 anchors.fill: parent
