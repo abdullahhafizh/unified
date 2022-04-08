@@ -1865,7 +1865,7 @@ Base{
                         release_print_with_refund(refundAmount.toString(), 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
                         break;
                     }
-                     popup_refund.close();
+                    popup_refund.close();
                     // proceedAble = true;
                     // initial_process();
                 }
@@ -2079,7 +2079,7 @@ Base{
             button_text: 'Y A'
             modeReverse: true
             blinkingMode: true
-            visible: !transactionInProcess
+            visible: !transactionInProcess && receivedPayment < totalPrice
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
