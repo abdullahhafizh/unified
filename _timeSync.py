@@ -20,7 +20,7 @@ def gettime_ntp(addr='time.nist.gov'):
     try:
         # Timing out the connection after 5 seconds, if no response received
         client.settimeout(5.0)
-        client.sendto( data, (addr, 123))
+        client.sendto( data.encode('utf-8'), (addr, 123))
         data, address = client.recvfrom( 1024 )
         if data:
             epoch_time = struct.unpack( '!12I', data )[10]
