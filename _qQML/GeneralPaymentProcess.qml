@@ -1337,11 +1337,13 @@ Base{
         modeReverse: true
         z: 10
 //        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
-        visible: !transactionInProcess
+        visible: !transactionInProcess || receivedPayment < totalPrice
 
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                // Add Extra Handling
+                if (receivedPayment >= totalPrice) return;
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
