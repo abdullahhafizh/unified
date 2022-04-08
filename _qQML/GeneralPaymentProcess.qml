@@ -894,12 +894,12 @@ Base{
                 do_refund_or_print('cash_device_error');
                 return;
             } else if (grgResult == 'COMPLETE'){
-                back_button.visible = false;
                 _SLOT.stop_bill_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
+                transactionInProcess = true;
                 return;
             } else if (grgResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){
@@ -964,11 +964,10 @@ Base{
             } if (meiResult == 'COMPLETE'){
                 _SLOT.start_dis_accept_mei();
                 _SLOT.start_store_es_mei();
-                back_button.visible = false;
                 popup_loading.textMain = 'Harap Tunggu Sebentar'
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda'
                 popup_loading.open();
-//                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
+                transactionInProcess = true;
             } else {
                 receivedPayment = parseInt(meiResult);
             }
@@ -1222,12 +1221,12 @@ Base{
             onTriggered:{
                 // console.log('[GLOBAL-PAYMENT]', abc.counter);
                 abc.counter -= 1;
-                //Force Allowed Back Button For Cash after 240 seconds
-                if (details.payment=='cash'){
-                    if (abc.counter < (timer_value-240)){
-                        back_button.visible = true;
-                    }
-                }
+                //Disable Force Allowed Back Button For Cash after 240 seconds
+                // if (details.payment=='cash'){
+                //     if (abc.counter < (timer_value-240)){
+                //         back_button.visible = true;
+                //     }
+                // }
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -1336,14 +1335,16 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-//        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
         visible: !transactionInProcess && receivedPayment < totalPrice
 
         MouseArea{
             anchors.fill: parent
             onClicked: {
                 // Add Extra Handling
-                if (receivedPayment >= totalPrice) return;
+                if (receivedPayment >= totalPrice){
+                    back_button.visible = false;
+                    return;
+                }
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';

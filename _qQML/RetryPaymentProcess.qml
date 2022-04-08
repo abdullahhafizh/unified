@@ -799,13 +799,13 @@ Base{
                 do_refund_or_print('cash_device_error');
                 return;
             } else if (grgResult == 'COMPLETE'){
-                back_button.visible = false;
                 _SLOT.stop_bill_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
+                transactionInProcess = true;
                 return;
             } else if (grgResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > initialPayment){
@@ -873,10 +873,11 @@ Base{
             } if (meiResult == 'COMPLETE'){
                 _SLOT.start_dis_accept_mei();
                 _SLOT.start_store_es_mei();
-                back_button.visible = false;
                 popup_loading.textMain = 'Harap Tunggu Sebentar'
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda'
                 popup_loading.open();
+                transactionInProcess = true;
+
 //                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else {
                 receivedPayment = parseInt(meiResult);
@@ -1249,7 +1250,10 @@ Base{
             anchors.fill: parent
             onClicked: {
                 // Add Extra Handling
-                if (receivedPayment >= totalPrice) return;
+                if (receivedPayment >= totalPrice){
+                    back_button.visible = false;
+                    return;
+                }
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
