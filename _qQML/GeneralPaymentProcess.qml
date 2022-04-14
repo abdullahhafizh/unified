@@ -542,7 +542,7 @@ Base{
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                 return;
             }
             switch_frame('source/smiley_down.png', 'Waktu Pembayaran QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow|3', true )
@@ -687,7 +687,7 @@ Base{
             details.payment_received = receivedPayment.toString();
             details.pending_trx_code = uniqueCode;
             console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
-            release_print('Transaksi Anda Gagal', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+            release_print('Transaksi Anda Gagal', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
             return;
         }
         do_refund_or_print('topup_prepaid_error');
@@ -755,7 +755,7 @@ Base{
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
-                release_print('Transaksi Anda Gagal', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                release_print('Transaksi Anda Gagal', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                 return;
             }
             do_refund_or_print('card_eject_error');
@@ -1264,7 +1264,7 @@ Base{
                             details.payment_received = receivedPayment.toString();
                             details.pending_trx_code = uniqueCode;
                             console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
-                            release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                            release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                             return;
                         }
                         set_refund_channel('CS_ONLY');
@@ -1285,7 +1285,7 @@ Base{
                                 details.payment_received = receivedPayment.toString();
                                 details.pending_trx_code = uniqueCode;
                                 console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
-                                release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                                release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                                 return;
                             }
                         } else {
@@ -1490,7 +1490,7 @@ Base{
                     details.pending_trx_code = uniqueCode;
                     details.receipt_title = 'Transaksi Anda Gagal';
                     console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                    release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                    release_print('Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                     return;
                 }
                 set_refund_channel('CS_ONLY');
