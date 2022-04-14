@@ -1447,7 +1447,7 @@ Base{
                     details.payment_received = receivedPayment.toString();
                     details.pending_trx_code = uniqueCode;
                     console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                    release_print('Anda Telah Membatalkan Transaksi', 'Silakan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                    release_print('Anda Telah Membatalkan Transaksi', 'Silakan Ambil Struk Transaksi Anda dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                     return;
                 }
                 do_refund_or_print('user_cancellation');
@@ -1476,7 +1476,7 @@ Base{
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
-                release_print('Anda Telah Membatalkan Transaksi', 'Silakan Lakukan Transaksi Ulang Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
+                release_print('Anda Telah Membatalkan Transaksi', 'Silakan Ambil Struk Transaksi Anda dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
                 return;
             }
             set_refund_channel('CS_ONLY');
