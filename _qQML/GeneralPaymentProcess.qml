@@ -163,7 +163,6 @@ Base{
         promoData = trx_data;
         var closeTime = 5;
         if (result == 'AVAILABLE'){
-            // Promo Only Direct Impact With Cash Payment
             // Otherwise will be impacted after payment for further validation on payment_channel
             // Bypassed Enable Promo When Value has changed on details.value
             if (details.payment == 'cash' || details.value != promoData.value){
