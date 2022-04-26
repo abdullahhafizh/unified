@@ -234,9 +234,11 @@ Base{
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                         console.log('Selected Category : ', now, category_text);
                         _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
-                        //Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
+                        // Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
                         if (category_text.toLowerCase()=='uang elektronik') my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
                         else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
+                        // TODO: Handle New Category Ancol Here
+                        // else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
                         else my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text});
                     }
                 }

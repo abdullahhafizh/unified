@@ -165,7 +165,8 @@ Base{
         if (result == 'AVAILABLE'){
             // Promo Only Direct Impact With Cash Payment
             // Otherwise will be impacted after payment for further validation on payment_channel
-            if (details.payment == 'cash'){
+            // Bypassed Enable Promo When Value has changed on details.value
+            if (details.payment == 'cash' || details.value != promoData.value){
                 details = trx_data;
                 details.promo_code_active = true;
             }
