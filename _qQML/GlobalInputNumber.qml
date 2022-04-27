@@ -476,6 +476,7 @@ Base{
             false_notif('Tagihan Anda Tidak Ditemukan/Belum Tersedia Saat Ini', 'backToPrevious', 'NOT_AVAILABLE');
             return;
         }
+        popup_loading.close();
         ppobTagihanData = {
             customer: i.customer,
             value: i.total.toString(),
