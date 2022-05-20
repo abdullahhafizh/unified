@@ -1,3 +1,9 @@
+14.0.G10-GLOBAL:
+- Disable Button Not Active Denom,
+- Move Last Card Check Into Temp Data,
+- Add Panel Card Check Log Into Dashboard,
+- ...
+
 14.0.G9-GLOBAL:
 - Change CD Library,
 - Disable CD Init on Start,

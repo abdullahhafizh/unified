@@ -749,6 +749,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
             # "Response":"0145000100018635|20000|298500|01010124014500010001863500298500000200002021011105192209013149124254455354444556454C5A5359423031885000942678845E374B6E1B1C4B8A025E180B1B0202180B1C1B373D4E1B5E6E026E27276E5E1C4B4B5E4E4B4B8A0B1C4E378A8A4B278A4B1B1C4E5E02023D1B4B27370B5E378A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E278A4B844E378482820B3D828A0B840B4E274B8A6E3718820B020B0B3D4B8A848A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4E8A4B0B060B1B848A18843D5E06183D4EF4C2998190093B0DB181","ErrorDesc":"Sukses"}
             LOGGER.debug((_param, bank, mode, response, result))
+            last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
             if response == 0 and '|' in result:
                 return {
                     'bank': bank,
@@ -768,8 +769,8 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 if service_response['Result'] in BCA_TOPUP_ONLINE_ERROR or BCA_KEY_REVERSAL in result:
                     # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
                     # Store Local Card Number Here For Futher Reversal Process
-                    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
-                    previous_card_data = _QPROX.LAST_BALANCE_CHECK
+                    previous_card_no = last_card_check['card_no']
+                    previous_card_data = last_card_check
                     # previous_card_data['refference_id'] = LAST_BCA_REFF_ID
                     _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
                     reset_bca_session()
@@ -1107,13 +1108,14 @@ def get_topup_readiness():
             'printer_setting': '1' if _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default') == 'Default' else '0',
         }
         ADMIN_FEE_INCLUDE = True if ready['admin_include'] == '1' else False
+        last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
         # Assuming always check card balance first before check topup readiness validation
-        if _QPROX.LAST_BALANCE_CHECK is not None:
-            if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BRI':
+        if not _Helper.empty(last_card_check):
+            if last_card_check['bank_name'] == 'BRI':
                 ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
-            if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'BCA':
+            if last_card_check['bank_name'] == 'BCA':
                 ready['bca'] = 'AVAILABLE' if _Common.BCA_TOPUP_ONLINE is True else 'N/A'
-            if _QPROX.LAST_BALANCE_CHECK['bank_name'] == 'DKI':
+            if last_card_check['bank_name'] == 'DKI':
                 ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE_ACTIVE is True) else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
@@ -1181,7 +1183,9 @@ def update_balance_online(bank):
     if bank is None or bank not in _Common.ALLOWED_BANK_UBAL_ONLINE:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
         return
-    last_card_check = _QPROX.LAST_BALANCE_CHECK
+    # last_card_check = _QPROX.LAST_CARD_CHECK
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+
     if bank == 'MANDIRI':
         try:            
             param = QPROX['UPDATE_BALANCE_ONLINE_MANDIRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN + '|' 
@@ -1209,7 +1213,8 @@ def update_balance_online(bank):
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
     elif bank == 'BNI':
         try:
-            if _QPROX.LAST_BALANCE_CHECK['able_topup'] in ERROR_TOPUP.keys():
+            last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+            if last_card_check['able_topup'] in ERROR_TOPUP.keys():
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|INVALID_CARD')
                 return
             # Do Action List :
@@ -1219,7 +1224,7 @@ def update_balance_online(bank):
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
                 return
             # - Request Update Balance BNI
-            crypto_data = check_update_balance_bni(card_info, _QPROX.LAST_BALANCE_CHECK['balance'])
+            crypto_data = check_update_balance_bni(card_info, last_card_check['balance'])
             if crypto_data is False:
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
                 return
@@ -1233,7 +1238,7 @@ def update_balance_online(bank):
                 # _Helper.dump(send_crypto_tapcash)
                 if send_crypto_tapcash is True:
                 # - Send Output as Mandiri Specification    
-                    last_balance = int(_QPROX.LAST_BALANCE_CHECK['balance']) + int(crypto_data['amount'])
+                    last_balance = int(last_card_check['balance']) + int(crypto_data['amount'])
                     output = {
                         'bank': bank,
                         'card_no': card_info[4:20],
@@ -1291,14 +1296,15 @@ def update_balance_online(bank):
                 _Common.remove_temp_data(card_no)
                 TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
-                previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
+                last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+                previous_card_no = last_card_check['card_no']
                 if GENERAL_NO_PENDING in result:
                     _Common.remove_temp_data(previous_card_no)
                     TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
                     if BCA_KEY_REVERSAL in result:
                         # Store Local Card Number Here For Futher Reversal Process
-                        previous_card_data = _QPROX.LAST_BALANCE_CHECK
+                        previous_card_data = last_card_check
                         _Common.store_to_temp_data(previous_card_no, json.dumps(previous_card_data))
                         # TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|BCA_NEED_REVERSAL')
                         # param_reversal = QPROX['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
@@ -1318,8 +1324,9 @@ def start_retry_topup_online_bca(amount, trxid):
 
 
 def retry_topup_online_bca(amount, trxid):
-    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
-    previous_card_balance = _QPROX.LAST_BALANCE_CHECK['balance']
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    previous_card_no = last_card_check['card_no']
+    previous_card_balance = last_card_check['balance']
     check_card_balance = _QPROX.direct_card_balance()
     #  output = {
     #     'balance': balance,
@@ -1374,8 +1381,9 @@ def start_retry_topup_online_bri(amount, trxid):
 
 
 def retry_topup_online_bri(amount, trxid):
-    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
-    previous_card_balance = _QPROX.LAST_BALANCE_CHECK['balance']
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    previous_card_no = last_card_check['card_no']
+    previous_card_balance = last_card_check['balance']
     check_card_balance = _QPROX.direct_card_balance()
     #  output = {
     #     'balance': balance,
@@ -1427,8 +1435,9 @@ def start_retry_topup_online_dki(amount, trxid):
 
 
 def retry_topup_online_dki(amount, trxid):
-    previous_card_no = _QPROX.LAST_BALANCE_CHECK['card_no']
-    previous_card_balance = _QPROX.LAST_BALANCE_CHECK['balance']
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    previous_card_no = last_card_check['card_no']
+    previous_card_balance = last_card_check['balance']
     check_card_balance = _QPROX.direct_card_balance()
     #  output = {
     #     'balance': balance,
@@ -1519,7 +1528,7 @@ def topup_online(bank, cardno, amount, trxid=''):
     #     output = {
     #             'last_balance': '999999',
     #             'report_sam': 'DUMMY',
-    #             'card_no': _QPROX.LAST_BALANCE_CHECK['card_no'],
+    #             'card_no': _QPROX.LAST_CARD_CHECK['card_no'],
     #             'report_ka': 'DUMMY',
     #             'bank_id': '3' if bank == 'BRI' else '4',
     #             'bank_name': bank,
@@ -1534,7 +1543,7 @@ def topup_online(bank, cardno, amount, trxid=''):
     #     output['last_wallet'] = _Common.MDS_WALLET
     #     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
     #     return
-    # LAST_BALANCE_CHECK = {
+    # LAST_CARD_CHECK = {
     #     'balance': balance,
     #     'card_no': card_no,
     #     'bank_type': result.split('|')[2].replace('#', ''),
@@ -1546,7 +1555,9 @@ def topup_online(bank, cardno, amount, trxid=''):
             LOGGER.warning((bank, 'NOT_ALLOWED_PENDING_ONLINE'))
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             return False
-        last_card_check = _QPROX.LAST_BALANCE_CHECK
+        # last_card_check = _QPROX.LAST_CARD_CHECK
+        last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+
         if bank == 'BRI':
             if not _Common.BRI_SAM_ACTIVE:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
@@ -1628,7 +1639,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
             return True
         elif bank == 'BCA':
-            # last_check = _QPROX.LAST_BALANCE_CHECK            
+            # last_check = _QPROX.LAST_CARD_CHECK            
             _param = {
                 'card_no': cardno,
                 'amount': amount,
@@ -1852,10 +1863,12 @@ def topup_online(bank, cardno, amount, trxid=''):
             __param = QPROX['REQUEST_TOPUP_DKI'] + '|' + amount + '|'
             response, result = _Command.send_request(param=__param, output=None)
             LOGGER.debug((__param, bank, response, result))
+            last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+
             if response == 0 and '|' in result:
                 card_info = result.split('|')[5] + result.split('|')[3] + result.split('|')[4]
                 _param['card_info'] = card_info
-                _param['prev_balance'] = _QPROX.LAST_BALANCE_CHECK['balance']
+                _param['prev_balance'] = last_card_check['balance']
                 update_result = update_balance(_param, bank='DKI', mode='TOPUP')
                 if not update_result:
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')

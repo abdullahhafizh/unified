@@ -469,7 +469,7 @@ def start_check_card_balance():
     _Helper.get_thread().apply_async(check_card_balance)
 
 
-LAST_BALANCE_CHECK = None   
+LAST_CARD_CHECK = None   
 FW_BANK = _Common.FW_BANK
 
 DUMMY_BALANCE_CHECK_BALANCE = [
@@ -509,7 +509,7 @@ DUMMY_BALANCE_CHECK_BALANCE = [
 
 
 def check_card_balance():
-    global LAST_BALANCE_CHECK
+    global LAST_CARD_CHECK
     param = QPROX['BALANCE'] + '|'
     # Start Force Testing Mode ==========================
     if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
@@ -554,7 +554,8 @@ def check_card_balance():
         #         output['balance'] = prev_last_balance
         #     else:
         #         _Common.log_to_temp_config(card_no, balance)
-        LAST_BALANCE_CHECK = output
+        LAST_CARD_CHECK = output
+        _Common.store_to_temp_data('last-card-check', json.dumps(output))
         _Common.NFC_ERROR = ''
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
     else:
@@ -698,13 +699,15 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             __deposit_last_balance = _Common.MANDIRI_ACTIVE_WALLET
         __card_last_balance = _Helper.reverse_hexdec(__report_emoney[54:62])
         # Handle Force Settlement as Success TRX | Redefine Emoney Last Balance
+        last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+
         if status == '0000' and __card_last_balance == 0:
-            __card_last_balance = int(LAST_BALANCE_CHECK['balance']) + (int(amount) - int(_Common.C2C_ADMIN_FEE[0]))
+            __card_last_balance = int(last_card_check['balance']) + (int(amount) - int(_Common.C2C_ADMIN_FEE[0]))
             LOGGER.info(('REDEFINE EMONEY LAST BALANCE FROM FORCE_SETTLEMENT', __card_last_balance))
         # if not _Helper.empty(r[0].strip()) or r[0] != '0':
         #     __card_last_balance = r[0].strip()
-        if __report_emoney[:16] == LAST_BALANCE_CHECK['card_no']:
-            __card_prev_balance = LAST_BALANCE_CHECK['balance']
+        if __report_emoney[:16] == last_card_check['card_no']:
+            __card_prev_balance = last_card_check['balance']
         else:
             __card_prev_balance = (int(__card_last_balance) - int(amount)) - int(_Common.C2C_ADMIN_FEE[0])
         output = {
@@ -774,27 +777,29 @@ def top_up_mandiri_correction(amount, trxid=''):
     # Add Check Card Number First Before Correction - Optional
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))
-    # check_card_no = LAST_BALANCE_CHECK['card_no']
+    # check_card_no = LAST_CARD_CHECK['card_no']
     check_card_no = '0'
     last_balance = '0'
     # if FORCE_MANDIRI_CHECK_NO is True:
-    #     check_card_no = LAST_BALANCE_CHECK['card_no']
-    #     last_balance = LAST_BALANCE_CHECK['balance']
+    #     check_card_no = LAST_CARD_CHECK['card_no']
+    #     last_balance = LAST_CARD_CHECK['balance']
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    
     if response == 0 and '|' in result:
         check_card_no = result.split('|')[1].replace('#', '')
         last_balance = result.split('|')[0]
     else:
-        LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
+        LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, last_card_check['card_no'], trxid, result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
         return
-    if LAST_BALANCE_CHECK['card_no'] != check_card_no:
-        LOGGER.warning(('MDR_CARD_MISSMATCH', check_card_no, LAST_BALANCE_CHECK['card_no'], trxid, result))
+    if last_card_check['card_no'] != check_card_no:
+        LOGGER.warning(('MDR_CARD_MISSMATCH', check_card_no, last_card_check['card_no'], trxid, result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
         # get_force_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
     # Below Condition under Transaction Success
-    if (int(LAST_BALANCE_CHECK['balance']) + int(amount) - 1500) == int(last_balance):
+    if (int(last_card_check['balance']) + int(amount) - 1500) == int(last_balance):
         # Force Settlement As Success
         get_force_settlement(amount, trxid, force_status='0000')
         # param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
@@ -854,8 +859,10 @@ def get_force_settlement(amount, trxid, force_status=None):
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     global LAST_C2C_APP_TYPE
-    if LAST_BALANCE_CHECK['card_no'] in _Common.MANDIRI_CARD_BLOCKED_LIST:
-        LOGGER.warning(('Card No: ', LAST_BALANCE_CHECK['card_no'], 'Found in Mandiri Card Blocked Data'))
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    
+    if last_card_check['card_no'] in _Common.MANDIRI_CARD_BLOCKED_LIST:
+        LOGGER.warning(('Card No: ', last_card_check['card_no'], 'Found in Mandiri Card Blocked Data'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
         return
     prev_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
@@ -920,6 +927,8 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
         slot = str(_Common.MANDIRI_ACTIVE)
     param = QPROX['TOPUP'] + '|' + str(amount)
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    
     if _response == 0 and '|' in _result:
         __data = _result.split('|')
         __status = __data[0]
@@ -927,7 +936,7 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
         if __status == '0000':
             __remarks = __data[5]
         if __status == '6969':
-            LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
+            LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', last_card_check))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
             return
         if __status == '6984':
@@ -1199,6 +1208,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     param = QPROX['INIT_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((attempt, amount, trxid, slot, result))
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     # print('pyt: topup_offline_bni > init_bni : ', result)
     if response == 0 and '12292' not in result:
         # Update : Add slot after value
@@ -1215,7 +1225,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             __status = __data[0]
             if __status in ['6969', '6984']:
                 if __status == '6969':
-                    LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
+                    LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', last_card_check))
                     QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
                 elif __status == '6984':
                     LOGGER.warning(('BNI_SAM_BALANCE_NOT_SUFFICIENT', slot, _result))
@@ -1229,9 +1239,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                         'samCardSlot': _Common.BNI_SINGLE_SAM,
                         'samPrevBalance': deposit_prev_balance,
                         'samLastBalance': _Common.BNI_ACTIVE_WALLET,
-                        'topupCardNo': LAST_BALANCE_CHECK['card_no'],
-                        'topupPrevBalance': LAST_BALANCE_CHECK['balance'],
-                        'topupLastBalance': LAST_BALANCE_CHECK['balance'],
+                        'topupCardNo': last_card_check['card_no'],
+                        'topupPrevBalance': last_card_check['balance'],
+                        'topupLastBalance': last_card_check['balance'],
                         'status': 'FAILED',
                         'remarks': _result,
                     }
@@ -1302,9 +1312,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                     'samCardSlot': _Common.BNI_SINGLE_SAM,
                     'samPrevBalance': deposit_prev_balance,
                     'samLastBalance': _Common.BNI_ACTIVE_WALLET,
-                    'topupCardNo': LAST_BALANCE_CHECK['card_no'],
-                    'topupPrevBalance': LAST_BALANCE_CHECK['balance'],
-                    'topupLastBalance': LAST_BALANCE_CHECK['balance'],
+                    'topupCardNo': last_card_check['card_no'],
+                    'topupPrevBalance': last_card_check['balance'],
+                    'topupLastBalance': last_card_check['balance'],
                     'status': 'FAILED',
                     'remarks': _result,
                 }

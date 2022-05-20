@@ -14,7 +14,7 @@ Rectangle {
     width: buttonWidth
     height: 183
     color: 'transparent'
-    visible: true
+    visible: buttonActive
 
     Text{
         id: master_not_active_text
