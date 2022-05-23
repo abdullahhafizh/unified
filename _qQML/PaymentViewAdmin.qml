@@ -254,7 +254,7 @@ Base{
                     spacing: 25
                     Image{
                         id: img_count_20
-                       width: 100; height: 50;
+                        width: 100; height: 50;
         //                rotation: 45
                         source: "source/20rb.png"
                         fillMode: Image.PreserveAspectFit
