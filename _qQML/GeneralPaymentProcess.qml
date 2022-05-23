@@ -11,7 +11,7 @@ Base{
 //                property var globalScreenType: '2'
 //                height: (globalScreenType=='2') ? 1024 : 1080
 //                width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 600
+    property int timer_value: 300
     property var press: '0'
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
@@ -596,6 +596,7 @@ Base{
 //        if (qrMode=='linkaja') _SLOT.start_do_check_linkaja_qr(JSON.stringify(qrPayload));
         var msg = '*' + details.shop_type.toUpperCase() + ' ' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value);
         if (details.shop_type=='topup') msg = '*Isi Ulang Kartu Prabayar '+ details.provider + ' Rp. ' + FUNC.insert_dot(details.denom) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
+        if (details.provider.toLowerCase() == 'tagihan omnitsel') msg = msg + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());=
         if (promoCodeActive) msg = msg +'\nPromo Aktif '+promoData.promo.code+' '+promoData.promo.name;
         press = '0'
         if (info.payment_time != undefined) qr_payment_frame.timerDuration = parseInt(info.payment_time);
