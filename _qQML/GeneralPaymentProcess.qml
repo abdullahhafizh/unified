@@ -599,7 +599,7 @@ Base{
         if (details.shop_type=='topup') msg = '*Isi Ulang Kartu Prabayar '+ details.provider + ' Rp. ' + FUNC.insert_dot(details.denom) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
         if (details.shop_type=='ppob') {
             msg = msg + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
-            if (details.ppob_mode=='tagihan') msg = '*' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value); + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
+            if (details.ppob_mode=='tagihan') msg = '*' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
         }
         if (promoCodeActive) msg = msg +'\nPromo Aktif '+promoData.promo.code+' '+promoData.promo.name;
         press = '0'
