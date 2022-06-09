@@ -226,8 +226,10 @@ def bni_topup(param, __global_response__):
     LOG.fw("013:Parameter = ", C_Slot)
 
     res_str, card_number, reportSAM = prepaid.topupbni_credit_multi_sam(C_Slot, C_Denom, b"5")
-    sleep(2)
-    resS, sam_last_saldo, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
+    # str(int(__report_sam[58:64], 16))
+    sam_last_saldo = str(BNI_SAM_SALDO)
+    # sleep(2)
+    # resS, sam_last_saldo, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -236,6 +238,9 @@ def bni_topup(param, __global_response__):
         amountBeforeStr = reportSAM[34:40]
         # LOG.fw("013:amountBeforeStr = ",amountBeforeStr)
         amountBefore = int(amountBeforeStr, 16)
+        
+        # Override Sam Last Saldo From Report
+        sam_last_saldo = str(int(reportSAM[58:64], 16))
 
         amountAfterStr = reportSAM[40:46]
         # LOG.fw("013:amountAfterStr = ",amountAfterStr)
