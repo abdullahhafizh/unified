@@ -18,6 +18,8 @@ Base{
     property var category: []
     property bool frameWithButton: false
 
+    property var selectProductOperator: ['pulsa', 'uang elektronik']
+
     property var press: '0'
 
     Stack.onStatusChanged:{
@@ -235,7 +237,8 @@ Base{
                         console.log('Selected Category : ', now, category_text);
                         _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
                         // Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
-                        if (category_text.toLowerCase()=='uang elektronik') my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
+                        // Add List Operator Select selectProductOperator
+                        if (selectProductOperator.indexOf(category_text.toLowerCase()) !== false) my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
                         else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
                         // TODO: Handle New Category Ancol Here
                         // else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
