@@ -238,11 +238,13 @@ Base{
                         _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
                         // Switch View Here, If Uang Elektronik Get Into Another Select Operator Layer
                         // Add List Operator Select selectProductOperator
-                        if (selectProductOperator.indexOf(category_text.toLowerCase()) !== false) my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
-                        else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
-                        // TODO: Handle New Category Ancol Here
-                        // else if (category_text.toLowerCase()=='combo sakti') preload_combo_sakti.open();
-                        else my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text});
+                        if (category_text.toLowerCase()=='combo sakti') {
+                            preload_combo_sakti.open();
+                        } else if (selectProductOperator.indexOf(category_text.toLowerCase()) !== false) {
+                            my_layer.push(ppob_product_operator, {ppobData: ppobData, selectedCategory: category_text});
+                        } else {
+                            my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text});
+                        }
                     }
                 }
             }
