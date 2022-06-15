@@ -1,10 +1,15 @@
+14.0.G11-GLOBAL:
+- Add PPOB Select Operator in Certain Category,
+- Force Disable Topup Prepaid From Check Balance,
+- Fix WA Redeem Confirm Display,
+- ...
+
 14.0.G10-GLOBAL:
 - Disable Button Not Active Denom,
 - Move Last Card Check Into Temp Data,
 - Add Panel Card Check Log Into Dashboard,
 - Fix Missing Payment Type in QR Linkaja PPOB,
 - Fix Flow Topup Offline BNI With New FW 1.5.1,
-- Add PPOB Select Operator in Certain,
 - ...
 
 14.0.G9-GLOBAL:

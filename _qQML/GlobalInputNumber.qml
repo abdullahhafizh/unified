@@ -438,6 +438,7 @@ Base{
             return;
         }
         console.log('get_check_voucher', now, res);
+        popup_loading.close();
         var i = JSON.parse(v.replace('CHECK_VOUCHER|', ''));
         vCollectionData = i;
         vCollectionMode = i.mode;
@@ -1125,7 +1126,7 @@ Base{
                     return
                 case 'WA_VOUCHER':
                     console.log('Checking WA Invoice Number : ', now, textInput);
-                    popup_loading.open('Memeriksa Kode Ulang Anda Anda...')
+                    popup_loading.open('Memeriksa Voucher Code (VCODE) Anda...')
                     _SLOT.start_check_voucher(textInput);
                     return;
                 default:
