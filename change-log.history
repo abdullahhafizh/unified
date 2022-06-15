@@ -3,6 +3,7 @@
 - Force Disable Topup Prepaid From Check Balance,
 - Fix WA Redeem Confirm Display,
 - Change Card Stock Indicator Level,
+- Add Handler Anomali Similar Timestamp On Bill Notes Receive,
 - ...
 
 14.0.G10-GLOBAL:

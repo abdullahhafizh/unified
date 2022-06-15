@@ -83,6 +83,7 @@ BILL = {}
 SMALL_NOTES_NOT_ALLOWED = _Common.BILL_RESTRICTED_NOTES.split('|')
 OPEN_STATUS = False
 CASH_HISTORY = []
+CASH_TIME_HISTORY = []
 MAX_EXECUTION_TIME = 180
 IS_RECEIVING = False
 
@@ -177,11 +178,12 @@ def start_set_direct_price(price):
 
 
 def set_direct_price(price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
+    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
     DIRECT_PRICE_MODE = True
     DIRECT_PRICE_AMOUNT = int(price)
     COLLECTED_CASH = 0
     CASH_HISTORY = []
+    CASH_TIME_HISTORY = []
 
 
 def start_set_direct_price_with_current(current, price):
@@ -189,12 +191,14 @@ def start_set_direct_price_with_current(current, price):
 
 
 def set_direct_price_with_current(current, price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
+    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
     DIRECT_PRICE_MODE = True
     DIRECT_PRICE_AMOUNT = int(price)
     COLLECTED_CASH = int(current)
     CASH_HISTORY = []
+    CASH_TIME_HISTORY = []
     CASH_HISTORY.append(current)
+    CASH_TIME_HISTORY.append(_Helper.time_string())
     LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'DIRECT_PRICE_AMOUNT', DIRECT_PRICE_AMOUNT, 'CASH_HISTORY', CASH_HISTORY))
 
 
@@ -226,7 +230,7 @@ def parse_notes(_result):
 
 
 def start_receive_note(trxid):
-    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     if _Common.IDLE_MODE is True:
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
@@ -310,7 +314,8 @@ def start_receive_note(trxid):
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
                     LOGGER.warning(('BILL Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
                                                                         'COLLECTED': COLLECTED_CASH,
-                                                                        'TARGET': DIRECT_PRICE_AMOUNT})))
+                                                                        'TARGET': DIRECT_PRICE_AMOUNT,
+                                                                        'RECEIVED_TIMESTAMP': CASH_TIME_HISTORY})))
                     # Call API To Force Update Into Server
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
                     # sleep(1.5)
@@ -358,7 +363,7 @@ def start_receive_note(trxid):
         _Common.store_notes_activity('ERROR', trxid)
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
-        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT], 'device')
+        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT, CASH_TIME_HISTORY], 'device')
 
 
 def store_cash_into_cashbox():
@@ -415,18 +420,21 @@ def set_cashbox_full():
 
 
 def update_cash_status(cash_in, store_result=False):
-    global CASH_HISTORY, COLLECTED_CASH
+    global CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
     # print("pyt: ", _Helper.whoami())
     try:
         if not store_result:
             LOGGER.warning(('Store Cash Failed', 'Update Cash Failed', store_result))
             return False, store_result
-        CASH_HISTORY.append(str(cash_in))
-        COLLECTED_CASH += int(cash_in)
+        if _Helper.time_string() not in CASH_TIME_HISTORY:
+            CASH_HISTORY.append(str(cash_in))
+            CASH_TIME_HISTORY.append(_Helper.time_string())
+            COLLECTED_CASH += int(cash_in)
         # _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
         LOGGER.debug(('Cash Status:', json.dumps({
                     'ADD': cash_in,
                     'COLLECTED': COLLECTED_CASH,
+                    'RECEIVED_TIMESTAMP': CASH_TIME_HISTORY,
                     'HISTORY': CASH_HISTORY})))
         # Signal Emit To Update View Cash Status
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
@@ -457,7 +465,7 @@ def stop_bill_receive_note():
 
 
 def stop_receive_note():
-    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
     # sleep(_Common.BILL_STORE_DELAY)
     try:
@@ -477,6 +485,7 @@ def stop_receive_note():
                 BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS')
             COLLECTED_CASH = 0
             CASH_HISTORY = []
+            CASH_TIME_HISTORY = []
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
             LOGGER.warning((str(response), str(result)))
