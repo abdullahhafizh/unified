@@ -39,7 +39,7 @@ Base{
     property bool spvButton: false
     property bool comboSaktiFeature: false
 
-    property bool cardStockTreshold: 25
+    property var cardStockTreshold: 25
 //    width: globalWidth
 //    height: globalHeight
     isPanelActive: false
