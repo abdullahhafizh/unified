@@ -291,7 +291,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
         LOGGER.warning((str(payload), str(e)))
     finally:
         if result:
-            do_print_qr_receipt(mode, r.get('data'))
+            do_print_qr_receipt(mode.upper(), r.get('data'))
         return result
             # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
             # break;
