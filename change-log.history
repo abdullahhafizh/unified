@@ -4,6 +4,7 @@
 - Fix WA Redeem Confirm Display,
 - Change Card Stock Indicator Level,
 - Add Handler Anomali Similar Timestamp On Bill Notes Receive,
+- Add QR Receipt Print in Retry Transaction,
 - ...
 
 14.0.G10-GLOBAL:

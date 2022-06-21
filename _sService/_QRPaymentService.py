@@ -253,14 +253,14 @@ def start_do_print_qr_receipt(mode):
     _Helper.get_thread().apply_async(do_print_qr_receipt, (mode,))
     
 
-def do_print_qr_receipt(mode):
+def do_print_qr_receipt(mode, data=None):
     try:
         payload = json.loads(QR_CHECK_PAYLOAD)
         LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
         if mode not in _Common.QRIS_RECEIPT:
             print('[pyt] QR Mode Not Allowed For Printing')
             return
-        qr_data = QR_DATA_RESPONSE
+        qr_data = data if data is not None else QR_DATA_RESPONSE
         qr_data['trx_reff_no'] = payload['refference']
         LOGGER.debug(('QR PRINT DATA', str(qr_data)))
         _QRPrintTool.generate_qr_receipt(qr_data, mode.lower())
@@ -290,6 +290,8 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
     finally:
+        if result:
+            do_print_qr_receipt(mode, r.get('data'))
         return result
             # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
             # break;
