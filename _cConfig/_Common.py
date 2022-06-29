@@ -107,6 +107,7 @@ LOGGER.info((CD_NEW_TYPE))
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 PRINTER_NEW_LAYOUT = True if _ConfigParser.get_set_value('PRINTER', 'new^layout', '0') == '1' else False
+ALLOW_REPRINT_RECEIPT = True if _ConfigParser.get_set_value('PRINTER', 'allow^reprint^receipt', '0') == '1' else False
 
 MID_MAN = _ConfigParser.get_set_value('MANDIRI', 'mid', '---')
 TID_MAN = _ConfigParser.get_set_value('MANDIRI', 'tid', '---')

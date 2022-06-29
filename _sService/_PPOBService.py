@@ -345,6 +345,14 @@ def do_check_trx(reff_no):
             # Force Close Retry TRX From Online
             if data['payment_method'] is None:
                 data['payment_method'] = remarks.get('payment', '').replace('-', ' ')
+            # Keep Check Actual Status To Server For Reprint Purpose (Set On Setting File)
+            if _Common.ALLOW_REPRINT_RECEIPT:
+                check_trx_id = remarks.get('host_trx_id', data['product_id'])
+                status, result = validate_payment_history(
+                    payment_method=data['payment_method'], 
+                    trx_id=check_trx_id,
+                    provider=data['payment_method'].lower()
+                )
             data['retry_able'] = 0
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(data))
         else:
