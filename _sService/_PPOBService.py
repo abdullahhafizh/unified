@@ -346,13 +346,15 @@ def do_check_trx(reff_no):
             if data['payment_method'] is None:
                 data['payment_method'] = remarks.get('payment', '').replace('-', ' ')
             # Keep Check Actual Status To Server For Reprint Purpose (Set On Setting File)
-            if _Common.ALLOW_REPRINT_RECEIPT:
+            reprint_status = False
+            if _Common.ALLOW_REPRINT_RECEIPT is True:
                 check_trx_id = remarks.get('host_trx_id', data['product_id'])
-                status, result = validate_payment_history(
+                reprint_status, result = validate_payment_history(
                     payment_method=data['payment_method'], 
                     trx_id=check_trx_id,
                     provider=data['payment_method'].lower()
                 )
+            data['reprint_status'] = reprint_status
             data['retry_able'] = 0
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(data))
         else:
@@ -391,6 +393,7 @@ def do_inquiry_trx(payload):
 
 
 def validate_payment_history(payment_method='QR', trx_id=None, provider='shopeepay'):
+    LOGGER.info((payment_method, trx_id, provider))
     if _Helper.empty(trx_id) is True:
         return False, None
     if payment_method.lower() == 'debit':
