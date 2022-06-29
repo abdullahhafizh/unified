@@ -264,7 +264,7 @@ def do_print_qr_receipt(mode, data=None):
         if qr_data is None:
             qr_data = {}
         # Inject Refference Number
-        reff_no = qr_data.get('reff_no')
+        reff_no = qr_data.get('trx_id')
         qr_data['trx_reff_no'] = payload.get('refference', reff_no)
         LOGGER.debug(('QR PRINT DATA', str(qr_data)))
         _QRPrintTool.generate_qr_receipt(qr_data, mode.lower())
