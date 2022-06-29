@@ -255,13 +255,17 @@ def start_do_print_qr_receipt(mode):
 
 def do_print_qr_receipt(mode, data=None):
     try:
-        payload = json.loads(QR_CHECK_PAYLOAD)
+        payload = json.loads(QR_CHECK_PAYLOAD) if QR_CHECK_PAYLOAD is not None else {}
         LOGGER.info(('CHECK MODE QRIS PROVIDER', mode, str(_Common.QRIS_RECEIPT)))
         if mode not in _Common.QRIS_RECEIPT:
             print('[pyt] QR Mode Not Allowed For Printing')
             return
         qr_data = data if data is not None else QR_DATA_RESPONSE
-        qr_data['trx_reff_no'] = payload['refference']
+        if qr_data is None:
+            qr_data = {}
+        # Inject Refference Number
+        reff_no = qr_data.get('reff_no')
+        qr_data['trx_reff_no'] = payload.get('refference', reff_no)
         LOGGER.debug(('QR PRINT DATA', str(qr_data)))
         _QRPrintTool.generate_qr_receipt(qr_data, mode.lower())
     except Exception as e:
