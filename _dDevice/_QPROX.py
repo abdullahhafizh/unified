@@ -315,6 +315,7 @@ INIT_BNI = False
 INIT_BRI = False
 INIT_BCA = True
 INIT_LIST = []
+INIT_DELAY_TIME = int(_Common.INIT_DELAY_TIME)
 
 
 def start_init_config():
@@ -371,14 +372,14 @@ def init_config():
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
                         INIT_BNI = True
-                        sleep(1.5)
+                        sleep(3)
                         ka_info_bni(slot=_Common.BNI_ACTIVE)
-                        sleep(1.5)
+                        sleep(3)
                         get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
                         # get_bni_wallet_status()
                     else:
                         LOGGER.warning((BANK['BANK'], result))
-            sleep(1)
+            sleep(INIT_DELAY_TIME)
             continue
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'

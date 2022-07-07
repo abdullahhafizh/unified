@@ -679,10 +679,25 @@ def mark_today_report(tid):
         'synced_at': _Helper.time_string()        
     }
     sql = " UPDATE DailySummary SET synced_at = :synced_at WHERE tid =:tid AND report_date = :report_date "
-    result = _Database.get_query(sql=sql, parameter=param)
-    if len(result) > 0:
-        result = result[0]
-    return result
+    return _Database.insert_update(sql=sql, parameter=param)
+
+
+def get_not_synced_report(tid):
+    param = {
+        'tid': tid,
+    }
+    sql = " SELECT * FROM DailySummary WHERE tid = :tid AND synced_at IS NULL "
+    return _Database.get_query(sql=sql, parameter=param)
+
+
+def mark_synced_report(tid, report_date):
+    param = {
+        'tid': tid,
+        'report_date': report_date,
+        'synced_at': _Helper.time_string()        
+    }
+    sql = " UPDATE DailySummary SET synced_at = :synced_at WHERE tid = :tid AND report_date = :report_date "
+    return _Database.insert_update(sql=sql, parameter=param)
 
 
 def truncate_cashbox():

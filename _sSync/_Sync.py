@@ -100,6 +100,11 @@ def send_daily_summary():
         return True
     else:
         return False
+    
+
+def send_not_synced_daily_report():
+    # TODO: Finalise This Function
+    pass
 
 
 def start_idle_mode():
@@ -116,8 +121,6 @@ def change_idle_mode(s):
         _UserService.USER = None
     elif s == 'STOP':
         _Common.IDLE_MODE = False
-
-
 
 
 def start_sync_machine_status():
@@ -137,7 +140,7 @@ def sync_machine_status():
                 print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
             else:
-                LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
+                LOGGER.debug(('Sending Kiosk Status : ', str(_Common.IDLE_MODE)))
         except Exception as e:
             LOGGER.warning(e)
         finally:

@@ -20,6 +20,7 @@ Base{
     property variant actionChangeList: []
 
     property bool printChangeStockButton: false
+    property bool enableCDTest: false
 
     property var operatorName: ''
 
@@ -1057,7 +1058,7 @@ Base{
 
                     NextButton{
                        id: button_test_slot1
-                       visible: row_data.visible
+                       visible: enableCDTest
                        enabled: (_total_stock_101!='---') ? true : false
                        button_text: 'test'
                        width: 80
@@ -1117,7 +1118,7 @@ Base{
                     layoutDirection: Qt.RightToLeft
                     NextButton{
                        id: button_test_slot2
-                       visible: row_data.visible
+                       visible: enableCDTest
                        enabled: (_total_stock_102!='---') ? true : false
                        button_text: 'test'
                        width: 80
@@ -1173,7 +1174,7 @@ Base{
                     layoutDirection: Qt.RightToLeft
                     NextButton{
                        id: button_test_slot3
-                       visible: row_data.visible
+                       visible: enableCDTest
                        enabled: (_total_stock_103!='---') ? true : false
                        button_text: 'test'
                        width: 80

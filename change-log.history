@@ -1,3 +1,9 @@
+14.0.G12-GLOBAL:
+- Disable Test CD Button,
+- Flag DailySummary Report Sync,
+- Add Delay Init Bank,
+- ...
+
 14.0.G11-GLOBAL:
 - Add PPOB Select Operator in Certain Category,
 - Force Disable Topup Prepaid From Check Balance,
