@@ -560,7 +560,7 @@ def bni_card_get_log_priv(max_t=29):
     ErrMsg = ""
     msg = ""
     GetLogBNI = ""
-    rawRapdu = []
+    listRAPDU = []
     # Max History
     # max_t = 29
 
@@ -577,9 +577,9 @@ def bni_card_get_log_priv(max_t=29):
                     apdu = "90320300010" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                     if resultStr == "0000":
-                        if rapdu in rawRapdu:
+                        if rapdu in listRAPDU:
                             continue
-                        rawRapdu.append(rapdu)
+                        listRAPDU.append(rapdu)
                         types = rapdu[:2]
                         amount = get_amount_for_log(rapdu[2:8])
                         dates = get_date(rapdu[8:16])
@@ -595,7 +595,7 @@ def bni_card_get_log_priv(max_t=29):
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, msg, rawRapdu
+    return resultStr, msg, listRAPDU
 
 
 def bni_sam_get_log_priv(slot, max_t=29):
@@ -605,7 +605,7 @@ def bni_sam_get_log_priv(slot, max_t=29):
     ErrMsg = ""
     msg = ""
     GetLogBNI = ""
-    rawRapdu = []
+    listRAPDU = []
     # Max History
     # max_t = 29
 
@@ -622,9 +622,9 @@ def bni_sam_get_log_priv(slot, max_t=29):
                     apdu = "90320300010" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend(slot, apdu)
                     if resultStr == "0000":
-                        if rapdu in rawRapdu:
+                        if rapdu in listRAPDU:
                             continue
-                        rawRapdu.append(rapdu)
+                        listRAPDU.append(rapdu)
                         types = rapdu[:2]
                         amount = get_amount_for_log(rapdu[2:8])
                         dates = get_date(rapdu[8:16])
@@ -640,7 +640,7 @@ def bni_sam_get_log_priv(slot, max_t=29):
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, msg, rawRapdu
+    return resultStr, msg, listRAPDU
 
 
 def get_amount_for_log(data):
