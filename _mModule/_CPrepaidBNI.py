@@ -577,6 +577,7 @@ def bni_card_get_log_priv(max_t=29):
                     apdu = "90320300010" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                     if resultStr == "0000":
+                        i = i + 1                        
                         if rapdu in listRAPDU:
                             continue
                         listRAPDU.append(rapdu)
@@ -585,7 +586,6 @@ def bni_card_get_log_priv(max_t=29):
                         dates = get_date(rapdu[8:16])
                         resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
                         msg = msg + resreport + "#"
-                        i = i + 1
                     else:
                         GetLogBNI= rapdu
 
@@ -622,6 +622,7 @@ def bni_sam_get_log_priv(slot, max_t=29):
                     apdu = "90320300010" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend(slot, apdu)
                     if resultStr == "0000":
+                        i = i + 1
                         if rapdu in listRAPDU:
                             continue
                         listRAPDU.append(rapdu)
@@ -630,7 +631,6 @@ def bni_sam_get_log_priv(slot, max_t=29):
                         dates = get_date(rapdu[8:16])
                         resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
                         msg = msg + resreport + "#"
-                        i = i + 1
                     else:
                         GetLogBNI= rapdu
 
