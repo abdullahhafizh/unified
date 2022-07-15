@@ -80,6 +80,7 @@ QPROX = {
     "RAW_APDU": "034", #Send Raw APDU TO Target (255-SAM, 1/2/3/4-Slot)
     "CARD_HISTORY_MANDIRI": "039", #MANDIRI CARD LOG
     "CARD_HISTORY_BNI": "040", #BNI CARD LOG
+    "SAM_HISTORY_BNI": "042", #BNI SAM LOG
     "GET_LAST_C2C_REPORT": "041", #"Send SAM C2C Slot"
     "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
     "UPDATE_BALANCE_ONLINE_BCA": "044", #BCA UBAL ONLINE TID, MID, Token
@@ -1651,8 +1652,22 @@ def get_card_history(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BNI_ERROR')
+    elif bank == 'BNI_C2C':   
+        slot = _Common.BNI_ACTIVE
+        _slot = _Common.BNI_ACTIVE - 1
+        param = QPROX['SAM_HISTORY_BNI'] + '|' + str(_slot) + '|'
+        try:
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                output = parse_card_history(bank, result)
+                return output
+            else:
+                return
+        except Exception as e:
+            LOGGER.warning(str(e))
+            return
     else:
-        QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|ERROR')
+        QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('BNI_SAM_HISTORY|ERROR')
         return
 
 

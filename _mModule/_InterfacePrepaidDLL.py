@@ -104,7 +104,9 @@ def send_command(cmd, param):
         elif cmd == "039":
             prepaid_mandiri.mandiri_get_log(param, __global_response__)
         elif cmd == "040":
-            prepaid_bni.bni_get_log(param, __global_response__)
+            prepaid_bni.bni_card_get_log(param, __global_response__)
+        elif cmd == "042":
+            prepaid_bni.bni_sam_get_log(param, __global_response__)
         elif cmd == "041":
             prepaid_mandiri.mandiri_get_last_report(param, __global_response__)
         elif cmd == "043":

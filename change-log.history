@@ -1,3 +1,9 @@
+14.0.G13-GLOBAL:
+- Add Function Get SAM BNI Log History,
+- Set Max BNI History to 30,
+- Adjust Flow Force Settlement BNI,
+- ...
+
 14.0.G12-GLOBAL:
 - Disable Test CD Button,
 - Flag DailySummary Report Sync,

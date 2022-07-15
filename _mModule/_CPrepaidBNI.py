@@ -1,5 +1,6 @@
 __author__ = 'wahyudi@multidaya.id'
 
+from email.contentmanager import raw_data_manager
 from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidCommon as pr_common
 from _mModule import _CPrepaidUtils as utils
@@ -499,70 +500,89 @@ def bni_update_card_crypto(param, __global_response__):
     return res_str
 
 #040
-def bni_get_log(param, __global_response__):
-    res_str, errmsg = bni_get_log_priv()
+def bni_card_get_log(param, __global_response__):
+    
+    res_str, errmsg, desc = bni_card_get_log_priv()
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["Response"] = errmsg
+        if type(desc) == list and len(desc) > 0:
+            __global_response__["Description"] = ",".join(desc)
         LOG.fw("040:Response = ", errmsg)
-
         __global_response__["ErrorDesc"] = "Sukses"
-
         LOG.fw("040:Result = ", res_str)
         LOG.fw("040:Sukses", None)
     else:
         __global_response__["Response"] = errmsg
         LOG.fw("040:Response = ", errmsg, True)
-     
         __global_response__["ErrorDesc"] = "Gagal"
-
         LOG.fw("040:Result = ",res_str, True)
         LOG.fw("040:Gagal", None, True)
 
     return res_str
 
-def bni_get_log_priv():
+#042
+def bni_sam_get_log(param, __global_response__):
+    
+    Param = param.split('|')
+    if len(Param) > 1:
+        C_Slot = Param[0]
+    else:
+        LOG.fw("042:Parameter tidak lengkap", param)
+        raise SystemError("042:Parameter tidak lengkap: "+param)
+    
+    res_str, errmsg, desc = bni_sam_get_log_priv(C_Slot)
+
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["Response"] = errmsg
+        if type(desc) == list and len(desc) > 0:
+            __global_response__["Description"] = ",".join(desc)
+        LOG.fw("042:Response = ", errmsg)
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("042:Result = ", res_str)
+        LOG.fw("042:Sukses", None)
+    else:
+        __global_response__["Response"] = errmsg
+        LOG.fw("042:Response = ", errmsg, True)
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("042:Result = ",res_str, True)
+        LOG.fw("042:Gagal", None, True)
+
+    return res_str
+
+
+def bni_card_get_log_priv(max_t=29):
     resultStr = ""
     ErrorCode = ""
     resreport = ""
     ErrMsg = ""
     msg = ""
     GetLogBNI = ""
+    rawRapdu = []
+    # Max History
+    # max_t = 29
 
     try:
         prepaid.topup_card_disconnect()
         resultStr, data, ErrMsg = prepaid.topup_pursedata()
         if resultStr == "0000":
-            max_t = 4
             i = 0
             while resultStr == "0000" and i <= max_t:
-                if i == 4:
-                    resultStr, rapdu = prepaid.topup_apdusend("255","90320300010410")
-                    if resultStr == "0000":
-                        types = rapdu[:2]
-                        amount = get_amount_for_log(rapdu[2:8])
-                        dates = get_date(rapdu[8:16])
-
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
-
-                        msg = msg + resreport
-
-                        i = i + 1
-                    else:
-                        GetLogBNI= rapdu
+                if i > max_t:
+                    break
                 else:
-                    apdu = "90320300010" + str(i) + "10"
-                    resultStr, rapdu = prepaid.topup_apdusend("255",apdu)
+                    idx = hex_padding(i)
+                    apdu = "90320300010" + str(idx) + "10"
+                    resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                     if resultStr == "0000":
+                        rawRapdu.append(apdu)
                         types = rapdu[:2]
                         amount = get_amount_for_log(rapdu[2:8])
                         dates = get_date(rapdu[8:16])
-
                         resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
-
                         msg = msg + resreport + "#"
-
                         i = i + 1
                     else:
                         GetLogBNI= rapdu
@@ -573,7 +593,50 @@ def bni_get_log_priv():
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, msg
+    return resultStr, msg, rawRapdu
+
+
+def bni_sam_get_log_priv(slot, max_t=29):
+    resultStr = ""
+    ErrorCode = ""
+    resreport = ""
+    ErrMsg = ""
+    msg = ""
+    GetLogBNI = ""
+    rawRapdu = []
+    # Max History
+    # max_t = 29
+
+    try:
+        prepaid.topup_card_disconnect()
+        resultStr, data, ErrMsg = prepaid.topup_pursedata()
+        if resultStr == "0000":
+            i = 0
+            while resultStr == "0000" and i <= max_t:
+                if i > max_t:
+                    break
+                else:
+                    idx = hex_padding(i)
+                    apdu = "90320300010" + str(idx) + "10"
+                    resultStr, rapdu = prepaid.topup_apdusend(slot, apdu)
+                    if resultStr == "0000":
+                        rawRapdu.append(apdu)
+                        types = rapdu[:2]
+                        amount = get_amount_for_log(rapdu[2:8])
+                        dates = get_date(rapdu[8:16])
+                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                        msg = msg + resreport + "#"
+                        i = i + 1
+                    else:
+                        GetLogBNI= rapdu
+
+        msg = msg + GetLogBNI
+        
+    except Exception as ex:
+        resultStr = "1"
+        msg = "{0}".format(ex)
+    
+    return resultStr, msg, rawRapdu
 
 
 def get_amount_for_log(data):
@@ -588,3 +651,7 @@ def get_date(data):
     date_1 = datetime.datetime(1995,1,1,0,0,0)
     date_2 = date_1 + datetime.timedelta(0,epoch)
     return date_2.strftime("%Y%m%d%H%M%S")
+
+
+def hex_padding(i, pad=2):
+    return format(int(i), 'x').zfill(pad).upper()
