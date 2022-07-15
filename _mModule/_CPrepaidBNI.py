@@ -609,7 +609,7 @@ def bni_sam_get_log_priv(slot, max_t=29):
 
     try:
         prepaid.topup_card_disconnect()
-        resultStr, data, ErrMsg = prepaid.topup_pursedata()
+        resultStr, data, ErrMsg = prepaid.topup_pursedata_multi_sam(slot)
         if resultStr == "0000":
             i = 0
             while resultStr == "0000" and i <= max_t:
