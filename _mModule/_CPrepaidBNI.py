@@ -574,8 +574,13 @@ def bni_card_get_log_priv(max_t=29):
                     break
                 else:
                     idx = hex_padding(i)
-                    apdu = "90320300010" + str(idx) + "10"
+                    apdu = "9032030001" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                    # 01
+                    # FFFFF6
+                    # 33AAD243
+                    # 00001E2268200217
+                    # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
                     if resultStr == "0000":
                         i = i + 1                        
                         if rapdu in listRAPDU:
@@ -619,7 +624,7 @@ def bni_sam_get_log_priv(slot, max_t=29):
                     break
                 else:
                     idx = hex_padding(i)
-                    apdu = "90320300010" + str(idx) + "10"
+                    apdu = "9032030001" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend(slot, apdu)
                     if resultStr == "0000":
                         i = i + 1
