@@ -886,21 +886,22 @@ def topup_bni_correction(amount, trxid=''):
     else:
         # Get Card Log And Push SAM Audit
         param = last_audit_result
+        param.pop('topup_result')
         # Will Change To Card Purse
         sam_purse = last_audit_result.get('sam_purse')
-        sam_history = last_audit_result.get('sam_history')
+        sam_history = last_audit_result.get('sam_history', '')
         card_purse, card_history = bni_card_history_direct(10)
         param['remarks'] = json.dumps({
             'mid': _Common.MID_BNI,
             'tid': _Common.TID_BNI,
-            'reader_response': last_audit_result.get('last_result'),
             'can': check_card_no,
             'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
             'card_history': card_history,
             'amount': amount,
             'sam_history': sam_history,
-            'sam_purse': sam_purse,
-            'card_purse': card_purse
+            # 'sam_purse': sam_purse,
+            'card_purse': card_purse,
+            'err_code': param['err_code'],
         })
         # 00017546050002591031000000006E6E6E626187A02B89245456E2DDF0F451F39310000000000100157C88889999040021343360AD8F15789251010000003360CBBF50555243000000000000C307926DE549686CDE87AC42D7A4027D
         # 'trxid': trxid+'_FAILED',
@@ -913,7 +914,8 @@ def topup_bni_correction(amount, trxid=''):
         # 'topupLastBalance': last_card_check['balance'],
         # 'status': 'FAILED',
         # 'remarks': {},
-        # 'last_result': json.loads(_result)
+        # 'topup_result': json.loads(_result),
+        # 'err_code': json.loads(_result),
         _Common.store_upload_sam_audit(param)
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
@@ -1040,29 +1042,8 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
             return
         if __status in ERROR_TOPUP.keys():
             __remarks += '|'+ERROR_TOPUP[__status]
-        # status='0000' -> success
-        # samCardNo='7546130000013640'
-        # samPrevBalance='100000'
-        # samLastBalance='90000'
-        # reportSAM='75461300000136407546130000013640010002EE0003520000647A0F127A0EAE2D944C9D04B5E8816DCE7F381E8480010701000009000009000007010002EE00000088889999E7C0A8568C598500AB3DFE1320FCBDE369D72A9D48B835AB00035204B5E8816D04B5E8816DCE7F380000090000090000754646000000159675464600000015965017CE0054DB8D88'
-        # topupCardNo='7546460000001596'
-        # topupPrevBalance='1000'
-        # topupLastBalance='11000'
-        # 0000| -> 0
-        # 7546000001023442| -> 1
-        # 556900| -> 2
-        # 556899| -> 3
-        # 1| -> 4
-        # 75460000010567757546000001056775010C79B40C81840007D00F42400F3A702BA49F3600B6FFC692431D360F424001070100005A00002F000007010C79B40007D0888899996551465F2B1393685E20873C706ED28A2DB9825BF242CC3F0C818400B6FFC69200B6FFC692431D3600005A00002F000075460000000000480000000000000048E7AADAEBF223F5C4|
-        # 7546000001056775| -> 6
-        # 8912| -> 7
-        # 8913 -> 8
-        # topup_last_balance = str(int(__data[2].lstrip('0')) + int(amount))
         __deposit_last_balance = __data[3].lstrip('0')
         __report_sam = __data[5]
-        # if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
-        #     # __deposit_last_balance = str(int(__data[2].lstrip('0')) - int(amount))
-        #     __report_sam = 'CARD_NOT_EXIST'
         output = {
             'last_balance': __data[8].lstrip('0'),
             'report_sam': __report_sam.split('#')[0],
@@ -1355,6 +1336,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # False Condition
         ka_info_bni(_Common.BNI_ACTIVE)
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR')
+        topup_result = json.loads(_result)
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
                 'samCardNo': _Common.BNI_SAM_1_NO,
@@ -1364,10 +1346,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 'topupCardNo': last_card_check['card_no'],
                 'topupPrevBalance': last_card_check['balance'],
                 'topupLastBalance': last_card_check['balance'],
-                'status': 'FAILED',
+                'status': 'FORCE_SETTLEMENT' if str(deposit_prev_balance) != str(_Common.BNI_ACTIVE_WALLET) else 'FAILED',
                 'remarks': {},
-                'last_result': json.loads(_result),
-                'sam_purse': init_result,
+                'last_result': topup_result,
+                'err_code': topup_result.get('Result'),
+                # 'sam_purse': init_result,
                 # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
