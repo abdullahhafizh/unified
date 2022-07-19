@@ -634,25 +634,31 @@ Base{
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
-            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            _SLOT.start_play_audio('please_pull_retap_card');
+            return
+        } else if (t=='BNI_PARTIAL_ERROR') {
+            modeButtonPopup = 'bni_correction';
+//            console.log('c2c_special_handler', modeButtonPopup);
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='BCA_PARTIAL_ERROR') {
             modeButtonPopup = 'bca_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
-            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='BRI_PARTIAL_ERROR') {
             modeButtonPopup = 'bri_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
-            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='DKI_PARTIAL_ERROR') {
             modeButtonPopup = 'dki_correction';
 //            console.log('c2c_special_handler', modeButtonPopup);
-            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
+            switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
         } else if (t=='MDR_C2C_FORCE_SETTLEMENT') {
@@ -1743,7 +1749,11 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-//                    console.log('GLOBAL_FRAME_CANCEL_BUTTON', press);
+                    // Add Extra Handling
+                    if (receivedPayment >= totalPrice){
+                        cancel_button_global.visible = false;
+                        return;
+                    }
                     _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (press != '0') return;
                     press = '1';
@@ -1772,7 +1782,6 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-//                    console.log('GLOBAL_FRAME_NEXT_BUTTON', press);
                     _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
                     press = '1'
@@ -1808,6 +1817,11 @@ Base{
                         if (CONF.c2c_mode == 1) amount = details.value;
                         var structId = details.shop_type + details.epoch.toString();
                         _SLOT.start_topup_mandiri_correction(amount, structId);
+                        popup_loading.open();
+                        break;
+                    case 'bni_correction':
+                        var trxid = details.shop_type + details.epoch.toString();
+                        _SLOT.start_topup_bni_correction(getDenom.toString(), trxid);
                         popup_loading.open();
                         break;
                     case 'bca_correction':

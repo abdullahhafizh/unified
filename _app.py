@@ -668,6 +668,10 @@ class SlotHandler(QObject):
     def start_topup_mandiri_correction(self, amount, trxid):
         _QPROX.start_topup_mandiri_correction(amount, trxid)
     start_topup_mandiri_correction = pyqtSlot(str, str)(start_topup_mandiri_correction)
+    
+    def start_topup_bni_correction(self, amount, trxid):
+        _QPROX.start_topup_bni_correction(amount, trxid)
+    start_topup_bni_correction = pyqtSlot(str, str)(start_topup_bni_correction)
 
     def start_check_online_topup(self, mode, payload):
         _TopupService.start_check_online_topup(mode, payload)

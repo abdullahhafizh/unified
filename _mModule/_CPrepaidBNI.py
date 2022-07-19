@@ -192,15 +192,22 @@ def bni_init_topup(param, __global_response__):
     if len(report) >= 20:
         BNI_SAM_CARD_NUMBER = report[4:20]
 
-    resS, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
-    sleep(1)
-    resB, BNI_CARD_SALDO, BNI_CARD_NUMBER, BT = prepaid.topup_balance_with_sn()
-    sleep(1)
+    # resS, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
+    # sleep(1)
+    BNI_SAM_SALDO = str(_Common.BNI_ACTIVE_WALLET)
+    # resB, BNI_CARD_SALDO, BNI_CARD_NUMBER, BT = prepaid.topup_balance_with_sn()
+    # sleep(1)
+    res_card_purse, purse_report, purse_error = prepaid.topup_pursedata()
+    BNI_CARD_NUMBER = purse_report[4:20]
+    # Parse Card Amount From Purse
+    # BNI_CARD_SALDO = ""
+
     res_str = prepaid.topupbni_init_multi(C_Slot, C_Terminal)
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["ErrorDesc"] = "Sukses"
+        __global_response__["Response"] = purse_report if res_card_purse == '0000' else ''
         LOG.fw("012:Result = ", res_str)
         LOG.fw("012:Sukses")
     else:
@@ -228,7 +235,7 @@ def bni_topup(param, __global_response__):
 
     res_str, card_number, reportSAM = prepaid.topupbni_credit_multi_sam(C_Slot, C_Denom, b"5")
     # str(int(__report_sam[58:64], 16))
-    sam_last_saldo = str(BNI_SAM_SALDO)
+    sam_last_saldo = str(_Common.BNI_ACTIVE_WALLET)
     # sleep(2)
     # resS, sam_last_saldo, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
 
@@ -522,6 +529,36 @@ def bni_card_get_log(param, __global_response__):
 
     return res_str
 
+
+#077
+def bni_card_get_log_custom(param, __global_response__):
+    
+    Param = param.split('|')
+    row = 29
+    if len(Param) > 1:
+        row = Param[0].encode('utf-8') 
+        row = int(row) - 1
+    
+    res_str, errmsg, desc = bni_card_get_log_priv(row)
+
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["Response"] = errmsg
+        if type(desc) == list and len(desc) > 0:
+            __global_response__["Response"] = ",".join(desc)
+        LOG.fw("040:Response = ", errmsg)
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("040:Result = ", res_str)
+        LOG.fw("040:Sukses", None)
+    else:
+        __global_response__["Response"] = errmsg
+        LOG.fw("040:Response = ", errmsg, True)
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("040:Result = ",res_str, True)
+        LOG.fw("040:Gagal", None, True)
+
+    return res_str
+
 #042
 def bni_sam_get_log(param, __global_response__):
     
@@ -538,7 +575,7 @@ def bni_sam_get_log(param, __global_response__):
     if res_str == "0000":
         __global_response__["Response"] = errmsg
         if type(desc) == list and len(desc) > 0:
-            __global_response__["Description"] = ",".join(desc)
+            __global_response__["Response"] = ",".join(desc)
         LOG.fw("042:Response = ", errmsg)
         __global_response__["ErrorDesc"] = "Sukses"
         LOG.fw("042:Result = ", res_str)
@@ -576,10 +613,6 @@ def bni_card_get_log_priv(max_t=29):
                     idx = hex_padding(i)
                     apdu = "9032030001" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
-                    # 01
-                    # FFFFF6
-                    # 33AAD243
-                    # 00001E2268200217
                     # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
                     if resultStr == "0000":
                         i = i + 1                        
@@ -626,6 +659,21 @@ def bni_sam_get_log_priv(slot, max_t=29):
                     idx = hex_padding(i)
                     apdu = "9032030001" + str(idx) + "10"
                     resultStr, rapdu = prepaid.topup_apdusend(slot, apdu)
+                    # E/listApdu: 01FFF25433A26E4600000880234181029000
+                    # E/listApdu: 01FFFFFF33620F180000162C788002449000
+                    # E/listApdu: 01FFFFFF33620D6F0000162D788002449000
+                    # E/listApdu: 01FFFFFF3361F00E0000162E410870039000
+                    # E/listApdu: 01FFFFFF3361E9890000162F414001039000
+                    # E/listApdu: 01FFFFFF3361D33E00001630414003179000
+                    # E/listApdu: 01FFFFFF33379A2800001631333102019000
+                    # E/listApdu: 01FFFFFF3183A25300001632012345679000
+                    # E/listApdu: 01FF73603160303700001633140909019000
+                    # E/listApdu: 040001F4315D35F00000A2D3888899999000
+                    # E/listApdu: 040021343149BD600000A0DF888899999000
+                    # E/listApdu: 01FF75543149BFF300007FAB140909019000
+                    # E/listApdu: 040021343149B73500010A57888899999000
+                    # E/listApdu: 040021343149A3E70000E923888899999000
+                    # E/listApdu: 0400213431499D2A0000C7EF888899999000
                     if resultStr == "0000":
                         i = i + 1
                         if rapdu in listRAPDU:
