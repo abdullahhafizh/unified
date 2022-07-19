@@ -55,6 +55,8 @@ Base{
         }
         _userData = JSON.parse(l.replace('SUCCESS|', ''));
         if (_userData.active==1 && _userData.isAbleTerminal==1) {
+            // Disable OTP Code For Dev App
+            if (_userData.forceLogin !== undefined && _userData.forceLogin == 1) useOtpCode = false;
             // Add Handle OTP Code Before Redirect to Admin Page if Use OTP Code is ACTIVE
             if (useOtpCode) {
                 press = '0';
