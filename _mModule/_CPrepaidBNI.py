@@ -192,9 +192,9 @@ def bni_init_topup(param, __global_response__):
     if len(report) >= 20:
         BNI_SAM_CARD_NUMBER = report[4:20]
 
-    # resS, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
-    # sleep(1)
-    BNI_SAM_SALDO = str(_Common.BNI_ACTIVE_WALLET)
+    resS, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
+    sleep(1)
+    # BNI_SAM_SALDO = str(_Common.BNI_ACTIVE_WALLET)
     # resB, BNI_CARD_SALDO, BNI_CARD_NUMBER, BT = prepaid.topup_balance_with_sn()
     # sleep(1)
     res_card_purse, purse_report, purse_error = prepaid.topup_pursedata()
