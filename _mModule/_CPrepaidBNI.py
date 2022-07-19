@@ -189,15 +189,15 @@ def bni_init_topup(param, __global_response__):
     LOG.fw("012:Parameter = ", C_Terminal)
     
     # Purse Tapcash Data First
-    res_card_purse, report_card_purse, purse_error = prepaid.topup_pursedata()
-    if res_card_purse != '0000':
-        __global_response__["ErrorDesc"] = "Gagal"
-        LOG.fw("012:Result Purse Kartu= ", res_card_purse, True)
-        LOG.fw("012:Gagal Purse Kartu", purse_error, True)
-        return res_str
+    # res_card_purse, report_card_purse, purse_error = prepaid.topup_pursedata()
+    # if res_card_purse != '0000':
+    #     __global_response__["ErrorDesc"] = "Gagal"
+    #     LOG.fw("012:Result Purse Kartu= ", res_card_purse, True)
+    #     LOG.fw("012:Gagal Purse Kartu", purse_error, True)
+    #     return res_str
     
-    sleep(1)
-    BNI_CARD_NUMBER = report_card_purse[4:20] if res_card_purse == '0000' else ''
+    # sleep(1)
+    # BNI_CARD_NUMBER = report_card_purse[4:20] if res_card_purse == '0000' else ''
 
     res_purse_sam, report_sam_purse = prepaid.topup_pursedata_multi_sam(C_Slot)
     if len(report_sam_purse) >= 20:
@@ -216,7 +216,7 @@ def bni_init_topup(param, __global_response__):
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["ErrorDesc"] = "Sukses"
-        __global_response__["Response"] = report_card_purse if res_card_purse == '0000' else ''
+        __global_response__["Response"] = report_sam_purse
         LOG.fw("012:Result = ", res_str)
         LOG.fw("012:Sukses")
     else:
@@ -572,7 +572,7 @@ def bni_card_get_log_custom(param, __global_response__):
 def bni_sam_get_log(param, __global_response__):
     
     Param = param.split('|')
-    if len(Param) > 1:
+    if len(Param) > 0:
         C_Slot = Param[0]
     else:
         LOG.fw("042:Parameter tidak lengkap", param)

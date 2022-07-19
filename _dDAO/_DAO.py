@@ -390,7 +390,7 @@ def get_airport_terminal(param):
 def update_kiosk_data(param):
     # sql = ' INSERT INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
     #     'VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin ) '
-    delete = ' DELETE FROM `Terminal` WHERE tid <> "'+param['tid']+'"'
+    delete = 'DELETE FROM `Terminal` WHERE tid <> "'+param['tid']+'"'
     _Database.delete_row(sql=delete)
     insert = ' INSERT OR IGNORE INTO `Terminal`(`tid`,`name`,`locationId`,`status`,`token`,`defaultMargin`, `defaultAdmin`) ' \
             ' VALUES (:tid, :name, :locationId, :status, :token, :defaultMargin, :defaultAdmin);'
@@ -406,9 +406,9 @@ def update_kiosk_data(param):
 
 def flush_table(_table, _where=None):
     if _where is None:
-        sql = ' DELETE FROM {} '.format(_table)
+        sql = 'DELETE FROM {} '.format(_table)
     else:
-        sql = ' DELETE FROM {} WHERE {} '.format(_table, _where)
+        sql = 'DELETE FROM {} WHERE {} '.format(_table, _where)
     _Database.delete_row(sql=sql)
 
 

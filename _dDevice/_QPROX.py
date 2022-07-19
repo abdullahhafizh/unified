@@ -886,7 +886,8 @@ def topup_bni_correction(amount, trxid=''):
     else:
         # Get Card Log And Push SAM Audit
         param = last_audit_result
-        last_purse = last_audit_result.get('card_purse')
+        # Will Change To Card Purse
+        last_purse = last_audit_result.get('sam_purse')
         sam_history = last_audit_result.get('sam_history')
         card_history = bni_card_history_direct(30)
         param['remarks'] = json.dumps({
@@ -1364,7 +1365,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 'status': 'FAILED',
                 'remarks': {},
                 'last_result': json.loads(_result),
-                'card_purse': init_result,
+                'sam_purse': init_result,
                 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
