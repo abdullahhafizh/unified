@@ -3,6 +3,7 @@
 - Set Max BNI History to 30,
 - Adjust Flow Force Settlement BNI,
 - Waive OTP For Dev Envi,
+- Add Remote Command Release BNI Reload LOCK,
 - ...
 
 14.0.G12-GLOBAL:

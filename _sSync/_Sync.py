@@ -742,6 +742,10 @@ def handle_tasks(tasks):
         if task['taskName'] == 'TOPUP_DEPOSIT_BNI':
             result = _TopupService.do_topup_deposit_bni(slot=1)
             update_task(task, result)
+        if task['taskName'] == 'RELEASE_BNI_DEPOSIT_LOCK':
+            _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
+            result = 'SUCCESS_REMOVE_FILE'
+            update_task(task, result)
         if 'FORCE_LAST_STOCK' in task['taskName']:
             # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
             result = 'INVALID_ARGUMENTS'

@@ -555,16 +555,16 @@ def bni_card_get_log_custom(param, __global_response__):
         __global_response__["Response"] = errmsg
         if type(desc) == list and len(desc) > 0:
             __global_response__["Response"] = errmsg + "#" + (",".join(desc))
-        LOG.fw("040:Response = ", errmsg)
+        LOG.fw("077:Response = ", errmsg)
         __global_response__["ErrorDesc"] = "Sukses"
-        LOG.fw("040:Result = ", res_str)
-        LOG.fw("040:Sukses", None)
+        LOG.fw("077:Result = ", res_str)
+        LOG.fw("077:Sukses", None)
     else:
         __global_response__["Response"] = errmsg
-        LOG.fw("040:Response = ", errmsg, True)
+        LOG.fw("077:Response = ", errmsg, True)
         __global_response__["ErrorDesc"] = "Gagal"
-        LOG.fw("040:Result = ",res_str, True)
-        LOG.fw("040:Gagal", None, True)
+        LOG.fw("077:Result = ",res_str, True)
+        LOG.fw("077:Gagal", None, True)
 
     return res_str
 
