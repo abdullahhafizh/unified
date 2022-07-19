@@ -192,8 +192,8 @@ def bni_init_topup(param, __global_response__):
     res_card_purse, report_card_purse, purse_error = prepaid.topup_pursedata()
     if res_card_purse != '0000':
         __global_response__["ErrorDesc"] = "Gagal"
-        LOG.fw("012:Result = ", res_str, True)
-        LOG.fw("012:Gagal", None, True)
+        LOG.fw("012:Result Purse Kartu= ", res_card_purse, True)
+        LOG.fw("012:Gagal Purse Kartu", None, True)
         return res_str
     
     sleep(1)
