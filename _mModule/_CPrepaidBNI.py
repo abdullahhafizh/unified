@@ -187,18 +187,27 @@ def bni_init_topup(param, __global_response__):
 
     LOG.fw("012:Parameter = ", C_Slot)
     LOG.fw("012:Parameter = ", C_Terminal)
+    
+    # Purse Tapcash Data First
+    res_card_purse, report_card_purse, purse_error = prepaid.topup_pursedata()
+    if res_card_purse != '0000':
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("012:Result = ", res_str, True)
+        LOG.fw("012:Gagal", None, True)
+        return res_str
+    
+    sleep(1)
+    BNI_CARD_NUMBER = report_card_purse[4:20] if res_card_purse == '0000' else ''
 
-    resP, report = prepaid.topup_pursedata_multi_sam(C_Slot)
-    if len(report) >= 20:
-        BNI_SAM_CARD_NUMBER = report[4:20]
+    res_purse_sam, report_sam_purse = prepaid.topup_pursedata_multi_sam(C_Slot)
+    if len(report_sam_purse) >= 20:
+        BNI_SAM_CARD_NUMBER = report_sam_purse[4:20]
 
-    resS, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
+    res_balance_sam, BNI_SAM_SALDO, BNI_SAM_MAX_SALDO = prepaid.topupbni_km_balance_multi_sam(C_Slot)
     sleep(1)
     # BNI_SAM_SALDO = str(_Common.BNI_ACTIVE_WALLET)
     # resB, BNI_CARD_SALDO, BNI_CARD_NUMBER, BT = prepaid.topup_balance_with_sn()
     # sleep(1)
-    res_card_purse, purse_report, purse_error = prepaid.topup_pursedata()
-    BNI_CARD_NUMBER = purse_report[4:20]
     # Parse Card Amount From Purse
     # BNI_CARD_SALDO = ""
 
@@ -207,7 +216,7 @@ def bni_init_topup(param, __global_response__):
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["ErrorDesc"] = "Sukses"
-        __global_response__["Response"] = purse_report if res_card_purse == '0000' else ''
+        __global_response__["Response"] = report_card_purse if res_card_purse == '0000' else ''
         LOG.fw("012:Result = ", res_str)
         LOG.fw("012:Sukses")
     else:
