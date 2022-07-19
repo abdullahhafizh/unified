@@ -27,8 +27,8 @@ def update_balance_mandiri(param, __global_response__):
         C_MID = Param[1].encode('utf-8')
         C_Token = Param[2].encode('utf-8')
     else:
-        LOG.fw("019:Parameter tidak lengkap", param)
-        raise SystemError("019:Parameter tidak lengkap: "+param)
+        LOG.fw("019:Missing Parameter", param)
+        raise SystemError("019:Missing Parameter: "+param)
 
     LOG.fw("019:Parameter = ", C_TID)
     LOG.fw("019:Parameter = ", C_MID)
@@ -591,8 +591,8 @@ def mandiri_update_sam_balance(param, __global_response__):
         C_MID = Param[2].encode('utf-8')
         C_Token = Param[3].encode('utf-8')
     else:
-        LOG.fw("035:Parameter tidak lengkap", param)
-        raise SystemError("035:Parameter tidak lengkap: "+param)
+        LOG.fw("035:Missing Parameter", param)
+        raise SystemError("035:Missing Parameter: "+param)
 
     LOG.fw("035:Parameter = ", C_Slot)
     LOG.fw("035:Parameter = ", C_TID)
@@ -884,8 +884,8 @@ def mandiri_C2C_refill(param, __global_response__):
         C_Value = int(Param[0].encode('utf-8'),10)
         LOG.fw("026:Parameter Amount = ", C_Value)
     else:
-        LOG.fw("026:Parameter tidak lengkap", param)
-        raise SystemError("026:Parameter tidak lengkap: "+param)
+        LOG.fw("026:Missing Parameter", param)
+        raise SystemError("026:Missing Parameter: "+param)
     
     Timestamp = datetime.datetime.now().strftime("%d%m%y%H%M%S")
     LOG.fw("026:Parameter Timestamp = ", Timestamp)
@@ -928,8 +928,8 @@ def mandiri_C2C_init(param, __global_response__):
         C_MAC = Param[1].encode('utf-8')
         C_Slot =Param[2].encode('utf-8')
     else:
-        LOG.fw("027:Parameter tidak lengkap", param)
-        raise SystemError("027:Parameter tidak lengkap: "+param)
+        LOG.fw("027:Missing Parameter", param)
+        raise SystemError("027:Missing Parameter: "+param)
 
     LOG.fw("027:Parameter = ", C_Terminal)
     LOG.fw("027:Parameter = ", C_MAC)
@@ -986,8 +986,8 @@ def mandiri_C2C_getfee(param, __global_response__):
     if len(Param) == 1:
         C_Flag = Param[0].encode('utf-8')
     else:
-        LOG.fw("029:Parameter tidak lengkap", param)
-        raise SystemError("029:Parameter tidak lengkap: "+param)
+        LOG.fw("029:Missing Parameter", param)
+        raise SystemError("029:Missing Parameter: "+param)
 
     LOG.fw("029:Parameter = ", C_Flag)
 
@@ -1019,8 +1019,8 @@ def mandiri_C2C_setfee(param, __global_response__):
         C_Flag = Param[0].encode('utf-8')
         C_Response = Param[1].encode('utf-8')
     else:
-        LOG.fw("030:Parameter tidak lengkap", param)
-        raise SystemError("030:Parameter tidak lengkap: "+param)
+        LOG.fw("030:Missing Parameter", param)
+        raise SystemError("030:Missing Parameter: "+param)
 
     LOG.fw("030:Parameter = ", C_Flag)
     LOG.fw("030:Parameter = ", C_Response)
@@ -1047,8 +1047,8 @@ def mandiri_C2C_force(param, __global_response__):
     if len(Param) == 1:
         C_Flag = Param[0]
     else:
-        LOG.fw("031:Parameter tidak lengkap", param)
-        raise SystemError("031:Parameter tidak lengkap: "+param)
+        LOG.fw("031:Missing Parameter", param)
+        raise SystemError("031:Missing Parameter: "+param)
 
     LOG.fw("031:Parameter = ", C_Flag)
 
@@ -1086,8 +1086,8 @@ def mandiri_get_last_report(param, __global_response__):
     if len(Param) == 1:
         C_Slot = Param[0].encode('utf-8')
     else:
-        LOG.fw("041:Parameter tidak lengkap", param)
-        raise SystemError("041:Parameter tidak lengkap: "+param)
+        LOG.fw("041:Missing Parameter", param)
+        raise SystemError("041:Missing Parameter: "+param)
 
     LOG.fw("041:Parameter = ", C_Slot)
 

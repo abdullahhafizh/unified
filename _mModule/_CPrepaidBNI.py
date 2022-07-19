@@ -153,8 +153,8 @@ def bni_terminal_update(param, __global_response__):
     if len(Param) == 1:
         C_Terminal = Param[0].encode('utf-8')
     else:
-        LOG.fw("011:Parameter tidak lengkap", param)
-        raise SystemError("011:Parameter tidak lengkap: "+param)
+        LOG.fw("011:Missing Parameter", param)
+        raise SystemError("011:Missing Parameter: "+param)
 
     LOG.fw("011:Parameter = ", C_Terminal)
 
@@ -182,8 +182,8 @@ def bni_init_topup(param, __global_response__):
         C_Slot = Param[0].encode('utf-8')
         C_Terminal = Param[1].encode('utf-8')
     else:
-        LOG.fw("012:Parameter tidak lengkap", param)
-        raise SystemError("012:Parameter tidak lengkap: "+param)
+        LOG.fw("012:Missing Parameter", param)
+        raise SystemError("012:Missing Parameter: "+param)
 
     LOG.fw("012:Parameter = ", C_Slot)
     LOG.fw("012:Parameter = ", C_Terminal)
@@ -236,8 +236,8 @@ def bni_topup(param, __global_response__):
         C_Denom = int(Param[0].encode('utf-8'),10)
         C_Slot = Param[1].encode('utf-8')
     else:
-        LOG.fw("013:Parameter tidak lengkap", param)
-        raise SystemError("013:Parameter tidak lengkap: "+param)
+        LOG.fw("013:Missing Parameter", param)
+        raise SystemError("013:Missing Parameter: "+param)
 
     LOG.fw("013:Parameter = ", C_Denom)
     LOG.fw("013:Parameter = ", C_Slot)
@@ -310,8 +310,8 @@ def bni_sam_balance_multi(param, __global_response__):
     if len(Param) == 1:
         C_Slot = Param[0]
     else:
-        LOG.fw("014:Parameter tidak lengkap", param)
-        raise SystemError("014:Parameter tidak lengkap: "+param)
+        LOG.fw("014:Missing Parameter", param)
+        raise SystemError("014:Missing Parameter: "+param)
 
     LOG.fw("014:Parameter = ", C_Slot)
 
@@ -342,8 +342,8 @@ def bni_get_purse_data_sam_multi(param, __global_response__):
     if len(Param) == 1:
         C_Slot = Param[0]
     else:
-        LOG.fw("015:Parameter tidak lengkap", param)
-        raise SystemError("015:Parameter tidak lengkap: "+param)
+        LOG.fw("015:Missing Parameter", param)
+        raise SystemError("015:Missing Parameter: "+param)
 
     LOG.fw("015:Parameter = ", C_Slot)
 
@@ -376,8 +376,8 @@ def bni_update_sam_crypto(param, __global_response__):
         C_PurseData = Param[1].encode('utf-8')
         C_Cryptogram = Param[2].encode('utf-8')
     else:
-        LOG.fw("016:Parameter tidak lengkap", param)
-        raise SystemError("016:Parameter tidak lengkap: "+param)
+        LOG.fw("016:Missing Parameter", param)
+        raise SystemError("016:Missing Parameter: "+param)
 
     LOG.fw("016:Parameter = ", C_Slot)
     LOG.fw("016:Parameter = ", C_PurseData)
@@ -418,8 +418,8 @@ def bni_get_card_no_sam_multi(param, __global_response__):
     if len(Param) == 1:
         C_Slot = Param[0]
     else:
-        LOG.fw("017:Parameter tidak lengkap", param)
-        raise SystemError("017:Parameter tidak lengkap: "+param)
+        LOG.fw("017:Missing Parameter", param)
+        raise SystemError("017:Missing Parameter: "+param)
 
     LOG.fw("017:Parameter = ", C_Slot)
 
@@ -454,8 +454,8 @@ def bni_reset_count_sam_multi(param, __global_response__):
         C_Slot = Param[0]
         C_TerminalID = Param[1]
     else:
-        LOG.fw("018:Parameter tidak lengkap", param)
-        raise SystemError("018:Parameter tidak lengkap: "+param)
+        LOG.fw("018:Missing Parameter", param)
+        raise SystemError("018:Missing Parameter: "+param)
 
     LOG.fw("018:Parameter = ", C_Slot)
     LOG.fw("018:Parameter = ", C_TerminalID)
@@ -484,8 +484,8 @@ def bni_update_card_crypto(param, __global_response__):
         C_PurseData = Param[0].encode('utf-8')
         C_Cryptogram = Param[1].encode('utf-8')
     else:
-        LOG.fw("021:Parameter tidak lengkap", param)
-        raise SystemError("021:Parameter tidak lengkap: "+param)
+        LOG.fw("021:Missing Parameter", param)
+        raise SystemError("021:Missing Parameter: "+param)
 
     LOG.fw("021:Parameter = ", C_PurseData)
     LOG.fw("021:Parameter = ", C_Cryptogram)
@@ -575,8 +575,8 @@ def bni_sam_get_log(param, __global_response__):
     if len(Param) > 0:
         C_Slot = Param[0]
     else:
-        LOG.fw("042:Parameter tidak lengkap", param)
-        raise SystemError("042:Parameter tidak lengkap: "+param)
+        LOG.fw("042:Missing Parameter", param)
+        raise SystemError("042:Missing Parameter: "+param)
     
     res_str, errmsg, desc = bni_sam_get_log_priv(C_Slot)
 

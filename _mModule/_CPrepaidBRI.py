@@ -28,8 +28,8 @@ def update_balance_bri(param, __global_response__):
         C_TOKEN = Param[2]
         C_SAMSLOT = Param[3]
     else:
-        LOG.fw("024:Parameter tidak lengkap", param)
-        raise SystemError("024:Parameter tidak lengkap: "+param)
+        LOG.fw("024:Missing Parameter", param)
+        raise SystemError("024:Missing Parameter: "+param)
     
     LOG.fw("024:Parameter = ", C_TID)
     LOG.fw("024:Parameter = ", C_MID)
@@ -278,8 +278,8 @@ def reversal_bri(param, __global_response__):
         C_BRI_TOKEN = Param[4]
         C_REFFNOHost = Param[5]
     else:
-        LOG.fw("064:Parameter tidak lengkap", param)
-        raise SystemError("064:Parameter tidak lengkap: "+param)
+        LOG.fw("064:Missing Parameter", param)
+        raise SystemError("064:Missing Parameter: "+param)
     
     LOG.fw("064:Parameter = ", C_TID)
     LOG.fw("064:Parameter = ", C_MID)
@@ -531,8 +531,8 @@ def GetLogBRI(param, __global_response__):
     if len(Param) == 1:
         C_SAMSLOT = Param[0]
     else:
-        LOG.fw("025:Parameter tidak lengkap", param)
-        raise SystemError("025:Parameter tidak lengkap: "+param)
+        LOG.fw("025:Missing Parameter", param)
+        raise SystemError("025:Missing Parameter: "+param)
     
     LOG.fw("025:Parameter = ", C_SAMSLOT)
 

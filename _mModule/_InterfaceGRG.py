@@ -58,8 +58,8 @@ def doInit(param, __global_response__):
     if len(Param) == 1:
         GRG_PORT = "COM"+Param[0]
     else:
-        LOG.grglog("[501]: Parameter tidak lengkap: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
-        raise SystemError("Parameter tidak lengkap: "+param)
+        LOG.grglog("[501]: Missing Parameter: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
+        raise SystemError("Missing Parameter: "+param)
 
     LOG.grglog("[501]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, GRG_PORT)
 

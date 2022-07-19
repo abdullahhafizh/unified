@@ -115,8 +115,8 @@ def DKI_RequestTopup(param, __global_response__):
     if len(Param) == 1:
         C_Denom = Param[0]
     else:
-        LOG.fw("051:Parameter tidak lengkap", param)
-        raise SystemError("051:Parameter tidak lengkap: "+param)
+        LOG.fw("051:Missing Parameter", param)
+        raise SystemError("051:Missing Parameter: "+param)
     
     LOG.fw("051:Parameter = ", C_Denom)
 
@@ -179,8 +179,8 @@ def DKI_Topup(param, __global_response__):
     if len(Param) == 1:
         C_DataToCard = Param[0]
     else:
-        LOG.fw("052:Parameter tidak lengkap", param)
-        raise SystemError("052:Parameter tidak lengkap: "+param)
+        LOG.fw("052:Missing Parameter", param)
+        raise SystemError("052:Missing Parameter: "+param)
     
     LOG.fw("052:Parameter = ", C_DataToCard)
 

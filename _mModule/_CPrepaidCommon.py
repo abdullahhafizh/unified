@@ -53,8 +53,8 @@ def init_topup(param, __global_response__):
         C_Institution =Param[2].encode('utf-8')
         C_Terminal = Param[3].encode('utf-8')
     else:
-        LOG.fw("001:Parameter tidak lengkap", param)
-        raise SystemError("001:Parameter tidak lengkap: "+param)
+        LOG.fw("001:Missing Parameter", param)
+        raise SystemError("001:Missing Parameter: "+param)
 
     LOG.fw("001:Parameter = ", C_PORT)
     LOG.fw("001:Parameter = ", C_SAMPIN)
@@ -129,8 +129,8 @@ def balance_with_sn(param, __global_response__):
     if len(Param) == 1:
         C_Denom = Param[0].encode('utf-8')
     else:
-        LOG.fw("003:Parameter tidak lengkap", param)
-        raise SystemError("003:Parameter tidak lengkap: "+param)
+        LOG.fw("003:Missing Parameter", param)
+        raise SystemError("003:Missing Parameter: "+param)
 
     LOG.fw("003:Parameter = ", C_Denom)
 
@@ -178,8 +178,8 @@ def debit(param, __global_response__):
     if len(Param) == 1:
         C_Denom = Param[0].encode('utf-8')
     else:
-        LOG.fw("008:Parameter tidak lengkap", param)
-        raise SystemError("008:Parameter tidak lengkap: "+param)
+        LOG.fw("008:Missing Parameter", param)
+        raise SystemError("008:Missing Parameter: "+param)
 
     LOG.fw("008:Parameter = ", C_Denom)
 
@@ -279,8 +279,8 @@ def debit_no_init_single_report(param, __global_response__):
         C_Denom = Param[0].encode('utf-8')
         C_TID = Param[1].encode('utf-8')
     else:
-        LOG.fw("022:Parameter tidak lengkap", param)
-        raise SystemError("022:Parameter tidak lengkap: "+param)
+        LOG.fw("022:Missing Parameter", param)
+        raise SystemError("022:Missing Parameter: "+param)
 
     LOG.fw("022:Parameter = ", C_Denom)
     LOG.fw("022:Parameter = ", C_TID)
@@ -318,8 +318,8 @@ def send_apdu(param, __global_response__):
         C_Slot = Param[0].encode('utf-8')
         C_APDU = Param[1].encode('utf-8')
     else:
-        LOG.fw("034:Parameter tidak lengkap", param)
-        raise SystemError("034:Parameter tidak lengkap: "+param)
+        LOG.fw("034:Missing Parameter", param)
+        raise SystemError("034:Missing Parameter: "+param)
 
     LOG.fw("034:Parameter = ", C_Slot)
     LOG.fw("034:Parameter = ", C_APDU)
