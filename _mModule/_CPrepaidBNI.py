@@ -544,17 +544,17 @@ def bni_card_get_log_custom(param, __global_response__):
     
     Param = param.split('|')
     row = 29
-    if len(Param) > 1:
+    if len(Param) > 0:
         row = Param[0].encode('utf-8') 
         row = int(row) - 1
     
-    res_str, errmsg, desc = bni_card_get_log_priv(row)
+    res_str, errmsg, desc = bni_card_get_log_custom_priv(row)
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["Response"] = errmsg
         if type(desc) == list and len(desc) > 0:
-            __global_response__["Response"] = ",".join(desc)
+            __global_response__["Response"] = errmsg + "#" + (",".join(desc))
         LOG.fw("040:Response = ", errmsg)
         __global_response__["ErrorDesc"] = "Sukses"
         LOG.fw("040:Result = ", res_str)
@@ -597,6 +597,53 @@ def bni_sam_get_log(param, __global_response__):
         LOG.fw("042:Gagal", None, True)
 
     return res_str
+
+
+def bni_card_get_log_custom_priv(max_t=29):
+    resultStr = ""
+    ErrorCode = ""
+    resreport = ""
+    ErrMsg = ""
+    msg = ""
+    GetLogBNI = ""
+    listRAPDU = []
+    # Max History
+    # max_t = 29
+
+    try:
+        prepaid.topup_card_disconnect()
+        resultStr, purseData, ErrMsg = prepaid.topup_pursedata()
+        if resultStr == "0000":
+            i = 0
+            while resultStr == "0000" and i <= max_t:
+                if i > max_t:
+                    break
+                else:
+                    idx = hex_padding(i)
+                    apdu = "9032030001" + str(idx) + "10"
+                    resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                    # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
+                    if resultStr == "0000":
+                        i = i + 1                        
+                        if rapdu in listRAPDU:
+                            continue
+                        listRAPDU.append(rapdu)
+                        types = rapdu[:2]
+                        amount = get_amount_for_log(rapdu[2:8])
+                        dates = get_date(rapdu[8:16])
+                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                        msg = msg + resreport + "#"
+                    else:
+                        GetLogBNI= rapdu
+
+        msg = msg + GetLogBNI
+        
+    except Exception as ex:
+        resultStr = "1"
+        msg = "{0}".format(ex)
+    
+    return resultStr, purseData, listRAPDU
+
 
 
 def bni_card_get_log_priv(max_t=29):

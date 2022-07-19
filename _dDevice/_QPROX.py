@@ -887,18 +887,20 @@ def topup_bni_correction(amount, trxid=''):
         # Get Card Log And Push SAM Audit
         param = last_audit_result
         # Will Change To Card Purse
-        last_purse = last_audit_result.get('sam_purse')
+        sam_purse = last_audit_result.get('sam_purse')
         sam_history = last_audit_result.get('sam_history')
-        card_history = bni_card_history_direct(30)
+        card_purse, card_history = bni_card_history_direct(10)
         param['remarks'] = json.dumps({
             'mid': _Common.MID_BNI,
             'tid': _Common.TID_BNI,
             'reader_response': last_audit_result.get('last_result'),
             'can': check_card_no,
-            'csn': last_purse[20:36] if last_purse is not None and len(last_purse) > 36 else '',
+            'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
             'card_history': card_history,
             'amount': amount,
             'sam_history': sam_history,
+            'sam_purse': sam_purse,
+            'card_purse': card_purse
         })
         # 00017546050002591031000000006E6E6E626187A02B89245456E2DDF0F451F39310000000000100157C88889999040021343360AD8F15789251010000003360CBBF50555243000000000000C307926DE549686CDE87AC42D7A4027D
         # 'trxid': trxid+'_FAILED',
@@ -1366,7 +1368,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 'remarks': {},
                 'last_result': json.loads(_result),
                 'sam_purse': init_result,
-                'sam_history': bni_sam_history_direct()
+                # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
     else:
@@ -1722,7 +1724,10 @@ def get_card_history(bank):
 def bni_card_history_direct(row=30):
     param = QPROX['CARD_HISTORY_BNI_RAW'] + '|' + str(row) + '|'
     response, result = _Command.send_request(param=param, output=None)
-    return result if response == 0 else ''
+    if response == 0:
+        return result.split('#')[0], result.split('#')[1]
+    else:
+        return "", ""
 
 
 def bni_sam_history_direct():
