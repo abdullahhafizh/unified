@@ -193,7 +193,7 @@ def bni_init_topup(param, __global_response__):
     if res_card_purse != '0000':
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("012:Result Purse Kartu= ", res_card_purse, True)
-        LOG.fw("012:Gagal Purse Kartu", None, True)
+        LOG.fw("012:Gagal Purse Kartu", purse_error, True)
         return res_str
     
     sleep(1)
