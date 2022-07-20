@@ -905,21 +905,24 @@ def check_mandiri_deposit():
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TOPUP_DEPOSIT_C2C_SUCCESS')
         
         
-def start_check_mandiri_c2c_settlement():
+def start_daily_mandiri_c2c_settlement():
     if _Common.C2C_MODE:
-        _Helper.get_thread().apply_async(check_mandiri_c2c_settlement)
+        _Helper.get_thread().apply_async(daily_mandiri_c2c_settlement)
     else:
         print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
         
 
-def check_mandiri_c2c_settlement():
+def daily_mandiri_c2c_settlement():
     _SFTPAccess.HOST_BID = 0
-    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
+    print('pyt: MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
+    LOGGER.info(('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT'))
     _param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C')
     if _param_sett is False:
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
+        print('pyt: MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
+        LOGGER.error(('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT'))
         return
-    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
+    print('pyt: MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
+    LOGGER.info(('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT'))
     _file_ok = _param_sett['filename'].replace('.txt', '.ok')
     _push_file_sett = upload_settlement_file(
         filename=[_param_sett['filename'], _file_ok],
@@ -931,11 +934,14 @@ def check_mandiri_c2c_settlement():
     _param_sett['remote_path'] = _push_file_sett['remote_path']
     _param_sett['local_path'] = _push_file_sett['local_path']
     # async_push_settlement_data(_param_sett)
-    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
     send_settlement_data = push_settlement_data(_param_sett)
     if not send_settlement_data:
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
+        print('pyt: MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_PENDING')
+        LOGGER.error(('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_PENDING'))
         return
+    print('pyt: MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
+    LOGGER.info(('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS'))
+
 
 
 def validate_update_balance():

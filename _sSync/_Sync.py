@@ -60,9 +60,9 @@ def sync_machine(url, param):
         except Exception as e:
             LOGGER.debug(e)         
         finally:
+            if _Common.DAILY_C2C_SETTLEMENT_TIME == _Helper.time_string('%H:%M'):
+                _SettlementService.start_daily_mandiri_c2c_settlement()    
             if _Common.DAILY_SYNC_SUMMARY_TIME == _Helper.time_string('%H:%M'):
-                # print("pyt: Check Mandiri C2C Settlement...")
-                _SettlementService.start_check_mandiri_c2c_settlement()    
                 while True:
                     if send_daily_summary() is True:
                         break
@@ -72,7 +72,7 @@ def sync_machine(url, param):
                 sleep(30)
                 _KioskService.execute_command('shutdown -r -f -t 0')
                 # _KioskService.kiosk_status()
-        sleep(45.45)
+        sleep(30.50)
 
 
 def send_daily_summary():

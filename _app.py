@@ -1310,7 +1310,7 @@ if __name__ == '__main__':
         # if '02:3' in _Helper.time_string('%H:%M'):
         #     sleep(1)
         #     print("pyt: Check Mandiri C2C Settlement...")
-        #     _SettlementService.start_check_mandiri_c2c_settlement()    
+        #     _SettlementService.start_daily_mandiri_c2c_settlement()    
     if _QPROX.INIT_BNI is True:
         sleep(.5)
         print("pyt: Triggering BNI Settlement Sync...")

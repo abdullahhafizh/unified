@@ -1,9 +1,9 @@
 14.0.G13-GLOBAL:
-- Add Function Get SAM BNI Log History,
 - Set Max BNI History to 30,
-- Adjust Flow Force Settlement BNI,
+- Provide Failure Data Topup Offline BNI,
 - Waive OTP For Dev Envi,
 - Add Remote Command Release BNI Reload LOCK,
+- Add Daily Settlement C2C Mandiri On 23:59,
 - ...
 
 14.0.G12-GLOBAL:
