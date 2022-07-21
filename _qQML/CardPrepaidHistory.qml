@@ -128,9 +128,9 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "PRINT OUT"');
                 if (press!='0') return;
                 press = '1';
+                _SLOT.user_action_log('Press "PRINT OUT"');
                 var payload = {
                     card_no: cardNo,
                     last_balance: balance,
@@ -324,9 +324,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     popup_loading.open();
                     switch(actionMode){
                     case 'check_balance':

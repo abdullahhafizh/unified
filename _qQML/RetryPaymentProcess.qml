@@ -1264,9 +1264,9 @@ Base{
                     back_button.visible = false;
                     return;
                 }
-                _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
+                _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (receivedPayment == initialPayment){
                     if (details.payment=='cash') _SLOT.stop_bill_receive_note();
                     exit_with_message(3);
@@ -1634,9 +1634,9 @@ Base{
                 anchors.fill: parent
                 onClicked: {
 //                    console.log('GLOBAL_FRAME_CANCEL_BUTTON', press);
-                    _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (details.payment=='cash') {
                         console.log('[CANCELLATION] Cash Method Payment Detected..!')
                         proceedAble = false;
@@ -1761,9 +1761,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
 //                    _SLOT.start_cancel_qr_global('CANCEL_'+details.shop_type+details.epoch.toString());
                     qr_payment_frame.cancel('USER_CANCEL');
                     my_timer.stop();

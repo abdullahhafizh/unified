@@ -105,9 +105,9 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press Denom "'+bigDenomAmount.toString()+'"');
                     if (prepaid_topup_denom.press != '0') return;
                     prepaid_topup_denom.press = '1';
+                    _SLOT.user_action_log('Press Denom "'+bigDenomAmount.toString()+'"');
                     var param = JSON.stringify({
                         'provider': _provider,
                         'value': bigDenomAmount.toString(),
@@ -129,9 +129,9 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press Denom "'+smallDenomAmount.toString()+'"');
                     if (prepaid_topup_denom.press != '0') return;
                     prepaid_topup_denom.press = '1';
+                    _SLOT.user_action_log('Press Denom "'+smallDenomAmount.toString()+'"');
                     var param = JSON.stringify({
                         'provider': _provider,
                         'value': smallDenomAmount.toString(),
@@ -154,9 +154,9 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press Denom "'+tinyDenomAmount.toString()+'"');
                     if (prepaid_topup_denom.press != '0') return;
                     prepaid_topup_denom.press = '1';
+                    _SLOT.user_action_log('Press Denom "'+tinyDenomAmount.toString()+'"');
                     var param = JSON.stringify({
                         'provider': _provider,
                         'value': tinyDenomAmount.toString(),
@@ -180,9 +180,9 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press Denom "'+miniDenomAmount.toString()+'"');
                     if (prepaid_topup_denom.press != '0') return;
                     prepaid_topup_denom.press = '1';
+                    _SLOT.user_action_log('Press Denom "'+miniDenomAmount.toString()+'"');
                     var param = JSON.stringify({
                         'provider': _provider,
                         'value': miniDenomAmount.toString(),

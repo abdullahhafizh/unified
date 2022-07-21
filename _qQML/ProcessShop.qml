@@ -497,9 +497,9 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
+                _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (details.payment=='cash' && !isPaid) {
                     _SLOT.stop_bill_receive_note();
                     if (receivedCash > 0){

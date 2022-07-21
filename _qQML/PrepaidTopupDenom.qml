@@ -540,9 +540,9 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "LANJUT"');
                 if (press!='0') return;
                 press = '1';
+                _SLOT.user_action_log('Press "LANJUT"');
                 disable_all_next_button();
                 do_set_confirm('button_LANJUT_trigger');
             }
@@ -921,9 +921,9 @@ Base{
                 onClicked: {
                     if (exceed_balance(tinyDenomTopup)) return;
                     if (minus_sam_balance(tinyDenomTopup)) return;
-                    _SLOT.user_action_log('Choose tinyDenom "'+tinyDenomTopup+'"');;
                     if (press!='0') return;
                     press = '1';
+                    _SLOT.user_action_log('Choose tinyDenom "'+tinyDenomTopup+'"');;
                     release_denom_selection(tiny_denom);
                     set_selected_denom(tinyDenomTopup);
                 }
@@ -940,9 +940,9 @@ Base{
                 onClicked: {
                     if (exceed_balance(smallDenomTopup)) return;
                     if (minus_sam_balance(smallDenomTopup)) return;
-                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');;
                     if (press!='0') return;
                     press = '1';
+                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');;
                     release_denom_selection(small_denom);
                     set_selected_denom(smallDenomTopup);
                 }
@@ -959,9 +959,9 @@ Base{
                 onClicked: {
                     if (exceed_balance(midDenomTopup)) return;
                     if (minus_sam_balance(midDenomTopup)) return;
-                    _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
+                    _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     release_denom_selection(mid_denom);
                     set_selected_denom(midDenomTopup);
                 }
@@ -978,9 +978,9 @@ Base{
                 onClicked: {
                     if (exceed_balance(highDenomTopup)) return;
                     if (minus_sam_balance(highDenomTopup)) return;
-                    _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
+                    _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     release_denom_selection(high_denom);
                     set_selected_denom(highDenomTopup);
                 }
@@ -1125,9 +1125,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
                         _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
@@ -1179,10 +1179,10 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     preload_check_card.close();
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     popup_loading.open();
                     _SLOT.start_check_card_balance();
                 }

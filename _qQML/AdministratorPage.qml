@@ -398,9 +398,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Reboot"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Reboot"');
                     console.log('reboot_button is pressed..!');
                     switch_notif('Dear User|Tekan Tombol "reboot" Untuk Melanjutkan Proses.', false);
                     standard_notif_view.buttonEnabled = false;
@@ -417,9 +417,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Reset BILL"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Reset BILL"');
                     console.log('reset_bill_button is pressed..!');
                     popup_loading.open();
                     _SLOT.start_reset_bill();
@@ -486,9 +486,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Update Balance Deposit Mandiri"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Update Balance Deposit Mandiri"');
                     console.log('update_balance_deposit_mandiri is pressed..!');
                     popup_loading.open();
                     _SLOT.start_deposit_update_balance('MANDIRI');
@@ -526,9 +526,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Topup BNI Deposit"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Topup BNI Deposit"');
                     console.log('topup_bni_deposit_button is pressed..!');
                     popup_loading.open();
                     _SLOT.start_do_force_topup_bni();
@@ -565,9 +565,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Sync Card"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Sync Card"');
                     console.log('sync_product_stock is pressed..!');
                     popup_loading.open();
                     _SLOT.start_sync_product_stock();
@@ -603,9 +603,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Force Update App"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Force Update App"');
                     console.log('update_app is pressed..!');
                     popup_loading.open();
                     _SLOT.start_do_update();
@@ -622,9 +622,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Open Explorer.exe"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Open Explorer.exe"');
                     console.log('open_explorer is pressed..!');
 //                    popup_loading.open();
                     _SLOT.start_trigger_explorer();
@@ -662,9 +662,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onDoubleClicked: {
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Collection Print"');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log(operatorName + '- Admin Page "Collection Print"');
                     console.log('print_receipt_button is pressed..!');
                     if (actionList.length > 0){
                         popup_loading.open();

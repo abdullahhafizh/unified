@@ -1356,9 +1356,9 @@ Base{
                     back_button.visible = false;
                     return;
                 }
-                _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
                 press = '1';
+                _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (useCancelConfirmation){
                     cancel_confirmation.open();
                     press = '0';
@@ -1754,9 +1754,9 @@ Base{
                         cancel_button_global.visible = false;
                         return;
                     }
-                    _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (useCancelConfirmation){
                         press = '0';
                         cancel_confirmation.open();
@@ -1782,9 +1782,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
                         _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
@@ -1865,9 +1865,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (useCancelConfirmation){
                         press = '0';
                         cancel_confirmation.open();
@@ -1998,7 +1998,7 @@ Base{
                         release_print_with_refund(refundAmount.toString(), 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
                         break;
                     }
-                     popup_refund.close();
+                    popup_refund.close();
                     // proceedAble = true;
                     // initial_process();
                 }

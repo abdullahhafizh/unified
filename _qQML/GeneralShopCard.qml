@@ -385,9 +385,9 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "LANJUT"');
                 if (press!='0') return;
                 press = '1';
+                _SLOT.user_action_log('Press "LANJUT"');
                 var get_details = get_cart_details(selectedPayment);
                 my_layer.push(general_payment_process, {details: get_details});
 //                popup_loading.close();
@@ -893,9 +893,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     switch(modeButtonPopup){
                     default:
                         break;

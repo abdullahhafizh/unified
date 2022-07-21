@@ -320,9 +320,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "Cek Saldo"');
                     if (press!="0") return;
                     press = "1";
+                    _SLOT.user_action_log('Press "Cek Saldo"');
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -350,9 +350,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "TopUp Saldo"');
                     if (press!="0") return;
                     press = "1";
+                    _SLOT.user_action_log('Press "TopUp Saldo"');
                     if (!printerAvailable){
                         show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
                         return
@@ -445,9 +445,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "Bayar/Beli"');
                     if (press!="0") return;
                     press = "1";
+                    _SLOT.user_action_log('Press "Bayar/Beli"');
                     if (!printerAvailable){
                         show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
                         return

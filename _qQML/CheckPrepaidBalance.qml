@@ -341,10 +341,10 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "ISI SALDO"');
                 preload_check_card.close();
                 if (press!='0') return;
-                press = '1'
+                press = '1';
+                _SLOT.user_action_log('Press "ISI SALDO"');
                 if (allowedBank.indexOf(bankName) > -1){
                     if ((bankName=='MANDIRI' && !emoneyAvailable) ||
                             (bankName=='BNI' && !tapcashAvailable) ||
@@ -695,9 +695,9 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     popup_loading.open();
                     switch(actionMode){
                     case 'check_balance':

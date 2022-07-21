@@ -1059,11 +1059,11 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                console.log('button "LANJUT" is pressed..!')
-                _SLOT.user_action_log('press "LANJUT" In Input Number Page');
+                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                console.log('button "LANJUT" is pressed..!');
                 if(press != "0") return;
-                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                 press = "1"
+                _SLOT.user_action_log('press "LANJUT" In Input Number Page');
                 transactionInProcess = true;
 //                    console.log('number input', now, textInput);
                 switch(mode){
@@ -1230,10 +1230,10 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT" For Retry Transaction');
                     console.log('Press "LANJUT" For Retry Transaction');
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log('Press "LANJUT" For Retry Transaction');
                     proceed_button.visible = false;
                     if (retryCategory == 'TOPUP'){
                         press = '0';
@@ -1317,10 +1317,10 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "LANJUT"');
                     preload_check_card.close();
                     if (press!='0') return;
-                    press = '1'
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT"');
                     popup_loading.open();
                     _SLOT.start_check_card_balance();
                 }
