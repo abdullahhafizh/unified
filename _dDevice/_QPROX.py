@@ -890,6 +890,8 @@ def topup_bni_correction(amount, trxid=''):
         param = last_audit_result
         if 'topup_result' in param.keys():
             param.pop('topup_result')
+        if 'last_result' in param.keys():
+            param.pop('last_result')
         # Will Change To Card Purse
         # sam_purse = last_audit_result.get('sam_purse')
         sam_history = last_audit_result.get('sam_history', '')
