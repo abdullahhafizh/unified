@@ -886,40 +886,45 @@ def topup_bni_correction(amount, trxid=''):
         return
     # Still Negative Condition
     # Get Card Log And Push SAM Audit
-    param = last_audit_result
-    param.pop('topup_result')
-    # Will Change To Card Purse
-    # sam_purse = last_audit_result.get('sam_purse')
-    sam_history = last_audit_result.get('sam_history', '')
-    card_purse, card_history = bni_card_history_direct(10)
-    param['remarks'] = json.dumps({
-        'mid': _Common.MID_BNI,
-        'tid': _Common.TID_BNI,
-        'can': check_card_no,
-        'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
-        'card_history': card_history,
-        'amount': amount,
-        'sam_history': sam_history,
-        # 'sam_purse': sam_purse,
-        'card_purse': card_purse,
-        'err_code': param.get('err_code'),
-    })
-    # 00017546050002591031000000006E6E6E626187A02B89245456E2DDF0F451F39310000000000100157C88889999040021343360AD8F15789251010000003360CBBF50555243000000000000C307926DE549686CDE87AC42D7A4027D
-    # 'trxid': trxid+'_FAILED',
-    # 'samCardNo': _Common.BNI_SAM_1_NO,
-    # 'samCardSlot': _Common.BNI_ACTIVE,
-    # 'samPrevBalance': deposit_prev_balance,
-    # 'samLastBalance': _Common.BNI_ACTIVE_WALLET,
-    # 'topupCardNo': last_card_check['card_no'],
-    # 'topupPrevBalance': last_card_check['balance'],
-    # 'topupLastBalance': last_card_check['balance'],
-    # 'status': 'FAILED',
-    # 'remarks': {},
-    # 'topup_result': json.loads(_result),
-    # 'err_code': json.loads(_result),
-    LOGGER.info((str(param)))
-    _Common.store_upload_sam_audit(param)
+    try:
+        param = last_audit_result
+        param.pop('topup_result')
+        # Will Change To Card Purse
+        # sam_purse = last_audit_result.get('sam_purse')
+        sam_history = last_audit_result.get('sam_history', '')
+        card_purse, card_history = bni_card_history_direct(10)
+        param['remarks'] = json.dumps({
+            'mid': _Common.MID_BNI,
+            'tid': _Common.TID_BNI,
+            'can': check_card_no,
+            'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
+            'card_history': card_history,
+            'amount': amount,
+            'sam_history': sam_history,
+            # 'sam_purse': sam_purse,
+            'card_purse': card_purse,
+            'err_code': param.get('err_code'),
+        })
+        # 00017546050002591031000000006E6E6E626187A02B89245456E2DDF0F451F39310000000000100157C88889999040021343360AD8F15789251010000003360CBBF50555243000000000000C307926DE549686CDE87AC42D7A4027D
+        # 'trxid': trxid+'_FAILED',
+        # 'samCardNo': _Common.BNI_SAM_1_NO,
+        # 'samCardSlot': _Common.BNI_ACTIVE,
+        # 'samPrevBalance': deposit_prev_balance,
+        # 'samLastBalance': _Common.BNI_ACTIVE_WALLET,
+        # 'topupCardNo': last_card_check['card_no'],
+        # 'topupPrevBalance': last_card_check['balance'],
+        # 'topupLastBalance': last_card_check['balance'],
+        # 'status': 'FAILED',
+        # 'remarks': {},
+        # 'topup_result': json.loads(_result),
+        # 'err_code': json.loads(_result),
+        LOGGER.info((str(param)))
+        _Common.store_upload_sam_audit(param)
+        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+    except Exception as e:
+        LOGGER.warning((e))
     QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+
 
 
 
