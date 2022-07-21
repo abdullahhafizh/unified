@@ -889,7 +889,7 @@ def topup_bni_correction(amount, trxid=''):
     param = last_audit_result
     param.pop('topup_result')
     # Will Change To Card Purse
-    sam_purse = last_audit_result.get('sam_purse')
+    # sam_purse = last_audit_result.get('sam_purse')
     sam_history = last_audit_result.get('sam_history', '')
     card_purse, card_history = bni_card_history_direct(10)
     param['remarks'] = json.dumps({
@@ -902,7 +902,7 @@ def topup_bni_correction(amount, trxid=''):
         'sam_history': sam_history,
         # 'sam_purse': sam_purse,
         'card_purse': card_purse,
-        'err_code': param['err_code'],
+        'err_code': param.get('err_code'),
     })
     # 00017546050002591031000000006E6E6E626187A02B89245456E2DDF0F451F39310000000000100157C88889999040021343360AD8F15789251010000003360CBBF50555243000000000000C307926DE549686CDE87AC42D7A4027D
     # 'trxid': trxid+'_FAILED',
