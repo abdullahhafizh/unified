@@ -518,11 +518,12 @@ Base{
             popup_loading.open();
             switch(vCollectionMode){
             case 'card_collection':
-                console.log('Card Collection...')
-                switch_frame('source/sand-clock-animated-2.gif', 'Memproses Kartu Baru Anda', 'Mohon Tunggu Beberapa Saat', 'closeWindow', true )
+                console.log('Card WA Redeem Collection...');
+                switch_frame('source/sand-clock-animated-2.gif', 'Memproses Kartu Baru Anda', 'Mohon Tunggu Beberapa Saat', 'closeWindow', true );
                 var attempt = vCollectionData.slot.toString();
                 var multiply = vCollectionData.qty.toString();
-                _SLOT.start_multiple_eject(attempt, multiply);
+                var voucher = vCollectionData.voucher.toString();
+                _SLOT.start_card_validate_redeem(attempt, multiply, voucher);
                 break;
             case 'mandiri_topup':
                 console.log('Mandiri Topup...')

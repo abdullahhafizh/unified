@@ -6,6 +6,7 @@ from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
 from _tTools import _Helper
+from _nNetwork import _NetworkAccess
 from time import sleep
 import os
 import sys
@@ -121,6 +122,17 @@ def start_multiple_eject(attempt, multiply):
     #     _Helper.get_thread().apply_async(new_cd_eject, (port, attempt, ))
     # else:
     #     _Helper.get_thread().apply_async(general_cd_eject, (attempt, multiply,))
+    
+
+def start_card_validate_redeem(attempt, multiply, vcode):
+    port = CD_PORT_LIST.get(attempt)
+    # Generalise Command
+    # false_ok = False
+    # if not _Common.CD_NEW_TYPE.get(port, False):
+    #     # Old CD Treated to Allow False OK Response (80/78)
+    #     false_ok = True
+    slot = attempt
+    _Helper.get_thread().apply_async(voucher_trigger_card_dispenser, (port, slot, multiply, vcode,))
 
 
 def new_cd_eject(port, attempt):
@@ -163,6 +175,26 @@ def trigger_card_dispenser(port, slot, multiply='1'):
             emit_eject_error(slot, output, 'trigger_card_dispenser')
     except Exception as e:
         emit_eject_error(slot, str(e), 'trigger_card_dispenser')
+
+
+def voucher_trigger_card_dispenser(port, slot, multiply='1', vcode=''):
+    try:
+        success = False
+        payload = {
+            'vcode': vcode
+        }
+        url = _Common.BACKEND_URL+'ppob/voucher/check'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload, custom_timeout=5)
+        if s == 200 and r['result'] == 'OK' and r['data']['Response'] == '0':
+            success = True
+        LOGGER.info((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+    finally:
+        if success:
+            trigger_card_dispenser(port, slot, multiply)
+        else:
+            emit_eject_error(slot, 'Vcode Validation Failed', 'voucher_trigger_card_dispenser')
 
 
 def general_cd_eject(attempt, multiply, false_ok=False):

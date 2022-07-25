@@ -351,6 +351,10 @@ class SlotHandler(QObject):
     def start_multiple_eject(self, attempt, multiply):
         _CD.start_multiple_eject(attempt, multiply)
     start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
+    
+    def start_card_validate_redeem(self, attempt, multiply, vcode):
+        _CD.start_card_validate_redeem(attempt, multiply, vcode)
+    start_card_validate_redeem = pyqtSlot(str, str, str)(start_card_validate_redeem)
 
     def start_store_transaction_global(self, param):
         _KioskService.start_store_transaction_global(param)

@@ -4,6 +4,8 @@
 - Waive OTP For Dev Envi,
 - Add Remote Command Release BNI Reload LOCK,
 - Add Daily Settlement C2C Mandiri On 23:59,
+- Add Handle Topup Mandiri C2C 025E,
+- WA Redeem Trigger Validation,
 - ...
 
 14.0.G12-GLOBAL:

@@ -132,6 +132,7 @@ def check_voucher(voucher):
             check_product = _DAO.check_product_status_by_pid({'pid': product_id})
             if len(check_product) > 0:
                 output = {
+                    'voucher': voucher,
                     'mode': 'card_collection',
                     'product': product_id,
                     'qty': r['data']['qty_available'],
