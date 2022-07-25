@@ -950,22 +950,22 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
         return
     try:
-        _result_json = json.loads(_result)
+        topup_result = json.loads(_result)
 
         LAST_C2C_APP_TYPE = '0'
-        if _result_json["Response"] == '83' or _result_json["Result"] in ["6208"]:
+        if topup_result["Response"] == '83' or topup_result["Result"] in ["6208"]:
             LAST_C2C_APP_TYPE = '1'
         # validate if deposit balance is deducted
         c2c_balance_info()
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
         LOGGER.info(('PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
         LOGGER.info(('LAST_BALANCE_DEPOSIT', last_deposit_balance ))
-        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', _result, 'applet_type:', LAST_C2C_APP_TYPE ))
+        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
         
         if prev_deposit_balance == last_deposit_balance:
             LOGGER.debug(('FAILED MDR C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
             # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
-            if _result_json["Result"] in ["6208"]:
+            if topup_result["Result"] in ["6208"]:
                 LAST_C2C_APP_TYPE == '1'
                 get_force_settlement(amount, trxid, 'FAILED')
                 sleep(1)
@@ -975,11 +975,10 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         # "6987", "100C", "10FC" Another Captured Error Code
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
         
-        topup_result = json.loads(_result)
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
-                'samCardNo': _Common.BNI_SAM_1_NO,
-                'samCardSlot': _Common.BNI_ACTIVE,
+                'samCardNo': _Common.MANDIRI_SAM_NO_1,
+                'samCardSlot': _Common.MANDIRI_ACTIVE,
                 'samPrevBalance': prev_deposit_balance,
                 'samLastBalance': _Common.MANDIRI_ACTIVE_WALLET,
                 'topupCardNo': last_card_check['card_no'],
