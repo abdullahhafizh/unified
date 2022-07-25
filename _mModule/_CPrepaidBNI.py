@@ -141,8 +141,15 @@ def send_update_balance(TOKEN, TID, MID, card_no, purse_data, reff_no, last_bala
 
 #003-2
 def bni_validation(param, __global_response__):
-    res_str = prepaid.topupbni_validation(b"5")
         
+    res_str = __global_response__["Result"]
+
+    # Do validate BNI if only Tapcash
+    if __global_response__["Result"] == '0000':
+        card_balance_data =  __global_response__["Response"]
+        if card_balance_data.split('|')[1][:4] == '7546':
+            res_str = prepaid.topupbni_validation(b"5")
+    
     __global_response__["Response"] = __global_response__["Response"] + "|" + res_str
 
     return res_str

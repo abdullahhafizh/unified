@@ -651,10 +651,7 @@ def direct_card_balance():
 
 
 def start_topup_offline_mandiri(amount, trxid):
-    if not _Common.C2C_MODE:
-        _Helper.get_thread().apply_async(topup_offline_mandiri, (amount, trxid,))
-    else:
-        _Helper.get_thread().apply_async(topup_offline_mandiri_c2c, (amount, trxid,))
+    _Helper.get_thread().apply_async(topup_offline_mandiri_c2c, (amount, trxid,))
 
 
 LAST_MANDIRI_C2C_REPORT = ""
@@ -808,34 +805,13 @@ def top_up_mandiri_correction(amount, trxid=''):
     # Below Condition under Transaction Success
     if (int(last_card_check['balance']) + int(amount) - 1500) == int(last_balance):
         # Force Settlement As Success
-        get_force_settlement(amount, trxid, force_status='0000')
-        # param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
-        # _, report = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        # if _ == 0 and len(report) >= 196:
-        #     if report in LAST_MANDIRI_C2C_REPORT:
-        #         LOGGER.debug('DUPLICATE LAST_MANDIRI_C2C_REPORT', LAST_MANDIRI_C2C_REPORT, 'DO_FORCE_SETTLEMENT')
-        #         # Handle Force Settlement As Success TRX
-        #         get_force_settlement(amount, trxid, force_status='0000')
-        #         return
-        #     c2c_report = report
-        #     if report[0] != '|':
-        #         c2c_report = '|' + report
-        #     parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
-        #     return
-    # Handle Old Applet Correction
-    # if LAST_C2C_APP_TYPE == '0':
-        # Old Applet Doing Topup Offline
-        # return topup_offline_mandiri_c2c(amount, trxid)
+        get_force_settlement(amount, trxid, set_status='0000')
+
     else:
         # New Applet Doing Correction
         # param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
         # _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        # if _response == 0 and len(_result) >= 196:
-            # parse_c2c_report(report=_result, reff_no=trxid, amount=amount)
-        # else:
-            # LOGGER.warning((trxid, _result))
-        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
-        get_force_settlement(amount, trxid)
+        get_force_settlement(amount, trxid, set_status='FAILED')
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
 
@@ -938,17 +914,14 @@ def start_mandiri_c2c_force_settlement(amount, trxid):
         _Helper.get_thread().apply_async(get_force_settlement, (amount, trxid,))
 
 
-def get_force_settlement(amount, trxid, force_status=None):
+def get_force_settlement(amount, trxid, set_status='FAILED'):
     _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
     _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
     LOGGER.debug((_param, _response, _result))
     if _response == 0 and len(_result) >= 196:
         # Update Detail TRX Detail Attribute
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
-        if force_status is not None:
-            parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
-        else:
-            parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=force_status)
+        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
     else:
         LOGGER.warning((trxid, _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
@@ -1003,7 +976,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
             if _result_json["Result"] in ["6208"]:
                 LAST_C2C_APP_TYPE == '1'
-                get_force_settlement(amount, trxid)
+                get_force_settlement(amount, trxid, 'FAILED')
                 sleep(1)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             return
@@ -1345,6 +1318,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 return
         # False Condition
         ka_info_bni(_Common.BNI_ACTIVE)
+        if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
+            LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            return
+        # Real False Condition
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR')
         topup_result = json.loads(_result)
         last_audit_report = json.dumps({
