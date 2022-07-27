@@ -185,7 +185,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         slot = _Common.BNI_ACTIVE
         if _Common.BNI_SINGLE_SAM is True:
             slot = 1
-        _QPROX.ka_info_bni(slot=slot)
+        # Check Lastest Deposit Balance Removed
         if _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD:
             LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', slot, _Common.BNI_ACTIVE_WALLET, _Common.BNI_THRESHOLD))
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_DEPOSIT_STILL_SUFFICIENT')
@@ -201,6 +201,8 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         invoice_no = 'refill'+str(_Helper.epoch())
         _Common.store_to_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES', invoice_no)
         LOGGER.debug(('BNI_DEPOSIT_RELOAD_IN_PROGRES', str(invoice_no)))
+        # Add Delay Read Deposit
+        sleep(1)
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
