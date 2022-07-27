@@ -7,6 +7,7 @@
 - Add Handle Topup Mandiri C2C 025E,
 - WA Redeem Trigger Validation,
 - Adjust Issue Failed Read Deposit Balance When Reload Deposit,
+- Adjust Screen Size Detection,
 - ...
 
 14.0.G12-GLOBAL:

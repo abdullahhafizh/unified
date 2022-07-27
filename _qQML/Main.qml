@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 
 
 Rectangle {
@@ -10,8 +10,8 @@ Rectangle {
     property var language: "INA"
     property var globalBoxName: ""
     property bool mediaOnPlaying: false
-    property int globalWidth: parseInt(SCREEN.size.width)
-    property int globalHeight: parseInt(SCREEN.size.height)
+    property int globalWidth: parseInt(SCREEN_WIDTH)
+    property int globalHeight: parseInt(SCREEN_HEIGHT)
     width: globalWidth
     height: globalHeight
 

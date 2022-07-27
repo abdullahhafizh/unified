@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 
 Rectangle{
     id:notification_standard
@@ -14,8 +14,8 @@ Rectangle{
     property bool modeReverse: true
     property alias _button_text: close_button.button_text
     color: 'transparent'
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
+    width: parseInt(SCREEN_WIDTH)
+    height: parseInt(SCREEN_HEIGHT)
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }

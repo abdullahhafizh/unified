@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 import "config.js" as CONF
 import "base_function.js" as FUNC
 

@@ -2,15 +2,15 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
 import QtMultimedia 5.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 import "config.js" as CONF
 
 
 Rectangle{
     id:parent_root
     color: "black"
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
+    width: parseInt(SCREEN_WIDTH)
+    height: parseInt(SCREEN_HEIGHT)
     property var img_path: "/_vVideo/"
     property url img_path_: ".." + img_path
     property var qml_pic

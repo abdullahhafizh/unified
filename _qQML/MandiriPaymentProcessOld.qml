@@ -2,14 +2,14 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 import "config.js" as CONF
 
 
 Base{
     id: general_payment_process
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
+    width: parseInt(SCREEN_WIDTH)
+    height: parseInt(SCREEN_HEIGHT)
     property int timer_value: 300
     property var press: '0'
     property var details

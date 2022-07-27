@@ -46,12 +46,12 @@ print("""
         Unik Vending Kiosk
     App Ver: """ + _Common.VERSION + """
 Powered By: PT. MultiDaya Dinamika
-              -2021-
+              -2022-
 """)
 
 # Set Default Screen Frame Size
-GLOBAL_WIDTH = 1920
-GLOBAL_HEIGHT = 1080
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
 
 
 class SlotHandler(QObject):
@@ -961,24 +961,24 @@ def get_disk_info():
 
 
 def get_screen_resolution():
-    global GLOBAL_HEIGHT, GLOBAL_WIDTH
+    global SCREEN_HEIGHT, SCREEN_WIDTH
     try:
         import ctypes
         user32 = ctypes.windll.user32
         # user32.SetProcessDPIAware()
         resolution = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
-        LOGGER.info(('get_screen_resolution : ', str(resolution)))
-        screen_js = sys.path[0] + '/_qQml/screen.js'
-        GLOBAL_WIDTH = resolution[0]
-        GLOBAL_HEIGHT = resolution[1]
-        content_js = 'var size = { "width": ' + str(resolution[0]) + ', "height": ' + str(resolution[1]) + '};'
-        with open(screen_js, 'w+') as s:
-            s.write(content_js)
-            s.close()
-        LOGGER.info(('write_screen_resolution : ', screen_js, content_js))
+        LOGGER.info(('SCREEN RESOLUTION : ', str(resolution)))
+        # screen_js = sys.path[0] + '/_qQml/screen.js'
+        SCREEN_WIDTH = resolution[0]
+        SCREEN_HEIGHT = resolution[1]
+        # content_js = 'var size = { "width": ' + str(resolution[0]) + ', "height": ' + str(resolution[1]) + '};'
+        # with open(screen_js, 'w+') as s:
+        #     s.write(content_js)
+        #     s.close()
+        # LOGGER.info(('write_screen_resolution : ', screen_js, content_js))
     except Exception as e:
         resolution = [0, 0]
-        LOGGER.warning(('get_screen_resolution : ', e))
+        LOGGER.warning((e))
     # print(res)
     return resolution
 
@@ -1207,6 +1207,8 @@ if __name__ == '__main__':
     view = QQuickView()
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
+    context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
+    context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
@@ -1217,7 +1219,7 @@ if __name__ == '__main__':
         app.setOverrideCursor(Qt.BlankCursor)
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
-    view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
+    view.resize(SCREEN_WIDTH, SCREEN_HEIGHT - 1)
     print("pyt: Table Adjustment...")
     _KioskService.direct_alter_table([
         "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",

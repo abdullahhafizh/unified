@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtWebKit 3.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 
 Base{
     property int timer_value: 300
@@ -80,7 +80,7 @@ Base{
         Rectangle {
             y: 100; x: 0;
             ScrollView {
-                width: parseInt(SCREEN.size.width)
+                width: parseInt(SCREEN_WIDTH)
                 height: 924
                 WebView {
                     id: webview

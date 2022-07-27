@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 import "config.js" as CONFIG
 
 
@@ -9,8 +9,8 @@ Rectangle{
     id: main
     x:0
     y:0
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
+    width: parseInt(SCREEN_WIDTH)
+    height: parseInt(SCREEN_HEIGHT)
     color: "transparent"
     property string mode_: "normal"
     property var use_

@@ -1,13 +1,13 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 
 Rectangle{
     id:popup_update_stock
     visible: false
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
+    width: parseInt(SCREEN_WIDTH)
+    height: parseInt(SCREEN_HEIGHT)
     color: 'transparent'
     property int max_count: 4
     property var press: "0"

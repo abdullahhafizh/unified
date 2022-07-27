@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
+//import "screen.js" as SCREEN
 import "config.js" as CONF
 
 
@@ -25,7 +25,7 @@ Rectangle{
     visible: false
     color: 'transparent'
     height: 350
-    width: parseInt(SCREEN.size.width)
+    width: parseInt(SCREEN_WIDTH)
 //    width: 1920
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
