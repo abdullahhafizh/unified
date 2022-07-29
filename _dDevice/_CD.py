@@ -22,6 +22,8 @@ CD_MID = ''
 CD_TID = ''
 
 CMD_CD_EXEC = os.path.join(sys.path[0], '_lLib', 'cd', 'card_dispenser.exe')
+if _Common.IS_LINUX:
+    CMD_CD_EXEC = os.path.join(sys.path[0], '_lLib', 'cd', 'card_dispenser')
 CMD_CD_NEW = os.path.join(sys.path[0], '_lLib', 'cd', 'new', 'card.exe')
 CMD_CD_OLD = os.path.join(sys.path[0], '_lLib', 'cd', 'general', 'card.exe')
 
@@ -105,7 +107,7 @@ def get_multiple_eject_status():
     check_multiple_eject = _ConfigParser.get_set_value('CD', 'multiple^eject', '0')
     MULTIPLE_EJECT = 'AVAILABLE' if check_multiple_eject == '1' else 'N/A'
     # print('pyt: MULTIPLE_EJECT_STATUS -> ' + eject_status)
-    LOGGER.debug(('get_multiple_eject_status', MULTIPLE_EJECT))
+    LOGGER.debug((MULTIPLE_EJECT))
     CD_SIGNDLER.SIGNAL_MULTIPLE_EJECT.emit(MULTIPLE_EJECT)
 
 
@@ -241,7 +243,7 @@ def eject_full_round(attempt):
     _cd_selected_port = None
     try:
         _cd_selected_port = CD_PORT_LIST[attempt]
-        LOGGER.info(('_cd_selected_port :', _cd_selected_port))
+        LOGGER.info(('selected_port :', _cd_selected_port))
     except IndexError:
         LOGGER.warning(('Failed to Select CD Port', _cd_selected_port))
         CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
@@ -250,20 +252,20 @@ def eject_full_round(attempt):
         # Open CD Port
         param = CD["OPEN"] + "|" + _cd_selected_port
         response, result = _Command.send_request(param=param, output=None)
-        LOGGER.debug(("eject_full_round [OPEN] : ", param, result))
+        LOGGER.debug(("[OPEN] : ", param, result))
         # return True if '0' in status else False
         if response == 0:
             # Init CD Port
             sleep(1)
             param = CD["INIT"] + "|"
             response, result = _Command.send_request(param=param, output=None)
-            LOGGER.debug(("eject_full_round [INIT] : ", param, result))
+            LOGGER.debug(("[INIT] : ", param, result))
             if response == 0:
                 # Eject From CD
                 sleep(1)
                 param = CD["MOVE"] + "|"
                 response, result = _Command.send_request(param=param, output=None)
-                LOGGER.debug(("eject_full_round [MOVE] : ", param, result))
+                LOGGER.debug(("[MOVE] : ", param, result))
                 if response == 0:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
                 else:
@@ -273,7 +275,7 @@ def eject_full_round(attempt):
                 sleep(1)
                 param = CD["STOP"] + "|"
                 response, result = _Command.send_request(param=param, output=None)
-                LOGGER.debug(("eject_full_round [STOP] : ", param, result))
+                LOGGER.debug(("[STOP] : ", param, result))
             else:
                 emit_eject_error(attempt, 'DEVICE_NOT_INIT|'+attempt)
                 return
@@ -309,7 +311,7 @@ def move_card_disp(attempt):
         param = CD["MOVE"] + "|"
     for x in range(attempt):
         response, result = _Command.send_request(param=param, output=None)
-        LOGGER.debug(("move_card_disp : ", param, result, str(x)))
+        LOGGER.debug(( param, result, str(x)))
         if x == (attempt-1):
             if response == 0:
                 CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS-' + str(x))
@@ -332,7 +334,7 @@ def hold_card_disp():
         return
     param = CD["HOLD"] + "|"
     response, result = _Command.send_request(param=param, output=None)
-    LOGGER.debug(("hold_card_disp : ", param, result))
+    LOGGER.debug(( param, result))
     if response == 0:
         CD_SIGNDLER.SIGNAL_CD_HOLD.emit('SUCCESS')
     else:
@@ -351,7 +353,7 @@ def stop_card_disp():
         return
     param = CD["STOP"] + "|"
     response, result = _Command.send_request(param=param, output=None)
-    LOGGER.debug(("stop_card_disp : ", param, result))
+    LOGGER.debug((param, result))
     if response == 0:
         CD_SIGNDLER.SIGNAL_CD_STOP.emit('SUCCESS')
     else:
@@ -368,7 +370,7 @@ def init_cd(com):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
     output = output[0].split(";")
-    LOGGER.debug(('init_cd', com, output))
+    LOGGER.debug((com, output))
     CD_SIGNDLER.SIGNAL_CD_PORT_INIT.emit(json.dumps({'port': com, 'status': output}))
     return True if '1' not in output else False
 

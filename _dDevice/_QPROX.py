@@ -13,8 +13,9 @@ from datetime import datetime
 import random
 import os
 
-import win32com.client as client
-import pythoncom
+if _Common.IS_WINDOWS:
+    import win32com.client as client
+    import pythoncom
 
 
 LOGGER = logging.getLogger()

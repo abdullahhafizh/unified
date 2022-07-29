@@ -3,7 +3,7 @@ __author__ = "wahyudi@multidaya.id"
 import logging
 from time import sleep
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _ConfigParser, _Common
+from _cConfig import _Common
 from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess

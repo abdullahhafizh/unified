@@ -6,7 +6,6 @@ import sys
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, QTranslator, Qt
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQuick import QQuickView
-import wmi
 import logging
 import logging.handlers
 import subprocess
@@ -40,6 +39,8 @@ from _sService import _AudioService
 from _mModule import _MainService
 import json
 import sentry_sdk
+if _Common.IS_WINDOWS:
+    import wmi
 
 
 print("""
@@ -1192,7 +1193,7 @@ if __name__ == '__main__':
     # install_font()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()
-    if _Common.LIVE_MODE:
+    if _Common.LIVE_MODE and _Common.IS_WINDOWS:
         kill_explorer()
     print("pyt: Checking Auth to Server...")
     _Sync.start_sync_machine(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
@@ -1237,7 +1238,7 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.alter_table('_TransactionsNew.sql')
     sleep(1)
-    if INITIAL_SETTING['reloadService'] is True:
+    if INITIAL_SETTING['reloadService'] is True and _Common.IS_WINDOWS:
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
         sleep(1)

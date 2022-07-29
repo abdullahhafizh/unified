@@ -11,6 +11,11 @@ import sys
 import json
 import re
 from sentry_sdk import capture_exception
+import platform
+# from sentry_sdk import capture_exception
+
+IS_LINUX = platform.system() == 'Linux'
+IS_WINDOWS = not IS_LINUX
 
 
 LOGGER = logging.getLogger()

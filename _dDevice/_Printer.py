@@ -3,8 +3,6 @@ __author__ = "wahyudi@multidaya.id"
 import os
 import logging
 import sys
-# import win32print, win32api, win32con
-# from escpos.connections import getSerialPrinter
 from _tTools import _Helper
 from _cConfig import _Common
 import subprocess

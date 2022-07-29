@@ -14,8 +14,6 @@ from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from pprint import pprint
-import win32print
-import wmi
 from _sService import _UserService, _MDSService
 from time import sleep
 import subprocess
@@ -23,8 +21,11 @@ from operator import itemgetter
 # from _dDevice import _BILL
 import json
 # import win32serviceutil
-import win32com.client as client
-import pythoncom
+if _Common.IS_WINDOWS:
+    import wmi
+    import win32com.client as client
+    import pythoncom
+    import win32print
 
 
 class KioskSignalHandler(QObject):
@@ -125,8 +126,9 @@ def update_kiosk_status(s=400, r=None):
                 _Common.KIOSK_MARGIN = int(_Common.KIOSK_SETTING['defaultMargin'])
                 _Common.KIOSK_ADMIN = int(_Common.KIOSK_SETTING['defaultAdmin'])
                 _Common.PAYMENT_SETTING = r['data']['payment']
-                print("pyt: Syncing Payment Setting...")
-                define_device_port_setting(_Common.PAYMENT_SETTING)
+                if _Common.IS_WINDOWS:
+                    print("pyt: Syncing Payment Setting...")
+                    define_device_port_setting(_Common.PAYMENT_SETTING)
                 _Common.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
                 _Common.FEATURE_SETTING = r['data']['feature']
                 print("pyt: Syncing Feature Setting...")
@@ -528,13 +530,17 @@ def machine_summary():
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
     }
     try:
-        pythoncom.CoInitialize()
-        COMP = wmi.WMI()
         summary['gui_version'] = _Common.VERSION
-        summary["c_space"] = get_disk_space("C:")
-        summary["d_space"] = get_disk_space("D:")
-        summary["ram_space"] = get_ram_space()
-        summary['paper_printer'] = get_printer_status_v2()
+        if _Common.IS_WINDOWS:
+            pythoncom.CoInitialize()
+            COMP = wmi.WMI()
+            summary["c_space"] = get_disk_space("C:")
+            summary["d_space"] = get_disk_space("D:")
+            summary["ram_space"] = get_ram_space()
+            summary['paper_printer'] = get_printer_status_v2()
+        else:
+            # TODO: Add Handler if Linux
+            pass
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
     finally:
