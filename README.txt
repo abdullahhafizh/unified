@@ -28,4 +28,5 @@ Installer:
 - sudo apt install preload
 - sudo apt install gnome-shell-extension-autohidetopbar
 - sudo apt install acpi
+- sudo apt-get install libqt5multimedia5-plugins qml-module-qtmultimedia
 

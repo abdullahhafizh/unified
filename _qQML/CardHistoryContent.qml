@@ -6,7 +6,7 @@ Rectangle{
     property var set_height: 60
     property var set_padding: 40
     property var left_padding: 10
-    property var set_font_size: 30
+    property var set_font_size: 28
     property var set_font_color: 'white'
     property var content_no: 'no'
     property var content_time: 'timestamp'

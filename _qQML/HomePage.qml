@@ -532,7 +532,7 @@ Base{
                     wa_voucher_button.color = 'white';
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
-                    if (!mediaOnPlaying) {
+                    if (!mediaOnPlaying && IS_WINDOWS) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
                         my_layer.push(media_page, {mode: 'mediaPlayer',

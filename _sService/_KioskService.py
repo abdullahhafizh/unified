@@ -227,7 +227,7 @@ def define_theme(d):
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
     
-    config_js = sys.path[0] + '/_qQml/config.js'
+    config_js = sys.path[0] + '/_qQML/config.js'
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger
     daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
@@ -240,7 +240,7 @@ def define_theme(d):
         d['master_logo'] = [d['master_logo']]
     master_logo = []
     for m in d['master_logo']:
-        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQml/source/logo')
+        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQML/source/logo')
         if download is True:
             master_logo.append(image)
         else:
@@ -248,7 +248,7 @@ def define_theme(d):
     content_js += 'var master_logo = ' + json.dumps(master_logo) + ';' + os.linesep
     partner_logos = []
     for p in d['partner_logos']:
-        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQml/source/logo')
+        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQML/source/logo')
         if download is True:
             partner_logos.append(image)
         else:
@@ -256,7 +256,7 @@ def define_theme(d):
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
     backgrounds = []
     for b in d['backgrounds']:
-        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQml/source/background')
+        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQML/source/background')
         if download is True:
             backgrounds.append(image)
         else:

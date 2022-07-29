@@ -430,6 +430,9 @@ def get_cash_activity(keyword=None, trx_output=False):
     }
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+        if not os.path.exists(cash_status_file):
+            with open(cash_status_file, 'w+') as c:
+                c.close()
         cash_status = open(cash_status_file, 'r').readlines()
         if len(cash_status) == 0:
             LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
