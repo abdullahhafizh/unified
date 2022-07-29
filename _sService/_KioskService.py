@@ -13,18 +13,16 @@ from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
-from pprint import pprint
-import win32print
-import wmi
 from _sService import _UserService, _MDSService
 from time import sleep
 import subprocess
 from operator import itemgetter
-# from _dDevice import _BILL
 import json
-# import win32serviceutil
-import win32com.client as client
-import pythoncom
+if _Common.IS_WINDOWS:
+    import win32com.client as client
+    import pythoncom
+    import win32print
+    import wmi
 
 
 class KioskSignalHandler(QObject):
@@ -225,7 +223,7 @@ def define_theme(d):
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
     
-    config_js = sys.path[0] + '/_qQml/config.js'
+    config_js = sys.path[0] + '/_qQML/config.js'
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger
     daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
@@ -238,7 +236,7 @@ def define_theme(d):
         d['master_logo'] = [d['master_logo']]
     master_logo = []
     for m in d['master_logo']:
-        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQml/source/logo')
+        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQML/source/logo')
         if download is True:
             master_logo.append(image)
         else:
@@ -246,7 +244,7 @@ def define_theme(d):
     content_js += 'var master_logo = ' + json.dumps(master_logo) + ';' + os.linesep
     partner_logos = []
     for p in d['partner_logos']:
-        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQml/source/logo')
+        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQML/source/logo')
         if download is True:
             partner_logos.append(image)
         else:
@@ -254,7 +252,7 @@ def define_theme(d):
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
     backgrounds = []
     for b in d['backgrounds']:
-        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQml/source/background')
+        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQML/source/background')
         if download is True:
             backgrounds.append(image)
         else:
@@ -528,13 +526,14 @@ def machine_summary():
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
     }
     try:
-        pythoncom.CoInitialize()
-        COMP = wmi.WMI()
         summary['gui_version'] = _Common.VERSION
-        summary["c_space"] = get_disk_space("C:")
-        summary["d_space"] = get_disk_space("D:")
-        summary["ram_space"] = get_ram_space()
-        summary['paper_printer'] = get_printer_status_v2()
+        if _Common.IS_WINDOWS:
+            pythoncom.CoInitialize()
+            COMP = wmi.WMI()
+            summary["c_space"] = get_disk_space("C:")
+            summary["d_space"] = get_disk_space("D:")
+            summary["ram_space"] = get_ram_space()
+            summary['paper_printer'] = get_printer_status_v2()
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
     finally:

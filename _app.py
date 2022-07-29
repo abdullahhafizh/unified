@@ -6,7 +6,6 @@ import sys
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, QTranslator, Qt
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQuick import QQuickView
-import wmi
 import logging
 import logging.handlers
 import subprocess
@@ -40,6 +39,8 @@ from _sService import _AudioService
 from _mModule import _MainService
 import json
 import sentry_sdk
+if _Common.IS_WINDOWS:
+    import wmi
 
 
 print("""
@@ -963,19 +964,19 @@ def get_disk_info():
 def get_screen_resolution():
     global SCREEN_HEIGHT, SCREEN_WIDTH
     try:
-        import ctypes
-        user32 = ctypes.windll.user32
-        # user32.SetProcessDPIAware()
-        resolution = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
+        if _Common.IS_WINDOWS:
+            import ctypes
+            user32 = ctypes.windll.user32
+            # user32.SetProcessDPIAware()
+            resolution = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
+        else:
+            output = subprocess.Popen('xrandr | grep "\*" | cut -d" " -f4',shell=True, stdout=subprocess.PIPE).communicate()[0]
+            resolution = output.split()[-1].decode('utf-8').split('x')
+            resolution[0] = int(resolution[0])
+            resolution[1] = int(resolution[1])
         LOGGER.info(('SCREEN RESOLUTION : ', str(resolution)))
-        # screen_js = sys.path[0] + '/_qQml/screen.js'
         SCREEN_WIDTH = resolution[0]
         SCREEN_HEIGHT = resolution[1]
-        # content_js = 'var size = { "width": ' + str(resolution[0]) + ', "height": ' + str(resolution[1]) + '};'
-        # with open(screen_js, 'w+') as s:
-        #     s.write(content_js)
-        #     s.close()
-        # LOGGER.info(('write_screen_resolution : ', screen_js, content_js))
     except Exception as e:
         resolution = [0, 0]
         LOGGER.warning((e))
@@ -1093,7 +1094,7 @@ def init_local_setting():
             qml.close()
         LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
     INITIAL_SETTING['dev_mode'] = _Common.TEST_MODE
-    INITIAL_SETTING['db'] = _ConfigParser.get_value('GENERAL', 'DB')
+    INITIAL_SETTING['db'] = _ConfigParser.get_set_value('GENERAL', 'DB', 'kiosk.db')
     INITIAL_SETTING['display'] = get_screen_resolution()
     INITIAL_SETTING['devices'] = _Common.get_devices()
     INITIAL_SETTING['tid'] = _Common.TID
@@ -1105,7 +1106,7 @@ def init_local_setting():
     # setting['sftpMandiri'] = _Common.SFTP_MANDIRI
     # setting['ftp'] = _Common.FTP
     # setting['bankConfig'] = _Common.BANKS
-    INITIAL_SETTING['serviceVersion'] = _Common.get_service_version()
+    # INITIAL_SETTING['serviceVersion'] = _Common.get_service_version()
     # pprint(setting)
 
 
@@ -1192,12 +1193,13 @@ if __name__ == '__main__':
     # install_font()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()
-    if _Common.LIVE_MODE:
+    if _Common.LIVE_MODE and _Common.IS_WINDOWS:
         kill_explorer()
     print("pyt: Checking Auth to Server...")
     _Sync.start_sync_machine(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     print("pyt: Setting Up Function(s)/Method(s)...")
     SLOT_HANDLER = SlotHandler()
+    # os.environ["QT_DEBUG_PLUGINS"] = "1"
     app = QGuiApplication(sys.argv)
     print("pyt: Setting Up View...")
     if os.name == 'nt':
@@ -1209,11 +1211,15 @@ if __name__ == '__main__':
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
+    context.setContextProperty('IS_WINDOWS', _Common.IS_WINDOWS)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
     view.engine().quit.connect(app.quit)
-    view.setSource(QUrl(path + 'Main.qml'))
+    if _Common.IS_WINDOWS:
+        view.setSource(QUrl(path + 'Main.qml'))
+    else:
+        view.setSource(QUrl(path + 'MainNoMedia.qml'))
     s_handler()
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
@@ -1237,7 +1243,7 @@ if __name__ == '__main__':
     sleep(1)
     _KioskService.alter_table('_TransactionsNew.sql')
     sleep(1)
-    if INITIAL_SETTING['reloadService'] is True:
+    if INITIAL_SETTING['reloadService'] is True and _Common.IS_WINDOWS:
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
         sleep(1)
