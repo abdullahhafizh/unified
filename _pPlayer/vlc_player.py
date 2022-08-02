@@ -1,8 +1,11 @@
+import imp
 from vlc import Instance
 import os
 from pathlib import Path
 import time
 from pymouse import PyMouseEvent
+import sys
+
 
 def fibo():
     a = 0
@@ -23,7 +26,8 @@ class Clickonacci(PyMouseEvent):
         '''Print Fibonacci numbers when the left click is pressed.'''
         if button == 1:
             if press:
-                print('Mouse Clicked')
+                print('Mouse Clicked, Exit')
+                sys.exit(0)
         else:  # Exit if any other mouse button used
             self.stop()
 
@@ -61,4 +65,4 @@ if __name__ == '__main__':
     player.play()
     C = Clickonacci()
     C.run()
-    time.sleep(120)
+    time.sleep(1)
