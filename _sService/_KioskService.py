@@ -346,7 +346,8 @@ def define_ads(a):
     LOGGER.debug(("expired media(s) : ", str(__must_backup)))
     # __must_delete = __current_list
     # _Helper.dump(__must_delete)
-    if len(__must_backup) > 0:
+    # TODO: Remove Below Treatment
+    if len(__must_backup) > 0 and _Common.IS_WINDOWS:
         for d in __must_backup:
             file_expired = os.path.join(__tvc_path, d)
             file_backup = os.path.join(__tvc_backup, d)
