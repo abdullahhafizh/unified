@@ -54,12 +54,12 @@ class VLC:
 
 
 if __name__ == '__main__':
-    C = Clickonacci()
-    C.run()
     player = VLC()
     up_dir = Path(__file__).resolve().parents[1]
     path = os.path.join(up_dir, "_vVideo")
     player.addPlaylist(path)
     print(path)
     player.play()
+    C = Clickonacci()
+    C.run()
     time.sleep(120)
