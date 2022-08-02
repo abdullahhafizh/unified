@@ -6,7 +6,6 @@ Pillow
 pygame
 pyusb
 pyserial
-VideoCapture
 urllib3
 aenum
 asn1crypto
