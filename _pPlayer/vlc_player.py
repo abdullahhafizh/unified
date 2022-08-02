@@ -23,7 +23,7 @@ class Clickonacci(PyMouseEvent):
         '''Print Fibonacci numbers when the left click is pressed.'''
         if button == 1:
             if press:
-                print(self.fibo.next())
+                print('Mouse Clicked')
         else:  # Exit if any other mouse button used
             self.stop()
 

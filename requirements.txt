@@ -26,3 +26,6 @@ pika
 python-printer-escpos
 python-escpos
 sentry-sdk
+pymouse
+unix
+pyuserinput

@@ -17,6 +17,7 @@ External Module(s) / Librari(es) :
 - flask,
 - python-printer-escpos,
 - python-escpos,
+- pymouse,
 
 Installer:
 [Windows]
@@ -29,4 +30,5 @@ Installer:
 - sudo apt install gnome-shell-extension-autohidetopbar
 - sudo apt install acpi
 - sudo apt-get install libqt5multimedia5-plugins qml-module-qtmultimedia
+- sudo apt install vlc
 
