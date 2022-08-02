@@ -28,8 +28,8 @@ class VLC:
 
 if __name__ == '__main__':
     player = VLC()
-    up_dir = Path(__file__).resolve().parents[1] + "_vVideo"
-    print(up_dir)
-    path = up_dir
+    up_dir = Path(__file__).resolve().parents[1]
+    path = os.path.join(up_dir, "_vVideo")
     player.addPlaylist(path)
+    print(path)
     player.play()
