@@ -532,15 +532,18 @@ Base{
                     wa_voucher_button.color = 'white';
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
-                    if (!mediaOnPlaying && IS_WINDOWS) {
+                    if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
-                        my_layer.push(media_page, {mode: 'mediaPlayer',
+                        if (IS_WINDOWS){
+                            my_layer.push(media_page, {mode: 'mediaPlayer',
                                           mandiri_update_schedule: mandiri_update_schedule,
                                           edc_settlement_schedule: edc_settlement_schedule
                                       });
+                        } else {
+                            _SLOT.set_tvc_player('START');
+                        }
                     }
-//                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
                 }

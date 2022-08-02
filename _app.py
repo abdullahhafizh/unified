@@ -1051,7 +1051,8 @@ def check_path(new):
 
 
 def set_tvc_player(command):
-    pass
+    if command == 'START':
+        os.system('python3 ' + (sys.path[0] + '/_pPlayer/vlc_player.py'))
 
 
 def set_ext_keyboard(command):
