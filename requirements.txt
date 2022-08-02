@@ -23,3 +23,6 @@ Flask
 pycryptodomex
 pycryptodome
 pika
+python-printer-escpos
+python-escpos
+sentry-sdk

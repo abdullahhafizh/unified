@@ -597,7 +597,7 @@ Base{
         anchors.leftMargin: -radius
         width: 180
         height: 180
-        visible: comboSaktiFeature
+        visible: false
         Image{
             anchors.fill: parent
             scale: 0.75
