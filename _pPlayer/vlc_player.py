@@ -1,6 +1,7 @@
 from vlc import Instance
 import os
 from pathlib import Path
+import time
 
 
 class VLC:
@@ -12,6 +13,7 @@ class VLC:
         medias = os.listdir(path)
         for s in medias:
             self.mediaList.add_media(self.Player.media_new(os.path.join(path,s)))
+        print('Media Length', len(self.mediaList))
         self.listPlayer = self.Player.media_list_player_new()
         self.listPlayer.set_media_list(self.mediaList)
     def play(self):
@@ -33,3 +35,4 @@ if __name__ == '__main__':
     player.addPlaylist(path)
     print(path)
     player.play()
+    time.sleep(30)
