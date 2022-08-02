@@ -1,10 +1,7 @@
-import imp
 from vlc import Instance
-import os
+import os, sys, time
 from pathlib import Path
-import time
 from pymouse import PyMouseEvent
-import sys
 
 
 def fibo():
@@ -23,7 +20,6 @@ class Clickonacci(PyMouseEvent):
         self.fibo = fibo()
 
     def click(self, x, y, button, press):
-        '''Print Fibonacci numbers when the left click is pressed.'''
         if button == 1:
             if press:
                 print('Mouse Clicked, Exit')
