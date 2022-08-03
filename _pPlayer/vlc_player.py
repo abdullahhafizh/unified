@@ -35,9 +35,11 @@ class VLC:
             "--autoscale",
             "--fullscreen",
             "--video-on-top",
-            "--no-video-title-show"
+            "--no-video-title-show",
+            '--input-repeat=-1',
+            '--mouse-hide-timeout=0'
         )
-        self.Player.set_playback_mode(PlaybackMode.loop)
+        # self.Player.set_playback_mode(PlaybackMode.loop)
 
     def addPlaylist(self, path):
         self.mediaList = self.Player.media_list_new()
