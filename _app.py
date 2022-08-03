@@ -1058,7 +1058,7 @@ def set_tvc_player(command):
             return
         LOGGER.info(('Unknown Command: ', command))
     except Exception as e:
-            LOGGER.warning(('check_path is failed : ', e))
+            LOGGER.warning((e))
 
 
 
