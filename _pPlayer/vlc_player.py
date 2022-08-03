@@ -1,4 +1,4 @@
-from vlc import Instance
+from vlc import Instance, PlaybackMode
 import os, sys, time
 from pathlib import Path
 from pymouse import PyMouseEvent
@@ -37,13 +37,14 @@ class VLC:
             "--video-on-top",
             "--no-video-title-show"
         )
+        self.Player.set_playback_mode(PlaybackMode.loop)
 
     def addPlaylist(self, path):
         self.mediaList = self.Player.media_list_new()
         medias = os.listdir(path)
         for s in medias:
             self.mediaList.add_media(self.Player.media_new(os.path.join(path,s)))
-        print('Media Length', len(self.mediaList))
+        # print('Media Length', len(self.mediaList))
         self.listPlayer = self.Player.media_list_player_new()
         #self.listPlayer.toggle_fullscreen()
         #self.listPlayer.set_fullscreen(True)
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     up_dir = Path(__file__).resolve().parents[1]
     path = os.path.join(str(up_dir), "_vVideo")
     player.addPlaylist(path)
-    print(path)
+    # print(path)
     player.play()
     touchscreen = Clickonacci()
     touchscreen.run()
