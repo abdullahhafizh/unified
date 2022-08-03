@@ -46,7 +46,7 @@ class VLC:
         print('Media Length', len(self.mediaList))
         self.listPlayer = self.Player.media_list_player_new()
         #self.listPlayer.toggle_fullscreen()
-        self.listPlayer.set_fullscreen(True)
+        #self.listPlayer.set_fullscreen(True)
         self.listPlayer.set_media_list(self.mediaList)
     def play(self):
         self.listPlayer.play()
