@@ -534,7 +534,7 @@ Base{
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                        console.log("starting tvc player...", now);
+                        console.log("starting tvc player...", now, IS_WINDOWS);
                         if (IS_WINDOWS){
                             my_layer.push(media_page, {mode: 'mediaPlayer',
                                           mandiri_update_schedule: mandiri_update_schedule,
