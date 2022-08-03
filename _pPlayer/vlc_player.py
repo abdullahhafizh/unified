@@ -22,7 +22,7 @@ class Clickonacci(PyMouseEvent):
     def click(self, x, y, button, press):
         if button == 1:
             if press:
-                print('Mouse Clicked, Exit')
+                print('Touchscreen Detected, Exit')
                 sys.exit(0)
         else:  # Exit if any other mouse button used
             self.stop()
@@ -39,6 +39,7 @@ class VLC:
             self.mediaList.add_media(self.Player.media_new(os.path.join(path,s)))
         print('Media Length', len(self.mediaList))
         self.listPlayer = self.Player.media_list_player_new()
+        self.listPlayer.toggle_fullscreen()
         self.listPlayer.set_media_list(self.mediaList)
     def play(self):
         self.listPlayer.play()
@@ -59,6 +60,6 @@ if __name__ == '__main__':
     player.addPlaylist(path)
     print(path)
     player.play()
-    C = Clickonacci()
-    C.run()
+    touchscreen = Clickonacci()
+    touchscreen.run()
     time.sleep(1)
