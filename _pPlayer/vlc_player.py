@@ -30,7 +30,13 @@ class Clickonacci(PyMouseEvent):
 
 class VLC:
     def __init__(self):
-        self.Player = Instance('--loop', '--fullscreen')
+        self.Player = Instance(
+            "--loop",             
+            "--autoscale",
+            "--fullscreen",
+            "--video-on-top",
+            "--no-video-title-show"
+        )
 
     def addPlaylist(self, path):
         self.mediaList = self.Player.media_list_new()
