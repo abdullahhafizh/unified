@@ -18,6 +18,7 @@ External Module(s) / Librari(es) :
 - python-printer-escpos,
 - python-escpos,
 - pymouse,
+- pyuserinput,
 
 Installer:
 [Windows]

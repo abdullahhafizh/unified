@@ -1220,6 +1220,7 @@ if __name__ == '__main__':
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
     context.setContextProperty('IS_WINDOWS', _Common.IS_WINDOWS)
+    context.setContextProperty('IS_LINUX', _Common.IS_LINUX)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
@@ -1227,7 +1228,7 @@ if __name__ == '__main__':
     if _Common.IS_WINDOWS:
         view.setSource(QUrl(path + 'Main.qml'))
     else:
-        view.setSource(QUrl(path + 'MainNoMedia.qml'))
+        view.setSource(QUrl(path + 'MainLinux.qml'))
     s_handler()
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)

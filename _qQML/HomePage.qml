@@ -59,6 +59,7 @@ Base{
             _SLOT.get_kiosk_status();
 //            _SLOT.kiosk_get_product_stock();
             _SLOT.start_play_audio('homepage_greeting');
+            console.log('Platform Check', IS_LINUX, IS_WINDOWS)
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
@@ -534,13 +535,12 @@ Base{
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                        console.log("starting tvc player...", now, IS_WINDOWS);
-                        if (IS_WINDOWS){
+                        console.log("starting tvc player...", now);
                             my_layer.push(media_page, {mode: 'mediaPlayer',
                                           mandiri_update_schedule: mandiri_update_schedule,
                                           edc_settlement_schedule: edc_settlement_schedule
                                       });
-                        } else {
+                        if (IS_LINUX){
                             _SLOT.set_tvc_player('START');
                         }
                     }

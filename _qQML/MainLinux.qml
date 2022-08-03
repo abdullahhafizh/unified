@@ -218,9 +218,9 @@ Rectangle {
         HomePageEvent{}
     }
 
-    // Component {id: media_page
-    //     MediaPage{}
-    // }
+    Component {id: media_page
+        MediaPageLinux{}
+    }
 
     Component {id: coming_soon
         ComingSoon{}
