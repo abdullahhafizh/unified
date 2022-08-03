@@ -1051,8 +1051,15 @@ def check_path(new):
 
 
 def set_tvc_player(command):
-    if command == 'START':
-        os.system('python3 ' + (sys.path[0] + '/_pPlayer/vlc_player.py'))
+    try:
+        if command == 'START':
+            player = os.path.join(os.getcwd(), '_pPlayer', 'vlc_player.py')
+            os.system('python3 ' + player)
+            return
+        LOGGER.info(('Unknown Command: ', command))
+    except Exception as e:
+            LOGGER.warning(('check_path is failed : ', e))
+
 
 
 def set_ext_keyboard(command):
