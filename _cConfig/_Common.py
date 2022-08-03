@@ -59,6 +59,8 @@ REFUND_FEATURE = True if _ConfigParser.get_set_value('GENERAL', 'refund^feature'
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
 
+USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme', '1') == '1' else False
+
 # Initiate Network Header
 # HEADER = get_header()
 _NetworkAccess.HEADER = _NetworkAccess.get_header(TID, TERMINAL_TOKEN)

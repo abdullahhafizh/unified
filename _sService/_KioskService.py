@@ -238,26 +238,29 @@ def define_theme(d):
     content_js += 'var bank_ubal_online = ' + json.dumps(_Common.ALLOWED_BANK_UBAL_ONLINE) + ';' + os.linesep
     if type(d['master_logo']) != list:
         d['master_logo'] = [d['master_logo']]
+
     master_logo = []
     for m in d['master_logo']:
         download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQML/source/logo')
-        if download is True:
+        if download is True or _Common.USE_PREV_THEME:
             master_logo.append(image)
         else:
             continue
     content_js += 'var master_logo = ' + json.dumps(master_logo) + ';' + os.linesep
+
     partner_logos = []
     for p in d['partner_logos']:
         download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQML/source/logo')
-        if download is True:
+        if download is True or _Common.USE_PREV_THEME:
             partner_logos.append(image)
         else:
             continue
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
+    
     backgrounds = []
     for b in d['backgrounds']:
         download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQML/source/background')
-        if download is True:
+        if download is True or _Common.USE_PREV_THEME:
             backgrounds.append(image)
         else:
             continue
