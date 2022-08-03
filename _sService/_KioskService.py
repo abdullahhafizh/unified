@@ -298,10 +298,11 @@ def define_theme(d):
     content_js += 'var general_qr = ' +  general_qr + ';' + os.linesep
     # Over night
     content_js += 'var over_night = ' +  str(_Common.OVER_NIGHT) + ';' + os.linesep
-    # Receipt tvc_waiting_time
+    # Receipt tvc_waiting_time ()default 60 sec)
+    content_js += 'var tvc_waiting_time = ' +  str(60) + ';' + os.linesep
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
-        content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+        content_js += 'tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
     if not _Common.empty(_Common.EDC_MOBILE_DURATION):
         content_js += 'var edc_waiting_time = "' +  str(_Common.EDC_MOBILE_DURATION) + '";' + os.linesep
     # Receipt Logo
