@@ -31,6 +31,9 @@ Rectangle{
             if(mode=="mediaPlayer" && media_files.length == 0){
                 _SLOT.get_file_list(img_path);
             }
+            if (IS_LINUX){
+                _SLOT.set_tvc_player('START');
+            }
             counter = 0;
         }
         if(Stack.status==Stack.Deactivating){

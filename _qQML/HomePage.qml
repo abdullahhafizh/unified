@@ -540,9 +540,6 @@ Base{
                                           mandiri_update_schedule: mandiri_update_schedule,
                                           edc_settlement_schedule: edc_settlement_schedule
                                       });
-                        if (IS_LINUX){
-                            _SLOT.set_tvc_player('START');
-                        }
                     }
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
