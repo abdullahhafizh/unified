@@ -57,9 +57,11 @@ Base{
             productCount3 = 0;
             selectedMenu = '';
             _SLOT.get_kiosk_status();
-//            _SLOT.kiosk_get_product_stock();
             _SLOT.start_play_audio('homepage_greeting');
-            console.log('Platform Check', IS_LINUX, IS_WINDOWS)
+            console.log('Platform Check', IS_LINUX, IS_WINDOWS);
+            if (IS_LINUX){
+                mediaOnPlaying = false;
+            }
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
