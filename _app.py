@@ -1217,28 +1217,17 @@ if __name__ == '__main__':
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
     context.setContextProperty('IS_WINDOWS', _Common.IS_WINDOWS)
-<<<<<<< HEAD
-    translator = QTranslator()
-    translator.load(path + 'INA.qm')
-    app.installTranslator(translator)
-=======
     context.setContextProperty('IS_LINUX', _Common.IS_LINUX)
     context.setContextProperty('VIEW_CONFIG', _Common.VIEW_CONFIG)
     # translator = QTranslator()
     # translator.load(path + 'INA.qm')
     # app.installTranslator(translator)
->>>>>>> develop-linux
     view.engine().quit.connect(app.quit)
     if _Common.IS_WINDOWS:
         view.setSource(QUrl(path + 'Main.qml'))
     else:
-<<<<<<< HEAD
-        view.setSource(QUrl(path + 'MainNoMedia.qml'))
-    s_handler()
-=======
         view.setSource(QUrl(path + 'MainLinux.qml'))
     set_signal_handler()
->>>>>>> develop-linux
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
     view.setFlags(Qt.WindowFullscreenButtonHint)

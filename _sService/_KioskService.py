@@ -13,29 +13,18 @@ from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
-<<<<<<< HEAD
-=======
 from pprint import pprint
->>>>>>> develop-linux
 from _sService import _UserService, _MDSService
 from time import sleep
 import subprocess
 from operator import itemgetter
 import json
-<<<<<<< HEAD
-if _Common.IS_WINDOWS:
-    import win32com.client as client
-    import pythoncom
-    import win32print
-    import wmi
-=======
 # import win32serviceutil
 if _Common.IS_WINDOWS:
     import wmi
     import win32com.client as client
     import pythoncom
     import win32print
->>>>>>> develop-linux
 
 
 class KioskSignalHandler(QObject):
@@ -237,11 +226,7 @@ def define_theme(d):
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
     
-<<<<<<< HEAD
-    config_js = sys.path[0] + '/_qQML/config.js'
-=======
     config_js = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
->>>>>>> develop-linux
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger
     daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
@@ -260,13 +245,8 @@ def define_theme(d):
 
     master_logo = []
     for m in d['master_logo']:
-<<<<<<< HEAD
-        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQML/source/logo')
-        if download is True:
-=======
         download, image = _NetworkAccess.item_download(m, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
         if download is True or _Common.USE_PREV_THEME:
->>>>>>> develop-linux
             master_logo.append(image)
         else:
             continue
@@ -275,13 +255,8 @@ def define_theme(d):
 
     partner_logos = []
     for p in d['partner_logos']:
-<<<<<<< HEAD
-        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQML/source/logo')
-        if download is True:
-=======
         download, image = _NetworkAccess.item_download(p, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
         if download is True or _Common.USE_PREV_THEME:
->>>>>>> develop-linux
             partner_logos.append(image)
         else:
             continue
@@ -290,13 +265,8 @@ def define_theme(d):
 
     backgrounds = []
     for b in d['backgrounds']:
-<<<<<<< HEAD
-        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQML/source/background')
-        if download is True:
-=======
         download, image = _NetworkAccess.item_download(b, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/background')
         if download is True or _Common.USE_PREV_THEME:
->>>>>>> develop-linux
             backgrounds.append(image)
         else:
             continue
@@ -601,12 +571,9 @@ def machine_summary():
             summary["d_space"] = get_disk_space("D:")
             summary["ram_space"] = get_ram_space()
             summary['paper_printer'] = get_printer_status_v2()
-<<<<<<< HEAD
-=======
         else:
             # TODO: Add Handler if Linux
             pass
->>>>>>> develop-linux
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
     finally:
