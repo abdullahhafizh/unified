@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -36,7 +36,7 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: title_text
         size_: (parent.width==1920) ? 50 : 40
-        color_: CONF.text_color
+        color_: VIEW_CONFIG.text_color
     }
 
     Row{
@@ -155,7 +155,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'Q R I S' :"QR OVO"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' :"QR OVO"
             modeReverse: true
             visible: _qrOvoEnable && !_qrMultiEnable
             MouseArea{
@@ -189,7 +189,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS LinkAja"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS LinkAja"
             modeReverse: true
             visible: _qrLinkAjaEnable && !_qrMultiEnable
             MouseArea{
@@ -223,7 +223,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS Duwit"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS Duwit"
             modeReverse: true
             visible: _qrDuwitEnable && !_qrMultiEnable
             MouseArea{
@@ -257,7 +257,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS Dana"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS Dana"
             modeReverse: true
             visible: _qrDanaEnable && !_qrMultiEnable
             MouseArea{
@@ -291,7 +291,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS ShopeePay"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS ShopeePay"
             modeReverse: true
             visible: _qrShopeeEnable && !_qrMultiEnable
             MouseArea{
@@ -325,7 +325,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (CONF.general_qr=='1') ? 'Q R I S' : "QRIS JakOne"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS JakOne"
             modeReverse: true
             visible: _qrJakoneEnable && !_qrMultiEnable
             MouseArea{

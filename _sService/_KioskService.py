@@ -232,10 +232,15 @@ def define_theme(d):
     # Mandiri Update Schedule Time For Timer Trigger
     daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
     content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
+    _Common.VIEW_CONFIG['mandiri_update_schedule'] = daily_settle_time
     edc_daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
     content_js += 'var edc_settlement_schedule = "' + edc_daily_settle_time + '";' + os.linesep
+    _Common.VIEW_CONFIG['edc_settlement_schedule'] = edc_daily_settle_time
+
     # Temp Config For Ubal Online
     content_js += 'var bank_ubal_online = ' + json.dumps(_Common.ALLOWED_BANK_UBAL_ONLINE) + ';' + os.linesep
+    _Common.VIEW_CONFIG['bank_ubal_online'] = _Common.ALLOWED_BANK_UBAL_ONLINE
+
     if type(d['master_logo']) != list:
         d['master_logo'] = [d['master_logo']]
 
@@ -247,6 +252,7 @@ def define_theme(d):
         else:
             continue
     content_js += 'var master_logo = ' + json.dumps(master_logo) + ';' + os.linesep
+    _Common.VIEW_CONFIG['master_logo'] = master_logo
 
     partner_logos = []
     for p in d['partner_logos']:
@@ -256,6 +262,7 @@ def define_theme(d):
         else:
             continue
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
+    _Common.VIEW_CONFIG['partner_logos'] = partner_logos
 
     backgrounds = []
     for b in d['backgrounds']:
@@ -265,49 +272,69 @@ def define_theme(d):
         else:
             continue
     content_js += 'var backgrounds = ' + json.dumps(backgrounds) + ';' + os.linesep
+    _Common.VIEW_CONFIG['backgrounds'] = backgrounds
+
     # Running Text
     if not _Common.empty(d['running_text']):
         content_js += 'var running_text = "' + d['running_text'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['running_text'] = d['running_text']
+
     # Running Text Color
     if not _Common.empty(d['running_text_color']):
         content_js += 'var running_text_color = "' + d['running_text_color'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['running_text_color'] = d['running_text_color']
         content_js += 'var text_color = "' + _Common.COLOR_TEXT + '";' + os.linesep
+        _Common.VIEW_CONFIG['text_color'] = _Common.COLOR_TEXT
         content_js += 'var frame_color = "' + d['frame_color'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['frame_color'] = d['frame_color']
         content_js += 'var background_color = "' +  _Common.COLOR_BACK + '";' + os.linesep
+        _Common.VIEW_CONFIG['background_color'] = _Common.COLOR_BACK
+
     if not _Common.empty(d['whatsapp_no']):
         _Common.THEME_WA_NO = d['whatsapp_no']
         _Common.log_to_temp_config('theme^wa^no', d['whatsapp_no'])
         content_js += 'var whatsapp_no = "' +  d['whatsapp_no'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['whatsapp_no'] = d['whatsapp_no']
+
     if not _Common.empty(d['whatsapp_qr']):
         _Common.THEME_WA_QR = d['whatsapp_qr']
         _Common.log_to_temp_config('theme^wa^qr', d['whatsapp_qr'])
         store, receipt_wa_qr = _NetworkAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source')
         if store is True:
             content_js += 'var whatsapp_qr = "source/' + receipt_wa_qr + '";' + os.linesep
-
+            _Common.VIEW_CONFIG['whatsapp_qr'] = "source/" + receipt_wa_qr
     # Add Printer Type
     printer_type = _Common.PRINTER_TYPE.lower()
     content_js += 'var printer_type = "' +  printer_type + '";' + os.linesep
-
+    _Common.VIEW_CONFIG['printer_type'] = printer_type
     # Add Printer Manual Delay Show
     printer_manual_delay = str(_Common.DELAY_MANUAL_PRINT)
     content_js += 'var delay_manual_print = ' +  printer_manual_delay + ';' + os.linesep
-
+    _Common.VIEW_CONFIG['delay_manual_print'] = printer_manual_delay
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep
+    _Common.VIEW_CONFIG['c2c_mode'] = c2c_mode
     # General QR config
     general_qr = '1' if _Common.GENERAL_QR is True else '0'
     content_js += 'var general_qr = ' +  general_qr + ';' + os.linesep
+    _Common.VIEW_CONFIG['general_qr'] = general_qr
+
     # Over night
     content_js += 'var over_night = ' +  str(_Common.OVER_NIGHT) + ';' + os.linesep
+    _Common.VIEW_CONFIG['over_night'] = str(_Common.OVER_NIGHT)
+
     # Receipt tvc_waiting_time ()default 60 sec)
     content_js += 'var tvc_waiting_time = ' +  str(60) + ';' + os.linesep
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
         content_js += 'tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+        _Common.VIEW_CONFIG['tvc_waiting_time'] = str(d['tvc_waiting_time'])
+
     if not _Common.empty(_Common.EDC_MOBILE_DURATION):
         content_js += 'var edc_waiting_time = "' +  str(_Common.EDC_MOBILE_DURATION) + '";' + os.linesep
+        _Common.VIEW_CONFIG['edc_waiting_time'] = str(_Common.EDC_MOBILE_DURATION)
+
     # Receipt Logo
     if not _Common.empty(d['receipt_custom_text']):
         _Common.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
@@ -316,9 +343,12 @@ def define_theme(d):
     if store is True:
         _Common.RECEIPT_LOGO = receipt_logo
         _Common.log_to_config('PRINTER', 'receipt^logo', receipt_logo)
+    
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)
         config_qml.close()
+
+    _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
     LOGGER.info((config_js, content_js))
 
 
@@ -350,8 +380,7 @@ def define_ads(a):
     LOGGER.debug(("expired media(s) : ", str(__must_backup)))
     # __must_delete = __current_list
     # _Helper.dump(__must_delete)
-    # TODO: Remove Below Treatment
-    if len(__must_backup) > 0 and _Common.IS_WINDOWS:
+    if len(__must_backup) > 0 and not _Common.USE_PREV_ADS:
         for d in __must_backup:
             file_expired = os.path.join(__tvc_path, d)
             file_backup = os.path.join(__tvc_backup, d)

@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -48,7 +48,7 @@ Rectangle{
     Rectangle{
         id: rec_empty_text
         anchors.fill: parent
-        color: CONF.background_color
+        color: VIEW_CONFIG.background_color
         opacity: .6
         visible: (itemStock == 0 || isSelected)
     }
@@ -56,7 +56,7 @@ Rectangle{
     Text {
         id: empty_text
         anchors.fill: parent
-        color: CONF.text_color
+        color: VIEW_CONFIG.text_color
         text: 'TIDAK TERSEDIA'
         font.bold: true
         visible: (itemStock == 0 || isSelected)
@@ -69,7 +69,7 @@ Rectangle{
     Text {
         id: item_name
         width: 400
-        color: CONF.text_color
+        color: VIEW_CONFIG.text_color
         text: itemName
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 70
@@ -103,7 +103,7 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         Text {
             id: item_price
-            color: CONF.background_color
+            color: VIEW_CONFIG.background_color
             text: (itemStock > 0) ? 'Rp. ' + FUNC.insert_dot(itemPrice) + ',-' : 'HABIS'
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
@@ -116,7 +116,7 @@ Rectangle{
 
     Text {
         id: item_stock
-        color: CONF.background_color
+        color: VIEW_CONFIG.background_color
         text: itemStock
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10

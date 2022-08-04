@@ -1,7 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Base{
@@ -90,7 +90,7 @@ Base{
             font.pixelSize: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
-            color: CONF.text_color
+            color: VIEW_CONFIG.text_color
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
         }
@@ -102,7 +102,7 @@ Base{
             font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
-            color: CONF.text_color
+            color: VIEW_CONFIG.text_color
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
         }
@@ -119,10 +119,10 @@ Base{
         width: parent.width
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: false
-        color: CONF.text_color
+        color: VIEW_CONFIG.text_color
         verticalAlignment: Text.AlignVCenter
         font.family:"Ubuntu"
-        visible: (CONF.general_qr=='1')
+        visible: (VIEW_CONFIG.general_qr=='1')
     }
 
     Row{
@@ -131,7 +131,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         spacing: 10
-        visible: (CONF.general_qr=='1')
+        visible: (VIEW_CONFIG.general_qr=='1')
         Image{
             scale: 0.65
             source: "source/ovo_logo.png"
@@ -196,7 +196,7 @@ Base{
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: CONF.frame_color
+        color: VIEW_CONFIG.frame_color
         opacity: 1
         visible: successPayment
         AnimatedImage  {

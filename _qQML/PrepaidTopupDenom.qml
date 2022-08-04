@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
-import "config.js" as CONF
+//import "config.js" as CONF
 
 Base{
     id: prepaid_topup_denom
@@ -621,7 +621,7 @@ Base{
         var topup_amount = parseInt(denom) - parseInt(adminFee);
         switch(cardData.bank_name){
             case 'MANDIRI':
-                if (CONF.c2c_mode==1) topup_amount = parseInt(denom);
+                if (VIEW_CONFIG.c2c_mode==1) topup_amount = parseInt(denom);
                 sam_balance = parseInt(mandiriTopupWallet);
                 break;
             case 'BNI':

@@ -3,7 +3,7 @@ import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Base{
@@ -188,7 +188,7 @@ Base{
         var refund = JSON.parse(r);
         if (refund.MANUAL == 'AVAILABLE'){
             var now_hour =  parseInt(Qt.formatDateTime(new Date(), "HH"));
-            var over_night = parseInt(CONF.over_night);
+            var over_night = parseInt(VIEW_CONFIG.over_night);
             if (now_hour < over_night){
                 popup_refund.manualEnable = true;
             }
@@ -380,7 +380,7 @@ Base{
         hide_all_cancel_button();
         console.log('release_print', now, title, msg, successTransaction, receivedPayment, initialPayment, totalPrice);
         if (allQRProvider.indexOf(details.payment) > -1){
-            if (CONF.general_qr=='1') details.payment = 'QRIS PAYMENT';
+            if (VIEW_CONFIG.general_qr=='1') details.payment = 'QRIS PAYMENT';
         }
         if (title==undefined || title.length == 0) title = 'Terima Kasih';
         if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
@@ -393,12 +393,12 @@ Base{
                     }
                 _SLOT.start_do_confirm_promo(JSON.stringify(payload));
             }
-            if (CONF.printer_type=='whatsapp'){
+            if (VIEW_CONFIG.printer_type=='whatsapp'){
                 hide_all_cancel_button();
                 reset_variables_to_default();
                 // Trigger Deposit Update Balance Check
                 if (cardNo.substring(0, 4) == '6032'){
-                    if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+                    if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
                 } else if (cardNo.substring(0, 4) == '7546'){
                     _SLOT.start_check_bni_deposit();
                 }
@@ -416,7 +416,7 @@ Base{
             switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
             // Trigger Deposit Update Balance Check
             if (cardNo.substring(0, 4) == '6032'){
-                if (CONF.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+                if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
             } else if (cardNo.substring(0, 4) == '7546'){
                 _SLOT.start_check_bni_deposit();
             }
@@ -524,7 +524,7 @@ Base{
         }
         var info = JSON.parse(result);
         var qrMode = mode.toUpperCase();
-        qr_payment_frame.modeQR = (CONF.general_qr == '1') ? 'QR Wallet Anda' : qrMode;
+        qr_payment_frame.modeQR = (VIEW_CONFIG.general_qr == '1') ? 'QR Wallet Anda' : qrMode;
         qr_payment_frame.imageSource = info.qr;
 //        if (qrMode=='ovo') _SLOT.start_do_pay_ovo_qr(JSON.stringify(qrPayload));
 //        if (qrMode=='gopay') _SLOT.start_do_check_gopay_qr(JSON.stringify(qrPayload));
@@ -553,7 +553,7 @@ Base{
         //========
         if (t=='BCA_PARTIAL_ERROR' || t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
-            if (t=='MANDIRI_SAM_BALANCE_EXPIRED' && CONF.c2c_mode == 0) _SLOT.start_reset_mandiri_settlement();
+            if (t=='MANDIRI_SAM_BALANCE_EXPIRED' && VIEW_CONFIG.c2c_mode == 0) _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
 //                var slot_topup = t.split('|')[1]
 //                _SLOT.start_do_topup_deposit_bni(slot_topup);
@@ -1017,7 +1017,7 @@ Base{
         // Only Open Mandiri Denom For Bin-Range 6032 Only
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
             //Re-define topup amount for C2C Mode
-            if (CONF.c2c_mode == 1) amount = details.value;
+            if (VIEW_CONFIG.c2c_mode == 1) amount = details.value;
             _SLOT.start_topup_offline_mandiri(amount, structId);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
             _SLOT.start_topup_offline_bni(amount, structId);
@@ -1110,7 +1110,7 @@ Base{
         } else if (details.payment == 'debit') {
             main_title.show_text = 'Ringkasan Transaksi Anda';
             var edc_waiting_time = '150';
-            if (CONF.edc_waiting_time != undefined) edc_waiting_time = CONF.edc_waiting_time;
+            if (VIEW_CONFIG.edc_waiting_time != undefined) edc_waiting_time = VIEW_CONFIG.edc_waiting_time;
 //            open_preload_notif('Masukkan Kartu Debit dan PIN Anda Pada EDC', 'source/insert_card_new.png');
             switch_frame('source/insert_card_dc.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar', 'closeWindow|'+edc_waiting_time, false )
             _SLOT.start_play_audio('follow_payment_instruction');
@@ -1570,7 +1570,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         title_text: 'SILAKAN MASUKKAN UANG ANDA PADA BILL ACCEPTOR\nPASTIKAN GUNAKAN LEMBAR UANG YANG BAIK'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
-        boxColor: CONF.frame_color
+        boxColor: VIEW_CONFIG.frame_color
 
     }
 
@@ -1711,7 +1711,7 @@ Base{
                         break;
                     case 'c2c_correction':
                         var amount = getDenom.toString();
-                        if (CONF.c2c_mode == 1) amount = details.value;
+                        if (VIEW_CONFIG.c2c_mode == 1) amount = details.value;
                         var structId = details.shop_type + details.epoch.toString();
                         _SLOT.start_topup_mandiri_correction(amount, structId);
                         popup_loading.open();
@@ -1997,8 +1997,8 @@ Base{
         textSecond: 'Silakan masukkan nomor Whatsapp Anda untuk transaksi kembalian.'
         textThird: 'Anda bisa melakukan transaksi Topup dan Beli Kartu melalui Whatsapp.'
         textFourth: 'Silakan Scan QR untuk melihat Voucher pengembalian Anda di Whatsapp.'
-        showWhatAppQR: (CONF.whatsapp_qr !== undefined)
-        imageSource: CONF.whatsapp_qr
+        showWhatAppQR: (VIEW_CONFIG.whatsapp_qr !== undefined)
+        imageSource: VIEW_CONFIG.whatsapp_qr
 
 
         CircleButton{

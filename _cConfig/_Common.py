@@ -60,6 +60,7 @@ TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
 
 USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme', '1') == '1' else False
+USE_PREV_ADS = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^ads', '0') == '1' else False
 
 # Initiate Network Header
 # HEADER = get_header()
@@ -585,6 +586,9 @@ PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+
+VIEW_CONFIG = load_from_temp_data('view-config', 'json')
+
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')

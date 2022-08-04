@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 //import "screen.js" as SCREEN
-import "config.js" as CONFIG
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -20,9 +20,9 @@ Rectangle{
     property int header_height: 125
     property int idx_bg: 0
     //Change Background Asset
-    property variant backgrounds: CONFIG.backgrounds
-    property variant logo: CONFIG.master_logo
-    property variant partner_logos: CONFIG.partner_logos
+    property variant backgrounds: VIEW_CONFIG.backgrounds
+    property variant logo: VIEW_CONFIG.master_logo
+    property variant partner_logos: VIEW_CONFIG.partner_logos
 //    property variant backgrounds: ['source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png' ]
     // Old Property Not Used But Cannot Be Removed
     property bool isPanelActive: false

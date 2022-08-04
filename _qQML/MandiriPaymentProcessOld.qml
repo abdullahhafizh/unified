@@ -3,7 +3,7 @@ import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Base{
@@ -1295,7 +1295,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         title_text: 'JIKA TERJADI GAGAL/BATAL TRANSAKSI\nPENGEMBALIAN DANA DIALIHKAN KE AKUN ANDA ' + customerPhone+ ' (Powered By DUWIT)'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
-        boxColor: CONF.frame_color
+        boxColor: VIEW_CONFIG.frame_color
 
     }
 

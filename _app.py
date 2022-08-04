@@ -1091,12 +1091,13 @@ var tvc_waiting_time = 60;
 
 def init_local_setting():
     global INITIAL_SETTING
-    qml_config = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
-    if not os.path.exists(qml_config):
-        with open(sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js', 'w+') as qml:
-            qml.write(TEMP_CONFIG_JS)
-            qml.close()
-        LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
+    # Disabled - Move View Config To Context Property - 2022-08-02
+    # qml_config = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
+    # if not os.path.exists(qml_config):
+    #     with open(sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js', 'w+') as qml:
+    #         qml.write(TEMP_CONFIG_JS)
+    #         qml.close()
+    #     LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
     INITIAL_SETTING['dev_mode'] = _Common.TEST_MODE
     INITIAL_SETTING['db'] = _ConfigParser.get_set_value('GENERAL', 'DB', 'kiosk.db')
     INITIAL_SETTING['display'] = get_screen_resolution()
@@ -1217,9 +1218,10 @@ if __name__ == '__main__':
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
     context.setContextProperty('IS_WINDOWS', _Common.IS_WINDOWS)
     context.setContextProperty('IS_LINUX', _Common.IS_LINUX)
-    translator = QTranslator()
-    translator.load(path + 'INA.qm')
-    app.installTranslator(translator)
+    context.setContextProperty('VIEW_CONFIG', _Common.VIEW_CONFIG)
+    # translator = QTranslator()
+    # translator.load(path + 'INA.qm')
+    # app.installTranslator(translator)
     view.engine().quit.connect(app.quit)
     if _Common.IS_WINDOWS:
         view.setSource(QUrl(path + 'Main.qml'))

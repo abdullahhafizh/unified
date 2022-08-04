@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -14,14 +14,14 @@ Rectangle{
 
     Rectangle{
         anchors.fill: parent
-        color: CONF.frame_color
+        color: VIEW_CONFIG.frame_color
         opacity: globalOpacity
         radius: width/2
     }
 
     Text {
         anchors.fill: parent
-        color: CONF.text_color
+        color: VIEW_CONFIG.text_color
         text: button_text.toUpperCase()
         style: Text.Sunken
         wrapMode: Text.WordWrap

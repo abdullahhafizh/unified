@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Base{
@@ -33,7 +33,7 @@ Base{
     property var bigButtonPadding: 100
     property var actionMode: 'check_balance'
     property variant allowedBank: []
-    property variant allowedUpdateBalanceOnline: CONF.bank_ubal_online
+    property variant allowedUpdateBalanceOnline: VIEW_CONFIG.bank_ubal_online
 
     property var selectedMenu: ''
     property bool showCustomerInfo: true
@@ -176,8 +176,8 @@ Base{
             allowedBank.push('BCA');
         }
 
-        if (CONF.whatsapp_no !== undefined && CONF.whatsapp_no.length > 3){
-            preload_customer_info.whatsappNo = CONF.whatsapp_no;
+        if (VIEW_CONFIG.whatsapp_no !== undefined && VIEW_CONFIG.whatsapp_no.length > 3){
+            preload_customer_info.whatsappNo = VIEW_CONFIG.whatsapp_no;
         }
 
     }

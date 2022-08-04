@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
 import "base_function.js" as FUNC
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Base{
@@ -37,8 +37,8 @@ Base{
             popup_loading.open('Transaksi Berhasil\nMempersiapkan eReceipt Anda.');
             abc.counter = timer_value;
             my_timer.start();
-            if (CONF.delay_manual_print != undefined){
-                showManualPrintButton = parseInt(CONF.delay_manual_print);
+            if (VIEW_CONFIG.delay_manual_print != undefined){
+                showManualPrintButton = parseInt(VIEW_CONFIG.delay_manual_print);
                 console.log('Delay Manual Print', showManualPrintButton);
             }
             _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
@@ -107,7 +107,7 @@ Base{
     function ereceipt_show(data){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('ereceipt_show', now, JSON.stringify(data));
-        var whatsappNo = CONF.whatsapp_no;
+        var whatsappNo = VIEW_CONFIG.whatsapp_no;
         whatsappNo = '62' + whatsappNo.substring(1);
 //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
         imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
