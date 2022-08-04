@@ -1,0 +1,235 @@
+[GENERAL]
+backend^server = http://vm-api.mdd.co.id:11199/kiosk-api/v2/
+tid = 17092001
+token = 54eb7894380c7758d69b6b8b0cff4187
+reload^service = 1
+mode = develop-linux
+payment^cancel = 0
+payment^confirm = 1
+pir^usage = 1
+force^settlement = 0
+db = kiosk.db
+exceed^payment = 1
+mandiri^sam^production = 1
+db^debug = 1
+min^refund^amount = 2500
+ssl^verify = 0
+allowed^ubal^online = MANDIRI|BNI|BRI
+over^night = 22
+mandiri^card^blocked = 1
+mandiri^card^blocked^url = https://prepaid-service.mdd.co.id/topup-mandiri/blacklist
+daily^sync^summary^time = 23:55
+daily^reboot^time = 02:30
+refund^feature = 0
+admin^pass = mdd*123
+topup^service = 1
+database^debug = 0
+sentry^dsn = https://d1e7e31740c147b289ee1414b2d48874@sentry-logging.multidaya.id/3
+disable^card^retry^code = 0
+allowed^check^card^log = MANDIRI|BNI
+daily^c2c^settlement^time = 23:59
+
+[PRINTER]
+port = COM
+baudrate = 19200
+receipt^print^count = 231
+receipt^print^limit = 1800
+receipt^logo = 20220211113915fL6WUaD8QnccopOOm2.gif
+receipt^custom^text = Layanan Pelanggan WA: +62 822 1364 5190 Telegram: @multidayadinamika E-mail: support@mdd.co.id
+printer^type = Default
+new^layout = 1
+ereceipt^url = http://erg.elebox.id/ereceipt/create
+delay^manual^print = 10
+printer^setting = default
+allow^reprint^receipt = 1
+
+[CD]
+port1 = COM
+port2 = COM
+port3 = COM
+multiple^eject = 0
+port1^type = OLD
+port2^type = OLD
+port3^type = OLD
+debit^aid = A0000006021010
+eject^attempt = 1
+port4 = COM
+port4^type = OLD
+stock^opname^duration^hours = 0
+
+[MEI]
+port = COM
+
+[QR]
+qr^host = http://apiv2.mdd.co.id:2020/v1/
+qr^token = e6f092a0fa88d9cac8dac3d2162f1450
+qr^mid = 000972721511382bf739669cce165808
+store^local = 1
+payment^time = 180
+general^qr = 0
+qris^receipt = BCA-QRIS|BNI-QRIS|DUWIT
+
+[SFTP]
+mdr^host = 103.28.14.188
+mdr^user = mcash
+mdr^pass = Mdd*123
+mdr^port = 22222
+mdr^path = /home/mcash/TopUpOffline
+bni^host = 172.31.250.60
+bni^user = vmtjbni
+bni^pass = vmtjbn1
+bni^port = 22
+bni^path = /settlement/bni
+
+[REPOSITORY]
+username = developer
+password = Mdd*123#
+
+[EDC]
+port = COM
+type = UPT-IUR
+daily^settle^time = 18:00
+print^last = 1
+debit^only = 1
+serial^no = 0000000000000000
+payment^duration = 180
+payment^direct^mode = 1
+force^settlement = 0
+
+[BILL]
+type = NV
+port = COM
+last^money^inserted = 10000
+not^allowed^denom = 1000|2000|5000
+store^money^delay = 3
+service^library = 0
+library^debug = 0
+direct^read^note = 1
+
+[QPROX_NFC]
+port = COM
+init^delay^time = 5
+
+[MANDIRI]
+mid = ---
+tid = ---
+sam^pin = ---
+amount^minimum = 50000
+ka^pin1 = ---
+ka^pin2 = ---
+kl^pin = ---
+ka^nik = 2345
+sam1^uid = ---
+sam2^uid = ---
+single^sam = 1
+active^slot = 1
+daily^settle^time = 02:00
+
+[BNI]
+mid = 000100410009302
+tid = 41030418
+merried^code = ---
+sam1^slot = 4
+sam2^slot = ---
+amount^topup = 20000
+amount^minimum = 1000
+single^sam = 1
+active^slot = 1
+sam1^no = 7546990000042042
+sam2^no = 
+url^activation = http://192.168.7.7:80/
+activation^retry = 5
+get^reference^timeout^minute = 30
+remote^activation = 1
+treshold^usage = 1
+
+[BRI]
+mid = ---
+tid = ---
+procode = ---
+sam^slot = 3
+auto^refund = 1
+
+[BCA]
+mid = ---
+tid = ---
+sam^slot = ---
+mid^topup = 000200057
+tid^topup = ETU00002
+
+[MANDIRI_C2C]
+mode = 1
+mactros = 0114040000770000
+mid = 0077
+tid = 51140488
+sam^pin = 6D2FE98B75D45FE1
+sam^slot = 1
+minimum^amount = 6000
+amount^topup = 100000
+deposit^slot = 2
+c2c^path = /tb/
+c2c^host = 172.31.250.60
+c2c^user = tbvm
+c2c^pass = TbVm123
+c2c^port = 22
+c2c^path^settlement = settlement_tb
+c2c^path^fee = fee_tb
+c2c^path^resp^fee = resp_fee_tb
+daily^sync^time = 3600
+deposit^update^loop = 300
+deposit^update^max^loop = 10
+blocked^bin^card = 6032984098
+treshold^usage = 1
+
+[DKI]
+mid^topup = VMTJ10001110001
+tid^topup = VMTJ1008
+mid = ---
+tid = ---
+service^library = 0
+
+[AMQP]
+active = 0
+host = amqp.mdd.co.id
+port = 5672
+user = kiosk
+pass = kiosk
+
+[SCANNER]
+port = ---
+single^read = 1
+read^timeout = 45
+
+[QPROX NFC]
+port = COM
+
+[TEMPORARY]
+dki^last^topup^stan = 121
+dki^last^topup^invoice = 61
+c2c^card^no = 6032000000000000
+c2c^card^uid = ---
+theme^name = TEST
+theme^wa^no = 081210105500
+theme^wa^url = ---
+max^pending^code^retry = 7
+max^pending^code^duration = 2
+customer^service^no = 082124999951
+service^version = ---
+color^text = white
+color^back = black
+last^auth = 0
+last^update = 0
+last^get^ppob = 1633597485000
+last^c2c^set^fee = 0
+search^trx = 1
+wa^voucher = 1
+ubal^online^bni = 1
+ubal^online^bri = 1
+ubal^online^bca = 0
+ubal^online^dki = 0
+ubal^online^mandiri = 1
+theme^wa^qr = http://vm-api.mdd.co.id:11199/uploads/logos/20210727152816M2GGxKPTioP76z0rIw.png
+tvc^waiting^time = 9999
+admin^include = 1
+secret^test^code = 0000
+
