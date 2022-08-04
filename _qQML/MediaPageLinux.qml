@@ -7,7 +7,7 @@ import "config.js" as CONF
 
 Rectangle{
     id:parent_root
-    color: "black"
+    color: "transparent"
     width: parseInt(SCREEN_WIDTH)
     height: parseInt(SCREEN_HEIGHT)
     property var img_path: "/_vVideo/"
@@ -126,85 +126,85 @@ Rectangle{
     }
 
     
-    Image{
-        id: img_background
-        visible: true
-        source: "source/background/" + backgrounds[0]
-        fillMode: Image.PreserveAspectCrop
-        anchors.fill: parent
-    }
+    // Image{
+    //     id: img_background
+    //     visible: true
+    //     source: "source/background/" + backgrounds[0]
+    //     fillMode: Image.PreserveAspectCrop
+    //     anchors.fill: parent
+    // }
 
 
-    Rectangle{
-        id: header_opacity
-        width: parent.width
-        height: 125
-        color: 'white'
-        visible: true
-        opacity: 0.1
-    }
+    // Rectangle{
+    //     id: header_opacity
+    //     width: parent.width
+    //     height: 125
+    //     color: 'white'
+    //     visible: true
+    //     opacity: 0.1
+    // }
 
-    Image{
-        id: img_logo_left
-        width: 275
-        height: 100
-        anchors.verticalCenter: header_opacity.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 50
-        source: 'source/logo/'+CONF.master_logo[0]
-        fillMode: Image.PreserveAspectFit
-    }
+    // Image{
+    //     id: img_logo_left
+    //     width: 275
+    //     height: 100
+    //     anchors.verticalCenter: header_opacity.verticalCenter
+    //     anchors.left: parent.left
+    //     anchors.leftMargin: 50
+    //     source: 'source/logo/'+CONF.master_logo[0]
+    //     fillMode: Image.PreserveAspectFit
+    // }
 
-    Image{
-        id: img_logo_right
-        width: 275
-        height: 100
-        anchors.verticalCenter: header_opacity.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: 50
-        source: ''
-        fillMode: Image.PreserveAspectFit
-        visible: false
-    }
+    // Image{
+    //     id: img_logo_right
+    //     width: 275
+    //     height: 100
+    //     anchors.verticalCenter: header_opacity.verticalCenter
+    //     anchors.right: parent.right
+    //     anchors.rightMargin: 50
+    //     source: ''
+    //     fillMode: Image.PreserveAspectFit
+    //     visible: false
+    // }
 
 
-    Rectangle{
-        id: running_text_box
-        width: parent.width
-        height: 100
-        color: "transparent"
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
-        anchors.horizontalCenter: parent.horizontalCenter
+    // Rectangle{
+    //     id: running_text_box
+    //     width: parent.width
+    //     height: 100
+    //     color: "transparent"
+    //     anchors.bottom: parent.bottom
+    //     anchors.bottomMargin: 0
+    //     anchors.horizontalCenter: parent.horizontalCenter
 
-        Rectangle{
-            id: opacity_background
-            anchors.fill: parent
-            color: 'white'
-            opacity: .4
-        }
+    //     Rectangle{
+    //         id: opacity_background
+    //         anchors.fill: parent
+    //         color: 'white'
+    //         opacity: .4
+    //     }
 
-        Text{
-            id: moving_text
-            x: parent.width
-            anchors.fill: running_text_box
-            color: CONF.running_text_color
-            text: CONF.running_text
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 50
-            verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            font.family:"Ubuntu"
+    //     Text{
+    //         id: moving_text
+    //         x: parent.width
+    //         anchors.fill: running_text_box
+    //         color: CONF.running_text_color
+    //         text: CONF.running_text
+    //         anchors.verticalCenter: parent.verticalCenter
+    //         font.pixelSize: 50
+    //         verticalAlignment: Text.AlignVCenter
+    //         horizontalAlignment: Text.AlignHCenter
+    //         font.family:"Ubuntu"
 
-            NumberAnimation on x{
-                duration: 5000
-                easing.type: Easing.Linear
-                from: running_text_box.width
-                to: -1*moving_text.width
-                loops: Animation.Infinite
-            }
-        }
-    }
+    //         NumberAnimation on x{
+    //             duration: 5000
+    //             easing.type: Easing.Linear
+    //             from: running_text_box.width
+    //             to: -1*moving_text.width
+    //             loops: Animation.Infinite
+    //         }
+    //     }
+    // }
 
     MouseArea{
         anchors.fill: parent

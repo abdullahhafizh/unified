@@ -170,15 +170,11 @@ def use_voucher(voucher, reff_no):
             'note_ref': reff_no,
             'pid': product_id,
         }
-    check_product = _DAO.check_product_status_by_pid({'pid': product_id})
-    if len(check_product) > 0:
-        last_stock = check_product[0]['stock'] - 1
-        _DAO.update_product_stock({
-                'pid': product_id,
-                'stock': last_stock,
-            })
-        __payload['last_stock'] = last_stock
-        __payload['slot'] = check_product[0]['status']
+    product_stock = _DAO.check_product_status_by_pid({'pid': product_id})
+    # Use Direct Deduct On CD Module - 2022-08-04
+    if len(product_stock) > 0:
+        __payload['last_stock'] = product_stock[0]['stock']
+        __payload['slot'] = product_stock[0]['status']
         _Common.store_redeem_activity(voucher, str(__payload['slot']))
     try:
         __url = _Common.BACKEND_URL+'ppob/voucher/use'

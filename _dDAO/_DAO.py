@@ -330,6 +330,11 @@ def get_product_stock_by_slot_status(status):
     return _Database.get_query(sql=sql, parameter={})
 
 
+def reduce_product_stock_by_slot_status(status):
+    sql = " UPDATE ProductStock SET stock = stock-1 WHERE status = {} ".format(str(status))
+    return _Database.insert_update(sql=sql, parameter={})
+
+
 def check_product_stock(param):
     sql = " SELECT count(*) as count FROM ProductStock WHERE stid = :stid AND pid = :pid LIMIT 0,1 "
     return _Database.get_query(sql=sql, parameter=param)
@@ -338,6 +343,11 @@ def check_product_stock(param):
 def check_product_status_by_pid(param):
     sql = " SELECT * FROM ProductStock WHERE pid = :pid LIMIT 0,1 "
     return _Database.get_query(sql=sql, parameter=param)
+
+
+def reduce_product_stock_by_pid(param):
+    sql = " UPDATE ProductStock SET stock = stock-1 WHERE pid = :pid "
+    return _Database.insert_update(sql=sql, parameter=param)
 
 
 def clear_stock_product():

@@ -62,13 +62,13 @@ def get_ppob_product(signal=True):
 def store_image_item(products):
     for p in range(len(products)):
         old_path_category = products[p]['category_url']
-        new_path_category = sys.path[0]+'/_qQML/source/ppob_category'
+        new_path_category = sys.path[0]+'/'+_Common.VIEW_FOLDER+'/source/ppob_category'
         store_category, category = _NetworkAccess.item_download(old_path_category, new_path_category)
         if store_category is True:
             products[p]['category_url'] = 'source/ppob_category/'+category
         operator = products[p]['operator']
         old_path_icon = 'https://api.trendpos.id/mcash/icon?operator='+operator.lower()
-        new_path_icon = sys.path[0]+'/_qQML/source/ppob_icon'
+        new_path_icon = sys.path[0]+'/'+_Common.VIEW_FOLDER+'/source/ppob_icon'
         store_icon, icon = _NetworkAccess.item_download(old_path_icon, new_path_icon, name=operator+'.png')
         if store_icon is True:
             products[p]['icon_url'] = 'source/ppob_icon/'+icon
