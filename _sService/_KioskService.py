@@ -18,7 +18,6 @@ from _sService import _UserService, _MDSService
 from time import sleep
 import subprocess
 from operator import itemgetter
-# from _dDevice import _BILL
 import json
 # import win32serviceutil
 if _Common.IS_WINDOWS:
