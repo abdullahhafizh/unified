@@ -618,10 +618,6 @@ class SlotHandler(QObject):
         _QPROX.start_fake_update_dki(card_no, amount)
     start_fake_update_dki = pyqtSlot(str, str)(start_fake_update_dki)
 
-    def start_check_init_cd(self, com):
-        _CD.start_check_init_cd(com)
-    start_check_init_cd = pyqtSlot(str)(start_check_init_cd)
-
     def start_log_book_cash(self, pid, amount):
         _BILL.start_log_book_cash(pid, amount)
     start_log_book_cash = pyqtSlot(str, str)(start_log_book_cash)
@@ -794,7 +790,7 @@ class SlotHandler(QObject):
     start_do_confirm_promo = pyqtSlot(str)(start_do_confirm_promo)
 
 
-def s_handler():
+def set_signal_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
     _KioskService.K_SIGNDLER.SIGNAL_GET_GUI_VERSION.connect(view.rootObject().result_get_gui_version)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.connect(view.rootObject().result_get_kiosk_name)
@@ -1051,7 +1047,15 @@ def check_path(new):
 
 
 def set_tvc_player(command):
-    pass
+    try:
+        if command == 'START':
+            player = os.path.join(os.getcwd(), '_pPlayer', 'vlc_player.py')
+            os.system('python3 ' + player)
+            return
+        LOGGER.info(('Unknown Command: ', command))
+    except Exception as e:
+        LOGGER.warning((e))
+
 
 
 def set_ext_keyboard(command):
@@ -1087,12 +1091,13 @@ var tvc_waiting_time = 60;
 
 def init_local_setting():
     global INITIAL_SETTING
-    qml_config = sys.path[0] + '/_qQML/config.js'
-    if not os.path.exists(qml_config):
-        with open(sys.path[0] + '/_qQML/config.js', 'w+') as qml:
-            qml.write(TEMP_CONFIG_JS)
-            qml.close()
-        LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
+    # Disabled - Move View Config To Context Property - 2022-08-02
+    # qml_config = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
+    # if not os.path.exists(qml_config):
+    #     with open(sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js', 'w+') as qml:
+    #         qml.write(TEMP_CONFIG_JS)
+    #         qml.close()
+    #     LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
     INITIAL_SETTING['dev_mode'] = _Common.TEST_MODE
     INITIAL_SETTING['db'] = _ConfigParser.get_set_value('GENERAL', 'DB', 'kiosk.db')
     INITIAL_SETTING['display'] = get_screen_resolution()
@@ -1203,30 +1208,43 @@ if __name__ == '__main__':
     app = QGuiApplication(sys.argv)
     print("pyt: Setting Up View...")
     if os.name == 'nt':
-        path = '_qQML/'
+        path = _Common.VIEW_FOLDER+'/'
     else:
-        path = sys.path[0] + '/_qQML/'
+        path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/'
     view = QQuickView()
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
     context.setContextProperty('IS_WINDOWS', _Common.IS_WINDOWS)
+<<<<<<< HEAD
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
+=======
+    context.setContextProperty('IS_LINUX', _Common.IS_LINUX)
+    context.setContextProperty('VIEW_CONFIG', _Common.VIEW_CONFIG)
+    # translator = QTranslator()
+    # translator.load(path + 'INA.qm')
+    # app.installTranslator(translator)
+>>>>>>> develop-linux
     view.engine().quit.connect(app.quit)
     if _Common.IS_WINDOWS:
         view.setSource(QUrl(path + 'Main.qml'))
     else:
+<<<<<<< HEAD
         view.setSource(QUrl(path + 'MainNoMedia.qml'))
     s_handler()
+=======
+        view.setSource(QUrl(path + 'MainLinux.qml'))
+    set_signal_handler()
+>>>>>>> develop-linux
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(SCREEN_WIDTH, SCREEN_HEIGHT - 1)
-    print("pyt: Table Adjustment...")
+    print("pyt: Table Adjustment/Migration...")
     _KioskService.direct_alter_table([
         "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
         "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
@@ -1305,11 +1323,6 @@ if __name__ == '__main__':
             _QPROX.init_config()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
-    # Disabled, No Need Create Init 
-    # if _Common.CD['status'] is True:
-        # sleep(1)
-        # print("pyt: [INFO] Re-Init CD Library Configuration...")
-        # _CD.init_cd_library()
     if _QPROX.INIT_MANDIRI is True:
         sleep(1)
         print("pyt: Check Mandiri Deposit Update Balance...")

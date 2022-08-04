@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -39,7 +39,7 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: title_text
         size_: (parent.width==1920) ? 50 : 40
-        color_: CONF.text_color
+        color_: VIEW_CONFIG.text_color
     }
 
     Row{

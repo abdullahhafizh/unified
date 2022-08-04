@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
 import QtMultimedia 5.0
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -207,7 +207,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50
-        source: 'source/logo/'+CONF.master_logo[0]
+        source: 'source/logo/'+VIEW_CONFIG.master_logo[0]
         fillMode: Image.PreserveAspectFit
     }
 
@@ -244,8 +244,8 @@ Rectangle{
             id: moving_text
             x: parent.width
             anchors.fill: running_text_box
-            color: CONF.running_text_color
-            text: CONF.running_text
+            color: VIEW_CONFIG.running_text_color
+            text: VIEW_CONFIG.running_text
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 50
             verticalAlignment: Text.AlignVCenter

@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 import "base_function.js" as FUNC
 
 Base{
@@ -12,7 +12,7 @@ Base{
 //    height: (globalScreenType=='2') ? 1024 : 1080
 //    width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
-    property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
+    property int tvc_timeout: parseInt(VIEW_CONFIG.tvc_waiting_time)
     property bool isMedia: true
     property bool kioskStatus: false
     property var productData: undefined
@@ -26,8 +26,8 @@ Base{
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
-    property var mandiri_update_schedule: CONF.mandiri_update_schedule
-    property var edc_settlement_schedule: CONF.edc_settlement_schedule
+    property var mandiri_update_schedule: VIEW_CONFIG.mandiri_update_schedule
+    property var edc_settlement_schedule: VIEW_CONFIG.edc_settlement_schedule
     property var last_money_insert: 'N/A'
 
     property bool printerAvailable: true
@@ -59,6 +59,7 @@ Base{
             _SLOT.get_kiosk_status();
 //            _SLOT.kiosk_get_product_stock();
             _SLOT.start_play_audio('homepage_greeting');
+            console.log('Platform Check', IS_LINUX, IS_WINDOWS)
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
@@ -209,10 +210,10 @@ Base{
         }
 
         //Set WhatsApp Config Here
-        if (CONF.whatsapp_qr !== undefined) preload_whatasapp_voucher.imageSource = CONF.whatsapp_qr;
-        if (CONF.whatsapp_no !== undefined && CONF.whatsapp_no.length > 3){
-            preload_whatasapp_voucher.whatsappNo = CONF.whatsapp_no;
-            preload_customer_info.whatsappNo = CONF.whatsapp_no;
+        if (VIEW_CONFIG.whatsapp_qr !== undefined) preload_whatasapp_voucher.imageSource = VIEW_CONFIG.whatsapp_qr;
+        if (VIEW_CONFIG.whatsapp_no !== undefined && VIEW_CONFIG.whatsapp_no.length > 3){
+            preload_whatasapp_voucher.whatsappNo = VIEW_CONFIG.whatsapp_no;
+            preload_customer_info.whatsappNo = VIEW_CONFIG.whatsapp_no;
         }
 
         if (kiosk.refund_feature == '0') showCustomerInfo = true;
@@ -535,12 +536,14 @@ Base{
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
-                        my_layer.push(media_page, {mode: 'mediaPlayer',
+                            my_layer.push(media_page, {mode: 'mediaPlayer',
                                           mandiri_update_schedule: mandiri_update_schedule,
                                           edc_settlement_schedule: edc_settlement_schedule
                                       });
+                        if (IS_LINUX){
+                            _SLOT.set_tvc_player('START');
+                        }
                     }
-//                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
                 }
@@ -597,7 +600,7 @@ Base{
         anchors.leftMargin: -radius
         width: 180
         height: 180
-        visible: comboSaktiFeature
+        visible: false
         Image{
             anchors.fill: parent
             scale: 0.75

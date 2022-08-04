@@ -13,16 +13,29 @@ from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
+<<<<<<< HEAD
+=======
+from pprint import pprint
+>>>>>>> develop-linux
 from _sService import _UserService, _MDSService
 from time import sleep
 import subprocess
 from operator import itemgetter
 import json
+<<<<<<< HEAD
 if _Common.IS_WINDOWS:
     import win32com.client as client
     import pythoncom
     import win32print
     import wmi
+=======
+# import win32serviceutil
+if _Common.IS_WINDOWS:
+    import wmi
+    import win32com.client as client
+    import pythoncom
+    import win32print
+>>>>>>> develop-linux
 
 
 class KioskSignalHandler(QObject):
@@ -123,8 +136,9 @@ def update_kiosk_status(s=400, r=None):
                 _Common.KIOSK_MARGIN = int(_Common.KIOSK_SETTING['defaultMargin'])
                 _Common.KIOSK_ADMIN = int(_Common.KIOSK_SETTING['defaultAdmin'])
                 _Common.PAYMENT_SETTING = r['data']['payment']
-                print("pyt: Syncing Payment Setting...")
-                define_device_port_setting(_Common.PAYMENT_SETTING)
+                if _Common.IS_WINDOWS:
+                    print("pyt: Syncing Payment Setting...")
+                    define_device_port_setting(_Common.PAYMENT_SETTING)
                 _Common.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
                 _Common.FEATURE_SETTING = r['data']['feature']
                 print("pyt: Syncing Feature Setting...")
@@ -223,83 +237,133 @@ def define_theme(d):
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
     
+<<<<<<< HEAD
     config_js = sys.path[0] + '/_qQML/config.js'
+=======
+    config_js = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
+>>>>>>> develop-linux
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger
     daily_settle_time = _ConfigParser.get_set_value('MANDIRI', 'daily^settle^time', '02:00')
     content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
+    _Common.VIEW_CONFIG['mandiri_update_schedule'] = daily_settle_time
     edc_daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
     content_js += 'var edc_settlement_schedule = "' + edc_daily_settle_time + '";' + os.linesep
+    _Common.VIEW_CONFIG['edc_settlement_schedule'] = edc_daily_settle_time
+
     # Temp Config For Ubal Online
     content_js += 'var bank_ubal_online = ' + json.dumps(_Common.ALLOWED_BANK_UBAL_ONLINE) + ';' + os.linesep
+    _Common.VIEW_CONFIG['bank_ubal_online'] = _Common.ALLOWED_BANK_UBAL_ONLINE
+
     if type(d['master_logo']) != list:
         d['master_logo'] = [d['master_logo']]
+
     master_logo = []
     for m in d['master_logo']:
+<<<<<<< HEAD
         download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQML/source/logo')
         if download is True:
+=======
+        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
+        if download is True or _Common.USE_PREV_THEME:
+>>>>>>> develop-linux
             master_logo.append(image)
         else:
             continue
     content_js += 'var master_logo = ' + json.dumps(master_logo) + ';' + os.linesep
+    _Common.VIEW_CONFIG['master_logo'] = master_logo
+
     partner_logos = []
     for p in d['partner_logos']:
+<<<<<<< HEAD
         download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQML/source/logo')
         if download is True:
+=======
+        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
+        if download is True or _Common.USE_PREV_THEME:
+>>>>>>> develop-linux
             partner_logos.append(image)
         else:
             continue
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
+    _Common.VIEW_CONFIG['partner_logos'] = partner_logos
+
     backgrounds = []
     for b in d['backgrounds']:
+<<<<<<< HEAD
         download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQML/source/background')
         if download is True:
+=======
+        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/background')
+        if download is True or _Common.USE_PREV_THEME:
+>>>>>>> develop-linux
             backgrounds.append(image)
         else:
             continue
     content_js += 'var backgrounds = ' + json.dumps(backgrounds) + ';' + os.linesep
+    _Common.VIEW_CONFIG['backgrounds'] = backgrounds
+
     # Running Text
     if not _Common.empty(d['running_text']):
         content_js += 'var running_text = "' + d['running_text'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['running_text'] = d['running_text']
+
     # Running Text Color
     if not _Common.empty(d['running_text_color']):
         content_js += 'var running_text_color = "' + d['running_text_color'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['running_text_color'] = d['running_text_color']
         content_js += 'var text_color = "' + _Common.COLOR_TEXT + '";' + os.linesep
+        _Common.VIEW_CONFIG['text_color'] = _Common.COLOR_TEXT
         content_js += 'var frame_color = "' + d['frame_color'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['frame_color'] = d['frame_color']
         content_js += 'var background_color = "' +  _Common.COLOR_BACK + '";' + os.linesep
+        _Common.VIEW_CONFIG['background_color'] = _Common.COLOR_BACK
+
     if not _Common.empty(d['whatsapp_no']):
         _Common.THEME_WA_NO = d['whatsapp_no']
         _Common.log_to_temp_config('theme^wa^no', d['whatsapp_no'])
         content_js += 'var whatsapp_no = "' +  d['whatsapp_no'] + '";' + os.linesep
+        _Common.VIEW_CONFIG['whatsapp_no'] = d['whatsapp_no']
+
     if not _Common.empty(d['whatsapp_qr']):
         _Common.THEME_WA_QR = d['whatsapp_qr']
         _Common.log_to_temp_config('theme^wa^qr', d['whatsapp_qr'])
-        store, receipt_wa_qr = _NetworkAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/_qQML/source')
+        store, receipt_wa_qr = _NetworkAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source')
         if store is True:
             content_js += 'var whatsapp_qr = "source/' + receipt_wa_qr + '";' + os.linesep
-
+            _Common.VIEW_CONFIG['whatsapp_qr'] = "source/" + receipt_wa_qr
     # Add Printer Type
     printer_type = _Common.PRINTER_TYPE.lower()
     content_js += 'var printer_type = "' +  printer_type + '";' + os.linesep
-
+    _Common.VIEW_CONFIG['printer_type'] = printer_type
     # Add Printer Manual Delay Show
     printer_manual_delay = str(_Common.DELAY_MANUAL_PRINT)
     content_js += 'var delay_manual_print = ' +  printer_manual_delay + ';' + os.linesep
-
+    _Common.VIEW_CONFIG['delay_manual_print'] = printer_manual_delay
     # C2C Mode View config
     c2c_mode = '1' if _Common.C2C_MODE is True else '0'
     content_js += 'var c2c_mode = ' +  c2c_mode + ';' + os.linesep
+    _Common.VIEW_CONFIG['c2c_mode'] = c2c_mode
     # General QR config
     general_qr = '1' if _Common.GENERAL_QR is True else '0'
     content_js += 'var general_qr = ' +  general_qr + ';' + os.linesep
+    _Common.VIEW_CONFIG['general_qr'] = general_qr
+
     # Over night
     content_js += 'var over_night = ' +  str(_Common.OVER_NIGHT) + ';' + os.linesep
-    # Receipt tvc_waiting_time
+    _Common.VIEW_CONFIG['over_night'] = str(_Common.OVER_NIGHT)
+
+    # Receipt tvc_waiting_time ()default 60 sec)
+    content_js += 'var tvc_waiting_time = ' +  str(60) + ';' + os.linesep
     if not _Common.empty(d['tvc_waiting_time']):
         _Common.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
-        content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+        content_js += 'tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+        _Common.VIEW_CONFIG['tvc_waiting_time'] = str(d['tvc_waiting_time'])
+
     if not _Common.empty(_Common.EDC_MOBILE_DURATION):
         content_js += 'var edc_waiting_time = "' +  str(_Common.EDC_MOBILE_DURATION) + '";' + os.linesep
+        _Common.VIEW_CONFIG['edc_waiting_time'] = str(_Common.EDC_MOBILE_DURATION)
+
     # Receipt Logo
     if not _Common.empty(d['receipt_custom_text']):
         _Common.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
@@ -308,9 +372,12 @@ def define_theme(d):
     if store is True:
         _Common.RECEIPT_LOGO = receipt_logo
         _Common.log_to_config('PRINTER', 'receipt^logo', receipt_logo)
+    
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)
         config_qml.close()
+
+    _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
     LOGGER.info((config_js, content_js))
 
 
@@ -342,7 +409,7 @@ def define_ads(a):
     LOGGER.debug(("expired media(s) : ", str(__must_backup)))
     # __must_delete = __current_list
     # _Helper.dump(__must_delete)
-    if len(__must_backup) > 0:
+    if len(__must_backup) > 0 and not _Common.USE_PREV_ADS:
         for d in __must_backup:
             file_expired = os.path.join(__tvc_path, d)
             file_backup = os.path.join(__tvc_backup, d)
@@ -534,6 +601,12 @@ def machine_summary():
             summary["d_space"] = get_disk_space("D:")
             summary["ram_space"] = get_ram_space()
             summary['paper_printer'] = get_printer_status_v2()
+<<<<<<< HEAD
+=======
+        else:
+            # TODO: Add Handler if Linux
+            pass
+>>>>>>> develop-linux
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
     finally:
@@ -1089,127 +1162,6 @@ def store_transaction_mds(param):
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR|STORE_TRX')
 
 
-def store_transaction_global_old(param, retry=False):
-    global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
-    g = GLOBAL_TRANSACTION_DATA = json.loads(param)
-    LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
-    try:
-        update_summary_report(g)
-        __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
-        # Delete Failure/Pending TRX Local Records
-        _DAO.delete_transaction_failure({
-            'reff_no': __pid,
-            'tid': _Common.TID
-        })
-        __bid = _Common.get_bid(g['provider'])
-        # Overwrite bid value for shop transaction
-        if g['shop_type'] == 'shop':
-            __bid = g['raw'].get('bid', 0)
-        # _______________________________________________________________________________________________________
-        if retry is False:
-            _trxid = TRX_ID_SALE = _Helper.get_uuid()
-            # If TRX Failure/Payment/Process Error Detected
-            if 'payment_error' in g.keys() or 'process_error' in g.keys():
-                if g['shop_type'] == 'shop':
-                    PID_SALE = g['raw']['pid']
-                g['pid'] = __pid
-                g['trxid'] = _trxid
-                # if g['payment'] == 'cash':
-                    # Saving The CASH
-                    # _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
-                    # save_cash_local(g['payment_received'], 'cancel')
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
-                # Must Stop The Logic Here
-                return
-            _total_price = int(g['value']) * int(g['qty'])
-            _param = {
-                'pid': __pid,
-                'bid': __bid,
-                'name': g['provider'],
-                'price': _total_price,
-                'details': param,
-                'status': 1
-            }
-            check_prod = _DAO.check_product(__pid)
-            if len(check_prod) == 0:
-                _DAO.insert_product(_param)
-            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/product', param=_param)
-            if status == 200 and response['id'] == _param['pid']:
-                _param['key'] = _param['pid']
-                _DAO.mark_sync(param=_param, _table='Product', _key='pid')
-            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_PRODUCT-'+_param['pid'])
-            # if g['payment'] == 'cash':
-                # Saving The CASH
-                # save_cash_local(g['payment_received'])
-                # _BILL.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
-
-        # _______________________________________________________________________________________________________
-        _param_stock = dict()
-        _trxid = TRX_ID_SALE
-        _param = {
-            'pid': __pid,
-            'name': g['provider'],
-            'price': int(g['value']),
-            'details': param,
-            'status': 1
-        }
-        if g['shop_type'] == 'shop':
-            PID_STOCK_SALE = g['raw']['pid']
-            _param_stock = {
-                'pid': PID_STOCK_SALE,
-                'stock': int(g['raw']['stock']) - int(g['qty'])
-            }
-            _DAO.update_product_stock(_param_stock)
-            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + _param_stock['pid'])
-            __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
-        __paymentType = get_payment(g['payment'])
-        # Insert DKI TRX STAN For Topup Jakcard Using Cash
-        if g['shop_type'] == 'topup' and g['payment'] == 'cash':
-            if g['raw']['bank_name'] == 'DKI':
-                g['payment_details']['stan_no'] = _Common.LAST_DKI_STAN
-        __notes = json.dumps(g['payment_details'])
-        __total_price = int(g['value']) * int(g['qty'])
-        __param = {
-            'trxid': _trxid,
-            'tid': TID,
-            'mid': '',
-            'pid': __pid,
-            'tpid': PID_STOCK_SALE if g['shop_type'] == 'shop' else __bid,
-            'sale': __total_price,
-            'amount': __total_price,
-            'cardNo': g['payment_details'].get('card_no', ''),
-            'paymentType': __paymentType,
-            'paymentNotes': __notes,
-            'isCollected': 0,
-            'pidStock': PID_STOCK_SALE if g['shop_type'] == 'shop' else ''
-        }
-        g['pid'] = PID_SALE
-        g['trxid'] = _trxid
-        check_trx = _DAO.check_trx(_trxid)
-        if len(check_trx) == 0:
-            _DAO.insert_transaction(__param)
-            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
-            __param['createdAt'] = _Helper.now()
-            status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-topup', param=__param)
-            if status == 200 and response['id'] == __param['trxid']:
-                __param['key'] = __param['trxid']
-                _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
-            else:
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
-    except Exception as e:
-        LOGGER.warning((str(retry), str(e)))
-        K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-        _Common.online_logger(['Data TRX Store', str(e)], 'general')
-
-    # finally:
-    #     if g['shop_type'] == 'topup':
-    #         sleep(1.5)
-    #         store_topup_transaction(param)
-    # This Topup Record Only Store Locally To Provide Settlement Data
-    # Moved Into Each Topup Offline Transaction Function
-
-
 def store_transaction_global(param, retry=False):
     global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
     
@@ -1243,17 +1195,13 @@ def store_transaction_global(param, retry=False):
             admin_fee = 0
             bank_id = g['raw'].get('bid', 0)
             PID_STOCK_SALE = g['raw']['pid']
+            # Move Card Stock Reduce To CD Module - 2022-08-04
             check_product = _DAO.check_product_status_by_pid({'pid': g['raw']['pid']})
-            last_stock = check_product[0]['stock'] - 1
-            stock_update = {
-                'pid': g['raw']['pid'],
-                'stock': last_stock
-            }
-            _DAO.update_product_stock(stock_update)
-            LOGGER.debug((trx_id, product_id, str(stock_update)))
-            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid']+'-'+str(last_stock))
+            # _DAO.update_product_stock(stock_update)
+            # LOGGER.debug((trx_id, product_id, str(stock_update)))
+            # K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + stock_update['pid']+'-'+str(last_stock))
             # This Product ID Builder For Update Stock in Backend
-            product_id = str(product_id) + '|' + str(stock_update['pid']) + '|' + str(stock_update['stock'])
+            product_id = str(product_id) + '|' + str(check_product[0]['pid']) + '|' + str(check_product[0]['stock'])
             # NOTICE: Need For Stock Opname Calculation
             trx_notes = g['raw'].get('stid', '')
             # trx_notes = g['raw']

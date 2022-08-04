@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
-import "config.js" as CONF
+//import "config.js" as CONF
 
 Base{
     id: global_input_number
@@ -715,7 +715,7 @@ Base{
             }
         }
         if (i.show_info_cs !== undefined && i.show_info_cs === 1){
-            notice_retry_able.title_text = 'SILAKAN HUBUNGI CS DI NO WHATSAPP ' + CONF.whatsapp_no;
+            notice_retry_able.title_text = 'SILAKAN HUBUNGI CS DI NO WHATSAPP ' + VIEW_CONFIG.whatsapp_no;
             notice_retry_able.visible = true;
         }
 
@@ -976,7 +976,7 @@ Base{
         radius: 0
         anchors.top: parent.top
         anchors.topMargin: 325
-        border.color: CONF.text_color
+        border.color: VIEW_CONFIG.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -991,7 +991,7 @@ Base{
         font.family: "Ubuntu"
         font.pixelSize: 50
         // Use Frame Color
-        color: CONF.frame_color
+        color: VIEW_CONFIG.frame_color
         clip: true
         visible: true
         focus: true
@@ -1189,7 +1189,7 @@ Base{
             anchors.horizontalCenter: parent.horizontalCenter
             title_text: 'TRANSAKSI ANDA DAPAT DILANJUTKAN\nSILAKAN TEKAN TOMBOL LANJUT'
     //        modeReverse: (abc.counter %2 == 0) ? true : false
-            boxColor: CONF.frame_color
+            boxColor: VIEW_CONFIG.frame_color
         }
 
         CircleButton{

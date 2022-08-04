@@ -785,7 +785,11 @@ def sync_product_stock():
             for product in products:
                 if product['url_image'] is not None:
                     image_url = product['url_image']
+<<<<<<< HEAD
                     download, image = _NetworkAccess.item_download(image_url, os.getcwd() + '/_qQML/source/card')
+=======
+                    download, image = _NetworkAccess.item_download(image_url, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/card')
+>>>>>>> develop-linux
                     if download is True:
                         product['remarks'] = product['remarks'] + '|' + 'source/card/' + image
                 _DAO.insert_product_stock(product)

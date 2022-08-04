@@ -11,6 +11,11 @@ import sys
 import json
 import re
 from sentry_sdk import capture_exception
+import platform
+# from sentry_sdk import capture_exception
+
+IS_LINUX = platform.system() == 'Linux'
+IS_WINDOWS = not IS_LINUX
 
 
 LOGGER = logging.getLogger()
@@ -32,7 +37,7 @@ def digit_in(s):
 def clean_white_space(s):
     return re.sub(r'\s+', '', s)
 
-
+VIEW_FOLDER = '_qQML/'
 APP_MODE = _ConfigParser.get_set_value('GENERAL', 'mode', 'live')
 LIVE_MODE = True if APP_MODE == 'live' else False
 BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/')
@@ -53,6 +58,9 @@ RELOAD_SERVICE = True if _ConfigParser.get_set_value('GENERAL', 'reload^service'
 REFUND_FEATURE = True if _ConfigParser.get_set_value('GENERAL', 'refund^feature', '1') == '1' else False
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
+
+USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme', '1') == '1' else False
+USE_PREV_ADS = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^ads', '0') == '1' else False
 
 # Initiate Network Header
 # HEADER = get_header()
@@ -425,6 +433,9 @@ def get_cash_activity(keyword=None, trx_output=False):
     }
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+        if not os.path.exists(cash_status_file):
+            with open(cash_status_file, 'w+') as c:
+                c.close()
         cash_status = open(cash_status_file, 'r').readlines()
         if len(cash_status) == 0:
             LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
@@ -575,6 +586,9 @@ PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+
+VIEW_CONFIG = load_from_temp_data('view-config', 'json')
+
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')

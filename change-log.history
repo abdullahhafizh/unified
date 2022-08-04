@@ -1,3 +1,11 @@
+15.0.A-GLOBAL:
+- Linux Platform Enable,
+- Fix Theme Syncronisation,
+- Enhance Card Stock,
+- Fix Ads Sync Config,
+- Enhance View Config Into Context Property,
+- ...
+
 14.0.G13-GLOBAL:
 - Set Max BNI History to 30,
 - Provide Failure Data Topup Offline BNI,

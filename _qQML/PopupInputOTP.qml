@@ -3,7 +3,7 @@ import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -45,7 +45,7 @@ Rectangle{
         id: base_overlay
         visible: withBackground
         anchors.fill: parent
-        color: CONF.background_color
+        color: VIEW_CONFIG.background_color
         // color: '#1A144A'
         opacity: 0.6
     }
@@ -54,7 +54,7 @@ Rectangle{
         id: notif_rec
         width: parent.width
         height: parent.height - 100
-        // color: CONF.frame_color
+        // color: VIEW_CONFIG.frame_color
         color: '#1A144A'
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -67,7 +67,7 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: caseTitle + mainTitle
             size_: (popup_input_otp.width==1920) ? 50 : 40
-            color_: CONF.text_color
+            color_: VIEW_CONFIG.text_color
         }
 
         TextRectangle{
@@ -77,7 +77,7 @@ Rectangle{
             anchors.top: parent.top
             anchors.topMargin: 160
             anchors.horizontalCenter: parent.horizontalCenter
-            borderColor: CONF.text_color
+            borderColor: VIEW_CONFIG.text_color
         }
 
         TextInput {
@@ -89,7 +89,7 @@ Rectangle{
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
             font.pixelSize: (popup_input_otp.width==1920) ? 50 : 45
-            color: CONF.text_color
+            color: VIEW_CONFIG.text_color
             clip: true
             focus: true
         }
@@ -151,7 +151,6 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         source: 'source/blue_gradient_circle_loading.gif'
         fillMode: Image.PreserveAspectFit
-        visible: !successPayment
         Text{
             id: text_timer_show
             anchors.fill: parent

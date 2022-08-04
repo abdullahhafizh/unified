@@ -35,3 +35,4 @@ _sService/__pycache__/
 _sSync/__pycache__/
 _tTools/__pycache__/
 
+*.pyc

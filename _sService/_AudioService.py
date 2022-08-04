@@ -72,6 +72,8 @@ def sounder(track):
 
 
 def start_play_audio(track):
+    if _Common.IS_LINUX:
+        return
     _Helper.get_thread().apply_async(play_audio, (track,))
 
 

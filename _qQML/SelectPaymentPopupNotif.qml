@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Rectangle{
@@ -36,7 +36,7 @@ Rectangle{
         id: base_overlay
         visible: withBackground
         anchors.fill: parent
-        color: CONF.background_color
+        color: VIEW_CONFIG.background_color
         opacity: 0.6
     }
 
@@ -46,7 +46,7 @@ Rectangle{
         height: parent.height - 300
 //        color: (modeReverse) ? "black" : "white"
 //        opacity: .8
-        color: CONF.frame_color
+        color: VIEW_CONFIG.frame_color
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
@@ -57,14 +57,14 @@ Rectangle{
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: title_text
             size_: 50
-            color_: CONF.text_color
+            color_: VIEW_CONFIG.text_color
         }
     }
 
 //    Text {
 //        id: main_text
 //        color: (modeReverse) ? "white" : "black"
-//        color: CONF.text_color
+//        color: VIEW_CONFIG.text_color
 //        text: show_text
 //        font.bold: true
 //        verticalAlignment: Text.AlignVCenter
@@ -156,7 +156,7 @@ Rectangle{
         //     height: 270
         //     anchors.verticalCenter: parent.verticalCenter
         //     img_: "source/phone_qr.png"
-        //     text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR OVO")
+        //     text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR OVO")
         //     text2_: qsTr("QR OVO")
         //     visible: _qrOvoEnable
         //     MouseArea{
@@ -189,7 +189,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BNI")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BNI")
             text2_: qsTr("QR BNI")
             visible: _qrBniEnable
             MouseArea{
@@ -222,7 +222,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BCA")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BCA")
             text2_: qsTr("QR BCA")
             visible: _qrBcaEnable
             MouseArea{
@@ -255,7 +255,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR LinkAja")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR LinkAja")
             text2_: qsTr("QR LinkAja")
             visible: _qrLinkAjaEnable
             MouseArea{
@@ -288,7 +288,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Duwit")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Duwit")
             text2_: qsTr("QR Duwit")
             visible: _qrDuwitEnable
             MouseArea{
@@ -321,7 +321,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Dana")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Dana")
             text2_: qsTr("QR Dana")
             visible: _qrDanaEnable
             MouseArea{
@@ -354,7 +354,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR ShopeePay")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR ShopeePay")
             text2_: qsTr("QR Shopee")
             visible: _qrShopeeEnable
             MouseArea{
@@ -387,7 +387,7 @@ Rectangle{
             height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/phone_qr.png"
-            text_: (CONF.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
             text2_: qsTr("QR JakOne")
             visible: _qrJakoneEnable
             MouseArea{

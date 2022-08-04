@@ -3,7 +3,7 @@ import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 //import "screen.js" as SCREEN
-import "config.js" as CONF
+//import "config.js" as CONF
 
 
 Base{
@@ -37,7 +37,7 @@ Base{
         id: base_overlay
         visible: false
         anchors.fill: parent
-        color: CONF.background_color
+        color: VIEW_CONFIG.background_color
 //        color: 'black'
         opacity: 0.6
     }
@@ -47,7 +47,7 @@ Base{
         width: parent.width
         y: 125
         height: parent.height - y
-//        color: CONF.frame_color
+//        color: VIEW_CONFIG.frame_color
         color: colorMode
         anchors.horizontalCenter: parent.horizontalCenter
 //        anchors.verticalCenter: parent.verticalCenter
@@ -60,14 +60,14 @@ Base{
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: mainTitle
             size_: (cancel_confirmation.width==1920) ? 40 : 30
-            color_: CONF.text_color
+            color_: VIEW_CONFIG.text_color
         }
 
         Text {
             id: main_desc
             width: parent.width - 400
             height: 400
-            color: CONF.text_color
+            color: VIEW_CONFIG.text_color
             text: mainDescription
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
