@@ -96,7 +96,7 @@ def trigger_card_dispenser(port, slot, multiply='1'):
         # LOGGER.debug((command, output, type(response), str(response)))
         if response.get('code') is not None:
             # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}
-            if response['code'] == '0000':
+            if response['code'] in ['0000', 'FF10']: #Set Card Jam Into Success Release
                 if multiply == '1':
                     # Direct Reduce Slot Without Transaction Record Dependant
                     _DAO.reduce_product_stock_by_slot_status(status=slot)

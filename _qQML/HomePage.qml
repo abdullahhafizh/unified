@@ -160,6 +160,12 @@ Base{
         if (tr.bca == 'AVAILABLE') topup_active.push('BCA');
         if (tr.dki == 'AVAILABLE') topup_active.push('DKI');
 
+        topup_status_comp.statusMandiri = tr.mandiri;
+        topup_status_comp.statusBni = tr.bni;
+        topup_status_comp.statusBri = tr.bri;
+        topup_status_comp.statusBca = tr.bca;
+        topup_status_comp.statusDki = tr.dki;
+
         topup_saldo_button.visible = false;
         if (topup_active.length > 0) topup_saldo_button.visible = true;
 
@@ -294,19 +300,11 @@ Base{
         global_frame.open();
     }
 
-//    LoadingViewNew{
-//        id: slider
-//        x: 0; y:0;
-//        visible: withSlider
-//        show_caption: false
-//        height: 1080
-//        width: 1920
-//    }
 
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 350 : 300
+        anchors.topMargin: (globalScreenType == '1') ? 280 : 230
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
         visible: !popup_loading.visible
@@ -317,7 +315,7 @@ Base{
 
     Row{
         id: row_button
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 30
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 60 : 30
@@ -485,6 +483,15 @@ Base{
         }
     }
 
+    TopupStatus{
+        id:topup_status_comp
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 100
+        scale: 0.8
+
+    }
+
 
     MouseArea {
         id: buttonSpvActivation
@@ -540,7 +547,7 @@ Base{
                     }
                 }
                 // Handle Simultane Check Topup Status Every 5 seconds
-                if (tvc_loading.counter%5==0) _SLOT.start_get_topup_readiness();
+                if (tvc_loading.counter%5==0) _SLOT.start_check_topup_readiness();
 
                 //Handle Button Blinking
                 tvc_loading.counter -= 1
@@ -938,11 +945,6 @@ Base{
         return 'silver';
     }
 
-//    NotifView{
-//        id: notif_view
-//        isSuccess: false
-//        z: 99
-//    }
 
     StandardNotifView{
         id: standard_notif_view
@@ -1078,7 +1080,6 @@ Base{
             }
         }
     }
-
 
     PreloadCustomerInfo{
         id: preload_customer_info
