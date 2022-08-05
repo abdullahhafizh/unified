@@ -40,8 +40,8 @@ Base{
     property bool comboSaktiFeature: false
 
     property var cardStockTreshold: 25
-//    width: globalWidth
-//    height: globalHeight
+    width: globalWidth
+    height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -489,34 +489,39 @@ Base{
         scale: 0.8
         visible: VIEW_CONFIG.topup_status
 
+        Text{
+            id: label1
+            width: 250
+            text: "INFORMASI STATUS TOPUP"
+            color: "white"
+                wrapMode: Text.WordWrap
+                anchors.left: topup_status_comp.left
+                anchors.leftMargin: -850
+                verticalAlignment: Text.AlignTop
+                horizontalAlignment: Text.AlignRight
+                style: Text.Sunken
+                font.bold: true
+                font.pixelSize: 40
+                font.family: "Ubuntu"
+            }
+
+            Text{
+                id: label2
+                width: 250
+                text: "KARTU UANG ELEKTRONIK"
+                color: "white"
+                horizontalAlignment: Text.AlignLeft
+                wrapMode: Text.WordWrap
+                anchors.right: topup_status_comp.right
+                anchors.rightMargin: -850
+                style: Text.Sunken
+                font.bold: true
+                font.pixelSize: 40
+                font.family: "Ubuntu"
+            }
+
     }
 
-    Text{
-            id: label1
-            text: "INFORMASI STATUS TOPUP"
-            wrapMode: Text.WordWrap
-            anchors.left: topup_status_comp.left
-            anchors.leftMargin: -850
-            verticalAlignment: Text.AlignTop
-            horizontalAlignment: Text.AlignRight
-            style: Text.Sunken
-            font.bold: true
-            font.pixelSize: 45
-            font.family: "Ubuntu"
-        }
-
-        Text{
-            id: label2
-            text: "KARTU UANG ELEKTRONIK"
-            horizontalAlignment: Text.AlignLeft
-            wrapMode: Text.WordWrap
-            anchors.right: topup_status_comp.right
-            anchors.rightMargin: -850
-            style: Text.Sunken
-            font.bold: true
-            font.pixelSize: 45
-            font.family: "Ubuntu"
-        }
 
 
     MouseArea {
