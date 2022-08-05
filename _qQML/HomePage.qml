@@ -545,8 +545,8 @@ Base{
                         _SLOT.start_trigger_edc_settlement();
                     }
                 }
-                // Handle Simultane Check Topup Status Every 5 seconds
-                if (tvc_loading.counter%5==0) _SLOT.start_check_topup_readiness();
+                // Handle Simultane Check Topup Status Every 3 seconds
+                if (tvc_loading.counter%3==0) _SLOT.start_check_topup_readiness();
 
                 //Handle Button Blinking
                 tvc_loading.counter -= 1

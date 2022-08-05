@@ -2198,15 +2198,15 @@ def start_check_topup_readiness():
 
 def check_topup_readiness():
     try:
-        connection_exist = _NetworkAccess.is_online(_Helper.whoami())
+        ping_status = _NetworkAccess.is_online(_Common.API_HOST)
         ready = {
             'balance_mandiri': str(_Common.MANDIRI_ACTIVE_WALLET),
             'balance_bni': str(_Common.BNI_ACTIVE_WALLET),
             'mandiri': 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0 and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
             'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
-            'bri': 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and connection_exist) else 'N/A',
-            'bca': 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and connection_exist) else 'N/A',
-            'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE_ACTIVE is True) and  connection_exist else 'N/A',
+            'bri': 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_status) else 'N/A',
+            'bca': 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and ping_status) else 'N/A',
+            'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE_ACTIVE is True) and  ping_status else 'N/A',
         }
         TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
     except Exception as e:

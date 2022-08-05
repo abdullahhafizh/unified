@@ -618,6 +618,9 @@ CORE_TOKEN = QR_TOKEN
 CORE_MID = QR_MID
 EDC_ECR_URL = 'https://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
 
+API_HOST = CORE_HOST.replace('v1/', 'ping')
+
+
 if PTR_MODE:
     EDC_ECR_URL = 'http://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
 
