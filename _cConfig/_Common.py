@@ -1939,7 +1939,7 @@ PRINT_LOGO_MAPPING = {
     'kai': 'kai-logo'
 }
 
-THEME_WITH_TOPUP_STATUS = ['TRANSJAKARTA']
+THEME_WITH_TOPUP_STATUS = ['TRANSJAKARTA', 'TEST']
 
 
 def logo_theme(theme):
