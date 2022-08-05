@@ -493,7 +493,6 @@ Base{
 
     Text{
             id: label1
-            color: "white"
             text: "INFORMASI STATUS TOPUP"
             wrapMode: Text.WordWrap
             anchors.left: topup_status_comp.left
@@ -508,9 +507,6 @@ Base{
 
         Text{
             id: label2
-            x: 420
-            width: 285
-            color: "white"
             text: "KARTU UANG ELEKTRONIK"
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.WordWrap
