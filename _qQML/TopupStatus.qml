@@ -41,7 +41,7 @@ Rectangle{
             width: 200
             height: 160
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/Jaklingko-mandiri.png"
+            sourceImage: "source/Jaklinko-mandiri.png"
             itemName: "ACTIVE"
         }
 
@@ -50,7 +50,7 @@ Rectangle{
             width: 200
             height: 160
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/Jaklingko-bni.png"
+            sourceImage: "source/Jaklinko-bni.png"
             itemName: "ACTIVE"
         }
 
@@ -59,7 +59,7 @@ Rectangle{
             width: 200
             height: 160
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/Jaklingko-bri.png"
+            sourceImage: "source/Jaklinko-bri.png"
             itemName: "ACTIVE"
         }
 
@@ -68,7 +68,7 @@ Rectangle{
             width: 200
             height: 160
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/Jaklingko-bca.png"
+            sourceImage: "source/Jaklinko-bca.png"
             itemName: "ACTIVE"
         }
 
@@ -77,7 +77,7 @@ Rectangle{
             width: 200
             height: 160
             anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/Jaklingko-dki.png"
+            sourceImage: "source/Jaklinko-dki.png"
             itemName: "ACTIVE"
         }
 
