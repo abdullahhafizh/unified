@@ -489,12 +489,14 @@ Base{
         scale: 0.8
         visible: VIEW_CONFIG.topup_status
 
-        Text{
+    }
+
+    Text{
             id: label1
             color: "white"
             text: "INFORMASI STATUS TOPUP"
             wrapMode: Text.WordWrap
-            anchors.left: parent.left
+            anchors.left: topup_status_comp.left
             anchors.leftMargin: -850
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignRight
@@ -509,18 +511,16 @@ Base{
             x: 420
             width: 285
             color: "white"
-            text: " KARTU UANG ELEKTRONIK"
+            text: "KARTU UANG ELEKTRONIK"
             horizontalAlignment: Text.AlignLeft
             wrapMode: Text.WordWrap
-            anchors.right: parent.right
+            anchors.right: topup_status_comp.right
             anchors.rightMargin: -850
             style: Text.Sunken
             font.bold: true
             font.pixelSize: 45
             font.family: "Ubuntu"
         }
-
-    }
 
 
     MouseArea {
