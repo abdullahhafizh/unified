@@ -142,12 +142,27 @@ Base{
         var tr = JSON.parse(t);
         mandiriTopupWallet = parseInt(tr.balance_mandiri);
         bniTopupWallet = parseInt(tr.balance_bni);
+        var topup_active = [];
         if (tr.mandiri == 'AVAILABLE' || tr.mandiri == 'TEST_MODE') {
-            if (mandiriTopupWallet > 0) mandiriTopupActive = true;
+            if (mandiriTopupWallet > 0) {
+                mandiriTopupActive = true;
+                topup_active.push('MANDIRI');
+            }
         }
         if (tr.bni == 'AVAILABLE') {
-            if (bniTopupWallet > 0) bniTopupActive = true;
+            if (bniTopupWallet > 0) {
+                bniTopupActive = true;
+                topup_active.push('BNI');
+            }
         }
+        
+        if (tr.bri == 'AVAILABLE') topup_active.push('BRI');
+        if (tr.bca == 'AVAILABLE') topup_active.push('BCA');
+        if (tr.dki == 'AVAILABLE') topup_active.push('DKI');
+
+        topup_saldo_button.visible = false;
+        if (topup_active.length > 0) topup_saldo_button.visible = true;
+
     }
 
     function get_product_stock(p){
@@ -222,7 +237,6 @@ Base{
         else showCustomerInfo = false;
 
         main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
-//        _SLOT.start_get_topup_readiness();
     }
 
     function not_authorized(){
@@ -525,6 +539,9 @@ Base{
                         _SLOT.start_trigger_edc_settlement();
                     }
                 }
+                // Handle Simultane Check Topup Status Every 5 seconds
+                if (tvc_loading.counter%5==0) _SLOT.start_get_topup_readiness();
+
                 //Handle Button Blinking
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){

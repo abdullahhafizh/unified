@@ -134,7 +134,7 @@ def update_kiosk_status(s=400, r=None):
                 define_feature(_Common.FEATURE_SETTING)
                 _Common.THEME_SETTING = r['data']['theme']
                 print("pyt: Syncing Theme Setting...")
-                define_theme(_Common.THEME_SETTING)
+                build_view_config(_Common.THEME_SETTING)
                 _Common.ADS_SETTING = r['data']['ads']
                 _Common.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
                 if 'refund' in r['data'].keys():
@@ -212,7 +212,7 @@ def define_device_port_setting(data):
             _Common.QPROX_PORT = c['config']
 
 
-def define_theme(d):
+def build_view_config(d):
     _Common.store_to_temp_data('theme-setting', json.dumps(d))
     _Common.THEME_NAME = d['name']
     _Common.log_to_temp_config('theme^name', d['name'])
@@ -225,6 +225,8 @@ def define_theme(d):
     _Common.CUSTOMER_SERVICE_NO = d.get('customer_service_no', _Common.CUSTOMER_SERVICE_NO)
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
+
+    _Common.VIEW_CONFIG['all_qr_provider'] = [x.lower() for x in _Common.ALL_QR_PROVIDER]
     
     config_js = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
     content_js = ''
@@ -343,9 +345,9 @@ def define_theme(d):
         _Common.RECEIPT_LOGO = receipt_logo
         _Common.log_to_config('PRINTER', 'receipt^logo', receipt_logo)
     
-    with open(config_js, 'w+') as config_qml:
-        config_qml.write(content_js)
-        config_qml.close()
+    # with open(config_js, 'w+') as config_qml:
+    #     config_qml.write(content_js)
+    #     config_qml.close()
 
     _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
     LOGGER.info((config_js, content_js))
@@ -397,6 +399,7 @@ def define_ads(a):
             if media_link is not False:
                 stream, media = _NetworkAccess.stream_large_download(media_link, l, _Common.TEMP_FOLDER, __tvc_path)
                 if stream is True:
+                    LOGGER.debug(("success download new media : ", media))
                     __must_download.remove(l)
     K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|SUCCESS')
     return True

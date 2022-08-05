@@ -281,7 +281,7 @@ def get_card_info(slot=1, bank='BNI'):
                 _Common.BNI_SAM_2_NO = ''
                 BNI_CARD_NO_SLOT_2 = ''
             _Common.NFC_ERROR = 'CHECK_CARD_INFO_BNI_ERROR_SLOT_'+str(slot)
-            return 
+            return False
     elif bank == 'MANDIRI_C2C':
         # TODO Add Logic Handler Here
         pass

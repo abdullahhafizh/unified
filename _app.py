@@ -369,6 +369,10 @@ class SlotHandler(QObject):
         _TopupService.start_get_topup_readiness()
     start_get_topup_readiness = pyqtSlot()(start_get_topup_readiness)
 
+    def start_check_topup_readiness(self):
+        _TopupService.start_check_topup_readiness()
+    start_check_topup_readiness = pyqtSlot()(start_check_topup_readiness)
+
     def start_sale_print_global(self):
         _SalePrintTool.start_sale_print_global()
     start_sale_print_global = pyqtSlot()(start_sale_print_global)
