@@ -11,6 +11,7 @@ Rectangle{
     color: 'transparent'
     height: 160
 //    width: 1280
+    scale: 0.8
     width: parseInt(SCREEN_WIDTH)
     property alias statusMandiri: mandiri_status.itemName
     property alias statusBni: bni_status.itemName
@@ -19,15 +20,41 @@ Rectangle{
     property alias statusDki: dki_status.itemName
 
 
-    scale: visible ? 1.0 : 0.1
-    Behavior on scale {
-        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
-    }
-
     Rectangle{
         anchors.fill: parent
         color: "black"
         opacity: .75
+    }
+
+    Text{
+        id: label1
+        color: "white"
+        text: "INFORMASI STATUS TOPUP"
+        wrapMode: Text.WordWrap
+        anchors.left: parent.left
+        anchors.leftMargin: -850
+        verticalAlignment: Text.AlignTop
+        horizontalAlignment: Text.AlignRight
+        style: Text.Sunken
+        font.bold: true
+        font.pixelSize: 45
+        font.family: "Ubuntu"
+    }
+
+    Text{
+        id: label2
+        x: 420
+        width: 285
+        color: "white"
+        text: " KARTU UANG ELEKTRONIK"
+        horizontalAlignment: Text.AlignLeft
+        wrapMode: Text.WordWrap
+        anchors.right: parent.right
+        anchors.rightMargin: -850
+        style: Text.Sunken
+        font.bold: true
+        font.pixelSize: 45
+        font.family: "Ubuntu"
     }
 
     Row{
