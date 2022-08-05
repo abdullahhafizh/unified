@@ -202,7 +202,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         _Common.store_to_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES', invoice_no)
         LOGGER.debug(('BNI_DEPOSIT_RELOAD_IN_PROGRES', str(invoice_no)))
         # Add Delay Read Deposit
-        sleep(1)
+        sleep(2)
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
@@ -333,6 +333,7 @@ def bni_reset_update_balance(slot=1, activation=True):
         slot = _Common.BNI_ACTIVE
         if _Common.BNI_SINGLE_SAM is True:
             slot = 1
+        sleep(1)
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             return False, 'GET_CARD_DATA_FAILED'

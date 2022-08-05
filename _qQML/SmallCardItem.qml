@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: rectangle
     property var sourceImage
-    property var itemName: 'ACTIVE'
+    property var itemName: 'AVAILABLE'
 
     width: 200
     height: 160
@@ -26,7 +26,7 @@ Rectangle {
 
     Text{
         color: "white"
-        text: itemName
+        text: (itemName=='AVAILABLE') ? 'AKTIF' : 'TIDAK AKTIF'
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
         style: Text.Sunken
