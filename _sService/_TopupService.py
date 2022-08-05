@@ -2198,7 +2198,7 @@ def start_check_topup_readiness():
 
 def check_topup_readiness():
     try:
-        ping_status = _NetworkAccess.is_online(_Common.API_HOST)
+        ping_status = _NetworkAccess.is_online_by_ip(source=_Helper.whoami())
         ready = {
             'balance_mandiri': str(_Common.MANDIRI_ACTIVE_WALLET),
             'balance_bni': str(_Common.BNI_ACTIVE_WALLET),

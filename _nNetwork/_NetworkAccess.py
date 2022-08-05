@@ -11,15 +11,13 @@ import urllib3
 urllib3.disable_warnings()
 
 
-def is_online_old(host="8.8.8.8", port=53, timeout=3, source=''):
+def is_online_by_ip(host="8.8.8.8", port=53, timeout=3, source=''):
     try:
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        if source != '':
-            LOGGER.debug(('source', source))
         return True
     except Exception as e:
-        LOGGER.debug((str(e), 'source', source))
+        LOGGER.debug((str(e), source))
         return False
 
 
