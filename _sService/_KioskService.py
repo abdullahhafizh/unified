@@ -227,7 +227,8 @@ def build_view_config(d):
     # ===
 
     _Common.VIEW_CONFIG['all_qr_provider'] = [x.lower() for x in _Common.ALL_QR_PROVIDER]
-    
+    _Common.VIEW_CONFIG['topup_status'] = d['name'].upper() in _Common.THEME_WITH_TOPUP_STATUS
+
     config_js = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/config.js'
     content_js = ''
     # Mandiri Update Schedule Time For Timer Trigger

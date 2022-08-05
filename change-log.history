@@ -4,6 +4,8 @@
 - Enhance Card Stock,
 - Fix Ads Sync Config,
 - Enhance View Config Into Context Property,
+- Topup Status Check Base On Theme Every 5 seconds,
+- Waive CD Error FF01 (jammed) into Success Transaction,
 - ...
 
 14.0.G13-GLOBAL:

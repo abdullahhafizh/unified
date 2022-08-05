@@ -59,9 +59,7 @@ Base{
             _SLOT.get_kiosk_status();
             _SLOT.start_play_audio('homepage_greeting');
             console.log('Platform Check', IS_LINUX, IS_WINDOWS);
-            if (IS_LINUX){
-                mediaOnPlaying = false;
-            }
+            if (IS_LINUX)  mediaOnPlaying = false;
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
@@ -315,7 +313,7 @@ Base{
 
     Row{
         id: row_button
-        anchors.verticalCenterOffset: 30
+        anchors.verticalCenterOffset: (VIEW_CONFIG.topup_status) ? 30 : 75
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 60 : 30
@@ -489,6 +487,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 100
         scale: 0.8
+        visible: VIEW_CONFIG.topup_status
 
     }
 
