@@ -481,46 +481,45 @@ Base{
         }
     }
 
-    Row{
-        id: row_topup_status
-        visible: VIEW_CONFIG.topup_status
+    TopupStatus{
+        id:topup_status_comp
         anchors.horizontalCenter: parent.horizontalCenter
-        width: globalWidth
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 150
-        spacing: 5
-
+        anchors.bottomMargin: 100
+        scale: 0.8
+        visible: VIEW_CONFIG.topup_status
+		width: globalWidth
 
         Text{
             id: label1
             width: 250
             text: "INFORMASI STATUS TOPUP"
             color: "white"
-            horizontalAlignment: Text.AlignRight
-            wrapMode: Text.WordWrap
-            style: Text.Sunken
-            font.bold: true
-            font.pixelSize: 40
-            font.family: "Ubuntu"
-        }
+                wrapMode: Text.WordWrap
+                anchors.left: parent.left
+                anchors.leftMargin: -850
+                verticalAlignment: Text.AlignTop
+                horizontalAlignment: Text.AlignRight
+                style: Text.Sunken
+                font.bold: true
+                font.pixelSize: 40
+                font.family: "Ubuntu"
+            }
 
-        TopupStatus{
-            id:topup_status_comp
-            scale: 0.8
-        }
-
-        Text{
-            id: label2
-            width: 250
-            text: "KARTU UANG ELEKTRONIK"
-            color: "white"
-            horizontalAlignment: Text.AlignLeft
-            wrapMode: Text.WordWrap
-            style: Text.Sunken
-            font.bold: true
-            font.pixelSize: 40
-            font.family: "Ubuntu"
-        }
+            Text{
+                id: label2
+                width: 250
+                text: "KARTU UANG ELEKTRONIK"
+                color: "white"
+                horizontalAlignment: Text.AlignLeft
+                wrapMode: Text.WordWrap
+                anchors.right: parent.right
+                anchors.rightMargin: -850
+                style: Text.Sunken
+                font.bold: true
+                font.pixelSize: 40
+                font.family: "Ubuntu"
+            }
 
     }
 
