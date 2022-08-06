@@ -404,6 +404,8 @@ def bni_reset_update_balance(slot=1, activation=True):
             }
             confirm_bni_topup(output)
             _Common.ALLOW_DO_TOPUP = True
+            #Need To Release This To Enable Topup Transaction After Reset Command
+            BNI_DEPOSIT_UPDATE_BALANCE_PROCESS = False
             return True, 'RESET_SUCCESS'
     except Exception as e:
         LOGGER.warning((str(slot), str(e)))

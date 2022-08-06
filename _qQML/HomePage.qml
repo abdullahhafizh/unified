@@ -488,6 +488,7 @@ Base{
         anchors.bottomMargin: 100
         scale: 0.8
         visible: VIEW_CONFIG.topup_status
+		width: globalWidth
 
         Text{
             id: label1
