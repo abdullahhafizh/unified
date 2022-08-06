@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 //import "screen.js" as SCREEN
 //import "config.js" as CONF
 import "base_function.js" as FUNC
@@ -8,9 +8,9 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-//    property var globalScreenType: '1'
-//    height: (globalScreenType=='2') ? 1024 : 1080
-//    width: (globalScreenType=='2') ? 1280 : 1920
+    property var globalScreenType: '1'
+    height: (globalScreenType=='2') ? 1024 : 1080
+    width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(VIEW_CONFIG.tvc_waiting_time)
     property bool isMedia: true
@@ -40,8 +40,8 @@ Base{
     property bool comboSaktiFeature: false
 
     property var cardStockTreshold: 25
-    width: globalWidth
-    height: globalHeight
+//    width: globalWidth
+//    height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -481,48 +481,48 @@ Base{
         }
     }
 
-    TopupStatus{
-        id:topup_status_comp
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
-        scale: 0.8
+    Row{
+        id: row_topup_status
         visible: VIEW_CONFIG.topup_status
-		width: globalWidth
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: globalWidth
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 150
+        spacing: 5
+
 
         Text{
             id: label1
             width: 250
             text: "INFORMASI STATUS TOPUP"
             color: "white"
-                wrapMode: Text.WordWrap
-                anchors.left: topup_status_comp.left
-                anchors.leftMargin: -850
-                verticalAlignment: Text.AlignTop
-                horizontalAlignment: Text.AlignRight
-                style: Text.Sunken
-                font.bold: true
-                font.pixelSize: 40
-                font.family: "Ubuntu"
-            }
+            horizontalAlignment: Text.AlignRight
+            wrapMode: Text.WordWrap
+            style: Text.Sunken
+            font.bold: true
+            font.pixelSize: 40
+            font.family: "Ubuntu"
+        }
 
-            Text{
-                id: label2
-                width: 250
-                text: "KARTU UANG ELEKTRONIK"
-                color: "white"
-                horizontalAlignment: Text.AlignLeft
-                wrapMode: Text.WordWrap
-                anchors.right: topup_status_comp.right
-                anchors.rightMargin: -850
-                style: Text.Sunken
-                font.bold: true
-                font.pixelSize: 40
-                font.family: "Ubuntu"
-            }
+        TopupStatus{
+            id:topup_status_comp
+            scale: 0.8
+        }
+
+        Text{
+            id: label2
+            width: 250
+            text: "KARTU UANG ELEKTRONIK"
+            color: "white"
+            horizontalAlignment: Text.AlignLeft
+            wrapMode: Text.WordWrap
+            style: Text.Sunken
+            font.bold: true
+            font.pixelSize: 40
+            font.family: "Ubuntu"
+        }
 
     }
-
 
 
     MouseArea {
