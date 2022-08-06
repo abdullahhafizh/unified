@@ -6,6 +6,7 @@
 - Enhance View Config Into Context Property,
 - Topup Status Check Base On Theme Every 5 seconds,
 - Waive CD Error FF01 (jammed) into Success Transaction,
+- Waive Validation BNI Deposit Ubal Active Thread,
 - ...
 
 14.0.G13-GLOBAL:

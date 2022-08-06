@@ -333,7 +333,7 @@ def bni_reset_update_balance(slot=1, activation=True):
         slot = _Common.BNI_ACTIVE
         if _Common.BNI_SINGLE_SAM is True:
             slot = 1
-        sleep(1)
+        sleep(2)
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             return False, 'GET_CARD_DATA_FAILED'
@@ -630,9 +630,10 @@ def start_deposit_update_balance(bank):
         if not ('---' not in _Common.MID_BNI and len(_Common.MID_BNI) > 3):
             TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|DEPOSIT_BNI_NOT_ACTIVE')
             return 'DEPOSIT_BNI_NOT_ACTIVE'
-        if BNI_DEPOSIT_UPDATE_BALANCE_PROCESS:
-            TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|ANOTHER_PROCESS_STILL_RUNNING')
-            return 'ANOTHER_PROCESS_STILL_RUNNING'
+        # Disabled Validation Active Thread
+        # if BNI_DEPOSIT_UPDATE_BALANCE_PROCESS:
+        #     TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|ANOTHER_PROCESS_STILL_RUNNING')
+        #     return 'ANOTHER_PROCESS_STILL_RUNNING'
         slot = 1
         _Helper.get_thread().apply_async(auto_refill_zero_bni, (slot,))
         return 'TASK_EXECUTED_IN_MACHINE'
