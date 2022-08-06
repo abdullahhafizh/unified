@@ -4,6 +4,8 @@
 
 *.status
 *.log
+*.pyc
+
 /_dDB/kiosk.db
 setting.ini
 setting.ini.bak
@@ -35,5 +37,3 @@ _sService/__pycache__/
 _sSync/__pycache__/
 _tTools/__pycache__/
 _mModule/__pycache__/
-
-*.pyc

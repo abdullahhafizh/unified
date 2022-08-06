@@ -8,9 +8,9 @@ import "base_function.js" as FUNC
 Base{
     id: base_page
 
-    property var globalScreenType: '1'
-    height: (globalScreenType=='2') ? 1024 : 1080
-    width: (globalScreenType=='2') ? 1280 : 1920
+    // property var globalScreenType: '1'
+    // height: (globalScreenType=='2') ? 1024 : 1080
+    // width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(VIEW_CONFIG.tvc_waiting_time)
     property bool isMedia: true
@@ -40,8 +40,8 @@ Base{
     property bool comboSaktiFeature: false
 
     property var cardStockTreshold: 25
-//    width: globalWidth
-//    height: globalHeight
+   width: globalWidth
+   height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
