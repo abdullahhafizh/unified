@@ -29,15 +29,16 @@ Rectangle{
         id: label1
         width: 250
         text: "INFORMASI STATUS TOPUP"
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: row_button.left
+        anchors.rightMargin: 50
         color: "white"
         wrapMode: Text.WordWrap
-        anchors.left: parent.left
-        anchors.leftMargin: -750
-        verticalAlignment: Text.AlignTop
+        verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
         style: Text.Sunken
         font.bold: true
-        font.pixelSize: 40
+        font.pixelSize: 35
         font.family: "Ubuntu"
     }
 
@@ -101,14 +102,15 @@ Rectangle{
         id: label2
         width: 250
         text: "KARTU UANG ELEKTRONIK"
+        anchors.left: row_button.right
+        anchors.leftMargin: 50
+        anchors.verticalCenter: parent.verticalCenter
         color: "white"
         horizontalAlignment: Text.AlignLeft
         wrapMode: Text.WordWrap
-        anchors.right: parent.right
-        anchors.rightMargin: -750
         style: Text.Sunken
         font.bold: true
-        font.pixelSize: 40
+        font.pixelSize: 35
         font.family: "Ubuntu"
     }
 
