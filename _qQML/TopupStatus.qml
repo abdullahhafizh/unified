@@ -27,7 +27,7 @@ Rectangle{
 
     Text{
         id: label1
-        width: 250
+        width: 225
         text: "INFORMASI STATUS TOPUP"
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: row_button.left
@@ -38,7 +38,7 @@ Rectangle{
         horizontalAlignment: Text.AlignRight
         style: Text.Sunken
         font.bold: true
-        font.pixelSize: 35
+        font.pixelSize: 33
         font.family: "Ubuntu"
     }
 
@@ -100,7 +100,7 @@ Rectangle{
 
     Text{
         id: label2
-        width: 250
+        width: 225
         text: "KARTU UANG ELEKTRONIK"
         anchors.left: row_button.right
         anchors.leftMargin: 50
@@ -110,7 +110,7 @@ Rectangle{
         wrapMode: Text.WordWrap
         style: Text.Sunken
         font.bold: true
-        font.pixelSize: 35
+        font.pixelSize: 33
         font.family: "Ubuntu"
     }
 
