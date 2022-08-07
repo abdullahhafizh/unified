@@ -1,3 +1,9 @@
+15.0.A1-GLOBAL:
+- Add Default View Config By Theme (Bug Fix Issue White Screen),
+- Disable Permanent QR Local Store,
+- Add wording TOPUP STATUS in Homepage,
+- ...
+
 15.0.A-GLOBAL:
 - Linux Platform Enable,
 - Fix Theme Syncronisation,

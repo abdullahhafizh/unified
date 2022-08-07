@@ -11,7 +11,6 @@ Rectangle{
     color: 'transparent'
     height: 160
 //    width: 1280
-    scale: 0.8
     width: parseInt(SCREEN_WIDTH)
     property alias statusMandiri: mandiri_status.itemName
     property alias statusBni: bni_status.itemName
@@ -26,6 +25,22 @@ Rectangle{
         opacity: .75
     }
 
+    Text{
+        id: label1
+        width: 250
+        text: "INFORMASI STATUS TOPUP"
+        color: "white"
+        wrapMode: Text.WordWrap
+        anchors.left: parent.left
+        anchors.leftMargin: -750
+        verticalAlignment: Text.AlignTop
+        horizontalAlignment: Text.AlignRight
+        style: Text.Sunken
+        font.bold: true
+        font.pixelSize: 40
+        font.family: "Ubuntu"
+    }
+
     Row{
         id: row_button
         height: parent.height
@@ -34,8 +49,8 @@ Rectangle{
 
         SmallCardItem {
             id: mandiri_status
-            width: 200
-            height: 160
+            width: 200 * 0.8
+            height: 160 * 0.8
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/Jaklinko-mandiri.png"
             itemName: "ACTIVE"
@@ -43,8 +58,8 @@ Rectangle{
 
         SmallCardItem {
             id: bni_status
-            width: 200
-            height: 160
+            width: 200 * 0.8
+            height: 160 * 0.8
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/Jaklinko-bni.png"
             itemName: "ACTIVE"
@@ -52,8 +67,8 @@ Rectangle{
 
         SmallCardItem {
             id: bri_status
-            width: 200
-            height: 160
+            width: 200 * 0.8
+            height: 160 * 0.8
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/Jaklinko-bri.png"
             itemName: "ACTIVE"
@@ -61,8 +76,8 @@ Rectangle{
 
         SmallCardItem {
             id: bca_status
-            width: 200
-            height: 160
+            width: 200 * 0.8
+            height: 160 * 0.8
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/Jaklinko-bca.png"
             itemName: "ACTIVE"
@@ -70,8 +85,8 @@ Rectangle{
 
         SmallCardItem {
             id: dki_status
-            width: 200
-            height: 160
+            width: 200 * 0.8
+            height: 160 * 0.8
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/Jaklinko-dki.png"
             itemName: "ACTIVE"
@@ -82,5 +97,19 @@ Rectangle{
     }
 
 
+    Text{
+        id: label2
+        width: 250
+        text: "KARTU UANG ELEKTRONIK"
+        color: "white"
+        horizontalAlignment: Text.AlignLeft
+        wrapMode: Text.WordWrap
+        anchors.right: parent.right
+        anchors.rightMargin: -750
+        style: Text.Sunken
+        font.bold: true
+        font.pixelSize: 40
+        font.family: "Ubuntu"
+    }
 
 }

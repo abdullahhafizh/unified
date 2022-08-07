@@ -558,11 +558,13 @@ def exist_temp_data(temp):
     return False
 
 
-def load_from_temp_data(temp, mode='text'):
+def load_from_temp_data(temp, mode='text', force_path=None):
     LOGGER.info((temp))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
+    if force_path is not None:
+        temp_path = os.path.join(force_path, temp)
     if not os.path.exists(temp_path):
         with open(temp_path, 'w+') as t:
             if mode == 'json':
@@ -588,9 +590,18 @@ THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 
 VIEW_CONFIG = load_from_temp_data('view-config', 'json')
-
+TJ_VIEW_CONFIG = load_from_temp_data('tj-view-config', 'json', sys.path[0] + '/_cConfig/')
+KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '/_cConfig/')
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
+
+# Re-write view config if missing
+if len(VIEW_CONFIG.keys()) == 0:
+    if THEME_NAME.lower() == 'transjakarta':
+        VIEW_CONFIG = TJ_VIEW_CONFIG
+    if THEME_NAME.lower() in ['kai', 'kci']:
+        VIEW_CONFIG = KAI_VIEW_CONFIG
+
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
 
@@ -625,7 +636,10 @@ if PTR_MODE:
     EDC_ECR_URL = 'http://edc-ecr.mdd.co.id/voldemort-'+CORE_MID 
 
 
-STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
+# STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
+# Force Stop QR Local Store Due To Mismatch Sys Path - 2022-08-07
+STORE_QR_TO_LOCAL = False
+
 QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
 QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
 if not os.path.exists(QR_STORE_PATH):
