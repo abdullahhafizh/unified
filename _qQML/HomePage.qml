@@ -646,35 +646,35 @@ Base{
         }
     }
 
-    Rectangle{
-        id: combo_sakti_button
-        color: 'white'
-        radius: 25
-        anchors.verticalCenterOffset: -150
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: -radius
-        width: 180
-        height: 180
-        visible: false
-        Image{
-            anchors.fill: parent
-            scale: 0.75
-            source: 'source/combosakti.png'
-            fillMode: Image.PreserveAspectFit
-        }
+//    Rectangle{
+//        id: combo_sakti_button
+//        color: 'white'
+//        radius: 25
+//        anchors.verticalCenterOffset: -150
+//        anchors.verticalCenter: parent.verticalCenter
+//        anchors.left: parent.left
+//        anchors.leftMargin: -radius
+//        width: 180
+//        height: 180
+//        visible: false
+//        Image{
+//            anchors.fill: parent
+//            scale: 0.75
+//            source: 'source/combosakti.png'
+//            fillMode: Image.PreserveAspectFit
+//        }
 
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Press "Combo Sakti" Button');
-                console.log('Combo Sakti Button is Pressed..!');
-                _SLOT.stop_idle_mode();
-                resetMediaTimer();
-                preload_combo_sakti.open();
-            }
-        }
-    }
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Press "Combo Sakti" Button');
+//                console.log('Combo Sakti Button is Pressed..!');
+//                _SLOT.stop_idle_mode();
+//                resetMediaTimer();
+//                preload_combo_sakti.open();
+//            }
+//        }
+//    }
 
     Rectangle{
         id: search_trx_button
