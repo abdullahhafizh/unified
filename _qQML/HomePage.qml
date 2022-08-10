@@ -612,6 +612,41 @@ Base{
     }
 
     Rectangle{
+        id: reset_printer_spooler
+        color: 'white'
+        radius: 20
+        anchors.top: parent.top
+        anchors.topMargin: 300
+        anchors.left: parent.left
+        anchors.leftMargin: -30
+        width: 100
+        height: 80
+        visible: spvButton
+        Image{
+            width: 80
+            height: 90
+            anchors.horizontalCenterOffset: 10
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.horizontalCenter: parent.horizontalCenter
+            scale: 0.75
+            source: 'source/print_ticket.png'
+            fillMode: Image.PreserveAspectFit
+        }
+
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: {
+                _SLOT.user_action_log('Press "Reset Printer" Button');
+                console.log('Reset Printer is Pressed..!');
+                _SLOT.stop_idle_mode();
+                resetMediaTimer();
+                _SLOT.start_reset_receipt_count('0');
+            }
+        }
+    }
+
+    Rectangle{
         id: combo_sakti_button
         color: 'white'
         radius: 25
