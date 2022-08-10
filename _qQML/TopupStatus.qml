@@ -40,6 +40,7 @@ Rectangle{
         font.bold: true
         font.pixelSize: 33
         font.family: "Ubuntu"
+        visible: (parent.width==1920)
     }
 
     Row{
@@ -112,6 +113,8 @@ Rectangle{
         font.bold: true
         font.pixelSize: 33
         font.family: "Ubuntu"
+        visible: (parent.width==1920)
+
     }
 
 }
