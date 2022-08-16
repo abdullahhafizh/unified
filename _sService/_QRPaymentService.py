@@ -324,7 +324,7 @@ def trigger_success_qr_payment(mode, data):
 def check_payment_result(result, mode):
     if _Common.empty(result):
         return False
-    if result.get('status').upper() in ['SUCCESS', 'PAID', 'SETTLEMENT']:
+    if result.get('status', 'XXX').upper() in ['SUCCESS', 'PAID', 'SETTLEMENT']:
         return True
     return False
 
