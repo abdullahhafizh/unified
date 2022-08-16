@@ -324,9 +324,7 @@ def trigger_success_qr_payment(mode, data):
 def check_payment_result(result, mode):
     if _Common.empty(result):
         return False
-    if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
-        return True
-    if mode in _Common.QR_NON_DIRECT_PAY and result['status'] in ['SUCCESS', 'PAID']:
+    if result.get('status').upper() in ['SUCCESS', 'PAID', 'SETTLEMENT']:
         return True
     return False
 
