@@ -612,34 +612,69 @@ Base{
     }
 
     Rectangle{
-        id: combo_sakti_button
+        id: reset_printer_spooler
         color: 'white'
-        radius: 25
-        anchors.verticalCenterOffset: -150
-        anchors.verticalCenter: parent.verticalCenter
+        radius: 20
+        anchors.top: parent.top
+        anchors.topMargin: 300
         anchors.left: parent.left
-        anchors.leftMargin: -radius
-        width: 180
-        height: 180
-        visible: false
+        anchors.leftMargin: -30
+        width: 100
+        height: 80
+        visible: spvButton
         Image{
-            anchors.fill: parent
+            width: 80
+            height: 90
+            anchors.horizontalCenterOffset: 10
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.horizontalCenter: parent.horizontalCenter
             scale: 0.75
-            source: 'source/combosakti.png'
+            source: 'source/print_ticket.png'
             fillMode: Image.PreserveAspectFit
         }
 
         MouseArea{
             anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Press "Combo Sakti" Button');
-                console.log('Combo Sakti Button is Pressed..!');
+            onDoubleClicked: {
+                _SLOT.user_action_log('Press "Reset Printer" Button');
+                console.log('Reset Printer is Pressed..!');
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
-                preload_combo_sakti.open();
+                _SLOT.start_reset_receipt_count('0');
             }
         }
     }
+
+//    Rectangle{
+//        id: combo_sakti_button
+//        color: 'white'
+//        radius: 25
+//        anchors.verticalCenterOffset: -150
+//        anchors.verticalCenter: parent.verticalCenter
+//        anchors.left: parent.left
+//        anchors.leftMargin: -radius
+//        width: 180
+//        height: 180
+//        visible: false
+//        Image{
+//            anchors.fill: parent
+//            scale: 0.75
+//            source: 'source/combosakti.png'
+//            fillMode: Image.PreserveAspectFit
+//        }
+
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Press "Combo Sakti" Button');
+//                console.log('Combo Sakti Button is Pressed..!');
+//                _SLOT.stop_idle_mode();
+//                resetMediaTimer();
+//                preload_combo_sakti.open();
+//            }
+//        }
+//    }
 
     Rectangle{
         id: search_trx_button
