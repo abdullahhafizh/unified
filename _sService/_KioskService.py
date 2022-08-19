@@ -1421,7 +1421,7 @@ def start_reset_receipt_count(count):
 def reset_receipt_count(count):
     result = _Common.reset_receipt_count(count)
     K_SIGNDLER.SIGNAL_PANEL_SETTING.emit('RESET_PRINTER_PAPER|'+result)
-    if _Common.IS_WINDOWS:
-        if int(count) == 0:
-            command = 'start _resetPrinterSpooler.bat'
-            return _Helper.execute_console(command)
+    # if _Common.IS_WINDOWS:
+    #     if int(count) == 0:
+    #         command = 'start _resetPrinterSpooler.bat'
+    #         return _Helper.execute_console(command)

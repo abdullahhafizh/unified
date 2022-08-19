@@ -98,7 +98,7 @@ Rectangle{
             anchors.topMargin: -20
             anchors.fill: parent
             scale: 0.8
-            source: "source/empty_printer_paper.png"
+            source: "source/empty_printer_paper.jpeg"
             fillMode: Image.PreserveAspectFit
         }
         Text {
