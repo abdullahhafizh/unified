@@ -90,14 +90,31 @@ Rectangle{
         id: printer_status_info
         color: 'white'
         anchors.left: parent.left
-        anchors.leftMargin: 300
+        anchors.leftMargin: 380
         height: header_height
         width: 180
-        visible: printerAvailable
+        visible: !printerAvailable
         Image{
+            anchors.topMargin: -20
             anchors.fill: parent
+            scale: 0.8
             source: "source/empty_printer_paper.png"
             fillMode: Image.PreserveAspectFit
+        }
+        Text {
+            width: parent.width
+            height: 50
+            text: 'STRUK HABIS'
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
+            style: Text.Sunken
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignBottom
+            font.family:"Ubuntu"
+            font.pixelSize:24
+            color:"#ff0000"
+
         }
 
     }
