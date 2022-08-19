@@ -834,16 +834,16 @@ def restart_mdd_service():
         #     result = shell.Run(argument)
         #     print('pyt: Result : ', result)
         # command = 'runas /user:administrator powershell -command "Restart-Service MDDTopUpService -Force"'
-        os.system("net stop MDDTopUpService") 
-        sleep(1)
-        os.system("net start MDDTopUpService") 
+        # os.system("net stop MDDTopUpService") 
+        # sleep(1)
+        # os.system("net start MDDTopUpService") 
         # shell.Run(command)
         # shell.SendKeys(admin_pass+"\r\n", 0)
         # script = '/_restartMDDTopupService.bat'
         # process = subprocess.run(sys.path[0] + script, shell=True, stdout=subprocess.PIPE)
         # output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         # LOGGER.info((output))
-        print("pyt: Restarting MDDTopUpService...Success")
+        # print("pyt: Restarting MDDTopUpService...Success")
         return True
     except Exception as e:
         LOGGER.warning((e))

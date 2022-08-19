@@ -42,15 +42,15 @@ def start_init_ppob_product():
 def get_ppob_product(signal=True):
     _check_prev_ppob = _Common.load_from_temp_data(temp='ppob-product', mode='json')
     _last_get_product = _Common.get_config_value('last^get^ppob', digit=True)
-    if ( _last_get_product + (60 * 60 * 1000)) > _Helper.now() and not _Common.empty(_check_prev_ppob):
+    if ( _last_get_product + (3 * 24 * 60 * 60 * 1000)) > _Helper.now() and not _Common.empty(_check_prev_ppob):
         products = _check_prev_ppob
     else:
-        s, r = _NetworkAccess.get_from_url(url=_Common.BACKEND_URL+'get/product')
+        s, r = _NetworkAccess.get_from_url(url=_Common.BACKEND_URL+'get/product', log=False)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
             _Common.LAST_GET_PPOB = _Helper.now()
             _Common.log_to_temp_config('last^get^ppob', _Common.LAST_GET_PPOB)
-            _Common.store_to_temp_data(temp='ppob-product', content=json.dumps(products))
+            _Common.store_to_temp_data(temp='ppob-product', content=json.dumps(products), log=False)
         else:
             products = _Common.load_from_temp_data(temp='ppob-product', mode='json')
     # products = store_image_item(products)

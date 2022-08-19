@@ -502,8 +502,9 @@ def init_temp_data():
     TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 
 
-def store_to_temp_data(temp, content):
-    LOGGER.info((temp, content))
+def store_to_temp_data(temp, content, log=True):
+    if log is True:
+        LOGGER.info((temp, content))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
@@ -878,6 +879,7 @@ RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_l
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
 ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
+ERECEIPT_ASYNC_MODE = True if _ConfigParser.get_set_value('PRINTER', 'ereceipt^async^mode', '1') == '1' else False
 # ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:10107/generate/qr/')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False

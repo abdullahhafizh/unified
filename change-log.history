@@ -1,5 +1,9 @@
 15.0.A2-GLOBAL:
 - Add Secret Button Reset Printer Paper Counter/Spooler,
+- Enhance Ereceipt To Asyncronous,
+- Enhance Connection Status Detection,
+- Improve Log Efficiency,
+- Darken Background,
 - ...
 
 15.0.A1-GLOBAL:

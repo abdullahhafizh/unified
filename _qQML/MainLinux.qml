@@ -218,7 +218,7 @@ Rectangle {
         HomePageEvent{}
     }
 
-    Component {id: media_page
+    Component {id: media_page_linux
         MediaPageLinux{}
     }
 

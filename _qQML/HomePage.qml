@@ -98,7 +98,7 @@ Base{
 
     function get_ppob_product(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_ppob_product', now, p);
+        console.log('get_ppob_product', now);
         press = '0';
         popup_loading.close();
         my_layer.push(ppob_category, {ppobData: p});
@@ -574,20 +574,20 @@ Base{
                 if (tvc_loading.counter%2==0){
                     search_trx_button.color = 'white';
                     wa_voucher_button.color = '#4FCE5D';
-                    printer_paper_status_info.modeReverse = true;
                 } else {
                     search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
-                    printer_paper_status_info.modeReverse = false;
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     if (!mediaOnPlaying) {
-                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                        console.log("starting tvc player...", now);
+                        if (IS_WINDOWS) {
+                            console.log("starting tvc player...", now);
                             my_layer.push(media_page, {mode: 'mediaPlayer',
-                                          mandiri_update_schedule: mandiri_update_schedule,
-                                          edc_settlement_schedule: edc_settlement_schedule
-                                      });
+                                            mandiri_update_schedule: mandiri_update_schedule,
+                                            edc_settlement_schedule: edc_settlement_schedule
+                                        });
+                        }
                     }
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
@@ -666,39 +666,11 @@ Base{
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
                 _SLOT.start_reset_receipt_count('0');
+                _SLOT.get_kiosk_status();
             }
         }
     }
 
-//    Rectangle{
-//        id: combo_sakti_button
-//        color: 'white'
-//        radius: 25
-//        anchors.verticalCenterOffset: -150
-//        anchors.verticalCenter: parent.verticalCenter
-//        anchors.left: parent.left
-//        anchors.leftMargin: -radius
-//        width: 180
-//        height: 180
-//        visible: false
-//        Image{
-//            anchors.fill: parent
-//            scale: 0.75
-//            source: 'source/combosakti.png'
-//            fillMode: Image.PreserveAspectFit
-//        }
-
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Press "Combo Sakti" Button');
-//                console.log('Combo Sakti Button is Pressed..!');
-//                _SLOT.stop_idle_mode();
-//                resetMediaTimer();
-//                preload_combo_sakti.open();
-//            }
-//        }
-//    }
 
     Rectangle{
         id: search_trx_button
@@ -1166,10 +1138,10 @@ Base{
         BoxTitle{
             id: printer_paper_status_info
             width: 1000
-            height: 100
+            height: 80
             visible: !printerAvailable
             modeReverse: true
-            radius: 50
+            radius: 40
             fontSize: 25
             border.width: 0
             anchors.bottom: parent.bottom
@@ -1177,7 +1149,6 @@ Base{
             anchors.horizontalCenter: parent.horizontalCenter
             title_text: 'KERTAS STRUK HABIS, TRANSAKSI TIDAK DAPAT MENGELUARKAN BUKTI TRANSAKSI'
             boxColor: VIEW_CONFIG.frame_color
-
         }
 
         CircleButton{
