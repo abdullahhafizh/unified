@@ -140,6 +140,7 @@ Base{
         var tr = JSON.parse(t);
         mandiriTopupWallet = parseInt(tr.balance_mandiri);
         bniTopupWallet = parseInt(tr.balance_bni);
+
         var topup_active = [];
         if (tr.mandiri == 'AVAILABLE' || tr.mandiri == 'TEST_MODE') {
             if (mandiriTopupWallet > 0) {
@@ -153,10 +154,31 @@ Base{
                 topup_active.push('BNI');
             }
         }
+
+        var topupOnlineAvailable = false;
+        box_connection.text = 'OFFLINE';
+        box_connection.color = 'red';
+        kioskStatus = false;
         
-        if (tr.bri == 'AVAILABLE') topup_active.push('BRI');
-        if (tr.bca == 'AVAILABLE') topup_active.push('BCA');
-        if (tr.dki == 'AVAILABLE') topup_active.push('DKI');
+        if (tr.bri == 'AVAILABLE') {
+            topupOnlineAvailable = true;
+            topup_active.push('BRI');
+        }
+        if (tr.bca == 'AVAILABLE') {
+            topupOnlineAvailable = true;
+            topup_active.push('BCA');
+        }
+        if (tr.dki == 'AVAILABLE') {
+            topupOnlineAvailable = true;
+            topup_active.push('DKI');
+        }
+
+
+        if (topupOnlineAvailable) {
+            kioskStatus = true;
+            box_connection.color = 'green';
+            box_connection.text = 'ONLINE';
+        }
 
         topup_status_comp.statusMandiri = tr.mandiri;
         topup_status_comp.statusBni = tr.bni;
@@ -366,10 +388,10 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.user_action_log('Press "TopUp Saldo"');
-                    if (!printerAvailable){
-                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
-                        return
-                    }
+//                    if (!printerAvailable){
+//                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
+//                        return
+//                    }
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -403,10 +425,10 @@ Base{
                     _SLOT.user_action_log('Press "Beli Kartu"');
                     if (press!="0") return;
                     press = "1";
-                    if (!printerAvailable){
-                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
-                        return
-                    }
+//                    if (!printerAvailable){
+//                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
+//                        return
+//                    }
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -461,10 +483,10 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.user_action_log('Press "Bayar/Beli"');
-                    if (!printerAvailable){
-                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
-                        return
-                    }
+//                    if (!printerAvailable){
+//                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
+//                        return
+//                    }
                     resetMediaTimer();
     //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
@@ -1137,6 +1159,22 @@ Base{
                     resetMediaTimer();
                 }
             }
+        }
+
+        BoxTitle{
+            id: printer_paper_status_info
+            width: 1000
+            height: 100
+//            visible: !printerAvailable
+            radius: 50
+            fontSize: 25
+            border.width: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+            title_text: 'KERTAS STRUK HABIS, TRANSAKSI TIDAK DAPAT MENGELUARKAN BUKTI TRANSAKSI'
+            boxColor: VIEW_CONFIG.frame_color
+
         }
 
         CircleButton{
