@@ -30,7 +30,6 @@ Base{
     property var edc_settlement_schedule: VIEW_CONFIG.edc_settlement_schedule
     property var last_money_insert: 'N/A'
 
-    property bool printerAvailable: true
     property bool showCardStock: false
 
     property var selectedMenu: ''
@@ -40,8 +39,9 @@ Base{
     property bool comboSaktiFeature: false
 
     property var cardStockTreshold: 25
-   width: globalWidth
-   height: globalHeight
+
+    width: globalWidth
+    height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -1168,6 +1168,7 @@ Base{
             width: 1000
             height: 100
             visible: !printerAvailable
+            modeReverse: true
             radius: 50
             fontSize: 25
             border.width: 0

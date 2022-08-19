@@ -9,8 +9,14 @@ Rectangle{
     id: main
     x:0
     y:0
+
+//    property var globalScreenType: '1'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
+
     width: parseInt(SCREEN_WIDTH)
     height: parseInt(SCREEN_HEIGHT)
+
     color: "transparent"
     property string mode_: "normal"
     property var use_
@@ -19,6 +25,7 @@ Rectangle{
     property bool logo_vis: true
     property int header_height: 125
     property int idx_bg: 0
+
     //Change Background Asset
     property variant backgrounds: VIEW_CONFIG.backgrounds
     property variant logo: VIEW_CONFIG.master_logo
@@ -37,6 +44,8 @@ Rectangle{
     property var top_color: (mode_!='normal') ? "#f03838" : "white"
 // Define All QR Provider Here
     property variant allQRProvider: VIEW_CONFIG.all_qr_provider
+    property bool printerAvailable: true
+
 // =========
 
 
@@ -46,6 +55,13 @@ Rectangle{
         source: "source/background/" + backgrounds[0]
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
+    }
+
+    Rectangle{
+        id: body_opacity
+        anchors.fill: parent
+        color: 'black'
+        opacity: 0.5
     }
 
     Rectangle{
@@ -67,6 +83,23 @@ Rectangle{
         source: "source/logo/" +logo[0]
         fillMode: Image.PreserveAspectFit
         visible: logo_vis
+    }
+
+
+    Rectangle{
+        id: printer_status_info
+        color: 'white'
+        anchors.left: parent.left
+        anchors.leftMargin: 300
+        height: header_height
+        width: 180
+        visible: printerAvailable
+        Image{
+            anchors.fill: parent
+            source: "source/empty_printer_paper.png"
+            fillMode: Image.PreserveAspectFit
+        }
+
     }
 
     Image{
