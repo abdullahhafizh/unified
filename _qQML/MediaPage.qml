@@ -141,7 +141,7 @@ Rectangle{
         function setIndex(i){
             index = i;
             index %= media_files.length;
-            player.source = img_path + media_files[index];
+            player.source = img_path_ + media_files[index];
             console.log("Playing List (" + i + ") - " + player.source)
 //            _SLOT.post_tvc_log(media_files[index])
             player.play();
