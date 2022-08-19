@@ -61,7 +61,7 @@ Rectangle{
         id: body_opacity
         anchors.fill: parent
         color: 'black'
-        opacity: 0.5
+        opacity: 0.6
     }
 
     Rectangle{

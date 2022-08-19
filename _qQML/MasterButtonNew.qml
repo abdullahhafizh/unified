@@ -18,7 +18,7 @@ Rectangle {
         id: background_base
         anchors.fill: parent
         color: 'white'
-        opacity: .2
+        opacity: .3
         visible: (mode3d==undefined)
     }
     Image{
