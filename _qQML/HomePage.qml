@@ -1137,17 +1137,17 @@ Base{
 
         BoxTitle{
             id: printer_paper_status_info
-            width: 1000
-            height: 80
+            width: 900
+            height: 60
             visible: !printerAvailable
             modeReverse: true
-            radius: 40
+            radius: 30
             fontSize: 25
             border.width: 0
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 20
+            anchors.bottomMargin: 15
             anchors.horizontalCenter: parent.horizontalCenter
-            title_text: 'KERTAS STRUK HABIS, TRANSAKSI TIDAK DAPAT MENGELUARKAN BUKTI TRANSAKSI'
+            title_text: 'KERTAS HABIS, SAAT INI TRANSAKSI ANDA TIDAK MENGELUARKAN STRUK'
             boxColor: VIEW_CONFIG.frame_color
         }
 
