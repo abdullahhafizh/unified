@@ -700,9 +700,9 @@ def file_list(dir_):
     _dir_ = dir_.replace(".", "")
     try:
         # //qml: Playing List (0) - file:///C:/MDD_KIOSK/_qQML/_vVideo/1. CEGAH COVID - 19 (RUBIK).mp4
-        new_path = 'file:///' + os.getcwd() + dir_
+        # new_path = 'file:///' + os.getcwd() + dir_
         files = {
-            "result": [(new_path + x) for x in os.listdir(sys.path[0] + _dir_) if x.endswith(ext_files)],
+            "result": [x for x in os.listdir(sys.path[0] + _dir_) if x.endswith(ext_files)],
             "dir": dir_
         }
         if "Video" in str(dir_):
