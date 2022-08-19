@@ -574,9 +574,11 @@ Base{
                 if (tvc_loading.counter%2==0){
                     search_trx_button.color = 'white';
                     wa_voucher_button.color = '#4FCE5D';
+                    printer_paper_status_info.modeReverse = true;
                 } else {
                     search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
+                    printer_paper_status_info.modeReverse = false;
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     if (!mediaOnPlaying) {
@@ -1165,7 +1167,7 @@ Base{
             id: printer_paper_status_info
             width: 1000
             height: 100
-//            visible: !printerAvailable
+            visible: !printerAvailable
             radius: 50
             fontSize: 25
             border.width: 0
