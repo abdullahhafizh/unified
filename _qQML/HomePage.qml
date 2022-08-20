@@ -346,7 +346,7 @@ Base{
         AnimatedImage  {
             width: (globalScreenType == '1') ? 350 : 250
             height: (globalScreenType == '1') ? 350 : 250
-            anchors.verticalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             source: "source/sand-clock-animated-2.gif"
             fillMode: Image.PreserveAspectFit
             visible: (globalBoxName == "")

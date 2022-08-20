@@ -1141,6 +1141,7 @@ def startup_task():
     global STARTUP_TASK
     
     if not STARTUP_TASK:
+        STARTUP_TASK = True
         print("pyt: Table Adjustment/Migration...")
         _KioskService.direct_alter_table([
             "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
@@ -1271,7 +1272,6 @@ def startup_task():
         # _Sync.start_do_pending_upload_job()
         print("pyt: Get Kiosk Terminal Status...")
         _KioskService.get_kiosk_status()
-        STARTUP_TASK = True
     
 
 if __name__ == '__main__':
