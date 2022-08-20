@@ -694,6 +694,7 @@ Base{
                 console.log('Reset Printer is Pressed..!');
                 _SLOT.stop_idle_mode();
                 resetMediaTimer();
+                spvButton = false;
                 _SLOT.start_reset_receipt_count('0');
                 _SLOT.get_kiosk_status();
             }
