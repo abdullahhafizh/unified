@@ -5,6 +5,7 @@ Rectangle{
     property string show_text: "Select Your Schedule"
     property int size_: 30
     property string color_: "darkred"
+    property bool setItalic: false
     height: 50
     width: 1000
 
@@ -19,6 +20,7 @@ Rectangle{
         textFormat: Text.PlainText
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
+        font.italic: setItalic
     }
 
 }

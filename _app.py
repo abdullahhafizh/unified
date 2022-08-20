@@ -1143,6 +1143,7 @@ def startup_task():
     if not STARTUP_TASK:
         STARTUP_TASK = True
         print("pyt: Table Adjustment/Migration...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Table Adjustment/Migration...')
         _KioskService.direct_alter_table([
             "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
             "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
@@ -1161,14 +1162,17 @@ def startup_task():
         sleep(1)
         if INITIAL_SETTING['reloadService'] is True and _Common.IS_WINDOWS:
             print("pyt: Restarting MDDTopUpService...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Restarting MDDTopUpService...')
             _KioskService.start_restart_mdd_service()
             sleep(1)
         print("pyt: HouseKeeping Old Local Data/Files...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|HouseKeeping Old Local Data/Files...')
         _KioskService.house_keeping(age_month=6)
         sleep(1)
         _KioskService.reset_db_record()
         sleep(1)
         print("pyt: Syncing Remote Task...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Remote Task...')
         _Sync.start_sync_task()
         sleep(1)
         # print("pyt: Syncing Offline Item Transaction...")
@@ -1178,6 +1182,7 @@ def startup_task():
         # _Sync.start_sync_product_stock()
         # sleep(1)
         print("pyt: Syncing Transaction...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Transaction...')
         _Sync.start_sync_data_transaction()
         sleep(1)
         # print("pyt: Syncing Transaction Failure Data...")
@@ -1187,6 +1192,7 @@ def startup_task():
         # _Sync.start_sync_topup_records()
         # sleep(1)
         print("pyt: Syncing Topup Amount...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Topup Amount...')
         _Sync.start_sync_topup_amount()
         sleep(1)
         # print("pyt: Syncing SAM Audit...")
@@ -1196,6 +1202,7 @@ def startup_task():
         # _Sync.start_sync_pending_refund()
         # sleep(.5)
         print("pyt: Syncing PPOB Product...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing PPOB Product...')
         _PPOBService.start_init_ppob_product()
         sleep(1)
         # Disable Load As WebServer, Call as Direct Module Instead
@@ -1203,30 +1210,38 @@ def startup_task():
         # _Helper.get_thread().apply_async(start_webserver)
         # sleep(1)
         print("pyt: Start Init Cash Activity...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Start Init Cash Activity...')
         _Common.init_cash_activity()
         sleep(1)
         if _Common.BILL['status'] is True:
             sleep(1)
             print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Connecting to ' +_Common.BILL_TYPE+ ' Bill Acceptor...')
             _BILL.init_bill()
         if _Common.MEI['status'] is True:
             sleep(1)
             print("pyt: Connecting to MEI Bill Acceptor...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Connecting to MEI Bill Acceptor...')
             _MEI.mei_standby_mode()
         if _Common.QPROX['status'] is True:
             print("pyt: Connecting to Prepaid Reader...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Connecting to Prepaid Reader...')
             sleep(1)
             if _QPROX.open() is True:
                 print("pyt: [INFO] Init Prepaid Reader...")
+                _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Init Prepaid Reader...')
                 _QPROX.init_config()
             else:
                 print("pyt: [ERROR] Connect to Prepaid Reader...")
+                _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Init Prepaid Reader...ERROR')
         if _QPROX.INIT_MANDIRI is True:
             sleep(1)
             print("pyt: Check Mandiri Deposit Update Balance...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check Mandiri Deposit Update Balance...')
             _TopupService.check_mandiri_deposit_update_balance()
             sleep(1)
             print("pyt: Resync Data Mandiri Card Blacklist...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Data Mandiri Card Blacklist...')
             # _SettlementService.start_check_mandiri_deposit()    
             _TopupService.get_mandiri_card_blocked_list()
             # Below Handler Move into Sync
@@ -1237,6 +1252,7 @@ def startup_task():
         if _QPROX.INIT_BNI is True:
             sleep(.5)
             print("pyt: Triggering BNI Settlement Sync...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering BNI Settlement Sync...')
             _Sync.start_sync_settlement_bni()
             #Disable Automation
             # sleep(2)
@@ -1251,26 +1267,34 @@ def startup_task():
             # TODO Add Special Handler For BCA Initiation
             sleep(1)
             print("pyt: Triggering Topup BCA Init Config...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering Topup BCA Init Config...')
             _QPROX.start_init_config_bca()
             print("pyt: Triggering Topup BCA Reset Session...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering Topup BCA Reset Session...')
             _TopupService.reset_bca_session()
         if _Common.EDC['mobile'] is True:
             sleep(1)
             print("pyt: [INFO] Re/Binding VM Machine Into EDC...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Re/Binding VM Machine Into EDC...')
             _EDC.edc_mobile_start_binding_edc()
         print("pyt: Syncing Ads Content...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Ads Content...')
         sleep(1)
         _KioskService.start_define_ads(3)
         print("pyt: Reset Open Previous Pending Jobs...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Reset Open Previous Pending Jobs...')
         sleep(2)
         _KioskService.reset_open_job()
         print("pyt: Do Pending Request Jobs...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Do Pending Request Jobs...')
         sleep(1)
         _Sync.start_do_pending_request_job()
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Startup Completed...')
         # print("pyt: Do Pending Upload Jobs...")
         # sleep(1)
         # _Sync.start_do_pending_upload_job()
         print("pyt: Get Kiosk Terminal Status...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Get Kiosk Terminal Status...')
         _KioskService.get_kiosk_status()
     
 

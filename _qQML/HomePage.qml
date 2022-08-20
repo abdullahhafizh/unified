@@ -281,6 +281,10 @@ Base{
             switch_frame('source/loading_static.png', 'Mohon Tunggu Mesin Akan Dimuat Ulang', 'Dalam 30 Detik', 'closeWindow', false )
             return;
         }
+        if (result.indexOf('STARTUP|') > -1){
+            var message = result.split('|')[0];
+            startup_process.show_text = message;
+        }
     }
 
     function get_pdf(pdf){
@@ -521,6 +525,19 @@ Base{
         anchors.bottomMargin: 100
         visible: VIEW_CONFIG.topup_status && (globalBoxName !== "")
 		width: globalWidth
+    }
+
+    MainTitle{
+        id: startup_process
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 150
+        show_text: ""
+        visible: (globalBoxName == "")
+        size_: 30
+        color_: "yellow"
+        setItalic: true
+
     }
 
 
