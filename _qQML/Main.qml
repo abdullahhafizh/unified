@@ -178,17 +178,17 @@ Rectangle {
     }
 
 
-    Component{id: checkin_success
-        CheckInSuccess{}
-    }
+//    Component{id: checkin_success
+//        CheckInSuccess{}
+//    }
 
-    Component{id: select_seat
-        SelectSeatView{}
-    }
+//    Component{id: select_seat
+//        SelectSeatView{}
+//    }
 
-    Component{id: checkin_page
-        CheckInPage{}
-    }
+//    Component{id: checkin_page
+//        CheckInPage{}
+//    }
 
     Component{id: backdooor_login
         BackDoorLogin{}
@@ -246,13 +246,13 @@ Rectangle {
     //     GlobalWebView{}
     // }
 
-    Component {id: faq_ina
-        FAQPageINA{}
-    }
+//    Component {id: faq_ina
+//        FAQPageINA{}
+//    }
 
-    Component {id: faq_en
-        FAQPageEN{}
-    }
+//    Component {id: faq_en
+//        FAQPageEN{}
+//    }
 
     Component {id: test_view
         GeneralTemplate{}
