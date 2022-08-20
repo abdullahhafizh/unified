@@ -282,7 +282,7 @@ Base{
             return;
         }
         if (result.indexOf('STARTUP|') > -1){
-            var message = result.split('|')[0];
+            var message = result.split('|')[1];
             startup_process.show_text = message;
         }
     }
