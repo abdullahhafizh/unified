@@ -189,7 +189,7 @@ Base{
         topup_status_comp.statusDki = tr.dki;
 
         topup_saldo_button.visible = false;
-        if (topup_active.length > 0) topup_saldo_button.visible = true;
+        if (topup_active.length > 0 && globalBoxName !== "") topup_saldo_button.visible = true;
 
     }
 
@@ -342,6 +342,15 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 60 : 30
         visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
+
+        AnimatedImage  {
+            width: (globalScreenType == '1') ? 350 : 250
+            height: (globalScreenType == '1') ? 350 : 250
+            anchors.verticalCenter: parent.horizontalCenter
+            source: "source/sand-clock-animated-2.gif"
+            fillMode: Image.PreserveAspectFit
+            visible: (globalBoxName == "")
+        }
 
         MasterButtonNew {
             id: check_saldo_button
