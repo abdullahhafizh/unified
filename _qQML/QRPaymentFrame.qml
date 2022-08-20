@@ -26,7 +26,7 @@ Base{
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
 
-    property variant qrisProvider: ['linkaja', 'dana', 'bca-qris', 'shopeepay', 'jakone', 'bni-qris']
+    property variant qrisProvider: allQRProvider
 
     property alias qrTimer: show_timer
     property var calledFrom
@@ -196,7 +196,8 @@ Base{
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: VIEW_CONFIG.frame_color
+//        color: VIEW_CONFIG.frame_color
+        color: "#005b96"
         opacity: 1
         visible: successPayment
         AnimatedImage  {

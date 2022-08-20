@@ -1139,7 +1139,7 @@ Base{
             id: printer_paper_status_info
             width: 900
             height: 60
-            visible: !printerAvailable
+            visible: false
             modeReverse: true
             radius: 30
             fontSize: 25

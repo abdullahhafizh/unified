@@ -1691,7 +1691,7 @@ class Ereceipt:
             self.logo = 'kci-logo'
 
     def set_trxid(self, trxid):
-        self.trxid = trxid
+        self.trxid = "-".join([trxid, _Common.TID])
 
     def generate(self):
         output_data = {
@@ -1804,7 +1804,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         if _Common.ERECEIPT_ASYNC_MODE is True:
             sleep(1)
             output = {
-                'trxid'     : trxid,
+                'trxid'     : "-".join([trxid, _Common.TID]),
                 'status'    : 0,
                 'mode'      : 'ASYNC'
             }
@@ -1905,7 +1905,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         if _Common.ERECEIPT_ASYNC_MODE is True:
             sleep(1)
             output = {
-                'trxid'     : trxid,
+                'trxid'     : "-".join([trxid, _Common.TID]),
                 'status'    : 0,
                 'mode'      : 'ASYNC'
             }
@@ -2030,7 +2030,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         if _Common.ERECEIPT_ASYNC_MODE is True:
             sleep(1)
             output = {
-                'trxid'     : trxid,
+                'trxid'     : "-".join([trxid, _Common.TID]),
                 'status'    : 0,
                 'mode'      : 'ASYNC'
             }
