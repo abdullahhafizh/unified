@@ -519,7 +519,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 100
-        visible: VIEW_CONFIG.topup_status && (globalBoxName == "")
+        visible: VIEW_CONFIG.topup_status && (globalBoxName !== "")
 		width: globalWidth
     }
 
