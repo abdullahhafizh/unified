@@ -46,7 +46,6 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            _SLOT.start_startup_task();
             _SLOT.start_idle_mode();
             resetPopup();
             _SLOT.user_action_log('[Homepage] Standby Mode');
@@ -548,6 +547,7 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 if (globalBoxName == ""){
+                    _SLOT.start_startup_task();
                     _SLOT.start_play_audio('welcome');
                     _SLOT.get_kiosk_status();
                 }

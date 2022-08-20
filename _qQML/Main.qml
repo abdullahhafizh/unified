@@ -28,17 +28,8 @@ Rectangle {
     signal result_get_file_list(string str)
     signal result_get_gui_version(string str)
     signal result_get_kiosk_name(string str)
-    signal result_set_plan(string str)
-    signal result_create_schedule(string str)
-    signal result_create_chart(string str)
-    signal result_post_person(string str)
-    signal result_create_booking(string str)
-    signal result_create_payment(string str)
-    signal result_create_print(string str)
-    signal result_clear_person(string str)
     signal result_sale_edc(string str)
     signal result_get_payment(string str)
-    signal result_confirm_schedule(string str)
     signal result_accept_mei(string str)
     signal result_dis_accept_mei(string str)
     signal result_stack_mei(string str)
@@ -59,11 +50,8 @@ Rectangle {
     signal result_online_info_qprox(string str)
     signal result_init_online_mandiri(string str)
     signal result_stop_qprox(string str)
-    signal result_airport_name(string str)
     signal result_generate_pdf(string str)
     signal result_general(string str)
-    signal result_passenger(string str)
-    signal result_flight_data_sorted(string str)
     signal result_kiosk_status(string str)
     signal result_price_setting(string str)
     signal result_collect_cash(string str)
@@ -230,13 +218,13 @@ Rectangle {
 //        BuyTicketWebPage{}
 //    }
 
-    Component {id: select_ticket
-        SelectTicketView{}
-    }
+//    Component {id: select_ticket
+//        SelectTicketView{}
+//    }
 
-    Component {id: select_plan
-        SelectPlanView{}
-    }
+//    Component {id: select_plan
+//        SelectPlanView{}
+//    }
 
     Component {id: input_number
         InputGeneralNumber{}

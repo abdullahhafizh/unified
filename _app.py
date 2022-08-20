@@ -14,7 +14,7 @@ from _nNetwork import _NetworkAccess
 from _dDB import _Database
 from _sService import _KioskService
 from _sService import _UserService
-from _tTools import _Tibox
+from _tTools import _Helper
 from _sSync import _Sync
 from _dDevice import _EDC
 from _dDevice import _MEI
@@ -87,38 +87,6 @@ class SlotHandler(QObject):
         set_tvc_player(command)
     set_tvc_player = pyqtSlot(str)(set_tvc_player)
 
-    def start_set_plan(self, param):
-        _Tibox.start_set_plan(param)
-    start_set_plan = pyqtSlot(str)(start_set_plan)
-
-    def start_create_schedule(self):
-        _Tibox.start_create_schedule()
-    start_create_schedule = pyqtSlot()(start_create_schedule)
-
-    def start_create_chart(self, param):
-        _Tibox.start_create_chart(param)
-    start_create_chart = pyqtSlot(str)(start_create_chart)
-
-    def start_post_person(self, param):
-        _Tibox.start_post_person(param)
-    start_post_person = pyqtSlot(str)(start_post_person)
-
-    def start_create_booking(self):
-        _Tibox.start_create_booking()
-    start_create_booking = pyqtSlot()(start_create_booking)
-
-    def start_create_payment(self, amount):
-        _Tibox.start_create_payment(payment=amount)
-    start_create_payment = pyqtSlot(str)(start_create_payment)
-
-    def start_create_print(self):
-        _Tibox.start_create_print()
-    start_create_print = pyqtSlot()(start_create_print)
-
-    def start_clear_person(self):
-        _Tibox.start_clear_person()
-    start_clear_person = pyqtSlot()(start_clear_person)
-
     def create_sale_edc(self, amount):
         _EDC.create_sale_edc(amount=amount)
     create_sale_edc = pyqtSlot(str)(create_sale_edc)
@@ -126,10 +94,6 @@ class SlotHandler(QObject):
     def start_get_payments(self):
         _KioskService.start_get_payments()
     start_get_payments = pyqtSlot()(start_get_payments)
-
-    def start_confirm_schedule(self):
-        _Tibox.start_confirm_schedule()
-    start_confirm_schedule = pyqtSlot()(start_confirm_schedule)
 
     def start_accept_mei(self):
         _MEI.start_accept_mei()
@@ -207,10 +171,6 @@ class SlotHandler(QObject):
         _QPROX.start_init_online_mandiri()
     start_init_online_mandiri = pyqtSlot()(start_init_online_mandiri)
 
-    def set_rounded_fare(self, amount):
-        _Tibox.set_rounded_fare(amount=amount)
-    set_rounded_fare = pyqtSlot(str)(set_rounded_fare)
-
     def start_disconnect_mei(self):
         _MEI.start_disconnect_mei()
     start_disconnect_mei = pyqtSlot()(start_disconnect_mei)
@@ -223,10 +183,6 @@ class SlotHandler(QObject):
         _QPROX.start_disconnect_qprox()
     start_disconnect_qprox = pyqtSlot()(start_disconnect_qprox)
 
-    def start_get_airport_name(self, prefix1, prefix2):
-        _Tibox.start_get_airport_name(prefix1=prefix1, prefix2=prefix2)
-    start_get_airport_name = pyqtSlot(str, str)(start_get_airport_name)
-
     def start_generate(self, mode):
         _TicketTool.start_generate(use=mode)
     start_generate = pyqtSlot(str)(start_generate)
@@ -238,14 +194,6 @@ class SlotHandler(QObject):
     def start_set_payment(self, payment):
         _TicketTool.start_set_payment(payment=payment)
     start_set_payment = pyqtSlot(str)(start_set_payment)
-
-    def start_send_details_passenger(self):
-        _Tibox.start_send_details_passenger()
-    start_send_details_passenger = pyqtSlot()(start_send_details_passenger)
-
-    def start_sort_flight_data(self, key, method):
-        _Tibox.start_sort_flight_data(key=key, method=method)
-    start_sort_flight_data = pyqtSlot(str, str)(start_sort_flight_data)
 
     def get_kiosk_status(self):
         _KioskService.get_kiosk_status()
@@ -794,26 +742,17 @@ class SlotHandler(QObject):
     start_do_confirm_promo = pyqtSlot(str)(start_do_confirm_promo)
     
     def start_startup_task(self):
-        startup_task()
-    start_startup_task = pyqtSlot()(start_startup_task)
+        start_startup_task()
+    start_startup_task = pyqtSlot()(start_startup_task) 
 
 
 def set_signal_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
     _KioskService.K_SIGNDLER.SIGNAL_GET_GUI_VERSION.connect(view.rootObject().result_get_gui_version)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.connect(view.rootObject().result_get_kiosk_name)
-    _Tibox.T_SIGNDLER.SIGNAL_SET_PLAN.connect(view.rootObject().result_set_plan)
-    _Tibox.T_SIGNDLER.SIGNAL_CREATE_SCHEDULE.connect(view.rootObject().result_create_schedule)
-    _Tibox.T_SIGNDLER.SIGNAL_CREATE_CHART.connect(view.rootObject().result_create_chart)
-    _Tibox.T_SIGNDLER.SIGNAL_POST_PERSON.connect(view.rootObject().result_post_person)
-    _Tibox.T_SIGNDLER.SIGNAL_CREATE_BOOKING.connect(view.rootObject().result_create_booking)
-    _Tibox.T_SIGNDLER.SIGNAL_CREATE_PAYMENT.connect(view.rootObject().result_create_payment)
-    _Tibox.T_SIGNDLER.SIGNAL_CREATE_PRINT.connect(view.rootObject().result_create_print)
-    _Tibox.T_SIGNDLER.SIGNAL_CLEAR_PERSON.connect(view.rootObject().result_clear_person)
     _EDC.E_SIGNDLER.SIGNAL_SALE_EDC.connect(view.rootObject().result_sale_edc)
     _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENTS.connect(view.rootObject().result_get_payment)
     _KioskService.K_SIGNDLER.SIGNAL_GET_REFUNDS.connect(view.rootObject().result_get_refund)
-    _Tibox.T_SIGNDLER.SIGNAL_CONFIRM_SCHEDULE.connect(view.rootObject().result_confirm_schedule)
     _MEI.M_SIGNDLER.SIGNAL_ACCEPT_MEI.connect(view.rootObject().result_accept_mei)
     _MEI.M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.connect(view.rootObject().result_dis_accept_mei)
     _MEI.M_SIGNDLER.SIGNAL_STACK_MEI.connect(view.rootObject().result_stack_mei)
@@ -834,11 +773,8 @@ def set_signal_handler():
     _QPROX.QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.connect(view.rootObject().result_online_info_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.connect(view.rootObject().result_init_online_mandiri)
     _QPROX.QP_SIGNDLER.SIGNAL_STOP_QPROX.connect(view.rootObject().result_stop_qprox)
-    _Tibox.T_SIGNDLER.SIGNAL_GET_AIRPORT_NAME.connect(view.rootObject().result_airport_name)
     _TicketTool.PDF_SIGNDLER.SIGNAL_START_GENERATE.connect(view.rootObject().result_generate_pdf)
     _KioskService.K_SIGNDLER.SIGNAL_GENERAL.connect(view.rootObject().result_general)
-    _Tibox.T_SIGNDLER.SIGNAL_DETAILS_PASSENGER.connect(view.rootObject().result_passenger)
-    _Tibox.T_SIGNDLER.SIGNAL_FLIGHT_DATA_SORTED.connect(view.rootObject().result_flight_data_sorted)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.connect(view.rootObject().result_kiosk_status)
     _KioskService.K_SIGNDLER.SIGNAL_PRICE_SETTING.connect(view.rootObject().result_price_setting)
     _KioskService.K_SIGNDLER.SIGNAL_LIST_CASH.connect(view.rootObject().result_list_cash)
@@ -1194,6 +1130,10 @@ def init_local_setting_from_host():
 def start_webserver():
     _MainService.start()
     
+    
+def start_startup_task():
+    _Helper.get_thread().apply_async(startup_task,)
+
 
 STARTUP_TASK = False
 
