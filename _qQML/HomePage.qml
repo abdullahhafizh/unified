@@ -47,6 +47,8 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
+            console.log('Platform Check', IS_LINUX, IS_WINDOWS);
+            if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
             _SLOT.user_action_log('[Homepage] Standby Mode');
             press = "0";
@@ -56,10 +58,10 @@ Base{
             productCount2 = 0;
             productCount3 = 0;
             selectedMenu = '';
-            _SLOT.get_kiosk_status();
-            _SLOT.start_play_audio('homepage_greeting');
-            console.log('Platform Check', IS_LINUX, IS_WINDOWS);
-            if (IS_LINUX)  mediaOnPlaying = false;
+            if (globalBoxName !== ""){
+                _SLOT.get_kiosk_status();
+                _SLOT.start_play_audio('homepage_greeting');
+            }
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
@@ -549,7 +551,7 @@ Base{
                 if (globalBoxName == ""){
                     _SLOT.start_startup_task();
                     _SLOT.start_play_audio('welcome');
-                    _SLOT.get_kiosk_status();
+//                    _SLOT.get_kiosk_status();
                 }
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){

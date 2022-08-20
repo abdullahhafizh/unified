@@ -1269,6 +1269,8 @@ def startup_task():
         # print("pyt: Do Pending Upload Jobs...")
         # sleep(1)
         # _Sync.start_do_pending_upload_job()
+        print("pyt: Get Kiosk Terminal Status...")
+        _KioskService.get_kiosk_status()
         STARTUP_TASK = True
     
 
