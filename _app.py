@@ -58,10 +58,10 @@ SCREEN_HEIGHT = 1080
 class SlotHandler(QObject):
     __qualname__ = 'SlotHandler'
 
-    def set_language(self, s):
-        print("pyt: selected_language ", s)
-        translator.load(path + s)
-    set_language = pyqtSlot(str)(set_language)
+    # def set_language(self, s):
+    #     print("pyt: selected_language ", s)
+    #     translator.load(path + s)
+    # set_language = pyqtSlot(str)(set_language)
 
     def get_file_list(self, dir_):
         _KioskService.get_file_list(dir_=dir_)
@@ -792,6 +792,10 @@ class SlotHandler(QObject):
     def start_do_confirm_promo(self, payload):
         _PPOBService.start_do_confirm_promo(payload)
     start_do_confirm_promo = pyqtSlot(str)(start_do_confirm_promo)
+    
+    def start_startup_task(self):
+        startup_task()
+    start_startup_task = pyqtSlot()(start_startup_task)
 
 
 def set_signal_handler():
@@ -1189,7 +1193,144 @@ def init_local_setting_from_host():
             
 def start_webserver():
     _MainService.start()
+    
 
+STARTUP_TASK = False
+
+def startup_task():
+    global STARTUP_TASK
+    
+    if not STARTUP_TASK:
+        print("pyt: Table Adjustment/Migration...")
+        _KioskService.direct_alter_table([
+            "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
+            "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
+            "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
+            "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
+            "ALTER TABLE TransactionsNew ADD COLUMN trxNotes TEXT;",	
+            ])
+        sleep(1)
+        _KioskService.alter_table('_CashBox.sql')
+        sleep(1)
+        _KioskService.alter_table('_DailySummary.sql')
+        sleep(1)
+        _KioskService.alter_table('_SAMAudit.sql')
+        sleep(1)
+        _KioskService.alter_table('_TransactionsNew.sql')
+        sleep(1)
+        if INITIAL_SETTING['reloadService'] is True and _Common.IS_WINDOWS:
+            print("pyt: Restarting MDDTopUpService...")
+            _KioskService.start_restart_mdd_service()
+            sleep(1)
+        print("pyt: HouseKeeping Old Local Data/Files...")
+        _KioskService.house_keeping(age_month=6)
+        sleep(1)
+        _KioskService.reset_db_record()
+        sleep(1)
+        print("pyt: Syncing Remote Task...")
+        _Sync.start_sync_task()
+        sleep(1)
+        # print("pyt: Syncing Offline Item Transaction...")
+        # _Sync.start_sync_product_data()
+        # sleep(1)
+        # print("pyt: Syncing Product Stock...")
+        # _Sync.start_sync_product_stock()
+        # sleep(1)
+        print("pyt: Syncing Transaction...")
+        _Sync.start_sync_data_transaction()
+        sleep(1)
+        # print("pyt: Syncing Transaction Failure Data...")
+        # _Sync.start_sync_data_transaction_failure()
+        # sleep(1)
+        # print("pyt: Syncing Topup Records...")
+        # _Sync.start_sync_topup_records()
+        # sleep(1)
+        print("pyt: Syncing Topup Amount...")
+        _Sync.start_sync_topup_amount()
+        sleep(1)
+        # print("pyt: Syncing SAM Audit...")
+        # _Sync.start_sync_sam_audit()
+        # sleep(.5)
+        # print("pyt: Retrying Pending Refund...")
+        # _Sync.start_sync_pending_refund()
+        # sleep(.5)
+        print("pyt: Syncing PPOB Product...")
+        _PPOBService.start_init_ppob_product()
+        sleep(1)
+        # Disable Load As WebServer, Call as Direct Module Instead
+        # print("pyt: Start Topup Service...")
+        # _Helper.get_thread().apply_async(start_webserver)
+        # sleep(1)
+        print("pyt: Start Init Cash Activity...")
+        _Common.init_cash_activity()
+        sleep(1)
+        if _Common.BILL['status'] is True:
+            sleep(1)
+            print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
+            _BILL.init_bill()
+        if _Common.MEI['status'] is True:
+            sleep(1)
+            print("pyt: Connecting to MEI Bill Acceptor...")
+            _MEI.mei_standby_mode()
+        if _Common.QPROX['status'] is True:
+            print("pyt: Connecting to Prepaid Reader...")
+            sleep(1)
+            if _QPROX.open() is True:
+                print("pyt: [INFO] Init Prepaid Reader...")
+                _QPROX.init_config()
+            else:
+                print("pyt: [ERROR] Connect to Prepaid Reader...")
+        if _QPROX.INIT_MANDIRI is True:
+            sleep(1)
+            print("pyt: Check Mandiri Deposit Update Balance...")
+            _TopupService.check_mandiri_deposit_update_balance()
+            sleep(1)
+            print("pyt: Resync Data Mandiri Card Blacklist...")
+            # _SettlementService.start_check_mandiri_deposit()    
+            _TopupService.get_mandiri_card_blocked_list()
+            # Below Handler Move into Sync
+            # if '02:3' in _Helper.time_string('%H:%M'):
+            #     sleep(1)
+            #     print("pyt: Check Mandiri C2C Settlement...")
+            #     _SettlementService.start_daily_mandiri_c2c_settlement()    
+        if _QPROX.INIT_BNI is True:
+            sleep(.5)
+            print("pyt: Triggering BNI Settlement Sync...")
+            _Sync.start_sync_settlement_bni()
+            #Disable Automation
+            # sleep(2)
+            # print("pyt: Triggering BNI Balance Update Check...")
+            # _TopupService.start_define_topup_slot_bni()
+        if _QPROX.INIT_BRI is True:
+            # TODO Add Special Handler For BRI Initiation
+            # sleep(.5)
+            # print("pyt: Triggering BRI Balance Validation...")
+            pass
+        if _QPROX.INIT_BCA is True:
+            # TODO Add Special Handler For BCA Initiation
+            sleep(1)
+            print("pyt: Triggering Topup BCA Init Config...")
+            _QPROX.start_init_config_bca()
+            print("pyt: Triggering Topup BCA Reset Session...")
+            _TopupService.reset_bca_session()
+        if _Common.EDC['mobile'] is True:
+            sleep(1)
+            print("pyt: [INFO] Re/Binding VM Machine Into EDC...")
+            _EDC.edc_mobile_start_binding_edc()
+        print("pyt: Syncing Ads Content...")
+        sleep(1)
+        _KioskService.start_define_ads(3)
+        print("pyt: Reset Open Previous Pending Jobs...")
+        sleep(2)
+        _KioskService.reset_open_job()
+        print("pyt: Do Pending Request Jobs...")
+        sleep(1)
+        _Sync.start_do_pending_request_job()
+        # print("pyt: Do Pending Upload Jobs...")
+        # sleep(1)
+        # _Sync.start_do_pending_upload_job()
+        STARTUP_TASK = True
+    
 
 if __name__ == '__main__':
     print("pyt: Initiating Config...")
@@ -1237,135 +1378,7 @@ if __name__ == '__main__':
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(SCREEN_WIDTH, SCREEN_HEIGHT - 1)
-
-    print("pyt: Table Adjustment/Migration...")
-    _KioskService.direct_alter_table([
-        "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
-        "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
-        "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
-        "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
-        "ALTER TABLE TransactionsNew ADD COLUMN trxNotes TEXT;",	
-        ])
-    sleep(1)
-    _KioskService.alter_table('_CashBox.sql')
-    sleep(1)
-    _KioskService.alter_table('_DailySummary.sql')
-    sleep(1)
-    _KioskService.alter_table('_SAMAudit.sql')
-    sleep(1)
-    _KioskService.alter_table('_TransactionsNew.sql')
-    sleep(1)
-    if INITIAL_SETTING['reloadService'] is True and _Common.IS_WINDOWS:
-        print("pyt: Restarting MDDTopUpService...")
-        _KioskService.start_restart_mdd_service()
-        sleep(1)
-    print("pyt: HouseKeeping Old Local Data/Files...")
-    _KioskService.house_keeping(age_month=6)
-    sleep(1)
-    _KioskService.reset_db_record()
-    sleep(1)
-    print("pyt: Syncing Remote Task...")
-    _Sync.start_sync_task()
-    sleep(1)
-    # print("pyt: Syncing Offline Item Transaction...")
-    # _Sync.start_sync_product_data()
-    # sleep(1)
-    # print("pyt: Syncing Product Stock...")
-    # _Sync.start_sync_product_stock()
-    # sleep(1)
-    print("pyt: Syncing Transaction...")
-    _Sync.start_sync_data_transaction()
-    sleep(1)
-    # print("pyt: Syncing Transaction Failure Data...")
-    # _Sync.start_sync_data_transaction_failure()
-    # sleep(1)
-    # print("pyt: Syncing Topup Records...")
-    # _Sync.start_sync_topup_records()
-    # sleep(1)
-    print("pyt: Syncing Topup Amount...")
-    _Sync.start_sync_topup_amount()
-    sleep(1)
-    # print("pyt: Syncing SAM Audit...")
-    # _Sync.start_sync_sam_audit()
-    # sleep(.5)
-    # print("pyt: Retrying Pending Refund...")
-    # _Sync.start_sync_pending_refund()
-    # sleep(.5)
-    print("pyt: Syncing PPOB Product...")
-    _PPOBService.start_init_ppob_product()
-    sleep(1)
-    # Disable Load As WebServer, Call as Direct Module Instead
-    # print("pyt: Start Topup Service...")
-    # _Helper.get_thread().apply_async(start_webserver)
-    # sleep(1)
-    print("pyt: Start Init Cash Activity...")
-    _Common.init_cash_activity()
-    sleep(1)
-    if _Common.BILL['status'] is True:
-        sleep(1)
-        print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
-        _BILL.init_bill()
-    if _Common.MEI['status'] is True:
-        sleep(1)
-        print("pyt: Connecting to MEI Bill Acceptor...")
-        _MEI.mei_standby_mode()
-    if _Common.QPROX['status'] is True:
-        print("pyt: Connecting to Prepaid Reader...")
-        sleep(1)
-        if _QPROX.open() is True:
-            print("pyt: [INFO] Init Prepaid Reader...")
-            _QPROX.init_config()
-        else:
-            print("pyt: [ERROR] Connect to Prepaid Reader...")
-    if _QPROX.INIT_MANDIRI is True:
-        sleep(1)
-        print("pyt: Check Mandiri Deposit Update Balance...")
-        _TopupService.check_mandiri_deposit_update_balance()
-        sleep(1)
-        print("pyt: Resync Data Mandiri Card Blacklist...")
-        # _SettlementService.start_check_mandiri_deposit()    
-        _TopupService.get_mandiri_card_blocked_list()
-        # Below Handler Move into Sync
-        # if '02:3' in _Helper.time_string('%H:%M'):
-        #     sleep(1)
-        #     print("pyt: Check Mandiri C2C Settlement...")
-        #     _SettlementService.start_daily_mandiri_c2c_settlement()    
-    if _QPROX.INIT_BNI is True:
-        sleep(.5)
-        print("pyt: Triggering BNI Settlement Sync...")
-        _Sync.start_sync_settlement_bni()
-        #Disable Automation
-        # sleep(2)
-        # print("pyt: Triggering BNI Balance Update Check...")
-        # _TopupService.start_define_topup_slot_bni()
-    if _QPROX.INIT_BRI is True:
-        # TODO Add Special Handler For BRI Initiation
-        # sleep(.5)
-        # print("pyt: Triggering BRI Balance Validation...")
-        pass
-    if _QPROX.INIT_BCA is True:
-        # TODO Add Special Handler For BCA Initiation
-        sleep(1)
-        print("pyt: Triggering Topup BCA Init Config...")
-        _QPROX.start_init_config_bca()
-        print("pyt: Triggering Topup BCA Reset Session...")
-        _TopupService.reset_bca_session()
-    if _Common.EDC['mobile'] is True:
-        sleep(1)
-        print("pyt: [INFO] Re/Binding VM Machine Into EDC...")
-        _EDC.edc_mobile_start_binding_edc()
-    print("pyt: Syncing Ads Content...")
-    sleep(1)
-    _KioskService.start_define_ads(3)
-    print("pyt: Reset Open Previous Pending Jobs...")
-    sleep(2)
-    _KioskService.reset_open_job()
-    print("pyt: Do Pending Request Jobs...")
-    sleep(1)
-    _Sync.start_do_pending_request_job()
-    # print("pyt: Do Pending Upload Jobs...")
-    # sleep(1)
-    # _Sync.start_do_pending_upload_job()
+    # Move Sync Task Into Another Thread
     view.show()
     app.exec_()
     del view

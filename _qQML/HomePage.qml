@@ -46,6 +46,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
+            _SLOT.start_startup_task();
             _SLOT.start_idle_mode();
             resetPopup();
             _SLOT.user_action_log('[Homepage] Standby Mode');
