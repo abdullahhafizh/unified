@@ -692,7 +692,6 @@ Base{
             onDoubleClicked: {
                 _SLOT.user_action_log('Press "Reset Printer" Button');
                 console.log('Reset Printer is Pressed..!');
-                _SLOT.stop_idle_mode();
                 resetMediaTimer();
                 spvButton = false;
                 _SLOT.start_reset_receipt_count('0');
