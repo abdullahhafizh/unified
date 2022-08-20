@@ -336,7 +336,7 @@ def reduce_product_stock_by_slot_status(status):
         'updatedAt' : _Helper.now()
     }
     sql = " UPDATE ProductStock SET stock = stock-1, updatedAt = :updatedAt WHERE status = :status AND updatedAt <> :updatedAt "
-    return _Database.insert_update(sql=sql, parameter=param)
+    return _Database.insert_update(sql=sql, parameter=param, log=True)
 
 
 def check_product_stock(param):
