@@ -1237,8 +1237,11 @@ if __name__ == '__main__':
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(SCREEN_WIDTH, SCREEN_HEIGHT - 1)
+    
     # Test App View In The Front Process
     view.show()
+    app.exec_()
+
     print("pyt: Table Adjustment/Migration...")
     _KioskService.direct_alter_table([
         "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
@@ -1368,5 +1371,5 @@ if __name__ == '__main__':
     # sleep(1)
     # _Sync.start_do_pending_upload_job()
     # view.show()
-    app.exec_()
+    # app.exec_()
     del view
