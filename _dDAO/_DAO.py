@@ -335,7 +335,7 @@ def reduce_product_stock_by_slot_status(status):
         'status'    : status,
         'updatedAt' : _Helper.now()
     }
-    sql = " UPDATE ProductStock SET stock = stock-1, updatedAt = :updatedAt WHERE status = :status AND updatedAt <> :updatedAt "
+    sql = " UPDATE ProductStock SET stock = stock-1, updatedAt = :updatedAt WHERE stock > 0 AND status = :status AND updatedAt <> :updatedAt "
     return _Database.insert_update(sql=sql, parameter=param, log=True)
 
 
@@ -351,7 +351,7 @@ def check_product_status_by_pid(param):
 
 def reduce_product_stock_by_pid(param):
     param['updatedAt'] = _Helper.now()
-    sql = " UPDATE ProductStock SET stock = stock-1, updatedAt = :updatedAt WHERE pid = :pid AND updatedAt <> :updatedAt "
+    sql = " UPDATE ProductStock SET stock = stock-1, updatedAt = :updatedAt WHERE stock > 0 AND pid = :pid AND updatedAt <> :updatedAt "
     return _Database.insert_update(sql=sql, parameter=param)
 
 
