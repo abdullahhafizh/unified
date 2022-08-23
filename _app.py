@@ -1150,6 +1150,7 @@ def startup_task():
             "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",
             "ALTER TABLE Settlement ADD COLUMN trx_type VARCHAR(100);",	
             "ALTER TABLE TransactionsNew ADD COLUMN trxNotes TEXT;",	
+            "UPDATE ProductStock SET updatedAt = 1 WHERE updatedAt IS NULL;",
             ])
         sleep(1)
         _KioskService.alter_table('_CashBox.sql')
