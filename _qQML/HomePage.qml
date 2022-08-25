@@ -40,6 +40,8 @@ Base{
 
     property var cardStockTreshold: 25
 
+    property var cdReadiness: undefined
+
     width: globalWidth
     height: globalHeight
     isPanelActive: false
@@ -78,6 +80,8 @@ Base{
         base.result_topup_readiness.connect(topup_readiness);
         base.result_auth_qprox.connect(ka_login_status);
         base.result_get_ppob_product.connect(get_ppob_product);
+        base.result_cd_readiness.connect(get_cd_readiness);
+
     }
 
     Component.onDestruction: {
@@ -90,6 +94,14 @@ Base{
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_auth_qprox.disconnect(ka_login_status);
         base.result_get_ppob_product.disconnect(get_ppob_product);
+        base.result_cd_readiness.disconnect(get_cd_readiness);
+    }
+
+    function get_cd_readiness(c){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_cd_readiness', c, now);
+        cdReadiness = JSON.parse(c);
+        _SLOT.kiosk_get_product_stock();
     }
 
     function resetPopup(){
@@ -198,19 +210,19 @@ Base{
         console.log('get_product_stock', now, p);
         productData = JSON.parse(p);
         if (productData.length > 0) {
-            if (productData[0].status==101 && parseInt(productData[0].stock) > 0) productCount1 = parseInt(productData[0].stock);
-            if (productData[0].status==102 && parseInt(productData[0].stock) > 0) productCount2 = parseInt(productData[0].stock);
-            if (productData[0].status==103 && parseInt(productData[0].stock) > 0) productCount3 = parseInt(productData[0].stock);
+            if (productData[0].status==101 && parseInt(productData[0].stock && (cdReadiness.port1 != 'N/A')) > 0) productCount1 = parseInt(productData[0].stock);
+            if (productData[0].status==102 && parseInt(productData[0].stock && (cdReadiness.port2 != 'N/A')) > 0) productCount2 = parseInt(productData[0].stock);
+            if (productData[0].status==103 && parseInt(productData[0].stock && (cdReadiness.port3 != 'N/A')) > 0) productCount3 = parseInt(productData[0].stock);
         }
         if (productData.length > 1) {
-            if (productData[1].status==101 && parseInt(productData[1].stock) > 0) productCount1 = parseInt(productData[1].stock);
-            if (productData[1].status==102 && parseInt(productData[1].stock) > 0) productCount2 = parseInt(productData[1].stock);
-            if (productData[1].status==103 && parseInt(productData[1].stock) > 0) productCount3 = parseInt(productData[1].stock);
+            if (productData[1].status==101 && parseInt(productData[1].stock && (cdReadiness.port1 != 'N/A')) > 0) productCount1 = parseInt(productData[1].stock);
+            if (productData[1].status==102 && parseInt(productData[1].stock && (cdReadiness.port2 != 'N/A')) > 0) productCount2 = parseInt(productData[1].stock);
+            if (productData[1].status==103 && parseInt(productData[1].stock && (cdReadiness.port3 != 'N/A')) > 0) productCount3 = parseInt(productData[1].stock);
         }
         if (productData.length > 2) {
-            if (productData[2].status==101 && parseInt(productData[2].stock) > 0) productCount1 = parseInt(productData[2].stock);
-            if (productData[2].status==102 && parseInt(productData[2].stock) > 0) productCount2 = parseInt(productData[2].stock);
-            if (productData[2].status==103 && parseInt(productData[2].stock) > 0) productCount3 = parseInt(productData[2].stock);
+            if (productData[2].status==101 && parseInt(productData[2].stock && (cdReadiness.port1 != 'N/A')) > 0) productCount1 = parseInt(productData[2].stock);
+            if (productData[2].status==102 && parseInt(productData[2].stock && (cdReadiness.port2 != 'N/A')) > 0) productCount2 = parseInt(productData[2].stock);
+            if (productData[2].status==103 && parseInt(productData[2].stock && (cdReadiness.port3 != 'N/A')) > 0) productCount3 = parseInt(productData[2].stock);
         }
         productCountAll = productCount1 + productCount2 + productCount3;
         product_stock_status1.color = get_card_stock_color(productCount1);
@@ -263,6 +275,9 @@ Base{
 
         if (kiosk.refund_feature == '0') showCustomerInfo = true;
         else showCustomerInfo = false;
+
+        // Call CD Readiness & Product Stock
+        _SLOT.kiosk_get_cd_readiness();
 
         main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
     }
