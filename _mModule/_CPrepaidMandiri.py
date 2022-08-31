@@ -117,7 +117,8 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                 if "data" in dataJ.keys():
                     temp_json = dataJ["data"]
                     if code == "200" or code == 200:
-                        dataToCard = temp_json["dataToCard"]
+                        # API Will Not Send dataToCard For New Applet
+                        # dataToCard = temp_json["dataToCard"]
                         amount = temp_json["amount"]
                         lastbalance = int(card_prev_balance) + int(amount)
                         session = temp_json["session"]
