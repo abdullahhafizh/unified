@@ -142,11 +142,16 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     
                     strdate = datetime.datetime.now().strftime("%d%m%y%H%M%S")
                     pendingtopup = format(int(pendingtopup),'x')
-                    pendingtopup = pendingtopup.zfill(8)
+                    pendingtopup = pendingtopup.zfill(8).upper()
                     combinedata = strdate + "0000000000000000000000000000" + session + pendingtopup + "0000000000000000000011111111111111111111"
                     lendata = len(combinedata) / 2
-                    lendata = format(lendata, 'x')
+                    lendata = format(lendata, 'x').upper()
                     dataToCard = "00E50000" + lendata + combinedata
+                    LOG.fw("019:strdate:", strdate)
+                    LOG.fw("019:session:", session)
+                    LOG.fw("019:pendingtopup:", pendingtopup)
+                    LOG.fw("019:combinedata:", combinedata)
+                    LOG.fw("019:lendata:", lendata)
                     res_str, resreport = prepaid.topup_apdusend(b"255", dataToCard)
                     ErrorCode = res_str
 
