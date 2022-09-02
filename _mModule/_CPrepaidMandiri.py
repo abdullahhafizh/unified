@@ -133,6 +133,18 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                 
                 code = str(code)
                 res_str = code
+                
+                # override fun generateNewApp(updateBalanceResponse: UpdateBalanceResponse): String {
+                #     val date = Date()
+                #     val StrDate = SimpleDateFormat("ddMMyyHHmmss", Locale.getDefault()).format(date)
+                #     val strdata = (StrDate
+                #             + "0000000000000000000000000000"
+                #             + updateBalanceResponse.data.session
+                #             + "0123456789ABCDEF00112233445566778899"
+                #             + String.format("%08X", updateBalanceResponse.data.pendingTopup.toInt())
+                #             + "0000000000000000000011111111111111111111")
+                #     return String.format("%s%02X%s", "00E50000", strdata.length / 2, strdata)
+                # }
 
                 if code == "200" or code == 200:
                     res = True
@@ -145,7 +157,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     pendingtopup = format(int(pendingtopup),'x')
                     pendingtopup = pendingtopup.zfill(8).upper()
                     LOG.fw("019:pendingtopup:", pendingtopup)
-                    combinedata = strdate + "0000000000000000000000000000" + session + pendingtopup + "0000000000000000000011111111111111111111"
+                    combinedata = strdate + "0000000000000000000000000000" + session + '0123456789ABCDEF00112233445566778899' + pendingtopup + "0000000000000000000011111111111111111111"
+                    # 00E50000 46 020922150625 0000000000000000000000000000 4A515F8316A11ECF 0123456789ABCDEF00112233445566778899 0000000A 0000000000000000000011111111111111111111
+                    # CMD   LENGTH      STR_DATE    PAD_LEFT    SESSION     PAD_MIDDLE  PENDING_TOPUP_HEX   PAD_RIGHT   
                     LOG.fw("019:combinedata:", combinedata)
                     lendata = len(combinedata) / 2
                     lendata = format(int(lendata), 'x').upper()
