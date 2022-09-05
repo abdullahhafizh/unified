@@ -611,7 +611,7 @@ Base{
                     }
                 }
                 // Handle Simultane Check Topup Status Every 3 seconds
-                if (tvc_loading.counter%3==0) _SLOT.start_check_topup_readiness();
+                if (tvc_loading.counter % VIEW_CONFIG.check_topup_period==0) _SLOT.start_check_topup_readiness();
 
                 //Handle Button Blinking
                 tvc_loading.counter -= 1

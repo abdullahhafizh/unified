@@ -602,6 +602,8 @@ if len(VIEW_CONFIG.keys()) == 0:
         VIEW_CONFIG = TJ_VIEW_CONFIG
     if THEME_NAME.lower() in ['kai', 'kci']:
         VIEW_CONFIG = KAI_VIEW_CONFIG
+        
+VIEW_CONFIG['check_topup_period'] = int(_ConfigParser.get_set_value('GENERAL', 'check^topup^period', '3'))
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
