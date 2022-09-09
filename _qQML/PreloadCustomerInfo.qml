@@ -18,7 +18,7 @@ Base{
     property var textThird: 'Mesin ini akan menggunakan bukti elektronik via WhatsApps dan tidak mengeluarkan Struk Pembelian/Transaksi.'
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 37 : 32
-    property int boxSize: 200
+    property int boxSize: (globalScreenType == '1') ? 200 : 190
 
     visible: false
     opacity: visible ? 1.0 : 0.0
