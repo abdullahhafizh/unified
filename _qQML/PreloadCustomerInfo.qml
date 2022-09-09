@@ -33,7 +33,6 @@ Base{
 //    }
 
     MainTitle{
-        id: main_title
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 150 : 125
         anchors.horizontalCenter: parent.horizontalCenter
@@ -46,24 +45,22 @@ Base{
     Row{
         id: box_cust_info
         width: parent.width
-        height: parent.height - main_title.anchors.topMargin
+        height: parent.height - 125
         spacing: 250
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        GroupBox{
+        Rectangle{
+            id: rectangle
             visible: (VIEW_CONFIG.bill_type !== 'MEI')
             width: parent.width
             height: boxSize
+            color: "transparent"
 
             AnimatedImage  {
                 id: mainImage
                 width: boxSize
                 height: boxSize
-                anchors.horizontalCenterOffset: -500
-                anchors.verticalCenterOffset: -150
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
                 scale: 1
                 source: "source/whatsapp_icon_tnc.png"
                 fillMode: Image.PreserveAspectFit
@@ -72,15 +69,13 @@ Base{
             Text{
                 id: mainText
                 text: textMain
-                anchors.horizontalCenterOffset: 160
-                anchors.verticalCenterOffset: -150
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: mainImage.right
+                anchors.leftMargin: 10
                 font.pixelSize: textSize
-                width: 1000
+                width: parent.width - boxSize
                 height: boxSize
                 wrapMode: Text.WordWrap
                 horizontalAlignment: Text.AlignLeft
-                anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: false
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter
@@ -88,18 +83,15 @@ Base{
             }
         }
 
-        GroupBox{
+        Rectangle{
             width: parent.width
             height: boxSize
+            color: "transparent"
 
             AnimatedImage  {
                 id: slaveImage
                 width: boxSize
                 height: boxSize
-                anchors.horizontalCenterOffset: -500
-                anchors.verticalCenterOffset: 100
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
                 scale: 1
                 source: "source/inputcode_icon_tnc.png"
                 fillMode: Image.PreserveAspectFit
@@ -108,15 +100,13 @@ Base{
             Text{
                 id: slaveText
                 text: textSlave
-                anchors.horizontalCenterOffset: 160
-                anchors.verticalCenterOffset: 100
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: slaveImage.right
+                anchors.leftMargin: 10
                 horizontalAlignment: Text.AlignLeft
                 font.pixelSize: textSize
-                width: 1000
+                width: parent.width - boxSize
                 height: boxSize
                 wrapMode: Text.WordWrap
-                anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: false
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter
@@ -124,18 +114,15 @@ Base{
             }
         }
 
-        GroupBox{
+        Rectangle{
             width: parent.width
             height: boxSize
+            color: "transparent"
 
             AnimatedImage  {
                 id: thirdImage
                 width: boxSize
                 height: boxSize
-                anchors.horizontalCenterOffset: -500
-                anchors.verticalCenterOffset: 350
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
                 scale: 1
                 source: "source/receipt_qr_icon_tnc.png"
                 fillMode: Image.PreserveAspectFit
@@ -144,15 +131,13 @@ Base{
             Text{
                 id: thirdText
                 text: textThird
-                anchors.horizontalCenterOffset: 160
-                anchors.verticalCenterOffset: 350
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: thirdImage.right
+                anchors.leftMargin: 10
                 horizontalAlignment: Text.AlignLeft
                 font.pixelSize: textSize
-                width: 1000
+                width: parent.width - boxSize
                 height: boxSize
                 wrapMode: Text.WordWrap
-                anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: false
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter
