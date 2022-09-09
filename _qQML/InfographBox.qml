@@ -1,7 +1,8 @@
 import QtQuick 2.0
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 
 Rectangle{
+    id: rectangle
     property var _boxSize: 200
     property var _width: 1280
     property var _padding: 20
@@ -16,6 +17,8 @@ Rectangle{
         id: _image
         width: _boxSize
         height: _boxSize
+        anchors.left: parent.left
+        anchors.leftMargin: _padding * 2
         scale: 1
         source: "source/inputcode_icon_tnc.png"
         fillMode: Image.PreserveAspectFit
@@ -28,7 +31,7 @@ Rectangle{
         anchors.leftMargin: _padding
         horizontalAlignment: Text.AlignLeft
         font.pixelSize: _textSize
-        width: parent.width - _boxSize - _padding
+        width: parent.width - _boxSize - (_padding * 3)
         height: _boxSize
         wrapMode: Text.WordWrap
         font.bold: false
