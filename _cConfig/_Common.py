@@ -1090,12 +1090,15 @@ MEI = {
     "port": MEI_PORT,
     "status": True if MEI_PORT is not None and digit_in(MEI_PORT) is True else False
 }
-# BILL Device Type For GRG / NV
+# BILL Device Type For GRG / NV / MEI
 BILL = {
     "port": BILL_PORT,
     "type": BILL_TYPE,
     "status": True if BILL_PORT is not None and digit_in(BILL_PORT) is True else False
 }
+
+VIEW_CONFIG['bill_type'] = BILL_TYPE
+
 # Handling MEI VS BILL Duplicate Port Activation
 if BILL['status'] is True:
     MEI['status'] = False

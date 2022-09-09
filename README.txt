@@ -33,3 +33,14 @@ Installer:
 - sudo apt-get install libqt5multimedia5-plugins qml-module-qtmultimedia
 - sudo apt install vlc
 
+###Jika Menggunakan VM Lunari Untuk Kalibrasi Touchsreen###
+- sudo modprobe -r usbtouchscreen
+- sudo apt install xinput-calibrator
+- sudo apt install xserver-xorg-input-evdev
+- sudo apt remove xserver-xorg-input-libinput
+- xinput --list (cari device KTURSLibG URSG101)
+- xinput_calibrator --device (device_id)
+- copy output calibrator ke /usr/local/X11/xorg.conf.d/99-calibration.conf
+- 
+
+
