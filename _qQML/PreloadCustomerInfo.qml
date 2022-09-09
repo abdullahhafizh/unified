@@ -1,15 +1,15 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 
 
 Base{
     id:preload_customer_info
 //    color: "silver"
 
-//    property var globalScreenType: '1'
-//    height: (globalScreenType=='2') ? 1024 : 1080
-//    width: (globalScreenType=='2') ? 1280 : 1920
+    property var globalScreenType: '1'
+    height: (globalScreenType=='2') ? 1024 : 1080
+    width: (globalScreenType=='2') ? 1280 : 1920
 
     isBoxNameActive: false
     property var whatsappNo: ''
@@ -51,100 +51,115 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
-        AnimatedImage  {
-            id: mainImage
-            width: boxSize
-            height: boxSize
-            anchors.horizontalCenterOffset: -500
-            anchors.verticalCenterOffset: -150
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            scale: 1
-            source: "source/whatsapp_icon_tnc.png"
-            fillMode: Image.PreserveAspectFit
+        GroupBox{
             visible: (VIEW_CONFIG.bill_type !== 'MEI')
+            width: parent.width
+            height: boxSize
+
+            AnimatedImage  {
+                id: mainImage
+                width: boxSize
+                height: boxSize
+                anchors.horizontalCenterOffset: -500
+                anchors.verticalCenterOffset: -150
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                scale: 1
+                source: "source/whatsapp_icon_tnc.png"
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Text{
+                id: mainText
+                text: textMain
+                anchors.horizontalCenterOffset: 160
+                anchors.verticalCenterOffset: -150
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: textSize
+                width: 1000
+                height: boxSize
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignLeft
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.bold: false
+                color: 'white'
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Ubuntu"
+            }
         }
 
-        Text{
-            id: mainText
-            text: textMain
-            anchors.horizontalCenterOffset: 160
-            anchors.verticalCenterOffset: -150
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: textSize
-            width: 1000
+        GroupBox{
+            width: parent.width
             height: boxSize
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignLeft
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.bold: false
-            color: 'white'
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Ubuntu"
-            visible: (VIEW_CONFIG.bill_type !== 'MEI')
+
+            AnimatedImage  {
+                id: slaveImage
+                width: boxSize
+                height: boxSize
+                anchors.horizontalCenterOffset: -500
+                anchors.verticalCenterOffset: 100
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                scale: 1
+                source: "source/inputcode_icon_tnc.png"
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Text{
+                id: slaveText
+                text: textSlave
+                anchors.horizontalCenterOffset: 160
+                anchors.verticalCenterOffset: 100
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: textSize
+                width: 1000
+                height: boxSize
+                wrapMode: Text.WordWrap
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.bold: false
+                color: 'white'
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Ubuntu"
+            }
         }
 
-        AnimatedImage  {
-            id: slaveImage
-            width: boxSize
+        GroupBox{
+            width: parent.width
             height: boxSize
-            anchors.horizontalCenterOffset: -500
-            anchors.verticalCenterOffset: 100
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            scale: 1
-            source: "source/inputcode_icon_tnc.png"
-            fillMode: Image.PreserveAspectFit
+
+            AnimatedImage  {
+                id: thirdImage
+                width: boxSize
+                height: boxSize
+                anchors.horizontalCenterOffset: -500
+                anchors.verticalCenterOffset: 350
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                scale: 1
+                source: "source/receipt_qr_icon_tnc.png"
+                fillMode: Image.PreserveAspectFit
+            }
+
+            Text{
+                id: thirdText
+                text: textThird
+                anchors.horizontalCenterOffset: 160
+                anchors.verticalCenterOffset: 350
+                anchors.verticalCenter: parent.verticalCenter
+                horizontalAlignment: Text.AlignLeft
+                font.pixelSize: textSize
+                width: 1000
+                height: boxSize
+                wrapMode: Text.WordWrap
+                anchors.horizontalCenter: parent.horizontalCenter
+                font.bold: false
+                color: 'white'
+                verticalAlignment: Text.AlignVCenter
+                font.family: "Ubuntu"
+            }
         }
 
-        Text{
-            id: slaveText
-            text: textSlave
-            anchors.horizontalCenterOffset: 160
-            anchors.verticalCenterOffset: 100
-            anchors.verticalCenter: parent.verticalCenter
-            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: textSize
-            width: 1000
-            height: boxSize
-            wrapMode: Text.WordWrap
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.bold: false
-            color: 'white'
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Ubuntu"
-        }
-
-        AnimatedImage  {
-            id: thirdImage
-            width: boxSize
-            height: boxSize
-            anchors.horizontalCenterOffset: -500
-            anchors.verticalCenterOffset: 350
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-            scale: 1
-            source: "source/receipt_qr_icon_tnc.png"
-            fillMode: Image.PreserveAspectFit
-        }
-
-        Text{
-            id: thirdText
-            text: textThird
-            anchors.horizontalCenterOffset: 160
-            anchors.verticalCenterOffset: 350
-            anchors.verticalCenter: parent.verticalCenter
-            horizontalAlignment: Text.AlignLeft
-            font.pixelSize: textSize
-            width: 1000
-            height: boxSize
-            wrapMode: Text.WordWrap
-            anchors.horizontalCenter: parent.horizontalCenter
-            font.bold: false
-            color: 'white'
-            verticalAlignment: Text.AlignVCenter
-            font.family: "Ubuntu"
-        }
     }
 
 
