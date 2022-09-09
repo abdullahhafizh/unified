@@ -1,15 +1,15 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 
 
 Base{
     id:preload_customer_info
 //    color: "silver"
 
-    property var globalScreenType: '1'
-    height: (globalScreenType=='2') ? 1024 : 1080
-    width: (globalScreenType=='2') ? 1280 : 1920
+//    property var globalScreenType: '1'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
 
     isBoxNameActive: false
     property var whatsappNo: ''
@@ -44,10 +44,8 @@ Base{
 
     Column{
         id: box_cust_info
-        width: parent.width
-        height: parent.height - 125
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
         spacing: 50
 
         InfographBox{
