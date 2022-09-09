@@ -42,107 +42,37 @@ Base{
 
     }
 
-    Row{
+    Column{
         id: box_cust_info
         width: parent.width
         height: parent.height - 125
-        spacing: 250
-        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: 50
 
-        Rectangle{
-            id: rectangle
+        InfographBox{
+            id: info1
+            _boxSize: boxSize
+            _textSize: textSize
+            textContent: textMain
+            imageSource: "source/whatsapp_icon_tnc.png"
             visible: (VIEW_CONFIG.bill_type !== 'MEI')
-            width: parent.width
-            height: boxSize
-            color: "transparent"
-
-            AnimatedImage  {
-                id: mainImage
-                width: boxSize
-                height: boxSize
-                scale: 1
-                source: "source/whatsapp_icon_tnc.png"
-                fillMode: Image.PreserveAspectFit
-            }
-
-            Text{
-                id: mainText
-                text: textMain
-                anchors.left: mainImage.right
-                anchors.leftMargin: 10
-                font.pixelSize: textSize
-                width: parent.width - boxSize
-                height: boxSize
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignLeft
-                font.bold: false
-                color: 'white'
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Ubuntu"
-            }
         }
 
-        Rectangle{
-            width: parent.width
-            height: boxSize
-            color: "transparent"
-
-            AnimatedImage  {
-                id: slaveImage
-                width: boxSize
-                height: boxSize
-                scale: 1
-                source: "source/inputcode_icon_tnc.png"
-                fillMode: Image.PreserveAspectFit
-            }
-
-            Text{
-                id: slaveText
-                text: textSlave
-                anchors.left: slaveImage.right
-                anchors.leftMargin: 10
-                horizontalAlignment: Text.AlignLeft
-                font.pixelSize: textSize
-                width: parent.width - boxSize
-                height: boxSize
-                wrapMode: Text.WordWrap
-                font.bold: false
-                color: 'white'
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Ubuntu"
-            }
+        InfographBox{
+            id: info2
+            _boxSize: boxSize
+            _textSize: textSize
+            textContent: textSlave
+            imageSource: "source/inputcode_icon_tnc.png"
         }
 
-        Rectangle{
-            width: parent.width
-            height: boxSize
-            color: "transparent"
-
-            AnimatedImage  {
-                id: thirdImage
-                width: boxSize
-                height: boxSize
-                scale: 1
-                source: "source/receipt_qr_icon_tnc.png"
-                fillMode: Image.PreserveAspectFit
-            }
-
-            Text{
-                id: thirdText
-                text: textThird
-                anchors.left: thirdImage.right
-                anchors.leftMargin: 10
-                horizontalAlignment: Text.AlignLeft
-                font.pixelSize: textSize
-                width: parent.width - boxSize
-                height: boxSize
-                wrapMode: Text.WordWrap
-                font.bold: false
-                color: 'white'
-                verticalAlignment: Text.AlignVCenter
-                font.family: "Ubuntu"
-            }
+        InfographBox{
+            id: info3
+            _boxSize: boxSize
+            _textSize: textSize
+            textContent: textThird
+            imageSource: "source/receipt_qr_icon_tnc.png"
         }
 
     }
