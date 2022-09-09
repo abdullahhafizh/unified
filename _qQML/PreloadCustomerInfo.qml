@@ -50,6 +50,7 @@ Base{
 
         InfographBox{
             id: info1
+            _width: parent.width
             _boxSize: boxSize
             _textSize: textSize
             textContent: textMain
@@ -59,6 +60,7 @@ Base{
 
         InfographBox{
             id: info2
+            _width: parent.width
             _boxSize: boxSize
             _textSize: textSize
             textContent: textSlave
@@ -67,6 +69,7 @@ Base{
 
         InfographBox{
             id: info3
+            _width: parent.width
             _boxSize: boxSize
             _textSize: textSize
             textContent: textThird
