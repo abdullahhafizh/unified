@@ -18,7 +18,7 @@ Base{
     property var textThird: 'Mesin ini akan menggunakan bukti elektronik via WhatsApps dan tidak mengeluarkan Struk Pembelian/Transaksi.'
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 37 : 32
-    property int boxSize: (globalScreenType == '1') ? 200 : 190
+    property int boxSize: (globalScreenType == '1') ? 200 : 160
 
     visible: false
     opacity: visible ? 1.0 : 0.0
@@ -50,7 +50,7 @@ Base{
 
         InfographBox{
             id: info1
-            _width: parent.width
+            _width: globalWidth
             _boxSize: boxSize
             _textSize: textSize
             textContent: textMain
@@ -60,7 +60,7 @@ Base{
 
         InfographBox{
             id: info2
-            _width: parent.width
+            _width: globalWidth
             _boxSize: boxSize
             _textSize: textSize
             textContent: textSlave
@@ -69,7 +69,7 @@ Base{
 
         InfographBox{
             id: info3
-            _width: parent.width
+            _width: globalWidth
             _boxSize: boxSize
             _textSize: textSize
             textContent: textThird
