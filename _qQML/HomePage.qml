@@ -52,7 +52,7 @@ Base{
             console.log('Platform Check', IS_LINUX, IS_WINDOWS);
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
-            _SLOT.user_action_log('[Homepage] Standby Mode');
+            _SLOT.user_action_log('[Homepage] Standby Mode, UI Simplify ('+showCustomerInfo+')');
             press = "0";
             resetMediaTimer();
             kalogButton = false;
