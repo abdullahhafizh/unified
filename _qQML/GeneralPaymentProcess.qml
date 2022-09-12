@@ -1346,7 +1346,8 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !transactionInProcess && receivedPayment < totalPrice
+//        visible: !transactionInProcess && receivedPayment < totalPrice
+        visible: !transactionInProcess
 
         MouseArea{
             anchors.fill: parent
