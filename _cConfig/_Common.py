@@ -607,7 +607,7 @@ VIEW_CONFIG['check_topup_period'] = int(_ConfigParser.get_set_value('GENERAL', '
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
-VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_value('GENERAL', 'host^qr^generator', '---')
+VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
