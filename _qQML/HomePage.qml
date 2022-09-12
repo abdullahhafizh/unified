@@ -210,19 +210,19 @@ Base{
         console.log('get_product_stock', now, p);
         productData = JSON.parse(p);
         if (productData.length > 0) {
-            if (productData[0].status==101 && parseInt(productData[0].stock && (cdReadiness.port1 != 'N/A')) > 0) productCount1 = parseInt(productData[0].stock);
-            if (productData[0].status==102 && parseInt(productData[0].stock && (cdReadiness.port2 != 'N/A')) > 0) productCount2 = parseInt(productData[0].stock);
-            if (productData[0].status==103 && parseInt(productData[0].stock && (cdReadiness.port3 != 'N/A')) > 0) productCount3 = parseInt(productData[0].stock);
+            if (productData[0].status==101 && parseInt(productData[0].stock) > 0 && cdReadiness.port1 !== 'N/A') productCount1 = parseInt(productData[0].stock);
+            if (productData[0].status==102 && parseInt(productData[0].stock) > 0 && cdReadiness.port2 !== 'N/A') productCount2 = parseInt(productData[0].stock);
+            if (productData[0].status==103 && parseInt(productData[0].stock) > 0 && cdReadiness.port3 !== 'N/A') productCount3 = parseInt(productData[0].stock);
         }
         if (productData.length > 1) {
-            if (productData[1].status==101 && parseInt(productData[1].stock && (cdReadiness.port1 != 'N/A')) > 0) productCount1 = parseInt(productData[1].stock);
-            if (productData[1].status==102 && parseInt(productData[1].stock && (cdReadiness.port2 != 'N/A')) > 0) productCount2 = parseInt(productData[1].stock);
-            if (productData[1].status==103 && parseInt(productData[1].stock && (cdReadiness.port3 != 'N/A')) > 0) productCount3 = parseInt(productData[1].stock);
+            if (productData[1].status==101 && parseInt(productData[1].stock) > 0 && cdReadiness.port1 !== 'N/A') productCount1 = parseInt(productData[1].stock);
+            if (productData[1].status==102 && parseInt(productData[1].stock) > 0 && cdReadiness.port2 !== 'N/A') productCount2 = parseInt(productData[1].stock);
+            if (productData[1].status==103 && parseInt(productData[1].stock) > 0 && cdReadiness.port3 !== 'N/A') productCount3 = parseInt(productData[1].stock);
         }
         if (productData.length > 2) {
-            if (productData[2].status==101 && parseInt(productData[2].stock && (cdReadiness.port1 != 'N/A')) > 0) productCount1 = parseInt(productData[2].stock);
-            if (productData[2].status==102 && parseInt(productData[2].stock && (cdReadiness.port2 != 'N/A')) > 0) productCount2 = parseInt(productData[2].stock);
-            if (productData[2].status==103 && parseInt(productData[2].stock && (cdReadiness.port3 != 'N/A')) > 0) productCount3 = parseInt(productData[2].stock);
+            if (productData[2].status==101 && parseInt(productData[2].stock) > 0 && cdReadiness.port1 !== 'N/A') productCount1 = parseInt(productData[2].stock);
+            if (productData[2].status==102 && parseInt(productData[2].stock) > 0 && cdReadiness.port2 !== 'N/A') productCount2 = parseInt(productData[2].stock);
+            if (productData[2].status==103 && parseInt(productData[2].stock) > 0 && cdReadiness.port3 !== 'N/A') productCount3 = parseInt(productData[2].stock);
         }
         productCountAll = productCount1 + productCount2 + productCount3;
         product_stock_status1.color = get_card_stock_color(productCount1);

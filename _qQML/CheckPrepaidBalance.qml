@@ -192,6 +192,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('get_balance', now, text);
         press = '0';
+        if (VIEW_CONFIG.ui_simplify) global_frame.close();
         popup_loading.close();
         preload_check_card.close();
         standard_notif_view.buttonEnabled = true;
@@ -420,6 +421,9 @@ Base{
         switch(mode){
         case 'check_balance':
             autoTrigger = false;
+            var textMain = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda';
+            var textSlave = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai kartu terbaca';
+            switch_frame('source/reader_sign.png', textMain, textSlave, 'closeWindow|5', false );
             _SLOT.start_check_card_balance();
             break;
         case 'update_balance_online':
