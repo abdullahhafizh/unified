@@ -30,7 +30,7 @@ Rectangle{
 
     function release_select(){
         isSelected = false;
-        empty_text.text = (outOfService) ? 'RUSAK' : 'TIDAK TERSEDIA'
+        empty_text.text = (outOfService) ? 'TIDAK TERSEDIA' : 'HABIS';
     }
 
 
@@ -58,7 +58,7 @@ Rectangle{
         id: empty_text
         anchors.fill: parent
         color: VIEW_CONFIG.text_color
-        text: (outOfService) ? 'RUSAK' : 'TIDAK TERSEDIA'
+        text: (outOfService) ? 'TIDAK TERSEDIA' : 'HABIS'
         font.bold: true
         visible: (itemStock == 0 || isSelected || outOfService)
         horizontalAlignment: Text.AlignHCenter
@@ -105,7 +105,7 @@ Rectangle{
         Text {
             id: item_price
             color: VIEW_CONFIG.background_color
-            text: (itemStock > 0) ? 'Rp. ' + FUNC.insert_dot(itemPrice) + ',-' : (outOfService) ? 'RUSAK' : 'HABIS'
+            text: (itemStock > 0) ? 'Rp. ' + FUNC.insert_dot(itemPrice) + ',-' : (outOfService) ? 'TIDAK TERSEDIA' : 'HABIS'
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
