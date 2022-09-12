@@ -14,7 +14,7 @@ Rectangle {
     Image{
         id: raw_image
         width: parent.width
-        height: parent.height - 20
+        height: parent.height - 25
         anchors.top: parent.top
         anchors.topMargin: 0
         source: sourceImage
@@ -32,7 +32,7 @@ Rectangle {
         style: Text.Sunken
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: true
-        font.pixelSize: 23
+        font.pixelSize: 22
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"

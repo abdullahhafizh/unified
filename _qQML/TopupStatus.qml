@@ -35,10 +35,10 @@ Rectangle{
         color: "white"
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignHCenter
         style: Text.Sunken
         font.bold: true
-        font.pixelSize: 32
+        font.pixelSize: 30
         font.family: "Ubuntu"
     }
 
