@@ -100,7 +100,6 @@ Base{
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop();
-            loading_view.close();
         }
     }
 
@@ -1163,14 +1162,6 @@ Base{
 
 
     //==============================================================
-
-
-    LoadingView{
-        id:loading_view
-        z: 99
-        show_text: "Finding Flight..."
-    }
-
 
     GlobalConfirmationFrame{
         id: global_confirmation_frame

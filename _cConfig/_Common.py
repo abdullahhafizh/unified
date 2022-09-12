@@ -607,6 +607,7 @@ VIEW_CONFIG['check_topup_period'] = int(_ConfigParser.get_set_value('GENERAL', '
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
+VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_value('GENERAL', 'host^qr^generator', '---')
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
@@ -886,7 +887,7 @@ CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^tex
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
 ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
 ERECEIPT_ASYNC_MODE = True if _ConfigParser.get_set_value('PRINTER', 'ereceipt^async^mode', '1') == '1' else False
-# ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:10107/generate/qr/')
+ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:2020/')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
 EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False

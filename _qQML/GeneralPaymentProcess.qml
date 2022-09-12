@@ -1541,6 +1541,7 @@ Base{
 //        }
         press = '0';
         my_timer.stop();
+        
         transaction_completeness.mainTitle = mode;
         transaction_completeness.open();
         _SLOT.start_play_audio('please_input_wa_no');

@@ -111,6 +111,7 @@ Base{
         whatsappNo = '62' + whatsappNo.substring(1);
 //            imageSource = 'http://mac.local:5050/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
         imageSource = 'http://apiv2.mdd.co.id:10107/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
+        if (VIEW_CONFIG.host_qr_generator !== '---') imageSource = VIEW_CONFIG.host_qr_generator + '/whatsapp-ereceipt/'+whatsappNo+'/'+data.trxid;
         imageQr.source = imageSource;
         console.log('ereceipt_qr', imageSource);
         popup_loading.close();
@@ -321,35 +322,6 @@ Base{
 
 
     //==============================================================
-
-    ConfirmView{
-        id: confirm_view
-        show_text: "Dear Customer"
-        show_detail: "Proceed This ?."
-        z: 99
-        MouseArea{
-            id: ok_confirm_view
-            x: 668; y:691
-            width: 190; height: 50;
-            onClicked: {
-            }
-        }
-    }
-
-    NotifView{
-        id: notif_view
-        isSuccess: false
-        show_text: "Dear Customer"
-        show_detail: "Please Ensure You have set Your plan correctly."
-        z: 99
-    }
-
-    LoadingView{
-        id:loading_view
-        z: 99
-        show_text: "Finding Flight..."
-
-    }
 
     PopupLoading{
         id: popup_loading

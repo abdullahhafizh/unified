@@ -107,7 +107,7 @@ def do_get_qr(payload, mode, serialize=True):
         s, r = _NetworkAccess.post_to_url(url=url, param=param, custom_timeout=60)
         HISTORY_GET_QR.append(mode+'_'+param['trx_id'])
         if s == 200 and r['response']['code'] == 200:
-            if '10107' in url:
+            if '10107' in url or '2020' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
             if _Common.STORE_QR_TO_LOCAL is True:
                 r['data']['qr'] = serialize_qr(r['data']['qr'], payload['trx_id'])
