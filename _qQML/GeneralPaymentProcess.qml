@@ -73,7 +73,7 @@ Base{
                 if (VIEW_CONFIG.promo_check){
                     do_check_promo();
                 } else {
-                    initial_process();
+                    initial_process('stack_activation');
                 }
             } else {
                 popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
@@ -447,7 +447,7 @@ Base{
                     }
                 _SLOT.start_do_confirm_promo(JSON.stringify(payload));
             }
-            if (VIEW_CONFIG.printer_type=='whatsapp'){
+            if (VIEW_CONFIG.printer_type.toLowerCase()=='whatsapp'){
                 hide_all_cancel_button();
                 reset_variables_to_default();
                 // Trigger Deposit Update Balance Check
