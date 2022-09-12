@@ -98,6 +98,9 @@ Base{
             if (cardData==undefined){
                 if (VIEW_CONFIG.ui_simplify){
                     console.log('Direct Call Check Balance');
+                    var textMain = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda';
+                    var textSlave = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai';
+                    switch_frame('source/reader_sign.png', textMain, textSlave, 'closeWindow|10', false );
                     _SLOT.start_check_card_balance();
                 } else {
                     open_preload_notif();
