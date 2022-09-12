@@ -49,10 +49,10 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
-            console.log('Platform Check', IS_LINUX, IS_WINDOWS);
+            console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification);
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
-            _SLOT.user_action_log('[Homepage] Standby Mode, UI Simplify : ',uiSimplification);
+            _SLOT.user_action_log('[Homepage] Standby Mode');
             press = "0";
             resetMediaTimer();
             kalogButton = false;
