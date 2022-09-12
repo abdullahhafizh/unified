@@ -275,21 +275,24 @@ Base{
                 card_show_1.itemName = item_name;
                 card_show_1.itemImage = item_image;
                 card_show_1.itemPrice = item_price.toString();
-                card_show_1.itemStock = (cdReadiness.port1 != 'N/A') ? parseInt(item_stock) : 0;
+                card_show_1.itemStock =  parseInt(item_stock);
+                card_show_1.outOfService = (cdReadiness.port1 == 'N/A')
             }
             if (item_status==102){
                 card_show_2.visible = true;
                 card_show_2.itemName = item_name;
                 card_show_2.itemImage = item_image;
                 card_show_2.itemPrice = item_price.toString();
-                card_show_2.itemStock = (cdReadiness.port2 != 'N/A') ? parseInt(item_stock) : 0;
+                card_show_2.itemStock =  parseInt(item_stock);
+                card_show_2.outOfService = (cdReadiness.port2 == 'N/A')
             }
             if (item_status==103){
                 card_show_3.visible = true;
                 card_show_3.itemName = item_name;
                 card_show_3.itemImage = item_image;
                 card_show_3.itemPrice = item_price.toString();
-                card_show_3.itemStock = (cdReadiness.port3 != 'N/A') ? parseInt(item_stock) : 0;
+                card_show_3.itemStock =  parseInt(item_stock);
+                card_show_3.outOfService = (cdReadiness.port3 == 'N/A')
             }
             if (item_stock!='0') availItems.push(item_id);
         }

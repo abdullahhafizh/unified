@@ -16,6 +16,7 @@ Rectangle{
     property var itemStock: 10
     property var itemDesc: 'Product Description Product Description Product Description Product Description Product Description Product Description'
     property bool isSelected: false
+    property bool outOfService: false
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -29,7 +30,7 @@ Rectangle{
 
     function release_select(){
         isSelected = false;
-        empty_text.text = 'TIDAK TERSEDIA'
+        empty_text.text = (outOfService) ? 'RUSAK' : 'TIDAK TERSEDIA'
     }
 
 
@@ -50,16 +51,16 @@ Rectangle{
         anchors.fill: parent
         color: VIEW_CONFIG.background_color
         opacity: .6
-        visible: (itemStock == 0 || isSelected)
+        visible: (itemStock == 0 || isSelected || outOfService)
     }
 
     Text {
         id: empty_text
         anchors.fill: parent
         color: VIEW_CONFIG.text_color
-        text: 'TIDAK TERSEDIA'
+        text: (outOfService) ? 'RUSAK' : 'TIDAK TERSEDIA'
         font.bold: true
-        visible: (itemStock == 0 || isSelected)
+        visible: (itemStock == 0 || isSelected || outOfService)
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         wrapMode: Text.WordWrap
@@ -104,7 +105,7 @@ Rectangle{
         Text {
             id: item_price
             color: VIEW_CONFIG.background_color
-            text: (itemStock > 0) ? 'Rp. ' + FUNC.insert_dot(itemPrice) + ',-' : 'HABIS'
+            text: (itemStock > 0) ? 'Rp. ' + FUNC.insert_dot(itemPrice) + ',-' : (outOfService) ? 'RUSAK' : 'HABIS'
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
