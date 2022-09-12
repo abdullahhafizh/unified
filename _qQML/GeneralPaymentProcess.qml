@@ -70,8 +70,11 @@ Base{
             reset_variables_to_default();
 //            if (details != undefined) console.log('product details', JSON.stringify(details));
             if (preloadNotif==undefined){
-//                initial_process();
-                do_check_promo();
+                if (VIEW_CONFIG.promo_check){
+                    do_check_promo();
+                } else {
+                    initial_process();
+                }
             } else {
                 popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
                 cancel_button_input_number.visible = true;
@@ -1404,7 +1407,7 @@ Base{
         press = '0';
         if (msg==undefined) msg = 'Siapkan Uang Anda, Tunggu Hingga Bill Acceptor Siap';
         if (img==undefined) img = 'source/insert_money.png';
-        switch_frame(img, msg, 'Lembar Uang Yang Diterima', 'closeWindow', false )
+        switch_frame(img, msg, 'Lembar Uang Yang Diterima', 'closeWindow|10', false )
         return;
     }
 

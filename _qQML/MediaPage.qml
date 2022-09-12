@@ -11,6 +11,7 @@ Rectangle{
     color: "black"
     width: parseInt(SCREEN_WIDTH)
     height: parseInt(SCREEN_HEIGHT)
+
     property string img_path: "/_vVideo/"
     property url img_path_: "../.." + img_path
     property var qml_pic
@@ -110,7 +111,7 @@ Rectangle{
             moving_text.text = "Playlist Media File(s) Not Found";
             mediaOnPlaying = false;
             my_layer.pop();
-            return
+            return;
         } else {
             var files = JSON.parse(result);
             media_files = files.result;
@@ -230,8 +231,7 @@ Rectangle{
         width: parent.width
         height: 100
         color: "transparent"
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 0
+        anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
         Rectangle{

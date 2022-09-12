@@ -429,7 +429,7 @@ Base{
         popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Silakan Hubungi Layanan Pelanggan Bank Penerbit Kartu Anda', 'backToMain', false );
+            switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Angkat dan tempelkan kembali kartu Anda pada reader', 'backToMain', false );
             _SLOT.start_play_audio('card_not_detected');
             // switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
             return;

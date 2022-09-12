@@ -32,7 +32,7 @@ Rectangle {
         style: Text.Sunken
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: true
-        font.pixelSize: 25
+        font.pixelSize: 23
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
         font.family: "Ubuntu"

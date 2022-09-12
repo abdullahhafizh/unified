@@ -201,7 +201,7 @@ Base{
             cardNo = '';
             balance = 0;
             bankType = undefined;
-            switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Silakan Hubungi Layanan Pelanggan Bank Penerbit Kartu Anda', 'backToMain', false );
+            switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Angkat dan tempelkan kembali kartu Anda pada reader', 'backToMain', false );
             _SLOT.start_play_audio('card_not_detected');
             return;
         }
