@@ -285,7 +285,7 @@ Base{
         selectedPayment = method;
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
         press = '0';
-        //Auto Payment Process
+        //Auto Payment Process Base on UI Simplification
         if (VIEW_CONFIG.ui_simplify) {
             do_set_confirm(method);
         }

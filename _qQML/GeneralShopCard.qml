@@ -219,8 +219,11 @@ Base{
         }
         selectedPayment = p;
         press = '0';
-//        var get_details = get_cart_details(p);
-//        my_layer.push(general_payment_process, {details: get_details});
+        //Auto Payment Process Base on UI Simplification
+        if (VIEW_CONFIG.ui_simplify) {
+            var get_details = get_cart_details(p);
+            my_layer.push(general_payment_process, {details: get_details});
+        }
     }
 
     function get_status_multiple(m){
