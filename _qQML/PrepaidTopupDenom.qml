@@ -96,7 +96,12 @@ Base{
             globalDetails = undefined;
             frameWithButton = false;
             if (cardData==undefined){
-                open_preload_notif();
+                if (VIEW_CONFIG.ui_simplify){
+                    console.log('Direct Call Check Balance');
+                    _SLOT.start_check_card_balance();
+                } else {
+                    open_preload_notif();
+                }
             } else {
                 parse_cardData(cardData);
             }
@@ -565,12 +570,7 @@ Base{
     }
 
     function open_preload_notif(){
-        if (VIEW_CONFIG.ui_simplify){
-            console.log('Direct Call Check Balance');
-            _SLOT.start_check_card_balance();
-        } else {
-            preload_check_card.open();
-        }
+        preload_check_card.open();
     }
 
     function false_notif(closeMode, textSlave){
