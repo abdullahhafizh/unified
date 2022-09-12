@@ -1913,7 +1913,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         status, response = _NetworkAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
         # Drop API Response if using Async
         if _Common.ERECEIPT_ASYNC_MODE is True:
-            return
+            pass
         else:
             if status == 200:
                 output = response['response']
