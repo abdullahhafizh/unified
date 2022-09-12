@@ -414,6 +414,8 @@ Base{
     }
 
     function define_card(idx){
+        //Validate Product Stock
+        if (productData[idx].stock == 0) return;
         defaultItemPrice = parseInt(productData[idx].sell_price);
 //        var selected_stock = parseInt(productData[idx].stock);
 //        if (selected_stock < 4) count4.visible = false;
@@ -421,16 +423,19 @@ Base{
 //        if (selected_stock < 2) count2.visible = false;
         switch(idx){
         case 0:
+            if (card_show_1.outOfService) return;
             card_show_1.set_select();
             card_show_2.release_select();
             card_show_3.release_select();
             break;
         case 1:
+            if (card_show_2.outOfService) return;
             card_show_1.release_select();
             card_show_2.set_select();
             card_show_3.release_select();
             break;
         case 2:
+            if (card_show_3.outOfService) return;
             card_show_1.release_select();
             card_show_2.release_select();
             card_show_3.set_select();
