@@ -8,7 +8,7 @@ Base {
     property var img_: "source/img_clock.png"
     property var show_text: "COMING SOON"
     property var secondColor: "#f03838"
-    property int timer_value: 60
+    property int timer_value: (VIEW_CONFIG.page_timer)
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){

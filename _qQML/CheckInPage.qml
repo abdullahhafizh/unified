@@ -8,7 +8,7 @@ Base{
     isPanelActive: true
     textPanel: (language=="INA") ?  qsTr("Input Data Flight Anda") : qsTr("Enter Your Flight Details")
     imgPanel: "source/form_filling.png"
-    property int timer_value: 120
+    property int timer_value: (VIEW_CONFIG.page_timer * 2)
     property var textCodeInput: ""
     property var textNameInput: ""
     property var textCardInput: ""

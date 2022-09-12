@@ -9,7 +9,7 @@ Base{
     textPanel: (language=="INA") ?  "Dapatkan Boarding Pass" : "Get Your Boarding Pass"
     imgPanel: "source/icon/boarding-pass-white.png"
     imgPanelScale: 0.85
-    property int timer_value: 60
+    property int timer_value: (VIEW_CONFIG.page_timer)
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){

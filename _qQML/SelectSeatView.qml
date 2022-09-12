@@ -11,7 +11,7 @@ Base{
     textPanel: (language=='INA') ?  qsTr('Pilih Kursi Anda') : qsTr("Choose Your Seat")
     imgPanel: "source/icon/seat-white.png"
     imgPanelScale: 0.8
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
 
     property variant seatData: []
     property var flightData: undefined

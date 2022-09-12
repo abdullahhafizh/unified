@@ -10,7 +10,7 @@ Base{
     id: general_payment_process
     width: parseInt(SCREEN_WIDTH)
     height: parseInt(SCREEN_HEIGHT)
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'

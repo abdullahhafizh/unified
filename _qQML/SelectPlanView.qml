@@ -12,7 +12,7 @@ Base{
     isPanelActive: true
     textPanel: qsTr("Set Flight Plan")
     property var language_: base.language
-    property int timer_value: 150
+    property int timer_value: (VIEW_CONFIG.page_timer)
     property var originFrom: undefined
     property var destinationTo: undefined
     property bool isWithReturn: false

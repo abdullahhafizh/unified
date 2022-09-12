@@ -8,7 +8,7 @@ Base{
     isPanelActive: true
     textPanel: qsTr("Input Test Amount")
     imgPanel: "source/choose_payment.png"
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property int max_count: 25
     property var press: "0"
     property var textInput: ""

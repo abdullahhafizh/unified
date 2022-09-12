@@ -14,7 +14,7 @@ Base{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     property var press: '0'
-    property int timer_value: 60
+    property int timer_value: (VIEW_CONFIG.page_timer)
     property var whatsappNo: 'tersebut'
     property var textMain: 'Pada Android, Tekan Tombol Icon CAMERA di Pojok Kiri Atas'
     property var textSlave: 'Pada IOS, Tekan Tombol Icon CAMERA di Tengah Bawah'

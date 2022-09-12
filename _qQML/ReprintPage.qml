@@ -8,7 +8,7 @@ Base{
     isPanelActive: true
     textPanel: qsTr("Enter Your Booking Code")
     imgPanel: "source/form_filling.png"
-    property int timer_value: 60
+    property int timer_value: (VIEW_CONFIG.page_timer)
     property var textInput: ""
     property int max_count: 6
     property var baseFare: ""

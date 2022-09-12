@@ -4,7 +4,7 @@ import QtWebKit 3.0
 
 Base{
     property var geturl: "http://103.28.14.165:88/tibox/index.php?tid=110001"
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){

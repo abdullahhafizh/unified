@@ -4,7 +4,7 @@ import QtWebKit 3.0
 //import "screen.js" as SCREEN
 
 Base{
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var consId: "16718"
     property var ipServer: "202.4.170.9"
     property var webUrl: "http://"+ipServer+"/LionWebCheckIn/StartWebCheckIn.aspx?consID="+consId

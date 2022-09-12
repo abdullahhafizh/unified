@@ -10,7 +10,7 @@ Base{
     isPanelActive: true
     textPanel: qsTr("Please Fill In Data")
     imgPanel: "source/form_filling.png"
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property int max_count: 100
     property var orderList//: ["adt", "cnn", "inf"]
     property var selectedPrice //: [1]

@@ -11,7 +11,7 @@ Base{
     textPanel: qsTr("Choose Your Departure")
     imgPanel: "source/take_off_panel.png"
     imgPanelScale: 0.8
-    property int timer_value: 150
+    property int timer_value: (VIEW_CONFIG.page_timer)
     property var list_flight: undefined
     property var departDate
     property var returnDate

@@ -9,7 +9,7 @@ Base{
     textPanel: qsTr("Select Available Payment")
     imgPanel: "source/pembayaran_putih.png"
     imgPanelScale: 0.8
-    property int timer_value: 360
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var amount
     property var product
     property var useMode: "TICKET_FLIGHT" //["TICKET","PARKIR","OTHER"]

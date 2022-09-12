@@ -12,7 +12,7 @@ Base{
 //                property var globalScreenType: '2'
 //                height: (globalScreenType=='2') ? 1024 : 1080
 //                width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 600
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'

@@ -8,7 +8,7 @@ Base{
     isPanelActive: true
     textPanel: qsTr("Flight Summary")
     imgPanel: "source/form_filling.png"
-    property int timer_value: 60
+    property int timer_value: (VIEW_CONFIG.page_timer)
     property var detail_info: undefined
     property bool debuggingMode: false
     property var press: '0'

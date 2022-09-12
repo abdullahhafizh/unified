@@ -11,7 +11,7 @@ Base{
     imgPanel: "source/input.png"
     colorPanel: "#4286f4"
     imgPanelScale: 0.8
-    property int timer_value: 150
+    property int timer_value: (VIEW_CONFIG.page_timer)
     property int max_count: 50
     property var press: "0"
     property var textInput: ""

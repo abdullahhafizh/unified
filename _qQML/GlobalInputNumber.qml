@@ -14,7 +14,7 @@ Base{
     isHeaderActive: true
     isBoxNameActive: false
     textPanel: 'Pilih Produk'
-    property int timer_value: 240
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property int max_count: 24
     property int min_count: 10
     property var press: "0"

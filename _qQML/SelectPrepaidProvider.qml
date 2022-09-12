@@ -5,7 +5,7 @@ import "base_function.js" as FUNC
 
 Base{
     id: select_provider_prepaid
-    property int timer_value: 90
+    property int timer_value: VIEW_CONFIG.page_timer
     property var press: '0'
     idx_bg: 1
     property var denomTopup: undefined

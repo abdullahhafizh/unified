@@ -5,7 +5,7 @@ import "base_function.js" as FUNC
 
 Base{
     id: base_page
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var details: undefined
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'

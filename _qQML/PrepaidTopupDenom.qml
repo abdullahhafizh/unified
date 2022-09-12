@@ -10,7 +10,7 @@ Base{
 //        property var globalScreenType: '2'
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 120
+    property int timer_value: (VIEW_CONFIG.page_timer * 2)
     property var press: '0'
     idx_bg: 0
     property var denomTopup: undefined

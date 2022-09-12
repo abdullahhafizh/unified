@@ -5,7 +5,7 @@ import "base_function.js" as FUNC
 
 Base{
     id: shop_prepaid_card
-    property int timer_value: 300
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var cart: undefined
     property var shop_type: 'shop' // 'shop', 'topup'

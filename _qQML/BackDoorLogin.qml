@@ -9,7 +9,7 @@ Base{
     textPanel: qsTr("Input Secret Code")
     imgPanel: "source/input_secret_code.png"
     imgPanelScale: 0.8
-    property int timer_value: 750
+    property int timer_value: (VIEW_CONFIG.page_timer  * 3)
     property int max_count: 50
     property var press: "0"
     property var textInput: ""

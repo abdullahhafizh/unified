@@ -13,7 +13,7 @@ Base{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     property var press: '0'
-    property int timer_value: 600
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var userData: undefined
     property var productData: undefined
     property variant actionList: []

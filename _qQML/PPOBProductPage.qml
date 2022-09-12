@@ -7,7 +7,7 @@ Base{
 //        property var globalScreenType: '2'
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 60*5
+    property int timer_value: (VIEW_CONFIG.page_timer * 3)
     isPanelActive: false
     isHeaderActive: true
     isBoxNameActive: false

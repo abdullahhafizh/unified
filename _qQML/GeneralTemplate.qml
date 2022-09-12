@@ -9,7 +9,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: "Scan/Input The Numbers"
-    property int timer_value: 60
+    property int timer_value: (VIEW_CONFIG.page_timer)
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
