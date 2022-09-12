@@ -36,7 +36,7 @@ Base{
     property variant allowedUpdateBalanceOnline: VIEW_CONFIG.bank_ubal_online
 
     property var selectedMenu: ''
-    property bool showCustomerInfo: !VIEW_CONFIG.ui_simplify
+    property bool uiSimplification: VIEW_CONFIG.ui_simplify
 
 
     imgPanel: 'source/cek_saldo.png'
@@ -46,7 +46,7 @@ Base{
         if(Stack.status==Stack.Activating){
             _SLOT.start_get_topup_readiness();
             //Check UI Simplificatoin
-            if (showCustomerInfo){
+            if (!uiSimplification){
                 preload_check_card.open();
             } else {
                 command_to_reader(actionMode);
@@ -373,7 +373,7 @@ Base{
                         return;
                     }
                     selectedMenu = 'TOPUP_PREPAID';
-                    if (showCustomerInfo){
+                    if (!uiSimplification){
                         preload_customer_info.open();
                         return;
                     }

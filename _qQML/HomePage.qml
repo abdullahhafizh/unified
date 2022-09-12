@@ -33,7 +33,7 @@ Base{
     property bool showCardStock: false
 
     property var selectedMenu: ''
-    property bool showCustomerInfo: !VIEW_CONFIG.ui_simplify
+    property bool uiSimplification: VIEW_CONFIG.ui_simplify
 
     property bool spvButton: false
     property bool comboSaktiFeature: false
@@ -52,7 +52,7 @@ Base{
             console.log('Platform Check', IS_LINUX, IS_WINDOWS);
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
-            _SLOT.user_action_log('[Homepage] Standby Mode, UI Simplify ('+showCustomerInfo+')');
+            _SLOT.user_action_log('[Homepage] Standby Mode, UI Simplify : ',uiSimplification);
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -273,8 +273,8 @@ Base{
             preload_customer_info.whatsappNo = VIEW_CONFIG.whatsapp_no;
         }
 
-        if (kiosk.refund_feature == '0') showCustomerInfo = true;
-        else showCustomerInfo = false;
+        // if (kiosk.refund_feature == '0') uiSimplification = true;
+        // else uiSimplification = false;
 
         // Call CD Readiness & Product Stock
         _SLOT.kiosk_get_cd_readiness();
@@ -392,11 +392,11 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
 //                    selectedMenu = 'CHECK_BALANCE';
-//                    if (showCustomerInfo){
+//                    if (uiSimplification){
 //                        preload_customer_info.open();
 //                        return;
 //                    }
-                    my_layer.push(check_balance, {showCustomerInfo: showCustomerInfo});
+                    my_layer.push(check_balance, {uiSimplification: uiSimplification});
                 }
             }
         }
@@ -426,7 +426,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
-                    if (showCustomerInfo){
+                    if (!uiSimplification){
                         preload_customer_info.open();
                         return;
                     }
@@ -463,7 +463,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PREPAID';
-                    if (showCustomerInfo){
+                    if (!uiSimplification){
                         preload_customer_info.open();
                         return;
                     }
@@ -522,7 +522,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PPOB';
-                    if (showCustomerInfo){
+                    if (!uiSimplification){
                         preload_customer_info.open();
                         return;
                     }
