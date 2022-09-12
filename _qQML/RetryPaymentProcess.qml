@@ -731,7 +731,7 @@ Base{
         transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
-        abc.counter = 300;
+        abc.counter = 90;
         my_timer.restart();
 //        _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
     }
@@ -841,7 +841,7 @@ Base{
                 back_button.visible = true;
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
-                abc.counter = 300;
+                abc.counter = 90;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }

@@ -11,7 +11,7 @@ Base{
 //            property var globalScreenType: '1'
 //            height: (globalScreenType=='2') ? 1024 : 1080
 //            width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 300
+    property int timer_value: 90
     property var press: '0'
     property var cardNo: ''
     property var balance: '0'

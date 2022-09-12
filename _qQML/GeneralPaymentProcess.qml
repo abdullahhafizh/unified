@@ -11,7 +11,7 @@ Base{
 //                property var globalScreenType: '2'
 //                height: (globalScreenType=='2') ? 1024 : 1080
 //                width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 300
+    property int timer_value: 90
     property var press: '0'
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
@@ -827,7 +827,7 @@ Base{
         transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
-        abc.counter = 300;
+        abc.counter = 120;
         my_timer.restart();
         // _SLOT.system_action_log('PAYMENT_TRANSACTION_COMPLETE | ' + mode.toUpperCase(), 'debug')
     }
@@ -937,7 +937,7 @@ Base{
             } else {
                 global_frame.close();
                 receivedPayment = parseInt(grgResult);
-                abc.counter = 300;
+                abc.counter = 90;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }

@@ -5,7 +5,7 @@ import "base_function.js" as FUNC
 
 Base{
     id: general_shop_card
-    property int timer_value: 300
+    property int timer_value: 90
     property var press: '0'
     property var cart: undefined
     property var shop_type: 'shop' // 'shop', 'topup', 'ppob'
