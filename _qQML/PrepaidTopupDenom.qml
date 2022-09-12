@@ -285,6 +285,10 @@ Base{
         selectedPayment = method;
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
         press = '0';
+        //Auto Payment Process
+        if (VIEW_CONFIG.ui_simplify) {
+            do_set_confirm(method);
+        }
 //        do_set_confirm('process_selected_payment');
 //        var rows = [
 //            {label: 'Tanggal', content: now},
@@ -534,7 +538,8 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
-        visible: (selectedDenom > 0 && selectedPayment != undefined)
+//        visible: (selectedDenom > 0 && selectedPayment != undefined)
+        visible: (selectedDenom > 0 && selectedPayment != undefined && !VIEW_CONFIG.ui_simplify)
         modeReverse: true
         blinkingMode: true
         MouseArea{

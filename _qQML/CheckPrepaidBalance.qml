@@ -36,7 +36,7 @@ Base{
     property variant allowedUpdateBalanceOnline: VIEW_CONFIG.bank_ubal_online
 
     property var selectedMenu: ''
-    property bool showCustomerInfo: true
+    property bool showCustomerInfo: !VIEW_CONFIG.ui_simplify
 
 
     imgPanel: 'source/cek_saldo.png'
@@ -45,7 +45,12 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             _SLOT.start_get_topup_readiness();
-            preload_check_card.open();
+            //Check UI Simplificatoin
+            if (showCustomerInfo){
+                preload_check_card.open();
+            } else {
+                command_to_reader(actionMode);
+            }
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
@@ -57,7 +62,8 @@ Base{
             ableTopupCode = undefined;
             actionMode = 'check_balance';
             buttonCardHistory = false;
-            autoTrigger = true;
+            //Set Auto Trigger To False
+            autoTrigger = false;
             bigButtonPadding = 150;
         }
         if(Stack.status==Stack.Deactivating){
@@ -410,6 +416,21 @@ Base{
         global_frame.open();
     }
 
+    function command_to_reader(mode){
+        switch(mode){
+        case 'check_balance':
+            autoTrigger = false;
+            _SLOT.start_check_card_balance();
+            break;
+        case 'update_balance_online':
+            _SLOT.start_update_balance_online(bankName);
+            break;
+        case 'get_card_log_history':
+            _SLOT.start_get_card_history(bankName);
+            break;
+        }
+    }
+
     Text {
         id: label_card_no
         color: "white"
@@ -699,18 +720,7 @@ Base{
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT"');
                     popup_loading.open();
-                    switch(actionMode){
-                    case 'check_balance':
-                        autoTrigger = false;
-                        _SLOT.start_check_card_balance();
-                        break;
-                    case 'update_balance_online':
-                        _SLOT.start_update_balance_online(bankName);
-                        break;
-                    case 'get_card_log_history':
-                        _SLOT.start_get_card_history(bankName);
-                        break;
-                    }
+                    command_to_reader(actionMode);
                     preload_check_card.close();
                 }
             }

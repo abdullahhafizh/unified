@@ -33,7 +33,7 @@ Base{
     property bool showCardStock: false
 
     property var selectedMenu: ''
-    property bool showCustomerInfo: true
+    property bool showCustomerInfo: !VIEW_CONFIG.ui_simplify
 
     property bool spvButton: false
     property bool comboSaktiFeature: false
