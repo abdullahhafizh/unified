@@ -425,6 +425,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_balance', text, now);
         press = '0';
+        if (VIEW_CONFIG.ui_simplify) global_frame.close();
         popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
