@@ -789,6 +789,7 @@ Base{
         }
     }
 
+
     function do_promo_data_adjustment(mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         if (promoCodeActive) {
@@ -1186,7 +1187,7 @@ Base{
             popup_loading.open();
             return;
         } else if (details.payment == 'cash') {
-            open_preload_notif();
+            // open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
             _SLOT.start_set_direct_price(totalPrice.toString());
@@ -1689,6 +1690,41 @@ Base{
         title_text: 'SILAKAN MASUKKAN UANG ANDA PADA BILL ACCEPTOR\nPASTIKAN GUNAKAN LEMBAR UANG YANG BAIK'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
         boxColor: VIEW_CONFIG.frame_color
+
+    }
+
+    Row{
+        id: group_acceptable_money
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: notice_no_change.visible
+        scale: 1
+        spacing: 15
+        Image{
+            id: img_count_100
+            scale: 0.9
+            source: "source/100rb.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            id: img_count_50
+            scale: 0.9
+            source: "source/50rb.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            id: img_count_20
+            scale: 0.9
+            source: "source/20rb.png"
+            fillMode: Image.PreserveAspectFit
+        }
+        Image{
+            id: img_count_10
+            scale: 0.9
+            source: "source/10rb.png"
+            fillMode: Image.PreserveAspectFit
+        }
 
     }
 

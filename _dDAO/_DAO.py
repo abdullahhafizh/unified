@@ -325,6 +325,11 @@ def get_product_stock():
     return _Database.get_query(sql=sql, parameter={})
 
 
+def get_all_product_stock():
+    sql = " SELECT stid, tid, pid, status, stock FROM ProductStock WHERE status > 1 "
+    return _Database.get_query(sql=sql, parameter={})
+
+
 def get_product_stock_by_slot_status(status):
     sql = " SELECT stock FROM ProductStock WHERE status = {} ".format(str(status))
     return _Database.get_query(sql=sql, parameter={})

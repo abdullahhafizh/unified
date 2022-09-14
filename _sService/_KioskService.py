@@ -568,6 +568,7 @@ def machine_summary():
     }
     try:
         summary['gui_version'] = _Common.VERSION
+        summary['product_stock'] = _DAO.get_all_product_stock()
         if _Common.IS_WINDOWS:
             pythoncom.CoInitialize()
             COMP = wmi.WMI()

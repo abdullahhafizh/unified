@@ -122,38 +122,38 @@ Base{
 //            verticalAlignment: Text.AlignVCenter
 //            font.family:"Ubuntu"
 //        }
-        Row{
-            id: group_acceptable_money
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible:  (imageSource=='source/insert_money.png')
-            scale: 1
-            spacing: 16
-            Image{
-                id: img_count_100
-                scale: 0.9
-                source: "source/100rb.png"
-                fillMode: Image.PreserveAspectFit
-            }
-            Image{
-                id: img_count_50
-                scale: 0.9
-                source: "source/50rb.png"
-                fillMode: Image.PreserveAspectFit
-            }
-            Image{
-                id: img_count_20
-                scale: 0.9
-                source: "source/20rb.png"
-                fillMode: Image.PreserveAspectFit
-            }
-            Image{
-                id: img_count_10
-                scale: 0.9
-                source: "source/10rb.png"
-                fillMode: Image.PreserveAspectFit
-            }
+//        Row{
+//            id: group_acceptable_money
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            visible:  (imageSource=='source/insert_money.png')
+//            scale: 1
+//            spacing: 16
+//            Image{
+//                id: img_count_100
+//                scale: 0.9
+//                source: "source/100rb.png"
+//                fillMode: Image.PreserveAspectFit
+//            }
+//            Image{
+//                id: img_count_50
+//                scale: 0.9
+//                source: "source/50rb.png"
+//                fillMode: Image.PreserveAspectFit
+//            }
+//            Image{
+//                id: img_count_20
+//                scale: 0.9
+//                source: "source/20rb.png"
+//                fillMode: Image.PreserveAspectFit
+//            }
+//            Image{
+//                id: img_count_10
+//                scale: 0.9
+//                source: "source/10rb.png"
+//                fillMode: Image.PreserveAspectFit
+//            }
 
-        }
+//        }
     }
 
     AnimatedImage  {
