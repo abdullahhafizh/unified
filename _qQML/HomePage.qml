@@ -210,20 +210,21 @@ Base{
         console.log('get_product_stock', now, p);
         productData = JSON.parse(p);
         if (productData.length > 0) {
-            if (productData[0].status==101 && parseInt(productData[0].stock) > 0 && cdReadiness.port1 !== 'N/A') productCount1 = parseInt(productData[0].stock);
-            if (productData[0].status==102 && parseInt(productData[0].stock) > 0 && cdReadiness.port2 !== 'N/A') productCount2 = parseInt(productData[0].stock);
-            if (productData[0].status==103 && parseInt(productData[0].stock) > 0 && cdReadiness.port3 !== 'N/A') productCount3 = parseInt(productData[0].stock);
+            if (productData[0].status==101 && parseInt(productData[0].stock) > 0 && cdReadiness.cd1 !== 'N/A') productCount1 = parseInt(productData[0].stock);
+            if (productData[0].status==102 && parseInt(productData[0].stock) > 0 && cdReadiness.cd2 !== 'N/A') productCount2 = parseInt(productData[0].stock);
+            if (productData[0].status==103 && parseInt(productData[0].stock) > 0 && cdReadiness.cd3 !== 'N/A') productCount3 = parseInt(productData[0].stock);
         }
         if (productData.length > 1) {
-            if (productData[1].status==101 && parseInt(productData[1].stock) > 0 && cdReadiness.port1 !== 'N/A') productCount1 = parseInt(productData[1].stock);
-            if (productData[1].status==102 && parseInt(productData[1].stock) > 0 && cdReadiness.port2 !== 'N/A') productCount2 = parseInt(productData[1].stock);
-            if (productData[1].status==103 && parseInt(productData[1].stock) > 0 && cdReadiness.port3 !== 'N/A') productCount3 = parseInt(productData[1].stock);
+            if (productData[1].status==101 && parseInt(productData[1].stock) > 0 && cdReadiness.cd1 !== 'N/A') productCount1 = parseInt(productData[1].stock);
+            if (productData[1].status==102 && parseInt(productData[1].stock) > 0 && cdReadiness.cd2 !== 'N/A') productCount2 = parseInt(productData[1].stock);
+            if (productData[1].status==103 && parseInt(productData[1].stock) > 0 && cdReadiness.cd3 !== 'N/A') productCount3 = parseInt(productData[1].stock);
         }
         if (productData.length > 2) {
-            if (productData[2].status==101 && parseInt(productData[2].stock) > 0 && cdReadiness.port1 !== 'N/A') productCount1 = parseInt(productData[2].stock);
-            if (productData[2].status==102 && parseInt(productData[2].stock) > 0 && cdReadiness.port2 !== 'N/A') productCount2 = parseInt(productData[2].stock);
-            if (productData[2].status==103 && parseInt(productData[2].stock) > 0 && cdReadiness.port3 !== 'N/A') productCount3 = parseInt(productData[2].stock);
+            if (productData[2].status==101 && parseInt(productData[2].stock) > 0 && cdReadiness.cd1 !== 'N/A') productCount1 = parseInt(productData[2].stock);
+            if (productData[2].status==102 && parseInt(productData[2].stock) > 0 && cdReadiness.cd2 !== 'N/A') productCount2 = parseInt(productData[2].stock);
+            if (productData[2].status==103 && parseInt(productData[2].stock) > 0 && cdReadiness.cd3 !== 'N/A') productCount3 = parseInt(productData[2].stock);
         }
+        //TODO: Add 3 More Card Dispenser Indicator
         productCountAll = productCount1 + productCount2 + productCount3;
         product_stock_status1.color = get_card_stock_color(productCount1);
         product_stock_status2.color = get_card_stock_color(productCount2);
@@ -391,11 +392,7 @@ Base{
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
-//                    selectedMenu = 'CHECK_BALANCE';
-//                    if (uiSimplification){
-//                        preload_customer_info.open();
-//                        return;
-//                    }
+                    selectedMenu = 'CHECK_BALANCE';
                     my_layer.push(check_balance, {uiSimplification: uiSimplification});
                 }
             }
@@ -407,7 +404,7 @@ Base{
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
-            text_: qsTr("Topup Saldo")
+            text_: qsTr("Topup/Isi Saldo")
             text2_: qsTr("Topup Balance")
             modeReverse: false
             visible: false
@@ -418,16 +415,12 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.user_action_log('Press "TopUp Saldo"');
-//                    if (!printerAvailable){
-//                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
-//                        return
-//                    }
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
-                    if (!uiSimplification){
-                        preload_customer_info.open();
+                    if (uiSimplification){
+                        preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
                     my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
@@ -455,16 +448,12 @@ Base{
                     _SLOT.user_action_log('Press "Beli Kartu"');
                     if (press!="0") return;
                     press = "1";
-//                    if (!printerAvailable){
-//                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
-//                        return
-//                    }
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PREPAID';
-                    if (!uiSimplification){
-                        preload_customer_info.open();
+                    if (uiSimplification){
+                        preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
                     my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
@@ -513,17 +502,13 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.user_action_log('Press "Bayar/Beli"');
-//                    if (!printerAvailable){
-//                        show_message_notification('Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.');
-//                        return
-//                    }
                     resetMediaTimer();
     //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PPOB';
-                    if (!uiSimplification){
-                        preload_customer_info.open();
+                    if (uiSimplification){
+                        preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
                     popup_loading.open();
@@ -1157,73 +1142,74 @@ Base{
     PreloadCustomerInfo{
         id: preload_customer_info
 
-        CircleButton{
-            id: cancel_button_preload_info
-            anchors.left: parent.left
-            anchors.leftMargin: 30
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            button_text: 'BATAL'
-            modeReverse: true
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    preload_customer_info.close();
-                    selectedMenu = '';
-                    _SLOT.start_idle_mode();
-//                    _SLOT.kiosk_get_product_stock();
-                    _SLOT.get_kiosk_status();
-                    press = "0";
-                    resetMediaTimer();
-                }
-            }
-        }
+//        CircleButton{
+//            id: cancel_button_preload_info
+//            anchors.left: parent.left
+//            anchors.leftMargin: 30
+//            anchors.bottom: parent.bottom
+//            anchors.bottomMargin: 30
+//            button_text: 'BATAL'
+//            modeReverse: true
+//            MouseArea{
+//                anchors.fill: parent
+//                onClicked: {
+//                    preload_customer_info.close();
+//                    selectedMenu = '';
+//                    _SLOT.start_idle_mode();
+////                    _SLOT.kiosk_get_product_stock();
+//                    _SLOT.get_kiosk_status();
+//                    press = "0";
+//                    resetMediaTimer();
+//                }
+//            }
+//        }
 
-        BoxTitle{
-            id: printer_paper_status_info
-            width: 900
-            height: 60
-            visible: false
-            modeReverse: true
-            radius: 30
-            fontSize: 25
-            border.width: 0
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 15
-            anchors.horizontalCenter: parent.horizontalCenter
-            title_text: 'KERTAS HABIS, SAAT INI TRANSAKSI ANDA TIDAK MENGELUARKAN STRUK'
-            boxColor: VIEW_CONFIG.frame_color
-        }
+//        BoxTitle{
+//            id: printer_paper_status_info
+//            width: 900
+//            height: 60
+//            visible: false
+//            modeReverse: true
+//            radius: 30
+//            fontSize: 25
+//            border.width: 0
+//            anchors.bottom: parent.bottom
+//            anchors.bottomMargin: 15
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            title_text: 'KERTAS HABIS, SAAT INI TRANSAKSI ANDA TIDAK MENGELUARKAN STRUK'
+//            boxColor: VIEW_CONFIG.frame_color
+//        }
 
-        CircleButton{
-            id: next_button_preload_info
-            anchors.right: parent.right
-            anchors.rightMargin: 30
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            button_text: 'LANJUT'
-            modeReverse: true
-            blinkingMode: true
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    switch(selectedMenu){
-                    case 'CHECK_BALANCE':
-                        my_layer.push(check_balance);
-                        break;
-                    case 'TOPUP_PREPAID':
-                        my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
-                        break;
-                    case 'SHOP_PREPAID':
-                        my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
-                        break;
-                    case 'SHOP_PPOB':
-                        popup_loading.open();
-                        _SLOT.start_get_ppob_product();
-                        break;
-                    }
-                }
-            }
-        }
+//        CircleButton{
+//            id: next_button_preload_info
+//            anchors.right: parent.right
+//            anchors.rightMargin: 30
+//            anchors.bottom: parent.bottom
+//            anchors.bottomMargin: 30
+//            button_text: 'LANJUT'
+//            modeReverse: true
+//            blinkingMode: true
+//            MouseArea{
+//                anchors.fill: parent
+//                onClicked: {
+//                    switch(selectedMenu){
+//                    case 'CHECK_BALANCE':
+//                        my_layer.push(check_balance);
+//                        break;
+//                    case 'TOPUP_PREPAID':
+//                        my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
+//                        break;
+//                    case 'SHOP_PREPAID':
+//                        my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+//                        break;
+//                    case 'SHOP_PPOB':
+//                        popup_loading.open();
+//                        _SLOT.start_get_ppob_product();
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+
     }
 }

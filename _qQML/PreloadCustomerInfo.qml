@@ -20,6 +20,10 @@ Base{
     property int textSize: (globalScreenType == '1') ? 37 : 32
     property int boxSize: (globalScreenType == '1') ? 200 : 160
 
+    property int showDuration: 3
+    property bool autoDismiss: true
+    property var selectedMenu: ''
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -78,14 +82,79 @@ Base{
 
     }
 
+    Timer {
+        id: show_timer
+        interval: 1000
+        repeat: true
+        running: parent.visible && autoDismiss
+        onTriggered: {
+            showDuration -= 1;
+            if (showDuration==0) {
+                show_timer.stop();
+                switch(selectedMenu){
+                case 'CHECK_BALANCE':
+                    my_layer.push(check_balance);
+                    break;
+                case 'TOPUP_PREPAID':
+                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
+                    break;
+                case 'SHOP_PREPAID':
+                    my_layer.push(general_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+                    break;
+                case 'SHOP_PPOB':
+                    popup_loading.open();
+                    _SLOT.start_get_ppob_product();
+                    break;
+                }
+            }
+        }
+    }
+
+    AnimatedImage  {
+        width: 100
+        height: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        scale: 1
+        anchors.horizontalCenter: parent.horizontalCenter
+        source: 'source/blue_gradient_circle_loading.gif'
+        fillMode: Image.PreserveAspectFit
+        visible: autoDismiss
+        Text{
+            id: text_timer_show
+            anchors.fill: parent
+            text: showDuration
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            font.pixelSize: 20
+            color: 'yellow'
+            verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+        }
+    }
+
+    function delay(duration, callback) {
+        timer_delay.interval = duration;
+        timer_delay.repeat = false;
+        timer_delay.triggered.connect(callback);
+        timer_delay.start();
+    }
 
 
-    function open(){
+
+    function open(menu, timer){
+        selectedMenu = menu;
+        if (timer !== undefined && parseInt(timer) > 0){
+            autoDismiss = true;
+            showDuration = parseInt(timer);
+            show_timer.start();
+        }
         preload_customer_info.visible = true;
         _SLOT.start_play_audio('read_tnc_press_proceed');
     }
 
     function close(){
         preload_customer_info.visible = false;
+        show_timer.stop();
     }
 }

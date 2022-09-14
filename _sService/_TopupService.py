@@ -425,6 +425,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
+            _param['priv'] = 'NO_LIMIT'
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
@@ -470,6 +471,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
+            _param['priv'] = 'NO_LIMIT'
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
@@ -508,6 +510,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
+            _param['priv'] = 'NO_LIMIT'
             _url = TOPUP_URL
             if _Common.DEV_MODE_TOPUP_BCA:
                 _url = _Common.UPDATE_BALANCE_URL_DEV
@@ -589,6 +592,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
+            _param['priv'] = 'NO_LIMIT'
             status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:

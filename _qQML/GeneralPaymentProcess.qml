@@ -468,7 +468,7 @@ Base{
         }
         _SLOT.start_direct_sale_print_global(JSON.stringify(details));
         console.log('release_print', now, title, msg);
-        switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
+        switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
         hide_all_cancel_button();
 //        abc.counter = 3;
         reset_variables_to_default();
@@ -877,8 +877,8 @@ Base{
                 var provider = details.provider;
                 var amount = getDenom.toString();
                 var structId = details.shop_type + details.epoch.toString();
-                var textMain2 = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda';
-                var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai';
+                var textMain2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu yang bertanda';
+                var textSlave2 = 'dan tunggu hingga transaksi isi ulang selesai';
                 var trx_counter_notif = abc.counter.toString();
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|'+trx_counter_notif, false );
                 _SLOT.start_play_audio('keep_card_in_reader_untill_finished');

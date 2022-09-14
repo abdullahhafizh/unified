@@ -158,9 +158,12 @@ Base{
                 var item_image = items[x].image;
                 var item_id = items[x].pid;
                 if (cdReadiness != undefined){
-                    if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
-                    if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
-                    if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
+                    if (item_status==101 && cdReadiness.cd1 == 'N/A') item_stock = '0';
+                    if (item_status==102 && cdReadiness.cd2 == 'N/A') item_stock = '0';
+                    if (item_status==103 && cdReadiness.cd3 == 'N/A') item_stock = '0';
+                    if (item_status==104 && cdReadiness.cd4 == 'N/A') item_stock = '0';
+                    if (item_status==105 && cdReadiness.cd5 == 'N/A') item_stock = '0';
+                    if (item_status==106 && cdReadiness.cd6 == 'N/A') item_stock = '0';
                 }
                 if (item_image=='') item_image = 'source/bni_tapcash_card.png';
                 groceryItem_listModel.append({

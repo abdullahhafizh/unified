@@ -258,7 +258,7 @@ def start_receive_note(trxid):
                 if _response == -1:
                     if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
                         stop_receive_note()
-                        sleep(2.5)
+                        sleep(2)
                         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
                         break
                     # else: 
@@ -270,14 +270,14 @@ def start_receive_note(trxid):
                     # _Helper.dump(cash_in)
                     if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
                         if cash_in in SMALL_NOTES_NOT_ALLOWED:
-                            sleep(1.5)
+                            sleep(.5)
                             param = BILL["REJECT"] + '|'
                             send_command_to_bill(param=param, output=None)
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             break
                         if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
-                            sleep(1.5)
+                            sleep(.5)
                             param = BILL["REJECT"] + '|'
                             send_command_to_bill(param=param, output=None)
                             LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
@@ -286,7 +286,7 @@ def start_receive_note(trxid):
                             break
                     # Process Store and Update Data Cash
                     if _Common.store_notes_activity(cash_in, trxid) is True:
-                        # Somehow, Trigger OSError accidetally
+                        # Somehow, Trigger OSError accidentally
                         store_result = store_cash_into_cashbox()
                         if store_result is True:
                             update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
@@ -342,7 +342,8 @@ def start_receive_note(trxid):
                             LOGGER.debug(('#2 Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                             _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
                 pass
-            sleep(_Common.BILL_STORE_DELAY)
+            # sleep(_Common.BILL_STORE_DELAY)
+            sleep(1)
     except OSError as o:
         LOGGER.warning(('ANOMALY_FOUND_HERE', o))
         # Do you need recall same function ???

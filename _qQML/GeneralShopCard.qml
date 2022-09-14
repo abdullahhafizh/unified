@@ -278,7 +278,7 @@ Base{
                 card_show_1.itemImage = item_image;
                 card_show_1.itemPrice = item_price.toString();
                 card_show_1.itemStock =  parseInt(item_stock);
-                card_show_1.outOfService = (cdReadiness.port1 == 'N/A')
+                card_show_1.outOfService = (cdReadiness.cd1 == 'N/A')
             }
             if (item_status==102){
                 card_show_2.visible = true;
@@ -286,7 +286,7 @@ Base{
                 card_show_2.itemImage = item_image;
                 card_show_2.itemPrice = item_price.toString();
                 card_show_2.itemStock =  parseInt(item_stock);
-                card_show_2.outOfService = (cdReadiness.port2 == 'N/A')
+                card_show_2.outOfService = (cdReadiness.cd2 == 'N/A')
             }
             if (item_status==103){
                 card_show_3.visible = true;
@@ -294,8 +294,9 @@ Base{
                 card_show_3.itemImage = item_image;
                 card_show_3.itemPrice = item_price.toString();
                 card_show_3.itemStock =  parseInt(item_stock);
-                card_show_3.outOfService = (cdReadiness.port3 == 'N/A')
+                card_show_3.outOfService = (cdReadiness.cd3 == 'N/A')
             }
+            // TODO: Add 3 More Product Card (4,5,6)
             if (item_stock!='0') availItems.push(item_id);
         }
 //        console.log('avaialable_items', availItems.length);
@@ -309,9 +310,12 @@ Base{
             var item_status = items[x].status;
             var item_price = items[x].sell_price;
             if (cdReadiness != undefined){
-                if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
-                if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
-                if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
+                if (item_status==101 && cdReadiness.cd1 == 'N/A') item_stock = '0';
+                if (item_status==102 && cdReadiness.cd2 == 'N/A') item_stock = '0';
+                if (item_status==103 && cdReadiness.cd3 == 'N/A') item_stock = '0';
+                if (item_status==104 && cdReadiness.cd4 == 'N/A') item_stock = '0';
+                if (item_status==105 && cdReadiness.cd5 == 'N/A') item_stock = '0';
+                if (item_status==106 && cdReadiness.cd6 == 'N/A') item_stock = '0';
             }
             if (parseInt(item_stock) > 0) availItems.push({index: x, stock: parseInt(item_stock), price: parseInt(item_price)});
         }
@@ -322,7 +326,7 @@ Base{
         }
 
         var max = availItems.reduce(function (prev, current) {
-           return (prev.stock > current.stock) ? prev : current
+            return (prev.stock > current.stock) ? prev : current
         });
 //        productIdx = parseInt(max);
         productIdx = availItems.indexOf(max);

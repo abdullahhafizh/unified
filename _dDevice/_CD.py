@@ -141,6 +141,15 @@ def emit_eject_error(attempt, error_message, method='eject_full_round'):
     if attempt == '103':
         _Common.CD3_ERROR = 'DEVICE_RESPONSE_ERROR'
         _Common.upload_device_state('cd3', _Common.CD3_ERROR)
+    if attempt == '104':
+        _Common.CD4_ERROR = 'DEVICE_RESPONSE_ERROR'
+        _Common.upload_device_state('cd4', _Common.CD4_ERROR)
+    if attempt == '105':
+        _Common.CD5_ERROR = 'DEVICE_RESPONSE_ERROR'
+        _Common.upload_device_state('cd5', _Common.CD5_ERROR)
+    if attempt == '106':
+        _Common.CD6_ERROR = 'DEVICE_RESPONSE_ERROR'
+        _Common.upload_device_state('cd6', _Common.CD6_ERROR)
     _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR|'+error_message)
@@ -152,16 +161,35 @@ def kiosk_get_cd_readiness():
 
 def get_cd_readiness():
     if _Common.digit_in(_Common.CD_PORT1) is True:
-        _Common.CD_READINESS['port1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1) is True and _Common.CD_PORT1_TYPE in ['OLD', 'NEW'] else 'N/A'
+        _Common.CD_READINESS['cd1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1, '101') is True and _Common.CD_PORT1_TYPE in ['OLD', 'NEW'] else 'N/A'
     if _Common.digit_in(_Common.CD_PORT2) is True:
-        _Common.CD_READINESS['port2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2) is True and _Common.CD_PORT2_TYPE in ['OLD', 'NEW'] else 'N/A'
+        _Common.CD_READINESS['cd2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2, '102') is True and _Common.CD_PORT2_TYPE in ['OLD', 'NEW'] else 'N/A'
     if _Common.digit_in(_Common.CD_PORT3) is True:
-        _Common.CD_READINESS['port3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3) is True and _Common.CD_PORT3_TYPE in ['OLD', 'NEW'] else 'N/A'
+        _Common.CD_READINESS['cd3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3, '103') is True and _Common.CD_PORT3_TYPE in ['OLD', 'NEW'] else 'N/A'
+    if _Common.digit_in(_Common.CD_PORT4) is True:
+        _Common.CD_READINESS['cd4'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT4, '104') is True and _Common.CD_PORT4_TYPE in ['OLD', 'NEW'] else 'N/A'
+    if _Common.digit_in(_Common.CD_PORT5) is True:
+        _Common.CD_READINESS['cd5'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT5, '105') is True and _Common.CD_PORT5_TYPE in ['OLD', 'NEW'] else 'N/A'
+    if _Common.digit_in(_Common.CD_PORT6) is True:
+        _Common.CD_READINESS['cd6'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT6, '106') is True and _Common.CD_PORT6_TYPE in ['OLD', 'NEW'] else 'N/A'
     CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Common.CD_READINESS))
     LOGGER.info((json.dumps(_Common.CD_READINESS)))
 
 
-def check_init_cd(port):
+def check_init_cd(port, attempt):
     if _Common.CD_NEW_TYPE.get(port, False) is True or _Common.CD_DISABLE_CHECK_STATUS is True:
         return True
-    return True
+    # Validate Based On Error History
+    if attempt == '101' and _Common.CD1_ERROR == '':
+        return True
+    if attempt == '102' and _Common.CD2_ERROR == '':
+        return True
+    if attempt == '103' and _Common.CD3_ERROR == '':
+        return True
+    if attempt == '104' and _Common.CD4_ERROR == '':
+        return True
+    if attempt == '105' and _Common.CD5_ERROR == '':
+        return True
+    if attempt == '106' and _Common.CD6_ERROR == '':
+        return True
+    return False

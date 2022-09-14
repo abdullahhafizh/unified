@@ -96,15 +96,24 @@ AMQP_PASS = _ConfigParser.get_set_value('AMQP', 'pass', 'kiosk')
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
 CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
+CD_PORT4 = _ConfigParser.get_set_value('CD', 'port4', 'COM')
+CD_PORT5 = _ConfigParser.get_set_value('CD', 'port5', 'COM')
+CD_PORT6 = _ConfigParser.get_set_value('CD', 'port6', 'COM')
 
 CD_PORT1_TYPE = _ConfigParser.get_set_value('CD', 'port1^type', 'OLD')
 CD_PORT2_TYPE = _ConfigParser.get_set_value('CD', 'port2^type', 'OLD')
 CD_PORT3_TYPE = _ConfigParser.get_set_value('CD', 'port3^type', 'OLD')
+CD_PORT4_TYPE = _ConfigParser.get_set_value('CD', 'port4^type', 'OLD')
+CD_PORT5_TYPE = _ConfigParser.get_set_value('CD', 'port5^type', 'OLD')
+CD_PORT6_TYPE = _ConfigParser.get_set_value('CD', 'port6^type', 'OLD')
 
 CD_NEW_TYPE = {
     CD_PORT1: True if CD_PORT1_TYPE == 'NEW' else False,
     CD_PORT2: True if CD_PORT2_TYPE == 'NEW' else False,
-    CD_PORT3: True if CD_PORT3_TYPE == 'NEW' else False
+    CD_PORT3: True if CD_PORT3_TYPE == 'NEW' else False,
+    CD_PORT4: True if CD_PORT4_TYPE == 'NEW' else False,
+    CD_PORT5: True if CD_PORT5_TYPE == 'NEW' else False,
+    CD_PORT6: True if CD_PORT6_TYPE == 'NEW' else False,
 }
 
 # Disable CD Init For Old & New Type
@@ -606,6 +615,7 @@ if len(VIEW_CONFIG.keys()) == 0:
 VIEW_CONFIG['check_topup_period'] = int(_ConfigParser.get_set_value('GENERAL', 'check^topup^period', '3'))
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
+VIEW_CONFIG['tnc_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'tnc^timer', '4'))
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
 VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 
@@ -719,6 +729,9 @@ CD_PORT_LIST = {
     '101': CD_PORT1,
     '102': CD_PORT2,
     '103': CD_PORT3,
+    '104': CD_PORT4,
+    '105': CD_PORT5,
+    '106': CD_PORT6,
 }
 
 BID = {
@@ -875,6 +888,9 @@ WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
+CD4_ERROR = ''
+CD5_ERROR = ''
+CD6_ERROR = ''
 
 RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
 RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '750'))
@@ -1111,17 +1127,23 @@ if BILL['status'] is True:
     MEI['port'] = MEI_PORT
     
 CD = {
-    "port1": CD_PORT1,
-    "port2": CD_PORT2,
-    "port3": CD_PORT3,
+    "cd1": CD_PORT1,
+    "cd2": CD_PORT2,
+    "cd3": CD_PORT3,
+    "cd4": CD_PORT4,
+    "cd5": CD_PORT5,
+    "cd6": CD_PORT6,
     "status": True,
     "list_port": CD_PORT_LIST
 }
 
 CD_READINESS = {
-    "port1": 'N/A',
-    "port2": 'N/A',
-    "port3": 'N/A',
+    "cd1": 'N/A',
+    "cd2": 'N/A',
+    "cd3": 'N/A',
+    "cd4": 'N/A',
+    "cd5": 'N/A',
+    "cd6": 'N/A',
 }
 
 SMT_CONFIG = dict()
@@ -1310,8 +1332,7 @@ def start_upload_device_state(device, status):
 
 
 def upload_device_state(device, status):
-    if device not in ['nfc', 'mei', 'edc', 'printer', 'scanner', 'webcam', 'cd1', 'cd2', 'cd3']:
-        LOGGER.warning(('device not in known_list', device, status))
+    if device not in ['nfc', 'mei', 'edc', 'printer', 'scanner', 'webcam', 'cd1', 'cd2', 'cd3', 'cd4', 'cd5', 'cd6']:
         return False
     try:
         param = {
