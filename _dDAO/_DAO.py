@@ -352,7 +352,7 @@ def check_product_status_by_pid(param):
 
 def reduce_product_stock_by_pid(param):
     param['updatedAt'] = _Helper.now()
-    sql = " UPDATE ProductStock SET stock = stock-1, updatedAt = :updatedAt WHERE stock > 0 AND pid = :pid AND updatedAt < :updatedAt "
+    sql = " UPDATE ProductStock SET stock = stock-1 WHERE stock > 0 AND pid = :pid "
     return _Database.insert_update(sql=sql, parameter=param)
 
 
