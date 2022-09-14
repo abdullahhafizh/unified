@@ -180,8 +180,8 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Transaksi Berhasil\n'+ trxNotes
-        size_: 50
+        show_text: 'Transaksi Anda Berhasil\n'+ trxNotes
+        size_: 40
         color_: "white"
     }
 
