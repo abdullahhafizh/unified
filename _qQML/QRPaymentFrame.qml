@@ -196,8 +196,8 @@ Base{
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-//        color: VIEW_CONFIG.frame_color
-        color: "#005b96"
+        color: VIEW_CONFIG.frame_color
+        // color: "black"
         opacity: 1
         visible: successPayment
         AnimatedImage  {

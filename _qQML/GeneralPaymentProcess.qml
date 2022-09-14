@@ -557,7 +557,7 @@ Base{
             var info = JSON.parse(r.split('|')[3]);
             now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
             console.log('qr_check_result', now, mode, result, JSON.stringify(info));
-            qr_payment_frame.success(3)
+            qr_payment_frame.success(5)
             details.payment_details = info;
             details.init_payment = info.provider;
             details.payment = info.provider;
@@ -1193,7 +1193,6 @@ Base{
 //            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
             _SLOT.start_play_audio('insert_cash_with_good_condition');
-            back_button.visible = false;
             return;
         } else if (details.payment == 'debit') {
             main_title.show_text = 'Ringkasan Transaksi Anda';
@@ -1206,7 +1205,6 @@ Base{
             var structId = details.shop_type + details.epoch.toString();
             _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
             //Disable general back button for EDC Debit Payment
-            back_button.visible = false;
             return;
         }
 

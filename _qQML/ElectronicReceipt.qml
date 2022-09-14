@@ -35,7 +35,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            popup_loading.open('Mempersiakan Struk Transaksi Anda...');
+            popup_loading.open('Mempersiapkan Struk Transaksi Anda...');
             abc.counter = timer_value;
             my_timer.start();
 //            if (VIEW_CONFIG.delay_manual_print != undefined){
@@ -112,7 +112,7 @@ Base{
             trxNotes = 'Saldo Kartu Anda saat ini Rp. '+FUNC.insert_dot(details.final_balance.toString());
             break;
         case 'shop':
-            trxNotes = 'Pastikan Anda mengambil '+details.provider;
+            trxNotes = 'Pastikan Anda mendapatkan '+details.provider;
             break;
         case 'ppob':
             trxNotes = 'Pastikan Anda mendapatkan konfirmasi dari layanan pembayaran/pembelian Anda.';
