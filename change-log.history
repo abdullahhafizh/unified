@@ -1,9 +1,9 @@
 15.1.0-GLOBAL:
 - Adjust Wording notification before topup,
 - Auto Dismiss TnC Layer,
-- TODO Cancel button on Payment process,
-- TODO After Success Transaction, Choose Printer Type (Normal / Ereceipt),
-- TODO Stock Reduce after card trx,
+- Cancel button on Payment process,
+- After Success Transaction, Choose Printer Type (Normal / Ereceipt),
+- Stock Reduce after card trx,
 - Timer After success ereceipt 3 seconds,
 - Bill Noted Read time after insert,
 - Waive Topup Online in tight time validation,

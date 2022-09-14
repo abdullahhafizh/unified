@@ -14,9 +14,9 @@ Base{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     property var press: '0'
-    property int timer_value: (VIEW_CONFIG.page_timer)
+    property int timer_value: (VIEW_CONFIG.success_page_timer)
     property var whatsappNo: 'tersebut'
-    property var textMain: 'Pada Android, Tekan Tombol Icon CAMERA di Pojok Kiri Atas'
+    property var textMain: 'Scan QR Diatas untuk mendapatkan resi Whatsapp'
     property var textSlave: 'Pada IOS, Tekan Tombol Icon CAMERA di Tengah Bawah'
     property var textRebel: ''
     property var textQuard: ''
@@ -24,6 +24,7 @@ Base{
     property var details
     property int textSize: (globalScreenType == '1') ? 38 : 33
     property var showDuration: ''
+    property var trxNotes: ''
     property bool retryMode: false
     property bool manualButtonVisible: false
     property int showManualPrintButton: 10
@@ -34,13 +35,14 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            popup_loading.open('Transaksi Berhasil\nMempersiapkan eReceipt Anda.');
+            popup_loading.open('Mempersiakan Struk Transaksi Anda...');
             abc.counter = timer_value;
             my_timer.start();
-            if (VIEW_CONFIG.delay_manual_print != undefined){
-                showManualPrintButton = parseInt(VIEW_CONFIG.delay_manual_print);
-                console.log('Delay Manual Print', showManualPrintButton);
-            }
+//            if (VIEW_CONFIG.delay_manual_print != undefined){
+//                showManualPrintButton = parseInt(VIEW_CONFIG.delay_manual_print);
+//                console.log('Delay Manual Print', showManualPrintButton);
+//            }
+            define_trx_notes();
             _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
         }
         if(Stack.status==Stack.Deactivating){
@@ -104,6 +106,20 @@ Base{
         timer_delay.start();
     }
 
+    function define_trx_notes(){
+        switch(details.shop_type){
+        case 'topup':
+            trxNotes = 'Saldo Kartu Anda saat ini Rp. '+FUNC.insert_dot(details.final_balance.toString());
+            break;
+        case 'shop':
+            trxNotes = 'Pastikan Anda mengambil '+details.provider;
+            break;
+        case 'ppob':
+            trxNotes = 'Pastikan Anda mendapatkan konfirmasi dari layanan pembayaran/pembelian Anda.';
+            break;
+        }
+    }
+
     function ereceipt_show(data){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('ereceipt_show', now, JSON.stringify(data));
@@ -162,9 +178,9 @@ Base{
         y: 150
         width: 1198
         anchors.top: parent.top
-        anchors.topMargin: 150
+        anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Transaksi Berhasil, Scan QR Untuk eReceipt Anda'
+        show_text: 'Transaksi Berhasil\n'+ trxNotes
         size_: 50
         color_: "white"
     }
@@ -175,35 +191,35 @@ Base{
         y: 250
         width: parent.width
         height: 500
-        anchors.verticalCenterOffset: -50
+        anchors.verticalCenterOffset: 100
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 30
+        spacing: 20
         AnimatedImage  {
             id: imageQr
-            width: 350
-            height: 350
+            width: 300
+            height: 300
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
             fillMode: Image.PreserveAspectFit
         }
-        AnimatedImage  {
-            id: instructionQr
-            width: 800
-            height: 450
-            scale: 1
-            anchors.horizontalCenter: parent.horizontalCenter
-            source: 'source/scan_qr_receipt_instruction.jpg'
-            fillMode: Image.PreserveAspectFit
-        }
+//        AnimatedImage  {
+//            id: instructionQr
+//            width: 800
+//            height: 450
+//            scale: 1
+//            visible: false
+//            anchors.horizontalCenter: parent.horizontalCenter
+//            source: 'source/scan_qr_receipt_instruction.jpg'
+//            fillMode: Image.PreserveAspectFit
+//        }
         Text{
             text: textMain
-            visible: false
-            horizontalAlignment: Text.AlignLeft
+            font.pixelSize: 35
+            horizontalAlignment: Text.AlignHCenter
             width: parent.width - 250
             wrapMode: Text.WordWrap
-            font.pixelSize: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: 'white'
@@ -228,14 +244,13 @@ Base{
 
     CircleButton{
         id: manual_button
-        anchors.left: parent.left
-        anchors.leftMargin: 30
+        anchors.horizontalCenterOffset: -200
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
-        button_text: 'CETAK\nSTRUK'
+        anchors.bottomMargin: 175
+        anchors.horizontalCenter: parent.horizontalCenter
+        button_text: 'PRINT'
         modeReverse: true
         forceColorButton: 'orange'
-        visible: manualButtonVisible
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -260,11 +275,11 @@ Base{
 
     CircleButton{
         id: ok_button
-        anchors.right: parent.right
-        anchors.rightMargin: 30
+        anchors.horizontalCenterOffset: 200
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
-        button_text: 'O K\n( ' + showDuration + ' )'
+        anchors.bottomMargin: 175
+        button_text: 'SELESAI\n( ' + showDuration + ' )'
         modeReverse: true
         blinkingMode: true
         MouseArea{

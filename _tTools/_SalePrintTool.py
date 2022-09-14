@@ -1802,7 +1802,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
         if _Common.ERECEIPT_ASYNC_MODE is True:
-            sleep(1)
+            sleep(.5)
             output = {
                 'trxid'     : "-".join([trxid, _Common.TID]),
                 'status'    : 0,
@@ -1903,7 +1903,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
         if _Common.ERECEIPT_ASYNC_MODE is True:
-            sleep(1)
+            sleep(.5)
             output = {
                 'trxid'     : "-".join([trxid, _Common.TID]),
                 'status'    : 0,
@@ -2032,27 +2032,32 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
         if _Common.ERECEIPT_ASYNC_MODE is True:
-            sleep(1)
+            sleep(.5)
             output = {
                 'trxid'     : "-".join([trxid, _Common.TID]),
                 'status'    : 0,
                 'mode'      : 'ASYNC'
             }
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
-        status, response = _NetworkAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
-        if status == 200:
-            output = response['response']
-            if output['status'] == 0:
-                if not _Common.ERECEIPT_ASYNC_MODE:
-                    SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
-            else:
-                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
+        # Drop API Response if using Async
+        if _Common.ERECEIPT_ASYNC_MODE is True:
+            pass
         else:
-            # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
-            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
+            status, response = _NetworkAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
+            if status == 200:
+                output = response['response']
+                if output['status'] == 0:
+                    if not _Common.ERECEIPT_ASYNC_MODE:
+                        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
+                else:
+                    SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
+            else:
+                # _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.ERECEIPT_URL, payload=ereceipt_data)
+                SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     except Exception as e:
         LOGGER.warning(str(e))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
+        if not _Common.ERECEIPT_ASYNC_MODE:
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
     finally:
         finalize_trx_process(trxid, p, cash)
         del pdf

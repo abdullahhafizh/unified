@@ -484,7 +484,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('ppob_trx_result', now, p);
         popup_loading.close();
-        transactionInProcess = false;
+        // transactionInProcess = false;
         var result = p.split('|')[1];
         if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
@@ -617,7 +617,7 @@ Base{
         console.log('topup_result', now, t);
         global_frame.close();
         popup_loading.close();
-        transactionInProcess = false;
+        // transactionInProcess = false;
         if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
@@ -745,7 +745,7 @@ Base{
         console.log('shop_card_result', now, r);
         global_frame.close();
         popup_loading.close();
-        transactionInProcess = false;
+        // transactionInProcess = false;
         if (allQRProvider.indexOf(details.payment) > -1) qr_payment_frame.hide();
         abc.counter = 60;
         my_timer.restart();
@@ -1517,10 +1517,10 @@ Base{
     }
 
     function set_refund_number(n){
-       var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-       customerPhone = n;
-       details.refund_number = customerPhone;
-       console.log('customerPhone as refund_number', customerPhone, now);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        customerPhone = n;
+        details.refund_number = customerPhone;
+        console.log('customerPhone as refund_number', customerPhone, now);
    }
 
     function validate_transaction_success(mode){
