@@ -177,8 +177,8 @@ Base{
 
     AnimatedImage  {
         id: image_success
-        width: 200
-        height: 200
+        width: 160
+        height: 160
         anchors.top: parent.top
         anchors.topMargin: 150
         anchors.horizontalCenter: parent.horizontalCenter
@@ -192,7 +192,7 @@ Base{
         width: 1198
         height: 100
         anchors.top: parent.top
-        anchors.topMargin: 400
+        anchors.topMargin: 350
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Transaksi Berhasil\n'+ trxNotes
         size_: 40
@@ -211,8 +211,8 @@ Base{
         spacing: 15
         AnimatedImage  {
             id: imageQr
-            width: 200
-            height: 200
+            width: 180
+            height: 180
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
@@ -271,9 +271,9 @@ Base{
     CircleButton{
         id: manual_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 75
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: 75
         button_text: 'PRINT'
         modeReverse: true
         forceColorButton: 'white'
@@ -301,8 +301,8 @@ Base{
 
     OKButton{
         id: ok_button
-        width: 250
-        height: 120
+        width: 225
+        height: 100
         chars: 'SELESAI ( ' + showDuration + ' )'
         color: 'green'
         textColor: 'white'
