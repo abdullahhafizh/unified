@@ -1010,7 +1010,7 @@ Base{
         popup_loading.close();
         if (['ERROR'].indexOf(edcResult) > -1){
             next_button_global.visible = false;
-            switch_frame_with_button('source/insert_card_dc.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain|5', true );
+            switch_frame_with_button('source/smiley_down.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain|5', true );
             //To Avoid Printing If EDC Error
             abc.counter = 5;
             return;
