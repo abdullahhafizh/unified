@@ -197,7 +197,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 //        color: VIEW_CONFIG.frame_color
-         color: "transparent"
+        color: "transparent"
         opacity: 1
         visible: successPayment
 //        AnimatedImage  {
