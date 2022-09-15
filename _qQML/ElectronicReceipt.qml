@@ -229,7 +229,7 @@ Base{
 //            fillMode: Image.PreserveAspectFit
 //        }
         Text{
-            text: textSuggestion1 + '/n' + textSuggestion2
+            text: textSuggestion1 + '\n' + textSuggestion2
             font.pixelSize: textSize
             horizontalAlignment: Text.AlignHCenter
             width: parent.width - 250
