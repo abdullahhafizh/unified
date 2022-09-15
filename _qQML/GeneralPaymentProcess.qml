@@ -1592,6 +1592,12 @@ Base{
             details.process_error = 1;
             details_error_history_push('user_cancellation_debit')
             details.payment_error = 1;
+            if (VIEW_CONFIG.disable_print_on_cancel){
+                switch_frame_with_button('source/smiley_down.png', 'Pembayaran Debit Dibatalkan', 'Periksa kembali history transaksi kartu Anda', 'backToMain|5', true );
+                //To Avoid Printing If EDC Error
+                abc.counter = 5;
+                return;
+            }
             if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();

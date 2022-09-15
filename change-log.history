@@ -13,6 +13,8 @@
 - Simplify Cash Info,
 - Move Card Stock Sync Into Machine Status,
 - Wording Adjustment in Payment,
+- Disable EDC Cancel Print,
+- Adjust QR Frame Success to Transparent,
 - ...
 
 15.0.A3-GLOBAL:
