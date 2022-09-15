@@ -7,10 +7,9 @@ import QtGraphicalEffects 1.0
 Base{
     id: qr_payment_frame
 
-
-//                    property var globalScreenType: '1'
-//                    height: (globalScreenType=='2') ? 1024 : 1080
-//                    width: (globalScreenType=='2') ? 1280 : 1920
+//                   property var globalScreenType: '1'
+//                   height: (globalScreenType=='2') ? 1024 : 1080
+//                   width: (globalScreenType=='2') ? 1280 : 1920
     isBoxNameActive: false
     property var modeQR: "linkaja"
     property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR
@@ -188,19 +187,15 @@ Base{
         }
     }
 
-    Rectangle{
+    Column{
         id: rec_payment_success
-        width: parent.width
-        height: 500
-        anchors.top: parent.top
-        anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-//        color: VIEW_CONFIG.frame_color
-        color: "transparent"
-        opacity: 1
+        spacing: (globalScreenType == '1') ? 50 : 30
+        width: parent.width
+        anchors.verticalCenterOffset: -50
         visible: successPayment
-//        AnimatedImage  {
+        //        AnimatedImage  {
 //            width: 200
 //            height: 200
 //            scale: 0.5
@@ -210,14 +205,10 @@ Base{
 //        }
         Text{
             text: 'Pembayaran QRIS sudah kami terima'
-            anchors.horizontalCenterOffset: 0
-            anchors.top: parent.top
-            anchors.topMargin: 25
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
             font.pixelSize: 50
-            anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
             color: 'white'
             verticalAlignment: Text.AlignVCenter
@@ -225,14 +216,10 @@ Base{
         }
         Text{
             text: 'Sedang memproses transaksi Anda...'
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 30
-            anchors.horizontalCenterOffset: 0
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
             font.pixelSize: 50
-            anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
             color: 'white'
             verticalAlignment: Text.AlignVCenter
