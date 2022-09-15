@@ -271,9 +271,9 @@ Base{
     CircleButton{
         id: manual_button
         anchors.right: parent.right
-        anchors.rightMargin: 75
+        anchors.rightMargin: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 75
+        anchors.bottomMargin: 50
         button_text: 'PRINT'
         modeReverse: true
         forceColorButton: 'orange'
@@ -299,18 +299,15 @@ Base{
         }
     }
 
-    OKButton{
+    CircleButton{
         id: ok_button
-        width: 225
-        height: 100
-        chars: 'SELESAI ( ' + showDuration + ' )'
-        color: 'green'
-        textColor: 'white'
+        button_text: 'SELESAI\n( ' + showDuration + ' )'
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 100
         anchors.horizontalCenter: parent.horizontalCenter
-        mouseEnable: false
-        radius: 0
+        modeReverse: true
+        blinkingMode: true
+        baseSize: 150
         MouseArea{
             anchors.fill: parent
             onClicked: {
