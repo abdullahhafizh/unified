@@ -122,7 +122,7 @@ Base{
         color: VIEW_CONFIG.text_color
         verticalAlignment: Text.AlignVCenter
         font.family:"Ubuntu"
-        visible: (VIEW_CONFIG.general_qr=='1')
+        visible: (VIEW_CONFIG.general_qr=='1' && !successPayment)
     }
 
     Row{
@@ -131,7 +131,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         spacing: 10
-        visible: (VIEW_CONFIG.general_qr=='1')
+        visible: (VIEW_CONFIG.general_qr=='1' && !successPayment)
         Image{
             scale: 0.65
             source: "source/ovo_logo.png"
@@ -196,8 +196,8 @@ Base{
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: VIEW_CONFIG.frame_color
-        // color: "black"
+//        color: VIEW_CONFIG.frame_color
+         color: "transparent"
         opacity: 1
         visible: successPayment
 //        AnimatedImage  {

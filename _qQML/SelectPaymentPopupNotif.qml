@@ -89,15 +89,15 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/cash black.png"
-            text_: qsTr("Tunai")
-            text2_: qsTr("Cash")
-            visible: _cashEnable
+            img_: "source/credit card black.png"
+            text_: qsTr("Kartu Debit")
+            text2_: qsTr("Debit Card")
+            visible: _cardEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "CASH" Payment Method');
-                    var payment = 'cash';
+                    _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
+                    var payment = 'debit';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
@@ -122,15 +122,15 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/credit card black.png"
-            text_: qsTr("Kartu Debit")
-            text2_: qsTr("Debit Card")
-            visible: _cardEnable
+            img_: "source/cash black.png"
+            text_: qsTr("Tunai")
+            text2_: qsTr("Cash")
+            visible: _cashEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
-                    var payment = 'debit';
+                    _SLOT.user_action_log('choose "CASH" Payment Method');
+                    var payment = 'cash';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
