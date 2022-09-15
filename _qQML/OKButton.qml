@@ -8,6 +8,8 @@ Rectangle{
     radius: 10
 //    radius: 25
     property var chars: "OK"
+    property bool mouseEnable: true
+    property var textColor: 'black'
 
     Text{
         id: text_button
@@ -15,10 +17,12 @@ Rectangle{
         font.bold: true
         font.family:"Ubuntu"
         font.pixelSize:30
-        anchors.centerIn: parent;
+        anchors.centerIn: parent
+        color: textColor
     }
 
     MouseArea {
+        visible: mouseEnable
         anchors.fill: parent
         onClicked: {
             full_keyboard.funcButtonClicked(chars)

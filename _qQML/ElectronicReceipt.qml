@@ -16,13 +16,13 @@ Base{
     property var press: '0'
     property int timer_value: (VIEW_CONFIG.success_page_timer)
     property var whatsappNo: 'tersebut'
-    property var textMain: 'Scan QR Diatas untuk mendapatkan resi Whatsapp'
+    property var textMain: 'Scan QR diatas dengan Aplikasi Whatsapp untuk mendapatkan e-receipt'
     property var textSlave: 'Pada IOS, Tekan Tombol Icon CAMERA di Tengah Bawah'
-    property var textRebel: ''
-    property var textQuard: ''
+    property var textSuggestion1: 'Kami menyarankan Anda untuk menggunakan e-receipt'
+    property var textSuggestion2: 'demi menjaga kelestarian alam dengan tidak menggunakan kertas'
     property var imageSource: "source/sand-clock-animated-2.gif"
     property var details
-    property int textSize: (globalScreenType == '1') ? 38 : 33
+    property int textSize: (globalScreenType == '1') ? 35 : 33
     property var showDuration: ''
     property var trxNotes: ''
     property bool retryMode: false
@@ -109,14 +109,14 @@ Base{
     function define_trx_notes(){
         switch(details.shop_type){
         case 'topup':
-            trxNotes = 'Saldo Kartu Anda saat ini Rp. '+FUNC.insert_dot(details.final_balance.toString());
+            trxNotes = 'Saldo Anda Rp. '+FUNC.insert_dot(details.final_balance.toString());
             break;
-        case 'shop':
-            trxNotes = 'Pastikan Anda mendapatkan '+details.provider;
+        case 'shop': case 'ppob':
+            trxNotes = details.provider;
             break;
-        case 'ppob':
-            trxNotes = 'Pastikan Anda mendapatkan konfirmasi dari layanan pembayaran/pembelian Anda.';
-            break;
+//        case 'ppob':
+//            trxNotes = 'Pastikan Anda mendapatkan konfirmasi dari layanan pembayaran/pembelian Anda.';
+//            break;
         }
     }
 
@@ -174,13 +174,27 @@ Base{
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
+
+    AnimatedImage  {
+        id: image_success
+        width: 200
+        height: 200
+        anchors.top: parent.top
+        anchors.topMargin: 150
+        anchors.horizontalCenter: parent.horizontalCenter
+        scale: 1
+        source: 'source/success.png'
+        fillMode: Image.PreserveAspectFit
+    }
+
     MainTitle{
         y: 150
         width: 1198
+        height: 100
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: 400
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Transaksi Anda Berhasil\n'+ trxNotes
+        show_text: 'Transaksi Berhasil\n'+ trxNotes
         size_: 40
         color_: "white"
     }
@@ -191,14 +205,14 @@ Base{
         y: 250
         width: parent.width
         height: 500
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 20
+        spacing: 15
         AnimatedImage  {
             id: imageQr
-            width: 300
-            height: 300
+            width: 200
+            height: 200
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
@@ -215,8 +229,20 @@ Base{
 //            fillMode: Image.PreserveAspectFit
 //        }
         Text{
+            text: textSuggestion1 + '/n' + textSuggestion2
+            font.pixelSize: textSize
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width - 250
+            wrapMode: Text.WordWrap
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.bold: false
+            color: 'white'
+            verticalAlignment: Text.AlignVCenter
+            font.family: "Ubuntu"
+        }
+        Text{
             text: textMain
-            font.pixelSize: 35
+            font.pixelSize: textSize
             horizontalAlignment: Text.AlignHCenter
             width: parent.width - 250
             wrapMode: Text.WordWrap
@@ -244,13 +270,13 @@ Base{
 
     CircleButton{
         id: manual_button
-        anchors.horizontalCenterOffset: -200
+        anchors.right: parent.right
+        anchors.rightMargin: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 175
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 100
         button_text: 'PRINT'
         modeReverse: true
-        forceColorButton: 'orange'
+        forceColorButton: 'white'
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -273,15 +299,18 @@ Base{
         }
     }
 
-    CircleButton{
+    OKButton{
         id: ok_button
-        anchors.horizontalCenterOffset: 200
-        anchors.horizontalCenter: parent.horizontalCenter
+        width: 250
+        height: 120
+        chars: 'SELESAI ( ' + showDuration + ' )'
+        color: 'green'
+        textColor: 'white'
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 175
-        button_text: 'SELESAI\n( ' + showDuration + ' )'
-        modeReverse: true
-        blinkingMode: true
+        anchors.bottomMargin: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        mouseEnable: false
+        radius: 0
         MouseArea{
             anchors.fill: parent
             onClicked: {

@@ -200,16 +200,16 @@ Base{
         // color: "black"
         opacity: 1
         visible: successPayment
-        AnimatedImage  {
-            width: 200
-            height: 200
-            scale: 0.5
-            anchors.fill: parent
-            source: 'source/success.png'
-            fillMode: Image.PreserveAspectFit
-        }
+//        AnimatedImage  {
+//            width: 200
+//            height: 200
+//            scale: 0.5
+//            anchors.fill: parent
+//            source: 'source/success.png'
+//            fillMode: Image.PreserveAspectFit
+//        }
         Text{
-            text: 'Pembayaran QR Berhasil'
+            text: 'Pembayaran QRIS sudah kami terima'
             anchors.horizontalCenterOffset: 0
             anchors.top: parent.top
             anchors.topMargin: 25
@@ -224,7 +224,7 @@ Base{
             font.family:"Ubuntu"
         }
         Text{
-            text: 'Mohon Tunggu, Memproses Transaksi Anda...'
+            text: 'Sedang memproses transaksi Anda...'
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenterOffset: 0

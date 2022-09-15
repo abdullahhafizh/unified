@@ -1155,7 +1155,7 @@ Base{
                         back_button.visible = true;
                     }
                 }
-                notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
+                notice_cash_payment.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();
@@ -1514,7 +1514,7 @@ Base{
     Column{
         width: 900
         height: 500
-        anchors.horizontalCenterOffset: 50
+        anchors.horizontalCenterOffset: -100
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 20
@@ -1557,8 +1557,22 @@ Base{
 
     }
 
+    AnimatedImage  {
+        id: original_image
+        visible:  notice_cash_payment.visible
+        width: 300
+        height: 300
+        anchors.verticalCenterOffset: -100
+        anchors.horizontalCenterOffset: 500
+        anchors.verticalCenter: parent.verticalCenter
+        scale: 1
+        anchors.horizontalCenter: parent.horizontalCenter
+        source: 'source/insert_money.png'
+        fillMode: Image.PreserveAspectFit
+    }
+
     BoxTitle{
-        id: notice_no_change
+        id: notice_cash_payment
         width: 1200
         height: 120
         visible: (details.payment == 'cash' && !global_frame.visible)
@@ -1574,12 +1588,26 @@ Base{
 
     }
 
+    Text {
+        text: "Jenis Uang yang diterima"
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 150
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
+        color: "white"
+        wrapMode: Text.WordWrap
+        font.pixelSize: 30
+        font.family: "Ubuntu"
+        verticalAlignment: Text.AlignVCenter
+        visible: notice_cash_payment.visible
+    }
+
     Row{
         id: group_acceptable_money
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 25
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: notice_no_change.visible
+        visible: notice_cash_payment.visible
         scale: 1
         spacing: 15
         Image{

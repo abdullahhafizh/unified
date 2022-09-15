@@ -8,9 +8,9 @@ import "base_function.js" as FUNC
 Base{
     id: general_payment_process
 
-//                property var globalScreenType: '2'
-//                height: (globalScreenType=='2') ? 1024 : 1080
-//                width: (globalScreenType=='2') ? 1280 : 1920
+                // property var globalScreenType: '1'
+                // height: (globalScreenType=='2') ? 1024 : 1080
+                // width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: VIEW_CONFIG.page_timer
     property var press: '0'
     property var details
@@ -1240,7 +1240,7 @@ Base{
                 //         back_button.visible = true;
                 //     }
                 // }
-                notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
+                notice_cash_payment.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();
@@ -1616,7 +1616,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: (totalPrice > receivedPayment) ? 'Silakan Masukkan Uang Anda' : 'Pembayaran Selesai'
+        show_text: (totalPrice > receivedPayment) ? 'Masukkan Uang Anda' : 'Pembayaran Selesai'
         size_: 50
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
@@ -1625,7 +1625,7 @@ Base{
     Column{
         width: 900
         height: 500
-        anchors.horizontalCenterOffset: 50
+        anchors.horizontalCenterOffset: -100
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 17
@@ -1676,8 +1676,22 @@ Base{
 
     }
 
+    AnimatedImage  {
+        id: original_image
+        visible:  notice_cash_payment.visible
+        width: 300
+        height: 300
+        anchors.verticalCenterOffset: -100
+        anchors.horizontalCenterOffset: 500
+        anchors.verticalCenter: parent.verticalCenter
+        scale: 1
+        anchors.horizontalCenter: parent.horizontalCenter
+        source: 'source/insert_money.png'
+        fillMode: Image.PreserveAspectFit
+    }
+
     BoxTitle{
-        id: notice_no_change
+        id: notice_cash_payment
         width: 1200
         height: 120
         visible: (details.payment == 'cash' && !global_frame.visible && (totalPrice > receivedPayment))
@@ -1693,14 +1707,29 @@ Base{
 
     }
 
+    Text {
+        text: "Jenis Uang yang diterima"
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 150
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
+        color: "white"
+        wrapMode: Text.WordWrap
+        font.pixelSize: 30
+        font.family: "Ubuntu"
+        verticalAlignment: Text.AlignVCenter
+        visible: notice_cash_payment.visible
+    }
+
     Row{
         id: group_acceptable_money
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 25
         anchors.horizontalCenter: parent.horizontalCenter
-        visible: notice_no_change.visible
+        visible: notice_cash_payment.visible
         scale: 1
         spacing: 15
+
         Image{
             id: img_count_100
             scale: 0.9

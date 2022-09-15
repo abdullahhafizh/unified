@@ -784,7 +784,7 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 abc.counter -= 1;
-                notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
+                notice_cash_payment.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     if (details.payment=='cash' && !isPaid) {
                         _SLOT.stop_bill_receive_note();
@@ -1286,7 +1286,7 @@ Base{
     }
 
     BoxTitle{
-        id: notice_no_change
+        id: notice_cash_payment
         width: 1200
         height: 120
         visible: !isPaid && (details.payment=='cash')
