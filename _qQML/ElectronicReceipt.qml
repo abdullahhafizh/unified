@@ -276,7 +276,7 @@ Base{
         anchors.bottomMargin: 75
         button_text: 'PRINT'
         modeReverse: true
-        forceColorButton: 'white'
+        forceColorButton: 'orange'
         MouseArea{
             anchors.fill: parent
             onClicked: {
