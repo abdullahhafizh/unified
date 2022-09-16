@@ -303,7 +303,7 @@ Base{
         id: ok_button
         button_text: 'SELESAI\n( ' + showDuration + ' )'
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: 75
         anchors.horizontalCenter: parent.horizontalCenter
         modeReverse: true
         blinkingMode: true

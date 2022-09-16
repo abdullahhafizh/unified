@@ -7,9 +7,9 @@ import QtGraphicalEffects 1.0
 Base{
     id: qr_payment_frame
 
-//                   property var globalScreenType: '1'
-//                   height: (globalScreenType=='2') ? 1024 : 1080
-//                   width: (globalScreenType=='2') ? 1280 : 1920
+                //    property var globalScreenType: '1'
+                //    height: (globalScreenType=='2') ? 1024 : 1080
+                //    width: (globalScreenType=='2') ? 1280 : 1920
     isBoxNameActive: false
     property var modeQR: "linkaja"
     property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR
@@ -193,16 +193,8 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         spacing: (globalScreenType == '1') ? 30 : 25
         width: parent.width - 100
-        height: 500
         visible: successPayment
-        //        AnimatedImage  {
-//            width: 200
-//            height: 200
-//            scale: 0.5
-//            anchors.fill: parent
-//            source: 'source/success.png'
-//            fillMode: Image.PreserveAspectFit
-//        }
+
         Text{
             text: 'Pembayaran QRIS sudah kami terima'
             wrapMode: Text.WordWrap
