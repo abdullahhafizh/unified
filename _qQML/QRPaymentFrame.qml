@@ -191,9 +191,9 @@ Base{
         id: rec_payment_success
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: (globalScreenType == '1') ? 50 : 30
-        width: parent.width
-        anchors.verticalCenterOffset: -50
+        spacing: (globalScreenType == '1') ? 30 : 25
+        width: parent.width - 100
+        height: 500
         visible: successPayment
         //        AnimatedImage  {
 //            width: 200
@@ -208,8 +208,8 @@ Base{
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
-            font.pixelSize: 50
-            font.bold: true
+            font.pixelSize: textSize
+            font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
@@ -219,8 +219,8 @@ Base{
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
-            font.pixelSize: 50
-            font.bold: true
+            font.pixelSize: textSize
+            font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
