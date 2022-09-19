@@ -1110,13 +1110,15 @@ def update_summary_report(data):
     elif data['shop_type'] == 'topup':
         _DAO.update_today_summary_multikeys([bank+'_topup_freq', bank+'_transaction_count'], 1)
         _DAO.update_today_summary(bank+'_transaction_amount', int(data.get('value', 0)))  
+    return True
 
 
 def store_transaction_mds(param):
     global GLOBAL_TRANSACTION_DATA
     try:
         p = GLOBAL_TRANSACTION_DATA = json.loads(param)
-        update_summary_report(p)
+        update_summary = update_summary_report(p)
+        LOGGER.info(('UPDATE REPORT SUMMARY', update_summary))
         if p['shop_type'] != 'topup':
             LOGGER.warning(('MDS Store Transaction Failed, Only Support Topup TRX This Time'))
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
@@ -1149,7 +1151,9 @@ def store_transaction_global(param, retry=False):
             return
         
         # Update Daily Summary Data
-        update_summary_report(g)
+        update_summary = update_summary_report(g)
+        LOGGER.info(('UPDATE REPORT SUMMARY', update_summary))
+
         trx_id = TRX_ID_SALE = _Helper.get_uuid()
         product_id = PID_SALE = g['shop_type'] + str(g['epoch'])
         bank_id = _Common.get_bid(g['provider'])            
