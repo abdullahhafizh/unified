@@ -16,7 +16,6 @@ Base{
     textPanel: 'Pilih Kategori Produk'
 
     logo_vis: !smallHeight
-    isHeaderActive: !smallHeight
 
     property var ppobData
     property var category: []
