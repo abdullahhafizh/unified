@@ -32,7 +32,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 30 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Fitur Baru : Kemudahan Transaksi Dari Whatsapp'
         size_: (globalScreenType == '1') ? 50 : 45
@@ -49,8 +49,8 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         spacing: 20
         AnimatedImage  {
-            width: 400
-            height: 400
+            width:  (smallHeight) ? 250 : 400
+            height: (smallHeight) ? 250 : 400
             scale: 1
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource

@@ -167,7 +167,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 30 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: textPanel
         visible: !popup_loading.visible

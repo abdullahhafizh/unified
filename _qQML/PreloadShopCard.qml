@@ -30,7 +30,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 300 : (smallHeight) ? 100 : 250
+        anchors.topMargin: (globalScreenType == '1') ? 300 : (smallHeight) ? 30 : 250
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Penting : Informasi Pembelian Kartu'
         size_: (globalScreenType == '1') ? 50 : 45

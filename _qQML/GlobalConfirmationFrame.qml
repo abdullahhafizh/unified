@@ -49,7 +49,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 30 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: textMain
         size_: (globalScreenType == '1') ? 50 : 45

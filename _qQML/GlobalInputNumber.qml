@@ -959,7 +959,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: (smallHeight) ? 30 : 200
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: wording_text
         visible: !popup_loading.visible
@@ -976,7 +976,7 @@ Base{
         color: "white"
         radius: 0
         anchors.top: parent.top
-        anchors.topMargin: 325
+        anchors.topMargin: (smallHeight) ? 100 : 325
         border.color: VIEW_CONFIG.text_color
         anchors.horizontalCenter: parent.horizontalCenter
     }

@@ -1624,7 +1624,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (smallHeight) ? 100 : 200
+        anchors.topMargin: (smallHeight) ? 30 : 200
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: (totalPrice > receivedPayment) ? 'Masukkan Uang Anda' : 'Pembayaran Selesai'
         size_: 50
