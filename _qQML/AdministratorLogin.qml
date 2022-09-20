@@ -139,7 +139,7 @@ Base{
     Rectangle{
         id: rec_parent
         color: "transparent"
-        anchors.verticalCenterOffset: 50
+        anchors.verticalCenterOffset: 0
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
