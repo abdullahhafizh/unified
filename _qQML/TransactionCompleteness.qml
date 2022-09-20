@@ -38,7 +38,7 @@ Base{
     MainTitle{
         width: 1200
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 150 : 125
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: mainTitle
         size_: (globalScreenType == '1') ? 50 : 45

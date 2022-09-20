@@ -8,9 +8,11 @@ Base{
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: (VIEW_CONFIG.page_timer * 3)
-    isPanelActive: false
-    isHeaderActive: true
-    isBoxNameActive: false
+
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     textPanel: 'Pilih Produk'
     property var ppobData
     property bool frameWithButton: false
@@ -238,7 +240,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Nominal / Item Produk'
         visible: !popup_loading.visible

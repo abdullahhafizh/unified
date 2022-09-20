@@ -346,7 +346,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 280 : 230
+        anchors.topMargin: (globalScreenType == '1') ? 280 : (smallHeight) ? 120 : 230
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
         visible: !popup_loading.visible
@@ -522,7 +522,7 @@ Base{
         id:topup_status_comp
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         visible: VIEW_CONFIG.topup_status && (globalBoxName !== "")
 		width: globalWidth
     }
@@ -708,7 +708,7 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: (globalScreenType == '1') ? -15 : -5
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: (smallHeight) ? 100 : 200
         width: (globalScreenType == '1') ? 100 : 85
         height: (globalScreenType == '1') ? 300 : 225
         visible: false
@@ -756,7 +756,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 200
+        anchors.bottomMargin: (smallHeight) ? 100 : 200
         anchors.right: parent.right
         anchors.rightMargin:  (globalScreenType == '1') ? -15 : -5
         width: (globalScreenType == '1') ? 100 : 85

@@ -14,6 +14,11 @@ Base{
     isHeaderActive: true
     isBoxNameActive: false
     textPanel: 'Pilih Kategori Produk'
+
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     property var ppobData
     property var category: []
     property bool frameWithButton: false
@@ -169,7 +174,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kategori Produk'
         visible: !popup_loading.visible

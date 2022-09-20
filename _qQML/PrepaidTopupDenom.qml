@@ -73,6 +73,10 @@ Base{
 
     property var cashboxFull
 
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     signal topup_denom_signal(string str)
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -866,7 +870,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih nominal topup'
         size_: (globalScreenType == '1') ? 50 : 45

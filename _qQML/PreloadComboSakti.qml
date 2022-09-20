@@ -12,6 +12,11 @@ Base{
     property var imageSource: "source/tsel-combo-sakti-qr-code.png"
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
+    
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+    
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -26,7 +31,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Special Offer : Telkomsel Paket Murah'
         size_: (globalScreenType == '1') ? 50 : 45

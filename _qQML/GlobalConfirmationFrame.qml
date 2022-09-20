@@ -36,6 +36,11 @@ Base{
     property alias data9: row9.labelContent
     property alias label10: row10.labelName
     property alias data10: row10.labelContent
+    
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -45,7 +50,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: textMain
         size_: (globalScreenType == '1') ? 50 : 45

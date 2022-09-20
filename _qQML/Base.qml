@@ -46,6 +46,8 @@ Rectangle{
     property variant allQRProvider: VIEW_CONFIG.all_qr_provider
     property bool printerAvailable: true
 
+    property bool smallHeight: (parseInt(SCREEN_HEIGHT)==800)
+
 // =========
 
 

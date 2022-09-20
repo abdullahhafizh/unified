@@ -24,6 +24,10 @@ Base{
     property bool autoDismiss: true
     property var selectedMenu: ''
 
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -38,7 +42,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 150 : 125
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Syarat dan Ketentuan'
         size_: (globalScreenType == '1') ? 50 : 45

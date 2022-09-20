@@ -47,6 +47,9 @@ Base{
 
     property var cashboxFull
 
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
 
     idx_bg: 0
     imgPanel: 'source/beli_kartu.png'
@@ -456,7 +459,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
+        anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 100 : 120
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kartu Tersedia'
         size_: (globalScreenType == '1') ? 50 : 45

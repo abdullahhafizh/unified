@@ -57,6 +57,9 @@ Base{
     property bool promoCodeActive: false
     property var promoData
 
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
 
     signal framingSignal(string str)
 
@@ -1621,7 +1624,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: (smallHeight) ? 100 : 200
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: (totalPrice > receivedPayment) ? 'Masukkan Uang Anda' : 'Pembayaran Selesai'
         size_: 50

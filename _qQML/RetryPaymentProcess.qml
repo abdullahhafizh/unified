@@ -66,6 +66,10 @@ Base{
 
     signal framingSignal(string str)
 
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     idx_bg: 0
     imgPanel: 'source/cash black.png'
     textPanel: 'Proses Pembayaran'

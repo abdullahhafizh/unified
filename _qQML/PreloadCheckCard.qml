@@ -10,6 +10,11 @@ Base{
     property var imageSource: "source/reader_sign.png"
     property bool smallerSlaveSize: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
+
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: !smallHeight
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
