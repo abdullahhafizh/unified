@@ -4,7 +4,6 @@ import QtGraphicalEffects 1.0
 
 Base{
     id:preload_combo_sakti
-    isBoxNameActive: false
     property var textMain: 'Dapatkan Kode Pemesanan Produk dengan langkah-langkah berikut :'
     property var textSlave: 'Cara 1 : Pelanggan mengakses *363*369# untuk memilih paket yang diinginkan.'
     property var textRebel: 'Cara 2 : Scan QR Di Atas dengan smartphone Anda, dan buka tautan link untuk memilih Produk.'

@@ -5,7 +5,6 @@ import QtGraphicalEffects 1.0
 
 Base{
     id:preload_whatasapp_voucher
-    isBoxNameActive: false
     property var whatsappNo: 'tersebut'
     property var textMain: 'Untuk mengaktifkan fitur ini, Silakan lakukan hal berikut :'
     property var textSlave: '1. Pada smartphone Anda, unduh Aplikasi QR Reader/Pembaca QR'

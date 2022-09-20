@@ -4,7 +4,6 @@ import QtGraphicalEffects 1.0
 
 Base{
     id:preload_shop_card
-    isBoxNameActive: false
     property var textMain: 'Kartu Mandiri e-Money yang dijual pada mesin ini memiliki keterangan sebagai berikut :'
     property var textSlave: '1. Saldo awal kartu = Rp. 30.000 per kartu'
     property var textRebel: '2. Biaya pembelian kartu perdana = Rp. 20.000 per kartu'
