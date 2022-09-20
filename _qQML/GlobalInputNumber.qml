@@ -963,7 +963,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: wording_text
         visible: !popup_loading.visible
-        size_: 50
+        size_: (smallHeight) ? 40 : 50
         color_: "white"
 
     }
