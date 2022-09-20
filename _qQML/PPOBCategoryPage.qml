@@ -17,7 +17,6 @@ Base{
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
 
     property var ppobData
     property var category: []

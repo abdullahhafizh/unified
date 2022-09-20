@@ -11,7 +11,7 @@ Base{
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
+    isBoxNameActive: false
 
     textPanel: 'Pilih Produk'
     property var ppobData

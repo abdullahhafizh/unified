@@ -10,9 +10,7 @@ Base{
 //                height: (globalScreenType=='2') ? 1024 : 1080
 //                width: (globalScreenType=='2') ? 1280 : 1920
     mode_: "reverse"
-    isPanelActive: false
-    isHeaderActive: true
-    isBoxNameActive: false
+
     textPanel: 'Pilih Produk'
     property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property int max_count: 24
@@ -65,6 +63,10 @@ Base{
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
+
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: false
     
     property alias next_button: next_button
 

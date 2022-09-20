@@ -4,7 +4,6 @@ import QtGraphicalEffects 1.0
 
 Base{
     id:globalFrame
-    isBoxNameActive: false
 //        property var globalScreenType: '1'
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
@@ -22,6 +21,11 @@ Base{
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
     property var specialHandler
     property var modeAction: ""
+
+    logo_vis: !smallHeight
+    isHeaderActive: !smallHeight
+    isBoxNameActive: false
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {

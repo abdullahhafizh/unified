@@ -49,7 +49,7 @@ Base{
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
+    isBoxNameActive: false
 
     idx_bg: 0
     imgPanel: 'source/beli_kartu.png'

@@ -59,7 +59,7 @@ Base{
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
+    isBoxNameActive: false
 
     signal framingSignal(string str)
 

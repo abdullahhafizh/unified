@@ -75,7 +75,7 @@ Base{
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
+    isBoxNameActive: false
 
     signal topup_denom_signal(string str)
     signal get_payment_method_signal(string str)

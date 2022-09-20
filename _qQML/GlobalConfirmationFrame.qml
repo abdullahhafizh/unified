@@ -6,7 +6,6 @@ import QtGraphicalEffects 1.0
 
 Base{
     id:globalConfirmationFrame
-    isBoxNameActive: false
     property var textMain: 'Ringkasan Transaksi'
     property bool withTimer: false
     property int textSize: (globalScreenType == '1') ? 40 : 35
@@ -39,7 +38,7 @@ Base{
     
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
+    isBoxNameActive: false
 
     visible: false
     opacity: visible ? 1.0 : 0.0

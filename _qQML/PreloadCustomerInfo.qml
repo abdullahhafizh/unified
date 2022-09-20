@@ -25,7 +25,7 @@ Base{
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
-    isBoxNameActive: !smallHeight
+    isBoxNameActive: false
 
     visible: false
     opacity: visible ? 1.0 : 0.0
