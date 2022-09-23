@@ -19,10 +19,7 @@ from _sSync import _Sync
 from _dDevice import _EDC
 from _dDevice import _QPROX
 from _dDevice import _CD
-from _tTools import _TicketTool
-# from _tTools import _Helper
 from _dDevice import _Printer
-# from _cCommand import _Command
 from time import sleep
 from _tTools import _CheckIn
 from _tTools import _SalePrintTool
@@ -134,17 +131,9 @@ class SlotHandler(QObject):
         _QPROX.start_disconnect_qprox()
     start_disconnect_qprox = pyqtSlot()(start_disconnect_qprox)
 
-    def start_generate(self, mode):
-        _TicketTool.start_generate(use=mode)
-    start_generate = pyqtSlot(str)(start_generate)
-
     def start_default_print(self, path):
         _Printer.start_default_print(path)
     start_default_print = pyqtSlot(str)(start_default_print)
-
-    def start_set_payment(self, payment):
-        _TicketTool.start_set_payment(payment=payment)
-    start_set_payment = pyqtSlot(str)(start_set_payment)
 
     def get_kiosk_status(self):
         _KioskService.get_kiosk_status()
@@ -170,18 +159,6 @@ class SlotHandler(QObject):
         _KioskService.start_begin_collect_cash()
     start_begin_collect_cash = pyqtSlot()(start_begin_collect_cash)
 
-    # def start_search_booking(self, bk):
-    #     _KioskService.start_search_booking(bk)
-    # start_search_booking = pyqtSlot(str)(start_search_booking)
-
-    def start_reprint(self, new_status):
-        _TicketTool.start_reprint(new_status)
-    start_reprint = pyqtSlot(str)(start_reprint)
-
-    # def start_recreate_payment(self, payment):
-    #     _KioskService.start_recreate_payment(payment)
-    # start_recreate_payment = pyqtSlot(str)(start_recreate_payment)
-
     def start_idle_mode(self):
         _Sync.start_idle_mode()
     start_idle_mode = pyqtSlot()(start_idle_mode)
@@ -193,10 +170,6 @@ class SlotHandler(QObject):
     def start_get_settlement(self):
         _EDC.start_get_settlement()
     start_get_settlement = pyqtSlot()(start_get_settlement)
-
-    def start_print_global(self, i, u):
-        _TicketTool.start_print_global(input_text=i, use_for=u)
-    start_print_global = pyqtSlot(str, str)(start_print_global)
 
     def start_edc_settlement(self):
         _EDC.start_edc_settlement()
@@ -707,17 +680,14 @@ def set_signal_handler():
     _QPROX.QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.connect(view.rootObject().result_online_info_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.connect(view.rootObject().result_init_online_mandiri)
     _QPROX.QP_SIGNDLER.SIGNAL_STOP_QPROX.connect(view.rootObject().result_stop_qprox)
-    _TicketTool.PDF_SIGNDLER.SIGNAL_START_GENERATE.connect(view.rootObject().result_generate_pdf)
     _KioskService.K_SIGNDLER.SIGNAL_GENERAL.connect(view.rootObject().result_general)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.connect(view.rootObject().result_kiosk_status)
     _KioskService.K_SIGNDLER.SIGNAL_PRICE_SETTING.connect(view.rootObject().result_price_setting)
     _KioskService.K_SIGNDLER.SIGNAL_LIST_CASH.connect(view.rootObject().result_list_cash)
     _KioskService.K_SIGNDLER.SIGNAL_COLLECT_CASH.connect(view.rootObject().result_collect_cash)
     _KioskService.K_SIGNDLER.SIGNAL_BOOKING_SEARCH.connect(view.rootObject().result_booking_search)
-    _TicketTool.PDF_SIGNDLER.SIGNAL_REPRINT.connect(view.rootObject().result_reprint)
     _KioskService.K_SIGNDLER.SIGNAL_RECREATE_PAYMENT.connect(view.rootObject().result_recreate_payment)
     _EDC.E_SIGNDLER.SIGNAL_GET_SETTLEMENT_EDC.connect(view.rootObject().result_get_settlement)
-    _TicketTool.PDF_SIGNDLER.SIGNAL_PRINT_GLOBAL.connect(view.rootObject().result_print_global)
     _EDC.E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.connect(view.rootObject().result_process_settlement)
     _EDC.E_SIGNDLER.SIGNAL_VOID_SETTLEMENT_EDC.connect(view.rootObject().result_void_settlement)
     _CheckIn.CI_SIGNDLER.SIGNAL_CHECK_FLIGHTCODE.connect(view.rootObject().result_check_booking_code)
