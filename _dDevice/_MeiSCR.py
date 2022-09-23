@@ -151,6 +151,20 @@ class MeiDevice:
             return False, message_out, str(ex)
     
     
+    def softReset(self):
+        message_out = ""
+        try:
+            if not self._scr.isOpen():
+                raise Exception("SCR Not Opened")
+            self._scr.softReset()
+            message_out = self.createMessage()            
+            return True, message_out, "OK"
+        except Exception as ex:
+            trace = traceback.format_exc()
+            LOG.grglog("[MEI]: softReset ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, trace)
+            return False, message_out, str(ex)
+
+    
     def getStatus(self):
         try:            
             return True, self.createMessage(), "OK"
@@ -421,7 +435,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 recycleNotes
             )
             if res is True:
-                # Do Soft Reset
+                res, msg, err = MEI.softReset()
                 return 0, "0000"
             else:
                 MEI = None
@@ -486,14 +500,9 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 time.sleep(1)
             return -1, err
         elif command == config['RESET']:
-            res, msg, err = MEI.open(
-                config['PORT'],
-                len(recycleNotes) > 0,
-                recycleNotes
-            )
+            res, msg, err = MEI.softReset()
             if res is True:
-                # Do Soft Reset
-                return 0, "Bill Reset"
+                return 0, msg
             else:
                 return -1, err
         elif command == config['STOP']:
