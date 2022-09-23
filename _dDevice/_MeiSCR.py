@@ -411,6 +411,7 @@ class MeiDevice:
 MEI = None
 LOOP_ATTEMPT = 0
 MAX_LOOP_ATTEMPT = 90
+DELAY_RESET = 10
 
 
 def send_command(param=None, config=[], recycleNotes=[]):
@@ -436,6 +437,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
             )
             if res is True:
                 res, msg, err = MEI.softReset()
+                time.sleep(DELAY_RESET)
                 return 0, "0000"
             else:
                 MEI = None
@@ -502,6 +504,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
         elif command == config['RESET']:
             res, msg, err = MEI.softReset()
             if res is True:
+                time.sleep(DELAY_RESET)
                 return 0, msg
             else:
                 return -1, err
