@@ -480,12 +480,10 @@ def send_command(param=None, config=[], recycleNotes=[]):
                     if config['CODE_JAM'] in msg:
                         # MEI.stopAcceptBill()
                         return -1, msg
-                    # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                    # Set Harcoded only wait for 3 Seconds
-                    if LOOP_ATTEMPT >= 3: 
+                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
-                return 0, msg
+                return -1, err
             else:
                 return -1, err
         elif command == config['REJECT']:
