@@ -405,7 +405,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
         # if _Helper.empty(param) or _Helper.empty(config):
         #     return -1, ""
         if MEI is None:
-            MEI = MeiDevice
+            MEI = MeiDevice()
         args = param.split('|')
         command = args[0]
         param = "0"
