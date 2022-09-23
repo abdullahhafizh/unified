@@ -84,7 +84,7 @@ MEI = {
     "TIMEOUT_BAD_NOTES": '_documentStatus=REJECTED',
     "UNKNOWN_ITEM": None ,
     "LOOP_DELAY": 2,
-    "KEY_STORED": '_deviceState=IDLE',
+    "KEY_STORED": '_documentStatus=STACKED',
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": '_cassetteStatus=FULL',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
@@ -409,7 +409,7 @@ def start_receive_note(trxid):
 def store_cash_into_cashbox():
     try:
         # print("pyt: ", _Helper.whoami())
-        if BILL_TYPE == 'MEI':
+        if BILL['TYPE'] == 'MEI':
             # Dummy Store Per Notes, MEI Actually Doing Bulk Storing
             return True
         max_attempt = int(BILL['MAX_STORE_ATTEMPT'])

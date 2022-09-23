@@ -427,7 +427,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
         if len(args[1:]) > 0:
             param = "|".join(args[1:])
         err = ''
-        LOGGER.debug((command, param, config))
+        # LOGGER.debug((command, param, config))
         # Define Command
         if command == config['SET']:
             res, msg, err = MEI.open(

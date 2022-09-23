@@ -902,7 +902,8 @@ Base{
                 do_refund_or_print('cash_device_error');
                 return;
             } else if (grgResult == 'COMPLETE'){
-                _SLOT.stop_bill_receive_note();
+                if VIEW_CONFIG.bill_type != 'MEI':
+                    _SLOT.stop_bill_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 popup_loading.smallerSlaveSize = true;
