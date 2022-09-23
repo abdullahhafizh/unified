@@ -432,6 +432,9 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 while True:
                     res, msg, err = MEI.getStatus()
                     LOOP_ATTEMPT += 1
+                    # Need To Handle This False Denom Read
+                    if 'Received=IDR|Denomination=0' in msg:
+                        continue
                     if config['KEY_RECEIVED'] in msg:
                         return 0, msg
                     if config['KEY_BOX_FULL'] in msg:
