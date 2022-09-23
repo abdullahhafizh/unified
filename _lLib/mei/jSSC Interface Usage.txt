@@ -1,0 +1,45 @@
+jSSC interface
+--------------
+The CPI Integration Toolkit library uses the jSSC.jar to create a serial (RS-232) connection with the device. The following jSSC function calls are used within the MPOST jar file. Any modifications to these signatures will break the current CPI Integration Toolkit implementation.
+
+Classes and functions used by CPI Integration Toolkit:
+	jssc.SerialPortList.getPortNames() 			//Static function
+
+	jssc.SerialPort(java.lang.String portName) 	//Constructor
+	jssc.SerialPort.isOpened()
+	jssc.SerialPort.openPort()
+	jssc.SerialPort.setParams(int baudRate, int dataBits, int stopBits, int parity)
+	jssc.SerialPort.addEventListener(SerialPortEventListener listener)
+	jssc.SerialPort.removeListener()
+	jssc.SerialPort.closePort()
+	jssc.SerialPort.getInputBufferBytesCount()
+	jssc.SerialPort.writeBytes(byte[] buffer)
+	jssc.SerialPort.readBytes()
+
+	jssc.SerialPortEventListener.serialEvent(SerialPortEvent serialPortEvent)
+
+	jssc.SerialPortEvent.getEventType()
+
+	jssc.SerialPortException.getExceptionType()
+	jssc.SerialPortException.getMessage()
+
+Class Constants used by CPI Integration Toolkit:
+	jssc.SerialPort.BAUDRATE_9600
+	jssc.SerialPort.BAUDRATE_115200
+	jssc.SerialPort.DATABITS_7
+	jssc.SerialPort.DATABITS_8
+	jssc.SerialPort.STOPBITS_1
+	jssc.SerialPort.PARITY_EVEN
+	jssc.SerialPort.PARITY_NONE
+
+	jssc.SerialPortEvent.RXCHAR
+
+
+
+
+
+
+
+
+
+

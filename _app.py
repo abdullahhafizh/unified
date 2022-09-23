@@ -17,7 +17,6 @@ from _sService import _UserService
 from _tTools import _Helper
 from _sSync import _Sync
 from _dDevice import _EDC
-from _dDevice import _MEI
 from _dDevice import _QPROX
 from _dDevice import _CD
 from _tTools import _TicketTool
@@ -95,50 +94,6 @@ class SlotHandler(QObject):
         _KioskService.start_get_payments()
     start_get_payments = pyqtSlot()(start_get_payments)
 
-    def start_accept_mei(self):
-        _MEI.start_accept_mei()
-    start_accept_mei = pyqtSlot()(start_accept_mei)
-
-    def start_dis_accept_mei(self):
-        _MEI.start_dis_accept_mei()
-    start_dis_accept_mei = pyqtSlot()(start_dis_accept_mei)
-
-    def start_stack_mei(self):
-        _MEI.start_stack_mei()
-    start_stack_mei = pyqtSlot()(start_stack_mei)
-
-    def start_return_mei(self):
-        _MEI.start_return_mei()
-    start_return_mei = pyqtSlot()(start_return_mei)
-
-    def start_store_es_mei(self):
-        _MEI.start_store_es_mei()
-    start_store_es_mei = pyqtSlot()(start_store_es_mei)
-
-    def start_return_es_mei(self):
-        _MEI.start_return_es_mei()
-    start_return_es_mei = pyqtSlot()(start_return_es_mei)
-
-    def start_dispense_cou_mei(self):
-        _MEI.start_dispense_cou_mei()
-    start_dispense_cou_mei = pyqtSlot()(start_dispense_cou_mei)
-
-    def start_float_down_cou_mei(self):
-        _MEI.start_float_down_cou_mei()
-    start_float_down_cou_mei = pyqtSlot()(start_float_down_cou_mei)
-
-    def start_dispense_val_mei(self, amount):
-        _MEI.start_dispense_val_mei(amount=amount)
-    start_dispense_val_mei = pyqtSlot(str)(start_dispense_val_mei)
-
-    def start_float_down_all_mei(self):
-        _MEI.start_float_down_all_mei()
-    start_float_down_all_mei = pyqtSlot()(start_float_down_all_mei)
-
-    def start_get_return_note(self):
-        _MEI.start_get_return_note()
-    start_get_return_note = pyqtSlot()(start_get_return_note)
-
     # def start_init_qprox_config(self):
     #     _QPROX.start_init_config()
     # start_init_qprox_config = pyqtSlot()(start_init_qprox_config)
@@ -170,10 +125,6 @@ class SlotHandler(QObject):
     def start_init_online_mandiri(self):
         _QPROX.start_init_online_mandiri()
     start_init_online_mandiri = pyqtSlot()(start_init_online_mandiri)
-
-    def start_disconnect_mei(self):
-        _MEI.start_disconnect_mei()
-    start_disconnect_mei = pyqtSlot()(start_disconnect_mei)
 
     def start_disconnect_edc(self):
         _EDC.start_disconnect_edc()
@@ -231,10 +182,6 @@ class SlotHandler(QObject):
     #     _KioskService.start_recreate_payment(payment)
     # start_recreate_payment = pyqtSlot(str)(start_recreate_payment)
 
-    def start_mei_create_payment(self, payment):
-        _MEI.start_mei_create_payment(payment)
-    start_mei_create_payment = pyqtSlot(str)(start_mei_create_payment)
-
     def start_idle_mode(self):
         _Sync.start_idle_mode()
     start_idle_mode = pyqtSlot()(start_idle_mode)
@@ -288,12 +235,10 @@ class SlotHandler(QObject):
     start_sync_product_stock = pyqtSlot()(start_sync_product_stock)
 
     def start_set_direct_price(self, price):
-        # _MEI.start_set_direct_price(price)
         _BILL.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
     def start_set_direct_price_with_current(self, current, price):
-        # _MEI.start_set_direct_price(price)
         _BILL.start_set_direct_price_with_current(current, price)
     start_set_direct_price_with_current = pyqtSlot(str, str)(start_set_direct_price_with_current)
 
@@ -753,17 +698,6 @@ def set_signal_handler():
     _EDC.E_SIGNDLER.SIGNAL_SALE_EDC.connect(view.rootObject().result_sale_edc)
     _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENTS.connect(view.rootObject().result_get_payment)
     _KioskService.K_SIGNDLER.SIGNAL_GET_REFUNDS.connect(view.rootObject().result_get_refund)
-    _MEI.M_SIGNDLER.SIGNAL_ACCEPT_MEI.connect(view.rootObject().result_accept_mei)
-    _MEI.M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.connect(view.rootObject().result_dis_accept_mei)
-    _MEI.M_SIGNDLER.SIGNAL_STACK_MEI.connect(view.rootObject().result_stack_mei)
-    _MEI.M_SIGNDLER.SIGNAL_RETURN_MEI.connect(view.rootObject().result_return_mei)
-    _MEI.M_SIGNDLER.SIGNAL_STORE_ES_MEI.connect(view.rootObject().result_store_es_mei)
-    _MEI.M_SIGNDLER.SIGNAL_RETURN_ES_MEI.connect(view.rootObject().result_return_es_mei)
-    _MEI.M_SIGNDLER.SIGNAL_DISPENSE_COU_MEI.connect(view.rootObject().result_dispense_cou_mei)
-    _MEI.M_SIGNDLER.SIGNAL_FLOAT_DOWN_COU_MEI.connect(view.rootObject().result_float_down_cou_mei)
-    _MEI.M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.connect(view.rootObject().result_dispense_val_mei)
-    _MEI.M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.connect(view.rootObject().result_float_down_all_mei)
-    _MEI.M_SIGNDLER.SIGNAL_RETURN_STATUS.connect(view.rootObject().result_return_status)
     _QPROX.QP_SIGNDLER.SIGNAL_INIT_QPROX.connect(view.rootObject().result_init_qprox_config)
     _QPROX.QP_SIGNDLER.SIGNAL_DEBIT_QPROX.connect(view.rootObject().result_debit_qprox)
     _QPROX.QP_SIGNDLER.SIGNAL_AUTH_QPROX.connect(view.rootObject().result_auth_qprox)
@@ -1219,11 +1153,6 @@ def startup_task():
             print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Connecting to ' +_Common.BILL_TYPE+ ' Bill Acceptor...')
             _BILL.init_bill()
-        if _Common.MEI['status'] is True:
-            sleep(1)
-            print("pyt: Connecting to MEI Bill Acceptor...")
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Connecting to MEI Bill Acceptor...')
-            _MEI.mei_standby_mode()
         if _Common.QPROX['status'] is True:
             print("pyt: Connecting to Prepaid Reader...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Connecting to Prepaid Reader...')

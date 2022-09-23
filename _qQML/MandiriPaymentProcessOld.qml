@@ -67,11 +67,6 @@ Base{
     Component.onCompleted:{
         base.result_balance_qprox.connect(get_balance);
         base.result_sale_edc.connect(edc_payment_result);
-        base.result_accept_mei.connect(mei_payment_result);
-        base.result_dis_accept_mei.connect(mei_payment_result);
-        base.result_stack_mei.connect(mei_payment_result);
-        base.result_return_mei.connect(mei_payment_result);
-        base.result_store_es_mei.connect(mei_payment_result);
         base.result_cd_move.connect(card_eject_result);
         base.result_store_transaction.connect(store_result);
         base.result_sale_print.connect(print_result);
@@ -91,11 +86,6 @@ Base{
     Component.onDestruction:{
         base.result_balance_qprox.disconnect(get_balance);
         base.result_sale_edc.disconnect(edc_payment_result);
-        base.result_accept_mei.disconnect(mei_payment_result);
-        base.result_dis_accept_mei.disconnect(mei_payment_result);
-        base.result_stack_mei.disconnect(mei_payment_result);
-        base.result_return_mei.disconnect(mei_payment_result);
-        base.result_store_es_mei.disconnect(mei_payment_result);
         base.result_cd_move.disconnect(card_eject_result);
         base.result_store_transaction.disconnect(store_result);
         base.result_sale_print.disconnect(print_result);
@@ -541,43 +531,6 @@ Base{
         } else if (grgFunction == 'STATUS_BILL'){
             if(grgResult=='ERROR') {
                 false_notif('backToMain', 'Terjadi Kegagalan Pada Bill Acceptor');
-                return;
-            }
-        }
-    }
-
-    function mei_payment_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log("mei_payment_result : ", now, r)
-        var meiFunction = r.split('|')[0]
-        var meiResult = r.split('|')[1]
-        if (meiFunction == 'STACK'){
-            if (meiResult == "ERROR"||meiResult == "REJECTED"||meiResult == "OSERROR"){
-                false_notif();
-                if (receivedCash > 0){
-                    _SLOT.start_return_es_mei();
-                }
-            } if (meiResult == 'COMPLETE'){
-                _SLOT.start_dis_accept_mei();
-                _SLOT.start_store_es_mei();
-                back_button.visible = false;
-                popup_loading.textMain = 'Harap Tunggu Sebentar'
-                popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda'
-                popup_loading.open();
-//                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
-            } else {
-                receivedCash = parseInt(meiResult);
-            }
-        } else if (meiFunction == 'STORE_ES'){
-            if(meiResult.indexOf('SUCCESS') > -1) {
-                var cashResponse = JSON.parse(r.replace('STORE_ES|SUCCESS-', ''))
-                details.payment_details = cashResponse;
-                details.payment_received = cashResponse.total;
-                payment_complete();
-            }
-        } else if (meiFunction == 'ACCEPT'){
-            if(meiResult=='ERROR') {
-                false_notif();
                 return;
             }
         }

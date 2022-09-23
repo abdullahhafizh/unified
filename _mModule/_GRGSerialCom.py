@@ -18,14 +18,14 @@ class GRGSerial():
         if self.ser is None:
             self.ser = Serial(port=port, baudrate=19200, timeout=500)
             result = _GRGComProtocol.CM_Init(self.ser)
-            LOG.grglog("[LIB] initConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+            LOG.bvlog("[LIB] initConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         else:
             if self.ser.isOpen():
                 # self.ser.close()
                 self.disconnect()
                 self.ser = Serial(port=port, baudrate=19200, timeout=500)
             result = _GRGComProtocol.CM_Init(self.ser)
-            LOG.grglog("[LIB] reInitConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+            LOG.bvlog("[LIB] reInitConnect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
 
         return result
     
@@ -37,7 +37,7 @@ class GRGSerial():
         self.IS_START_DEPOSIT_ACTIVE = True
         try:
             isNormal, returnMessage, rawMessage = _GRGComProtocol.CM_StartDeposit(self.ser)
-            LOG.grglog("[LIB] startDeposit: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, (isNormal, returnMessage, rawMessage))
+            LOG.bvlog("[LIB] startDeposit: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, (isNormal, returnMessage, rawMessage))
 
             self.IS_START_DEPOSIT_ACTIVE = False
             if not isNormal:
@@ -51,21 +51,21 @@ class GRGSerial():
     
     def cancelDeposit(self):
         result = _GRGComProtocol.CM_CancelDeposit(self.ser, self.IS_START_DEPOSIT_ACTIVE)
-        LOG.grglog("[LIB] cancelDeposit: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+        LOG.bvlog("[LIB] cancelDeposit: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         return result
     
     def confirmNote(self):
         result = _GRGComProtocol.CM_AcceptNote(self.ser)
-        LOG.grglog("[LIB] confirmNote: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+        LOG.bvlog("[LIB] confirmNote: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         return result
     
     def cancelNote(self):
         result = _GRGComProtocol.CM_CancelNote(self.ser)
-        LOG.grglog("[LIB] cancelNote: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+        LOG.bvlog("[LIB] cancelNote: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         return result
     
     def getStatus(self):
         result = _GRGComProtocol.CM_GetStatus(self.ser)
-        LOG.grglog("[LIB] getStatus: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
+        LOG.bvlog("[LIB] getStatus: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         return result
     

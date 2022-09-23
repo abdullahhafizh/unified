@@ -46,16 +46,6 @@ Base{
         abortPayment.connect(abort_payment);
         base.result_get_payment.connect(define_device);
         base.result_sale_edc.connect(edc_payment_result);
-        base.result_accept_mei.connect(mei_payment_result);
-        base.result_dis_accept_mei.connect(mei_payment_result);
-        base.result_stack_mei.connect(mei_payment_result);
-        base.result_return_mei.connect(mei_payment_result);
-        base.result_store_es_mei.connect(mei_payment_result);
-        base.result_return_es_mei.connect(mei_payment_result);
-        base.result_dispense_cou_mei.connect(mei_payment_result);
-        base.result_float_down_cou_mei.connect(mei_payment_result);
-        base.result_dispense_val_mei.connect(mei_payment_result);
-        base.result_float_down_all_mei.connect(mei_payment_result);
         base.result_init_qprox_config.connect(qprox_payment_result);
         base.result_debit_qprox.connect(qprox_payment_result);
         base.result_auth_qprox.connect(qprox_payment_result);
@@ -74,16 +64,6 @@ Base{
         abortPayment.disconnect(abort_payment);
         base.result_get_payment.disconnect(define_device);
         base.result_sale_edc.disconnect(edc_payment_result);
-        base.result_accept_mei.disconnect(mei_payment_result);
-        base.result_dis_accept_mei.disconnect(mei_payment_result);
-        base.result_stack_mei.disconnect(mei_payment_result);
-        base.result_return_mei.disconnect(mei_payment_result);
-        base.result_store_es_mei.disconnect(mei_payment_result);
-        base.result_return_es_mei.disconnect(mei_payment_result);
-        base.result_dispense_cou_mei.disconnect(mei_payment_result);
-        base.result_float_down_cou_mei.disconnect(mei_payment_result);
-        base.result_dispense_val_mei.disconnect(mei_payment_result);
-        base.result_float_down_all_mei.disconnect(mei_payment_result);
         base.result_init_qprox_config.disconnect(qprox_payment_result);
         base.result_debit_qprox.disconnect(qprox_payment_result);
         base.result_auth_qprox.disconnect(qprox_payment_result);
@@ -258,49 +238,6 @@ Base{
         press = "0"
     }
 
-    function mei_payment_result(r){
-//        console.log("mei_payment_result : ", r)
-        var meiFunction = r.split('|')[0]
-        var meiResult = r.split('|')[1]
-        if (r==undefined||r==""||meiResult=="ERROR"||meiResult=="TIMEOUT"){
-//            _SLOT.start_disconnect_mei()
-            notif_view.isSuccess = false
-            if (meiResult=="TIMEOUT"){
-                notif_view.show_detail = qsTr("We're apologize, Your payment session is expired.")
-//                _SLOT.start_return_es_mei()
-            } else {
-                notif_view.show_detail =  meiFunction + " result : " + r
-            }
-            notif_view.show_detail =  meiFunction + " result : " + r
-            notif_view.z = 100
-            notif_view.escapeFunction = "closeWindow"
-            notif_view.open()
-        }
-            // TODO create multiple parse function for count
-        switch(meiFunction){
-        case "ACCEPT": console.log("ACCEPT FUNCTION : ", meiResult);
-            break;
-        case "DIS_ACCEPT": console.log("DIS_ACCEPT FUNCTION : ", meiResult);
-            break;
-        case "STACK": console.log("STACK FUNCTION : ", meiResult); update_cash(meiFunction, meiResult);
-            break;
-        case "RETURN": console.log("RETURN FUNCTION: ", meiResult); update_cash(meiFunction, meiResult);
-            break;
-        case "STORE_ES": console.log("STORE_ES FUNCTION : ", meiResult); if(meiResult=='SUCCESS') success_payment();
-            break;
-        case "RETURN_ES": console.log("RETURN_ES FUNCTION : ", meiResult); update_cash(meiFunction, meiResult);
-            break;
-        case "DISPENSE_VAL": console.log("DISPENSE_VAL FUNCTION : ", meiResult);
-            break;
-        case "RETURN_STAT": console.log("RETURN_STAT FUNCTION : ", meiResult);
-            break;
-        case "STOP": console.log("STOP FUNCTION : ", meiResult);
-            break;
-        default: console.log("DEFAULT FUNCTION : ", meiFunction, meiResult);
-            break;
-        }
-    }
-
     function update_cash(f, r){
        if(f=="STACK"){
            if (r=="CONTINUE"){
@@ -345,7 +282,7 @@ Base{
     }
 
     function qprox_payment_result(r){
-        console.log("mei_payment_result : ", r)
+        console.log("qprox_payment_result : ", r)
         var meiFunction = r.split('|')[0]
         var meiResult = r.split('|')[1]
         if (r==undefined||r==""||meiResult=="ERROR"){

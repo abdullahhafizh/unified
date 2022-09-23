@@ -79,8 +79,8 @@ EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') =
 MEI_PORT = get_config_value('port', 'MEI')
 BILL_PORT = get_config_value('port', 'BILL')
 BILL_TYPE = _ConfigParser.get_set_value('BILL', 'type', 'GRG')
-BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^library', '1') == '0' and BILL_TYPE == 'NV' else False
-BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug', '0') == '1' and BILL_TYPE == 'NV' else False
+BILL_NATIVE_MODULE = True if _ConfigParser.get_set_value('BILL', 'service^library', '1') == '0' else False
+BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug', '0') == '1' else False
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False

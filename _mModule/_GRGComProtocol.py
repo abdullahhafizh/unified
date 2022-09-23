@@ -159,7 +159,7 @@ class GRGReponseData():
             return self.getResponse()
         
         iCur = dataCash[iD+2] + dataCash[iD+3]
-        LOG.grglog("[LIB] iCur: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, iCur)
+        LOG.bvlog("[LIB] iCur: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, iCur)
 
         if iCur == "4F":
             iCur = "IDR"
@@ -167,7 +167,7 @@ class GRGReponseData():
             iCur = "UNK"
         
         iDen = dataCash[iD+4] + dataCash[iD+5]
-        LOG.grglog("[LIB] iDen: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, iDen)
+        LOG.bvlog("[LIB] iDen: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, iDen)
 
         # Get The Money Index From Last
         denom = DENOM_LIST.get(iDen[1], "0")
@@ -262,14 +262,14 @@ def writeAndRead(ser=Serial(), wByte=b""):
     wByte = PROTO_FUNC.STX.value + wByte + PROTO_FUNC.EXT.value
     wByte = wByte + calculateCRC(wByte)
     ser.write(wByte)
-    LOG.grglog("[LIB] write: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
+    LOG.bvlog("[LIB] write: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
 
     #GET ACK
     counter = 0
     while True:
         counter = counter + 1
         rByte = ser.read_until(size=2)
-        LOG.grglog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+        LOG.bvlog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
 
         try:
             proto = PROTO_FUNC(rByte[0:2])  
@@ -279,12 +279,12 @@ def writeAndRead(ser=Serial(), wByte=b""):
             #OK Next Sequence
             wByte = PROTO_FUNC.ENQ.value
             ser.write(wByte)
-            LOG.grglog("[LIB] write: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
+            LOG.bvlog("[LIB] write: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
 
             rByte = ser.read_until(PROTO_FUNC.EXT.value)
             crc = ser.read(1)
-            LOG.grglog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
-            LOG.grglog("[LIB] crc: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, crc)
+            LOG.bvlog("[LIB] read: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+            LOG.bvlog("[LIB] crc: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, crc)
             break
 
         elif proto == PROTO_FUNC.BOT:
@@ -292,12 +292,12 @@ def writeAndRead(ser=Serial(), wByte=b""):
             time.sleep(1)
             rByte = b""
             ser.write(wByte)
-            LOG.grglog("[LIB] busy response: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
+            LOG.bvlog("[LIB] busy response: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
 
         elif proto == PROTO_FUNC.FOT:
             rByte = b""
             ser.write(wByte)
-            LOG.grglog("[LIB] resume: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
+            LOG.bvlog("[LIB] resume: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
 
         else:
             if counter > 20:
@@ -312,7 +312,7 @@ def CM_Init(ser=Serial()):
     responseData = writeAndRead(ser, getVersionMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     if not isNormal:
         return isNormal, returnMessage, rawMessage
@@ -323,7 +323,7 @@ def CM_Init(ser=Serial()):
     responseData = writeAndRead(ser, clearNotesMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     if not isNormal:
         return isNormal, returnMessage, rawMessage
@@ -334,7 +334,7 @@ def CM_Init(ser=Serial()):
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     if not isNormal:
         return isNormal, returnMessage, rawMessage
@@ -353,7 +353,7 @@ def CM_StartDeposit(ser=Serial()):
     responseData = writeAndRead(ser, prepareDepositMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
@@ -363,7 +363,7 @@ def CM_StartDeposit(ser=Serial()):
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
@@ -373,13 +373,13 @@ def CM_StartDeposit(ser=Serial()):
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
     time.sleep(1)
 
-    LOG.grglog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
+    LOG.bvlog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
 
     startTime = time.time()
     while responseMessage.state == 3:
@@ -387,13 +387,13 @@ def CM_StartDeposit(ser=Serial()):
         responseData = writeAndRead(ser, getNotesInfo)
         responseMessage = GRGReponseData(responseData)
         isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-        LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+        LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
         if not isNormal:
             cancelNotesMessage = createMessage(CMD.DEPOSIT_CANCEL)
             responseData = writeAndRead(ser, cancelNotesMessage)
             responseMessage = GRGReponseData(responseData)
             isxNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
-            LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+            LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
             if not isxNormal:
                 return isxNormal, returnxMessage, xrawMessage
@@ -406,12 +406,12 @@ def CM_StartDeposit(ser=Serial()):
         responseData = writeAndRead(ser, getStatusMessage)
         responseMessage = GRGReponseData(responseData)
         isNormal, returnMessage, rawMessage = responseMessage.getResponse()
-        LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+        LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
         if not isNormal:
             return isNormal, returnMessage, rawMessage
 
-        LOG.grglog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
+        LOG.bvlog("[LIB] state: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.state)
         if responseMessage.state == 3:
             currentTime = time.time()
             if (currentTime - startTime) >= 30:
@@ -428,7 +428,7 @@ def CM_StartDeposit(ser=Serial()):
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
@@ -438,7 +438,7 @@ def CM_StartDeposit(ser=Serial()):
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnxMessage, xrawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
     
@@ -451,7 +451,7 @@ def CM_CancelDeposit(ser=Serial(), needCancelStart=False):
         CANCEL_EVENT.set()
         counter = 0
         while CANCEL_EVENT.isSet():
-            LOG.grglog("[LIB] WAIT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "ACK Cancel EVENT")
+            LOG.bvlog("[LIB] WAIT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "ACK Cancel EVENT")
             counter = counter + 1
             time.sleep(1)
             if counter >= 30:
@@ -461,7 +461,7 @@ def CM_CancelDeposit(ser=Serial(), needCancelStart=False):
     responseData = writeAndRead(ser, stopDepositMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
 
     return isNormal, returnMessage, rawMessage
 
@@ -471,7 +471,7 @@ def CM_AcceptNote(ser=Serial()):
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
@@ -481,7 +481,7 @@ def CM_AcceptNote(ser=Serial()):
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
 
@@ -491,7 +491,7 @@ def CM_AcceptNote(ser=Serial()):
     responseData = writeAndRead(ser, confirmNotesMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
 
@@ -503,7 +503,7 @@ def CM_CancelNote(ser=Serial()):
     responseData = writeAndRead(ser, getNotesInfo)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 
@@ -513,7 +513,7 @@ def CM_CancelNote(ser=Serial()):
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
 
@@ -523,7 +523,7 @@ def CM_CancelNote(ser=Serial()):
     responseData = writeAndRead(ser, cancelNotesMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnxMessage, xrawMessage = responseMessage.getResponse()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnxMessage, xrawMessage
 
@@ -535,7 +535,7 @@ def CM_GetStatus(ser=Serial()):
     responseData = writeAndRead(ser, getStatusMessage)
     responseMessage = GRGReponseData(responseData)
     isNormal, returnMessage, rawMessage = responseMessage.getCashInfo()
-    LOG.grglog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
+    LOG.bvlog("[LIB] responseMessage: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, responseMessage.toString())
     if not isNormal:
         return isNormal, returnMessage, rawMessage
 

@@ -21,7 +21,7 @@ if not os.path.exists(LOG_FILE):
     os.makedirs(LOG_FILE)
 
 
-def grglog(message, info_type, flow_type, fw_object=None, file_name_prefix="GRGLOG_", prettyprint=False, show_log=True):
+def bvlog(message, info_type, flow_type, fw_object=None, file_name_prefix="GRGLOG_", prettyprint=False, show_log=True):
     if show_log is True:
         do_logging(message, info_type, flow_type, fw_object, file_name_prefix, prettyprint)
         

@@ -13,6 +13,7 @@ import os
 import subprocess
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 from _dDevice import _NV200
+from _dDevice import _MeiSCR
 
 
 LOGGER = logging.getLogger()
@@ -68,6 +69,28 @@ NV = {
     "TYPE": "NV_200"
 }
 
+MEI = {
+    "SET": "301",
+    "RECEIVE": "302",
+    "STORE": "303",
+    "REJECT": "304",
+    "STOP": "305",
+    # "STATUS": "504",
+    "RESET": "306",
+    "KEY_RECEIVED": "Received=IDR|Denomination=",
+    "PORT": BILL_PORT,
+    # TODO Check Property Below Property
+    "CODE_JAM": '_disabledReason=JAMMED',
+    "TIMEOUT_BAD_NOTES": '_documentStatus=REJECTED',
+    "UNKNOWN_ITEM": None ,
+    "LOOP_DELAY": 2,
+    "KEY_STORED": '_deviceState=IDLE',
+    "MAX_STORE_ATTEMPT": 1,
+    "KEY_BOX_FULL": '_cassetteStatus=FULL',
+    "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
+    "TYPE": "MEI_SCR"
+}
+
 
 class BILLSignalHandler(QObject):
     __qualname__ = 'BILLSignalHandler'
@@ -118,7 +141,10 @@ DIRECT_PRICE_AMOUNT = 0
 
 def init_bill():
     global OPEN_STATUS, BILL
-    BILL = GRG if BILL_TYPE == 'GRG' else NV
+    # if BILL_TYPE == 'GRG': BILL = GRG 
+    # if BILL_TYPE == 'NV': BILL = NV 
+    # if BILL_TYPE == 'MEI': BILL = MEI 
+    exec('BILL='+BILL_TYPE)
     # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
         LOGGER.warning(("port", BILL_PORT))
@@ -144,15 +170,18 @@ def send_command_to_bill(param=None, output=None):
             # LOGGER.debug(('EXCEPTION_RAISED', 'RETRY_COMMAND', param, result))
             # sleep(1)
             # result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
-        LOGGER.info((param, result))
+    elif BILL_TYPE == 'MEI':
+        result = _MeiSCR.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
     else:
         result = _Command.send_request(param, output)
+    LOGGER.info((param, result))
     return result
 
 
 def reset_bill():
     global OPEN_STATUS, BILL
-    BILL = GRG if BILL_TYPE == 'GRG' else NV
+    # BILL = GRG if BILL_TYPE == 'GRG' else NV
+    exec('BILL='+BILL_TYPE)
     # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     # if BILL_PORT is None:
     #     LOGGER.warning(("port", BILL_PORT))
@@ -218,6 +247,9 @@ def parse_notes(_result):
         if BILL_TYPE == 'GRG':
             # Received=IDR|Denomination=5000|Version=2|SerialNumber=1|Go=0
             cash_in = _result.split('|')[1].split('=')[1]
+        elif BILL_TYPE == 'MEI':
+            # Received=IDR|Denomination=10000.0|Version=286318130
+            cash_in = _result.split('|')[1].split('=')[1].replace('.0', '')
         elif BILL_TYPE == 'NV':
             # Note in escrow, amount: 2000.00  IDR
             cash_in = _result.split('amount: ')[1].split('.00')[0]
@@ -296,6 +328,7 @@ def start_receive_note(trxid):
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
                 if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
+                    # Because GRG Not Trigger Auto Reject On Bad Notes
                     if BILL_TYPE == 'GRG':
                         _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
                         # send_command_to_bill(param=BILL["STOP"]+'|', output=None)
@@ -332,7 +365,7 @@ def start_receive_note(trxid):
                 # sleep(_Common.BILL_STORE_DELAY)
             except OSError as o:
                 LOGGER.warning(('ANOMALY_FOUND_HERE', o))
-                # Dangerous Zone Here
+                # WARNING: Dangerous Zone Here
                 if _result is not None:
                     cash_in = parse_notes(_result)
                     if int(cash_in) > 0:

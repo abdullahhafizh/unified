@@ -7,7 +7,7 @@ from _mModule import _GRGSerialCom
 GRG = None
 
 def send_command(cmd, param):
-    LOG.grglog("LIB [{0}]: Param = ".format(cmd), LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_NO_FLOW, param)
+    LOG.bvlog("LIB [{0}]: Param = ".format(cmd), LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_NO_FLOW, param)
 
     __global_response__ = {
         "Command": cmd,
@@ -18,7 +18,7 @@ def send_command(cmd, param):
     }
     
     try:
-        LOG.grglog("LIB [{0}]: Mulai".format(cmd), LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_NO_FLOW)
+        LOG.bvlog("LIB [{0}]: Mulai".format(cmd), LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_NO_FLOW)
 
         if cmd == "501":
             doInit(param, __global_response__)
@@ -39,13 +39,13 @@ def send_command(cmd, param):
         trace = traceback.format_exc()
         formatted_lines = trace.splitlines()
         err_message = traceback._cause_message
-        LOG.grglog("LIB [{0}]: ERROR ".format(cmd), LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_NO_FLOW, formatted_lines[-1])
-        LOG.grglog("LIB [{0}]: TRACE ".format(cmd), LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_NO_FLOW, trace)
+        LOG.bvlog("LIB [{0}]: ERROR ".format(cmd), LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_NO_FLOW, formatted_lines[-1])
+        LOG.bvlog("LIB [{0}]: TRACE ".format(cmd), LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_NO_FLOW, trace)
 
         __global_response__["Result"] = "EXCP"
         __global_response__["ErrorDesc"] = trace
     finally:
-        LOG.grglog("LIB [{0}]: DONE\r\n".format(cmd), LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_NO_FLOW)
+        LOG.bvlog("LIB [{0}]: DONE\r\n".format(cmd), LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_NO_FLOW)
 
     return __global_response__
 
@@ -58,10 +58,10 @@ def doInit(param, __global_response__):
     if len(Param) == 1:
         GRG_PORT = "COM"+Param[0]
     else:
-        LOG.grglog("[501]: Missing Parameter: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
+        LOG.bvlog("[501]: Missing Parameter: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
         raise SystemError("Missing Parameter: "+param)
 
-    LOG.grglog("[501]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, GRG_PORT)
+    LOG.bvlog("[501]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, GRG_PORT)
 
     if GRG is None:
         GRG = _GRGSerialCom.GRGSerial()
@@ -73,17 +73,17 @@ def doInit(param, __global_response__):
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = "Sukses"
 
-        LOG.grglog("[501]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[501]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
-        LOG.grglog("[501]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[501]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[501]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
+        LOG.bvlog("[501]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __global_response__["Result"] = "1" 
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = rawMessage
 
-        LOG.grglog("[501]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[501]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
-        LOG.grglog("[501]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
+        LOG.bvlog("[501]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[501]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
+        LOG.bvlog("[501]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
     
     return isNormal
 
@@ -92,7 +92,7 @@ def doStartDeposit(param, __global_response__):
     global GRG
 
     if GRG is None:
-        LOG.grglog("[502]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[502]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.startDeposit()
@@ -102,17 +102,17 @@ def doStartDeposit(param, __global_response__):
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = "Sukses"
 
-        LOG.grglog("[502]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[502]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
-        LOG.grglog("[502]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[502]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[502]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
+        LOG.bvlog("[502]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __global_response__["Result"] = "1" 
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = rawMessage
 
-        LOG.grglog("[502]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[502]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
-        LOG.grglog("[502]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
+        LOG.bvlog("[502]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[502]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
+        LOG.bvlog("[502]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
     
     return isNormal
 
@@ -121,7 +121,7 @@ def doCancelDeposit(param, __global_response__):
     global GRG
 
     if GRG is None:
-        LOG.grglog("[503]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[503]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.cancelDeposit()
@@ -131,17 +131,17 @@ def doCancelDeposit(param, __global_response__):
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = "Sukses"
 
-        LOG.grglog("[503]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[503]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
-        LOG.grglog("[503]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[503]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[503]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
+        LOG.bvlog("[503]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __global_response__["Result"] = "1" 
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = rawMessage
 
-        LOG.grglog("[503]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[503]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
-        LOG.grglog("[503]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
+        LOG.bvlog("[503]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[503]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
+        LOG.bvlog("[503]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
     
     return isNormal
 
@@ -150,7 +150,7 @@ def doGetStatus(param, __global_response__):
     global GRG
 
     if GRG is None:
-        LOG.grglog("[504]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[504]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.getStatus()
@@ -160,17 +160,17 @@ def doGetStatus(param, __global_response__):
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = "Sukses"
 
-        LOG.grglog("[504]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[504]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
-        LOG.grglog("[504]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[504]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[504]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
+        LOG.bvlog("[504]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __global_response__["Result"] = "1" 
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = rawMessage
 
-        LOG.grglog("[504]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[504]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
-        LOG.grglog("[504]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
+        LOG.bvlog("[504]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[504]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
+        LOG.bvlog("[504]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
     
     return isNormal
 
@@ -179,7 +179,7 @@ def doAcceptNote(param, __global_response__):
     global GRG
 
     if GRG is None:
-        LOG.grglog("[505]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[505]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.confirmNote()
@@ -189,17 +189,17 @@ def doAcceptNote(param, __global_response__):
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = "Sukses"
 
-        LOG.grglog("[505]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[505]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
-        LOG.grglog("[505]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[505]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[505]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
+        LOG.bvlog("[505]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __global_response__["Result"] = "1" 
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = rawMessage
 
-        LOG.grglog("[505]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[505]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
-        LOG.grglog("[505]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
+        LOG.bvlog("[505]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[505]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
+        LOG.bvlog("[505]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
     
     return isNormal
 
@@ -208,7 +208,7 @@ def doCancelNote(param, __global_response__):
     global GRG
 
     if GRG is None:
-        LOG.grglog("[506]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[506]: Lakukan init terlebih dulu", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         raise SystemError("Lakukan init terlebih dulu")
 
     isNormal, returnMessage, rawMessage = GRG.cancelNote()
@@ -218,16 +218,16 @@ def doCancelNote(param, __global_response__):
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = "Sukses"
 
-        LOG.grglog("[506]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[506]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
-        LOG.grglog("[506]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+        LOG.bvlog("[506]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[506]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, "0000")
+        LOG.bvlog("[506]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __global_response__["Result"] = "1" 
         __global_response__["Response"] = returnMessage
         __global_response__["ErrorDesc"] = rawMessage
 
-        LOG.grglog("[506]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
-        LOG.grglog("[506]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
-        LOG.grglog("[506]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
+        LOG.bvlog("[506]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, returnMessage)
+        LOG.bvlog("[506]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, "1")
+        LOG.bvlog("[506]: Gagal = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, rawMessage)
     
     return isNormal

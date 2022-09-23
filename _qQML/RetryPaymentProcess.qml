@@ -97,11 +97,6 @@ Base{
     Component.onCompleted:{
         base.result_balance_qprox.connect(get_balance);
         base.result_sale_edc.connect(edc_payment_result);
-        base.result_accept_mei.connect(mei_payment_result);
-        base.result_dis_accept_mei.connect(mei_payment_result);
-        base.result_stack_mei.connect(mei_payment_result);
-        base.result_return_mei.connect(mei_payment_result);
-        base.result_store_es_mei.connect(mei_payment_result);
         base.result_cd_move.connect(shop_card_result);
         base.result_store_transaction.connect(store_result);
         base.result_sale_print.connect(print_result);
@@ -123,11 +118,6 @@ Base{
     Component.onDestruction:{
         base.result_balance_qprox.disconnect(get_balance);
         base.result_sale_edc.disconnect(edc_payment_result);
-        base.result_accept_mei.disconnect(mei_payment_result);
-        base.result_dis_accept_mei.disconnect(mei_payment_result);
-        base.result_stack_mei.disconnect(mei_payment_result);
-        base.result_return_mei.disconnect(mei_payment_result);
-        base.result_store_es_mei.disconnect(mei_payment_result);
         base.result_cd_move.disconnect(shop_card_result);
         base.result_store_transaction.disconnect(store_result);
         base.result_sale_print.disconnect(print_result);
@@ -873,44 +863,6 @@ Base{
         }
     }
 
-    function mei_payment_result(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log("mei_payment_result : ", now, r)
-        var meiFunction = r.split('|')[0]
-        var meiResult = r.split('|')[1]
-        if (meiFunction == 'STACK'){
-            if (meiResult == "ERROR"||meiResult == "REJECTED"||meiResult == "OSERROR"){
-//                false_notif();
-                if (receivedPayment > initialPayment){
-                    _SLOT.start_return_es_mei();
-                }
-            } if (meiResult == 'COMPLETE'){
-                _SLOT.start_dis_accept_mei();
-                _SLOT.start_store_es_mei();
-                popup_loading.textMain = 'Harap Tunggu Sebentar'
-                popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda'
-                popup_loading.open();
-                transactionInProcess = true;
-
-//                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
-            } else {
-                receivedPayment = parseInt(meiResult);
-            }
-        } else if (meiFunction == 'STORE_ES'){
-            if(meiResult.indexOf('SUCCESS') > -1) {
-                var cashResponse = JSON.parse(r.replace('STORE_ES|SUCCESS-', ''))
-                details.payment_details = cashResponse;
-                details.payment_received = cashResponse.total;
-                if (proceedAble) payment_complete('mei');
-            }
-        } else if (meiFunction == 'ACCEPT'){
-            if(meiResult=='ERROR') {
-//                false_notif();
-                return;
-            }
-        }
-    }
-
     function edc_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log("edc_payment_result : ", now, r)
@@ -1106,7 +1058,6 @@ Base{
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
             _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
-//            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
             _SLOT.start_play_audio('insert_cash_with_good_condition');
             back_button.visible = false;
@@ -1713,9 +1664,7 @@ Base{
                             do_refund_or_print('user_cancellation');
                             return;
     //                        print_failed_transaction('cash', 'USER_CANCELLATION');
-    //                        _SLOT.start_return_es_mei();
                         }
-    //                    _SLOT.start_dis_accept_mei();
                     }
                     if (details.payment == 'debit'){
                         console.log('[CANCELLATION] User Payment Debit', receivedPayment);

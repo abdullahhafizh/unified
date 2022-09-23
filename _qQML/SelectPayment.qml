@@ -90,16 +90,6 @@ Base{
         abortPayment.connect(abort_payment);
         base.result_get_payment.connect(define_device);
         base.result_sale_edc.connect(edc_payment_result);
-        base.result_accept_mei.connect(mei_payment_result);
-        base.result_dis_accept_mei.connect(mei_payment_result);
-        base.result_stack_mei.connect(mei_payment_result);
-        base.result_return_mei.connect(mei_payment_result);
-        base.result_store_es_mei.connect(mei_payment_result);
-        base.result_return_es_mei.connect(mei_payment_result);
-        base.result_dispense_cou_mei.connect(mei_payment_result);
-        base.result_float_down_cou_mei.connect(mei_payment_result);
-        base.result_dispense_val_mei.connect(mei_payment_result);
-        base.result_float_down_all_mei.connect(mei_payment_result);
         base.result_init_qprox_config.connect(qprox_payment_result);
         base.result_debit_qprox.connect(qprox_payment_result);
         base.result_auth_qprox.connect(qprox_payment_result);
@@ -123,16 +113,6 @@ Base{
         abortPayment.disconnect(abort_payment);
         base.result_get_payment.disconnect(define_device);
         base.result_sale_edc.disconnect(edc_payment_result);
-        base.result_accept_mei.disconnect(mei_payment_result);
-        base.result_dis_accept_mei.disconnect(mei_payment_result);
-        base.result_stack_mei.disconnect(mei_payment_result);
-        base.result_return_mei.disconnect(mei_payment_result);
-        base.result_store_es_mei.disconnect(mei_payment_result);
-        base.result_return_es_mei.disconnect(mei_payment_result);
-        base.result_dispense_cou_mei.disconnect(mei_payment_result);
-        base.result_float_down_cou_mei.disconnect(mei_payment_result);
-        base.result_dispense_val_mei.disconnect(mei_payment_result);
-        base.result_float_down_all_mei.disconnect(mei_payment_result);
         base.result_init_qprox_config.disconnect(qprox_payment_result);
         base.result_debit_qprox.disconnect(qprox_payment_result);
         base.result_auth_qprox.disconnect(qprox_payment_result);
@@ -699,73 +679,6 @@ Base{
         notif_view.escapeFunction = 'closeWindow'
         notif_view.open()
         press = "0"
-    }
-
-    function mei_payment_result(r){
-//        console.log("mei_payment_result : ", r)
-        var meiFunction = r.split('|')[0]
-        var meiResult = r.split('|')[1]
-        if (r==undefined||r==""||meiResult=="ERROR"||meiResult=="TIMEOUT"){
-//            _SLOT.start_disconnect_mei()
-            notif_view.isSuccess = false
-            if (meiResult=="TIMEOUT"){
-                notif_view.show_detail = qsTr("We're apologize, Your payment session is expired. Your inserted cash will be rejected.")
-//                _SLOT.start_return_es_mei()
-            } else {
-                notif_view.show_detail =  meiFunction + " result : " + r
-            }
-            notif_view.z = 100
-            notif_view.escapeFunction = "closeWindow"
-            notif_view.open()
-        }
-        switch(meiFunction){
-        case "ACCEPT":
-            console.log("ACCEPT FUNCTION : ", meiResult);
-            if(meiResult=='ERROR'){
-                not_ready_device();
-                reset_button_payment();
-            };
-            break;
-        case "DIS_ACCEPT":
-            console.log("DIS_ACCEPT FUNCTION : ", meiResult);
-            if (meiResult=='SUCCESS'){
-//                if(payment_view.totalGetCount != '0'){
-//                } else if (parseInt(payment_view.totalGetCount)>=parseInt(totalPaid)){
-//                    isAborted = true;
-//                    _SLOT.start_store_es_mei();
-//                }
-            }
-            break;
-        case "STACK": console.log("STACK FUNCTION : ", meiResult); update_cash(meiFunction, meiResult);
-            break;
-        case "RETURN": console.log("RETURN FUNCTION: ", meiResult); update_cash(meiFunction, meiResult);
-            break;
-        case "STORE_ES":
-            if(meiResult=='SUCCESS') {
-                if (isAborted==true) abort_store_mei_transaction();
-                if (isPaid==true) success_payment();
-            }
-            if(meiResult=='SUCCESS_55'){
-                abc.counter = timer_value * 2
-                my_timer.restart()
-                _SLOT.start_accept_mei();
-                payment_view.meiTextMode = "normal";
-                payment_view.cancelAble = false;
-                payment_view.secondTry = true;
-                payment_view.modeLoading = false;
-            };
-            break;
-        case "RETURN_ES": console.log("RETURN_ES FUNCTION : ", meiResult); update_cash(meiFunction, meiResult);
-            break;
-        case "DISPENSE_VAL": console.log("DISPENSE_VAL FUNCTION : ", meiResult);
-            break;
-        case "RETURN_STAT": console.log("RETURN_STAT FUNCTION : ", meiResult);
-            break;
-        case "STOP": console.log("STOP FUNCTION : ", meiResult);
-            break;
-        default: console.log("DEFAULT FUNCTION : ", meiFunction, meiResult);
-            break;
-        }
     }
 
     function success_payment(){

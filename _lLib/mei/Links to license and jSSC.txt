@@ -1,0 +1,5 @@
+Link to GNU LESSER GENERAL PUBLIC LICENSE
+http://www.gnu.org/licenses/lgpl.html
+
+Link to download jSSC - java serial port communication library
+https://code.google.com/p/java-simple-serial-connector/
