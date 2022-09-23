@@ -141,10 +141,10 @@ DIRECT_PRICE_AMOUNT = 0
 
 def init_bill():
     global OPEN_STATUS, BILL
-    # if BILL_TYPE == 'GRG': BILL = GRG 
-    # if BILL_TYPE == 'NV': BILL = NV 
-    # if BILL_TYPE == 'MEI': BILL = MEI 
-    exec('BILL='+BILL_TYPE)
+    if BILL_TYPE == 'GRG': BILL = GRG 
+    if BILL_TYPE == 'NV': BILL = NV 
+    if BILL_TYPE == 'MEI': BILL = MEI 
+    # exec('BILL='+BILL_TYPE)
     # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     if BILL_PORT is None:
         LOGGER.warning(("port", BILL_PORT))
@@ -171,7 +171,7 @@ def send_command_to_bill(param=None, output=None):
             # sleep(1)
             # result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
     elif BILL_TYPE == 'MEI':
-        result = _MeiSCR.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
+        result = _MeiSCR.send_command(param, BILL)
     else:
         result = _Command.send_request(param, output)
     LOGGER.info((param, result))
@@ -181,14 +181,17 @@ def send_command_to_bill(param=None, output=None):
 def reset_bill():
     global OPEN_STATUS, BILL
     # BILL = GRG if BILL_TYPE == 'GRG' else NV
-    exec('BILL='+BILL_TYPE)
+    # exec('BILL='+BILL_TYPE)
+    if BILL_TYPE == 'GRG': BILL = GRG 
+    if BILL_TYPE == 'NV': BILL = NV 
+    if BILL_TYPE == 'MEI': BILL = MEI 
     # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
     # if BILL_PORT is None:
     #     LOGGER.warning(("port", BILL_PORT))
     #     _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
     #     return False
     param = BILL["SET"] + '|' + BILL["PORT"]
-    if BILL_TYPE == 'NV':
+    if BILL_TYPE in ['NV', 'MEI']:
         param = BILL["RESET"] + '|'
     response, result = send_command_to_bill(param=param, output=None)
     if response == 0:
