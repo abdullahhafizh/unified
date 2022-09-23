@@ -421,6 +421,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 recycleNotes
             )
             if res is True:
+                # Do Soft Reset
                 return 0, "0000"
             else:
                 MEI = None
@@ -491,6 +492,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 recycleNotes
             )
             if res is True:
+                # Do Soft Reset
                 return 0, "Bill Reset"
             else:
                 return -1, err
