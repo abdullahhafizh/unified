@@ -902,12 +902,12 @@ Base{
                 do_refund_or_print('cash_device_error');
                 return;
             } else if (billResult == 'COMPLETE'){
-                if (VIEW_CONFIG.bill_type != 'MEI') _SLOT.stop_bill_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
                 transactionInProcess = true;
+                _SLOT.stop_bill_receive_note();
                 return;
             } else if (billResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){

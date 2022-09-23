@@ -514,7 +514,20 @@ def send_command(param=None, config=[], recycleNotes=[]):
             else:
                 return -1, err
         elif command == config['STOP']:
-            LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
+            LOOP_ATTEMPT = 0
+            # Safety Close Bill
+            while True:
+                res, msg, err = MEI.getStatus()
+                LOOP_ATTEMPT += 1
+                if 'deviceState=HOST_DISABLED' in msg:
+                    return 0, msg
+                if 'deviceState=IDLE' in msg:
+                    break
+                if LOOP_ATTEMPT >= 10:
+                    break
+                time.sleep(1)
+            # Reset Loop Attempt
+            LOOP_ATTEMPT = 0
             res, msg, err = MEI.stopAcceptBill()
             if res is True:
                 while True:
