@@ -330,7 +330,7 @@ def start_receive_note(trxid):
                 if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     if BILL_TYPE == 'MEI':
                         r, s = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
-                        LOGGER.debug((BILL['TYPE'], r, s))
+                        LOGGER.debug((BILL_TYPE, r, s))
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
                 if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
@@ -409,7 +409,7 @@ def start_receive_note(trxid):
 def store_cash_into_cashbox():
     try:
         # print("pyt: ", _Helper.whoami())
-        if BILL['TYPE'] == 'MEI':
+        if BILL_TYPE == 'MEI':
             # Dummy Store Per Notes, MEI Actually Doing Bulk Storing
             return True
         max_attempt = int(BILL['MAX_STORE_ATTEMPT'])

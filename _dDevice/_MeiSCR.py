@@ -474,32 +474,25 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 return -1, err
         elif command == config['STORE']:
             LOOP_ATTEMPT = 0
-            if not MEI._isStoring:
-                MEI._isStoring = True
-                time.sleep(1)
-                res, msg, err = MEI.storeNotesBill()
-                if res is True:
-                    while True:
-                        res, msg, err = MEI.getStatus()
-                        LOOP_ATTEMPT += 1
-                        if config['KEY_STORED'] in msg:
-                            MEI._isStoring = False
-                            return 0, msg
-                        if config['KEY_BOX_FULL'] in msg:
-                            MEI._isStoring = False
-                            return -1, msg
-                        if config['CODE_JAM'] in msg:
-                            # MEI.stopAcceptBill()
-                            MEI._isStoring = False
-                            return -1, msg
-                        if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                            break
-                        time.sleep(1)
-                    MEI._isStoring = False
-                    return -1, err
-                else:
-                    MEI._isStoring = False
-                    return -1, err
+            time.sleep(1)
+            res, msg, err = MEI.storeNotesBill()
+            if res is True:
+                while True:
+                    res, msg, err = MEI.getStatus()
+                    LOOP_ATTEMPT += 1
+                    if config['KEY_STORED'] in msg:
+                        return 0, msg
+                    if config['KEY_BOX_FULL'] in msg:
+                        return -1, msg
+                    if config['CODE_JAM'] in msg:
+                        # MEI.stopAcceptBill()
+                        return -1, msg
+                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                        break
+                    time.sleep(1)
+                return -1, err
+            else:
+                return -1, err
         elif command == config['REJECT']:
             # Auto Reject
             LOOP_ATTEMPT = 0
