@@ -418,6 +418,7 @@ MEI = None
 LOOP_ATTEMPT = 0
 MAX_LOOP_ATTEMPT = 90
 DELAY_RESET = 1
+INIT_RESET = False
 
 
 def send_command(param=None, config=[], recycleNotes=[]):
@@ -442,7 +443,8 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 recycleNotes
             )
             if res is True:
-                res, msg, err = MEI.softReset()
+                if INIT_RESET:
+                    res, msg, err = MEI.softReset()
                 time.sleep(DELAY_RESET)
                 return 0, "0000"
             else:

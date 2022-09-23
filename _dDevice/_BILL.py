@@ -136,7 +136,7 @@ def start_reset_bill():
 
 
 DIRECT_PRICE_MODE = False
-DIRECT_PRICE_AMOUNT = 0
+TARGET_CASH_AMOUNT = 0
 
 
 def init_bill():
@@ -210,9 +210,9 @@ def start_set_direct_price(price):
 
 
 def set_direct_price(price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
+    global TARGET_CASH_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
     DIRECT_PRICE_MODE = True
-    DIRECT_PRICE_AMOUNT = int(price)
+    TARGET_CASH_AMOUNT = int(price)
     COLLECTED_CASH = 0
     CASH_HISTORY = []
     CASH_TIME_HISTORY = []
@@ -223,15 +223,15 @@ def start_set_direct_price_with_current(current, price):
 
 
 def set_direct_price_with_current(current, price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
+    global TARGET_CASH_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH, CASH_TIME_HISTORY
     DIRECT_PRICE_MODE = True
-    DIRECT_PRICE_AMOUNT = int(price)
+    TARGET_CASH_AMOUNT = int(price)
     COLLECTED_CASH = int(current)
     CASH_HISTORY = []
     CASH_TIME_HISTORY = []
     CASH_HISTORY.append(current)
     CASH_TIME_HISTORY.append(_Helper.time_string())
-    LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'DIRECT_PRICE_AMOUNT', DIRECT_PRICE_AMOUNT, 'CASH_HISTORY', CASH_HISTORY))
+    LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT, 'CASH_HISTORY', CASH_HISTORY))
 
 
 def start_bill_receive_note(trxid):
@@ -269,7 +269,7 @@ def start_receive_note(trxid):
     if _Common.IDLE_MODE is True:
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
-    LOGGER.info(('Trigger Bill', trxid, DIRECT_PRICE_AMOUNT))
+    LOGGER.info(('Trigger Bill', trxid, TARGET_CASH_AMOUNT))
     try:
         attempt = 0
         IS_RECEIVING = True
@@ -310,14 +310,14 @@ def start_receive_note(trxid):
                             send_command_to_bill(param=param, output=None)
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             break
-                        if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
+                        if is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH) is True:
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             sleep(.5)
                             param = BILL["REJECT"] + '|'
                             send_command_to_bill(param=param, output=None)
                             LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
                                                                                 'COLLECTED': COLLECTED_CASH,
-                                                                                'TARGET': DIRECT_PRICE_AMOUNT})))
+                                                                                'TARGET': TARGET_CASH_AMOUNT})))
                             break
                     # Process Store and Update Data Cash
                     if _Common.store_notes_activity(cash_in, trxid) is True:
@@ -327,10 +327,7 @@ def start_receive_note(trxid):
                             update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                             LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                             _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-                if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
-                    if BILL_TYPE == 'MEI':
-                        r, s = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
-                        LOGGER.debug((BILL_TYPE, r, s))
+                if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
                 if BILL["TIMEOUT_BAD_NOTES"] is not None and BILL["TIMEOUT_BAD_NOTES"] in _result:
@@ -353,7 +350,7 @@ def start_receive_note(trxid):
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
                     LOGGER.warning(('BILL Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
                                                                         'COLLECTED': COLLECTED_CASH,
-                                                                        'TARGET': DIRECT_PRICE_AMOUNT,
+                                                                        'TARGET': TARGET_CASH_AMOUNT,
                                                                         'RECEIVED_TIMESTAMP': CASH_TIME_HISTORY})))
                     # Call API To Force Update Into Server
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
@@ -403,14 +400,14 @@ def start_receive_note(trxid):
         _Common.store_notes_activity('ERROR', trxid)
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
-        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, DIRECT_PRICE_AMOUNT, CASH_TIME_HISTORY], 'device')
+        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, TARGET_CASH_AMOUNT, CASH_TIME_HISTORY], 'device')
 
 
 def store_cash_into_cashbox():
     try:
         # print("pyt: ", _Helper.whoami())
         if BILL_TYPE == 'MEI':
-            # Dummy Store Per Notes, MEI Actually Doing Bulk Storing
+            # Dummy Store Per Notes, MEI Actually Doing Bulk Storing in Stop Event
             return True
         max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
         sleep(1)
@@ -503,8 +500,6 @@ def is_exceed_payment(target, value_in, current_value):
 
 
 def stop_bill_receive_note():
-    # log_book_cash('', get_collected_cash())
-    # sleep(1)
     _Helper.get_thread().apply_async(stop_receive_note)
 
 
@@ -513,11 +508,16 @@ def stop_receive_note():
     IS_RECEIVING = False
     # sleep(_Common.BILL_STORE_DELAY)
     try:
-        param = BILL["STOP"] + '|'
-        response, result = send_command_to_bill(param=param, output=None)
+        if BILL_TYPE == 'MEI' and COLLECTED_CASH > 0:
+            # Do Store Any Notes that stored in Escrow
+            r, s = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
+            LOGGER.debug((BILL_TYPE, r, s))
+            # ----------------------------
+
+        response, result = send_command_to_bill(param=BILL["STOP"]+'|', output=None)
         if response == 0:
-            LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'DIRECT_PRICE_AMOUNT', DIRECT_PRICE_AMOUNT))
-            if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
+            LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
+            if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
                 cash_received = {
                     'history': get_cash_history(),
                     'total': get_collected_cash()
@@ -537,15 +537,6 @@ def stop_receive_note():
         _Common.BILL_ERROR = 'FAILED_STOP_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
         LOGGER.warning(e)
-    # finally:
-        # IS_RECEIVING = True
-    # finally:
-    #     if BILL_TYPE == 'NV':
-    #         param = BILL["SET"] + '|'
-    #         _response, _result = send_command_to_bill(param=param, output=None)
-    #         if _response != 0:
-    #             _Common.BILL_ERROR = 'FAILED_RESET_BILL_NV'
-    #             LOGGER.warning(('FAILED_RESET_BILL_NV|ERROR'))
 
 
 def start_get_status_bill():
