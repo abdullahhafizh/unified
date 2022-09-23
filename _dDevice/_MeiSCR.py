@@ -468,6 +468,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 return -1, err
         elif command == config['STORE']:
             LOOP_ATTEMPT = 0
+            time.sleep(1)
             res, msg, err = MEI.storeNotesBill()
             if res is True:
                 while True:
