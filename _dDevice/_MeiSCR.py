@@ -411,7 +411,7 @@ class MeiDevice:
 MEI = None
 LOOP_ATTEMPT = 0
 MAX_LOOP_ATTEMPT = 90
-DELAY_RESET = 10
+DELAY_RESET = 1
 
 
 def send_command(param=None, config=[], recycleNotes=[]):
