@@ -486,8 +486,9 @@ def update_cash_status(cash_in, store_result=False):
         LOGGER.warning('Store Cash Failed', 'Update Cash Failed', e)
         result = False, store_result
     finally:
-        if not _Helper.empty(cash_in):
-            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
+        # TODO: Check The Impact On GRG / NV
+        # if not _Helper.empty(cash_in):
+        #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|'+str(COLLECTED_CASH))
         return result
 
 

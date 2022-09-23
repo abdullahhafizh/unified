@@ -89,7 +89,7 @@ class MeiDevice:
     
     def startAcceptBill(self):
         message_out = ""
-        LOG.bvlog("[MEI]: startAcceptBill ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, 'CALL')
+        LOG.bvlog("[MEI]: startAcceptBill ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, 'CALL')
         try:
             if not self._scr.isOpen():
                 raise Exception("SCR Not Opened")
@@ -103,7 +103,7 @@ class MeiDevice:
     
     def stopAcceptBill(self):
         message_out = ""
-        LOG.bvlog("[MEI]: stopAcceptBill ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, 'CALL')
+        LOG.bvlog("[MEI]: stopAcceptBill ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, 'CALL')
         try:
             if not self._scr.isOpen():
                 raise Exception("SCR Not Opened")
@@ -117,7 +117,7 @@ class MeiDevice:
 
     def storeNotesBill(self):
         message_out = ""
-        LOG.bvlog("[MEI]: storeNotesBill ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, 'CALL')
+        LOG.bvlog("[MEI]: storeNotesBill ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, 'CALL')
         try:
             if not self._scr.isOpen():
                 raise Exception("SCR Not Opened")
@@ -136,7 +136,7 @@ class MeiDevice:
 
     def rejectNotesBill(self):
         message_out = ""
-        LOG.bvlog("[MEI]: rejectNotesBill ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, 'CALL')
+        LOG.bvlog("[MEI]: rejectNotesBill ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, 'CALL')
         try:
             if not self._scr.isOpen():
                 raise Exception("SCR Not Opened")
@@ -157,7 +157,7 @@ class MeiDevice:
     
     def softReset(self):
         message_out = ""
-        LOG.bvlog("[MEI]: softReset ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, 'CALL')
+        LOG.bvlog("[MEI]: softReset ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, 'CALL')
         try:
             if not self._scr.isOpen():
                 raise Exception("SCR Not Opened")
@@ -473,7 +473,6 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 return -1, err
         elif command == config['STORE']:
             LOOP_ATTEMPT = 0
-            time.sleep(1)
             res, msg, err = MEI.storeNotesBill()
             if res is True:
                 while True:

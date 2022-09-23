@@ -936,7 +936,6 @@ Base{
                 receivedPayment = parseInt(billResult);
                 abc.counter = 90;
                 my_timer.restart();
-//                _SLOT.start_bill_receive_note();
             }
         } else if (billFunction == 'STOP_BILL'){
             if(billResult.indexOf('SUCCESS') > -1){
