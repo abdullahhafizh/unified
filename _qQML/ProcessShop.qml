@@ -203,49 +203,49 @@ Base{
 
     function bill_payment_result(r){
         console.log("bill_payment_result : ", r)
-        var grgFunction = r.split('|')[0]
-        var grgResult = r.split('|')[1]
-        if (grgFunction == 'RECEIVE_BILL'){
-            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
+        var billFunction = r.split('|')[0]
+        var billResult = r.split('|')[1]
+        if (billFunction == 'RECEIVE_BILL'){
+            if (billResult == "ERROR" || billResult == 'TIMEOUT' || billResult == 'JAMMED'){
                 false_notif();
                 if (receivedCash > 0){                    
                     print_failed_transaction('cash');
                 }
                 return;
-            } else if (grgResult == 'COMPLETE'){
+            } else if (billResult == 'COMPLETE'){
 //                _SLOT.start_dis_accept_mei();
 //                _SLOT.start_store_es_mei();
                 _SLOT.stop_bill_receive_note()
                 back_button.visible = false;
                 popup_loading.open();
                 notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
-            } else if (grgResult == 'EXCEED'){
+            } else if (billResult == 'EXCEED'){
                 false_notif('Mohon Maaf|Silakan Hanya Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
                 modeButtonPopup = 'retrigger_bill';
                 standard_notif_view.buttonEnabled = false;
                 standard_notif_view._button_text = 'coba lagi';
                 return;
-            } else if (grgResult == 'BAD_NOTES'){
+            } else if (billResult == 'BAD_NOTES'){
                 false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
                 modeButtonPopup = 'retrigger_bill';
                 standard_notif_view.buttonEnabled = false;
                 standard_notif_view._button_text = 'coba lagi';
                 return;
             } else {
-                receivedCash = parseInt(grgResult);
+                receivedCash = parseInt(billResult);
                 abc.counter = timer_value;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
-        } else if (grgFunction == 'STOP_BILL'){
-            if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice) {
+        } else if (billFunction == 'STOP_BILL'){
+            if(billResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice) {
                 var cashResponse = JSON.parse(r.replace('STOP_BILL|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
                 payment_complete();
             }
-        } else if (grgFunction == 'STATUS_BILL'){
-            if(grgResult=='ERROR') {
+        } else if (billFunction == 'STATUS_BILL'){
+            if(billResult=='ERROR') {
                 false_notif();
                 return;
             }

@@ -791,18 +791,18 @@ Base{
     function bill_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("bill_payment_result : ", now, r, receivedPayment, totalPrice, proceedAble);
-        var grgFunction = r.split('|')[0]
-        var grgResult = r.split('|')[1]
+        var billFunction = r.split('|')[0]
+        var billResult = r.split('|')[1]
         modeButtonPopup = undefined;
         global_frame.modeAction = "";
         press = '0';
-        if (grgFunction == 'RECEIVE_BILL'){
-            if (grgResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
-            if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
+        if (billFunction == 'RECEIVE_BILL'){
+            if (billResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
+            if (billResult == "ERROR" || billResult == 'TIMEOUT' || billResult == 'JAMMED'){
                 details.process_error = 1;
                 do_refund_or_print('cash_device_error');
                 return;
-            } else if (grgResult == 'COMPLETE'){
+            } else if (billResult == 'COMPLETE'){
                 if (VIEW_CONFIG.bill_type != 'MEI') _SLOT.stop_bill_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
@@ -811,7 +811,7 @@ Base{
                 popup_loading.open();
                 transactionInProcess = true;
                 return;
-            } else if (grgResult == 'SERVICE_TIMEOUT'){
+            } else if (billResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > initialPayment){
                     back_button.visible = false;
                     modeButtonPopup = 'retrigger_bill';
@@ -822,11 +822,11 @@ Base{
                     exit_with_message(3);
                     return;
                 }
-            } else if (grgResult == 'EXCEED'){
+            } else if (billResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
-            } else if (grgResult == 'BAD_NOTES'){
+            } else if (billResult == 'BAD_NOTES'){
                 back_button.visible = false;
                 modeButtonPopup = 'retrigger_bill';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
@@ -834,13 +834,13 @@ Base{
             } else {
                 back_button.visible = true;
                 global_frame.close();
-                receivedPayment = parseInt(grgResult);
+                receivedPayment = parseInt(billResult);
                 abc.counter = 90;
                 my_timer.restart();
 //                _SLOT.start_bill_receive_note();
             }
-        } else if (grgFunction == 'STOP_BILL'){
-            if(grgResult.indexOf('SUCCESS') > -1){
+        } else if (billFunction == 'STOP_BILL'){
+            if(billResult.indexOf('SUCCESS') > -1){
                 if (receivedPayment >= totalPrice){
                     details.payment_received = receivedPayment;
                     details.payment_details = receivedPayment.toString();
@@ -855,8 +855,8 @@ Base{
                     if (proceedAble) payment_complete('bill_acceptor');
                 }
             }
-        } else if (grgFunction == 'STATUS_BILL'){
-            if(grgResult=='ERROR') {
+        } else if (billFunction == 'STATUS_BILL'){
+            if(billResult=='ERROR') {
                 false_notif('backToMain', 'Terjadi Kegagalan Pada Bill Acceptor');
                 return;
             }
