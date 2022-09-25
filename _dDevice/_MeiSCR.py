@@ -418,7 +418,7 @@ MEI = None
 LOOP_ATTEMPT = 0
 MAX_LOOP_ATTEMPT = 90
 DELAY_RESET = 1
-INIT_RESET = False
+INIT_WITH_SOFT_RESET = False
 
 
 def send_command(param=None, config=[], recycleNotes=[]):
@@ -433,7 +433,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
         param = "0"
         if len(args[1:]) > 0:
             param = "|".join(args[1:])
-        err = ''
+        err = 'GENERAL_ERROR'
         # LOGGER.debug((command, param, config))
         # Define Command
         if command == config['SET']:
@@ -442,63 +442,57 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 len(recycleNotes) > 0,
                 recycleNotes
             )
-            if res is True:
-                if INIT_RESET:
-                    res, msg, err = MEI.softReset()
-                time.sleep(DELAY_RESET)
-                return 0, "0000"
-            else:
+            if not res:
                 MEI = None
                 return -1, err
+            if INIT_WITH_SOFT_RESET:
+                res, msg, err = MEI.softReset()
+            time.sleep(DELAY_RESET)
+            return 0, "0000"
         elif command == config['RECEIVE']:
             LOOP_ATTEMPT = 0
             res, msg, err = MEI.startAcceptBill()
-            if res is True:
-                while True:
-                    res, msg, err = MEI.getStatus()
-                    LOOP_ATTEMPT += 1
-                    # Need To Handle This False Denom Read
-                    if 'Received=IDR|Denomination=0' in msg:
-                        continue
-                    if config['KEY_RECEIVED'] in msg:
-                        return 0, msg
-                    if config['KEY_BOX_FULL'] in msg:
-                        # MEI.stopAcceptBill()
-                        return -1, msg
-                    if config['CODE_JAM'] in msg:
-                        # MEI.stopAcceptBill()
-                        return -1, msg
-                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                        break
-                    time.sleep(1)
+            if not res:
                 return -1, err
-            else:
-                return -1, err
+            while True:
+                res, msg, err = MEI.getStatus()
+                LOOP_ATTEMPT += 1
+                # Need To Handle This False Denom Read
+                if 'Received=IDR|Denomination=0' in msg:
+                    continue
+                if config['KEY_RECEIVED'] in msg:
+                    return 0, msg
+                if config['KEY_BOX_FULL'] in msg:
+                    # MEI.stopAcceptBill()
+                    return -1, msg
+                if config['CODE_JAM'] in msg:
+                    # MEI.stopAcceptBill()
+                    return -1, msg
+                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                    break
+                time.sleep(1)
         elif command == config['STORE']:
             LOOP_ATTEMPT = 0
             time.sleep(1)
             res, msg, err = MEI.storeNotesBill()
-            if res is True:
-                while True:
-                    res, msg, err = MEI.getStatus()
-                    LOOP_ATTEMPT += 1
-                    if config['KEY_STORED'] in msg:
-                        return 0, msg
-                    if config['KEY_BOX_FULL'] in msg:
-                        return -1, msg
-                    if config['CODE_JAM'] in msg:
-                        # MEI.stopAcceptBill()
-                        return -1, msg
-                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                        break
-                    time.sleep(1)
+            if not res:
                 return -1, err
-            else:
-                return -1, err
+            while True:
+                res, msg, err = MEI.getStatus()
+                LOOP_ATTEMPT += 1
+                if config['KEY_STORED'] in msg:
+                    return 0, msg
+                if config['KEY_BOX_FULL'] in msg:
+                    return -1, msg
+                if config['CODE_JAM'] in msg:
+                    # MEI.stopAcceptBill()
+                    return -1, msg
+                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                    break
+                time.sleep(1)
         elif command == config['REJECT']:
             # Auto Reject
             LOOP_ATTEMPT = 0
-            err = ''
             while True:
                 res, msg, err = MEI.getStatus()
                 LOOP_ATTEMPT += 1
@@ -507,14 +501,11 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                     break
                 time.sleep(1)
-            return -1, err
         elif command == config['RESET']:
             res, msg, err = MEI.softReset()
             if res is True:
                 time.sleep(DELAY_RESET)
                 return 0, msg
-            else:
-                return -1, err
         elif command == config['STOP']:
             LOOP_ATTEMPT = 0
             # Safety Close Bill
@@ -531,26 +522,24 @@ def send_command(param=None, config=[], recycleNotes=[]):
             # Reset Loop Attempt
             LOOP_ATTEMPT = 0
             res, msg, err = MEI.stopAcceptBill()
-            if res is True:
-                while True:
-                    res, msg, err = MEI.getStatus()
-                    LOOP_ATTEMPT += 1
-                    if 'deviceState=HOST_DISABLED' in msg:
-                        return 0, msg
-                    if config['KEY_BOX_FULL'] in msg:
-                        # MEI.stopAcceptBill()
-                        return -1, msg
-                    if config['CODE_JAM'] in msg:
-                        # MEI.stopAcceptBill()
-                        return -1, msg
-                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                        break
-                    time.sleep(1)
+            if not res:
                 return -1, err
-            else:
-                return -1, err
-        else:
-            return -1, err
+            while True:
+                res, msg, err = MEI.getStatus()
+                LOOP_ATTEMPT += 1
+                if 'deviceState=HOST_DISABLED' in msg:
+                    return 0, msg
+                if config['KEY_BOX_FULL'] in msg:
+                    # MEI.stopAcceptBill()
+                    return -1, msg
+                if config['CODE_JAM'] in msg:
+                    # MEI.stopAcceptBill()
+                    return -1, msg
+                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                    break
+                time.sleep(1)
+        # Default Result
+        return -1, err
     except Exception as e:
         error_string = traceback.format_exc()
         LOGGER.warning((e))
