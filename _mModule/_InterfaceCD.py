@@ -6,7 +6,7 @@ from _mModule import _CardDispenserLib as cdLib
 
 from time import sleep
 from serial import Serial
-from func_timeout import func_timeout, FunctionTimedOut
+from func_timeout import func_timeout, func_set_timeout, FunctionTimedOut
 import traceback
 
 
@@ -504,6 +504,7 @@ def simply_eject_kyt(param, __output_response__):
 
     status, message, response = simply_eject_kyt_priv(CD_PORT)
 
+
     if status == ES_NO_ERROR:
         __output_response__["code"] = status
         __output_response__["data"] = {
@@ -539,7 +540,7 @@ def simply_eject_kyt(param, __output_response__):
     
     return status
 
-
+@func_set_timeout(10)
 def simply_eject_kyt_priv(port="COM10"):
     message = ""
     status = None
@@ -563,7 +564,7 @@ def simply_eject_kyt_priv(port="COM10"):
         #Init
         LOG.cdlog("[KYT]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_KYT, timeout=10)
- 
+
         cmd = C_ISSUE_LENGTH
         data_out = STX + cmd + ETX
         data_out = data_out + cdLib.get_bcc(data_out)
