@@ -107,20 +107,20 @@ CD_PORT4_TYPE = _ConfigParser.get_set_value('CD', 'port4^type', 'OLD')
 CD_PORT5_TYPE = _ConfigParser.get_set_value('CD', 'port5^type', 'OLD')
 CD_PORT6_TYPE = _ConfigParser.get_set_value('CD', 'port6^type', 'OLD')
 
-CD_NEW_TYPE = {
-    CD_PORT1: True if CD_PORT1_TYPE == 'NEW' else False,
-    CD_PORT2: True if CD_PORT2_TYPE == 'NEW' else False,
-    CD_PORT3: True if CD_PORT3_TYPE == 'NEW' else False,
-    CD_PORT4: True if CD_PORT4_TYPE == 'NEW' else False,
-    CD_PORT5: True if CD_PORT5_TYPE == 'NEW' else False,
-    CD_PORT6: True if CD_PORT6_TYPE == 'NEW' else False,
+CD_TYPES = {
+    CD_PORT1: CD_PORT1_TYPE,
+    CD_PORT2: CD_PORT2_TYPE,
+    CD_PORT3: CD_PORT3_TYPE,
+    CD_PORT4: CD_PORT4_TYPE,
+    CD_PORT5: CD_PORT5_TYPE,
+    CD_PORT6: CD_PORT6_TYPE,
 }
 
 # Disable CD Init For Old & New Type
 # CD Coneection Cannot Be Verified For Old Type
 CD_DISABLE_CHECK_STATUS = True
 
-LOGGER.info((CD_NEW_TYPE))
+LOGGER.info((CD_TYPES))
 
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')

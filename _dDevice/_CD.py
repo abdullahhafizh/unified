@@ -12,6 +12,7 @@ import sys
 import subprocess
 import json
 from _dDAO import _DAO
+from _mModule import _InterfaceCD as CDLibrary
 
 LOGGER = logging.getLogger()
 CD_PORT1 = _Common.CD_PORT1
@@ -68,9 +69,6 @@ def start_multiple_eject(attempt, multiply):
     port = CD_PORT_LIST.get(attempt)
     # Generalise Command
     # false_ok = False
-    # if not _Common.CD_NEW_TYPE.get(port, False):
-    #     # Old CD Treated to Allow False OK Response (80/78)
-    #     false_ok = True
     slot = attempt
     _Helper.get_thread().apply_async(trigger_card_dispenser, (port, slot, multiply,))
     
@@ -79,15 +77,20 @@ def start_card_validate_redeem(attempt, multiply, vcode):
     port = CD_PORT_LIST.get(attempt)
     # Generalise Command
     # false_ok = False
-    # if not _Common.CD_NEW_TYPE.get(port, False):
-    #     # Old CD Treated to Allow False OK Response (80/78)
-    #     false_ok = True
     slot = attempt
     _Helper.get_thread().apply_async(voucher_trigger_card_dispenser, (port, slot, multiply, vcode,))
 
 
 def trigger_card_dispenser(port, slot, multiply='1'):
     try:
+        # Handle Multiply CD Vendor By Type
+        cd_type = _Common.CD_TYPES.get(port, False)
+        if not cd_type:
+            emit_eject_error(slot, 'Card Type Not Found', 'trigger_card_dispenser')
+            return
+        if cd_type == 'KYT':
+            trigger_card_dispenser_kyt(port, slot, multiply)
+            return
         command = " ".join([CMD_CD_EXEC, str(port), "9600", multiply])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         # Multi replace below must be performed to get the response object
@@ -111,6 +114,33 @@ def trigger_card_dispenser(port, slot, multiply='1'):
         emit_eject_error(slot, str(e), 'trigger_card_dispenser')
 
 
+def trigger_card_dispenser_kyt(port, slot, multiply='1'):
+    try:
+        response = {
+            "cmd": 'SIMPLY_EJECT_KYT',
+            "param": port + '|',
+            "message": "N/A",
+            "code": "9999"
+        }
+        output = CDLibrary.simply_eject_kyt(port, response)
+        # LOGGER.debug((command, output, type(response), str(response)))
+        if response.get('code') is not None:
+            # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}
+            if response['code'] in ['0000']: #Set Card Jam Into Success Release
+                if multiply == '1':
+                    # Direct Reduce Slot Without Transaction Record Dependant
+                    _DAO.reduce_product_stock_by_slot_status(status=slot)
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+                else:
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
+            else:
+                emit_eject_error(slot, output, 'trigger_card_dispenser')
+        else:
+            emit_eject_error(slot, output, 'trigger_card_dispenser')
+    except Exception as e:
+        emit_eject_error(slot, str(e), 'trigger_card_dispenser')
+        
+        
 def voucher_trigger_card_dispenser(port, slot, multiply='1', vcode=''):
     try:
         success = False
@@ -177,8 +207,6 @@ def get_cd_readiness():
 
 
 def check_init_cd(port, attempt):
-    # if _Common.CD_NEW_TYPE.get(port, False) is True or _Common.CD_DISABLE_CHECK_STATUS is True:
-    #     return True
     # Validate Based On Error History
     if attempt == '101' and _Common.CD1_ERROR == '':
         return True
@@ -193,3 +221,4 @@ def check_init_cd(port, attempt):
     if attempt == '106' and _Common.CD6_ERROR == '':
         return True
     return False
+
