@@ -13,7 +13,7 @@ import os
 import subprocess
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 from _dDevice import _NV200
-from _dDevice import _MeiSCR
+# from _dDevice import _MeiSCR
 
 
 LOGGER = logging.getLogger()
@@ -170,8 +170,8 @@ def send_command_to_bill(param=None, output=None):
             # LOGGER.debug(('EXCEPTION_RAISED', 'RETRY_COMMAND', param, result))
             # sleep(1)
             # result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
-    elif BILL_TYPE == 'MEI':
-        result = _MeiSCR.send_command(param, BILL)
+    # elif BILL_TYPE == 'MEI':
+    #     result = _MeiSCR.send_command(param, BILL)
     else:
         result = _Command.send_request(param, output)
     LOGGER.info((param, result))
