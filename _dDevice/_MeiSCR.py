@@ -178,6 +178,11 @@ class MeiDevice:
             trace = traceback.format_exc()
             LOG.bvlog("[MEI]: getStatus ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, trace)
             return False, "", str(ex)
+        
+    
+    def resetCounter(self):
+        self._currentValueInEscrowStack = 0
+        self._currentStackedEscrow.clear()
     
     
     def createMessage(self):
@@ -460,14 +465,16 @@ def send_command(param=None, config=[], recycleNotes=[]):
                     if 'Received=IDR|Denomination=0' in msg:
                         continue
                     if config['KEY_RECEIVED'] in msg:
+                        MEI.resetCounter()
                         return 0, msg
                     if config['KEY_BOX_FULL'] in msg:
-                        # MEI.stopAcceptBill()
+                        MEI.resetCounter()
                         return -1, msg
                     if config['CODE_JAM'] in msg:
-                        # MEI.stopAcceptBill()
+                        MEI.resetCounter()
                         return -1, msg
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                        MEI.resetCounter()
                         break
                     time.sleep(1)
         elif command == config['STORE']:
