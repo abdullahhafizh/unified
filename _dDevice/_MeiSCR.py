@@ -47,7 +47,7 @@ class MeiDevice:
         self._isRecylerEnabled = None
         self._enabledRecyclerDenom = [0,0]
         self._recyclerError = ""
-        self._isStoring = False
+        self._disableCounter = True
     
     def open(self, mei_port, enableRecycler=False, enabledRecyclerDenom=[2,3]):
         try:
@@ -319,11 +319,8 @@ class MeiDevice:
             else:
                 LOG.bvlog("[MEI]: DocumentStatus STACKED ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, "INVALID CURRENCY {}".format(iso))
 
-
-
         # // Save off this document so we can reference it later
         # _document = event.getDocument();
-
         # displayEvent(event.toString());
 
     @JOverride
@@ -335,6 +332,9 @@ class MeiDevice:
     def escrowSessionSummaryReported(self,event:EscrowSessionSummaryEvent):
         LOG.bvlog("[MEI]: escrowSessionSummaryReported ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, event.toString())
         for doc in event.getDocumentEntries():
+            # Handle Counter By Library
+            if self._disableCounter is True:
+                continue
             iso = doc.getISO()
             if iso == "IDR":
                 note = doc.getValue()
