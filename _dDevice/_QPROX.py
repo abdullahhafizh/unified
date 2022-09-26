@@ -178,6 +178,10 @@ ERROR_TOPUP = {
     '6969': 'CARD_NOT_MATCH'
 }
 
+# Waive BNI Card Validation
+if not _Common.LIVE_MODE:
+    ERROR_TOPUP.pop('5106')
+
 def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
     if bank == 'BNI':
         #Getting Previous samBalance
