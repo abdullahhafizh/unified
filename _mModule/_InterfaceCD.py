@@ -10,7 +10,7 @@ from func_timeout import func_timeout, FunctionTimedOut
 import traceback
 
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 BAUD_RATE = 38400
 BAUD_RATE_KYT = 9600
 
