@@ -26,27 +26,22 @@ LOGGER = logging.getLogger()
 
 class AbstractEprinter:
     def __init__(self):
-        self.reset()
+
+
         self.output = ''
-        
-    def reset(self):
-        self.text = []
-        self.align = ''
-        self.text_type = ''
-        self.width = 1
-        self.height = 1
+
     
     def set(self, align="CENTER", text_type="normal", width=1, height=1):
-        self.align = align
-        self.text_type = text_type
-        self.width = width
-        self.height = height
+        self.output += (align + "xCC")
+        self.output += (text_type + "xCC")
+        self.output += (width + "xCC")
+        self.output += (height + "xCC")
     
     def text(self, context):
-        self.text.append(context)
+        self.output += (context + "|T|")
 
     def close(self):
-        self.reset()
+        self.__init__()
         
     def cut(self):
         pass
