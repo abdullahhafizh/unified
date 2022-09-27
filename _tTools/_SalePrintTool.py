@@ -26,6 +26,28 @@ LOGGER = logging.getLogger()
 
 class AbstractEprinter:
     def __init__(self):
+        self.reset()
+        
+    def reset(self):
+        self.text = []
+        self.align = ''
+        self.text_type = ''
+        self.width = 1
+        self.height = 1
+    
+    def set(self, align="CENTER", text_type="normal", width=1, height=1):
+        self.align = align
+        self.text_type = text_type
+        self.width = width
+        self.height = height
+    
+    def text(self, context):
+        self.text.append(context)
+
+    def close(self):
+        self.reset()
+        
+    def cut(self):
         pass
     
 
@@ -1280,7 +1302,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             if 'OMNITSEL' in provider:
                 total_pay = str(int(total_pay) + int(p['admin_fee']))
-            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay) + "\n")
+            printer.text((' ')+'TOTAL BAYAR : Rp. ' + clean_number(total_pay) + "\n")
         else:
             printer.text((' '*padding_left)+'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])) + "\n")
             if 'refund_status' in p.keys():
