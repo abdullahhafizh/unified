@@ -498,16 +498,16 @@ def simply_eject_kyt(param, __output_response__):
         CD_PORT = Param[0]
     else:
         LOG.cdlog("[KYT]: Missing/Improper Parameters: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
-        raise SystemError("9900:Missing/Improper Parameters")
+        raise SystemError("ERRO:Missing/Improper Parameters")
 
     LOG.cdlog("[KYT]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, CD_PORT)
 
     status, message, response = simply_eject_kyt_priv(CD_PORT)
 
-
     if status == ES_NO_ERROR:
         __output_response__["code"] = status
-        __output_response__["data"] = {
+        __output_response__["message"] = "Success"
+        __output_response__["description"] = {
             "is_stack_empty": response["is_stack_empty"],
             "is_card_on_sensor": response["is_card_on_sensor"],
             "is_motor_failed": response["is_motor_failed"],
@@ -515,25 +515,20 @@ def simply_eject_kyt(param, __output_response__):
         }
 
         LOG.cdlog("[KYT]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, __output_response__)
-
-        __output_response__["message"] = "Success"
-        __output_response__["description"]  = ""
         LOG.cdlog("[KYT]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, status)
         LOG.cdlog("[KYT]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
     else:
         __output_response__["code"] = status 
         __output_response__["message"] = message
-
+        __output_response__["description"] = ""
+        
         if response:
-            __output_response__["data"] = {
+            __output_response__["description"] = {
                 "is_stack_empty": response["is_stack_empty"],
                 "is_card_on_sensor": response["is_card_on_sensor"],
                 "is_motor_failed": response["is_motor_failed"],
                 "is_cd_busy": response["is_cd_busy"]
             }
-        else:
-            __output_response__["data"] = ""
-        __output_response__["description"]  = ""
 
         LOG.cdlog("[KYT]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, status)
         LOG.cdlog("[KYT]: Gagal", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
@@ -597,7 +592,7 @@ def simply_eject_kyt_priv(port="COM10"):
         if retry <= 0 :
             status = "C_ISSUE_LENGTH"
             message = "Maksimum Retry Reached"
-            raise Exception(message)
+            raise SystemError('MAXR:'+message)
 
 
         #Get Status
@@ -654,7 +649,7 @@ def simply_eject_kyt_priv(port="COM10"):
         if retry <= 0 :
             status = "C_STATUS_REQUEST"
             message = "Maksimum Retry Reached"
-            raise Exception(message)
+            raise SystemError('MAXR:'+message)
 
         if is_stack_empty:
             status = ES_CARDS_EMPTY
@@ -708,7 +703,7 @@ def simply_eject_kyt_priv(port="COM10"):
             if retry <= 0 :
                 status = "C_ISSUE_CARD"
                 message = "Maksimum Retry Reached"
-                raise Exception(message)
+                raise SystemError('MAXR:'+message)
             
             #Get Last Status
             LOG.cdlog("[KYT]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS_REQUEST", show_log=DEBUG_MODE)
@@ -764,23 +759,23 @@ def simply_eject_kyt_priv(port="COM10"):
             if retry <= 0 :
                 status = "C_STATUS_REQUEST"
                 message = "Maksimum Retry Reached For Last Status"
-                raise Exception(message)
+                raise SystemError('MAXR:'+message)
 
             status = ES_NO_ERROR
-
-    except Exception as ex:
-        last_response = None
-
-        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format(ex, status, message, last_response)
-        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
-            status = ES_UNKNOWN_ERROR
-    
-        LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         
     except FunctionTimedOut as ex:
         last_response = None
 
         message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format("INIT_GAGAL, CD Tidak Ada Response", status, message, last_response)
+        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
+            status = ES_UNKNOWN_ERROR
+    
+        LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+
+    except Exception as ex:
+        last_response = None
+
+        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format(ex, status, message, last_response)
         if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
             status = ES_UNKNOWN_ERROR
     
