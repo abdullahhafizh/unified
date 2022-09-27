@@ -13,7 +13,9 @@ import os
 import subprocess
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 from _dDevice import _NV200
-from _dDevice import _MeiSCR
+
+if _Common.IS_LINUX:
+    from _dDevice import _MeiSCR
 
 
 LOGGER = logging.getLogger()
@@ -101,6 +103,31 @@ class BILLSignalHandler(QObject):
 
 
 BILL_SIGNDLER = BILLSignalHandler()
+
+
+# Abstract Class MeiScr
+class _AbstractMeiSCR:
+    def __init__(self):
+        pass
+    
+    def send_command(self, param=None, config=[], recycleNotes=[]):
+        try:
+            args = param.split('|')
+            command = args[0]
+            param = "0"
+            if len(args[1:]) > 0:
+                param = "|".join(args[1:])
+            err = 'GENERAL_ERROR'
+            LOGGER.debug((command, param, config))
+            return -1, err
+        except Exception as e:
+            LOGGER.warning((e))
+            return -99, str(e)
+
+
+if _Common.IS_WINDOWS:
+    _MeiSCR = _AbstractMeiSCR()
+
 
 BILL = {}
 SMALL_NOTES_NOT_ALLOWED = _Common.BILL_RESTRICTED_NOTES.split('|')
