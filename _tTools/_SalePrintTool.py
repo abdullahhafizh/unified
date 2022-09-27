@@ -27,6 +27,7 @@ LOGGER = logging.getLogger()
 class AbstractEprinter:
     def __init__(self):
         self.reset()
+        self.output = ''
         
     def reset(self):
         self.text = []
