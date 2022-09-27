@@ -1547,6 +1547,8 @@ def admin_print_global(struct_id, ext='.pdf'):
     print_copy = 2
     user = 'mdd_operator'
     s = False
+    if _Common.IS_LINUX:
+        return eprinter_admin_global(struct_id)
     if _UserService.USER is not None:
         user = _UserService.USER['username']
     try:
@@ -1641,6 +1643,90 @@ def admin_print_global(struct_id, ext='.pdf'):
         del pdf
 
 
+def eprinter_admin_global(struct_id, ext='.pdf'):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    user = 'mdd_operator'
+    s = False
+    if _UserService.USER is not None:
+        user = _UserService.USER['username']
+    try:
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text('VM COLLECTION REPORT' + "\n")
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text("\n")
+        s = _Common.COLLECTION_DATA
+        printer.text((' '*padding_left)+'_' * max_chars+ "\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
+        prev_collect_time = _Common.load_from_temp_config('last^collection', 'N/A')
+        printer.text((' '*padding_left)+'Periode : '+ prev_collect_time + "\n")
+        collect_time = datetime.strftime(datetime.now(), '%d-%m-%Y %H:%M:%S')
+        printer.text((' '*padding_left)+'Hingga  : '+ collect_time + "\n")
+        _Common.log_to_temp_config('last^collection', collect_time)
+        printer.text((' '*padding_left)+'Operator : ' + user + ' | ' + struct_id + "\n")
+        # printer.text((' '*padding_left)+'TRX ID : '+struct_id + "\n")
+        printer.text((' '*padding_left)+'_' * max_chars+ "\n")
+        printer.text((' '*padding_left)+'NOTES SUMMARY' + "\n")
+        # qty_card = s['trx_card']
+        # total_card = str(int(qty_card) * CARD_SALE)
+        error_count = 0
+        for activity_note in s['cash_activity']['notes']:
+            if 'ERROR' in activity_note:
+                error_count += 1
+                continue
+        for note in _Common.BILL_ACTIVE_NOTES:
+            qty = s['cash_activity']['summary'].get(note, 0)
+            sub_total = int(qty) * int(note)
+            printer.text((' '*padding_left)+
+                    ' -- '+clean_number(str(note).rjust(6, ' '))+' x '+str(qty).rjust(4, ' ')+'  = Rp. '+clean_number(str(sub_total)).rjust(10, ' ') + "\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
+        printer.text((' '*padding_left)+'=' * max_chars+ "\n")
+        if error_count > 0:
+            printer.text((' '*padding_left)+'*SUSPECT AMOUNT NOT MATCH*'+ "\n")
+            printer.text((' '*padding_left)+'ERROR TRX COUNT : ' + str(error_count)+ "\n")
+        else:
+            printer.text((' '*padding_left)+'STATUS NORMAL'+ "\n")
+        printer.text((' '*padding_left)+'=' * max_chars+ "\n")
+        # total_amount = str(int(s['all_amount']) + int(s['failed_amount']))
+        # if total_amount == '0':
+        #     total_amount = str(s['failed_amount'])
+        printer.text((' '*padding_left)+'TOTAL CASH = Rp. ' + clean_number(str(s['cash_activity']['total'])) + "\n")
+        # End Layouting
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # Mark Sync Collected Data
+        mark_sync_collected_data(s)
+        # Print-out to printer
+        for i in range(2):
+            print_result = _Printer.escpos_direct_print(printer.output)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+            sleep(1)
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
+    finally:
+        # Send To Backend
+        _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
+        # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
+        del pdf
+
+
 def start_admin_change_stock_print(struct_id):
     # _Helper.get_thread().apply_async(admin_change_stock_print, (struct_id,))
     _Helper.get_thread().apply_async(admin_card_preload_update, (struct_id,))
@@ -1656,6 +1742,8 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
     print_copy = 2
     user = 'mdd_operator'
     s = False
+    if _Common.IS_LINUX:
+        return eprinter_admin_preload(struct_id)
     if _UserService.USER is not None:
         user = _UserService.USER['username']
     # LAYOUT NEW
@@ -1755,6 +1843,92 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         del pdf
 
 
+def eprinter_admin_preload(struct_id, ext='.pdf'):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    user = 'mdd_operator'
+    s = False
+    if _UserService.USER is not None:
+        user = _UserService.USER['username']
+    try:
+        product_count = int(_DAO.custom_query(' SELECT count(*) AS __ FROM ProductStock WHERE stid IS NOT NULL ')[0]['__'])
+        if product_count == 0:
+            SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR|EMPTY_PRODUCT')
+            return
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text('CARD JOURNAL REPORT' + "\n")
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text("\n")
+        s = _Common.generate_card_preload_data(user, struct_id)
+        # print(str(s))
+        # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        # Layouting
+        printer.text((' '*padding_left)+ '_' * max_chars +"\n")
+        printer.text((' '*padding_left)+ 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
+                    datetime.strftime(datetime.now(), '%H:%M:%S') + "\n")
+        printer.text((' '*padding_left)+ 'Operator : ' + user + ' | ' + struct_id + "\n")
+        printer.text((' '*padding_left)+ '_' * max_chars +"\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
+
+        for i in range(product_count):
+            slot = str(i+1)
+            printer.text((' '*padding_left)+ 'SLOT '+slot+ ' - '+s.get('pid_stock_'+slot)+' : ' + "\n") 
+            printer.text((' '*padding_left)+
+                    '- Stok Awal        : ' + str(s.get('init_stock_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+
+                    '- Penjualan        : ' + str(s.get('sale_stock_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+
+                    '- WA Redeem        : ' + str(s.get('wa_redeem_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+ '_' * max_chars +"\n")
+            printer.text((' '*padding_left)+
+                    '- Stok Seharusnya  : ' + str(s.get('last_stock_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+
+                    '- Sisa Kartu       : ' + str(s.get('last_input_stock_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+ '_' * max_chars +"\n")
+            printer.text((' '*padding_left)+
+                    '- Selisih          : ' + str(s.get('diff_stock_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+
+                    '- Penambahan       : ' + str(s.get('add_stock_'+slot, '-')) + "\n")
+            printer.text((' '*padding_left)+ '_' * max_chars +"\n")
+            # Redefine Last Stock
+            last_stock = int(s.get('final_stock_'+slot, '0'))
+            # if int(s.get('diff_stock_'+slot, '0')) != 0:
+            #     last_stock = int(s.get('last_input_stock_'+slot, '0'))
+            printer.text((' '*padding_left)+
+                    '- Stok Akhir       : ' + str(last_stock) + "\n")
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # Print-out to printer
+        for i in range(2):
+            print_result = _Printer.escpos_direct_print(printer.output)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+            sleep(1)
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
+    finally:
+        _Common.send_stock_opname(struct_id)
+        del pdf
+
+
 def admin_change_stock_print(struct_id, ext='.pdf'):
     global GENERAL_TITLE
     pdf = None
@@ -1764,6 +1938,8 @@ def admin_change_stock_print(struct_id, ext='.pdf'):
     padding_left = 0
     print_copy = 2
     user = 'mdd_operator'
+    if _Common.IS_LINUX:
+        return eprinter_admin_change_stock(struct_id)
     s = False
     if _UserService.USER is not None:
         user = _UserService.USER['username']
@@ -1831,6 +2007,71 @@ def admin_change_stock_print(struct_id, ext='.pdf'):
         del pdf
 
 
+def eprinter_admin_change_stock(struct_id, ext='.pdf'):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    s = False
+    if _UserService.USER is not None:
+        user = _UserService.USER['username']
+    try:
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text('VM UPDATE CARD REPORT' + "\n")
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text("\n")
+        s = _Common.generate_stock_change_data()
+        # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        # Layouting
+        printer.text((' '*padding_left)+ '_' * max_chars + "\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)        
+        printer.text((' '*padding_left)+ 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
+                 datetime.strftime(datetime.now(), '%H:%M:%S') + "\n")
+        printer.text((' '*padding_left)+ 'Operator : ' + user + ' | ' + struct_id + "\n")
+        # printer.text((' '*padding_left)+ 'TRX ID : '+struct_id + "\n")
+        printer.text((' '*padding_left)+ '_' * max_chars + "\n")
+        printer.text((' '*padding_left)+ 'CARD STOCK' + "\n") 
+        adjust_slot1 = int(s['slot1']) - int(s['init_slot1'])
+        printer.text((' '*padding_left)+
+                 '- Slot 1 : ' + str(s['init_slot1']) + ' + ' + str(adjust_slot1) + ' = ' + str(s['slot1']) + "\n")
+        adjust_slot2 = int(s['slot2']) - int(s['init_slot2'])
+        printer.text((' '*padding_left)+
+                 '- Slot 2 : ' + str(s['init_slot2']) + ' + ' + str(adjust_slot2) + ' = ' + str(s['slot2']) + "\n")
+        adjust_slot3 = int(s['slot3']) - int(s['init_slot3'])
+        printer.text((' '*padding_left)+
+                 '- Slot 3 : ' + str(s['init_slot3']) + ' + ' + str(adjust_slot3) + ' = ' + str(s['slot3']) + "\n")
+        printer.text((' '*padding_left)+ 'MDR Wallet : Rp. ' + clean_number(str(s['sam_1_balance'])) + "\n")
+        printer.text((' '*padding_left)+ 'BNI Wallet : Rp. ' + clean_number(str(s['sam_2_balance'])) + "\n")
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # Print-out to printer
+        for i in range(2):
+            print_result = _Printer.escpos_direct_print(printer.output)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+            sleep(1)
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
+    finally:
+        del pdf
+
+
+
 def mark_sync_collected_data(s):
     try:
         LOGGER.info(('START'))
@@ -1874,6 +2115,8 @@ def print_card_history(payload):
     global GENERAL_TITLE, USE_FOOTER
     if _Helper.empty(_Common.LAST_CARD_LOG_HISTORY):
         return
+    if _Common.IS_LINUX:
+        return eprinter_print_card_history(payload)
     # Payload Must Contain Card Number, Bank Name, Balance
     payload = json.loads(payload)
     pdf = None
@@ -1951,6 +2194,77 @@ def print_card_history(payload):
             print("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_)))
             if '[ERROR]' in print_:
                 break
+            sleep(1)
+    except Exception as e:
+        LOGGER.warning(str(e))
+    finally:
+        _Common.LAST_CARD_LOG_HISTORY = []
+
+
+def eprinter_print_card_history(payload):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    # Payload Must Contain Card Number, Bank Name, Balance
+    payload = json.loads(payload)
+    try:
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text('PREPAID CARD HISTORY' + "\n")
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text("\n")
+        printer.text((' '*padding_left)+ 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
+                datetime.strftime(datetime.now(), '%H:%M:%S') + "\n")
+        printer.text((' '*padding_left)+ 'No Kartu : ' + payload['card_no'] + "\n")
+        printer.text((' '*padding_left)+ 'Penerbit : Bank ' + payload['bank_name'] + "\n")
+        printer.text((' '*padding_left)+ '_' * max_chars + "\n")
+        printer.text((' '*padding_left)+ 'NO|   TIME   |     TRX     |  AMT  | BAL ' + "\n")
+        printer.text((' '*padding_left)+ '_' * max_chars + "\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)        
+
+        #==================================== 
+        # Looping Log Here
+        # 'date': datetime.strptime(row[2], '%m%d%y').strftime('%Y-%m-%d'),
+        # 'time': ':'.join(_Helper.strtolist(row[3])),
+        # 'type': _Common.BRI_LOG_LEGEND.get(row[4], ''),
+        # 'amount': row[5],
+        # 'prev_balance': row[6],
+        # 'last_balance': row[7]
+        no = 0
+        for log in _Common.LAST_CARD_LOG_HISTORY:
+            no += 1
+            content_row = ' | '.join([
+                str(no).zfill(2),
+                log['date'] + ' ' + log['time'], 
+                log['type'],
+                clean_number(log['amount']), 
+                clean_number(log['last_balance']), 
+                ])
+            printer.text((' '*padding_left)+ content_row + "\n")
+            # printer.text((' '*padding_left)+ (5*' ')+log['time'] + "\n")
+        #==================================== 
+        printer.text((' '*padding_left)+ '_' * max_chars + "\n")
+        printer.set(align="RIGHT",text_type="normal", width=1, height=1)        
+        printer.text((' '*padding_left)+ 'Saldo Akhir : ' + clean_number(payload['last_balance']) + "\n")
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # Print-out to printer
+        for i in range(1):
+            print_result = _Printer.escpos_direct_print(printer.output)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
             sleep(1)
     except Exception as e:
         LOGGER.warning(str(e))
