@@ -1,3 +1,10 @@
+15.1.1-GLOBAL:
+- Add Printer Capability in Linux OS,
+- Add MEI Bill Validator Type,
+- Detect Printer in Bootup (Linux),
+- ...
+
+
 15.1.0-GLOBAL:
 - Adjust Wording notification before topup,
 - Auto Dismiss TnC Layer,

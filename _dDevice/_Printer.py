@@ -99,6 +99,25 @@ def do_printout(path):
         return '[ERROR] {}'.format(str(e))
 
 
+ESCPOS_EMBED_PRINTER = _Common.PRINTER_PORT
+    
+def escpos_direct_print(print_data=None):
+    if print_data is None:
+        LOGGER.warning(('[ERROR] escpos_direct_print : ', 'Empty Data'))
+        return '[ERROR] {}'.format('Empty Print Data')
+    try:
+        printer = open(ESCPOS_EMBED_PRINTER, 'wb')
+        printer.write(print_data)
+        printer.close()
+        _Common.update_receipt_count()
+        return 'SUCCESS_PRINTING'
+    except Exception as e:
+        # _Common.online_logger(['Printer', PDF_FILE], 'device')
+        _Common.PRINTER_ERROR = 'FAILED_PRINTING'
+        LOGGER.warning((e))
+        return '[ERROR] {}'.format(str(e))
+
+
 '''
  import win32api
  fname="C:\\somePDF.pdf"

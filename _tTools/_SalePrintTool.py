@@ -13,10 +13,12 @@ from _sService import _KioskService
 from _nNetwork import _NetworkAccess
 from _cConfig import _Common
 from _sService import _UserService
-from _sService import _ProductService
 from _dDAO import _DAO
 from time import sleep
 import re
+
+from escpos.printer import Dummy as EPrinter
+
 
 LOGGER = logging.getLogger()
 
@@ -168,6 +170,10 @@ def justifying(left, right):
     return left + (" " * (MAX_LENGTH-len(left)-len(right))) + right
 
 
+def serialize_number(sn):
+    return re.sub(r'(?<!^)(?=(\d{3})+$)', r'.', str(sn))
+
+
 def start_direct_sale_print_global(payload):
     _KioskService.GLOBAL_TRANSACTION_DATA = json.loads(payload)
     _Helper.get_thread().apply_async(sale_print_global, )
@@ -276,10 +282,8 @@ def get_retry_code_tnc():
     return max_attempt+"x coba / "+day_duration+"x24 jam"
 
 
-
 def start_finalize_trx_process(trxid, data, cash):
     _Helper.get_thread().apply_async(finalize_trx_process, (trxid, data, cash,))
-
 
 
 def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION'):
@@ -309,6 +313,8 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
+    if _Common.IS_LINUX:
+        return eprinter_topup_trx(p, t)
     pdf = None
     # Init Variables
     small_space = SMALL_SPACE - 0.3
@@ -570,12 +576,120 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         del pdf
 
 
+def eprinter_topup_trx(p, t):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    try:
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        cash = int(p['payment_received'])
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text(datetime.strftime(datetime.now(), '%d-%m-%Y %H:%M') + "\n")
+        printer.text(('_' * max_chars) + '\n')
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
+        if 'receipt_title' in p.keys():
+            printer.text((' '*padding_left)+ p['receipt_title'].upper() + "\n")
+        printer.text((' '*padding_left)+ merge_text(['TOPUP', p['raw']['bank_name'], p['payment'].upper(), ]) + "\n")
+        trxid = p['shop_type']+str(p['epoch'])
+        printer.text((' '*padding_left)+'NO TRX : '+trxid + "\n")
+        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            if 'topup_details' in p.keys():
+                printer.text((' '*padding_left)+'ISI ULANG  : ' + serialize_number(p['denom']) + "\n")
+                printer.text((' '*padding_left)+'BIAYA ADMIN: ' + serialize_number(p['admin_fee']) + "\n")
+                printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(p['price']) + "\n")
+                # printer.text((' '*padding_left)+'BANK PENERBIT: ' + p['topup_details']['bank_name'] + "\n")
+                if 'other_channel_topup' in p['topup_details'].keys():
+                    if int(p['topup_details']['other_channel_topup']) > 0:
+                        printer.text((' '*padding_left)+'PENDING SALDO: ' + serialize_number(str(p['topup_details']['other_channel_topup'])) + "\n")
+                printer.text((' '*padding_left)+'NO. KARTU  : ' + p['topup_details']['card_no'] + "\n")
+                # saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
+                printer.text((' '*padding_left)+'SALDO AWAL : ' + serialize_number(p['raw']['prev_balance']) + "\n")
+                printer.text((' '*padding_left)+'SALDO AKHIR: ' + serialize_number(str(p['final_balance'])) + "\n")
+                if not _Helper.empty(p.get('promo')):
+                    if int(p['receive_discount']) > 0:
+                        printer.text((' '*padding_left)+'PROMO AKTIF: ' + p['promo']['code'] + "\n")
+                if 'refund_status' in p.keys():
+                    printer.text((' '*padding_left)+'UANG DITERIMA: ' + serialize_number(str(p['payment_received'])) + "\n")
+                    printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
+                    printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
+                    printer.text((' '*padding_left)+'NILAI KEMBALIAN: ' + serialize_number(str(p['refund_amount'])) + "\n")
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
+            else:
+                printer.text((' '*padding_left)+'NO. KARTU   : ' + p['raw']['card_no'] + "\n")
+                printer.text((' '*padding_left)+'SISA SALDO  : ' + serialize_number(p['raw']['prev_balance']) + "\n")
+                printer.text((' '*padding_left)+'UANG DITERIMA: ' + serialize_number(str(p['payment_received'])) + "\n")
+                if 'refund_status' in p.keys():
+                    printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
+                    printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
+                    printer.text((' '*padding_left)+'NILAI KEMBALIAN: ' + serialize_number(str(p['refund_amount'])) + "\n")
+                    fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                    if fee_refund_exist:
+                        printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
+                elif 'pending_trx_code' in p.keys():
+                    printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
+                    printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
+                    printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
+        else:
+            printer.text((' '*padding_left)+'NO. KARTU   : ' + p['raw']['card_no'] + "\n")
+            printer.text((' '*padding_left)+'SISA SALDO  : ' + serialize_number(p['raw']['prev_balance']) + "\n")
+            printer.text((' '*padding_left)+'UANG DITERIMA: ' + serialize_number(str(p['payment_received'])) + "\n")
+            if 'refund_status' in p.keys():
+                printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
+                printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
+                printer.text((' '*padding_left)+'NILAI KEMBALIAN: ' + serialize_number(str(p['refund_amount'])) + "\n")
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
+            elif 'pending_trx_code' in p.keys():
+                printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
+                printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
+                printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
+        printer.text("\n")
+        if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
+            for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
+                printer.text(" " + custom_text + "\n")
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # End Layouting
+        _Common.store_to_temp_data('last-trx-print-data', json.dumps(p))
+        # Print-out to printer
+        print_result = _Printer.escpos_direct_print(printer.output)
+        # print_ = _Printer.native_print(pdf_file)
+        print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        finalize_trx_process(trxid, p, cash)
+        del printer
+        return print_result
+
+
 def new_print_shop_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
     if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
+    if _Common.IS_LINUX:
+        return eprinter_shop_trx(p, t)
     pdf = None
     # Init Variables
     small_space = SMALL_SPACE - 0.3
@@ -762,12 +876,90 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         del pdf
 
 
+def eprinter_shop_trx(p, t):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    try:
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        cash = int(p['payment_received'])
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text(datetime.strftime(datetime.now(), '%d-%m-%Y %H:%M') + "\n")
+        printer.text(('_' * max_chars) + '\n')
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
+        if 'receipt_title' in p.keys():
+            printer.text((' '*padding_left)+ p['receipt_title'].upper() + "\n")
+        printer.text((' '*padding_left)+ merge_text(['PEMBELIAN KARTU', p['payment'].upper(), ]) + "\n")
+        trxid = p['shop_type']+str(p['epoch'])
+        printer.text((' '*padding_left)+'NO TRX : '+trxid + "\n")
+        if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            printer.text((' '*padding_left)+'TIPE KARTU  : ' + p['provider'] + "\n")
+            printer.text((' '*padding_left)+'QTY KARTU   : ' + str(p['qty']) + "\n")
+            if 'shop_details' in p.keys():
+                printer.text((' '*padding_left)+'NOMOR KARTU  : ' + p['shop_details'].get('card_no', '') + "\n")
+                printer.text((' '*padding_left)+'ISI SALDO    : ' + p['shop_details'].get('balance', '0') + "\n")
+            printer.text((' '*padding_left)+str(p['qty']) + ' x ' + serialize_number(p['value']) + "\n")
+            if not _Helper.empty(p.get('promo')):
+                if int(p['receive_discount']) > 0:
+                    printer.text((' '*padding_left)+'PROMO AKTIF: ' + p['promo']['code'] + "\n")
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(total_pay) + "\n")
+        else:
+            if 'refund_status' in p.keys():
+                printer.text((' '*padding_left)+'PENGEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
+                printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
+                printer.text((' '*padding_left)+'NILAI KEMBALIAN: ' + serialize_number(str(p['refund_amount'])) + "\n")
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
+            elif 'pending_trx_code' in p.keys():
+                printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
+                printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
+                printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
+        printer.text("\n")
+        if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
+            for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
+                printer.text(" " + custom_text + "\n")
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # End Layouting
+        _Common.store_to_temp_data('last-trx-print-data', json.dumps(p))
+        # Print-out to printer
+        print_result = _Printer.escpos_direct_print(printer.output)
+        # print_ = _Printer.native_print(pdf_file)
+        print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        finalize_trx_process(trxid, p, cash)
+        del printer
+        return print_result
+
+
 def new_print_ppob_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
     if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
+    if _Common.IS_LINUX:
+        return eprinter_ppob_trx(p, t)
     pdf = None
     # Init Variables
     small_space = SMALL_SPACE - 0.3
@@ -978,6 +1170,139 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         # Print-out to printer
         print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        finalize_trx_process(trxid, p, cash)
+        del pdf
+
+
+def eprinter_ppob_trx(p, t, ext='.pdf'):
+    header_space = 3
+    footer_space = 2
+    printer = None
+    print_result = False
+    padding_left = 1
+    max_chars = MAX_LENGTH
+    if _Common.PRINTER_PAPER_TYPE == '80mm':
+        max_chars = 48
+        padding_left = 5
+        header_space = 0
+    try:
+        printer = EPrinter()
+        for x in range(header_space):
+            printer.text("\n")
+        cash = int(p['payment_received'])
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
+        printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
+        printer.text(datetime.strftime(datetime.now(), '%d-%m-%Y %H:%M') + "\n")
+        printer.text(('_' * max_chars) + '\n')
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
+        if 'receipt_title' in p.keys():
+            printer.text((' '*padding_left)+ p['receipt_title'].upper() + "\n")
+        __title = t
+        printer.text((' '*padding_left)+merge_text([__title, p['payment'].upper(), ]) + "\n")
+        trxid = p['shop_type']+str(p['epoch'])
+        printer.text((' '*padding_left)+'NO TRX    : '+trxid + "\n")
+        provider = str(p['provider'])
+        if '(Admin' in provider:
+            provider = provider.split('(Admin')[0]
+        printer.text((' '*padding_left)+'PROVIDER  : ' + provider + "\n")
+        printer.text((' '*padding_left)+'MSISDN    : ' + str(p['msisdn']) + "\n")
+        # pdf.set_font(USED_FONT, 'B', regular_space)
+        # printer.text((' '*padding_left)+p['shop_type'].upper()+' '+p['provider'] + "\n")
+        if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
+            if p['ppob_mode'] == 'tagihan':
+                label_detail = 'INFO PAKET'
+                if 'OMNITSEL' not in provider:
+                    label_detail = 'PELANGGAN  '
+                printer.text((' '*padding_left)+label_detail+': ' + str(p['customer']) + "\n")
+                printer.text((' '*padding_left)+'TAGIHAN   : Rp. ' + clean_number(str(p['value'])) + "\n")
+                printer.text((' '*padding_left)+'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])) + "\n")
+            else:
+                printer.text((' '*padding_left)+'JUMLAH     : ' + str(p['qty']) + "\n")
+                ovo_cashin = False
+                if _Common.LAST_PPOB_TRX is not None:
+                    if _Common.LAST_PPOB_TRX['payload']['product_channel'] == 'MDD':
+                        if _Common.LAST_PPOB_TRX['payload']['operator'] == 'CASHIN OVO':
+                            ovo_cashin = True
+                if not ovo_cashin:
+                    printer.text((' '*padding_left)+'HARGA/UNIT : Rp. ' + clean_number(str(p['value'])) + "\n")
+                    if 'product_channel' in p.keys():
+                        if p['product_channel'] == 'MDD':
+                            printer.text((' '*padding_left)+'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])) + "\n")
+                else:
+                    printer.text((' '*padding_left)+'Saldo OVO Cash Anda Akan Dipotong'+ "\n")
+                    printer.text((' '*padding_left)+'Biaya Admin Rp. '+clean_number(str(p['admin_fee']))+ "\n")
+                    
+                if 'sn' in p['ppob_details'].keys():
+                    label_sn = 'S/N '
+                    if p['category'].lower() == 'listrik':
+                        label_sn = 'TOKEN '
+                        if str(p['ppob_details']['sn']) == '[]':
+                            printer.text((' '*padding_left)+'TOKEN DALAM PROSES, HUBUNGI LAYANAN PELANGGAN' + "\n")
+                        else:    
+                            printer.text((' '*padding_left)+label_sn + str(p['ppob_details']['sn'][:24]) + "\n")
+                    else:
+                        printer.text((' '*padding_left)+label_sn + str(p['ppob_details']['sn'][:24]) + "\n")
+            if not _Helper.empty(p.get('promo')):
+                if int(p['receive_discount']) > 0:
+                    printer.text((' '*padding_left)+'PROMO AKTIF: ' + p['promo']['code'] + "\n")
+            if 'refund_status' in p.keys():
+                printer.text((' '*padding_left)+'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])) + "\n")
+                printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
+                printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
+                printer.text((' '*padding_left)+'NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])) + "\n")
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    printer.text((' '*padding_left)+'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)) + "\n")
+            elif 'pending_trx_code' in p.keys():
+                printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
+                printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
+                printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
+                printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
+                printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            if 'product_channel' in p.keys():
+                if p['product_channel'] == 'MDD':
+                    total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
+            if 'OMNITSEL' in provider:
+                total_pay = str(int(total_pay) + int(p['admin_fee']))
+            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay) + "\n")
+        else:
+            printer.text((' '*padding_left)+'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])) + "\n")
+            if 'refund_status' in p.keys():
+                printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
+                printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
+                printer.text((' '*padding_left)+'NILAI KEMBALIAN: Rp. ' + clean_number(str(p['refund_amount'])) + "\n")
+                fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
+                if fee_refund_exist:
+                    printer.text((' '*padding_left)+'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)) + "\n")
+            elif 'pending_trx_code' in p.keys():
+                printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
+                printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
+                printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
+                printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
+                printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
+        # Footer Move Here
+        printer.text("\n")
+        if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
+            for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
+                printer.text(" " + custom_text + "\n")
+        for y in range(footer_space):
+            printer.text("\n")
+        printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
+        printer.close()
+        if _Common.PRINTER_PAPER_TYPE == '80mm':
+            printer.cut()
+        # End Layouting
+        _Common.store_to_temp_data('last-trx-print-data', json.dumps(p))
+        # Print-out to printer
+        print_result = _Printer.escpos_direct_print(printer.output)
+        # print_ = _Printer.native_print(pdf_file)
+        print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))

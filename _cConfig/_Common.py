@@ -12,6 +12,7 @@ import json
 import re
 from sentry_sdk import capture_exception
 import platform
+import subprocess
 # from sentry_sdk import capture_exception
 
 IS_LINUX = platform.system() == 'Linux'
@@ -125,7 +126,27 @@ LOGGER.info((CD_TYPES))
 PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 PRINTER_NEW_LAYOUT = True if _ConfigParser.get_set_value('PRINTER', 'new^layout', '0') == '1' else False
+PRINTER_PAPER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^paper^type', '80mm')
+
 ALLOW_REPRINT_RECEIPT = True if _ConfigParser.get_set_value('PRINTER', 'allow^reprint^receipt', '0') == '1' else False
+
+
+def linux_get_printer_address():
+    global PRINTER_PORT
+    try:
+        output = subprocess.Popen('ls -l /dev/usb/lp*',shell=True, stdout=subprocess.PIPE).communicate()[0]
+        addr = output.split()[-1].decode('utf-8').split('/dev/usb')[-1]
+        printer = '/dev/usb' + addr
+        _ConfigParser.set_value('PRINTER', 'port', printer)
+        PRINTER_PORT = printer
+        print('pyt: Found Printer : ' + PRINTER_PORT)
+    except Exception as e:
+        print('pyt: Failed Detect Printer : ' + str(e))
+
+# Add Auto Detect Printer Address
+if IS_LINUX:
+    linux_get_printer_address()
+
 
 MID_MAN = _ConfigParser.get_set_value('MANDIRI', 'mid', '---')
 TID_MAN = _ConfigParser.get_set_value('MANDIRI', 'tid', '---')
