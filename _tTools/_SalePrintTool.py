@@ -17,11 +17,21 @@ from _dDAO import _DAO
 from time import sleep
 import re
 
-from escpos.printer import Dummy as EPrinter
+if _Common.IS_LINUX:
+    from escpos.printer import Dummy as EPrinter
 
 
 LOGGER = logging.getLogger()
 
+
+class AbstractEprinter:
+    def __init__(self):
+        pass
+    
+
+if _Common.IS_WINDOWS:
+    Eprinter = AbstractEprinter()
+    
 
 class SPrintToolSignalHandler(QObject):
     __qualname__ = 'SPrintToolSignalHandler'
