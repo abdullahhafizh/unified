@@ -776,6 +776,15 @@ def simply_eject_kyt_priv(port="COM10"):
             status = ES_UNKNOWN_ERROR
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        
+    except FunctionTimedOut as ex:
+        last_response = None
+
+        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format("INIT_GAGAL, CD Tidak Ada Response", status, message, last_response)
+        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
+            status = ES_UNKNOWN_ERROR
+    
+        LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
         if ser:
