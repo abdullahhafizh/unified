@@ -1759,7 +1759,8 @@ def parse_card_history(bank, raw):
             card_history.append({
                 'date': datetime.strptime(row[1][:6], '%d%m%y').strftime('%Y-%m-%d'),
                 'time': ':'.join(_Helper.strtolist(row[1][6:])),
-                'type': '-'.join([_Common.MANDIRI_LOG_LEGEND.get(row[4], ''), row[2]]),
+                'type': _Common.MANDIRI_LOG_LEGEND.get(row[4], 'TOPUP'),
+                # 'type': '-'.join([_Common.MANDIRI_LOG_LEGEND.get(row[4], ''), row[2]]),
                 'amount': row[5],
                 'prev_balance': str(int(row[6])-1),
                 'last_balance': row[6]

@@ -2224,10 +2224,12 @@ def eprinter_print_card_history(payload):
         printer.text("\n")
         printer.text((' '*padding_left)+ 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
                 datetime.strftime(datetime.now(), '%H:%M:%S') + "\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
         printer.text((' '*padding_left)+ 'No Kartu : ' + payload['card_no'] + "\n")
         printer.text((' '*padding_left)+ 'Penerbit : Bank ' + payload['bank_name'] + "\n")
+        printer.set(align="CENTER",text_type="normal", width=1, height=1)
         printer.text((' '*padding_left)+ '_' * max_chars + "\n")
-        printer.text((' '*padding_left)+ 'NO|   TIME   |     TRX     |  AMT  | BAL ' + "\n")
+        printer.text((' '*padding_left)+ 'NO |   TIME   |     TRX     |  AMT  | BAL ' + "\n")
         printer.text((' '*padding_left)+ '_' * max_chars + "\n")
         printer.set(align="LEFT",text_type="normal", width=1, height=1)        
 
@@ -2244,13 +2246,13 @@ def eprinter_print_card_history(payload):
             no += 1
             content_row = ' | '.join([
                 str(no).zfill(2),
-                log['date'] + ' ' + log['time'], 
+                log['date'][2:], 
                 log['type'],
                 clean_number(log['amount']), 
                 clean_number(log['last_balance']), 
                 ])
-            printer.text((' '*padding_left)+ content_row + "\n")
-            # printer.text((' '*padding_left)+ (5*' ')+log['time'] + "\n")
+            printer.text((' ')+ content_row + "\n")
+            printer.text((' ')+ (5*' ')+log['time'][:-2] + "\n")
         #==================================== 
         printer.text((' '*padding_left)+ '_' * max_chars + "\n")
         printer.set(align="RIGHT",text_type="normal", width=1, height=1)        
