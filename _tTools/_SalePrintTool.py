@@ -2246,13 +2246,13 @@ def eprinter_print_card_history(payload):
             no += 1
             content_row = ' | '.join([
                 str(no).zfill(2),
-                log['date'][2:], 
+                log['date'][2:] + ' ' + log['time'][:-3], 
                 log['type'],
                 clean_number(log['amount']), 
                 clean_number(log['last_balance']), 
                 ])
-            printer.text((' ')+ content_row + "\n")
-            printer.text((' ')+ (5*' ')+log['time'][:-2] + "\n")
+            printer.text((' '*2)+ content_row + "\n")
+            # printer.text((' ')+ (5*' ')+log['time'][:-2] + "\n")
         #==================================== 
         printer.text((' '*padding_left)+ '_' * max_chars + "\n")
         printer.set(align="RIGHT",text_type="normal", width=1, height=1)        
