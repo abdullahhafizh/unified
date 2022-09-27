@@ -2222,9 +2222,9 @@ def eprinter_print_card_history(payload):
         printer.text('PREPAID CARD HISTORY' + "\n")
         printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
         printer.text("\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)
         printer.text((' '*padding_left)+ 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
                 datetime.strftime(datetime.now(), '%H:%M:%S') + "\n")
-        printer.set(align="LEFT",text_type="normal", width=1, height=1)
         printer.text((' '*padding_left)+ 'No Kartu : ' + payload['card_no'] + "\n")
         printer.text((' '*padding_left)+ 'Penerbit : Bank ' + payload['bank_name'] + "\n")
         printer.set(align="CENTER",text_type="normal", width=1, height=1)
@@ -2259,6 +2259,7 @@ def eprinter_print_card_history(payload):
         printer.text((' '*padding_left)+ 'Saldo Akhir : ' + clean_number(payload['last_balance']) + "\n")
         for y in range(footer_space):
             printer.text("\n")
+        printer.set(align="LEFT",text_type="normal", width=1, height=1)        
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
         if _Common.PRINTER_PAPER_TYPE == '80mm':
