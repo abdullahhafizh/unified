@@ -631,7 +631,7 @@ def eprinter_topup_trx(p, t):
             if 'topup_details' in p.keys():
                 printer.text((' '*padding_left)+'ISI ULANG  : ' + serialize_number(p['denom']) + "\n")
                 printer.text((' '*padding_left)+'BIAYA ADMIN: ' + serialize_number(p['admin_fee']) + "\n")
-                printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(p['price']) + "\n")
+                printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(p['value']) + "\n")
                 # printer.text((' '*padding_left)+'BANK PENERBIT: ' + p['topup_details']['bank_name'] + "\n")
                 if 'other_channel_topup' in p['topup_details'].keys():
                     if int(p['topup_details']['other_channel_topup']) > 0:
