@@ -281,6 +281,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
     }
     # _Helper.dump(payload)
     result = False, None
+    r = dict()
     try:
         url = _Common.QR_HOST+mode.lower()+'/status-payment'
         if not _Common.QR_PROD_STATE[mode.upper()]:
@@ -294,7 +295,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
     finally:
-        if result:
+        if result[0] is True:
             do_print_qr_receipt(mode.upper(), r.get('data'))
         return result
             # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
