@@ -507,10 +507,12 @@ def send_command(param=None, config=[], recycleNotes=[]):
                     break
                 time.sleep(1)
         elif command == config['RESET']:
-            res, msg, err = MEI.softReset()
-            if res is True:
-                time.sleep(DELAY_RESET)
-                return 0, msg
+            time.sleep(DELAY_RESET)
+            return 0, msg
+            # res, msg, err = MEI.softReset()
+            # if res is True:
+            #     time.sleep(DELAY_RESET)
+            #     return 0, msg
         elif command == config['STOP']:
             LOOP_ATTEMPT = 0
             # Safety Close Bill
