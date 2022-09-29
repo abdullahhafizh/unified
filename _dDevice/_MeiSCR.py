@@ -513,10 +513,10 @@ def send_command(param=None, config=[], recycleNotes=[]):
                 len(recycleNotes) > 0,
                 recycleNotes
             )
-            time.sleep(DELAY_RESET)
-            return 0, 'OK'
+            if res is True:
+                time.sleep(DELAY_RESET)
+                return 0, 'OK'
             # res, msg, err = MEI.softReset()
-            # if res is True:
             #     time.sleep(DELAY_RESET)
             #     return 0, msg
         elif command == config['STOP']:
