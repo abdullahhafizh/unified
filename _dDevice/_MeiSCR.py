@@ -507,8 +507,7 @@ def send_command(param=None, config=[], recycleNotes=[]):
                     break
                 time.sleep(1)
         elif command == config['RESET']:
-            if MEI is None:
-                MEI = MeiDevice()
+            MEI = MeiDevice()
             res, msg, err = MEI.open(
                 config['PORT'],
                 len(recycleNotes) > 0,
