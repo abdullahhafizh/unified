@@ -160,14 +160,14 @@ class MeiDevice:
         message_out = ""
         LOG.bvlog("[MEI]: softReset ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, 'CALL')
         try:
-            if not self._scr.isOpen():
-                raise Exception("SCR Not Opened")
+            # if not self._scr.isOpen():
+            #     raise Exception("SCR Not Opened")
             self._scr.softReset()
             message_out = self.createMessage()            
             return True, message_out, "OK"
         except Exception as ex:
             trace = traceback.format_exc()
-            LOG.grglog("[MEI]: softReset ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, trace)
+            LOG.bvlog("[MEI]: softReset ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, trace)
             return False, message_out, str(ex)
 
     
