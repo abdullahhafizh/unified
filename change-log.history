@@ -2,6 +2,8 @@
 - Add Printer Capability in Linux OS,
 - Add MEI Bill Validator Type,
 - Detect Printer in Bootup (Linux),
+- Fix QR Provider Name in Retry TRX,
+- Fix MEI Reset,
 - ...
 
 

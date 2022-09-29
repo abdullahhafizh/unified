@@ -289,9 +289,9 @@ def do_check_trx(reff_no):
             LOGGER.info(('START VALIDATE PAYMENT'))
             # Add Debit & QR Payment Check
             # Serialise QR Provider Name
-            if 'QRIS ' in r['payment_method'].upper():
+            if ' ' in r['payment_method'].upper():
                 # QRIS BNI to BNI-QRIS / QRIS BCA to BCA-QRIS
-                r['payment_method'] = r['payment_method'].replace('QRIS ', '-QRIS')
+                r['payment_method'] = r['payment_method'].split(' ')[1] + '-QRIS'
             ext_channel = list(_Common.QR_PROD_STATE.keys())
             ext_channel.append('DEBIT')
             if r['payment_method'].upper() in ext_channel:
@@ -299,9 +299,9 @@ def do_check_trx(reff_no):
                 r['status'] = 'FAILED'
                 check_trx_id = remarks.get('host_trx_id', r['product_id'])
                 qr_provider = remarks.get('init_payment', r['payment_method'])
-                if 'QRIS ' in qr_provider.upper():
+                if ' ' in qr_provider.upper():
                     # QRIS BNI to BNI-QRIS / QRIS BCA to BCA-QRIS
-                    qr_provider = qr_provider.replace('QRIS ', '-QRIS')
+                    qr_provider = qr_provider.split(' ')[1] + '-QRIS'
                 status, result = validate_payment_history(
                     payment_method = r['payment_method'], 
                     trx_id = check_trx_id,
