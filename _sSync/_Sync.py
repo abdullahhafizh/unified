@@ -76,35 +76,67 @@ def sync_machine(url, param):
 
 
 def send_daily_summary():
-    payload = _DAO.get_today_report(_Common.TID)
-    sleep(1)
-    _QPROX.ka_info_mandiri()
-    payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
-    sleep(1)
-    _QPROX.ka_info_bni()
-    payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET
-    # payload['last_stock_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
-    payload['last_stock_cash'] = _Common.get_cash_activity()['total']
-    payload['last_stock_slot_1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
-    payload['last_stock_slot_2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
-    payload['last_stock_slot_3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
-    payload['last_stock_slot_4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
-    url = _Common.BACKEND_URL + 'sync/daily-summary'
-    if len(payload) > 0:
-        _DAO.mark_today_report(_Common.TID)
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        print('pyt: send_daily_summary ' + _Helper.time_string())
-        if s != 200 or r.get('result') != 'OK':
-            payload['endpoint'] = 'sync/daily-summary'
-            _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
-        return True
-    else:
+    try:
+        payload = _DAO.get_today_report(_Common.TID)
+        sleep(1)
+        _QPROX.ka_info_mandiri()
+        payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
+        sleep(1)
+        _QPROX.ka_info_bni()
+        payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET
+        # payload['last_stock_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
+        payload['last_stock_cash'] = _Common.get_cash_activity()['total']
+        payload['last_stock_slot_1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 101 ')[0]['__']
+        payload['last_stock_slot_2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 102 ')[0]['__']
+        payload['last_stock_slot_3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 103 ')[0]['__']
+        payload['last_stock_slot_4'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE status = 104 ')[0]['__']
+        url = _Common.BACKEND_URL + 'sync/daily-summary'
+        if len(payload) > 0:
+            _DAO.mark_today_report(_Common.TID)
+            s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+            print('pyt: PROCESSING TODAY REPORT ' + _Helper.time_string())
+            if s != 200 or r.get('result') != 'OK':
+                payload['endpoint'] = 'sync/daily-summary'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(e)
         return False
     
 
-def send_not_synced_daily_report():
-    # TODO: Finalise This Function
-    pass
+def send_all_not_synced_daily_report():
+    while True:
+        try:
+            reports = _DAO.get_all_unsynced_report(_Common.TID)
+            if len(reports) > 0:
+                for report in reports:
+                    if report['report_date'] == _Helper.time_string(f='%Y-%m-%d'):
+                        continue
+                    report['mandiri_deposit_last_balance'] = -1
+                    report['bni_deposit_last_balance'] = -1
+                    report['last_stock_cash'] = -1
+                    report['last_stock_slot_1'] = -1
+                    report['last_stock_slot_2'] = -1
+                    report['last_stock_slot_3'] = -1
+                    report['last_stock_slot_4'] = -1
+                    url = _Common.BACKEND_URL + 'sync/daily-summary'
+                    s, r = _NetworkAccess.post_to_url(url=url, param=report)
+                    print('pyt: PROCESSING ' + report['report_date'] + ' ' + _Helper.time_string())
+                    LOGGER.debug('PROCESSING ' + report['report_date'] + ' ' + _Helper.time_string())
+                    if s == 200 and r.get('result') == 'OK':
+                        _DAO.mark_synced_report(_Common.TID, report['report_date'])
+                        print('pyt: SUCCESS SYNCED ' + report['report_date'] + ' ' + _Helper.time_string())
+                        LOGGER.info('SUCCESS SYNCED ' + report['report_date'] + ' ' + _Helper.time_string())
+                    continue
+        except Exception as e:
+            LOGGER.warning(e)
+        sleep(60*30)
+
+
+def start_send_all_not_synced_daily_report():
+    _Helper.get_thread().apply_async(send_all_not_synced_daily_report)
 
 
 def start_idle_mode():

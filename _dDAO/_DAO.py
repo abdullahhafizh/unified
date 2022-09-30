@@ -692,6 +692,14 @@ def get_today_report(tid):
         result = result[0]
     return result
 
+def get_all_unsynced_report(tid):
+    param = {
+        'tid': tid,
+    }
+    sql = " SELECT * FROM DailySummary WHERE tid = :tid AND synced_at IS NULL  "
+    result = _Database.get_query(sql=sql, parameter=param)
+    return result
+
 
 def mark_today_report(tid):
     param = {

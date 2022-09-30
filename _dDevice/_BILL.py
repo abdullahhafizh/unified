@@ -218,7 +218,12 @@ def reset_bill():
     #     _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
     #     return False
     param = BILL["SET"] + '|' + BILL["PORT"]
-    if BILL_TYPE in ['NV', 'MEI']:
+    if BILL_TYPE in ['MEI']:
+        OPEN_STATUS = True
+        _Common.BILL_ERROR = ''
+        BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('RESET_BILL|DONE')
+        return
+    if BILL_TYPE in ['NV']:
         param = BILL["RESET"] + '|'
     response, result = send_command_to_bill(param=param, output=None)
     if response == 0:

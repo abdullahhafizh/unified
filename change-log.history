@@ -3,7 +3,8 @@
 - Add MEI Bill Validator Type,
 - Detect Printer in Bootup (Linux),
 - Fix QR Provider Name in Retry TRX,
-- Fix MEI Reset,
+- Fix MEI Reset (OPEN),
+- Add Sync Report Not Synced,
 - ...
 
 

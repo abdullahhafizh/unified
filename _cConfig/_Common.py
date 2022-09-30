@@ -700,7 +700,7 @@ QR_PROD_STATE = {
     'DANA': True,
     'LINKAJA': True,
     'SHOPEEPAY': True,
-    'OVO': True
+    'OVO': True,
 }
 
 ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
