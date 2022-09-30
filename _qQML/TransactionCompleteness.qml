@@ -48,7 +48,7 @@ Base{
 
     AnimatedImage  {
         id: mainImage
-        visible: showWhatAppQR
+        visible: showWhatAppQR && (globalScreenType == '1')
         width: imageSize
         height: imageSize
         anchors.verticalCenterOffset: 275
@@ -75,17 +75,17 @@ Base{
 
     Column{
         id: rowDetailText
-        spacing: 50
+        spacing: (globalScreenType == '1') ? 50 : 30
         width: parent.width - boxPadding
         height: parent.height - boxPadding
-        anchors.verticalCenterOffset: 75
+        anchors.verticalCenterOffset: (globalScreenType == '1') ? 75 : 40
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 
         Text{
             id: firstText
             text: " - " + textFirst
-            font.pixelSize: 40
+            font.pixelSize: (globalScreenType == '1') ? 40 : 30
             width: parent.width
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignLeft
@@ -95,12 +95,11 @@ Base{
             font.family: "Ubuntu"
         }
 
-
         Text{
             id: secondText
             text: " - " + textSecond
             horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 40
+            font.pixelSize: (globalScreenType == '1') ? 40 : 30
             width: parent.width
             wrapMode: Text.WordWrap
             font.bold: false
@@ -114,7 +113,7 @@ Base{
             visible: textThird.length > 0
             text: " - " + textThird
             horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 40
+            font.pixelSize: (globalScreenType == '1') ? 40 : 30
             width: parent.width
             wrapMode: Text.WordWrap
             font.bold: false
@@ -128,7 +127,7 @@ Base{
             visible: textFourth.length > 0
             text: " - " + textFourth
             horizontalAlignment: Text.AlignLeft
-            font.pixelSize: 40
+            font.pixelSize: (globalScreenType == '1') ? 40 : 30
             width: parent.width
             wrapMode: Text.WordWrap
             font.bold: false
