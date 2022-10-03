@@ -1053,7 +1053,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'JUMLAH     : ' + str(p['qty']), 0, 0, 'L')
                 ovo_cashin = False
-                if _Common.LAST_PPOB_TRX is not None:
+                if _Common.LAST_PPOB_TRX is not None and 'product_channel' in p.keys():
                     if _Common.LAST_PPOB_TRX['payload']['product_channel'] == 'MDD':
                         if _Common.LAST_PPOB_TRX['payload']['operator'] == 'CASHIN OVO':
                             ovo_cashin = True
@@ -1249,7 +1249,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
             else:
                 printer.text((' '*padding_left)+'JUMLAH     : ' + str(p['qty']) + "\n")
                 ovo_cashin = False
-                if _Common.LAST_PPOB_TRX is not None:
+                if _Common.LAST_PPOB_TRX is not None and 'product_channel' in p.keys():
                     if _Common.LAST_PPOB_TRX['payload']['product_channel'] == 'MDD':
                         if _Common.LAST_PPOB_TRX['payload']['operator'] == 'CASHIN OVO':
                             ovo_cashin = True
