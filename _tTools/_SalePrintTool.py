@@ -1295,7 +1295,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             if 'OMNITSEL' in provider:
                 total_pay = str(int(total_pay) + int(p['admin_fee']))
-            printer.text((' ')+'TOTAL BAYAR : Rp. ' + clean_number(total_pay) + "\n")
+            printer.text((' '*padding_left)+'TOTAL BAYAR : Rp. ' + clean_number(total_pay) + "\n")
         else:
             printer.text((' '*padding_left)+'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])) + "\n")
             if 'refund_status' in p.keys():
