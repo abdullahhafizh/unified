@@ -307,7 +307,6 @@ class SlotHandler(QObject):
         _SalePrintTool.start_admin_print_global(struct_id)
     start_admin_print_global = pyqtSlot(str)(start_admin_print_global)
 
-
     def start_admin_change_stock_print(self, struct_id):
         _SalePrintTool.start_admin_change_stock_print(struct_id)
     start_admin_change_stock_print = pyqtSlot(str)(start_admin_change_stock_print)
@@ -1193,9 +1192,9 @@ def startup_task():
         sleep(1)
         _Sync.start_send_all_not_synced_daily_report()
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Startup Completed...')
-        # print("pyt: Do Pending Upload Jobs...")
-        # sleep(1)
-        # _Sync.start_do_pending_upload_job()
+        print("pyt: Do Reprint Jobs...")
+        sleep(1)
+        _SalePrintTool.reprint_pending_task()
         print("pyt: Get Kiosk Terminal Status...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Get Kiosk Terminal Status...')
         _KioskService.get_kiosk_status()

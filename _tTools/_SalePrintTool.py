@@ -284,6 +284,28 @@ def sale_print_global_new_layout():
         new_print_ppob_trx(p, 'BELI/BAYAR')
 
 
+def reprint_pending_task():
+    print_data_path = os.path.join(_Common.TEMP_FOLDER, 'last-trx-print-data.reprint')
+    if not os.path.exists(print_data_path):
+        print('pyt: Reprint Data Not Found')
+        return
+    content = open(print_data_path, 'r').read().strip()
+    if len(_Common.clean_white_space(content)) == 0:
+        print('pyt: Reprint Data Content Not Found')
+        return
+    p = json.loads(content)
+    if p['shop_type'] == 'topup':    
+        print('pyt: Printing TOPUP Transaction Data')
+        new_print_topup_trx(p, 'ISI ULANG KARTU')    
+    if p['shop_type'] == 'shop':    
+        print('pyt: Printing SHOP Transaction Data')
+        new_print_shop_trx(p, 'PEMBELIAN KARTU')
+    if p['shop_type'] == 'ppob':    
+        print('pyt: Printing PPOB Transaction Data')
+        new_print_ppob_trx(p, 'BELI/BAYAR')
+    os.remove(print_data_path)
+
+
 def sale_print_global_ereceipt():
     p = LAST_TRX = _KioskService.GLOBAL_TRANSACTION_DATA
     if p['shop_type'] == 'topup':    
