@@ -284,6 +284,10 @@ def sale_print_global_new_layout():
         new_print_ppob_trx(p, 'BELI/BAYAR')
 
 
+def start_reprint_pending_task():
+    _Helper.get_thread().apply_async(reprint_pending_task, )
+
+
 def reprint_pending_task():
     print_data_path = os.path.join(_Common.TEMP_FOLDER, 'last-trx-print-data.reprint')
     if not os.path.exists(print_data_path):
