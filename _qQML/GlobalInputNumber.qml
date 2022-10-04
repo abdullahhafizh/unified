@@ -641,15 +641,22 @@ Base{
         var trx_id = FUNC.get_value(i.product_id);
         if (trx_id=='') trx_id = FUNC.get_value(i.remarks.shop_type) + FUNC.get_value(i.remarks.epoch.toString());
         retryCategory = i.category;
-        if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
-        if (i.category == 'TOPUP')
-            trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
-            prev_card_no = i.remarks.raw.card_no;
         var total_payment = i.amount.toString();
-        if (i.category == 'SHOP'){
-            trx_name = i.category + ' ' + i.remarks.provider;
-            total_payment = i.remarks.value.toString();
+
+        switch (i.category){
+            case 'PPOB':
+                trx_name = i.category + ' ' + i.remarks.product_id;
+            break;
+            case 'TOPUP':
+                trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
+                prev_card_no = i.remarks.raw.card_no;
+            break;
+            case 'SHOP':
+                trx_name = i.category + ' ' + i.remarks.provider;
+                total_payment = i.remarks.value.toString();
+            break;
         }
+        
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
         var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         // if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
