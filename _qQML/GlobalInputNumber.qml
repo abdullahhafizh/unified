@@ -656,7 +656,7 @@ Base{
                 total_payment = i.remarks.value.toString();
             break;
         }
-        
+
         if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
         var amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         // if (i.status!='PAID' || i.status=='FAILED' || i.status=='PENDING') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
@@ -694,19 +694,31 @@ Base{
                 }
             }
         }
-        if (i.remarks.product_category == 'Listrik' && i.status == 'PAID' && i.category == 'PPOB' ){
-            var add_info = i.remarks.remarks;
-            console.log('get add_info', JSON.stringify(add_info.data.sn));
-            var sn = add_info.data.sn.split('*')[0];
-            rows = [
-                        {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
-                        {label: 'Tanggal', content: FUNC.get_value(i.date)},
-                        {label: 'Jenis Transaksi', content: trx_name},
-                        {label: 'Pembayaran', content: FUNC.insert_dot(i.amount.toString())},
-                        {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
-                        {label: 'Status', content: i.status},
-                        {label: 'Token/SN', content: sn}
-                    ]
+        if (i.status == 'PAID' && i.category == 'PPOB' ){
+            if (i.remarks.product_category == 'Listrik'){
+                var add_info = i.remarks.remarks;
+                console.log('get add_info', JSON.stringify(add_info.data.sn));
+                var sn = add_info.data.sn.split('*')[0];
+                rows = [
+                            {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
+                            {label: 'Tanggal', content: FUNC.get_value(i.date)},
+                            {label: 'Jenis Transaksi', content: trx_name},
+                            {label: 'Pembayaran', content: FUNC.insert_dot(i.amount.toString())},
+                            {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                            {label: 'Status', content: i.status},
+                            {label: 'Token/SN', content: sn}
+                        ]
+            } else {
+                rows = [
+                            {label: 'No Transaksi', content: trx_id},
+                            {label: 'Tanggal', content: FUNC.get_value(i.date)},
+                            {label: 'Jenis Transaksi', content: trx_name},
+                            {label: 'Total Bayar', content: FUNC.insert_dot(total_payment)},
+                            {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                            {label: 'Status', content: i.status}
+                        ]
+            }
+            
         }
         generateConfirm(rows, false, 'backToMain');
         // Set Value For Retry Transaction If Status Pending
