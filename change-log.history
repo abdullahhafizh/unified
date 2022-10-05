@@ -3,8 +3,11 @@
 - Add MEI Bill Validator Type,
 - Detect Printer in Bootup (Linux),
 - Fix QR Provider Name in Retry TRX,
-- Fix MEI Reset (OPEN),
+- Fix MEI Reset,
 - Add Sync Report Not Synced,
+- Add Detail Topup Error,
+- Fix PPOB Details Data Parsing,
+- Flush Product Stock in Terminal Replacement,
 - ...
 
 

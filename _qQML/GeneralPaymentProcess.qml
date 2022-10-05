@@ -615,7 +615,7 @@ Base{
         abc.counter = 60;
         my_timer.restart();
         //========
-        if (t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||
+        if (t.indexOf('TOPUP_ERROR') > -1 || t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
             if (t=='MANDIRI_SAM_BALANCE_EXPIRED' && VIEW_CONFIG.c2c_mode == 0) _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
@@ -721,7 +721,7 @@ Base{
         if (issue==undefined) issue = 'BILL_ERROR';
         if (channelPayment=='cash'){
             details.payment_error = issue;
-            details_error_history_push(issue)
+            details_error_history_push(issue);
             details.payment_received = receivedPayment.toString();
             if (customerPhone!=''){
 //                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );

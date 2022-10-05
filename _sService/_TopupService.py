@@ -1353,12 +1353,14 @@ def retry_topup_online_bca(amount, trxid):
         return
     if previous_card_no != check_card_balance['card_no']:
         LOGGER.warning(('BCA_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
         return
-    bca_card_info = _QPROX.bca_card_info()
-    if bca_card_info is False:
+    res_bca_card_info, bca_card_info = _QPROX.bca_card_info()
+    if res_bca_card_info is False:
         LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        bca_card_info = json.loads(bca_card_info)
+        rc = bca_card_info.get('Result', 'FFFF')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_INFO_MISSMATCH#RC_'+rc)
         return
     if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
         # Success Topup Here
@@ -1378,7 +1380,7 @@ def retry_topup_online_bca(amount, trxid):
         _Common.remove_temp_data(trxid)
         _Common.remove_temp_data(previous_card_no)
     else:
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RETRY_PARTIAL')
     confirm_bca_topup({
         'card_data': bca_card_info,
         'card_no': check_card_balance['card_no'],
@@ -1410,7 +1412,7 @@ def retry_topup_online_bri(amount, trxid):
         return
     if previous_card_no != check_card_balance['card_no']:
         LOGGER.warning(('BRI_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
         return
     if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
         # Success Topup Here
@@ -1436,7 +1438,7 @@ def retry_topup_online_bri(amount, trxid):
         # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
         # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
         LOGGER.debug((response, result))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RETRY_PARTIAL')
         refund_bri_pending(LAST_BRI_PENDING_RESULT)
     
 
@@ -1472,7 +1474,7 @@ def retry_topup_online_dki(amount, trxid):
             'reff_no': trxid
         },'DKI', 'TOPUP')
         LOGGER.warning(('DKI_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
         return
     if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
         # Success Topup Here
@@ -1502,7 +1504,7 @@ def retry_topup_online_dki(amount, trxid):
             'card_no': previous_card_no,
             'reff_no': trxid
         },'DKI', 'TOPUP')
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RETRY_PARTIAL')
     
     
 def start_topup_online_dki(card_no, amount, trxid):
@@ -1511,9 +1513,6 @@ def start_topup_online_dki(card_no, amount, trxid):
     else:
         bank = 'DKI'
         _Helper.get_thread().apply_async(topup_online, (bank, card_no, amount, trxid))
-        # LOGGER.warning(('NO AVAILABLE DKI TOPUP SERVICE DEFINED'))
-        # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
-
 
 def start_topup_online_bri(cardno, amount, trxid):
     bank = 'BRI'
@@ -1563,14 +1562,14 @@ def topup_online(bank, cardno, amount, trxid=''):
     try:
         if bank is None or bank not in _Common.ALLOWED_BANK_PENDING_ONLINE:
             LOGGER.warning((bank, 'NOT_ALLOWED_PENDING_ONLINE'))
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FEATURED_CLOSED')
             return False
         # last_card_check = _QPROX.LAST_CARD_CHECK
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
 
         if bank == 'BRI':
             if not _Common.BRI_SAM_ACTIVE:
-                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#SAM_NOT_ACTIVE')
                 return False
             _param = {
                 'card_no': cardno,
@@ -1583,7 +1582,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not _Common.exist_temp_data(trxid):
                 pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
                 if not pending_result:
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
             # _Common.update_to_temp_data('bri-success-pending', trxid)
@@ -1661,7 +1660,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             #         pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
             #         # pending_result = _MDSService.mds_online_topup(bank, _param)
             #         if not pending_result:
-            #             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            #             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
             #             return
             #         _Common.store_to_temp_data(trxid, json.dumps(_param))
             # else:
@@ -1681,7 +1680,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                 pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
                 # pending_result = _MDSService.mds_online_topup(bank, _param)
                 if not pending_result:
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
             # if _Common.exist_temp_data(cardno):
@@ -1866,7 +1865,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not _Common.exist_temp_data(trxid):
                 pending_result = pending_balance(_param, bank='DKI', mode='TOPUP')
                 if not pending_result:
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
             # _Common.update_to_temp_data('bri-success-pending', trxid)
@@ -1925,11 +1924,11 @@ def topup_online(bank, cardno, amount, trxid=''):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
             return False
         else:
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#UNKNOW_BID')
             return False
     except Exception as e:
         LOGGER.warning((bank, cardno, amount, e))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#GENERAL_EXCEPTION')
         return False
     
 

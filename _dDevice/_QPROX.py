@@ -610,9 +610,9 @@ def bca_card_info():
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
     if response == 0 and len(result) >= 512:
-        return result
+        return True, result
     else:
-        return False
+        return False, result
 
 
 def direct_card_balance():
@@ -666,7 +666,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
     global LAST_MANDIRI_C2C_REPORT
     if _Common.empty(report) or len(report) < 196:
         LOGGER.warning(('EMPTY/MISSMATCH REPORT LENGTH'))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#WRONG_REPORT_LENGTH')
         return
     # Store To Memory Last Mandiri C2C Report
     LAST_MANDIRI_C2C_REPORT = report
@@ -761,7 +761,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         _Common.upload_mandiri_wallet()
     except Exception as e:
         LOGGER.warning((e, report, reff_no, amount, status))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#EXCEPTION_PARSING_REPORT')
 
 
 def start_topup_mandiri_correction(amount, trxid):
@@ -815,11 +815,12 @@ def top_up_mandiri_correction(amount, trxid=''):
         if last_audit_result.get('err_code').upper() == '025E':
             get_force_settlement(amount, trxid, set_status='0000')
             return
+        rc = last_audit_result.get('err_code', 'FFFF').upper()
         # New Applet Doing Correction
         # param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
         # _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
         get_force_settlement(amount, trxid, set_status='FAILED')
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
 
 
 def topup_bni_correction(amount, trxid=''):
@@ -847,6 +848,7 @@ def topup_bni_correction(amount, trxid=''):
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    rc = last_audit_result.get('err_code', 'FFFF').upper()
 
     # Below Condition under Transaction Success
     if (int(last_card_check['balance']) + int(amount)) == int(last_balance):
@@ -906,10 +908,9 @@ def topup_bni_correction(amount, trxid=''):
         # 'err_code': json.loads(_result),
         LOGGER.info((str(param)))
         _Common.store_upload_sam_audit(param)
-        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
     except Exception as e:
         LOGGER.warning((e))
-    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
 
 
 
@@ -932,7 +933,6 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
     else:
         LOGGER.warning((trxid, _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
-        # QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
@@ -943,7 +943,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     
     if last_card_check['card_no'] in _Common.MANDIRI_CARD_BLOCKED_LIST:
         LOGGER.warning(('Card No: ', last_card_check['card_no'], 'Found in Mandiri Card Blocked Data'))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_BLOCKED')
         return
     prev_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
@@ -974,7 +974,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 LAST_C2C_APP_TYPE == '1'
                 get_force_settlement(amount, trxid, 'FAILED')
                 sleep(1)
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            rc = topup_result.get("Result", 'FFFF').upper()
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
         
         # "6987", "100C", "10FC" Another Captured Error Code
@@ -1006,7 +1007,7 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
     global INIT_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#BANK_NOT_INIT')
         _Common.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     if slot is None:
@@ -1079,9 +1080,10 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
         # Update to server
         _Common.upload_mandiri_wallet()
     else:
+        rc = 'FFFF'
         LOGGER.warning((slot, _result))
         _Common.NFC_ERROR = 'TOPUP_MANDIRI_ERROR'
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
 
 
 def start_topup_offline_bni(amount, trxid):
@@ -1333,8 +1335,10 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # False Condition
         ka_info_bni(_Common.BNI_ACTIVE)
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
+            topup_result = json.loads(_result)
+            rc = topup_result.get('Result', 'FFFF')
             LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
         # Real False Condition
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR')
@@ -1358,7 +1362,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
     else:
         LOGGER.warning(('INIT_BNI', init_result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+        init_topup_result = json.loads(init_result)
+        rc = init_topup_result.get('Result', 'FFFF')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
         _Common.NFC_ERROR = 'TOPUP_BNI_ERROR'
 
 

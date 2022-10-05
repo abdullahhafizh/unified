@@ -261,7 +261,7 @@ Base{
         qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
-        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'||t.indexOf('TOPUP_SAM_REQUIRED')> -1){
+        if (t==undefined||t.indexOf('ERROR') > -1 || t=='TOPUP_FAILED_BALANCE_EXPIRED'||t.indexOf('TOPUP_SAM_REQUIRED')> -1){
             if (t=='TOPUP_FAILED_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
             if (t.indexOf('TOPUP_SAM_REQUIRED')> -1) {
                 var slot_topup = t.split('|')[1]
