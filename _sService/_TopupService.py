@@ -1381,7 +1381,7 @@ def retry_topup_online_bca(amount, trxid):
         _Common.remove_temp_data(trxid)
         _Common.remove_temp_data(previous_card_no)
     else:
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RETRY_PARTIAL')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#END')
     confirm_bca_topup({
         'card_data': bca_card_info,
         'card_no': check_card_balance['card_no'],
@@ -1440,7 +1440,7 @@ def retry_topup_online_bri(amount, trxid):
         # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
         # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
         LOGGER.debug((response, result))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RETRY_PARTIAL')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#END')
         refund_bri_pending(LAST_BRI_PENDING_RESULT)
     
 
@@ -1506,7 +1506,7 @@ def retry_topup_online_dki(amount, trxid):
             'card_no': previous_card_no,
             'reff_no': trxid
         },'DKI', 'TOPUP')
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RETRY_PARTIAL')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#END')
     
     
 def start_topup_online_dki(card_no, amount, trxid):

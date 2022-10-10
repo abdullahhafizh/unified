@@ -626,9 +626,9 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )
-        }  else if (t.indexOf('MANDIRI_C2C_PARTIAL_ERROR') > -1){
+        }  else if (t.indexOf('MDR_PARTIAL_ERROR') > -1){
             // Define View And Set Button Continue Mode
-            modeButtonPopup = 'c2c_correction';
+            modeButtonPopup = 'mdr_correction';
             details_error_history_push(t.split('#')[1]);
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
@@ -1202,7 +1202,7 @@ Base{
                 //     }
                 // }
                 notice_cash_payment.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if (abc.counter == 30 && modeButtonPopup == 'c2c_correction'){
+                if (abc.counter == 30 && modeButtonPopup == 'mdr_correction'){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     var amount = getDenom.toString();
                     var structId = details.shop_type + details.epoch.toString();
@@ -1847,7 +1847,7 @@ Base{
                         _SLOT.start_check_card_balance();
                         popup_loading.open();
                         break;
-                    case 'c2c_correction':
+                    case 'mdr_correction':
                         var amount = getDenom.toString();
                         if (VIEW_CONFIG.c2c_mode == 1) amount = details.value;
                         var structId = details.shop_type + details.epoch.toString();
