@@ -460,6 +460,12 @@ Base{
         do_refund_or_print();
     }
 
+    function details_error_history_push(e){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        details.error_history = details.error_history + "#" + e;
+        console.log('Error History', now, details.error_history);
+    }
+
     function validate_cash_refundable(){
         if (details.payment == 'cash' && receivedPayment > totalPrice){
             return parseInt(receivedPayment - totalPrice);
@@ -622,6 +628,7 @@ Base{
         }
         details.receipt_title = 'Transaksi Anda Gagal';
         _SLOT.start_play_audio('transaction_failed');
+        details_error_history_push(t);
         details.process_error = 1;
         details.payment_error = 1;
         if (!refundFeature){
