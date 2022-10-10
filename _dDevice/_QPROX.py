@@ -935,7 +935,7 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
         rc = _result.get('Result', 'FFFF').upper()
         if _response == 0 and len(_result) >= 196:
             # Update Detail TRX Detail Attribute
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_FORCE_SETTLEMENT')
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
         else:
             LOGGER.warning((trxid, _result))

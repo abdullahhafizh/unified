@@ -662,7 +662,7 @@ Base{
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
-        } else if (t=='MDR_C2C_FORCE_SETTLEMENT') {
+        } else if (t=='MDR_FORCE_SETTLEMENT') {
             details.force_settlement = 1;
             // Must Return Here to Stop Executing Receipt
             return
