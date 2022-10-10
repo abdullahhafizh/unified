@@ -791,16 +791,20 @@ def top_up_mandiri_correction(amount, trxid=''):
     #     last_balance = LAST_CARD_CHECK['balance']
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     
+    last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    # rc = last_audit_result.get('err_code', 'FFFF').upper()
+    rc = _Common.LAST_READER_ERR_CODE
+    
     if response == 0 and '|' in result:
         check_card_no = result.split('|')[1].replace('#', '')
         last_balance = result.split('|')[0]
     else:
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR#RC_1024')
         return
     if last_card_check['card_no'] != check_card_no:
         LOGGER.warning(('MDR_CARD_MISSMATCH', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR#RC_'+rc)
         # get_force_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
@@ -815,7 +819,6 @@ def top_up_mandiri_correction(amount, trxid=''):
         if last_audit_result.get('err_code').upper() == '025E':
             get_force_settlement(amount, trxid, set_status='0000')
             return
-        rc = last_audit_result.get('err_code', 'FFFF').upper()
         # New Applet Doing Correction
         # param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
         # _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
@@ -834,21 +837,22 @@ def topup_bni_correction(amount, trxid=''):
     
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     
+    last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    rc = _Common.LAST_READER_ERR_CODE
+    # rc = last_audit_result.get('err_code', 'FFFF').upper()
+    
     if response == 0 and '|' in result:
         check_card_no = result.split('|')[1].replace('#', '')
         last_balance = result.split('|')[0]
     else:
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR#RC_1024')
         return
     
     if last_card_check['card_no'] != check_card_no:
         LOGGER.warning(('BNI_CARD_MISSMATCH', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR#RC_'+rc)
         return
-    # Add Customer Last Balance Card Check After Topup C2C Failure
-    last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
-    rc = last_audit_result.get('err_code', 'FFFF').upper()
 
     # Below Condition under Transaction Success
     if (int(last_card_check['balance']) + int(amount)) == int(last_balance):
@@ -926,13 +930,19 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
     _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
     _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
     LOGGER.debug((_param, _response, _result))
-    if _response == 0 and len(_result) >= 196:
-        # Update Detail TRX Detail Attribute
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
-        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
-    else:
-        LOGGER.warning((trxid, _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
+    try:
+        _result = json.loads(_result)
+        rc = _result.get('Result', 'FFFF').upper()
+        if _response == 0 and len(_result) >= 196:
+            # Update Detail TRX Detail Attribute
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_C2C_FORCE_SETTLEMENT')
+            parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
+        else:
+            LOGGER.warning((trxid, _result))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR#FC_'+rc)
+    except Exception as e:
+        LOGGER.warning((trxid, _result, e))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR#EXCP')
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
@@ -967,6 +977,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         LOGGER.info(('LAST_BALANCE_DEPOSIT', last_deposit_balance ))
         LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
         
+        rc = topup_result.get("Result", 'FFFF').upper()
+        
         if prev_deposit_balance == last_deposit_balance:
             LOGGER.debug(('FAILED MDR C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
             # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
@@ -974,12 +986,11 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 LAST_C2C_APP_TYPE == '1'
                 get_force_settlement(amount, trxid, 'FAILED')
                 sleep(1)
-            rc = topup_result.get("Result", 'FFFF').upper()
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
         
         # "6987", "100C", "10FC" Another Captured Error Code
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR#RC_'+rc)
         
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
@@ -1000,7 +1011,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
     except Exception as e:
         LOGGER.warning((e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_C2C_PARTIAL_ERROR#EXCP')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):
@@ -1080,7 +1091,7 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
         # Update to server
         _Common.upload_mandiri_wallet()
     else:
-        rc = 'FFFF'
+        rc = _Common.LAST_READER_ERR_CODE
         LOGGER.warning((slot, _result))
         _Common.NFC_ERROR = 'TOPUP_MANDIRI_ERROR'
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
@@ -1223,7 +1234,9 @@ def topup_dki_by_service(amount, trxid):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
         return True
     else:
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+        _result = json.loads(_result)
+        rc = _result.get('Result', 'FFFF')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR#RC_'+rc)
         return False
         
 
@@ -1333,15 +1346,16 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 # Return Success Condition Here
                 return
         # False Condition
+        topup_result = json.loads(_result)
+        rc = topup_result.get('Result', 'FFFF')
+        
         ka_info_bni(_Common.BNI_ACTIVE)
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
-            topup_result = json.loads(_result)
-            rc = topup_result.get('Result', 'FFFF')
             LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
         # Real False Condition
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR#RC_'+rc)
         topup_result = json.loads(_result)
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',

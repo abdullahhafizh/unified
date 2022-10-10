@@ -932,6 +932,8 @@ EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1'
 EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
 LAST_EDC_TRX_RECEIPT = None
 
+LAST_READER_ERR_CODE = '0000'
+
 ALLOWED_SYNC_TASK = [
     'sync_product_data',
     # 'sync_pending_refund',

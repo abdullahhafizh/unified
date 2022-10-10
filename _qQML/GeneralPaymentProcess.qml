@@ -626,33 +626,38 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )
-        }  else if (t=='MANDIRI_C2C_PARTIAL_ERROR'){
+        }  else if (t.indexOf('MANDIRI_C2C_PARTIAL_ERROR#RC_'+rc) > -1){
             // Define View And Set Button Continue Mode
             modeButtonPopup = 'c2c_correction';
+            details_error_history_push(t.split('#')[1]);
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
-        } else if (t=='BNI_PARTIAL_ERROR') {
+        } else if (t.indexOf('BNI_PARTIAL_ERROR#RC_'+rc) > -1) {
             modeButtonPopup = 'bni_correction';
+            details_error_history_push(t.split('#')[1]);
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
-        } else if (t=='BCA_PARTIAL_ERROR') {
+        } else if (t.indexOf('BCA_PARTIAL_ERROR#RC_'+rc) > -1) {
             modeButtonPopup = 'bca_correction';
+            details_error_history_push(t.split('#')[1]);
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
-        } else if (t=='BRI_PARTIAL_ERROR') {
+        } else if (t.indexOf('BRI_PARTIAL_ERROR#RC_'+rc) > -1) {
             modeButtonPopup = 'bri_correction';
+            details_error_history_push(t.split('#')[1]);
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');
             return
-        } else if (t=='DKI_PARTIAL_ERROR') {
+        } else if (t.indexOf('DKI_PARTIAL_ERROR#RC_'+rc) > -1) {
             modeButtonPopup = 'dki_correction';
+            details_error_history_push(t.split('#')[1]);
 //            console.log('c2c_special_handler', modeButtonPopup);
             switch_frame_with_button('source/smiley_down.png', 'Kartu Tidak Terdeteksi/Sesuai', 'Silakan Angkat dan Tempelkan Kembali Kartu Yang Sama Dengan Sebelumnya', 'closeWindow', true );
             _SLOT.start_play_audio('please_pull_retap_card');

@@ -186,8 +186,6 @@ Base{
             topupOnlineAvailable = true;
             topup_active.push('DKI');
         }
-
-
         if (topupOnlineAvailable) {
             kioskStatus = true;
             box_connection.color = 'green';

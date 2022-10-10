@@ -9,6 +9,7 @@ from _mModule import _CPrepaidBCA as prepaid_bca
 from _mModule import _CPrepaidBRI as prepaid_bri
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidDKI as prepaid_dki
+from _cConfig import _Common
 # from func_timeout import func_set_timeout
 
 # @func_set_timeout(2.5)
@@ -142,4 +143,6 @@ def send_command(cmd, param):
         __global_response__["ErrorDesc"] = trace
     finally:
         LOG.fw("LIB [{0}]: DONE".format(cmd))
+        # Bind Last Reader Resposne Into Common Variable
+        _Common.LAST_READER_ERR_CODE = __global_response__["Result"]
         return __global_response__

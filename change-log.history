@@ -8,6 +8,7 @@
 - Add Detail Topup Error,
 - Fix PPOB Details Data Parsing,
 - Flush Product Stock in Terminal Replacement,
+- Add RC In All Bank Topup Failure,
 - ...
 
 

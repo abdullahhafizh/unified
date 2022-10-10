@@ -777,7 +777,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                 #         LAST_BCA_REFF_ID = service_response['Response'].split('|')[0]
                 #         LOGGER.debug(('Setting Value', 'LAST_BCA_REFF_ID', LAST_BCA_REFF_ID))
                 if service_response['Result'] in BCA_TOPUP_ONLINE_ERROR or BCA_KEY_REVERSAL in result:
-                    # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
+                    # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR#RC_'+rc)
                     # Store Local Card Number Here For Futher Reversal Process
                     previous_card_no = last_card_check['card_no']
                     previous_card_data = last_card_check
@@ -1349,7 +1349,7 @@ def retry_topup_online_bca(amount, trxid):
     # }
     if not check_card_balance:
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_balance, previous_card_no, trxid))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR#RC_1024')
         return
     if previous_card_no != check_card_balance['card_no']:
         LOGGER.warning(('BCA_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
@@ -1359,7 +1359,8 @@ def retry_topup_online_bca(amount, trxid):
     if res_bca_card_info is False:
         LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
         bca_card_info = json.loads(bca_card_info)
-        rc = bca_card_info.get('Result', 'FFFF')
+        # rc = bca_card_info.get('Result', 'FFFF')
+        rc = _Common.LAST_READER_ERR_CODE
         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_INFO_MISSMATCH#RC_'+rc)
         return
     if int(amount) + int(previous_card_balance) == int(check_card_balance['balance']):
@@ -1407,8 +1408,9 @@ def retry_topup_online_bri(amount, trxid):
     #     'able_topup': '0000', #Force Allowed Topup For All Non BNI
     # }
     if not check_card_balance:
+        # Card Balance Failed Meaning No Card Presense (Err. 1024)
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_balance, previous_card_no, trxid))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR#RC_1024')
         return
     if previous_card_no != check_card_balance['card_no']:
         LOGGER.warning(('BRI_CARD_MISSMATCH', trxid, previous_card_no, check_card_balance['card_no']))
@@ -1462,7 +1464,7 @@ def retry_topup_online_dki(amount, trxid):
     # }
     if not check_card_balance:
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_balance, previous_card_no, trxid))
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR#RC_1024')
         return
     if previous_card_no != check_card_balance['card_no']:
         # Call Reversal DKI
@@ -1590,7 +1592,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             update_result = update_balance(_param, bank='BRI', mode='TOPUP')
             if not update_result:
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
-                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR')
+                rc = _Common.LAST_READER_ERR_CODE
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_PARTIAL_ERROR#RC_'+rc)
                 # Keep Push Data To MDS as Failure
                 # failed_data = {
                 #     "invoice_number": _param['invoice_no'],
@@ -1693,7 +1696,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
             #     return
             if update_result is False or update_result == 'BCA_PARTIAL_ERROR':
-                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR')
+                rc = _Common.LAST_READER_ERR_CODE
+                _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_PARTIAL_ERROR#RC_'+rc)
                 return False
             _Common.remove_temp_data(trxid)
             if _Common.exist_temp_data(cardno):
@@ -1881,7 +1885,8 @@ def topup_online(bank, cardno, amount, trxid=''):
                 update_result = update_balance(_param, bank='DKI', mode='TOPUP')
                 if not update_result:
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+                    rc = _Common.LAST_READER_ERR_CODE
+                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR#RC_'+rc)
                     return False
                 ___param = QPROX['CONFIRM_TOPUP_DKI'] + '|' + update_result['data_to_card'] + '|'
                 response, result = _Command.send_request(param=___param, output=None)
@@ -1920,8 +1925,10 @@ def topup_online(bank, cardno, amount, trxid=''):
                     _param['last_balance'] = update_result['last_balance']
                     confirm_dki_topup(_param)
                     # Must Stop Process Here As Success TRX
-                    return True                    
-            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR')
+                    return True        
+            # rc = json.loads(result).get('Result', 'FFFF')    
+            rc = _Common.LAST_READER_ERR_CODE
+            _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR#RC_'+rc)
             return False
         else:
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#UNKNOW_BID')
