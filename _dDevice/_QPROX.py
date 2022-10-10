@@ -800,11 +800,11 @@ def top_up_mandiri_correction(amount, trxid=''):
         last_balance = result.split('|')[0]
     else:
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_PARTIAL_ERROR#RC_1024')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#RC_1024')
         return
     if last_card_check['card_no'] != check_card_no:
         LOGGER.warning(('MDR_CARD_MISSMATCH', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_PARTIAL_ERROR#RC_'+rc)
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#RC_'+rc)
         # get_force_settlement(amount, trxid)
         return
     # Add Customer Last Balance Card Check After Topup C2C Failure
@@ -846,12 +846,12 @@ def topup_bni_correction(amount, trxid=''):
         last_balance = result.split('|')[0]
     else:
         LOGGER.warning(('CARD_NO NOT DETECTED', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR#RC_1024')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_1024')
         return
     
     if last_card_check['card_no'] != check_card_no:
         LOGGER.warning(('BNI_CARD_MISSMATCH', check_card_no, last_card_check['card_no'], trxid, result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR#RC_'+rc)
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_'+rc)
         return
 
     # Below Condition under Transaction Success
@@ -939,10 +939,10 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
         else:
             LOGGER.warning((trxid, _result))
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_PARTIAL_ERROR#FC_'+rc)
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#FC_'+rc)
     except Exception as e:
         LOGGER.warning((trxid, _result, e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_PARTIAL_ERROR#EXCP')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
@@ -990,7 +990,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             return
         
         # "6987", "100C", "10FC" Another Captured Error Code
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_PARTIAL_ERROR#RC_'+rc)
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#RC_'+rc)
         
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
@@ -1011,7 +1011,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
     except Exception as e:
         LOGGER.warning((e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_PARTIAL_ERROR#EXCP')
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):
@@ -1236,7 +1236,7 @@ def topup_dki_by_service(amount, trxid):
     else:
         _result = json.loads(_result)
         rc = _result.get('Result', 'FFFF')
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_PARTIAL_ERROR#RC_'+rc)
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_TOPUP_CORRECTION#RC_'+rc)
         return False
         
 
@@ -1355,7 +1355,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
         # Real False Condition
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_PARTIAL_ERROR#RC_'+rc)
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_'+rc)
         topup_result = json.loads(_result)
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
