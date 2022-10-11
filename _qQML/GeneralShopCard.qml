@@ -538,7 +538,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'PERHATIAN: PEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG'
+        title_text: 'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG'
         boxColor: VIEW_CONFIG.frame_color
     }
 
