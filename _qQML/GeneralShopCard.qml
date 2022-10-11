@@ -358,7 +358,8 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                abc.counter -= 1
+                abc.counter -= 1;
+                notice_card_purchase.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -524,6 +525,23 @@ Base{
         }
 
    }
+
+
+    BoxTitle{
+        id: notice_card_purchase
+        width: 1200
+        height: 120
+        visible: !select_payment.visible
+        radius: 50
+        fontSize: 30
+        border.width: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        title_text: 'PERHATIAN: PEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG'
+        boxColor: VIEW_CONFIG.frame_color
+    }
+
 
     function open_preload_notif(){
         press = '0';
