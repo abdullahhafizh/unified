@@ -13,8 +13,27 @@ if _Common.IS_LINUX:
     import socketio
     SOCKET_IO = socketio.Client()
     
+    @SOCKET_IO.event
+    def connect():
+        LOGGER.info(('Connected, ID', SOCKET_IO.sid))
+
+    @SOCKET_IO.event
+    def connect_error(data):
+        LOGGER.info(('Connection Failed', str(data)))
+
+    @SOCKET_IO.event
+    def disconnect():
+        # LOGGER.info(('Disconnected'))
+        print(('Disconnected'))
+        
+    @SOCKET_IO.on('chat')
+    def on_chat(message):
+        print('pyt: Receive Message\n', str(message))
+        process_message(message)
+
+    
 if _Common.IS_WINDOWS:
-    from socketIO_client import SocketIO as __socketio
+    from socketIO_client import SocketIO, BaseNamespace
 
 LOGGER = logging.getLogger()
 SCRIPT_PATH = sys.path[0] + '/_sService/'
@@ -22,6 +41,22 @@ SCRIPT_PATH = sys.path[0] + '/_sService/'
 HELLO_WORDS = open(os.path.join(SCRIPT_PATH, 'hello.script'), 'r').read().strip().split(',')
 BAD_WORDS_TEMPLATE = open(os.path.join(SCRIPT_PATH, 'bad-words.script'), 'r').read().strip().split(',')
 BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
+
+
+class WindowsNamespace(BaseNamespace):
+    
+    def on_connect(self):
+        print(('Connected, ID', SOCKET_IO.sid))
+
+    def on_connect_error(self, data):
+        print(('Connection Failed', str(data)))
+
+    def on_disconnect(self):
+        print(('Disconnected'))
+        
+    def on_chat(self, message):
+        print(('Received', str(message)))
+        process_message(message)
 
 
 def start_initiation():
@@ -36,7 +71,7 @@ def init():
         if _Common.IS_WINDOWS:
             host = _Common.INTERRACTIVE_HOST.split(':')[0].replace('ws://')
             port = _Common.INTERRACTIVE_HOST.split(':')[2]
-            SOCKET_IO = __socketio(host, int(port))
+            SOCKET_IO = SocketIO(host, int(port), WindowsNamespace)
         SOCKET_IO.emit('create', {
             'room': _Common.TID,
             'name': 'VM ' + _Common.TID,
@@ -46,27 +81,8 @@ def init():
     except Exception as e:
         LOGGER.warning((e))
         
-
-@SOCKET_IO.event
-def connect():
-    LOGGER.info(('Connected, ID', SOCKET_IO.sid))
-
-
-@SOCKET_IO.event
-def connect_error(data):
-    LOGGER.info(('Connection Failed', str(data)))
-
-
-@SOCKET_IO.event
-def disconnect():
-    # LOGGER.info(('Disconnected'))
-    print(('Disconnected'))
     
-
-@SOCKET_IO.on('chat')
-def on_chat(message):
-    print('pyt: Receive Message\n', str(message))
-    
+def process_message(message):
     if message.lower() in HELLO_WORDS:
         result = build_hello_message()
     elif message.lower() in BAD_WORDS:
@@ -95,7 +111,7 @@ def on_chat(message):
     # Serialise to Readable Response
     result = human_message(result)
     response_message(result)
-
+    
 
 def find_arguments(message):
     for delimit in [' ', '\r\n', '\r', '\n', '|']:
