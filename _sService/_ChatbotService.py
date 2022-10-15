@@ -133,9 +133,9 @@ def response_message(message='Halo Mas Ganteng'):
     
 def build_hello_message():
     message = []
-    message.append('Hi Team, Terminal '+_Common.TID+' ready for your command.')
-    message.append('Application Version : '+_Common.VERSION)
-    message.append('Below Available Commands :')
+    message.append('Halo Tim, Mesin '+_Common.TID+' sudah siap untuk instruksi Kamu.')
+    message.append('Versi Aplikasi Mesin : '+_Common.VERSION)
+    message.append('Instruksi yang dapat digunakan :')
     for command in _Sync.available_commands():
         message.append(' - <strong>'+command.upper()+'</strong>')
     return '\n'.join(message)
