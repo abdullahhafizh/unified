@@ -6,11 +6,17 @@ from _tTools import _Helper
 from _sSync import _Sync
 import sys
 import os
+
+SOCKET_IO = None
 # os.system('pip install python-socketio[client]')
-import socketio
+if _Common.IS_LINUX:
+    import socketio
+    SOCKET_IO = socketio.Client()
+    
+if _Common.IS_WINDOWS:
+    from socketIO_client import SocketIO as __socketio
 
 LOGGER = logging.getLogger()
-SOCKET_IO = socketio.Client()
 SCRIPT_PATH = sys.path[0] + '/_sService/'
 
 HELLO_WORDS = open(os.path.join(SCRIPT_PATH, 'hello.script'), 'r').read().strip().split(',')
@@ -25,7 +31,12 @@ def start_initiation():
 def init():
     global SOCKET_IO
     try:
-        SOCKET_IO.connect(_Common.INTERRACTIVE_HOST)
+        if _Common.IS_LINUX:
+            SOCKET_IO.connect(_Common.INTERRACTIVE_HOST)
+        if _Common.IS_WINDOWS:
+            host = _Common.INTERRACTIVE_HOST.split(':')[0].replace('ws:\\')
+            port = _Common.INTERRACTIVE_HOST.split(':')[1]
+            SOCKET_IO = __socketio(host, int(port))
         SOCKET_IO.emit('create', {
             'room': _Common.TID,
             'name': 'VM ' + _Common.TID,
