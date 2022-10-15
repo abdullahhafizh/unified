@@ -17,7 +17,9 @@ SOCKET_IO = socketio.Client()
 
 SCRIPT_PATH = sys.path[0] + '/_sService/'
 
-HELLO_MESSAGE = open(os.path.join(SCRIPT_PATH, 'hello.script'), 'r').read().strip().split(',')
+HELLO_WORDS = open(os.path.join(SCRIPT_PATH, 'hello.script'), 'r').read().strip().split(',')
+BAD_WORDS_TEMPLATE = open(os.path.join(SCRIPT_PATH, 'bad-words.script'), 'r').read().strip().split(',')
+BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
 
 def start_initiation():
@@ -57,8 +59,10 @@ def disconnect():
 @SOCKET_IO.on('chat')
 def on_chat(message):
     print('pyt: Receive Message\n', str(message))
-    if message.lower() in HELLO_MESSAGE:
+    if message.lower() in HELLO_WORDS:
         result = build_hello_message()
+    elif message.lower() in BAD_WORDS:
+        result = 'Mohon Maaf, Tolong Jaga Perkataan Anda!'
     else:
         result = _Sync.handle_tasks([
             {
@@ -69,7 +73,17 @@ def on_chat(message):
                 'mode': 'CHATBOT'
             }
         ])
+        result = human_message(result)
     response_message(result)
+    
+
+def human_message(m):
+    if m == 'NOT_SUPPORTED':
+        return 'Mohon Maaf, Instruksi tidak didukung saat ini'
+    elif m == 'NOT_UNDERSTAND':
+        return 'Mohon Maaf, Instruksi tidak dimengerti mesin'
+    else:
+        return m
     
     
 def serialise_chatbot_response(res):
@@ -107,7 +121,7 @@ def serialise_chatbot_response(res):
 def response_message(message='Halo Mas Ganteng'):
     try:
         clean_message = serialise_chatbot_response(message)
-        print('pyt: Response Message\n', str(clean_message))
+        # print('pyt: Response Message\n', str(clean_message))
         SOCKET_IO.emit('chat', {
             'room': _Common.TID,
             'data': clean_message
