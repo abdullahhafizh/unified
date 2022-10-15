@@ -34,8 +34,8 @@ def init():
         if _Common.IS_LINUX:
             SOCKET_IO.connect(_Common.INTERRACTIVE_HOST)
         if _Common.IS_WINDOWS:
-            host = _Common.INTERRACTIVE_HOST.split(':')[0].replace('ws:\\')
-            port = _Common.INTERRACTIVE_HOST.split(':')[1]
+            host = _Common.INTERRACTIVE_HOST.split(':')[0].replace('ws://')
+            port = _Common.INTERRACTIVE_HOST.split(':')[2]
             SOCKET_IO = __socketio(host, int(port))
         SOCKET_IO.emit('create', {
             'room': _Common.TID,
