@@ -1,21 +1,16 @@
 __author__ = "wahyudi@multidaya.id"
 
-from ast import arguments
 import logging
 from _cConfig import _Common
 from _tTools import _Helper
 from _sSync import _Sync
 import sys
-
 import os
 # os.system('pip install python-socketio[client]')
-
 import socketio
 
 LOGGER = logging.getLogger()
-
 SOCKET_IO = socketio.Client()
-
 SCRIPT_PATH = sys.path[0] + '/_sService/'
 
 HELLO_WORDS = open(os.path.join(SCRIPT_PATH, 'hello.script'), 'r').read().strip().split(',')
