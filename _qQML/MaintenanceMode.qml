@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Mohon Maaf'
     property var textSlave: 'Mesin Sedang Dalam Pemeliharaan Sistem'
-    property var imageSource: "source/maintenance-icon.png"
+    property var imageSource: "source/under-maintenance.gif"
     property bool smallerSlaveSize: false
     property int textSize: 40
 //    width: 1920
@@ -26,12 +26,18 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 20
-        AnimatedImage  {
-            width: 500
-            height: 500
-            anchors.horizontalCenter: parent.horizontalCenter
-            source: imageSource
-            fillMode: Image.PreserveAspectFit
+        Rectangle{
+            color: 'white'
+            width: parent.width
+            height: parent.height
+            AnimatedImage  {
+                width: 500
+                height: 500
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: imageSource
+                fillMode: Image.PreserveAspectFit
+            }
+
         }
         Text{
             text: textMain
