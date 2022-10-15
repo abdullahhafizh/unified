@@ -6,7 +6,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Common
 from _dDAO import _DAO
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _sService import _UserService
 from _sService import _KioskService
 import json
@@ -81,7 +81,7 @@ def change_product_stock(payload):
         # Send Signal Into View&&
         _KioskService.kiosk_get_product_stock()
         # Change Stock Updation To Backend
-        status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'change/product-stock', param=_param)
+        status, response = _HTTPAccess.post_to_url(url=BACKEND_URL + 'change/product-stock', param=_param)
         # LOGGER.info((str(_param), str(response)))
         if status == 200 and response['result'] == 'OK':
             _Common.log_to_temp_config('last^slot^'+payload['port'].replace('10', '')+'^update^time', str(_Helper.now()))
@@ -102,7 +102,7 @@ def change_product_stock(payload):
 def kiosk_get_product_stock():
     _url = BACKEND_URL + 'get/product-stock'
     if _Helper.is_online(source='start_get_product_stock') is True:
-        s, r = _NetworkAccess.get_from_url(url=_url)
+        s, r = _HTTPAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
             products = sorted(products, key=itemgetter('status'))
@@ -126,7 +126,7 @@ def check_voucher(voucher):
     }
     try:
         url = _Common.BACKEND_URL+'ppob/voucher/check'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data']['Response'] == '0':
             product_id = r['data']['product']
             check_product = _DAO.check_product_status_by_pid({'pid': product_id})
@@ -178,7 +178,7 @@ def use_voucher(voucher, reff_no):
         _Common.store_redeem_activity(voucher, str(__payload['slot']))
     try:
         __url = _Common.BACKEND_URL+'ppob/voucher/use'
-        s, r = _NetworkAccess.post_to_url(url=__url, param=__payload)
+        s, r = _HTTPAccess.post_to_url(url=__url, param=__payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|' + json.dumps(r['data']))
         else:

@@ -5,7 +5,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Common
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 import sys
 from operator import itemgetter
 from _dDAO import _DAO
@@ -45,7 +45,7 @@ def get_ppob_product(signal=True):
     if ( _last_get_product + (3 * 24 * 60 * 60 * 1000)) > _Helper.now() and not _Common.empty(_check_prev_ppob):
         products = _check_prev_ppob
     else:
-        s, r = _NetworkAccess.get_from_url(url=_Common.BACKEND_URL+'get/product', log=False)
+        s, r = _HTTPAccess.get_from_url(url=_Common.BACKEND_URL+'get/product', log=False)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
             _Common.LAST_GET_PPOB = _Helper.now()
@@ -63,13 +63,13 @@ def store_image_item(products):
     for p in range(len(products)):
         old_path_category = products[p]['category_url']
         new_path_category = sys.path[0]+'/'+_Common.VIEW_FOLDER+'/source/ppob_category'
-        store_category, category = _NetworkAccess.item_download(old_path_category, new_path_category)
+        store_category, category = _HTTPAccess.item_download(old_path_category, new_path_category)
         if store_category is True:
             products[p]['category_url'] = 'source/ppob_category/'+category
         operator = products[p]['operator']
         old_path_icon = 'https://api.trendpos.id/mcash/icon?operator='+operator.lower()
         new_path_icon = sys.path[0]+'/'+_Common.VIEW_FOLDER+'/source/ppob_icon'
-        store_icon, icon = _NetworkAccess.item_download(old_path_icon, new_path_icon, name=operator+'.png')
+        store_icon, icon = _HTTPAccess.item_download(old_path_icon, new_path_icon, name=operator+'.png')
         if store_icon is True:
             products[p]['icon_url'] = 'source/ppob_icon/'+icon
     return products
@@ -99,7 +99,7 @@ def check_ppob_product(msisdn='', product_id=''):
             'product_id': product_id,
             'reff_no': _Common.TID+"-"+_Helper.time_string('%Y%m%d%H%M%S')
         }
-        s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL+'ppob/check', param=param)
+        s, r = _HTTPAccess.post_to_url(url=_Common.BACKEND_URL+'ppob/check', param=param)
         if s == 200 and r['result'] == 'OK':
             output = r['data']
             customer_name = ''
@@ -222,7 +222,7 @@ def do_trx_ppob(payload, mode='PAY'):
         url = _Common.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
             url = _Common.BACKEND_URL+'ppob/topup'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         _Common.LAST_PPOB_TRX = {
             'payload': payload,
             'result': r,
@@ -342,7 +342,7 @@ def do_check_trx(reff_no):
             return
         # Do check TRX server-side
         url = _Common.BACKEND_URL+'ppob/trx/detail'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK':
             # created_at as date','amount','pid as product_id','payment_method','tid','remarks','trxid as trx_id
             data = r['data']
@@ -382,7 +382,7 @@ def do_inquiry_trx(payload):
     _Helper.dump(payload)
     try:
         url = _Common.BACKEND_URL+'ppob/trx/inquiry'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK':
             data = payload
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_INQUIRY|OK|'+json.dumps(data))
@@ -428,7 +428,7 @@ def check_diva_balance(username):
     }
     try:
         url = _Common.BACKEND_URL+'diva/inquiry'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|' + json.dumps(r['data']))
         else:
@@ -486,7 +486,7 @@ def global_refund_balance(payload, store_only=False):
     payload['customer_login'] = payload['customer']
     try:
         url = _Common.BACKEND_URL+'refund/global'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200:
             if r['result'] == 'OK':
                 LAST_TRANSFER_REFF_NO = payload['reff_no']
@@ -540,7 +540,7 @@ def do_check_customer(payload, mode='CASHIN OVO'):
         payload = json.loads(payload)
         # _Helper.dump(payload)
         url = _Common.BACKEND_URL+'ppob/check-customer'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_CHECK_CUSTOMER.emit('CHECK_CUSTOMER|' + json.dumps(r['data']))
             LOGGER.debug((str(payload), mode, str(r)))
@@ -565,7 +565,7 @@ def check_detail_trx_status(payload, mode='CASHIN OVO'):
         payload = json.loads(payload)
         # _Helper.dump(payload)
         url = _Common.BACKEND_URL+'ppob/trx-status'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('CHECK_TRX_STATUS|' + json.dumps(r['data']))
             LOGGER.debug((str(payload), mode, str(r)))
@@ -602,7 +602,7 @@ def do_inquiry_promo(payload):
     payload = json.loads(payload)
     try:
         url = _Common.BACKEND_URL+'promo/check'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload, custom_timeout=5)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload, custom_timeout=5)
         if s == 200 and r['result'] == 'OK':
             data = r['data']
             if int(data.get('receive_discount', 0)) > 0:
@@ -628,7 +628,7 @@ def do_confirm_promo(payload):
     payload = json.loads(payload)
     try:
         url = _Common.BACKEND_URL+'promo/use'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK':
             LOGGER.info((str(payload), str(r)))
         else:

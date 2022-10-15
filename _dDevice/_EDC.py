@@ -9,14 +9,12 @@ from _tTools import _EDCTool
 from _dDAO import _DAO
 from _sService import _KioskService
 from _cConfig import _ConfigParser, _Common
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from time import sleep, time
 import json
 import re
 from datetime import datetime
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
-from _tTools import _Cryptograpy
-from _nNetwork import _AMQPAccess
 
 
 LOGGER = logging.getLogger()
@@ -796,7 +794,7 @@ def post_mark_settlement(l, t):
             "stid": '^^^'.join(l),
             "updatedAt": t
         }
-        status, response = _NetworkAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark', param)
+        status, response = _HTTPAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark', param)
         LOGGER.info(("post_mark_settlement : ", response))
     except Exception as e:
         LOGGER.warning((e))
@@ -804,7 +802,7 @@ def post_mark_settlement(l, t):
 
 def upload_edc_settlement_data(param):
     try:
-        status, response = _NetworkAccess.post_to_url(_Common.BACKEND_URL + 'settlement/mark-direct', param)
+        status, response = _HTTPAccess.post_to_url(_Common.BACKEND_URL + 'settlement/mark-direct', param)
         if status == 200 and response['result'] == 'OK':
             LOGGER.info((status, response))
         else:
@@ -908,7 +906,7 @@ def send_edc_server(param, trx='10'):
     try:
         __param = standardize_param(param, trx)
         __url = edc_server + '/EDCServerHost/v1/reporting/debit_credit'
-        status, response = _NetworkAccess.post_to_url(__url, __param)
+        status, response = _HTTPAccess.post_to_url(__url, __param)
         LOGGER.info(("send_edc_server : ", response))
         return True
     except Exception as e:
@@ -941,7 +939,7 @@ def edc_mobile_start_binding_edc():
     }
     try:
         while not EDC_MOBILE_BINDING_STATUS:
-            status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/start-binding', param)
+            status, response = _HTTPAccess.post_to_url(_Common.EDC_ECR_URL + '/start-binding', param)
             LOGGER.debug((status, response))
             if status == 200 and not _Helper.empty(response.get('response', None)):
                 if response['response']['code'] == 200:
@@ -979,11 +977,11 @@ def edc_mobile_do_payment(trx_id, amount):
         'reff_no': trx_id.upper(),
         'amount': amount
     }
-    timeout = _NetworkAccess.GLOBAL_TIMEOUT
+    timeout = _HTTPAccess.GLOBAL_TIMEOUT
     if _Common.EDC_MOBILE_DIRECT_MODE == '1':
         timeout = _Common.EDC_MOBILE_DURATION
     try:
-        status, response = _NetworkAccess.post_to_url(url=_Common.EDC_ECR_URL + '/do-payment', param=param, custom_timeout=timeout)
+        status, response = _HTTPAccess.post_to_url(url=_Common.EDC_ECR_URL + '/do-payment', param=param, custom_timeout=timeout)
         LOGGER.debug((status, response))
         if status == 504:
             return False, None
@@ -1030,7 +1028,7 @@ def edc_mobile_do_void(trx_id):
         'reff_no': trx_id,
     }
     try:
-        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/do-void', param)
+        status, response = _HTTPAccess.post_to_url(_Common.EDC_ECR_URL + '/do-void', param)
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
             return True
@@ -1062,7 +1060,7 @@ def edc_mobile_check_payment(trx_id):
         'reff_no': trx_id,
     }
     try:
-        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/status-payment', param)
+        status, response = _HTTPAccess.post_to_url(_Common.EDC_ECR_URL + '/status-payment', param)
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
             if response['data']['status'] != "WAITING":
@@ -1093,7 +1091,7 @@ def edc_mobile_do_settlement():
         'sn': _Common.EDC_SERIAL_NO,
     }
     try:
-        status, response = _NetworkAccess.post_to_url(_Common.EDC_ECR_URL + '/do-settlement', param)
+        status, response = _HTTPAccess.post_to_url(_Common.EDC_ECR_URL + '/do-settlement', param)
         LOGGER.debug((status, response))
         if status == 200 or response['response']['code'] == 200:
             return True, response['data']

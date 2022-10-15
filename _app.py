@@ -10,7 +10,7 @@ import logging
 import logging.handlers
 import subprocess
 from _cConfig import _ConfigParser, _Common
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _dDB import _Database
 from _sService import _KioskService
 from _sService import _UserService
@@ -32,6 +32,7 @@ from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
 from _sService import _AudioService
+from _sService import _ChatbotService
 from _mModule import _MainService
 import json
 import sentry_sdk
@@ -798,7 +799,7 @@ def get_disk_info():
     except Exception as e:
         LOGGER.warning((e))
     disk_info.append(encrypt_str)
-    _NetworkAccess.DISK_SERIAL_NUMBER = disk_info[0]
+    _HTTPAccess.DISK_SERIAL_NUMBER = disk_info[0]
     return disk_info[0] if disk_info[0] is not None else "N/A"
 
 
@@ -1015,7 +1016,7 @@ def check_git_status(log=False):
 
 def init_local_setting_from_host():
     url = _Common.BACKEND_URL + 'get/init-setting'
-    status, response = _NetworkAccess.get_from_url(url=url, force=True)
+    status, response = _HTTPAccess.get_from_url(url=url, force=True)
     if status == 200 and response['result'] == 'OK':
         if len(response['data']) > 0:
             _Common.store_to_temp_data('host-setting', response['data'])
@@ -1189,6 +1190,10 @@ def startup_task():
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Do Pending Request Jobs...')
         sleep(1)
         _Sync.start_do_pending_request_job()
+        print("pyt: Init Chatbot Engine...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Initiate Chatbot Engine...')
+        sleep(1)
+        _ChatbotService.start_initiation()
         sleep(1)
         print("pyt: Do Pending Daily Report...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Do Pending Daily Report...')

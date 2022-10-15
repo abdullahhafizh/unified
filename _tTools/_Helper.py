@@ -8,7 +8,7 @@ import datetime
 from _cConfig import _ConfigParser
 import random
 import binascii
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 import subprocess
 from sys import _getframe as whois
 import re
@@ -117,7 +117,7 @@ def file2crc32(filename):
 
 
 def is_online(source=''):
-    return _NetworkAccess.is_online(source=source)
+    return _HTTPAccess.is_online(source=source)
 
 
 def get_ds(string, length=4, log=False):

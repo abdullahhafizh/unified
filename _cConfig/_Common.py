@@ -3,7 +3,7 @@ __author__ = "wahyudi@multidaya.id"
 import logging
 from _cConfig import _ConfigParser
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _dDAO import _DAO
 from time import *
 import os
@@ -63,9 +63,10 @@ TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
 USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme', '1') == '1' else False
 USE_PREV_ADS = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^ads', '0') == '1' else False
 
+INTERRACTIVE_HOST = _ConfigParser.get_set_value('GENERAL', 'interractive^host', 'ws://192.168.7.8:3000')
 # Initiate Network Header
 # HEADER = get_header()
-_NetworkAccess.HEADER = _NetworkAccess.get_header(TID, TERMINAL_TOKEN)
+_HTTPAccess.HEADER = _HTTPAccess.get_header(TID, TERMINAL_TOKEN)
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
 INIT_DELAY_TIME = _ConfigParser.get_set_value('QPROX_NFC', 'init^delay^time', '5')
@@ -736,7 +737,7 @@ def get_service_version():
     ___resp = None
     try:
         # sleep(3)
-        ___stat, ___resp = _NetworkAccess.get_local(SERVICE_URL + '999&param=0')
+        ___stat, ___resp = _HTTPAccess.get_local(SERVICE_URL + '999&param=0')
         if ___stat == 200:
             SERVICE_VERSION = ___resp['Response']
             log_to_temp_config('service^version', SERVICE_VERSION)
@@ -1364,7 +1365,7 @@ def upload_device_state(device, status):
             "device": device,
             "state": status
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'change/device-state', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL + 'change/device-state', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
@@ -1384,7 +1385,7 @@ def update_usage_retry_code(trxid):
         __param = {
             "trx_id": trxid,
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/usage-pending-code', __param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL + 'sync/usage-pending-code', __param)
         LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
             return True
@@ -1416,7 +1417,7 @@ def upload_mandiri_wallet():
         if C2C_MODE is True:
             param['card_no_1'] = C2C_DEPOSIT_NO
             param['wallet_1'] = MANDIRI_ACTIVE_WALLET
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
@@ -1443,7 +1444,7 @@ def upload_bni_wallet():
             "card_no_1": BNI_SAM_1_NO,
             "card_no_2": BNI_SAM_2_NO
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
@@ -1486,7 +1487,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             # Auto Assign syncFlag
             __param['key'] = __param['trxid']
             _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')                
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
         LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
             # __param['key'] = __param['trxid']
@@ -1518,7 +1519,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
             'trx_list': trx_list,
             'collect_time': _Helper.time_string()
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/access-report', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL+'sync/access-report', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
@@ -1540,7 +1541,7 @@ def upload_topup_error(__slot, __type):
             'slot': __slot,
             'type': __type
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'update/topup-state', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL+'update/topup-state', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
@@ -1571,7 +1572,7 @@ def store_upload_sam_audit(param):
             'createdAt': _Helper.now()
         }
         # _DAO.insert_sam_audit(param)
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             # param['key'] = param['lid']
@@ -2107,6 +2108,7 @@ def validate_usage_pending_code(reff_no):
 
 
 IDLE_MODE = True
+MAINTENANCE_MODE = False
 
 LIMIT_CARD_OPNAME_DURATION_HOURS = int(_ConfigParser.get_set_value('CD', 'stock^opname^duration^hours', '6'))
 
@@ -2199,7 +2201,7 @@ def send_stock_opname(key):
         param = {
             'data': json.dumps(data)
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/card-preload', param)
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL+'sync/card-preload', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True

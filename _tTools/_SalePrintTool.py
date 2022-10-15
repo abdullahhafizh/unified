@@ -10,7 +10,7 @@ from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _Printer, _BILL
 from _sService import _KioskService
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _cConfig import _Common
 from _sService import _UserService
 from _dDAO import _DAO
@@ -2501,7 +2501,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                 'mode'      : 'ASYNC'
             }
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
-        status, response = _NetworkAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
+        status, response = _HTTPAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
         if _Common.ERECEIPT_ASYNC_MODE is True:
             pass
         else:
@@ -2604,7 +2604,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 'mode'      : 'ASYNC'
             }
             SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
-        status, response = _NetworkAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
+        status, response = _HTTPAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
         # Drop API Response if using Async
         if _Common.ERECEIPT_ASYNC_MODE is True:
             pass
@@ -2736,7 +2736,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         if _Common.ERECEIPT_ASYNC_MODE is True:
             pass
         else:
-            status, response = _NetworkAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
+            status, response = _HTTPAccess.post_to_url(url=_Common.ERECEIPT_URL, param=ereceipt_data, custom_timeout=5)
             if status == 200:
                 output = response['response']
                 if output['status'] == 0:

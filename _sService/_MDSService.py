@@ -5,9 +5,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Common
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
-import sys
-from operator import itemgetter
+from _nNetwork import _HTTPAccess
 from time import sleep
 
 
@@ -40,7 +38,7 @@ def master_login(master=False):
         'username': MDS_USER_GROUP,
         'password': MDS_GROUP_PASS
     }
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/auth-service/v1/login', param=payload)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/auth-service/v1/login', param=payload)
     LOGGER.debug((status, response))
     if status == 200 and response['response']['code'] == 200:
         return response['data']['access_token']
@@ -52,7 +50,7 @@ def mds_login():
         'username': _Common.TID,
         "password": _Common.TID+'*un1k',
     }
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/auth-service/v1/login', param=payload)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/auth-service/v1/login', param=payload)
     LOGGER.debug((status, response))
     # {
     #     "response": {
@@ -103,7 +101,7 @@ def merchant_config():
     payload = {
         'mid': _Common.MDS_MID
     }
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/merchant-service/v1/get-merchant-config-2', param=payload, header=header)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/merchant-service/v1/get-merchant-config-2', param=payload, header=header)
     LOGGER.debug((status, response))
     if status == 200 and response['response']['code'] == 200 and 'Merchant Configuration Found' in response['response']['message']:
         return True
@@ -128,7 +126,7 @@ def mds_register():
         'Authorization': 'Bearer: '+master_token
     }
     sleep(2.5)
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/auth-service/v1/user/create', param=payload, header=header)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/auth-service/v1/user/create', param=payload, header=header)
     LOGGER.debug((status, response))
     # {
     #     "response": {
@@ -187,7 +185,7 @@ def register_wallet():
     #         "wallet_id": 863
     #     }
     # }
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/wallet-service/v1/create-wallet', header=header)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/wallet-service/v1/create-wallet', header=header)
     LOGGER.debug((status, response))
     if status == 200 and response['response']['code'] == 200 and 'Wallet created' in response['response']['message']:
         _Common.log_to_temp_config('mds^wallet^id', str(response['data']['wallet_id']))
@@ -214,7 +212,7 @@ def register_merchant():
         'mid': _Common.MDS_MID
     }
     sleep(2.5)
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/merchant-service/v1/create-merchant-2', param=payload, header=header)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/merchant-service/v1/create-merchant-2', param=payload, header=header)
     LOGGER.debug((status, response))
     if status == 200 and response['response']['code'] == 200 and 'Merchant Register Success' in response['response']['message']:
         return True
@@ -246,7 +244,7 @@ def get_mds_wallet():
     #         "wallet_balance": 0
     #     }
     # }
-    status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/wallet-service/v1/get-balance', header=header)
+    status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/wallet-service/v1/get-balance', header=header)
     LOGGER.debug((status, response))
     if status == 200 and response['response']['code'] == 200:
         _Common.MDS_WALLET = int(response['data']['wallet_balance'])
@@ -309,7 +307,7 @@ def mds_sync_config():
             'Authorization': 'Bearer: '+_Common.MDS_TOKEN
         }
         sleep(2.5)
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+'/device-service/edc-config/sync', param=payload, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+'/device-service/edc-config/sync', param=payload, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             LOGGER.info(('MDS Device Sync Success', response['response']['message']))
@@ -390,7 +388,7 @@ def push_trx_online(payload):
             # param = {**param, **new_param}
             param = param.update(new_param)
         endpoint = '/unik-tablet-service/v1/push-trx/topup-online'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             return True
@@ -457,7 +455,7 @@ def push_trx_offline(payload):
             }
             param = param.update(new_param)
         endpoint = '/unik-tablet-service/v1/push-trx/topup-offline'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             return True
@@ -507,7 +505,7 @@ def push_trx_deposit(payload):
             "slot_active": "1"
         }
         endpoint = '/unik-tablet-service/v1/push-trx/topup-deposit'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             return True
@@ -556,7 +554,7 @@ def push_settlement_data(payload):
             "slot_active": "1"
         }
         endpoint = '/unik-tablet-service/v1/push-trx/c2c-settlement'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             return True
@@ -595,7 +593,7 @@ def push_trx_qr(payload):
             "qr_provider": payload['payment'].upper()
         }
         endpoint = '/unik-tablet-service/v1/push-trx/qr'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             return True
@@ -640,7 +638,7 @@ def sync_session():
         }
         
         endpoint = '/unik-tablet-service/v1/push-trx/session-transaction'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             return True
@@ -687,7 +685,7 @@ def mds_online_topup(bank=None, data=[]):
         }
         channel = MDS_TOPUP_CHANNEL[bank]
         endpoint = '/unik-tablet-service/v1/'+channel+'/topup'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200 and 'TOPUP APPROVED.' in response['response']['message']:
             _Common.MDS_WALLET = int(response['data']['last_wallet'])
@@ -718,7 +716,7 @@ def do_deduct_wallet(data):
             'trx_desc': data['trx_desc']
         }
         endpoint = '/wallet-service/v1/deduct-wallet'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header, log=_Common.TEST_MODE)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header, log=_Common.TEST_MODE)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200 and 'Deduct success' in response['response']['message']:
             _Common.MDS_WALLET = int(response['data']['wallet_balance'])
@@ -766,7 +764,7 @@ def generate_summary_trx():
         }
         
         endpoint = '/unik-tablet-service/v1/push-trx/summary-transaction'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             response['data']['operator_name'] = _Common.LOGGED_OPERATOR['first_name']
@@ -796,7 +794,7 @@ def dummy_summary_trx():
             "mid": "47781c18b952b0fa34b135349d324908"
         }
         endpoint = '/unik-tablet-service/v1/get-trx/summary-transaction-2'
-        status, response = _NetworkAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
+        status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
         if status == 200 and response['response']['code'] == 200:
             response['data']['operator_name'] = _Common.LOGGED_OPERATOR['first_name']

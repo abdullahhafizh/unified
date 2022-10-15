@@ -3,9 +3,9 @@ __author__ = "wahyudi@multidaya.id"
 import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _ConfigParser, _Common
+from _cConfig import _Common
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 import hashlib
 import os
 import sys
@@ -45,7 +45,7 @@ def kiosk_logout():
         _param = {
             'logout_time': _Helper.time_string(),
         }
-        status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-logout', param=_param)
+        status, response = _HTTPAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-logout', param=_param)
         LOGGER.info((str(_param), str(status), str(response)))
     except Exception as e:
         LOGGER.warning((e))
@@ -62,7 +62,7 @@ def kiosk_login(username, password):
             'username': username.lower(),
             'password': hashlib.md5((password.lower()+SALT).encode('utf-8')).hexdigest()
         }
-        status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-login', param=_param)
+        status, response = _HTTPAccess.post_to_url(url=_Common.BACKEND_URL + 'user/kiosk-login', param=_param)
         LOGGER.info((str(_param), str(status)))
         if status == 200 and response['result'] == 'OK':
             USER = response['data']

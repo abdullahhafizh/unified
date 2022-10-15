@@ -1,24 +1,24 @@
 __author__ = 'wahyudi@multidaya.id'
+
 import os
 import sys
 from _tTools import _Helper
 from _dDAO import _DAO
 from time import sleep
-from _cConfig import _ConfigParser, _Common
-from _nNetwork import _NetworkAccess, _SFTPAccess, _FTPAccess
+from _cConfig import _Common
+from _nNetwork import _HTTPAccess, _SFTPAccess, _FTPAccess
 import logging
 from _sService import _KioskService
 from _dDevice import _EDC
-from _dDevice import _BILL
 from _dDevice import _QPROX
 import json
 from _sService import _UserService
 from _sService import _SettlementService
 from _sService import _TopupService
 from _sService import _UpdateAppService
-from datetime import datetime
 from operator import itemgetter
 import subprocess
+from _tTools import _SalePrintTool
 
 
 LOGGER = logging.getLogger()
@@ -36,7 +36,7 @@ def sync_machine(url, param):
     while True:
         attempt += 1
         try:
-            status, response = _NetworkAccess.get_from_url(url=url, force=True)
+            status, response = _HTTPAccess.get_from_url(url=url, force=True)
             if status == 200:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Connected To Backend')
                 _Common.KIOSK_STATUS = 'ONLINE'
@@ -46,7 +46,7 @@ def sync_machine(url, param):
                 _Common.KIOSK_STATUS = 'OFFLINE'
             if attempt == 1:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Setting Initiation From Backend')
-                s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
+                s, r = _HTTPAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                 _KioskService.update_kiosk_status(s, r)
                 _DAO.create_today_report(_Common.TID)
             # if attempt > 1:
@@ -56,7 +56,7 @@ def sync_machine(url, param):
                 __param['on_usage'] = 'IDLE' if _Common.IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
                 # print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
-                _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
+                _HTTPAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
         except Exception as e:
             LOGGER.debug(e)         
         finally:
@@ -70,9 +70,21 @@ def sync_machine(url, param):
             if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
                 LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
                 sleep(30)
-                _KioskService.execute_command('shutdown -r -f -t 0')
+                if _Common. IS_WINDOWS:
+                    _KioskService.execute_command('shutdown -r -f -t 0')
+                else:
+                    _KioskService.execute_command('reboot now')
                 # _KioskService.kiosk_status()
         sleep(30.50)
+        
+def start_send_battery_status():
+    _Helper.get_thread().apply_async(send_battery_status,)
+
+
+def send_battery_status():
+    while True:
+        _KioskService.send_battery_status()
+        sleep(10)
 
 
 def send_daily_summary():
@@ -93,7 +105,7 @@ def send_daily_summary():
         url = _Common.BACKEND_URL + 'sync/daily-summary'
         if len(payload) > 0:
             _DAO.mark_today_report(_Common.TID)
-            s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+            s, r = _HTTPAccess.post_to_url(url=url, param=payload)
             print('pyt: PROCESSING TODAY REPORT ' + _Helper.time_string())
             if s != 200 or r.get('result') != 'OK':
                 payload['endpoint'] = 'sync/daily-summary'
@@ -122,7 +134,7 @@ def send_all_not_synced_daily_report():
                     report['last_stock_slot_3'] = -1
                     report['last_stock_slot_4'] = -1
                     url = _Common.BACKEND_URL + 'sync/daily-summary'
-                    s, r = _NetworkAccess.post_to_url(url=url, param=report)
+                    s, r = _HTTPAccess.post_to_url(url=url, param=report)
                     print('pyt: PROCESSING ' + report['report_date'] + ' ' + _Helper.time_string())
                     LOGGER.debug('PROCESSING ' + report['report_date'] + ' ' + _Helper.time_string())
                     if s == 200 and r.get('result') == 'OK':
@@ -170,7 +182,7 @@ def sync_machine_status():
                 __param['on_usage'] = 'IDLE' if _Common.IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
                 print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
-                _NetworkAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
+                _HTTPAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
             else:
                 LOGGER.debug(('Sending Kiosk Status : ', str(_Common.IDLE_MODE)))
         except Exception as e:
@@ -220,9 +232,9 @@ def do_pending_request_job():
                         __header = job['header']
                         if not _Helper.empty(_Common.MDS_TOKEN):
                             __header['Authorization'] = 'Bearer: '+_Common.MDS_TOKEN
-                        status, response = _NetworkAccess.post_to_url(url=__url, param=__param, header=__header)
+                        status, response = _HTTPAccess.post_to_url(url=__url, param=__param, header=__header)
                     else:
-                        status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+                        status, response = _HTTPAccess.post_to_url(url=__url, param=__param)
                     if 'result' not in response.keys():
                         response['result'] = status
                     # LOGGER.debug((p, __url, __param, status, response))
@@ -371,7 +383,7 @@ def sync_topup_records():
                 if len(topup_records) > 0:
                     print('pyt: sync_topup_records ' + _Helper.time_string() + ' Re-Sync Topup Records Data...')
                     for t in topup_records:
-                        status, response = _NetworkAccess.post_to_url(url=url, param=t)
+                        status, response = _HTTPAccess.post_to_url(url=url, param=t)
                         # LOGGER.info(('sync_topup_records', json.dumps(t), str(status), str(response)))
                         if status == 200 and response['id'] == t['rid']:
                             LOGGER.info(response)
@@ -404,7 +416,7 @@ def sync_data_transaction():
                     for t in transactions:
                         # Revert Flag Validation mid for Sale Calculation If Not Synced Before
                         t['mid'] = ''
-                        status, response = _NetworkAccess.post_to_url(url=url, param=t)
+                        status, response = _HTTPAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxId']:
                             LOGGER.info(response)
                             t['key'] = t['trxId']
@@ -430,7 +442,7 @@ def sync_data_transaction_old():
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
                     for t in transactions:
-                        status, response = _NetworkAccess.post_to_url(url=url, param=t)
+                        status, response = _HTTPAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
                             LOGGER.info(response)
                             t['key'] = t['trxid']
@@ -461,7 +473,7 @@ def sync_data_transaction_failure():
                 if len(transaction_failures) > 0:
                     # print('pyt: sync_data_transaction_failure ' + _Helper.time_string() + ' Re-Sync Transaction Failure Data...')
                     for t in transaction_failures:
-                        status, response = _NetworkAccess.post_to_url(url=url, param=t)
+                        status, response = _HTTPAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
                             LOGGER.info(response)
                             t['key'] = t['trxid']
@@ -491,7 +503,7 @@ def sync_product_data():
                 if len(products) > 0:
                     # print('pyt: sync_product_data ' + _Helper.time_string() + ' Re-Sync Product Data...')
                     for p in products:
-                        status, response = _NetworkAccess.post_to_url(url=url, param=p)
+                        status, response = _HTTPAccess.post_to_url(url=url, param=p)
                         if status == 200 and response['id'] == p['pid']:
                             LOGGER.info(response)
                             p['key'] = p['pid']
@@ -521,7 +533,7 @@ def sync_sam_audit():
                 if len(audits) > 0:
                     # print('pyt: sync_sam_audit ' + _Helper.time_string() + ' Re-Sync SAM Audit...')
                     for a in audits:
-                        status, response = _NetworkAccess.post_to_url(url=url, param=a)
+                        status, response = _HTTPAccess.post_to_url(url=url, param=a)
                         if status == 200 and response['id'] == a['lid']:
                             LOGGER.info(response)
                             a['key'] = a['lid']
@@ -594,7 +606,7 @@ def sync_task():
     while True:
         try:
             if _Helper.is_online(source='sync_task') is True and _Common.IDLE_MODE is True:
-                status, response = _NetworkAccess.get_from_url(url=_url, log=False)
+                status, response = _HTTPAccess.get_from_url(url=_url, log=False)
                 if status == 200 and response['result'] == 'OK':
                     if len(response['data']) > 0:
                         handle_tasks(response['data'])
@@ -630,7 +642,7 @@ def sync_pending_refund():
                         'channel'           : p['channel'],
                         'remarks'           : json.loads(p['remarks'])
                     } 
-                    s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
+                    s, r = _HTTPAccess.post_to_url(url=_url, param=_param)
                     if s == 200 and r['data'] is not None:
                         _DAO.update_pending_refund({
                             'trxid'         : p['trxid'],
@@ -653,24 +665,78 @@ def sync_pending_refund():
         sleep(15.15)
 
 
+CHATBOT_COMMANDS = [
+    'RESET_PAPER_ROLL',
+    'REMOVE_FAILED_TRX <TRX_ID>',
+    # 'EDC_CLEAR_BATCH',
+    # 'EDC_SETTLEMENT',
+    # 'RESET_DB',
+    # 'DO_TOPUP_BNI_<SLOT>',
+    # 'DO_SETTLEMENT_MANDIRI',
+    # 'SAM_TO_SLOT_<SLOT>',
+    'RESET_STOCK_PRODUCT',
+    'UPDATE_STOCK_PRODUCT', 
+    # 'REMOTE_UPDATE_STOCK',
+    # 'RESET_OFFLINE_USER',
+    # 'HOUSE_KEEPING_<COUNT_MONTH>',
+    # 'REFRESH_PPOB_PRODUCT',
+    # 'UPDATE_BALANCE_MANDIRI',
+    # 'UPDATE_BALANCE_BNI', 
+    # 'TRIGGER_TOPUP_1_BNI',
+    # 'TRIGGER_TOPUP_1_MANDIRI',
+    # 'TOPUP_DEPOSIT_MANDIRI',
+    # 'TOPUP_DEPOSIT_BNI',
+    # 'RELEASE_BNI_DEPOSIT_LOCK',
+    'REPRINT_LAST_TRX',
+    'CHECK_TIME',
+    'TERMINAL_STATUS',
+    # 'STATUS_TRX <TRX_ID>', #TODO
+    'MAINTENANCE_ON',
+    'MAINTENANCE_OFF',
+    
+]
+
+# Call Here, Not For Iterable
+CHATBOT_COMMANDS.sort()
+
+
+def available_commands():
+    return CHATBOT_COMMANDS
+
+
+def validate_command(t):
+    for c in CHATBOT_COMMANDS:
+        if c == t:
+            return True
+        if t in c:
+            return True
+    return False
+    
+
+
 def handle_tasks(tasks):
     if len(tasks) == 0:
-        return
+        return 'EMPTY_TASK'
     '''
     {
-    "no": 1,
-    "tid": "110321",
-    "taskName": "REBOOT",
-    "status": "OPEN",
-    "result": null,
-    "createdAt": "2018-04-14 00:00:00",
-    "initedAt": "2018-04-14 23:38:46",
-    "updatedAt": null,
-    "userId": null
+        "no": 1,
+        "tid": "110321",
+        "taskName": "REBOOT",
+        "status": "OPEN",
+        "result": null,
+        "createdAt": "2018-04-14 00:00:00",
+        "initedAt": "2018-04-14 23:38:46",
+        "updatedAt": null,
+        "userId": null
     }
     '''
     for task in tasks:
-        LOGGER.debug(('GIVEN REMOTE TASK', task['taskName']))
+        # print(('pyt: GIVEN REMOTE TASK', str(task)))
+        if task.get('mode') == 'CHATBOT':
+            if not validate_command(task['taskName']):
+                return 'NOT_SUPPORTED'
+        # Handling Commands
+        print('pyt: EXECUTING TASK', task['taskName'])
         if task['taskName'] == 'REBOOT':
             if _Common.IDLE_MODE is True:
                 result = 'EXECUTED_INTO_MACHINE'
@@ -680,105 +746,98 @@ def handle_tasks(tasks):
                 _KioskService.execute_command('shutdown -r -f -t 0')
             else:
                 result = 'FAILED_EXECUTED_VM_ON_USED'
-                update_task(task, result)
-        if task['taskName'] == 'FORCE_REBOOT':
+                return update_task(task, result)
+        elif task['taskName'] == 'FORCE_REBOOT':
             result = 'EXECUTED_INTO_MACHINE'
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
             update_task(task, result)
             sleep(30)
             _KioskService.execute_command('shutdown -r -f -t 0')
-        if task['taskName'] == 'RESET_PAPER_ROLL':
+        elif task['taskName'] == 'RESET_PAPER_ROLL':
             result = _Common.reset_paper_roll()
-            update_task(task, result)
-        if 'REMOVE_FAILED_TRX' in task['taskName']:
+            return update_task(task, result)
+        elif 'REMOVE_FAILED_TRX' in task['taskName']:
             trx_id = task['taskName'].split('|')[1]
             result = _KioskService.remove_failed_trx(trx_id)
-            update_task(task, result)
-        if task['taskName'] == 'EDC_CLEAR_BATCH':
+            return update_task(task, result)
+        elif task['taskName'] == 'EDC_CLEAR_BATCH':
             result = _EDC.void_settlement_data()
-            update_task(task, result)
-        if task['taskName'] == 'EDC_SETTLEMENT':
+            return update_task(task, result)
+        elif task['taskName'] == 'EDC_SETTLEMENT':
             result = _EDC.backend_edc_settlement()
-            update_task(task, result)
-        if task['taskName'] in ['RESET_GRG', 'RESET_BILL']:
-            if _Common.IDLE_MODE is True:
-                _BILL.start_reset_bill()
-                result = 'EXECUTED_INTO_BILL'
-            else:
-                result = 'FAILED_EXECUTED_VM_ON_USED'
-            update_task(task, result)
-        if task['taskName'] == 'RESET_DB':
+            return update_task(task, result)
+        elif task['taskName'] == 'RESET_DB':
             result = _KioskService.reset_db_record()
-            update_task(task, result)
-        if 'DO_TOPUP_BNI_' in task['taskName']:
+            return update_task(task, result)
+        elif 'DO_TOPUP_BNI_' in task['taskName']:
             _slot = int(task['taskName'][-1])
             result = _TopupService.do_topup_deposit_bni(slot=_slot, force=True)
-            update_task(task, result)
-        if task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
+            return update_task(task, result)
+        elif task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
             result = 'FAILED_EXECUTED_VM_ON_USED'
             if _Common.IDLE_MODE is True:
                 _SettlementService.start_reset_mandiri_settlement()
                 result = 'TRIGGERED_INTO_SYSTEM'
-            update_task(task, result)
-        if 'SAM_TO_SLOT_' in task['taskName']:
+            return update_task(task, result)
+        elif 'SAM_TO_SLOT_' in task['taskName']:
             _slot = task['taskName'][-1]
             result = _Common.sam_to_slot(_slot)
-            update_task(task, result)
-        if task['taskName'] == 'APP_UPDATE':
+            return update_task(task, result)
+        elif task['taskName'] == 'APP_UPDATE':
             result = _UpdateAppService.start_do_update()
             update_task(task, result)
             if result == 'APP_UPDATE|SUCCESS':
                 _KioskService.execute_command('shutdown -r -f -t 0')
-        if task['taskName'] == 'RESET_STOCK_PRODUCT':
+        elif task['taskName'] == 'RESET_STOCK_PRODUCT':
             _DAO.clear_stock_product()
-            update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
-        if task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
+            return update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
+        elif task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
             result = sync_product_stock()
-            update_task(task, result)
-        if task['taskName'] == 'UPDATE_KIOSK':
+            return update_task(task, result)
+        elif task['taskName'] == 'UPDATE_KIOSK':
             update_task(task)
             _url = _Common.BACKEND_URL + 'get/setting'
             LOGGER.info((_url, str(SETTING_PARAM)))
-            s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
+            s, r = _HTTPAccess.post_to_url(url=_url, param=SETTING_PARAM)
             # if s == 200 and r['result'] == 'OK':
             _KioskService.update_kiosk_status(s, r)
-        if 'RESET_OFFLINE_USER|' in task['taskName']:
+        elif 'RESET_OFFLINE_USER|' in task['taskName']:
             __hash = task['taskName'].split('|')[1]
             result = _UserService.reset_offline_user(__hash)
-            update_task(task, result)
-        if 'HOUSE_KEEPING_' in task['taskName']:
+            return update_task(task, result)
+        elif 'HOUSE_KEEPING_' in task['taskName']:
             age_month = int(task['taskName'][-1])
             result = _KioskService.house_keeping(age_month)
-            update_task(task, result)
-        if task['taskName'] == 'REFRESH_PPOB_PRODUCT':
+            return update_task(task, result)
+        elif task['taskName'] == 'REFRESH_PPOB_PRODUCT':
             result = 'TRIGGERED_INTO_SYSTEM'
             _Common.log_to_temp_config('last^get^ppob', '0')
-            update_task(task, result)
+            return update_task(task, result)
         # New Task Here, Start Version 14.0.A-GLOBAL
-        if 'CONSOLE|' in task['taskName']:
+        elif 'CONSOLE|' in task['taskName']:
             command = task['taskName'].split('|')[1]
             result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-            update_task(task, result)
-        if task['taskName'] == 'UPDATE_BALANCE_MANDIRI':
+            return update_task(task, result)
+        elif task['taskName'] == 'UPDATE_BALANCE_MANDIRI':
             result = _TopupService.start_deposit_update_balance('MANDIRI')
-            update_task(task, result)
-        if task['taskName'] in ['UPDATE_BALANCE_BNI', 'TRIGGER_TOPUP_1_BNI']:
+            return update_task(task, result)
+        elif task['taskName'] in ['UPDATE_BALANCE_BNI', 'TRIGGER_TOPUP_1_BNI']:
             result = _TopupService.start_deposit_update_balance('BNI')
-            update_task(task, result)
-        if task['taskName'] == 'TRIGGER_TOPUP_1_MANDIRI':
+            return update_task(task, result)
+        elif task['taskName'] == 'TRIGGER_TOPUP_1_MANDIRI':
             result = _TopupService.do_topup_deposit_mandiri(override_amount=1)
-            update_task(task, result)
-        if task['taskName'] == 'TOPUP_DEPOSIT_MANDIRI':
+            return update_task(task, result)
+        elif task['taskName'] == 'TOPUP_DEPOSIT_MANDIRI':
             result = _TopupService.do_topup_deposit_mandiri()
-            update_task(task, result)
-        if task['taskName'] == 'TOPUP_DEPOSIT_BNI':
+            return update_task(task, result)
+        elif task['taskName'] == 'TOPUP_DEPOSIT_BNI':
             result = _TopupService.do_topup_deposit_bni(slot=1)
-            update_task(task, result)
-        if task['taskName'] == 'RELEASE_BNI_DEPOSIT_LOCK':
+            return update_task(task, result)
+        elif task['taskName'] == 'RELEASE_BNI_DEPOSIT_LOCK':
             _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
             result = 'SUCCESS_REMOVE_FILE'
-            update_task(task, result)
-        if 'FORCE_LAST_STOCK' in task['taskName']:
+            return update_task(task, result)
+        elif 'FORCE_LAST_STOCK' in task['taskName']:
             # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
             result = 'INVALID_ARGUMENTS'
             if len(task['taskName'].split('|')) >= 3:
@@ -788,17 +847,48 @@ def handle_tasks(tasks):
                 _Common.log_to_temp_config('stock^opname^slot^'+slot, stock)
                 # Add Clear Data Product Stock -> In Order To Force Sync Card
                 _DAO.custom_update("UPDATE ProductStock SET stock = 0")
-            update_task(task, result)
-    # Add Another TaskType
+            return update_task(task, result)
+        # Add Other Command Identifier
+        elif task['taskName'] == 'REPRINT_LAST_TRX':
+            result = _SalePrintTool.reprint_last_receipt('trx')
+            return update_task(task, result)
+        elif task['taskName'] == 'CHECK_TIME':
+            result = _Helper.time_string()
+            return update_task(task, result)
+        elif task['taskName'] == 'TERMINAL_STATUS':
+            result = _KioskService.machine_summary()
+            return update_task(task, result)
+        elif task['taskName'] == 'MAINTENANCE_ON':
+            if _Common.MAINTENANCE_MODE:
+                result = 'MAINTENANCE_MODE_STILL_ACTIVE'
+            else:
+                _Common.MAINTENANCE_MODE = True
+                _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_ON')
+                result = 'MAINTENANCE_MODE_ACTIVATED'
+            return update_task(task, result)
+        elif task['taskName'] == 'MAINTENANCE_OFF':
+            if not _Common.MAINTENANCE_MODE:
+                result = 'MAINTENANCE_MODE_NOT_ACTIVE'
+            else:
+                _Common.MAINTENANCE_MODE = False
+                _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_OFF')
+                result = 'MAINTENANCE_MODE_DISABLED'
+            return update_task(task, result)
+        else:
+            result = 'NOT_UNDERSTAND'
+            return update_task(task, result)
 
 
 def update_task(task, result='TRIGGERED_TO_SYSTEM'):
+    if task.get('mode') == 'CHATBOT':
+        return result
+    # Update Remote Task Into Host By API
     _url = _Common.BACKEND_URL + 'task/finish'
     task['result'] = result
     while True:
-        status, response = _NetworkAccess.post_to_url(url=_url, param=task)
+        status, response = _HTTPAccess.post_to_url(url=_url, param=task)
         if status == 200 and response['result'] == 'OK':
-            break
+            return True
         sleep(11.1)
 
 
@@ -809,7 +899,7 @@ def start_sync_product_stock():
 def sync_product_stock():
     _url = _Common.BACKEND_URL + 'get/product-stock'
     if _Helper.is_online(source='start_sync_product_stock') is True:
-        s, r = _NetworkAccess.get_from_url(url=_url)
+        s, r = _HTTPAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
             products = sorted(products, key=itemgetter('status'))
@@ -817,7 +907,7 @@ def sync_product_stock():
             for product in products:
                 if product['url_image'] is not None:
                     image_url = product['url_image']
-                    download, image = _NetworkAccess.item_download(image_url, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/card')
+                    download, image = _HTTPAccess.item_download(image_url, os.getcwd() + '/_qQML/source/card')
                     if download is True:
                         product['remarks'] = product['remarks'] + '|' + 'source/card/' + image
                 _DAO.insert_product_stock(product)
@@ -843,7 +933,7 @@ def sync_topup_amount():
     _url = _Common.BACKEND_URL + 'get/topup-amount'
     while True:
         if _Helper.is_online(source='sync_topup_amount') is True and _Common.IDLE_MODE is True:
-            s, r = _NetworkAccess.get_from_url(url=_url)
+            s, r = _HTTPAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
                 _Common.TOPUP_AMOUNT_SETTING = r['data']
                 _Common.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
@@ -856,41 +946,6 @@ def sync_topup_amount():
         sleep(333.3)
 
 
-# def parse_topup_data(topups):
-#     topups = sorted(topups, key=itemgetter('name', 'sell_price'), reverse=True)
-#     topup_provider = []
-#     for topup in topups:
-#         if topup['name'] not in topup_provider:
-#             topup_provider.append(topup['name'])
-#     list_amount = []
-#     for topup in topups:
-#         if topup['sell_price'] not in list_amount:
-#             list_amount.append(topup['sell_price'])
-#     topup_data = []
-#     for provider in topup_provider:
-#         _new_item = dict()
-#         for x in range(len(topups)):
-#             if provider == topups[x]['name']:
-#                 _new_item['name'] = provider
-#                 if topups[x]['sell_price'] == list_amount[0]:
-#                     if _Common.TID == '110322':
-#                         _new_item['bigDenom'] = 270
-#                     else:
-#                         _new_item['bigDenom'] = topups[x]['sell_price']
-#                 if topups[x]['sell_price'] == list_amount[1]:
-#                     if _Common.TID == '110322':
-#                         _new_item['smallDenom'] = 170
-#                     else:
-#                         _new_item['smallDenom'] = topups[x]['sell_price']
-#                 if topups[x]['sell_price'] == list_amount[2]:
-#                     if _Common.TID == '110322':
-#                         _new_item['tinyDenom'] = 17
-#                     else:
-#                         _new_item['tinyDenom'] = topups[x]['sell_price']
-#         topup_data.append(_new_item)
-#     return topup_data
-
-
 def get_amount(idx, listx):
     output = 0
     try:
@@ -901,56 +956,7 @@ def get_amount(idx, listx):
         return output
 
 
-# def start_automate_topup_bni():
-#     _Tools.get_thread().apply_async(automate_topup_bni)
-#
-#
-# def automate_topup_bni():
-#     while True:
-#         if _Common.IDLE_MODE is True and _Tools.is_online(source='automate_topup_bni') is True:
-#             _QPROX.get_bni_wallet_status()
-#             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
-#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-#                 _TopupService.do_topup_deposit_bni(slot=1)
-#                 LOGGER.debug(('manual_topup_bni 1', str(_Common.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
-#                 _Common.BNI_ACTIVE = 2
-#             if _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
-#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-#                 _TopupService.do_topup_deposit_bni(slot=2)
-#                 LOGGER.debug(('manual_topup_bni 2', str(_Common.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
-#                 _Common.BNI_ACTIVE = 1
-#             _Common.save_sam_config()
-#         sleep(900)
-
-
-# def start_manual_trigger_topup_bni():
-#     _Tools.get_thread().apply_async(manual_trigger_topup_bni)
-#
-#
-# def manual_trigger_topup_bni():
-#     while True:
-#         if _Common.TRIGGER_MANUAL_TOPUP is True:
-#             _Common.TRIGGER_MANUAL_TOPUP = False
-#             if _Common.IDLE_MODE is True:
-#                 _QPROX.get_bni_wallet_status()
-#             if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
-#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-#                 _TopupService.do_topup_deposit_bni(slot=1)
-#                 LOGGER.debug(('manual_topup_bni 1', str(_Common.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
-#                 _Common.BNI_ACTIVE = 2
-#             if _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
-#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-#                 _TopupService.do_topup_deposit_bni(slot=2)
-#                 LOGGER.debug(('manual_topup_bni 2', str(_Common.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
-#                 _Common.BNI_ACTIVE = 1
-#             _Common.save_sam_config()
-#         sleep(3.3)
-
-
 def start_check_bni_deposit():
-    # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
-    #     print("pyt: [FAILED] CHECK_BNI_TOPUP_DEPOSIT, DUMMY TEST MODE")
-    #     return
     _Helper.get_thread().apply_async(check_bni_deposit)
 
 
@@ -958,20 +964,8 @@ def check_bni_deposit():
     # Triggered After Success Transaction
     LOGGER.info(('BNI DEPOSIT', _Common.BNI_SAM_1_WALLET, 'BNI THRESHOLD', _Common.BNI_THRESHOLD))
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
-        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
+        _TopupService.TP_SIGNDLER.MANUAL_DEPOSIT_REFILL.emit('MEMULAI_TOPUP_DEPOSIT_BNI')
         _TopupService.do_topup_deposit_bni(slot=1)
-        # if not _Common.BNI_SINGLE_SAM:
-        #     LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD), '1 >>> 2'))
-        #     _Common.BNI_ACTIVE = 2
-        # else:
-        #     LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.BNI_THRESHOLD)))
-    # elif _Common.BNI_SAM_2_WALLET <= _Common.BNI_THRESHOLD:
-    #     _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-    #     _TopupService.do_topup_deposit_bni(slot=2)
-    #     if not _Common.BNI_SINGLE_SAM:
-    #         LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD), '2 >>> 1'))
-    #         _Common.BNI_ACTIVE = 1
-    #     else:
-    #         LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.BNI_THRESHOLD)))
-    # _Common.save_sam_config()
+    else:
+        _TopupService.TP_SIGNDLER.MANUAL_DEPOSIT_REFILL.emit('DEPOSIT_BNI_MASIH_CUKUP')
 

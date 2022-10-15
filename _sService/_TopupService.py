@@ -2,7 +2,7 @@ __author__ = "wahyudi@multidaya.id"
 
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _dDevice import _QPROX
 from _dDAO import _DAO
 from _cConfig import _Common, _ConfigParser
@@ -426,7 +426,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             _param['priv'] = 'NO_LIMIT'
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/pending', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
             #    {
@@ -472,7 +472,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             _param['priv'] = 'NO_LIMIT'
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -514,7 +514,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _url = TOPUP_URL
             if _Common.DEV_MODE_TOPUP_BCA:
                 _url = _Common.UPDATE_BALANCE_URL_DEV
-            status, response = _NetworkAccess.post_to_url(url=_url + 'topup-bca/pending', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=_url + 'topup-bca/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -555,7 +555,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['email'] = _Common.THEME_NAME.lower() + '@mdd.co.id'
             # This Below Key Is Mandatory For Topup Deposit C2C TO Reroute Mandiri Cred
             _param['purpose'] = 'TOPUP_DEPOSIT_C2C'
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -593,7 +593,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             _param['priv'] = 'NO_LIMIT'
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 return response['data']
@@ -666,7 +666,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             _param['tid'] = TOPUP_TID
             _param['prev_balance'] = '0'
             LAST_BNI_TOPUP_PARAM = _param
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 response['data']['card_info'] = _param['card_info']
@@ -888,7 +888,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/update', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/update', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 return {
@@ -924,7 +924,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/reversal', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/reversal', param=_param)
             LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -958,7 +958,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
             _param['token'] = TOPUP_TOKEN
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
-            status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-dki/reversal', param=_param)
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/reversal', param=_param)
             LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -1073,7 +1073,7 @@ def ping_online_topup(mode, payload=None, trigger=True):
         else:
             payload = json.loads(payload)
         param = _Common.serialize_payload(payload)
-        status, response = _NetworkAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check', param)
+        status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['response']['code'] == 200:
             if trigger is True:
@@ -1159,7 +1159,7 @@ def check_update_balance_bni(card_info='', last_balance='0'):
             'card_no': card_info[4:20],
             'prev_balance': last_balance
         }
-        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=param)
+        status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             # {
@@ -1969,7 +1969,7 @@ def confirm_bni_topup(data):
             'card_no': data['card_no'],
             'last_balance': data['last_balance']
         }
-        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bni/confirm', param=param)
+        status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             # _Common.remove_temp_data(data['reff_no'])
@@ -1999,7 +1999,7 @@ def confirm_bca_topup(data):
         _url = TOPUP_URL
         if _Common.DEV_MODE_TOPUP_BCA:
             _url = _Common.UPDATE_BALANCE_URL_DEV
-        status, response = _NetworkAccess.post_to_url(url=_url + 'topup-bca/confirm', param=param)
+        status, response = _HTTPAccess.post_to_url(url=_url + 'topup-bca/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             # _Common.remove_temp_data(data['reff_no'])
@@ -2028,7 +2028,7 @@ def confirm_dki_topup(data):
             'reff_no': data['reff_no']
         }
         _url = TOPUP_URL
-        status, response = _NetworkAccess.post_to_url(url=_url + 'topup-dki/confirm', param=param)
+        status, response = _HTTPAccess.post_to_url(url=_url + 'topup-dki/confirm', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             _Common.remove_temp_data(data['reff_no'])
@@ -2055,7 +2055,7 @@ def refund_bri_pending(data=None):
             'reff_no_host': data['reff_no_trx'],
             'card_no': data['card_no']
         }
-        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bri/refund', param=param)
+        status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bri/refund', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             _Common.remove_temp_data(data['trxid'])
@@ -2074,7 +2074,7 @@ def get_mandiri_card_blocked_list():
         _Common.MANDIRI_CARD_BLOCKED_LIST = []
         return False
     try:
-        status, response = _NetworkAccess.get_from_url(url=_Common.MANDIRI_CARD_BLOCKED_URL)
+        status, response = _HTTPAccess.get_from_url(url=_Common.MANDIRI_CARD_BLOCKED_URL)
         if status == 200 and response['response']['code'] == 200:
             if not _Helper.empty(response['data']['blacklist']):
                 content = ''
@@ -2116,7 +2116,7 @@ def reset_bca_session():
             'mid': TOPUP_MID,
             'tid': TOPUP_TID
         }
-        status, response = _NetworkAccess.post_to_url(url=TOPUP_URL + 'topup-bca/reset-session', param=param)
+        status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bca/reset-session', param=param)
         LOGGER.debug((str(status), str(response)))
     except Exception as e:
         LOGGER.warning((e))
@@ -2212,7 +2212,7 @@ def start_check_topup_readiness():
 
 def check_topup_readiness():
     try:
-        ping_status = _NetworkAccess.is_online_by_ip(source=_Helper.whoami())
+        ping_status = _HTTPAccess.is_online_by_ip(source=_Helper.whoami())
         ready = {
             'balance_mandiri': str(_Common.MANDIRI_ACTIVE_WALLET),
             'balance_bni': str(_Common.BNI_ACTIVE_WALLET),

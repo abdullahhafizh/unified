@@ -1,4 +1,4 @@
-15.1.1-GLOBAL:
+15.2.1-GLOBAL:
 - Add Printer Capability in Linux OS,
 - Add MEI Bill Validator Type,
 - Detect Printer in Bootup (Linux),
@@ -10,6 +10,8 @@
 - Flush Product Stock in Terminal Replacement,
 - Add RC In All Bank Topup Failure,
 - Notice Wording 1 Man 1 Card Purchase,
+- Add Chatbot Engine,
+- Refactor Network Module,
 - ...
 
 

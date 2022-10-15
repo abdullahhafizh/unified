@@ -1,12 +1,10 @@
 __author__ = 'wahyudi@multidaya.id'
 
 from _cConfig import _ConfigParser, _Common
-from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
-from time import sleep
+from _nNetwork import _HTTPAccess
 import os
 import sys
 import subprocess
@@ -148,7 +146,7 @@ def voucher_trigger_card_dispenser(port, slot, multiply='1', vcode=''):
             'vcode': vcode
         }
         url = _Common.BACKEND_URL+'ppob/voucher/check'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload, custom_timeout=5)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload, custom_timeout=5)
         if s == 200 and r['result'] == 'OK' and r['data']['Response'] == '0':
             success = True
         LOGGER.info((str(payload), str(r)))

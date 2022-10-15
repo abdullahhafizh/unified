@@ -9,8 +9,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
-from _nNetwork import _SFTPAccess, _FTPAccess
+from _nNetwork import _HTTPAccess, _SFTPAccess, _FTPAccess
 from _dDevice import _QPROX, _EDC
 from _sService import _TopupService, _MDSService
 from time import sleep
@@ -96,7 +95,7 @@ def push_settlement_data_smt(__param):
     __param['tid'] = 'MDD-VM'+TID
     __param['endpoint'] = 'settlement/submit'
     try:
-        status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+        status, response = _HTTPAccess.post_to_url(url=__url, param=__param)
         # LOGGER.debug(('push_settlement_data :', str(status), str(response)))
         if status == 200 and response['response']['code'] == 200:
             _DAO.update_settlement({'sid': __sid, 'status': 'TOPUP_PREPAID|CLOSED'})
@@ -178,7 +177,7 @@ def push_settlement_data(__param=None):
         return False
     __param['endpoint'] = 'settlement/sync-record'
     try:
-        status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+        status, response = _HTTPAccess.post_to_url(url=__url, param=__param)
         LOGGER.debug((str(status), str(response)))
         if status == 200 and response['result'] == 'OK':
             _DAO.update_settlement({'sid': __sid, 'status': 'TOPUP_PREPAID|CLOSED'})

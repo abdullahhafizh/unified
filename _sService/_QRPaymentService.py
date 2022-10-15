@@ -5,7 +5,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Common
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from time import sleep
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 from _tTools import _QRPrintTool
@@ -104,7 +104,7 @@ def do_get_qr(payload, mode, serialize=True):
         url = _Common.QR_HOST+mode.lower()+'/get-qr'
         if not _Common.QR_PROD_STATE[mode]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
-        s, r = _NetworkAccess.post_to_url(url=url, param=param, custom_timeout=60)
+        s, r = _HTTPAccess.post_to_url(url=url, param=param, custom_timeout=60)
         HISTORY_GET_QR.append(mode+'_'+param['trx_id'])
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url or '2020' in url:
@@ -137,7 +137,7 @@ def do_get_qr(payload, mode, serialize=True):
 def serialize_qr(qr_url, name, ext='.png'):
     if ext not in name:
         name = name+ext
-    store, new_source = _NetworkAccess.item_download(qr_url, _Common.QR_STORE_PATH, name)
+    store, new_source = _HTTPAccess.item_download(qr_url, _Common.QR_STORE_PATH, name)
     if store is True:
         qr_url = '../_qQr/'+new_source
     return qr_url
@@ -221,7 +221,7 @@ def do_check_qr(payload, mode, serialize=True):
                 break
             attempt += 1
             # _Helper.dump([success, attempt])
-            s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+            s, r = _HTTPAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r.get('data'), mode)
                 # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
@@ -288,7 +288,7 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
         # Handle QR Payment Cancellation Realtime Abort
             # _Helper.dump([success, attempt])
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             if check_payment_result(r.get('data'), mode.upper()) is True:
                 result = True, r.get('data')
@@ -356,7 +356,7 @@ def do_pay_qr(payload, mode, serialize=True):
         url = _Common.QR_HOST+mode.lower()+'/pay-qr'
         if not _Common.QR_PROD_STATE[mode]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/pay-qr'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             sleep(.5)
@@ -398,7 +398,7 @@ def do_confirm_qr(payload, mode, serialize=True):
         url = _Common.QR_HOST+mode.lower()+'/trx-confirm'
         if not _Common.QR_PROD_STATE[mode]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/trx-confirm'
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             LOGGER.debug((str(payload), str(r)))
@@ -431,7 +431,7 @@ def cancel_qr_global(data):
         LOGGER.debug((mode, 'NO AVAIL TO REQUEST QR CANCELLATION'))
         return
     try:
-        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s != 200 or r['response'].get('code') != 200:
             _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
         LOGGER.debug((mode, str(payload), str(r)))

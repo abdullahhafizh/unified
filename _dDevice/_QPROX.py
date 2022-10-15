@@ -8,7 +8,7 @@ from _tTools import _Helper
 from _dDAO import _DAO
 from time import sleep
 import json
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from datetime import datetime
 import random
 import os
@@ -1549,7 +1549,7 @@ def do_update_limit_mandiri(rsp):
             _param['file_path'] = _param['file_path'].replace('_DEV', '')
     while True:
         attempt += 1
-        _stat, _res = _NetworkAccess.post_to_url(_url, _param)
+        _stat, _res = _HTTPAccess.post_to_url(_url, _param)
         LOGGER.debug((attempt, rsp, _stat, _res))
         if _stat == 200 and _res['status'] == 0 and _res['file'] is True:
             __content_rq1 = _res['content'].split('#')[0]
@@ -1628,7 +1628,7 @@ def set_c2c_settlement_fee(file):
     LOGGER.debug((attempt, file, _url, _param))
     while True:
         attempt += 1
-        response, result = _NetworkAccess.post_to_url(_url, _param)
+        response, result = _HTTPAccess.post_to_url(_url, _param)
         LOGGER.debug((attempt, file, response, result))
         if response == 200 and result['status'] == 0 and result['file'] is True:
             new_c2c_fees = result['content'].split('#')[0]

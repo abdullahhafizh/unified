@@ -12,7 +12,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from pprint import pprint
 from _sService import _UserService, _MDSService
 from time import sleep
@@ -248,7 +248,7 @@ def build_view_config(d):
 
     master_logo = []
     for m in d['master_logo']:
-        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
+        download, image = _HTTPAccess.item_download(m, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
         if download is True or _Common.USE_PREV_THEME:
             master_logo.append(image)
         else:
@@ -258,7 +258,7 @@ def build_view_config(d):
 
     partner_logos = []
     for p in d['partner_logos']:
-        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
+        download, image = _HTTPAccess.item_download(p, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/logo')
         if download is True or _Common.USE_PREV_THEME:
             partner_logos.append(image)
         else:
@@ -268,7 +268,7 @@ def build_view_config(d):
 
     backgrounds = []
     for b in d['backgrounds']:
-        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/background')
+        download, image = _HTTPAccess.item_download(b, os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source/background')
         if download is True or _Common.USE_PREV_THEME:
             backgrounds.append(image)
         else:
@@ -301,7 +301,7 @@ def build_view_config(d):
     if not _Common.empty(d['whatsapp_qr']):
         _Common.THEME_WA_QR = d['whatsapp_qr']
         _Common.log_to_temp_config('theme^wa^qr', d['whatsapp_qr'])
-        store, receipt_wa_qr = _NetworkAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source')
+        store, receipt_wa_qr = _HTTPAccess.item_download(d['whatsapp_qr'], os.getcwd() + '/'+_Common.VIEW_FOLDER+'/source')
         if store is True:
             content_js += 'var whatsapp_qr = "source/' + receipt_wa_qr + '";' + os.linesep
             _Common.VIEW_CONFIG['whatsapp_qr'] = "source/" + receipt_wa_qr
@@ -341,7 +341,7 @@ def build_view_config(d):
     if not _Common.empty(d['receipt_custom_text']):
         _Common.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
         _Common.log_to_config('PRINTER', 'receipt^custom^text', d['receipt_custom_text'])
-    store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
+    store, receipt_logo = _HTTPAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Common.RECEIPT_LOGO = receipt_logo
         _Common.log_to_config('PRINTER', 'receipt^logo', receipt_logo)
@@ -398,7 +398,7 @@ def define_ads(a):
             LOGGER.debug(("add new media : ", media_link))
             K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|ADD_NEW_'+l.upper())
             if media_link is not False:
-                stream, media = _NetworkAccess.stream_large_download(media_link, l, _Common.TEMP_FOLDER, __tvc_path)
+                stream, media = _HTTPAccess.stream_large_download(media_link, l, _Common.TEMP_FOLDER, __tvc_path)
                 if stream is True:
                     LOGGER.debug(("success download new media : ", media))
                     __must_download.remove(l)
@@ -469,7 +469,7 @@ def kiosk_name():
 def update_machine_stat(_url):
     _param = machine_summary()
     LOGGER.info(( _url, str(_param)))
-    s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
+    s, r = _HTTPAccess.post_to_url(url=_url, param=_param)
     return True if s == 200 and r['result'] == 'OK' else False
 
 
@@ -677,7 +677,7 @@ def post_gui_version():
 def gui_info():
     try:
         # NO-NEED Budled with Kiosk Status
-        status, response = _NetworkAccess.post_to_url('box/guiInfo', {"gui_version": str(_Common.VERSION)})
+        status, response = _HTTPAccess.post_to_url('box/guiInfo', {"gui_version": str(_Common.VERSION)})
         LOGGER.info(('SUCCESS', str(status), str(response)))
     except Exception as e:
         LOGGER.warning(('FAILED', str(e)))
@@ -722,7 +722,7 @@ def post_tvc_list(list_):
         return
     try:
         #NOTES: NO NEED, PLAYLIST FROM SERVER ALREADY
-        status, response = _NetworkAccess.post_to_url('box/tvcList', {"tvclist": list_})
+        status, response = _HTTPAccess.post_to_url('box/tvcList', {"tvclist": list_})
         LOGGER.info(('SUCCESS', response))
     except Exception as e:
         LOGGER.warning(("FAILED", str(e)))
@@ -778,7 +778,7 @@ def send_tvc_log(media, count, media_code=None):
         "date": time.strftime("%Y-%m-%d")
     }
     try:
-        status, response = _NetworkAccess.post_to_url(_Common.BACKEND_URL+'count/ads', param)
+        status, response = _HTTPAccess.post_to_url(_Common.BACKEND_URL+'count/ads', param)
         _Common.log_to_temp_config(media_code, str(_Helper.now()))
         # Not Handling Response Result
         LOGGER.info((media, str(count), status, response))
@@ -919,7 +919,7 @@ def post_cash_collection(l, t):
             "user": operator,
             "updatedAt": t
         }
-        status, response = _NetworkAccess.post_to_url(_Common.BACKEND_URL + 'collect/cash', param)
+        status, response = _HTTPAccess.post_to_url(_Common.BACKEND_URL + 'collect/cash', param)
         if status == 200:
             LOGGER.info(("SUCCESS", response))
         else:
@@ -994,7 +994,7 @@ def start_check_wallet(amount):
 def check_wallet(amount):
     try:
         param = {"amount": int(amount)}
-        status, response = _NetworkAccess.post_to_url(_Common.BACKEND_URL + 'task/check-wallet', param)
+        status, response = _HTTPAccess.post_to_url(_Common.BACKEND_URL + 'task/check-wallet', param)
         LOGGER.info((response))
         if status == 200 and response is not None:
             K_SIGNDLER.SIGNAL_WALLET_CHECK.emit(json.dumps(response))
@@ -1230,7 +1230,7 @@ def store_transaction_global(param, retry=False):
             _DAO.insert_transaction_new(trx_data)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + trx_id)
         # Push To Server
-        status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-new', param=trx_data)
+        status, response = _HTTPAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-new', param=trx_data)
         if status == 200 and response['id'] == trx_id:
             trx_data['key'] = trx_data['trxId']
             _DAO.mark_sync(param=trx_data, _table='TransactionsNew', _key='trxId')

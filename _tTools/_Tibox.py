@@ -5,7 +5,7 @@ import time
 from pprint import pprint
 import json
 from _cConfig import _ConfigParser
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 import os
@@ -59,7 +59,7 @@ def create_session():
         # CLEAN PREVIOUS VALUE =======================================
         if IS_RESET is False:
             reset_value()
-        status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+        status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if status == 200 and 'OK' in response:
             return True
         else:
@@ -132,7 +132,7 @@ def set_plan(param):
 
     if session is True:
         try:
-            status, response = _NetworkAccess.get_from_url(url=url__, header=HEADER)
+            status, response = _HTTPAccess.get_from_url(url=url__, header=HEADER)
             if status == 200 and 'FAIL|' not in response:
                 ID = response.split('|')[1]
                 T_SIGNDLER.SIGNAL_SET_PLAN.emit('SUCCESS')
@@ -168,7 +168,7 @@ def create_schedule():
             return
         else:
             SCHEDULE_SEND_FLAG = False
-            status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+            status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if status == 200 and 'FAIL|' not in response:
             try:
                 # res_ = parse_flight_data(response)
@@ -489,7 +489,7 @@ def create_chart(param):
 
         url_ = 'get_chart2.php?stype=' + stype + '&&id=' + ID + "&&val=" + sval
         try:
-            status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+            status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
             if status == 200:
                 # LOGGER.debug(('[INFO] create_chart : ', str(response)))
                 T_SIGNDLER.SIGNAL_CREATE_CHART.emit(str(response))
@@ -582,7 +582,7 @@ def post_person(param):
     url__ = TIBOX_URL + url_
     try:
         if url__ not in URL_POST_PERSON:
-            status, response = _NetworkAccess.get_from_url(url=url__, header=HEADER)
+            status, response = _HTTPAccess.get_from_url(url=url__, header=HEADER)
             URL_POST_PERSON.append(url__)
             if response not in PERSON_DATA_RESULT:
                 if status == 200 and fname in response:
@@ -630,7 +630,7 @@ def create_booking():
     global HEADER, ID, TIBOX_URL, TID, BOOKING_CODE, INIT_FARE, FLIGHT_PRODUCT
     url_ = 'web_create_booking.php?id=' + ID + '&&tid=' + TID
     try:
-        status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+        status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if status == 200 and 'BOOKING_CODE:?TOTAL' not in response:
             '''
 OK?BOOKING_CODE:ZSTGZX?TOTAL:730000.00?PAYMENT_STATUS:WAIT?TID:110050?FTYPE:OneWay?OB:1|730000.0000|0|0|Q|JT|326|2018-04-06T15:10:00|2018-04-06T17:55:00|1|Z?IB:?'''
@@ -780,7 +780,7 @@ def create_payment(payment):
         trying = 0
         while True:
             trying += 1
-            status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+            status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
             if status == 200 and 'OK' in response:
                 TXT_BOOKING_STATUS = 'SUCCESS'
                 if _KioskService.PREV_RECEIPT_RAW_DATA is not None:
@@ -816,7 +816,7 @@ def tibox_terminal():
     terminal_no = 'Terminal '
     url_ = 'web_ticket_print.php?id=' + ID + '&&tid=' + TID
     try:
-        status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+        status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if status == 200:
             '''
             OK?BOOKING_CODE:?TOTAL:?PAYMENT_STATUS:?TID:?FTYPE:?OB:?IB:?[NOTES]:HLP-JOG CHECK-IN WITH BATIK AIR KEBERANGKATAN DARI HALIM P K
@@ -846,7 +846,7 @@ def create_print():
     global HEADER, ID, TIBOX_URL, TID
     url_ = 'web_ticket_print.php?id=' + ID + '&&tid=' + TID
     try:
-        status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+        status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if status == 200 and 'OK' in response:
             generate_file_print(response)
             T_SIGNDLER.SIGNAL_CREATE_PRINT.emit('SUCCESS')
@@ -887,7 +887,7 @@ def clear_person():
     global ID
     url_ = 'get_person.php?stype=DELETE&&id=' + ID
     try:
-        status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+        status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if status == 200:
             T_SIGNDLER.SIGNAL_CLEAR_PERSON.emit('SUCCESS')
         else:
@@ -916,7 +916,7 @@ def confirm_schedule():
     global CONFIRM_SCHEDULE_RESULT, ID
     url_ = 'web_create_schedule_confirm.php?id=' + ID + '&&tid=' + TID
     try:
-        status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
+        status, response = _HTTPAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
         if (response + '||' + ID + '||' + TID) not in CONFIRM_SCHEDULE_RESULT:
             if status == 200 and 'OK' in response:
                 LOGGER.info(('[INFO] confirm_schedule response : ', response))
@@ -1111,7 +1111,7 @@ def log_product():
     }
     _DAO.insert_product(_param)
     _param["createdAt"] = _Helper.now()
-    status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
+    status, response = _HTTPAccess.post_to_url(url=_url, param=_param)
     if status == 200 and response['id'] == _param['pid']:
         _param['key'] = _param['pid']
         _DAO.mark_sync(param=_param, _table='Product', _key='pid')
@@ -1232,7 +1232,7 @@ def save_trx_server(_param):
     if _param['paymentType'] == 'WALLET':
         _url = BACKEND_URL + 'sync/transaction-wallet'
     _param['createdAt'] = _Helper.now()
-    status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
+    status, response = _HTTPAccess.post_to_url(url=_url, param=_param)
     if status == 200 and response['id'] == _param['trxid']:
         _param['key'] = _param['trxid']
         _DAO.mark_sync(param=_param, _table='Transactions', _key='trxid')
@@ -1265,7 +1265,7 @@ def save_receipt_local(r, d):
 
 def save_receipt_server(__param):
     _url = BACKEND_URL + 'sync/receipt'
-    status, response = _NetworkAccess.post_to_url(url=_url, param=__param)
+    status, response = _HTTPAccess.post_to_url(url=_url, param=__param)
     if status == 200 and response['result'] == 'OK':
         __param['key'] = __param['rid']
         _DAO.mark_sync(param=__param, _table='Receipts', _key='rid')

@@ -7,7 +7,7 @@ from _cConfig import _ConfigParser
 from _cConfig import _Common
 import json
 import platform
-from _nNetwork import _NetworkAccess
+from _nNetwork import _HTTPAccess
 from _mModule._InterfacePrepaidDLL import send_command as module_command
 
 
@@ -85,7 +85,7 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
     #     # Call GRG Interface Command
     #     ___stat, ___resp = 200, grg_command(cmd=___cmd, param=___param)
     else:
-        ___stat, ___resp = _NetworkAccess.get_local(
+        ___stat, ___resp = _HTTPAccess.get_local(
             url=service_url + ___cmd + '&param=' + ___param,
             __timeout=base_timeout
             )
