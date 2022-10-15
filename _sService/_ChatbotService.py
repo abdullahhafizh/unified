@@ -7,7 +7,7 @@ from _sSync import _Sync
 import sys
 
 import os
-os.system('pip install python-socketio[client]')
+# os.system('pip install python-socketio[client]')
 
 import socketio
 
