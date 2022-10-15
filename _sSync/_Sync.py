@@ -687,7 +687,7 @@ CHATBOT_COMMANDS = [
     # 'TOPUP_DEPOSIT_MANDIRI',
     # 'TOPUP_DEPOSIT_BNI',
     # 'RELEASE_BNI_DEPOSIT_LOCK',
-    'REPRINT_LAST_TRX',
+    # 'REPRINT_LAST_TRX',
     'CHECK_TIME',
     'TERMINAL_STATUS',
     # 'STATUS_TRX <TRX_ID>', #TODO
@@ -849,8 +849,8 @@ def handle_tasks(tasks):
                 _DAO.custom_update("UPDATE ProductStock SET stock = 0")
             return update_task(task, result)
         # Add Other Command Identifier
-        elif task['taskName'] == 'REPRINT_LAST_TRX':
-            result = _SalePrintTool.reprint_last_receipt('trx')
+        # elif task['taskName'] == 'REPRINT_LAST_TRX':
+        #     result = _SalePrintTool.reprint_last_receipt('trx')
             return update_task(task, result)
         elif task['taskName'] == 'CHECK_TIME':
             result = _Helper.time_string()
