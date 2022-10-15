@@ -92,7 +92,7 @@ def main():
     global SOCKET_IO
     try:
         print('Chat Host', INTERRACTIVE_HOST+'\n')
-        host = INTERRACTIVE_HOST.split(':')[0].replace('ws://')
+        host = INTERRACTIVE_HOST.split(':')[0].replace('ws://', '')
         port = INTERRACTIVE_HOST.split(':')[2]
         SOCKET_IO = SocketIO(host, int(port), Namespace)
         SOCKET_IO.emit('create', {
