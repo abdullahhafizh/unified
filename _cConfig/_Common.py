@@ -2064,7 +2064,8 @@ def kiosk_status_data():
             # 'admin_include': _ConfigParser.get_set_value('TEMPORARY', 'admin^include', '1'),
             # 'printer_setting': '1' if _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default') == 'Default' else '0',
             'admin_fee': C2C_ADMIN_FEE[0],
-            'printer_status': get_printer_status()
+            'printer_status': get_printer_status(),
+            'maintenance_mode': '1' if MAINTENANCE_MODE else '0'
             # 'operator_name': '' if LOGGED_OPERATOR is None else LOGGED_OPERATOR['first_name']
         }
         return data

@@ -278,6 +278,8 @@ Base{
         // Call CD Readiness & Product Stock
         _SLOT.kiosk_get_cd_readiness();
 
+        maintenance_mode.visible = (kiosk.maintenance_mode == '1')
+
         main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
     }
 
@@ -298,6 +300,14 @@ Base{
         if (result.indexOf('STARTUP|') > -1){
             var message = result.split('|')[1];
             startup_process.show_text = message;
+        }
+        if (result=='MAINTENANCE_MODE_ON'){
+            maintenance_mode.open();
+            return;
+        }
+        if (result=='MAINTENANCE_MODE_OFF'){
+            maintenance_mode.close();
+            return;
         }
     }
 
@@ -1210,4 +1220,10 @@ Base{
 //        }
 
     }
+
+    MaintenanceMode{
+        id: maintenance_mode
+        z: 999999
+    }
+
 }
