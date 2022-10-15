@@ -90,7 +90,9 @@ def on_chat(message):
 
 def find_arguments(message):
     arguments = message.split(' ')
+    if len(arguments) == 1: arguments = message.split('\r\n')
     if len(arguments) == 1: arguments = message.split('\n')
+    if len(arguments) == 1: arguments = message.split('\r')
     if len(arguments) == 1: arguments = message.split('|')
     return arguments
 
