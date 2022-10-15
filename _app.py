@@ -32,12 +32,15 @@ from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
 from _sService import _AudioService
-from _sService import _ChatbotService
 from _mModule import _MainService
 import json
 import sentry_sdk
 if _Common.IS_WINDOWS:
     import wmi
+
+if _Common.IS_LINUX:
+    from _sService import _ChatbotService
+
 
 
 print("""
@@ -1190,11 +1193,12 @@ def startup_task():
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Do Pending Request Jobs...')
         sleep(1)
         _Sync.start_do_pending_request_job()
-        print("pyt: Init Chatbot Engine...")
-        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Initiate Chatbot Engine...')
-        sleep(1)
-        _ChatbotService.start_initiation()
-        sleep(1)
+        # Dependency Issue In Windows (Must Be Python 3.5 and Up)
+        if _Common.IS_LINUX:
+            print("pyt: Init Chatbot Engine...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Initiate Chatbot Engine...')
+            sleep(1)
+            _ChatbotService.start_initiation()
         print("pyt: Do Pending Daily Report...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Do Pending Daily Report...')
         sleep(1)
