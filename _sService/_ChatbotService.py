@@ -70,6 +70,9 @@ def on_chat(message):
         if len(arguments) > 2:
             result = 'PARAMETER_MISMATCH'
             for arg in arguments:
+                if arg.lower() in HELLO_WORDS:
+                    result = build_hello_message()
+                    break
                 if arg.lower() in BAD_WORDS:
                     result = 'NOT_APPROPRIATE'
                     break
