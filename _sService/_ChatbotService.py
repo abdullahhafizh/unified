@@ -1,5 +1,6 @@
 __author__ = "wahyudi@multidaya.id"
 
+from ast import arguments
 import logging
 from _cConfig import _Common
 from _tTools import _Helper
@@ -59,29 +60,50 @@ def disconnect():
 @SOCKET_IO.on('chat')
 def on_chat(message):
     print('pyt: Receive Message\n', str(message))
+    
     if message.lower() in HELLO_WORDS:
         result = build_hello_message()
     elif message.lower() in BAD_WORDS:
-        result = 'Mohon Maaf, Tolong Jaga Perkataan Anda!'
+        result = 'NOT_APPROPRIATE'
     else:
-        result = _Sync.handle_tasks([
-            {
-                'taskName': message,
-                'status': 'OPEN',
-                'createdAt': _Helper.time_string(),
-                'userId': SOCKET_IO.sid,
-                'mode': 'CHATBOT'
-            }
-        ])
-        result = human_message(result)
+        arguments = find_arguments(message)
+        if len(arguments) > 2:
+            result = 'PARAMETER_MISMATCH'
+            for arg in arguments:
+                if arg.lower() in BAD_WORDS:
+                    result = 'NOT_APPROPRIATE'
+                    break
+        else:
+            result = _Sync.handle_tasks([
+                {
+                    'taskName': message.replace(' ', '|'),
+                    'status': 'OPEN',
+                    'createdAt': _Helper.time_string(),
+                    'userId': SOCKET_IO.sid,
+                    'mode': 'CHATBOT'
+                }
+            ])
+    # Serialise to Readable Response
+    result = human_message(result)
     response_message(result)
-    
+
+
+def find_arguments(message):
+    arguments = message.split(' ')
+    if len(arguments) == 1: arguments = message.split('\n')
+    if len(arguments) == 1: arguments = message.split('|')
+    return arguments
+
 
 def human_message(m):
     if m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
         return 'Mohon Maaf, Instruksi tidak dimengerti mesin'
+    elif m == 'NOT_APPROPRIATE':
+        return 'Mohon Maaf, Tolong berikan instruksi yang baik saja ya!'
+    elif m == 'PARAMETER_MISMATCH':
+        return 'Mohon Maaf, Parameter instruksi tidak sesuai!'    
     else:
         return m
     
