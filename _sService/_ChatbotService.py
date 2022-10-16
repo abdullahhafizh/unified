@@ -7,33 +7,27 @@ from _sSync import _Sync
 import sys
 import os
 
-SOCKET_IO = None
-# os.system('pip install python-socketio[client]')
-if _Common.IS_LINUX:
-    import socketio
-    SOCKET_IO = socketio.Client()
+import socketio
+SOCKET_IO = socketio.Client()
     
-    @SOCKET_IO.event
-    def connect():
-        LOGGER.info(('Connected, ID', SOCKET_IO.sid))
+@SOCKET_IO.event
+def connect():
+    LOGGER.info(('Connected, ID', SOCKET_IO.sid))
 
-    @SOCKET_IO.event
-    def connect_error(data):
-        LOGGER.info(('Connection Failed', str(data)))
+@SOCKET_IO.event
+def connect_error(data):
+    LOGGER.info(('Connection Failed', str(data)))
 
-    @SOCKET_IO.event
-    def disconnect():
-        # LOGGER.info(('Disconnected'))
-        print(('Disconnected'))
+@SOCKET_IO.event
+def disconnect():
+    # LOGGER.info(('Disconnected'))
+    print(('Disconnected'))
         
-    @SOCKET_IO.on('chat')
-    def on_chat(message):
-        print('pyt: Receive Message\n', str(message))
-        process_message(message)
-
+@SOCKET_IO.on('chat')
+def on_chat(message):
+    print('pyt: Receive Message\n', str(message))
+    process_message(message)
     
-if _Common.IS_WINDOWS:
-    from socketIO_client import SocketIO, BaseNamespace
 
 LOGGER = logging.getLogger()
 SCRIPT_PATH = sys.path[0] + '/_sService/'
@@ -43,20 +37,20 @@ BAD_WORDS_TEMPLATE = open(os.path.join(SCRIPT_PATH, 'bad-words.script'), 'r').re
 BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
 
-class WindowsNamespace(BaseNamespace):
+# class WindowsNamespace(BaseNamespace):
     
-    def on_connect(self):
-        print(('Connected, ID', SOCKET_IO.sid))
+#     def on_connect(self):
+#         print(('Connected, ID', SOCKET_IO.sid))
 
-    def on_connect_error(self, data):
-        print(('Connection Failed', str(data)))
+#     def on_connect_error(self, data):
+#         print(('Connection Failed', str(data)))
 
-    def on_disconnect(self):
-        print(('Disconnected'))
+#     def on_disconnect(self):
+#         print(('Disconnected'))
         
-    def on_chat(self, message):
-        print(('Received', str(message)))
-        process_message(message)
+#     def on_chat(self, message):
+#         print(('Received', str(message)))
+#         process_message(message)
 
 
 def start_initiation():
@@ -66,12 +60,7 @@ def start_initiation():
 def init():
     global SOCKET_IO
     try:
-        if _Common.IS_LINUX:
-            SOCKET_IO.connect(_Common.INTERRACTIVE_HOST)
-        if _Common.IS_WINDOWS:
-            host = _Common.INTERRACTIVE_HOST.split(':')[0].replace('ws://')
-            port = _Common.INTERRACTIVE_HOST.split(':')[2]
-            SOCKET_IO = SocketIO(host, int(port), WindowsNamespace)
+        SOCKET_IO.connect(_Common.INTERRACTIVE_HOST)
         SOCKET_IO.emit('create', {
             'room': _Common.TID,
             'name': 'VM ' + _Common.TID,
