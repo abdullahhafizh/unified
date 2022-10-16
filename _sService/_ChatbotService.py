@@ -118,7 +118,9 @@ def human_message(m):
     elif m == 'NOT_APPROPRIATE':
         return 'Mohon Maaf, Tolong berikan instruksi yang baik saja ya!'
     elif m == 'PARAMETER_MISMATCH':
-        return 'Mohon Maaf, Parameter instruksi tidak sesuai!'    
+        return 'Mohon Maaf, Parameter instruksi tidak sesuai!'  
+    elif '_' in m and len(m) < 100:
+        return 'Hasil eksekusi : ' + m
     else:
         return m
     
