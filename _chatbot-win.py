@@ -5,8 +5,8 @@ import sys, traceback
 from termcolor import colored
 
 import os
-os.system('pip install socketIO-client==0.5.7.2')
-os.system('pip install termcolor')
+# os.system('pip install socketIO-client==0.5.7.2')
+# os.system('pip install termcolor')
 
 from socketIO_client import SocketIO, BaseNamespace
 
