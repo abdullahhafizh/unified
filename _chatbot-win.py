@@ -91,10 +91,10 @@ def initiate():
 def main():
     global SOCKET_IO
     try:
-        print('Chat Host', INTERRACTIVE_HOST+'\n')
+        # print('Chat Host', INTERRACTIVE_HOST+'\n')
         host = INTERRACTIVE_HOST.replace('ws', 'http')
         port = INTERRACTIVE_HOST.split(':')[2]
-        SOCKET_IO = SocketIO(host, int(port))
+        SOCKET_IO = SocketIO(host, int(port), BaseNamespace)
         SOCKET_IO.emit('create', {
             'room': TID,
             'name': 'CONSOLE ' + TID,
