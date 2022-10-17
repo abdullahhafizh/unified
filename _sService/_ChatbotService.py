@@ -121,6 +121,8 @@ def human_message(m):
         return 'Mohon Maaf, Parameter instruksi tidak sesuai!'  
     elif '_' in m and len(m) < 100:
         return 'Hasil eksekusi : ' + m
+    elif '-' in m and len(m) < 100:
+        return 'Hasil eksekusi : ' + m
     else:
         return m
     
@@ -173,7 +175,7 @@ def response_message(message='Halo Mas Ganteng'):
 def build_hello_message():
     message = []
     message.append('Halo Tim, Mesin '+_Common.TID+' sudah siap untuk instruksi Kamu.')
-    message.append('Versi Aplikasi Mesin : '+_Common.VERSION)
+    message.append('Versi Aplikasi Mesin : <strong>'+_Common.VERSION+'</strong>')
     message.append('Instruksi yang dapat digunakan :')
     for command in _Sync.available_commands():
         message.append(' - <strong>'+command.upper()+'</strong>')
