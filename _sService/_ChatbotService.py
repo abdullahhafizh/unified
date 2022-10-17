@@ -38,7 +38,6 @@ BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
 
 # class WindowsNamespace(BaseNamespace):
-    
 #     def on_connect(self):
 #         print(('Connected, ID', SOCKET_IO.sid))
 
