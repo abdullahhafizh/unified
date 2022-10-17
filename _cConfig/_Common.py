@@ -19,13 +19,15 @@ IS_LINUX = platform.system() == 'Linux'
 IS_WINDOWS = not IS_LINUX
 
 SYSTEM_VERSION = sys.version.split(' ')[0]
-MINIMUM_SYSTEM_VERSION = (3*5*2)
+MINIMUM_SYSTEM_VERSION = (3*8*1)
 
 
 def validate_system_version():
     version_value = 1
     for v in SYSTEM_VERSION.split('.'):
+        if int(v) == 0: v = '1'
         version_value = (version_value * int(v))
+    LOGGER.debug(('SYSTEM_VERSION', MINIMUM_SYSTEM_VERSION, version_value))
     return version_value >= MINIMUM_SYSTEM_VERSION
 
 
