@@ -2202,7 +2202,7 @@ def check_mandiri_deposit_update_balance():
         LOGGER.warning((e))
         result = False
     finally:
-        _QPROX.c2c_balance_info()
+        _QPROX.mdr_c2c_balance_info()
         return result
 
 

@@ -91,10 +91,10 @@ def send_daily_summary():
     try:
         payload = _DAO.get_today_report(_Common.TID)
         sleep(1)
-        _QPROX.ka_info_mandiri()
+        _QPROX.mdr_c2c_balance_info()
         payload['mandiri_deposit_last_balance'] = _Common.MANDIRI_ACTIVE_WALLET
         sleep(1)
-        _QPROX.ka_info_bni()
+        _QPROX.bni_c2c_balance_info()
         payload['bni_deposit_last_balance'] = _Common.BNI_ACTIVE_WALLET
         # payload['last_stock_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
         payload['last_stock_cash'] = _Common.get_cash_activity()['total']

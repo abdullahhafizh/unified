@@ -29,3 +29,4 @@ sentry-sdk
 pymouse
 unix
 pyuserinput
+pytlv

@@ -207,7 +207,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
                 'bank_name': bank,
             }
             sleep(1)
-            ka_info_bni(slot=slot)
+            bni_c2c_balance_info(slot=slot)
             # get_card_info(slot=slot)
             # LOGGER.info((str(slot), bank, str(output)))
             samCardNo = _Common.BNI_SAM_1_NO if slot == 1 else _Common.BNI_SAM_2_NO
@@ -268,7 +268,7 @@ def get_card_info(slot=1, bank='BNI'):
                 'bank_id': '2',
                 'bank_name': bank,
             }
-            # ka_info_bni(slot=slot)
+            # bni_c2c_balance_info(slot=slot)
             if slot == 1:
                 _Common.BNI_SAM_1_NO = BNI_CARD_NO_SLOT_1 = output['card_no'] 
             if slot == 2:
@@ -353,7 +353,7 @@ def init_config():
                             # {"Result":"0000","Command":"027","Parameter":"51040188|5104010000750000|1","Response":"","ErrorDesc":"Sukses"}
                             if _response == 0:
                                 INIT_MANDIRI = True
-                                c2c_balance_info()
+                                mdr_c2c_balance_info()
                             else:
                                 LOGGER.warning(('FAILED_INIT_C2C_CONFIG', _response, _result))
                         else:
@@ -390,7 +390,7 @@ def init_config():
     finally:
         if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET < 0:
             sleep(INIT_DELAY_TIME)
-            ka_info_bni(slot=_Common.BNI_ACTIVE)
+            bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
         
 
 def start_recheck_bni_sam_balance():
@@ -399,7 +399,7 @@ def start_recheck_bni_sam_balance():
 
 def recheck_bni_sam_balance():
     if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET < 0:
-        ka_info_bni(slot=_Common.BNI_ACTIVE)
+        bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
         # sleep(1)
         # get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
 
@@ -748,7 +748,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
             # Renew C2C Deposit Balance Info
-            c2c_balance_info()
+            mdr_c2c_balance_info()
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
@@ -982,7 +982,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         if topup_result["Response"] == '83' or topup_result["Result"] in ["6208"]:
             LAST_C2C_APP_TYPE = '1'
         # validate if deposit balance is deducted
-        c2c_balance_info()
+        mdr_c2c_balance_info()
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
         LOGGER.info(('PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
         LOGGER.info(('LAST_BALANCE_DEPOSIT', last_deposit_balance ))
@@ -1122,7 +1122,7 @@ def get_bni_wallet_status(upload=True):
             attempt += 1
             get_card_info(slot=1)
             sleep(1)
-            ka_info_bni(slot=1)
+            bni_c2c_balance_info(slot=1)
             if attempt == 3 or _Common.BNI_SAM_1_WALLET != 0:
                 break
             sleep(1)
@@ -1132,7 +1132,7 @@ def get_bni_wallet_status(upload=True):
             _attempt += 1
             get_card_info(slot=2)
             sleep(1)
-            ka_info_bni(slot=2)
+            bni_c2c_balance_info(slot=2)
             if _attempt == 3 or _Common.BNI_SAM_1_WALLET != 0:
                 break
             sleep(1)
@@ -1360,7 +1360,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         topup_result = json.loads(_result)
         rc = topup_result.get('Result', 'FFFF')
         
-        ka_info_bni(_Common.BNI_ACTIVE)
+        bni_c2c_balance_info(_Common.BNI_ACTIVE)
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
@@ -1400,7 +1400,7 @@ def start_ka_info():
 MANDIRI_DEPOSIT_BALANCE = 0
 
 
-def c2c_balance_info():
+def mdr_c2c_balance_info():
     try:
         param = QPROX['BALANCE_C2C'] + '|'
         response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
@@ -1436,7 +1436,7 @@ def c2c_balance_info():
 def ka_info_mandiri(slot=None, caller=''):
     global MANDIRI_DEPOSIT_BALANCE
     if _Common.C2C_MODE is True:
-        c2c_balance_info()
+        mdr_c2c_balance_info()
         return
     if slot is None:
         slot = str(_Common.MANDIRI_ACTIVE)
@@ -1465,34 +1465,38 @@ def ka_info_mandiri(slot=None, caller=''):
 BNI_DEPOSIT_BALANCE = 0
 
 
-def ka_info_bni(slot=1):
+def bni_c2c_balance_info(slot=1):
     global BNI_DEPOSIT_BALANCE
     # Slot defined as sequence
-    _slot = slot - 1
-    param = QPROX['KA_INFO_BNI'] + '|' + str(_slot)
-    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-    LOGGER.debug((str(slot), result))
-    if response == 0 and (result is not None and result != ''):
-        BNI_DEPOSIT_BALANCE = int(result.split('|')[0])
-        if slot == 1:
-            _Common.BNI_SAM_1_WALLET = BNI_DEPOSIT_BALANCE
-            _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_1_WALLET
-        if slot == 2:
-            _Common.BNI_SAM_2_WALLET = BNI_DEPOSIT_BALANCE
-            _Common.BNI_ACTIVE_WALLET = _Common.BNI_SAM_2_WALLET
-        _DAO.create_today_report(_Common.TID)
-        _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(_Common.BNI_ACTIVE_WALLET))
-        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
-    else:
-        if slot == 1:
-            _Common.BNI_SAM_1_WALLET = -1
-            _Common.BNI_ACTIVE_WALLET = -1
-        if slot == 2:
-            _Common.BNI_SAM_2_WALLET = -1
-            _Common.BNI_ACTIVE_WALLET = -1
-        _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
-        _Common.online_logger(['KA INFO ERROR BNI', result, slot], 'device')
-        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
+    try:
+        _slot = slot - 1
+        param = QPROX['KA_INFO_BNI'] + '|' + str(_slot)
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+        LOGGER.debug((str(slot), result))
+        if response == 0 and (result is not None and result != ''):
+            BNI_DEPOSIT_BALANCE = int(result.split('|')[0])
+            _Common.BNI_ACTIVE_WALLET = BNI_DEPOSIT_BALANCE
+            if slot == 1:
+                _Common.BNI_SAM_1_WALLET = BNI_DEPOSIT_BALANCE
+            if slot == 2:
+                _Common.BNI_SAM_2_WALLET = BNI_DEPOSIT_BALANCE
+            _DAO.create_today_report(_Common.TID)
+            _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(_Common.BNI_ACTIVE_WALLET))
+            QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
+        else:
+            if slot == 1:
+                _Common.BNI_SAM_1_WALLET = -1
+                _Common.BNI_ACTIVE_WALLET = -1
+            if slot == 2:
+                _Common.BNI_SAM_2_WALLET = -1
+                _Common.BNI_ACTIVE_WALLET = -1
+            _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
+            # _Common.online_logger(['KA INFO ERROR BNI', result, slot], 'device')
+            QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
+    except Exception as e:
+        LOGGER.warning((e))
+    finally:
+        LOGGER.info((_Common.BNI_ACTIVE_WALLET))
 
 
 def start_create_online_info_mandiri():
