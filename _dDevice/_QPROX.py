@@ -379,6 +379,8 @@ def init_config():
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
                         INIT_BNI = True
+                        sleep(INIT_DELAY_TIME)
+                        bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
                         # get_bni_wallet_status()
                     else:
                         LOGGER.warning((BANK['BANK'], result))
@@ -388,7 +390,8 @@ def init_config():
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
     finally:
-        if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET < 0:
+        # Retry Read BNI SAM Balance
+        if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
             sleep(INIT_DELAY_TIME)
             bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
         
@@ -398,7 +401,7 @@ def start_recheck_bni_sam_balance():
 
 
 def recheck_bni_sam_balance():
-    if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET < 0:
+    if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
         bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
         # sleep(1)
         # get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
