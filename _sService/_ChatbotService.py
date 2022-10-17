@@ -72,6 +72,7 @@ def init():
         
     
 def process_message(message):
+    message = message.strip()
     if message.lower() in HELLO_WORDS:
         result = build_hello_message()
     elif message.lower() in BAD_WORDS:
@@ -90,7 +91,7 @@ def process_message(message):
         else:
             result = _Sync.handle_tasks([
                 {
-                    'taskName': message.replace(' ', '|').replace('\n', ''),
+                    'taskName': message.replace(' ', '|'),
                     'status': 'OPEN',
                     'createdAt': _Helper.time_string(),
                     'userId': SOCKET_IO.sid,
