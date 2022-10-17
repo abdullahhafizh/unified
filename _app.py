@@ -1191,9 +1191,10 @@ def startup_task():
             print("pyt: [INFO] Re/Binding VM Machine Into EDC...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Re/Binding VM Machine Into EDC...')
             _EDC.edc_mobile_start_binding_edc()
-        print("pyt: Syncing Ads Content...")
-        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Ads Content...')
-        sleep(1)
+        if not _Common.validate_system_version():
+            print("pyt: Syncing Ads Content...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Ads Content...')
+            sleep(1)
         _KioskService.start_define_ads(3)
         print("pyt: Reset Open Previous Pending Jobs...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Reset Open Previous Pending Jobs...')

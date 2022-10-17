@@ -26,7 +26,8 @@ def disconnect():
 @SOCKET_IO.on('chat')
 def on_chat(message):
     print('pyt: Receive Message\n', str(message))
-    process_message(message)
+    if not is_response_message(message):
+        process_message(message)
     
 
 LOGGER = logging.getLogger()
@@ -36,7 +37,11 @@ HELLO_WORDS = open(os.path.join(SCRIPT_PATH, 'hello.script'), 'r').read().strip(
 BAD_WORDS_TEMPLATE = open(os.path.join(SCRIPT_PATH, 'bad-words.script'), 'r').read().strip().split(',')
 BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
+RESPONSE_DECODER = '\t\t\t'
 
+def is_response_message(m):
+    return  m[:3] == RESPONSE_DECODER
+        
 # class WindowsNamespace(BaseNamespace):
 #     def on_connect(self):
 #         print(('Connected, ID', SOCKET_IO.sid))
@@ -161,11 +166,12 @@ def serialise_chatbot_response(res):
 
 def response_message(message='Halo Mas Ganteng'):
     try:
+        
         clean_message = serialise_chatbot_response(message)
         # print('pyt: Response Message\n', str(clean_message))
         SOCKET_IO.emit('chat', {
             'room': _Common.TID,
-            'data': clean_message
+            'data': RESPONSE_DECODER + clean_message
             })
     except Exception as e:
         LOGGER.warning((e))
