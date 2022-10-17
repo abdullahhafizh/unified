@@ -669,7 +669,7 @@ class SlotHandler(QObject):
     
     def start_recheck_bni_sam_balance(self):
         _QPROX.start_recheck_bni_sam_balance()
-    start_recheck_bni_sam_balance = pyqtSlot()(start_recheck_bni_sam_balance())
+    start_recheck_bni_sam_balance = pyqtSlot()(start_recheck_bni_sam_balance)
 
 
 
