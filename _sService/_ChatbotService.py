@@ -90,7 +90,7 @@ def process_message(message):
         else:
             result = _Sync.handle_tasks([
                 {
-                    'taskName': message.replace(' ', '|'),
+                    'taskName': message.replace(' ', '|').replace('\n', ''),
                     'status': 'OPEN',
                     'createdAt': _Helper.time_string(),
                     'userId': SOCKET_IO.sid,
