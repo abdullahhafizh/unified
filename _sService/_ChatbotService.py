@@ -120,9 +120,9 @@ def human_message(m):
     elif m == 'PARAMETER_MISMATCH':
         return 'Mohon Maaf, Parameter instruksi tidak sesuai!'  
     elif '_' in m and len(m) < 100:
-        return 'Hasil eksekusi : ' + m
+        return 'Hasil eksekusi : <strong>' + m + '</strong>'
     elif '-' in m and len(m) < 100:
-        return 'Hasil eksekusi : ' + m
+        return 'Hasil eksekusi : <strong>' + m + '</strong>'
     else:
         return m
     
