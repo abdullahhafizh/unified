@@ -78,7 +78,8 @@ INTERRACTIVE_HOST = _ConfigParser.get_set_value('GENERAL', 'interractive^host', 
 _HTTPAccess.HEADER = _HTTPAccess.get_header(TID, TERMINAL_TOKEN)
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
-INIT_DELAY_TIME = _ConfigParser.get_set_value('QPROX_NFC', 'init^delay^time', '5')
+INIT_DELAY_TIME = 2
+# _ConfigParser.get_set_value('QPROX_NFC', 'init^delay^time', '5')
 
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')

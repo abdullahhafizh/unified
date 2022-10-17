@@ -1161,9 +1161,9 @@ def startup_task():
             #     _SettlementService.start_daily_mandiri_c2c_settlement()    
         if _QPROX.INIT_BNI is True:
             sleep(.5)
-            print("pyt: Check BNI Deposit Balance...")
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance...')
-            _QPROX.start_recheck_bni_sam_balance()
+            # print("pyt: Check BNI Deposit Balance...")
+            # _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance...')
+            # _QPROX.start_recheck_bni_sam_balance()
             sleep(2)
             print("pyt: Triggering BNI Settlement Sync...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering BNI Settlement Sync...')

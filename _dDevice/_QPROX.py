@@ -387,6 +387,10 @@ def init_config():
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
+    finally:
+        if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET < 0:
+            sleep(INIT_DELAY_TIME)
+            ka_info_bni(slot=_Common.BNI_ACTIVE)
         
 
 def start_recheck_bni_sam_balance():
