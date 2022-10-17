@@ -535,6 +535,7 @@ def machine_summary():
         'cpu_temp': '33',
         'paper_printer': 'NORMAL',
         'gui_version': '1.0',
+        'system_version': _Common.SYSTEM_VERSION,
         'on_usage': 'IDLE',
         'edc_error': _Common.EDC_ERROR,
         'nfc_error': _Common.NFC_ERROR,
