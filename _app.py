@@ -35,10 +35,11 @@ from _sService import _AudioService
 from _mModule import _MainService
 import json
 import sentry_sdk
+
 if _Common.IS_WINDOWS:
     import wmi
 
-if _Common.IS_LINUX:
+if _Common.IS_LINUX or _Common.validate_system_version():
     from _sService import _ChatbotService
 
 
@@ -665,6 +666,11 @@ class SlotHandler(QObject):
     def start_startup_task(self):
         start_startup_task()
     start_startup_task = pyqtSlot()(start_startup_task) 
+    
+    def start_recheck_bni_sam_balance(self):
+        _QPROX.start_recheck_bni_sam_balance()
+    start_recheck_bni_sam_balance = pyqtSlot()(start_recheck_bni_sam_balance())
+
 
 
 def set_signal_handler():
@@ -1155,6 +1161,10 @@ def startup_task():
             #     _SettlementService.start_daily_mandiri_c2c_settlement()    
         if _QPROX.INIT_BNI is True:
             sleep(.5)
+            print("pyt: Check BNI Deposit Balance...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance...')
+            _QPROX.start_recheck_bni_sam_balance()
+            sleep(2)
             print("pyt: Triggering BNI Settlement Sync...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering BNI Settlement Sync...')
             _Sync.start_sync_settlement_bni()
@@ -1194,7 +1204,7 @@ def startup_task():
         sleep(1)
         _Sync.start_do_pending_request_job()
         # Dependency Issue In Windows (Must Be Python 3.5 and Up)
-        if _Common.IS_LINUX:
+        if _Common.IS_LINUX or _Common.validate_system_version():
             print("pyt: Init Chatbot Engine...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Initiate Chatbot Engine...')
             sleep(1)

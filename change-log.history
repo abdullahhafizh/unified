@@ -13,6 +13,8 @@
 - Add Chatbot Engine,
 - Refactor Network Module,
 - Add Maintenance Mode,
+- Init Engine Chat By OS or System Version,
+- Add Re-init BNI SAM Balance when failure from reboot,
 - ...
 
 

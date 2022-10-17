@@ -18,6 +18,15 @@ import subprocess
 IS_LINUX = platform.system() == 'Linux'
 IS_WINDOWS = not IS_LINUX
 
+SYSTEM_VERSION = sys.version.split(' ')[0]
+MINIMUM_SYSTEM_VERSION = (3*5*2)
+
+def validate_system_version():
+    version_value = 1
+    for v in SYSTEM_VERSION.split('.'):
+        version_value = version_value * int(v)
+    return version_value >= MINIMUM_SYSTEM_VERSION
+
 
 LOGGER = logging.getLogger()
 

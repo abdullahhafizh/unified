@@ -379,10 +379,6 @@ def init_config():
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
                         INIT_BNI = True
-                        sleep(3)
-                        ka_info_bni(slot=_Common.BNI_ACTIVE)
-                        sleep(3)
-                        get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
                         # get_bni_wallet_status()
                     else:
                         LOGGER.warning((BANK['BANK'], result))
@@ -391,6 +387,17 @@ def init_config():
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
+        
+
+def start_recheck_bni_sam_balance():
+    _Helper.get_thread().apply_async(recheck_bni_sam_balance,)
+
+
+def recheck_bni_sam_balance():
+    if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET < 0:
+        ka_info_bni(slot=_Common.BNI_ACTIVE)
+        # sleep(1)
+        # get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
 
 
 def start_debit_qprox(amount):
