@@ -1,9 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
-import QtMultimedia 5.0
-//import "screen.js" as SCREEN
-//import "config.js" as CONF
+//import QtMultimedia 5.0
 
 
 Rectangle{
@@ -35,7 +33,7 @@ Rectangle{
             counter = 0;
         }
         if(Stack.status==Stack.Deactivating){
-            player.stop()
+//            player.stop()
             while (media_files.length > 0) {
                 media_files.pop();
             }
@@ -90,16 +88,16 @@ Rectangle{
 
 
     function handle_general(result){
-        console.log("handle_general : ", result)
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log("handle_general : ", now, result);
         if (result=='') return
-        if (result=='REBOOT'){
-            loading_view.close()
-            notif_view.z = 99
-            notif_view.isSuccess = false
-            notif_view.closeButton = false
-            notif_view.show_text = "Dear User"
-            notif_view.show_detail = "This Kiosk Machine will be rebooted in 30 seconds."
-            notif_view.open()
+        if (result=='MAINTENANCE_MODE_ON'){
+            maintenance_mode.open();
+            return;
+        }
+        if (result=='MAINTENANCE_MODE_OFF'){
+            maintenance_mode.close();
+            return;
         }
     }
 
@@ -142,10 +140,10 @@ Rectangle{
         function setIndex(i){
             index = i;
             index %= media_files.length;
-            player.source = img_path_ + media_files[index];
-            console.log("Playing List (" + i + ") - " + player.source)
+//            player.source = img_path_ + media_files[index];
+//            console.log("Playing List (" + i + ") - " + player.source)
 //            _SLOT.post_tvc_log(media_files[index])
-            player.play();
+//            player.play();
             mediaOnPlaying = true;
         }
 
@@ -157,32 +155,32 @@ Rectangle{
             setIndex(index - 1);
         }
 
-        Connections {
-            target: player
-            onStopped: {
-                if (player.status == MediaPlayer.EndOfMedia) {
-                    if (index==media_files.length-1){ //Looping start from beginning
-                        media_mode.setIndex(0);
-                    } else{
-                        media_mode.next();
-                    }
-                }
-            }
-        }
+//        Connections {
+//            target: player
+//            onStopped: {
+//                if (player.status == MediaPlayer.EndOfMedia) {
+//                    if (index==media_files.length-1){ //Looping start from beginning
+//                        media_mode.setIndex(0);
+//                    } else{
+//                        media_mode.next();
+//                    }
+//                }
+//            }
+//        }
 
-        MediaPlayer {
-            id: player
-        }
+//        MediaPlayer {
+//            id: player
+//        }
 
-        VideoOutput {
-            anchors.fill: parent
-            source: player
-        }
+//        VideoOutput {
+//            anchors.fill: parent
+//            source: player
+//        }
 
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                player.stop();
+//                player.stop();
                 while (media_files.length > 0) {
                     media_files.pop();
                 }
@@ -225,7 +223,6 @@ Rectangle{
         visible: false
     }
 
-
     Rectangle{
         id: running_text_box
         width: parent.width
@@ -261,6 +258,11 @@ Rectangle{
                 loops: Animation.Infinite
             }
         }
+    }
+
+    MaintenanceMode{
+        id: maintenance_mode
+        z: 999999
     }
 
 }

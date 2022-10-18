@@ -192,9 +192,9 @@ Rectangle {
         HomePageEvent{}
     }
 
-    // Component {id: media_page
-    //     MediaPage{}
-    // }
+     Component {id: media_page
+         MediaPage{}
+     }
 
     Component {id: coming_soon
         ComingSoon{}

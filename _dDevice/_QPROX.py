@@ -389,22 +389,22 @@ def init_config():
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
-    finally:
-        # Retry Read BNI SAM Balance
-        if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
-            sleep(INIT_DELAY_TIME)
-            bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
+    # finally:
+    #     # Retry Read BNI SAM Balance
+    #     if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
+    #         sleep(INIT_DELAY_TIME)
+    #         bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
         
 
 def start_recheck_bni_sam_balance():
     _Helper.get_thread().apply_async(recheck_bni_sam_balance,)
 
-
+    
 def recheck_bni_sam_balance():
     if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
         bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
-        # sleep(1)
-        # get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
+        sleep(1)
+        get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')    
 
 
 def start_debit_qprox(amount):
