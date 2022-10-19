@@ -110,8 +110,10 @@ def process_message(message):
                 }
             ])
     # Serialise to Readable Response
+    print('pyt: Raw Message -> '+str(result))
     if MULTI_RESPONSE_DECODER in result:
         for res in result.split(MULTI_RESPONSE_DECODER):
+            print('pyt: Append Result -> '+str(res))
             response.append(res)
     else:
         response.append(result)
@@ -121,6 +123,7 @@ def process_message(message):
             result = human_message(res)
             response_message(result)
             sleep(1)
+        break
     
 
 def find_arguments(message):
