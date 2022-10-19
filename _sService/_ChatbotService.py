@@ -172,7 +172,8 @@ def get_news_message(keyword='transjakarta'):
     except Exception as e:
         print('pyt: '+str(e))
     finally:
-        return MULTI_RESPONSE_DECODER.join(news)
+        if len(news) == 0: return 'NOT_UNDERSTAND'
+        else : return MULTI_RESPONSE_DECODER.join(news)
 
 
 def human_message(m):
