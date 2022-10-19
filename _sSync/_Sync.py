@@ -725,8 +725,8 @@ def validate_command(t):
     try:
         for c in CHATBOT_COMMANDS:
             # Serialize Command Name
-            if c.split(' ') > 1: c = c.split(' ')[0]
-            if t.split('|') > 1: t = t.split('|')[0]
+            if len(c.split(' ')) > 1: c = c.split(' ')[0]
+            if len(t.split('|')) > 1: t = t.split('|')[0]
             if c == t:
                 return True
             if t in c:
