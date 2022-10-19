@@ -137,7 +137,7 @@ def find_arguments(message):
 def get_news_message():
     news = []
     try:
-        status, response = _HTTPAccess.post_to_url(
+        status, response = _HTTPAccess.get_from_url(
             url='https://newsapi.org/v2/top-headlines', 
             param={
                 'country': 'id',
