@@ -160,7 +160,7 @@ def get_news_message(keyword='mesin'):
     try:
         if NEWSAPI is None:
             NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
-        response = NEWSAPI.get_everything(q=selected_keyword)
+        response = NEWSAPI.get_everything(q=selected_keyword[0])
         if response.get('status') == 'ok':
             if int(response.get('totalResults', '0')) > 0:
                 if len(response.get('articles', [])) > 0:
