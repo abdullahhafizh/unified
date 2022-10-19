@@ -136,7 +136,13 @@ def find_arguments(message):
 
 def get_news_message():
     news = []
-    status, response = _HTTPAccess.get_from_url('https://newsapi.org/v2/top-headlines?country=id&apiKey=eda20002dbc44b2ab46205e783ad4354')
+    status, response = _HTTPAccess.post_to_url(
+        url='https://newsapi.org/v2/top-headlines', 
+        param={
+            'country': 'id',
+            'apiKey': 'eda20002dbc44b2ab46205e783ad4354'
+            }
+        )
     if status == 200:
         if response.get('status') == 'ok':
             if int(response.get('totalResults', '0')) > 0:
