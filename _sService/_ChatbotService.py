@@ -143,7 +143,7 @@ def get_news_message():
     try:
         if NEWSAPI is None:
             NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
-        response = NEWSAPI.get_top_headlines(country='id')
+        response = NEWSAPI.get_top_headlines(country='us')
         if response.get('status') == 'ok':
             if int(response.get('totalResults', '0')) > 0:
                 if len(response.get('articles', [])) > 0:
