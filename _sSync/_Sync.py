@@ -900,16 +900,15 @@ def handle_tasks(tasks):
                 result = 'MAINTENANCE_MODE_DISABLED'
             return update_task(task, result)
         elif task['taskName'] == 'CD_STATUS':
-            cd = _Common.CD_TYPES
-            error = {
-                'cd1': _Common.CD1_ERROR,
-                'cd2': _Common.CD2_ERROR,
-                'cd3': _Common.CD3_ERROR,
-                'cd4': _Common.CD4_ERROR,
-                'cd5': _Common.CD5_ERROR,
-                'cd6': _Common.CD6_ERROR,
-            }
-            result = cd.update(error)
+            result = _Common.CD_TYPES
+            result = result.update({
+                'cd1_error': _Common.CD1_ERROR,
+                'cd2_error': _Common.CD2_ERROR,
+                'cd3_error': _Common.CD3_ERROR,
+                'cd4_error': _Common.CD4_ERROR,
+                'cd5_error': _Common.CD5_ERROR,
+                'cd6_error': _Common.CD6_ERROR,
+            })
             return update_task(task, result)
         elif task['taskName'] == 'PRINTER_STATUS':
             result = {
