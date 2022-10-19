@@ -44,7 +44,7 @@ BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
 RESPONSE_DECODER = '\t\t\t'
 MULTI_RESPONSE_DECODER = '[[|MR|]]'
-TODAYS_NEWS_MESSAGE = ['berita_hari_ini', 'todays_news', 'news_feed', 'tell_me_story', 'story_me']
+TODAYS_NEWS_MESSAGE = ['berita_hari_ini', 'todays_news', 'news_feed', 'tell_me_story', 'story_me', 'tell_me_about', 'ceritakan', 'tell_me', 'what_about', 'how_is', 'berita', 'berita_tentang']
 
 def is_response_message(m):
     return  m[:3] == RESPONSE_DECODER
@@ -96,14 +96,14 @@ def process_message(message):
         if len(arguments) > 2:
             result = 'PARAMETER_MISMATCH'
             for arg in arguments:
+                if arg.lower() in TODAYS_NEWS_MESSAGE :
+                    result = get_news_message(message)
+                    break
                 if arg.lower() in HELLO_WORDS:
                     result = build_hello_message()
                     break
-                elif arg.lower() in BAD_WORDS:
+                if arg.lower() in BAD_WORDS:
                     result = 'NOT_APPROPRIATE'
-                    break
-                elif arg.lower() in TODAYS_NEWS_MESSAGE :
-                    result = get_news_message(arguments[1].lower())
                     break
         else:
             result = _Sync.handle_tasks([
@@ -137,12 +137,14 @@ def find_arguments(message):
         arguments = message.split(delimit)
         if len(arguments) > 1:
             break
+    print('pyt: Args Len '+str(len(arguments)))
     return arguments
 
 
 def get_news_message(keyword='mesin'):
     global NEWSAPI
     news = []
+    keyword = keyword.split(' ')[-1:]
     try:
         if NEWSAPI is None:
             NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
