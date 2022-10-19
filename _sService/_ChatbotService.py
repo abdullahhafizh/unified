@@ -138,11 +138,12 @@ def get_news_message():
     news = []
     try:
         status, response = _HTTPAccess.get_from_url(
-            url='https://newsapi.org/v2/top-headlines', 
+            url='https://newsapi.org/v2/top-headlines?apiKey=eda20002dbc44b2ab46205e783ad4354', 
             param={
                 'country': 'id',
                 'apiKey': 'eda20002dbc44b2ab46205e783ad4354'
-                }
+                },
+            header={'X-Api-Key': 'eda20002dbc44b2ab46205e783ad4354'}
             )
         print('pyt: '+str(status))
         if status == 200:
