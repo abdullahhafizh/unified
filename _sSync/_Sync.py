@@ -762,207 +762,213 @@ def handle_tasks(tasks):
                 return 'NOT_SUPPORTED'
         # Handling Commands
         print('pyt: EXECUTING TASK', task['taskName'])
-        if task['taskName'] == 'REBOOT':
-            if _Common.IDLE_MODE is True:
+        try:
+            if task['taskName'] == 'REBOOT':
+                if _Common.IDLE_MODE is True:
+                    result = 'EXECUTED_INTO_MACHINE'
+                    _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
+                    update_task(task, result)
+                    sleep(30)
+                    _KioskService.execute_command('shutdown -r -f -t 0')
+                else:
+                    result = 'FAILED_EXECUTED_VM_ON_USED'
+                    return update_task(task, result)
+            elif task['taskName'] == 'FORCE_REBOOT':
                 result = 'EXECUTED_INTO_MACHINE'
                 _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
                 update_task(task, result)
                 sleep(30)
                 _KioskService.execute_command('shutdown -r -f -t 0')
-            else:
+            elif task['taskName'] == 'RESET_PAPER_ROLL':
+                result = _Common.reset_paper_roll()
+                return update_task(task, result)
+            elif 'REMOVE_FAILED_TRX|' in task['taskName']:
+                trx_id = task['taskName'].split('|')[1]
+                result = _KioskService.remove_failed_trx(trx_id)
+                return update_task(task, result)
+            elif task['taskName'] == 'EDC_CLEAR_BATCH':
+                result = _EDC.void_settlement_data()
+                return update_task(task, result)
+            elif task['taskName'] == 'EDC_SETTLEMENT':
+                result = _EDC.backend_edc_settlement()
+                return update_task(task, result)
+            elif task['taskName'] == 'RESET_DB':
+                result = _KioskService.reset_db_record()
+                return update_task(task, result)
+            elif 'DO_TOPUP_BNI_' in task['taskName']:
+                _slot = int(task['taskName'][-1])
+                result = _TopupService.do_topup_deposit_bni(slot=_slot, force=True)
+                return update_task(task, result)
+            elif task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
                 result = 'FAILED_EXECUTED_VM_ON_USED'
+                if _Common.IDLE_MODE is True:
+                    _SettlementService.start_reset_mandiri_settlement()
+                    result = 'TRIGGERED_INTO_SYSTEM'
                 return update_task(task, result)
-        elif task['taskName'] == 'FORCE_REBOOT':
-            result = 'EXECUTED_INTO_MACHINE'
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
-            update_task(task, result)
-            sleep(30)
-            _KioskService.execute_command('shutdown -r -f -t 0')
-        elif task['taskName'] == 'RESET_PAPER_ROLL':
-            result = _Common.reset_paper_roll()
-            return update_task(task, result)
-        elif 'REMOVE_FAILED_TRX|' in task['taskName']:
-            trx_id = task['taskName'].split('|')[1]
-            result = _KioskService.remove_failed_trx(trx_id)
-            return update_task(task, result)
-        elif task['taskName'] == 'EDC_CLEAR_BATCH':
-            result = _EDC.void_settlement_data()
-            return update_task(task, result)
-        elif task['taskName'] == 'EDC_SETTLEMENT':
-            result = _EDC.backend_edc_settlement()
-            return update_task(task, result)
-        elif task['taskName'] == 'RESET_DB':
-            result = _KioskService.reset_db_record()
-            return update_task(task, result)
-        elif 'DO_TOPUP_BNI_' in task['taskName']:
-            _slot = int(task['taskName'][-1])
-            result = _TopupService.do_topup_deposit_bni(slot=_slot, force=True)
-            return update_task(task, result)
-        elif task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
-            result = 'FAILED_EXECUTED_VM_ON_USED'
-            if _Common.IDLE_MODE is True:
-                _SettlementService.start_reset_mandiri_settlement()
+            elif 'SAM_TO_SLOT_' in task['taskName']:
+                _slot = task['taskName'][-1]
+                result = _Common.sam_to_slot(_slot)
+                return update_task(task, result)
+            elif task['taskName'] == 'APP_UPDATE':
+                result = _UpdateAppService.start_do_update()
+                update_task(task, result)
+                if result == 'APP_UPDATE|SUCCESS':
+                    _KioskService.execute_command('shutdown -r -f -t 0')
+            elif task['taskName'] == 'RESET_STOCK_PRODUCT':
+                _DAO.clear_stock_product()
+                return update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
+            elif task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
+                result = sync_product_stock()
+                return update_task(task, result)
+            elif task['taskName'] == 'UPDATE_KIOSK':
+                update_task(task)
+                _url = _Common.BACKEND_URL + 'get/setting'
+                LOGGER.info((_url, str(SETTING_PARAM)))
+                s, r = _HTTPAccess.post_to_url(url=_url, param=SETTING_PARAM)
+                # if s == 200 and r['result'] == 'OK':
+                _KioskService.update_kiosk_status(s, r)
+            elif 'RESET_OFFLINE_USER|' in task['taskName']:
+                __hash = task['taskName'].split('|')[1]
+                result = _UserService.reset_offline_user(__hash)
+                return update_task(task, result)
+            elif 'HOUSE_KEEPING_' in task['taskName']:
+                age_month = int(task['taskName'][-1])
+                result = _KioskService.house_keeping(age_month)
+                return update_task(task, result)
+            elif task['taskName'] == 'REFRESH_PPOB_PRODUCT':
                 result = 'TRIGGERED_INTO_SYSTEM'
-            return update_task(task, result)
-        elif 'SAM_TO_SLOT_' in task['taskName']:
-            _slot = task['taskName'][-1]
-            result = _Common.sam_to_slot(_slot)
-            return update_task(task, result)
-        elif task['taskName'] == 'APP_UPDATE':
-            result = _UpdateAppService.start_do_update()
-            update_task(task, result)
-            if result == 'APP_UPDATE|SUCCESS':
-                _KioskService.execute_command('shutdown -r -f -t 0')
-        elif task['taskName'] == 'RESET_STOCK_PRODUCT':
-            _DAO.clear_stock_product()
-            return update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
-        elif task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
-            result = sync_product_stock()
-            return update_task(task, result)
-        elif task['taskName'] == 'UPDATE_KIOSK':
-            update_task(task)
-            _url = _Common.BACKEND_URL + 'get/setting'
-            LOGGER.info((_url, str(SETTING_PARAM)))
-            s, r = _HTTPAccess.post_to_url(url=_url, param=SETTING_PARAM)
-            # if s == 200 and r['result'] == 'OK':
-            _KioskService.update_kiosk_status(s, r)
-        elif 'RESET_OFFLINE_USER|' in task['taskName']:
-            __hash = task['taskName'].split('|')[1]
-            result = _UserService.reset_offline_user(__hash)
-            return update_task(task, result)
-        elif 'HOUSE_KEEPING_' in task['taskName']:
-            age_month = int(task['taskName'][-1])
-            result = _KioskService.house_keeping(age_month)
-            return update_task(task, result)
-        elif task['taskName'] == 'REFRESH_PPOB_PRODUCT':
-            result = 'TRIGGERED_INTO_SYSTEM'
-            _Common.log_to_temp_config('last^get^ppob', '0')
-            return update_task(task, result)
-        # New Task Here, Start Version 14.0.A-GLOBAL
-        elif 'CONSOLE|' in task['taskName']:
-            command = task['taskName'].split('|')[1]
-            result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-            return update_task(task, result)
-        elif task['taskName'] == 'UPDATE_BALANCE_MANDIRI':
-            result = _TopupService.start_deposit_update_balance('MANDIRI')
-            return update_task(task, result)
-        elif task['taskName'] in ['UPDATE_BALANCE_BNI', 'TRIGGER_TOPUP_1_BNI']:
-            result = _TopupService.start_deposit_update_balance('BNI')
-            return update_task(task, result)
-        elif task['taskName'] == 'TRIGGER_TOPUP_1_MANDIRI':
-            result = _TopupService.do_topup_deposit_mandiri(override_amount=1)
-            return update_task(task, result)
-        elif task['taskName'] == 'TOPUP_DEPOSIT_MANDIRI':
-            result = _TopupService.do_topup_deposit_mandiri()
-            return update_task(task, result)
-        elif task['taskName'] == 'TOPUP_DEPOSIT_BNI':
-            result = _TopupService.do_topup_deposit_bni(slot=1)
-            return update_task(task, result)
-        elif task['taskName'] == 'RELEASE_BNI_DEPOSIT_LOCK':
-            _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
-            result = 'SUCCESS_REMOVE_FILE'
-            return update_task(task, result)
-        elif 'FORCE_LAST_STOCK' in task['taskName']:
-            # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
-            result = 'INVALID_ARGUMENTS'
-            if len(task['taskName'].split('|')) >= 3:
-                slot = task['taskName'].split('|')[1].replace('10', '')
-                stock = task['taskName'].split('|')[2]
-                result = 'TRIGGERED_INTO_SYSTEM'
-                _Common.log_to_temp_config('stock^opname^slot^'+slot, stock)
-                # Add Clear Data Product Stock -> In Order To Force Sync Card
-                _DAO.custom_update("UPDATE ProductStock SET stock = 0")
-            return update_task(task, result)
-        # Add Other Command Identifier
-        # elif task['taskName'] == 'REPRINT_LAST_TRX':
-        #     result = _SalePrintTool.reprint_last_receipt('trx')
-            return update_task(task, result)
-        elif task['taskName'] == 'CHECK_TIME':
-            result = _Helper.time_string()
-            return update_task(task, result)
-        elif task['taskName'] == 'TERMINAL_STATUS':
-            result = _KioskService.machine_summary()
-            return update_task(task, result)
-        elif task['taskName'] == 'MAINTENANCE_ON':
-            if _Common.MAINTENANCE_MODE:
-                result = 'MAINTENANCE_MODE_STILL_ACTIVE'
-            else:
-                _Common.MAINTENANCE_MODE = True
-                _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_ON')
-                result = 'MAINTENANCE_MODE_ACTIVATED'
-            return update_task(task, result)
-        elif task['taskName'] == 'MAINTENANCE_OFF':
-            if not _Common.MAINTENANCE_MODE:
-                result = 'MAINTENANCE_MODE_NOT_ACTIVE'
-            else:
-                _Common.MAINTENANCE_MODE = False
-                _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_OFF')
-                result = 'MAINTENANCE_MODE_DISABLED'
-            return update_task(task, result)
-        elif task['taskName'] == 'CD_STATUS':
-            result = _Common.CD_TYPES
-            result = result.update({
-                'cd1_error': _Common.CD1_ERROR,
-                'cd2_error': _Common.CD2_ERROR,
-                'cd3_error': _Common.CD3_ERROR,
-                'cd4_error': _Common.CD4_ERROR,
-                'cd5_error': _Common.CD5_ERROR,
-                'cd6_error': _Common.CD6_ERROR,
-            })
-            return update_task(task, result)
-        elif task['taskName'] == 'PRINTER_STATUS':
-            result = {
-                'type': _Common.PRINTER_TYPE,
-                'paper_type': _Common.PRINTER_PAPER_TYPE,
-                'error': _Common.PRINTER_ERROR,
-                'status': _Common.get_printer_status(),
-                'paper_count': _Common.RECEIPT_PRINT_COUNT,
-                'paper_threshold': _Common.RECEIPT_PRINT_LIMIT,
-            }
-            return update_task(task, result)
-        elif task['taskName'] == 'BILL_STATUS':
-            result = {
-                'type': _Common.BILL_TYPE,
-                'port': _Common.BILL_PORT,
-                'error': _Common.BILL_ERROR,
-                'status': _Common.check_bill_status(),
-                'cashbox_count': _Common.get_cash_activity(),
-                'last_money_inserted': _Common.load_from_custom_config('BILL', 'last^money^inserted'),
-            }
-            return update_task(task, result)
-        elif task['taskName'] == 'TOPUP_AMOUNT_SETTING':
-            result = _Common.TOPUP_AMOUNT_SETTING
-            return update_task(task, result)
-        elif task['taskName'] == 'FEATURE_SETTING':
-            result = _Common.FEATURE_SETTING
-            return update_task(task, result)
-        elif task['taskName'] == 'PAYMENT_SETTING':
-            result = _Common.PAYMENT_SETTING
-            return update_task(task, result)
-        elif task['taskName'] == 'THEME_SETTING':
-            result = _Common.THEME_SETTING
-            return update_task(task, result)
-        elif 'TRX_STATUS|' in task['taskName']:
-            trx_id = task['taskName'].split('|')[1]
-            trx_success = _DAO.custom_query('SELECT * FROM TransactionsNew WHERE productId = "'+trx_id+'"')
-            if len(trx_success) > 0:
-                result = trx_success[0]
-                result['trx_status'] = 'SUCCESS'
+                _Common.log_to_temp_config('last^get^ppob', '0')
                 return update_task(task, result)
-            trx_failed = _DAO.custom_query('SELECT * FROM TransactionFailure WHERE trxid = "'+trx_id+'"')
-            if len(trx_failed) > 0:
-                result = trx_failed[0]
-                result['trx_status'] = 'PENDING'
+            # New Task Here, Start Version 14.0.A-GLOBAL
+            elif 'CONSOLE|' in task['taskName']:
+                command = task['taskName'].split('|')[1]
+                result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
                 return update_task(task, result)
-            result = 'TRX_NOT_FOUND'
-            return update_task(task, result)
-        elif 'CASH_STATUS|' in task['taskName']:
-            trx_id = task['taskName'].split('|')[1]
-            result = _Common.get_cash_activity(keyword=trx_id)
-            return update_task(task, result)
-        
-        else:
-            result = 'NOT_UNDERSTAND'
+            elif task['taskName'] == 'UPDATE_BALANCE_MANDIRI':
+                result = _TopupService.start_deposit_update_balance('MANDIRI')
+                return update_task(task, result)
+            elif task['taskName'] in ['UPDATE_BALANCE_BNI', 'TRIGGER_TOPUP_1_BNI']:
+                result = _TopupService.start_deposit_update_balance('BNI')
+                return update_task(task, result)
+            elif task['taskName'] == 'TRIGGER_TOPUP_1_MANDIRI':
+                result = _TopupService.do_topup_deposit_mandiri(override_amount=1)
+                return update_task(task, result)
+            elif task['taskName'] == 'TOPUP_DEPOSIT_MANDIRI':
+                result = _TopupService.do_topup_deposit_mandiri()
+                return update_task(task, result)
+            elif task['taskName'] == 'TOPUP_DEPOSIT_BNI':
+                result = _TopupService.do_topup_deposit_bni(slot=1)
+                return update_task(task, result)
+            elif task['taskName'] == 'RELEASE_BNI_DEPOSIT_LOCK':
+                _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
+                result = 'SUCCESS_REMOVE_FILE'
+                return update_task(task, result)
+            elif 'FORCE_LAST_STOCK' in task['taskName']:
+                # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
+                result = 'INVALID_ARGUMENTS'
+                if len(task['taskName'].split('|')) >= 3:
+                    slot = task['taskName'].split('|')[1].replace('10', '')
+                    stock = task['taskName'].split('|')[2]
+                    result = 'TRIGGERED_INTO_SYSTEM'
+                    _Common.log_to_temp_config('stock^opname^slot^'+slot, stock)
+                    # Add Clear Data Product Stock -> In Order To Force Sync Card
+                    _DAO.custom_update("UPDATE ProductStock SET stock = 0")
+                return update_task(task, result)
+            # Add Other Command Identifier
+            # elif task['taskName'] == 'REPRINT_LAST_TRX':
+            #     result = _SalePrintTool.reprint_last_receipt('trx')
+                return update_task(task, result)
+            elif task['taskName'] == 'CHECK_TIME':
+                result = _Helper.time_string()
+                return update_task(task, result)
+            elif task['taskName'] == 'TERMINAL_STATUS':
+                result = _KioskService.machine_summary()
+                return update_task(task, result)
+            elif task['taskName'] == 'MAINTENANCE_ON':
+                if _Common.MAINTENANCE_MODE:
+                    result = 'MAINTENANCE_MODE_STILL_ACTIVE'
+                else:
+                    _Common.MAINTENANCE_MODE = True
+                    _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_ON')
+                    result = 'MAINTENANCE_MODE_ACTIVATED'
+                return update_task(task, result)
+            elif task['taskName'] == 'MAINTENANCE_OFF':
+                if not _Common.MAINTENANCE_MODE:
+                    result = 'MAINTENANCE_MODE_NOT_ACTIVE'
+                else:
+                    _Common.MAINTENANCE_MODE = False
+                    _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_OFF')
+                    result = 'MAINTENANCE_MODE_DISABLED'
+                return update_task(task, result)
+            elif task['taskName'] == 'CD_STATUS':
+                result = _Common.CD_TYPES
+                result = result.update({
+                    'cd1_error': _Common.CD1_ERROR,
+                    'cd2_error': _Common.CD2_ERROR,
+                    'cd3_error': _Common.CD3_ERROR,
+                    'cd4_error': _Common.CD4_ERROR,
+                    'cd5_error': _Common.CD5_ERROR,
+                    'cd6_error': _Common.CD6_ERROR,
+                })
+                return update_task(task, result)
+            elif task['taskName'] == 'PRINTER_STATUS':
+                result = {
+                    'type': _Common.PRINTER_TYPE,
+                    'paper_type': _Common.PRINTER_PAPER_TYPE,
+                    'error': _Common.PRINTER_ERROR,
+                    'status': _Common.get_printer_status(),
+                    'paper_count': _Common.RECEIPT_PRINT_COUNT,
+                    'paper_threshold': _Common.RECEIPT_PRINT_LIMIT,
+                }
+                return update_task(task, result)
+            elif task['taskName'] == 'BILL_STATUS':
+                result = {
+                    'type': _Common.BILL_TYPE,
+                    'port': _Common.BILL_PORT,
+                    'error': _Common.BILL_ERROR,
+                    'status': _Common.check_bill_status(),
+                    'cashbox_count': _Common.get_cash_activity(),
+                    'last_money_inserted': _Common.load_from_custom_config('BILL', 'last^money^inserted'),
+                }
+                return update_task(task, result)
+            elif task['taskName'] == 'TOPUP_AMOUNT_SETTING':
+                result = _Common.TOPUP_AMOUNT_SETTING
+                return update_task(task, result)
+            elif task['taskName'] == 'FEATURE_SETTING':
+                result = _Common.FEATURE_SETTING
+                return update_task(task, result)
+            elif task['taskName'] == 'PAYMENT_SETTING':
+                result = _Common.PAYMENT_SETTING
+                return update_task(task, result)
+            elif task['taskName'] == 'THEME_SETTING':
+                result = _Common.THEME_SETTING
+                return update_task(task, result)
+            elif 'TRX_STATUS|' in task['taskName']:
+                trx_id = task['taskName'].split('|')[1]
+                trx_success = _DAO.custom_query('SELECT * FROM TransactionsNew WHERE productId = "'+trx_id+'"')
+                if len(trx_success) > 0:
+                    result = trx_success[0]
+                    result['trx_status'] = 'SUCCESS'
+                    return update_task(task, result)
+                trx_failed = _DAO.custom_query('SELECT * FROM TransactionFailure WHERE trxid = "'+trx_id+'"')
+                if len(trx_failed) > 0:
+                    result = trx_failed[0]
+                    result['trx_status'] = 'PENDING'
+                    return update_task(task, result)
+                result = 'TRX_NOT_FOUND'
+                return update_task(task, result)
+            elif 'CASH_STATUS|' in task['taskName']:
+                trx_id = task['taskName'].split('|')[1]
+                result = _Common.get_cash_activity(keyword=trx_id)
+                return update_task(task, result)
+            
+            # Add Intruction Above
+            else:
+                result = 'NOT_UNDERSTAND'
+                return update_task(task, result)
+        except Exception as e:
+            LOGGER.warning((e))
+            result = 'ERROR_EXECUTION'
             return update_task(task, result)
 
 
