@@ -99,8 +99,11 @@ def process_message(message):
                 if arg.lower() in HELLO_WORDS:
                     result = build_hello_message()
                     break
-                if arg.lower() in BAD_WORDS:
+                elif arg.lower() in BAD_WORDS:
                     result = 'NOT_APPROPRIATE'
+                    break
+                elif arg.lower() in TODAYS_NEWS_MESSAGE :
+                    result = get_news_message(arguments[1].lower())
                     break
         else:
             result = _Sync.handle_tasks([
@@ -113,10 +116,10 @@ def process_message(message):
                 }
             ])
     # Serialise to Readable Response
-    print('pyt: Raw Message -> '+str(result))
+    # print('pyt: Raw Message -> '+str(result))
     if MULTI_RESPONSE_DECODER in result:
         for res in result.split(MULTI_RESPONSE_DECODER):
-            print('pyt: Append Result -> '+str(res))
+            # print('pyt: Append Result -> '+str(res))
             response.append(res)
     else:
         response.append(result)
@@ -137,13 +140,13 @@ def find_arguments(message):
     return arguments
 
 
-def get_news_message():
+def get_news_message(keyword='mesin'):
     global NEWSAPI
     news = []
     try:
         if NEWSAPI is None:
             NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
-        response = NEWSAPI.get_top_headlines(country='us')
+        response = NEWSAPI.get_everything(q=keyword)
         if response.get('status') == 'ok':
             if int(response.get('totalResults', '0')) > 0:
                 if len(response.get('articles', [])) > 0:
