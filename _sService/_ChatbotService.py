@@ -136,20 +136,25 @@ def find_arguments(message):
 
 def get_news_message():
     news = []
-    status, response = _HTTPAccess.post_to_url(
-        url='https://newsapi.org/v2/top-headlines', 
-        param={
-            'country': 'id',
-            'apiKey': 'eda20002dbc44b2ab46205e783ad4354'
-            }
-        )
-    if status == 200:
-        if response.get('status') == 'ok':
-            if int(response.get('totalResults', '0')) > 0:
-                if len(response.get('articles', [])) > 0:
-                    for new in response.get('articles', []):
-                        news.append(new['title'])
-    return MULTI_RESPONSE_DECODER.join(news)
+    try:
+        status, response = _HTTPAccess.post_to_url(
+            url='https://newsapi.org/v2/top-headlines', 
+            param={
+                'country': 'id',
+                'apiKey': 'eda20002dbc44b2ab46205e783ad4354'
+                }
+            )
+        print('pyt: '+str(status))
+        if status == 200:
+            if response.get('status') == 'ok':
+                if int(response.get('totalResults', '0')) > 0:
+                    if len(response.get('articles', [])) > 0:
+                        for new in response.get('articles', []):
+                            news.append(new['title'])
+    except Exception as e:
+        print('pyt: '+str(e))
+    finally:
+        return MULTI_RESPONSE_DECODER.join(news)
 
 
 def human_message(m):
