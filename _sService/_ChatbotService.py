@@ -116,7 +116,9 @@ def find_arguments(message):
 
 
 def human_message(m):
-    if m == 'NOT_SUPPORTED':
+    if m is None:
+        return 'Terjadi kesalahan dalam eksekusi instruksi'
+    elif m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
         return 'Mohon Maaf, Instruksi tidak dimengerti mesin'

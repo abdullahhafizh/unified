@@ -667,7 +667,7 @@ def sync_pending_refund():
 
 CHATBOT_COMMANDS = [
     'RESET_PAPER_ROLL',
-    'REMOVE_FAILED_TRX <TRX_ID>',
+    'REMOVE_FAILED_TRX [TRX_ID]',
     # 'EDC_CLEAR_BATCH',
     # 'EDC_SETTLEMENT',
     # 'RESET_DB',
@@ -695,8 +695,8 @@ CHATBOT_COMMANDS = [
     'CD_STATUS',
     'PRINTER_STATUS',
     'BILL_STATUS',
-    'TRX_STATUS <TRX_ID>',
-    'CASH_STATUS <TRX_ID>',
+    'TRX_STATUS [TRX_ID]',
+    'CASH_STATUS [TRX_ID]',
     'TOPUP_AMOUNT_SETTING',
     'FEATURE_SETTING',
     'PAYMENT_SETTING',
@@ -901,15 +901,38 @@ def handle_tasks(tasks):
                     result = 'MAINTENANCE_MODE_DISABLED'
                 return update_task(task, result)
             elif task['taskName'] == 'CD_STATUS':
-                result = _Common.CD_TYPES
-                result = result.update({
-                    'cd1_error': _Common.CD1_ERROR,
-                    'cd2_error': _Common.CD2_ERROR,
-                    'cd3_error': _Common.CD3_ERROR,
-                    'cd4_error': _Common.CD4_ERROR,
-                    'cd5_error': _Common.CD5_ERROR,
-                    'cd6_error': _Common.CD6_ERROR,
-                })
+                result = {
+                    'cd1': {
+                        'port': _Common.CD_PORT1,
+                        'type': _Common.CD_PORT1_TYPE,
+                        'error': _Common.CD1_ERROR
+                        },
+                    'cd2': {
+                        'port': _Common.CD_PORT2,
+                        'type': _Common.CD_PORT2_TYPE,
+                        'error': _Common.CD2_ERROR
+                        },
+                    'cd3': {
+                        'port': _Common.CD_PORT3,
+                        'type': _Common.CD_PORT3_TYPE,
+                        'error': _Common.CD3_ERROR
+                        },
+                    'cd4': {
+                        'port': _Common.CD_PORT4,
+                        'type': _Common.CD_PORT4_TYPE,
+                        'error': _Common.CD4_ERROR
+                        },
+                    'cd5': {
+                        'port': _Common.CD_PORT5,
+                        'type': _Common.CD_PORT5_TYPE,
+                        'error': _Common.CD5_ERROR
+                        },
+                    'cd6': {
+                        'port': _Common.CD_PORT6,
+                        'type': _Common.CD_PORT6_TYPE,
+                        'error': _Common.CD6_ERROR
+                        },
+                }
                 return update_task(task, result)
             elif task['taskName'] == 'PRINTER_STATUS':
                 result = {
