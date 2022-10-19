@@ -122,6 +122,8 @@ def human_message(m):
         return 'Mohon Maaf, Instruksi tidak dimengerti mesin'
     elif m == 'NOT_APPROPRIATE':
         return 'Mohon Maaf, Tolong berikan instruksi yang baik saja ya!'
+    elif m == 'TRX_NOT_FOUND':
+        return 'Mohon Maaf, Data Transaksi tersebut tidak ditemukan di mesin ini'  
     elif m == 'PARAMETER_MISMATCH':
         return 'Mohon Maaf, Parameter instruksi tidak sesuai!'  
     elif '_' in m and len(m) < 100:

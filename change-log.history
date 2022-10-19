@@ -1,3 +1,9 @@
+15.2.2-GLOBAL:
+- Enhance Payment Time (3 Times Multiply From Default),
+- Add New Interractive Commands,
+- Enhance Version Validation,
+- ...
+
 15.2.1-GLOBAL:
 - Add Printer Capability in Linux OS,
 - Add MEI Bill Validator Type,
@@ -16,7 +22,6 @@
 - Init Engine Chat By OS or System Version,
 - Add Re-init BNI SAM Balance when failure from reboot,
 - ...
-
 
 15.1.0-GLOBAL:
 - Adjust Wording notification before topup,

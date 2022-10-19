@@ -674,8 +674,8 @@ CHATBOT_COMMANDS = [
     # 'DO_TOPUP_BNI_<SLOT>',
     # 'DO_SETTLEMENT_MANDIRI',
     # 'SAM_TO_SLOT_<SLOT>',
-    'RESET_STOCK_PRODUCT',
-    'UPDATE_STOCK_PRODUCT', 
+    # 'RESET_STOCK_PRODUCT',
+    # 'UPDATE_STOCK_PRODUCT', 
     # 'REMOTE_UPDATE_STOCK',
     # 'RESET_OFFLINE_USER',
     # 'HOUSE_KEEPING_<COUNT_MONTH>',
@@ -690,11 +690,28 @@ CHATBOT_COMMANDS = [
     # 'REPRINT_LAST_TRX',
     'CHECK_TIME',
     'TERMINAL_STATUS',
-    # 'STATUS_TRX <TRX_ID>', #TODO
     'MAINTENANCE_ON',
     'MAINTENANCE_OFF',
+    'CD_STATUS',
+    'PRINTER_STATUS',
+    'BILL_STATUS',
+    'TRX_STATUS <TRX_ID>',
+    'CASH_STATUS <TRX_ID>',
+    'TOPUP_AMOUNT_SETTING',
+    'FEATURE_SETTING',
+    'PAYMENT_SETTING',
+    # 'REFUND_SETTING',  
+    'THEME_SETTING',
+    # 'ADS_SETTING',
     
 ]
+
+# TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
+# FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+# PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+# REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
+# THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+# ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 
 # Call Here, Not For Iterable
 CHATBOT_COMMANDS.sort()
@@ -706,6 +723,9 @@ def available_commands():
 
 def validate_command(t):
     for c in CHATBOT_COMMANDS:
+        # Serialize Command Name
+        if c.split(' ') > 1: c = c.split('|')[0]
+        if t.split('|') > 1: t = t.split('|')[0]
         if c == t:
             return True
         if t in c:
@@ -756,7 +776,7 @@ def handle_tasks(tasks):
         elif task['taskName'] == 'RESET_PAPER_ROLL':
             result = _Common.reset_paper_roll()
             return update_task(task, result)
-        elif 'REMOVE_FAILED_TRX' in task['taskName']:
+        elif 'REMOVE_FAILED_TRX|' in task['taskName']:
             trx_id = task['taskName'].split('|')[1]
             result = _KioskService.remove_failed_trx(trx_id)
             return update_task(task, result)
@@ -874,6 +894,69 @@ def handle_tasks(tasks):
                 _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('MAINTENANCE_MODE_OFF')
                 result = 'MAINTENANCE_MODE_DISABLED'
             return update_task(task, result)
+        elif task['taskName'] == 'CD_STATUS':
+            cd = _Common.CD_TYPES
+            error = {
+                'cd1': _Common.CD1_ERROR,
+                'cd2': _Common.CD2_ERROR,
+                'cd3': _Common.CD3_ERROR,
+                'cd4': _Common.CD4_ERROR,
+                'cd5': _Common.CD5_ERROR,
+                'cd6': _Common.CD6_ERROR,
+            }
+            result = cd.update(error)
+            return update_task(task, result)
+        elif task['taskName'] == 'PRINTER_STATUS':
+            result = {
+                'type': _Common.PRINTER_TYPE,
+                'paper_type': _Common.PRINTER_PAPER_TYPE,
+                'error': _Common.PRINTER_ERROR,
+                'status': _Common.get_printer_status(),
+                'paper_count': _Common.RECEIPT_PRINT_COUNT,
+                'paper_threshold': _Common.RECEIPT_PRINT_LIMIT,
+            }
+            return update_task(task, result)
+        elif task['taskName'] == 'BILL_STATUS':
+            result = {
+                'type': _Common.BILL_TYPE,
+                'port': _Common.BILL_PORT,
+                'error': _Common.BILL_ERROR,
+                'status': _Common.check_bill_status(),
+                'cashbox_count': _Common.get_cash_activity(),
+                'last_money_inserted': _Common.load_from_custom_config('BILL', 'last^money^inserted'),
+            }
+            return update_task(task, result)
+        elif task['taskName'] == 'TOPUP_AMOUNT_SETTING':
+            result = _Common.TOPUP_AMOUNT_SETTING
+            return update_task(task, result)
+        elif task['taskName'] == 'FEATURE_SETTING':
+            result = _Common.FEATURE_SETTING
+            return update_task(task, result)
+        elif task['taskName'] == 'PAYMENT_SETTING':
+            result = _Common.PAYMENT_SETTING
+            return update_task(task, result)
+        elif task['taskName'] == 'THEME_SETTING':
+            result = _Common.THEME_SETTING
+            return update_task(task, result)
+        elif 'TRX_STATUS|' in task['taskName']:
+            trx_id = task['taskName'].split('|')[1]
+            trx_success = _DAO.custom_query('SELECT * FROM TransactionsNew WHERE productId = "'+trx_id+'"')
+            if len(trx_success) > 0:
+                result = trx_success[0]
+                result['trx_status'] = 'SUCCESS'
+                return update_task(task, result)
+            trx_failed = _DAO.custom_query('SELECT * FROM TransactionFailure WHERE trxid = "'+trx_id+'"')
+            if len(trx_failed) > 0:
+                result = trx_failed[0]
+                result['trx_status'] = 'PENDING'
+                return update_task(task, result)
+            result = 'TRX_NOT_FOUND'
+            return update_task(task, result)
+        elif 'CASH_STATUS|' in task['taskName']:
+            trx_id = task['taskName'].split('|')[1]
+            result = _Common.get_cash_activity(keyword=trx_id)
+            return update_task(task, result)
+        
         else:
             result = 'NOT_UNDERSTAND'
             return update_task(task, result)
