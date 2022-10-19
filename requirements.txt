@@ -31,3 +31,4 @@ unix
 pyuserinput
 pytlv
 python-socketio[client]
+newsapi-python

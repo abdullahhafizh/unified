@@ -4,10 +4,13 @@ import logging
 from _cConfig import _Common
 from _tTools import _Helper
 from _sSync import _Sync
-from _nNetwork import _HTTPAccess
 import sys
 import os
 from time import sleep
+from newsapi import NewsApiClient
+
+# Init
+NEWSAPI = None
 
 import socketio
 SOCKET_IO = socketio.Client()
@@ -135,23 +138,17 @@ def find_arguments(message):
 
 
 def get_news_message():
+    global NEWSAPI
     news = []
     try:
-        status, response = _HTTPAccess.get_from_url(
-            url='https://newsapi.org/v2/top-headlines?apiKey=eda20002dbc44b2ab46205e783ad4354', 
-            param={
-                'country': 'id',
-                'apiKey': 'eda20002dbc44b2ab46205e783ad4354'
-                },
-            header={'X-Api-Key': 'eda20002dbc44b2ab46205e783ad4354'}
-            )
-        print('pyt: '+str(status))
-        if status == 200:
-            if response.get('status') == 'ok':
-                if int(response.get('totalResults', '0')) > 0:
-                    if len(response.get('articles', [])) > 0:
-                        for new in response.get('articles', []):
-                            news.append(new['title'])
+        if NEWSAPI is None:
+            NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
+        response = NEWSAPI.get_top_headlines(country='id')
+        if response.get('status') == 'ok':
+            if int(response.get('totalResults', '0')) > 0:
+                if len(response.get('articles', [])) > 0:
+                    for new in response.get('articles', []):
+                        news.append(new['title'])            
     except Exception as e:
         print('pyt: '+str(e))
     finally:
