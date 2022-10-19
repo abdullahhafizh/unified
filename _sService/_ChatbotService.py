@@ -156,6 +156,7 @@ def get_news_message(keyword='mesin'):
     global NEWSAPI
     news = []
     keyword = keyword.split(' ')[-1:]
+    print('pyt: Found Keyword '+str(keyword))
     try:
         if NEWSAPI is None:
             NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
