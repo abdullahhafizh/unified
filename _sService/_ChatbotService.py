@@ -120,7 +120,7 @@ def process_message(message):
     if MULTI_RESPONSE_DECODER in result:
         for res in result.split(MULTI_RESPONSE_DECODER):
             # print('pyt: Append Result -> '+str(res))
-            response.append(res)
+            response.append(':::'+res)
     else:
         response.append(result)
         
@@ -161,6 +161,8 @@ def get_news_message(keyword='mesin'):
 def human_message(m):
     if m is None:
         return 'Terjadi kesalahan dalam eksekusi instruksi'
+    elif m[:3] == ':::':
+        return '<strong>' + m[3:] + '</strong>'
     elif m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
