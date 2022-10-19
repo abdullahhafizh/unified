@@ -26,8 +26,7 @@ Rectangle{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-//            console.log('ads mode : ' +  mode)
-            if(mode=="mediaPlayer" && media_files.length == 0){
+            if(media_files.length == 0){
                 _SLOT.get_file_list(img_path);
             }
             counter = 0;
