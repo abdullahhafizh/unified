@@ -152,7 +152,7 @@ def find_arguments(message):
     return arguments
 
 
-def get_news_message(keyword='mesin'):
+def get_news_message(keyword='transjakarta'):
     global NEWSAPI
     news = []
     selected_keyword = keyword.split(' ')[-1:]
