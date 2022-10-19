@@ -155,12 +155,12 @@ def find_arguments(message):
 def get_news_message(keyword='mesin'):
     global NEWSAPI
     news = []
-    keyword = keyword.split(' ')[-1:]
-    print('pyt: Found Keyword '+str(keyword))
+    selected_keyword = keyword.split(' ')[-1:]
+    print('pyt: Found Keyword '+str(selected_keyword))
     try:
         if NEWSAPI is None:
             NEWSAPI = NewsApiClient(api_key='eda20002dbc44b2ab46205e783ad4354')
-        response = NEWSAPI.get_everything(q=keyword)
+        response = NEWSAPI.get_everything(q=selected_keyword)
         if response.get('status') == 'ok':
             if int(response.get('totalResults', '0')) > 0:
                 if len(response.get('articles', [])) > 0:
