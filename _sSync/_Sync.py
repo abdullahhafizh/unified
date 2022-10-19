@@ -901,38 +901,44 @@ def handle_tasks(tasks):
                     result = 'MAINTENANCE_MODE_DISABLED'
                 return update_task(task, result)
             elif task['taskName'] == 'CD_STATUS':
-                result = {
-                    'cd1': {
+                result = [
+                    {
+                        'name': 'cd1',
                         'port': _Common.CD_PORT1,
                         'type': _Common.CD_PORT1_TYPE,
                         'error': _Common.CD1_ERROR
                         },
-                    'cd2': {
+                    {
+                        'name' : 'cd2',
                         'port': _Common.CD_PORT2,
                         'type': _Common.CD_PORT2_TYPE,
                         'error': _Common.CD2_ERROR
                         },
-                    'cd3': {
+                    {
+                        'name': 'cd3',
                         'port': _Common.CD_PORT3,
                         'type': _Common.CD_PORT3_TYPE,
                         'error': _Common.CD3_ERROR
                         },
-                    'cd4': {
+                    {
+                        'name': 'cd4',
                         'port': _Common.CD_PORT4,
                         'type': _Common.CD_PORT4_TYPE,
                         'error': _Common.CD4_ERROR
                         },
-                    'cd5': {
+                    {
+                        'name': 'cd5',
                         'port': _Common.CD_PORT5,
                         'type': _Common.CD_PORT5_TYPE,
                         'error': _Common.CD5_ERROR
                         },
-                    'cd6': {
+                    {
+                        'name': 'cd6',
                         'port': _Common.CD_PORT6,
                         'type': _Common.CD_PORT6_TYPE,
                         'error': _Common.CD6_ERROR
-                        },
-                }
+                    }
+                ]
                 return update_task(task, result)
             elif task['taskName'] == 'PRINTER_STATUS':
                 result = {
@@ -950,7 +956,7 @@ def handle_tasks(tasks):
                     'port': _Common.BILL_PORT,
                     'error': _Common.BILL_ERROR,
                     'status': _Common.check_bill_status(),
-                    'cashbox_count': _Common.get_cash_activity(),
+                    'cashbox_count': _Common.get_cash_activity()['total'],
                     'last_money_inserted': _Common.load_from_custom_config('BILL', 'last^money^inserted'),
                 }
                 return update_task(task, result)
