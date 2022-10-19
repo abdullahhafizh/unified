@@ -148,7 +148,7 @@ def find_arguments(message):
         arguments = message.split(delimit)
         if len(arguments) > 1:
             break
-    print('pyt: Args Len '+str(len(arguments)))
+    print('pyt: Args Length '+str(len(arguments)))
     return arguments
 
 
