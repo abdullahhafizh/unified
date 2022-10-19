@@ -93,28 +93,39 @@ def process_message(message):
         result = get_news_message()
     else:
         arguments = find_arguments(message)
-        if len(arguments) > 2:
+        if len(arguments) >= 2:
             result = 'PARAMETER_MISMATCH'
             for arg in arguments:
-                if arg.lower() in TODAYS_NEWS_MESSAGE :
-                    result = get_news_message(message)
-                    break
                 if arg.lower() in HELLO_WORDS:
                     result = build_hello_message()
                     break
-                if arg.lower() in BAD_WORDS:
+                elif arg.lower() in BAD_WORDS:
                     result = 'NOT_APPROPRIATE'
+                    break
+                elif arg.lower() in TODAYS_NEWS_MESSAGE :
+                    result = get_news_message(message)
+                    break
+                else:
+                    result = _Sync.handle_tasks([
+                        {
+                            'taskName': message.replace(' ', '|'),
+                            'status': 'OPEN',
+                            'createdAt': _Helper.time_string(),
+                            'userId': SOCKET_IO.sid,
+                            'mode': 'CHATBOT'
+                        }
+                    ])
                     break
         else:
             result = _Sync.handle_tasks([
-                {
-                    'taskName': message.replace(' ', '|'),
-                    'status': 'OPEN',
-                    'createdAt': _Helper.time_string(),
-                    'userId': SOCKET_IO.sid,
-                    'mode': 'CHATBOT'
-                }
-            ])
+                        {
+                            'taskName': message.replace(' ', '|'),
+                            'status': 'OPEN',
+                            'createdAt': _Helper.time_string(),
+                            'userId': SOCKET_IO.sid,
+                            'mode': 'CHATBOT'
+                        }
+                    ])
     # Serialise to Readable Response
     # print('pyt: Raw Message -> '+str(result))
     if MULTI_RESPONSE_DECODER in result:
