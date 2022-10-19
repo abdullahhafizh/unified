@@ -165,6 +165,7 @@ def get_news_message(keyword='transjakarta'):
             if int(response.get('totalResults', '0')) > 0:
                 if len(response.get('articles', [])) > 0:
                     for new in response.get('articles', []):
+                        if len(news) >= 10: break
                         news.append(new['title'])            
     except Exception as e:
         print('pyt: '+str(e))
@@ -176,7 +177,7 @@ def human_message(m):
     if m is None:
         return 'Terjadi kesalahan dalam eksekusi instruksi'
     elif m[:3] == ':::':
-        return '<strong>' + m[3:] + '</strong>'
+        return '<strong>Info : ' + m[3:] + '</strong>'
     elif m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
