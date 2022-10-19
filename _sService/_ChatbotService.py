@@ -4,8 +4,10 @@ import logging
 from _cConfig import _Common
 from _tTools import _Helper
 from _sSync import _Sync
+from _nNetwork import _HTTPAccess
 import sys
 import os
+from time import sleep
 
 import socketio
 SOCKET_IO = socketio.Client()
@@ -38,6 +40,8 @@ BAD_WORDS_TEMPLATE = open(os.path.join(SCRIPT_PATH, 'bad-words.script'), 'r').re
 BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
 RESPONSE_DECODER = '\t\t\t'
+MULTI_RESPONSE_DECODER = '[[|MR|]]'
+TODAYS_NEWS_MESSAGE = ['berita_hari_ini', 'todays_news', 'news_feed', 'tell_me_story', 'story_me']
 
 def is_response_message(m):
     return  m[:3] == RESPONSE_DECODER
@@ -76,11 +80,14 @@ def init():
         
     
 def process_message(message):
+    response = []
     message = message.strip()
     if message.lower() in HELLO_WORDS:
         result = build_hello_message()
     elif message.lower() in BAD_WORDS:
         result = 'NOT_APPROPRIATE'
+    elif message.lower() in TODAYS_NEWS_MESSAGE :
+        result = get_news_message()
     else:
         arguments = find_arguments(message)
         if len(arguments) > 2:
@@ -103,8 +110,17 @@ def process_message(message):
                 }
             ])
     # Serialise to Readable Response
-    result = human_message(result)
-    response_message(result)
+    if MULTI_RESPONSE_DECODER in result:
+        for res in result.split(MULTI_RESPONSE_DECODER):
+            response.append(res)
+    else:
+        response.append(result)
+        
+    while True:
+        for res in response:
+            result = human_message(res)
+            response_message(result)
+            sleep(1)
     
 
 def find_arguments(message):
@@ -113,6 +129,18 @@ def find_arguments(message):
         if len(arguments) > 1:
             break
     return arguments
+
+
+def get_news_message():
+    news = []
+    status, response = _HTTPAccess.get_from_url('https://newsapi.org/v2/top-headlines?country=id&apiKey=eda20002dbc44b2ab46205e783ad4354')
+    if status == 200:
+        if response.get('status') == 'ok':
+            if int(response.get('totalResults', '0')) > 0:
+                if len(response.get('articles', [])) > 0:
+                    for new in response.get('articles', []):
+                        news.append(new['title'])
+    return MULTI_RESPONSE_DECODER.join(news)
 
 
 def human_message(m):
