@@ -163,8 +163,7 @@ def get_news_message(keyword='transjakarta'):
         response = NEWSAPI.get_everything(
             q=selected_keyword[0],
             from_param='2022-01-01',
-            to=_Helper.time_string(f='%Y-%m-%d'),
-            language='id'
+            to=_Helper.time_string(f='%Y-%m-%d')
             )
         if response.get('status') == 'ok':
             if int(response.get('totalResults', '0')) > 0:
