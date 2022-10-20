@@ -169,7 +169,8 @@ def get_news_message(keyword='transjakarta'):
                 if len(response.get('articles', [])) > 0:
                     for new in response.get('articles', []):
                         if len(news) >= 10: break
-                        news.append(new['title'])            
+                        news.append(new['title'])      
+                        news.append(new['description'] + '<br /><span><a href="'+news['url']+'" target="_blank">Link</a></span>')      
     except Exception as e:
         print('pyt: '+str(e))
     finally:
