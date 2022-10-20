@@ -26,9 +26,9 @@ Rectangle{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            if(media_files.length == 0){
-                _SLOT.get_file_list(img_path);
-            }
+//            if(media_files.length == 0){
+//                _SLOT.get_file_list(img_path);
+//            }
             counter = 0;
         }
         if(Stack.status==Stack.Deactivating){
@@ -180,6 +180,7 @@ Rectangle{
             anchors.fill: parent
             onClicked: {
 //                player.stop();
+                if (maintenance_mode.visible) return;
                 while (media_files.length > 0) {
                     media_files.pop();
                 }
