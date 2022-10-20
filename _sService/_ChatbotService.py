@@ -132,7 +132,7 @@ def process_message(message):
     if MULTI_RESPONSE_DECODER in result:
         for res in result.split(MULTI_RESPONSE_DECODER):
             # print('pyt: Append Result -> '+str(res))
-            response.append(NEWS_DECODER+res)
+            response.append(res)
     else:
         response.append(result)
         
