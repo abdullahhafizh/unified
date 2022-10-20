@@ -132,7 +132,7 @@ def process_message(message):
     if MULTI_RESPONSE_DECODER in result:
         for res in result.split(MULTI_RESPONSE_DECODER):
             # print('pyt: Append Result -> '+str(res))
-            response.append(res)
+            response.append(NEWS_DECODER+res)
     else:
         response.append(result)
         
@@ -170,7 +170,7 @@ def get_news_message(keyword='transjakarta'):
                     for new in response.get('articles', []):
                         if len(news) >= 10: break
                         news.append(new['title'])      
-                        news.append(new['description'] + '<br />Link : <span><a href="'+news['url']+'" target="_blank">Here</a></span>')      
+                        # news.append(new['description'] + '<br />Link : <span><a href="'+news['url']+'" target="_blank">Here</a></span>')      
     except Exception as e:
         print('pyt: '+str(e))
     finally:
