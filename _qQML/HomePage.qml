@@ -394,7 +394,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if (press!="0") return;
+                    if (press!="0" || maintenance_mode.visible) return;
                     press = "1";
                     _SLOT.user_action_log('Press "Cek Saldo"');
                     resetMediaTimer();
@@ -420,7 +420,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if (press!="0") return;
+                    if (press!="0" || maintenance_mode.visible) return;
                     press = "1";
                     _SLOT.user_action_log('Press "TopUp Saldo"');
                     resetMediaTimer();
@@ -450,7 +450,7 @@ Base{
             visible: false
 //            mode3d: 'gray'
             MouseArea{
-                enabled: (productCountAll > 0) ? true : false
+                enabled: (productCountAll > 0 && !maintenance_mode.visible) ? true : false
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Beli Kartu"');
@@ -507,7 +507,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if (press!="0") return;
+                    if (press!="0" || maintenance_mode.visible) return;
                     press = "1";
                     _SLOT.user_action_log('Press "Bayar/Beli"');
                     resetMediaTimer();
@@ -660,6 +660,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onDoubleClicked: {
+                if (maintenance_mode.visible) return;
                 _SLOT.user_action_log('Press "Admin" Button');
                 console.log('Admin Button is Pressed..!');
                 // _SLOT.set_tvc_player("STOP");
@@ -696,6 +697,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onDoubleClicked: {
+                if (maintenance_mode.visible) return;
                 _SLOT.user_action_log('Press "Reset Printer" Button');
                 console.log('Reset Printer is Pressed..!');
                 resetMediaTimer();
@@ -745,7 +747,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                if (press!="0") return;
+                if (press!="0" || maintenance_mode.visible) return;
                 press = "1";
                 _SLOT.user_action_log('Press "SEARCH_TRX" Button');
                 console.log('Search Trx Button is Pressed..!');
@@ -795,7 +797,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                if (press!="0") return;
+                if (press!="0" || maintenance_mode.visible) return;
                 press = "1";
                 _SLOT.user_action_log('Press "WA_VOUCHER" Button');
                 console.log('WA Voucher Button is Pressed..!');
