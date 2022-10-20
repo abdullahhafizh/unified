@@ -43,6 +43,7 @@ BAD_WORDS_TEMPLATE = open(os.path.join(SCRIPT_PATH, 'bad-words.script'), 'r').re
 BAD_WORDS = list(map(lambda x: x.lower(), BAD_WORDS_TEMPLATE))
 
 RESPONSE_DECODER = '\t\t\t'
+NEWS_DECODER = ':::'
 MULTI_RESPONSE_DECODER = '[[|MR|]]'
 TODAYS_NEWS_MESSAGE = ['berita_hari_ini', 'todays_news', 'news_feed', 'tell_me_story', 'story_me', 'tell_me_about', 'ceritakan', 'tell_me', 'what_about', 'how_is', 'berita', 'berita_tentang']
 
@@ -131,7 +132,7 @@ def process_message(message):
     if MULTI_RESPONSE_DECODER in result:
         for res in result.split(MULTI_RESPONSE_DECODER):
             # print('pyt: Append Result -> '+str(res))
-            response.append(':::'+res)
+            response.append(NEWS_DECODER+res)
     else:
         response.append(result)
         
@@ -179,8 +180,8 @@ def get_news_message(keyword='transjakarta'):
 def human_message(m):
     if m is None:
         return 'Terjadi kesalahan dalam eksekusi instruksi'
-    elif ':::' in m:
-        return '<strong>FYI : ' + m.replace(':::', '') + '</strong>'
+    elif NEWS_DECODER in m:
+        return '<strong>FYI : ' + m.replace(NEWS_DECODER, '') + '</strong>'
     elif m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
@@ -191,9 +192,7 @@ def human_message(m):
         return 'Mohon Maaf, Data Transaksi tersebut tidak ditemukan di mesin ini'  
     elif m == 'PARAMETER_MISMATCH':
         return 'Mohon Maaf, Parameter instruksi tidak sesuai!'  
-    elif '_' in m and len(m) < 100:
-        return 'Hasil eksekusi : <strong>' + m + '</strong>'
-    elif '-' in m and len(m) < 100:
+    elif ('_' in m or '-' in m) and len(m) < 100:
         return 'Hasil eksekusi : <strong>' + m + '</strong>'
     else:
         return m
