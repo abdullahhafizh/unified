@@ -180,7 +180,7 @@ def human_message(m):
     if m is None:
         return 'Terjadi kesalahan dalam eksekusi instruksi'
     elif ':::' in m:
-        return '<strong>Info : ' + m.replace(':::', '') + '</strong>'
+        return '<strong>FYI : ' + m.replace(':::', '') + '</strong>'
     elif m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
