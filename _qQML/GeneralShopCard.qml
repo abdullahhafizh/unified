@@ -31,7 +31,6 @@ Base{
     property bool qrBniEnable: false
 
     property var cdReadiness: undefined
-    property var totalPaymentEnable: 0
 
     property variant availItems: []
     property variant activeQRISProvider: []
@@ -46,6 +45,7 @@ Base{
     property bool mainVisible: false
 
     property var cashboxFull
+    property var activePayment: []
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
@@ -88,6 +88,7 @@ Base{
             selectedPayment = undefined;
             isConfirm = false;
             availItems = [];
+            activePayment = [];
             activeQRISProvider = [];
         }
         if(Stack.status==Stack.Deactivating){
@@ -147,56 +148,55 @@ Base{
         if (device.BILL == 'CASHBOX_FULL'){
             cashboxFull = true;
             cashEnable = true;
-            totalPaymentEnable += 1;
         }
         if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
             cashEnable = true;
-            totalPaymentEnable += 1;
             cashboxFull = false;
+            activePayment.push('cash');
         }
         if (device.EDC == 'AVAILABLE') {
             cardEnable = true;
-            totalPaymentEnable += 1;
+            activePayment.push('debit');
         }
         if (device.QR_LINKAJA == 'AVAILABLE') {
             qrLinkajaEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('linkaja')
+            activeQRISProvider.push('linkaja');
+            activePayment.push('linkaja');
         }
         if (device.QR_DANA == 'AVAILABLE') {
             qrDanaEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('dana')
+            activeQRISProvider.push('dana');
+            activePayment.push('dana');
         }
         if (device.QR_DUWIT == 'AVAILABLE') {
             qrDuwitEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('duwit')
+            activeQRISProvider.push('duwit');
+            activePayment.push('duwit');
         }
         if (device.QR_OVO == 'AVAILABLE') {
             qrOvoEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('ovo')
+            activeQRISProvider.push('ovo');
+            activePayment.push('ovo');
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
             qrShopeeEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('shopeepay')
+            activeQRISProvider.push('shopeepay');
+            activePayment.push('shopeepay');
         }
         if (device.QR_JAKONE == 'AVAILABLE') {
             qrJakoneEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('jakone')
+            activeQRISProvider.push('jakone');
+            activePayment.push('jakone');
         }
         if (device.QR_BCA == 'AVAILABLE') {
             qrBcaEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('bca-qris')
+            activeQRISProvider.push('bca-qris');
+            activePayment.push('bca-qris');
         }
         if (device.QR_BNI == 'AVAILABLE') {
             qrBniEnable = true;
-            totalPaymentEnable += 1;
-            activeQRISProvider.push('bni-qris')
+            activeQRISProvider.push('bni-qris');
+            activePayment.push('bni-qris');
         }
     }
 
@@ -448,6 +448,12 @@ Base{
             card_show_3.set_select();
             break;
         }
+        //No Payment Selection Needed If Only 1 Available
+        if (activePayment.length==1){
+            console.log('direct process_selected_payment', activePayment[0]);
+            process_selected_payment(activePayment[0]);
+            return;
+        }
         if (!select_payment.visible){
             select_payment.open();
             _SLOT.start_play_audio('choose_payment_press_proceed');
@@ -642,7 +648,7 @@ Base{
         _qrLinkAjaEnable: qrLinkajaEnable
         _qrShopeeEnable: qrShopeeEnable
         _qrJakoneEnable: qrJakoneEnable
-        totalEnable: totalPaymentEnable
+        totalEnable: activePayment.length
     }
 
     SelectPaymentQR{
@@ -665,7 +671,7 @@ Base{
         _qrBcaEnable: qrBcaEnable
         _qrBniEnable: qrBniEnable
 
-        totalEnable: totalPaymentEnable
+        totalEnable: activePayment.length
     }
 
 
@@ -888,7 +894,7 @@ Base{
 //        _qrDanaEnable: qrDanaEnable
 //        _qrDuwitEnable: qrDuwitEnable
 //        _qrLinkAjaEnable: qrLinkajaEnable
-//        totalEnable: totalPaymentEnable
+//        totalEnable: activePayment.length
 //        z: 99
 //    }
 

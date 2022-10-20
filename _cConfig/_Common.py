@@ -234,7 +234,7 @@ LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^i
 # Disable DKI Topup Using Old Service Library
 DKI_TOPUP_ONLINE_BY_SERVICE = False
 _ConfigParser.set_value('DKI', 'service^library', '0')
-DKI_TOPUP_ONLINE_ACTIVE = True if MID_TOPUP_ONLINE_DKI != '---' else False
+DKI_TOPUP_ONLINE = True if MID_TOPUP_ONLINE_DKI != '---' else False
 
 
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False

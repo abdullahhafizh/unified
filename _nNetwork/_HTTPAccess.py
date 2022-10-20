@@ -32,7 +32,7 @@ def is_online(host="www.google.com", timeout=1, source=''):
     try:
         if LAST_REQUEST != 0:
             if int(time.time()) < (LAST_REQUEST + WAITING_TIME_ONLINE):
-                LOGGER.debug(('previous_state', source, IS_ONLINE))
+                # LOGGER.debug(('previous_state', source, IS_ONLINE))
                 return IS_ONLINE
         socket.create_connection((socket.gethostbyname(host), 80), timeout)
         IS_ONLINE = True

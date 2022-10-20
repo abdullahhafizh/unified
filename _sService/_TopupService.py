@@ -1119,14 +1119,15 @@ def get_topup_readiness():
         }
         ADMIN_FEE_INCLUDE = True if ready['admin_include'] == '1' else False
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+        connection_online = _Helper.is_online('get_topup_readiness')
         # Assuming always check card balance first before check topup readiness validation
         if not _Helper.empty(last_card_check):
             if last_card_check['bank_name'] == 'BRI':
-                ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_online_topup(mode='BRI', trigger=False) is True) else 'N/A'
+                ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and connection_online is True) else 'N/A'
             if last_card_check['bank_name'] == 'BCA':
-                ready['bca'] = 'AVAILABLE' if _Common.BCA_TOPUP_ONLINE is True else 'N/A'
+                ready['bca'] = 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and connection_online is True) else 'N/A'
             if last_card_check['bank_name'] == 'DKI':
-                ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE_ACTIVE is True) else 'N/A'
+                ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE is True and connection_online is True) else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
         #     ready['balance_bni'] = '999002'
@@ -1135,7 +1136,7 @@ def get_topup_readiness():
         #     ready['bri'] = 'AVAILABLE'
         #     ready['bca'] = 'AVAILABLE'
         #     ready['dki'] = 'AVAILABLE'
-        LOGGER.info((str(ready)))
+        # LOGGER.info((str(ready)))
         TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
     except Exception as e:
         LOGGER.warning((str(e)))
@@ -2220,7 +2221,7 @@ def check_topup_readiness():
             'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
             'bri': 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_status) else 'N/A',
             'bca': 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and ping_status) else 'N/A',
-            'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE_ACTIVE is True) and  ping_status else 'N/A',
+            'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE is True) and  ping_status else 'N/A',
         }
         TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
     except Exception as e:

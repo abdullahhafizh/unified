@@ -1,7 +1,9 @@
 15.2.2-GLOBAL:
 - Enhance Payment Time (3 Times Multiply From Default),
 - Add New Interractive Commands,
-- Enhance Version Validation,
+- Enhance Version Number Validation,
+- Fix Online Topup Validation,
+- Assign Direct Payment When No Options Found,
 - ...
 
 15.2.1-GLOBAL:
