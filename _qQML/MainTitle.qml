@@ -7,7 +7,7 @@ Rectangle{
     property string color_: "darkred"
     property bool setItalic: false
     height: 50
-    width: 1000
+    width: 1024
 
     Text {
         id: text_notif
