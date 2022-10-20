@@ -179,8 +179,8 @@ def get_news_message(keyword='transjakarta'):
 def human_message(m):
     if m is None:
         return 'Terjadi kesalahan dalam eksekusi instruksi'
-    elif m[:3] == ':::':
-        return '<strong>Info : ' + m[3:] + '</strong>'
+    elif ':::' in m:
+        return '<strong>Info : ' + m.replace(':::', '') + '</strong>'
     elif m == 'NOT_SUPPORTED':
         return 'Mohon Maaf, Instruksi tidak didukung saat ini'
     elif m == 'NOT_UNDERSTAND':
