@@ -37,7 +37,8 @@ def is_online(host="www.google.com", timeout=1, source=''):
         socket.create_connection((socket.gethostbyname(host), 80), timeout)
         IS_ONLINE = True
         if source != '':
-            LOGGER.debug((source, IS_ONLINE))
+            pass
+            # LOGGER.debug((source, IS_ONLINE))
     except Exception as e:
         IS_ONLINE = False
         LOGGER.debug((str(e), source, IS_ONLINE))

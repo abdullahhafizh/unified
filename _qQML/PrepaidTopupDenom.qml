@@ -410,7 +410,6 @@ Base{
                 buttonDenomWidth = 289;
             }
         }
-
         popup_loading.close();
     }
 
@@ -419,7 +418,6 @@ Base{
             return false;
         }
         return true;
-
     }
 
     function set_selected_denom(d){
