@@ -618,11 +618,11 @@ Base{
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     if (!mediaOnPlaying) {
-                             console.log("starting tvc player...", now);
-                             my_layer.push(media_page, {mode: 'mediaPlayer',
-                                             mandiri_update_schedule: mandiri_update_schedule,
-                                             edc_settlement_schedule: edc_settlement_schedule
-                                         });
+                            //  console.log("starting tvc player...", now);
+                            //  my_layer.push(media_page, {mode: 'mediaPlayer',
+                            //                  mandiri_update_schedule: mandiri_update_schedule,
+                            //                  edc_settlement_schedule: edc_settlement_schedule
+                            //              });
                     }
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
