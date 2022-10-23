@@ -69,9 +69,10 @@ def start_initiation():
     _Helper.get_thread().apply_async(init)
 
 
-def init():
+def init(attempt=1):
     global SOCKET_IO
     try:
+        LOGGER.debug((attempt))
         SOCKET_IO.connect(_Common.INTERRACTIVE_HOST)
         SOCKET_IO.emit('create', {
             'room': _Common.TID,
@@ -81,6 +82,11 @@ def init():
         SOCKET_IO.sleep(1)
     except Exception as e:
         LOGGER.warning((e))
+    finally:
+        while True:
+            attempt += 1
+            sleep(60*60)
+            init(attempt)
         
     
 def process_message(message):

@@ -28,6 +28,7 @@ def load_dll():
         DLL_LOAD =  windll.LoadLibrary(DLL_PATH)
         LOG.fw("DLL LOADED: ", DLL_PATH)
 
+
 def direct_load_dll():
     global DLL_LOAD
     if DLL_LOAD is None:
@@ -48,13 +49,10 @@ def open_only(PORT):
         LOG.fw("--> C_PORT = ",PORT)
 
         # C_PORT = utils.str_to_bytes(PORT)
-
         # LOG.fw("--> C_PORT = ", C_PORT)
 
         # func = DLL_LOAD.open_only
-
         # res = func(C_PORT)
-
         # res_str = utils.to_4digit(res)
         
         res_str, error_msg = lib.open_only(PORT.decode('utf-8'))
@@ -94,7 +92,6 @@ def topup_init(PORT, SAMPIN, Institution, Terminal, _serial, _passd):
         # LOG.fw("--> passd = ",passd)
 
         # func = DLL_LOAD.topup_init
-
         # res = func(C_PORT, C_SAMPIN, C_Institution, C_Terminal, serial, passd)
 
         res_str = lib.topup_init(C_PORT, C_SAMPIN, C_Institution, C_Terminal)
@@ -213,7 +210,6 @@ def topupbni_validation(_timeout):
 
         # func = DLL_LOAD.topupbni_validation
         # res = func(timeout)
-
         # res_str = utils.to_4digit(res)
         res_str = lib.topupbni_validation(timeout)
     except Exception as ex:
@@ -292,10 +288,9 @@ def topup_balance():
         LOG.fw("--> CMD READER = $31")
 
         # balanceValue = c_int64()
-
         # p_balanceValue = pointer(balanceValue)
-
         # func = DLL_LOAD.topup_balance
+        
         # res = func(p_balanceValue)
         # res_str = utils.to_4digit(res)
         # balance = str(balanceValue.value)
@@ -342,9 +337,7 @@ def topup_bni_update(Terminal):
         LOG.fw("--> C_Terminal = " , C_Terminal)
 
         # func = DLL_LOAD.topup_bni_update
-
         # res = func(C_Terminal)
-        
         # res_str = utils.to_4digit(res)
         res_str = lib.topup_bni_update(C_Terminal)        
     except Exception as ex:
@@ -369,12 +362,10 @@ def topup_pursedata_multi_sam(_slot):
 
         # structPurse = ResponPurseData()
         # p_structPurse = pointer(structPurse)
-
         # func = DLL_LOAD.topup_pursedata_multi_sam
 
         # res = func(slot, p_structPurse)
         # res_str = utils.to_4digit(res)
-
         # response = structPurse.rep.decode("cp437")
 
         res_str, response = lib.topup_pursedata_multi_sam(slot)
@@ -404,7 +395,6 @@ def topupbni_km_balance_multi_sam(_slot):
 
         # structSaldo = ResponSamSaldo()
         # p_structSaldo = pointer(structSaldo)
-
         # func = DLL_LOAD.topupbni_km_balance_multi_sam
 
         # res = func(slot, p_structSaldo)
@@ -479,11 +469,9 @@ def topupbni_credit_multi_sam(_slot, _value, _timeOut):
 
         # structTopUp = ResponTopUpBNI()
         # p_structTopUp = pointer(structTopUp)
-
         # func = DLL_LOAD.topupbni_credit_multi_sam
 
         # res = func(slot, value, timeOut, p_structTopUp)
-
         # reportSAM = structTopUp.rep.decode("cp437")
         # debErrorStr = structTopUp.c_error.decode("cp437")
 
@@ -526,13 +514,10 @@ def topupbni_sam_refill_multi(_slot, _terminal):
 
         # structTopUp = ResponTopUpBNI()
         # p_structTopUp = pointer(structTopUp)
-
         # func = DLL_LOAD.topupbni_sam_refill_multi
-
         # res = func(slot, terminal, p_structTopUp)
 
         # res_str = utils.to_4digit(res)
-
         # reportSAM = structTopUp.rep.decode("cp437")
         # debErrorStr = structTopUp.c_error.decode("cp437")
 
@@ -562,12 +547,10 @@ def topup_pursedata():
 
         # structPurse = ResponPurseData()
         # p_structPurse = pointer(structPurse)
-
         # func = DLL_LOAD.topup_pursedata
 
         # res = func(p_structPurse)
         # res_str = utils.to_4digit(res)
-
         # reportPurse = structPurse.rep.decode("cp437")
         # debErrorStr = structPurse.c_error.decode("cp437")
 
@@ -668,13 +651,10 @@ def topup_C2C_refill(Value, Timestamp):
 
         # structTopUp = ResponTopUpC2C()
         # p_structTopUp = pointer(structTopUp)
-
         # func = DLL_LOAD.topup_C2C_refill
-
         # res = func(C_Value, p_structTopUp)
 
         # res_str = utils.to_4digit(res)
-
         # reportSAM = structTopUp.rep.decode("cp437")
         # debErrorStr = structTopUp.c_error.decode("cp437")
 
@@ -710,9 +690,7 @@ def topup_C2C_init(Terminal, MAC, Slot):
         LOG.fw("--> C_Slot = ", C_Slot)
 
         # func = DLL_LOAD.topup_C2C_init
-
         # res = func(C_Terminal, C_MAC, C_Slot)
-
         # res_str = utils.to_4digit(res)
 
         res_str = lib.topup_C2C_init(C_Terminal, C_MAC, C_Slot)
@@ -736,7 +714,6 @@ def topup_C2C_Correct():
 
         # structReport = ResponTopUpC2C()
         # p_structReport = pointer(structReport)
-
         # func = DLL_LOAD.topup_C2C_Correct
 
         # res = func(p_structReport)
@@ -777,13 +754,10 @@ def topup_C2C_getfee(Flag):
 
         # structReport = ResponTopUpC2C()
         # p_structReport = pointer(structReport)
-
         # func = DLL_LOAD.topup_C2C_getfee
-
         # res = func(C_Flag, p_structReport)
 
         # res_str = utils.to_4digit(res)
-
         # reportSAM = structReport.rep.decode("cp437")
         # debErrorStr = structReport.c_error.decode("cp437")
 
@@ -817,9 +791,7 @@ def topup_C2C_setfee(Flag, Response):
         LOG.fw("--> C_Response = ", C_Response)
 
         # func = DLL_LOAD.topup_C2C_setfee
-
         # res = func(C_Flag, C_Response)
-
         # res_str = utils.to_4digit(res)
         res_str = lib.topup_C2C_setfee(C_Flag, C_Response)
 
@@ -846,12 +818,10 @@ def topup_C2C_force(Flag):
         
         # structReport = ResponTopUpC2C()
         # p_structReport = pointer(structReport)
-
         # func = DLL_LOAD.topup_C2C_force
 
         # res = func(C_Flag, p_structReport)
         # res_str = utils.to_4digit(res)
-
         # reportSAM = structReport.rep.decode("cp437")
         # debErrorStr = structReport.c_error.decode("cp437")
 
@@ -893,7 +863,6 @@ def topup_C2C_km_balance():
         # p_structAttr = pointer(structAttr)
 
         # func = DLL_LOAD.topup_C2C_km_balance
-
         # res = func(p_structSaldo, p_structUID, p_structData, p_structAttr)
         # res_str = utils.to_4digit(res)
 
@@ -937,15 +906,11 @@ def topup_apdusend(Slot, APDU):
         LOG.fw("--> C_APDU = ", C_APDU)
 
         # structAPDU = ResponAPDU()
-
         # p_structAPDU = pointer(structAPDU)
-
         # func = DLL_LOAD.topup_apdusend
 
         # res = func(C_Slot, C_APDU, p_structAPDU)
-        
         # res_str = utils.to_4digit(res)
-
         # RAPDU = structAPDU.repcek.decode("cp437")
         res_str, RAPDU = lib.topup_apdusend(C_Slot, C_APDU)
 
@@ -978,7 +943,6 @@ def topup_bca_update(TID, MID):
 
         # func = DLL_LOAD.topup_bca_update
         # res = func(C_TID, C_MID)
-        
         # res_str = utils.to_4digit(res)
         res_str = lib.topup_bca_update(C_TID,C_MID)
         
@@ -1003,15 +967,11 @@ def topup_get_sn():
         LOG.fw("--> CMD READER = $F7")
 
         # structUID = ResponUID()
-
         # p_structUID = pointer(structUID)
-
         # structSN = ResponSN()
-
         # p_structSN = pointer(structSN)
 
         # func = DLL_LOAD.topup_get_sn
-
         # res = func(p_structUID, p_structSN)
         # res_str = utils.to_4digit(res)
 
@@ -1044,14 +1004,11 @@ def topup_bca_cardinfo(ATD):
         LOG.fw("--> ATD = ", C_ATD)
 
         # structReport = ResponBCATopup1()
-
         # p_structReport = pointer(structReport)
-
         # func = DLL_LOAD.topup_bca_cardinfo
 
         # res = func(C_ATD, p_structReport)
         # res_str = utils.to_4digit(res)
-
         # report = structReport.repDATA.decode("cp437")
 
         res_str, report = lib.topup_bca_cardinfo(C_ATD)
@@ -1086,7 +1043,6 @@ def topup_get_carddata():
         # p_structAttr = pointer(structAttr)
 
         # func = DLL_LOAD.topup_get_carddata
-
         # res = func(p_structUID, p_structData, p_structAttr)
         # res_str = utils.to_4digit(res)
 
@@ -1115,9 +1071,7 @@ def topup_card_disconnect():
         LOG.fw("--> CMD READER = $FA")
 
         # func = DLL_LOAD.topup_card_disconnect
-
         # res = func()
-
         # res_str = utils.to_4digit(res)
 
         res_str = lib.topup_card_disconnect()
@@ -1145,15 +1099,11 @@ def topup_bca_session1(ATD, datetimes):
         LOG.fw("--> datetimes = ", C_datetimes)
         
         # structSession = ResponBCASession1()
-
         # p_structSession = pointer(structSession)
-    
         # func = DLL_LOAD.topup_bca_session1
-
+        
         # res = func(C_ATD, C_datetimes, p_structSession)
-
         # res_str = utils.to_4digit(res)
-
         # session = structSession.repDATA.decode("cp437")
 
         res_str, session = lib.topup_bca_session1(C_ATD, C_datetimes)
@@ -1178,9 +1128,7 @@ def topup_bca_session2(session):
         LOG.fw("--> session = ", C_session)
         
         # func = DLL_LOAD.topup_bca_session2
-
         # res = func(C_session)
-
         # res_str = utils.to_4digit(res)
 
         res_str = lib.topup_bca_session2(session)
@@ -1214,9 +1162,7 @@ def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
         LOG.fw("--> amounthex = ", C_amounthex)
         
         # structTopUp = ResponBCATopup1()
-
         # p_structTopUp = pointer(structTopUp)
-    
         # func = DLL_LOAD.topup_bca_topup1
 
         # res = func(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex, p_structTopUp)
@@ -1252,11 +1198,8 @@ def topup_bca_topup2(confirm1, confirm2):
         LOG.fw("--> confirm2 = ", C_confirm2)
 
         # structTopUp = ResponBCATopup2()
-
         # p_structTopUp = pointer(structTopUp)
-    
         # func = DLL_LOAD.topup_bca_topup2
-
         # res = func(C_confirm1, C_confirm2, p_structTopUp)
 
         # respon = structTopUp.rep.decode("cp437")
@@ -1288,9 +1231,7 @@ def topup_bca_lastreport():
         LOG.fw("--> CMD READER = $96")
         
         # structTopUp = ResponBCATopup1()
-
         # p_structTopUp = pointer(structTopUp)
-    
         # func = DLL_LOAD.topup_bca_lastreport
 
         # res = func(p_structTopUp)
@@ -1320,7 +1261,6 @@ def topup_bca_reversal(ATD):
         LOG.fw("--> ATD = ", C_ATD)
         
         # structReversal = ResponBCAReversal()
-
         # p_structReversal = pointer(structReversal)    
         # func = DLL_LOAD.topup_bca_reversal
 
@@ -1347,13 +1287,10 @@ def topup_get_tokenbri():
         LOG.fw("--> CMD READER = $A4")
         
         # structToken = ResponTokenBRI()
-
         # p_structToken = pointer(structToken)    
         # func = DLL_LOAD.topup_get_tokenbri
-
         # res = func(p_structToken)
         # res_str = utils.to_4digit(res)
-
         # CardData = structToken.repDATA.decode("cp437")
 
         res_str, CardData = lib.topup_get_tokenbri()
