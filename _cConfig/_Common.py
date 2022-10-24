@@ -2132,8 +2132,12 @@ IS_ONLINE = False
 
 
 def is_online(source=''):
+    global IS_ONLINE
     if not LIVE_MODE:
         LOGGER.info((source, IS_ONLINE))
+    # Hit Actual Ping Into Host If Only in Maintenance Mode
+    if MAINTENANCE_MODE:
+        IS_ONLINE = _Helper.is_online(source)
     return IS_ONLINE
 
 
