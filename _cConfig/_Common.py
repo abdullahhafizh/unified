@@ -1932,7 +1932,7 @@ def check_retry_able(data):
     if _Helper.empty(data) is True:
         return 0
     if data.get('shop_type') == 'ppob':
-        if _Helper.is_online(_Helper.whoami()+'_ppob'):
+        if is_online(_Helper.whoami()+'_ppob'):
             return 1
         else:
             return 0
@@ -1973,7 +1973,7 @@ def check_retry_able(data):
         try:
             raw = data.get('raw')
             # Topup DKI, BRI & BCA Retry Validation Also User Connection Status
-            if _Helper.is_online(_Helper.whoami()+'_topup') and raw.get('bank_name') in ['BRI', 'BCA', 'DKI']:
+            if is_online(_Helper.whoami()+'_topup') and raw.get('bank_name') in ['BRI', 'BCA', 'DKI']:
                 return 1
             topup_value = int(data.get('value', '0'))
             if MANDIRI_ACTIVE_WALLET > topup_value and raw.get('bank_name') in ['MANDIRI']:
@@ -2128,6 +2128,14 @@ def validate_usage_pending_code(reff_no):
 
 IDLE_MODE = True
 MAINTENANCE_MODE = False
+IS_ONLINE = False
+
+
+def is_online(source=''):
+    if not LIVE_MODE:
+        LOGGER.info((source, IS_ONLINE))
+    return IS_ONLINE
+
 
 LIMIT_CARD_OPNAME_DURATION_HOURS = int(_ConfigParser.get_set_value('CD', 'stock^opname^duration^hours', '6'))
 

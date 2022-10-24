@@ -4,6 +4,7 @@
 - Enhance Version Number Validation,
 - Fix Online Topup Validation,
 - Assign Direct Payment When No Options Found,
+- Connection Status By Kiosk Status, Not Realtime Check (every 60 seconds),
 - ...
 
 15.2.1-GLOBAL:

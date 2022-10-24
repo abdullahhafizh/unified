@@ -40,10 +40,12 @@ def sync_machine(url, param):
             if status == 200:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Connected To Backend')
                 _Common.KIOSK_STATUS = 'ONLINE'
+                _Common.IS_ONLINE = True
                 _KioskService.LAST_SYNC = _Helper.time_string()
             else:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Disconnected From Backend')
                 _Common.KIOSK_STATUS = 'OFFLINE'
+                _Common.IS_ONLINE = False
             if attempt == 1:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Setting Initiation From Backend')
                 s, r = _HTTPAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
@@ -59,6 +61,7 @@ def sync_machine(url, param):
                 _HTTPAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
         except Exception as e:
             LOGGER.debug(e)         
+            _Common.IS_ONLINE = False
         finally:
             if _Common.DAILY_C2C_SETTLEMENT_TIME == _Helper.time_string('%H:%M'):
                 _SettlementService.start_daily_mandiri_c2c_settlement()    
@@ -75,7 +78,7 @@ def sync_machine(url, param):
                 else:
                     _KioskService.execute_command('reboot now')
                 # _KioskService.kiosk_status()
-        sleep(30.50)
+        sleep(59)
         
 def start_send_battery_status():
     _Helper.get_thread().apply_async(send_battery_status,)
@@ -177,7 +180,7 @@ def sync_machine_status():
     __param = dict()
     while True:
         try:
-            if _Helper.is_online(source='sync_machine_status') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_machine_status') is True and _Common.IDLE_MODE is True:
                 __param = _KioskService.machine_summary()
                 __param['on_usage'] = 'IDLE' if _Common.IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
@@ -191,7 +194,7 @@ def sync_machine_status():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(59.59)
+        sleep(60*5)
 
 
 def start_do_pending_request_job():
@@ -254,7 +257,7 @@ def do_pending_request_job():
                 except Exception as e:
                     LOGGER.warning((e, p))
                 continue
-        sleep(61.61)
+        sleep(60*15)
 
 
 def start_do_pending_upload_job():
@@ -311,7 +314,7 @@ def do_pending_upload_job():
                     continue
             except Exception as e:
                 LOGGER.warning(e)
-        sleep(122.122)
+        sleep(60*10)
 
 
 def start_kiosk_sync():
@@ -378,7 +381,7 @@ def sync_topup_records():
     _table_ = 'TopUpRecords'
     while True:
         try:
-            if _Helper.is_online(source='sync_topup_records') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_topup_records') is True and _Common.IDLE_MODE is True:
                 topup_records = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(topup_records) > 0:
                     print('pyt: sync_topup_records ' + _Helper.time_string() + ' Re-Sync Topup Records Data...')
@@ -397,7 +400,7 @@ def sync_topup_records():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(44.55)
+        sleep(60*5)
 
 
 def start_sync_data_transaction():
@@ -409,7 +412,7 @@ def sync_data_transaction():
     _table_ = 'TransactionsNew'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction') is True:
+            if _Common.is_online(source='sync_data_transaction') is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
@@ -429,7 +432,7 @@ def sync_data_transaction():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(10.10)
+        sleep(60*5)
         
 
 def sync_data_transaction_old():
@@ -437,7 +440,7 @@ def sync_data_transaction_old():
     _table_ = 'Transactions'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_data_transaction') is True and _Common.IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
                     # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
@@ -456,7 +459,7 @@ def sync_data_transaction_old():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(88.99)
+        sleep(60*5)
 
 
 def start_sync_data_transaction_failure():
@@ -468,7 +471,7 @@ def sync_data_transaction_failure():
     _table_ = 'TransactionFailure'
     while True:
         try:
-            if _Helper.is_online(source='sync_data_transaction_failure') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_data_transaction_failure') is True and _Common.IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transaction_failures) > 0:
                     # print('pyt: sync_data_transaction_failure ' + _Helper.time_string() + ' Re-Sync Transaction Failure Data...')
@@ -486,7 +489,7 @@ def sync_data_transaction_failure():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(77.88)
+        sleep(60*3)
 
 
 def start_sync_product_data():
@@ -498,7 +501,7 @@ def sync_product_data():
     _table_ = 'Product'
     while True:
         try:
-            if _Helper.is_online(source='sync_product_data') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_product_data') is True and _Common.IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(products) > 0:
                     # print('pyt: sync_product_data ' + _Helper.time_string() + ' Re-Sync Product Data...')
@@ -516,7 +519,7 @@ def sync_product_data():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(55.66)
+        sleep(60*15)
 
 
 def start_sync_sam_audit():
@@ -528,7 +531,7 @@ def sync_sam_audit():
     _table_ = 'SAMAudit'
     while True:
         try:
-            if _Helper.is_online(source='sync_sam_audit') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_sam_audit') is True and _Common.IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(audits) > 0:
                     # print('pyt: sync_sam_audit ' + _Helper.time_string() + ' Re-Sync SAM Audit...')
@@ -546,7 +549,7 @@ def sync_sam_audit():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(77.7)
+        sleep(60*5)
 
 
 def start_sync_settlement_bni():
@@ -561,10 +564,10 @@ def sync_settlement_bni(bank):
     # _table_ = 'Settlement'
     while True:
         try:
-            if _Helper.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
                 _SettlementService.start_do_bni_topup_settlement()
             # Do BNI Settlement Creation Every +- 15 Minutes
-            # if _Helper.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
+            # if _Common.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
             #     settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
             #                                     ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
             #     if len(settlements) > 0:
@@ -594,7 +597,7 @@ def sync_settlement_bni(bank):
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(900.1010)
+        sleep(60*15)
 
 
 def start_sync_task():
@@ -605,7 +608,7 @@ def sync_task():
     _url = _Common.BACKEND_URL + 'task/check'
     while True:
         try:
-            if _Helper.is_online(source='sync_task') is True and _Common.IDLE_MODE is True:
+            if _Common.is_online(source='sync_task') is True and _Common.IDLE_MODE is True:
                 status, response = _HTTPAccess.get_from_url(url=_url, log=False)
                 if status == 200 and response['result'] == 'OK':
                     if len(response['data']) > 0:
@@ -620,7 +623,7 @@ def sync_task():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(33.33)
+        sleep(60*1)
 
 
 def start_sync_pending_refund():
@@ -662,7 +665,7 @@ def sync_pending_refund():
             if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
-        sleep(15.15)
+        sleep(60*15)
 
 
 CHATBOT_COMMANDS = [
@@ -1020,7 +1023,7 @@ def start_sync_product_stock():
 
 def sync_product_stock():
     _url = _Common.BACKEND_URL + 'get/product-stock'
-    if _Helper.is_online(source='start_sync_product_stock') is True:
+    if _Common.is_online(source='start_sync_product_stock') is True:
         s, r = _HTTPAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
@@ -1054,7 +1057,7 @@ def start_sync_topup_amount():
 def sync_topup_amount():
     _url = _Common.BACKEND_URL + 'get/topup-amount'
     while True:
-        if _Helper.is_online(source='sync_topup_amount') is True and _Common.IDLE_MODE is True:
+        if _Common.is_online(source='sync_topup_amount') is True and _Common.IDLE_MODE is True:
             s, r = _HTTPAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
                 _Common.TOPUP_AMOUNT_SETTING = r['data']

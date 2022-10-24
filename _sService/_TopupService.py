@@ -1119,7 +1119,7 @@ def get_topup_readiness():
         }
         ADMIN_FEE_INCLUDE = True if ready['admin_include'] == '1' else False
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
-        connection_online = _Helper.is_online('get_topup_readiness')
+        connection_online = _Common.is_online('get_topup_readiness')
         # Assuming always check card balance first before check topup readiness validation
         if not _Helper.empty(last_card_check):
             if last_card_check['bank_name'] == 'BRI':

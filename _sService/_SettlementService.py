@@ -649,7 +649,7 @@ def async_push_settlement_data(param):
 def do_prepaid_settlement(bank='BNI', force=False):
     if bank == 'BNI':
         _SFTPAccess.HOST_BID = 2
-        if _Helper.is_online(source='bni_settlement') is False:
+        if not _Common.is_online(source='bni_settlement'):
             return
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()
@@ -676,7 +676,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
         push_settlement_data(_param)
     elif bank == 'MANDIRI':
         _SFTPAccess.HOST_BID = 1
-        if _Helper.is_online(source='mandiri_settlement') is False:
+        if not _Common.is_online(source='mandiri_settlement'):
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTERNET_CONNECTION')
             return
         # _QPROX.auth_ka_mandiri(_slot=_Common.get_active_sam(bank='MANDIRI', reverse=False), initial=False)

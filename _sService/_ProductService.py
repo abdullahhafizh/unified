@@ -35,7 +35,7 @@ CARD_STOCK_UPDATE = []
 
 def change_product_stock(payload):
     global CARD_STOCK_UPDATE
-    if not _Helper.is_online('change_product_stock'):
+    if not _Common.is_online('change_product_stock'):
         PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT|CONNECTION_ERROR')
         return
     try:
@@ -101,7 +101,7 @@ def change_product_stock(payload):
 
 def kiosk_get_product_stock():
     _url = BACKEND_URL + 'get/product-stock'
-    if _Helper.is_online(source='start_get_product_stock') is True:
+    if _Common.is_online(source='start_get_product_stock'):
         s, r = _HTTPAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
