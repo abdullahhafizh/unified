@@ -608,7 +608,6 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
         ValueText = r.text
-
         LOG.fw(":CheckSessionBCA = ", ValueText)
 
         errorcode = "0000"
@@ -662,7 +661,7 @@ def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, la
         
         if not success:
             payload['card_data'] = confirm_data
-            payload.pop(confirm_data)
+            payload.pop('confirm_data')
         
         LOG.fw(":ConfirmBCA url = ", sURL)
         LOG.fw(":ConfirmBCA json = ", payload)
