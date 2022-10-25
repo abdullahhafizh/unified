@@ -570,6 +570,10 @@ def check_card_balance():
             # Drop Balance Check If Not Available For Topup
             if output['able_topup'] not in ERROR_TOPUP.keys():
                 output['able_topup'] = '0000'
+        else: # BRI, BCA, DKI
+            _Common.IS_ONLINE = _Helper.is_online(bank_name.lower+'_balance_check')
+            _Common.KIOSK_STATUS = 'ONLINE' if _Common.IS_ONLINE else 'OFFLINE'
+            output['able_topup'] = '0000' if _Common.IS_ONLINE else '9999'
         # elif bank_name == 'DKI':
         #     prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
         #     if not _Common.empty(prev_last_balance):

@@ -927,10 +927,10 @@ def topup_apdusend(Slot, APDU):
 
 #046
 @func_set_timeout(30)
-def topup_bca_update(TID, MID):
+def topup_bca_lib_config(TID, MID):
     # global DLL_LOAD
     res_str = ""
-    # LOG.tracing("DLL: ", "topup_bca_update")
+    # LOG.tracing("DLL: ", "topup_bca_lib_config")
     try:
 
         LOG.fw("--> CMD READER = $19")
@@ -941,10 +941,10 @@ def topup_bca_update(TID, MID):
         LOG.fw("--> C_TID = ", C_TID)
         LOG.fw("--> C_MID = ", C_MID)
 
-        # func = DLL_LOAD.topup_bca_update
+        # func = DLL_LOAD.topup_bca_lib_config
         # res = func(C_TID, C_MID)
         # res_str = utils.to_4digit(res)
-        res_str = lib.topup_bca_update(C_TID,C_MID)
+        res_str = lib.topup_bca_lib_config(C_TID,C_MID)
         
     except Exception as ex:
         LOG.fw("CMD $19 ERROR: ", "{0}".format(ex))
@@ -992,7 +992,7 @@ def topup_get_sn():
 
 #---
 @func_set_timeout(30)
-def topup_bca_cardinfo(ATD):
+def topup_bca_lib_cardinfo(ATD):
     # global DLL_LOAD
     report = ""
     res_str = ""
@@ -1005,13 +1005,13 @@ def topup_bca_cardinfo(ATD):
 
         # structReport = ResponBCATopup1()
         # p_structReport = pointer(structReport)
-        # func = DLL_LOAD.topup_bca_cardinfo
+        # func = DLL_LOAD.topup_bca_lib_cardinfo
 
         # res = func(C_ATD, p_structReport)
         # res_str = utils.to_4digit(res)
         # report = structReport.repDATA.decode("cp437")
 
-        res_str, report = lib.topup_bca_cardinfo(C_ATD)
+        res_str, report = lib.topup_bca_lib_cardinfo(C_ATD)
 
     except Exception as ex:
         LOG.fw("CMD $97 ERROR: ", "{0}".format(ex))
@@ -1084,7 +1084,7 @@ def topup_card_disconnect():
     return res_str
 
 @func_set_timeout(30)
-def topup_bca_session1(ATD, datetimes):
+def topup_bca_lib_session1(ATD, datetimes):
     # global DLL_LOAD
     session = ""
     res_str = ""
@@ -1100,13 +1100,13 @@ def topup_bca_session1(ATD, datetimes):
         
         # structSession = ResponBCASession1()
         # p_structSession = pointer(structSession)
-        # func = DLL_LOAD.topup_bca_session1
+        # func = DLL_LOAD.topup_bca_lib_session1
         
         # res = func(C_ATD, C_datetimes, p_structSession)
         # res_str = utils.to_4digit(res)
         # session = structSession.repDATA.decode("cp437")
 
-        res_str, session = lib.topup_bca_session1(C_ATD, C_datetimes)
+        res_str, session = lib.topup_bca_lib_session1(C_ATD, C_datetimes)
 
     except Exception as ex:
         LOG.fw("CMD $91 ERROR: ", "{0}".format(ex))        
@@ -1117,7 +1117,7 @@ def topup_bca_session1(ATD, datetimes):
     return res_str, session
 
 @func_set_timeout(30)
-def topup_bca_session2(session):
+def topup_bca_lib_session2(session):
     # global DLL_LOAD
     res_str = ""
     try:        
@@ -1127,11 +1127,11 @@ def topup_bca_session2(session):
 
         LOG.fw("--> session = ", C_session)
         
-        # func = DLL_LOAD.topup_bca_session2
+        # func = DLL_LOAD.topup_bca_lib_session2
         # res = func(C_session)
         # res_str = utils.to_4digit(res)
 
-        res_str = lib.topup_bca_session2(session)
+        res_str = lib.topup_bca_lib_session2(session)
 
     except Exception as ex:
         LOG.fw("CMD $92 ERROR: ", "{0}".format(ex))
@@ -1141,7 +1141,7 @@ def topup_bca_session2(session):
     return res_str
 
 @func_set_timeout(30)
-def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
+def topup_bca_lib_topup1(ATD, accescard, accescode, datetimes, amounthex):
     # global DLL_LOAD
     res_str = ""
     session = ""
@@ -1163,13 +1163,13 @@ def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
         
         # structTopUp = ResponBCATopup1()
         # p_structTopUp = pointer(structTopUp)
-        # func = DLL_LOAD.topup_bca_topup1
+        # func = DLL_LOAD.topup_bca_lib_topup1
 
         # res = func(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex, p_structTopUp)
         # res_str = utils.to_4digit(res)
         # session = structTopUp.repDATA.decode("cp437")
 
-        res_str, session = lib.topup_bca_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex)
+        res_str, session = lib.topup_bca_lib_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex)
 
     except Exception as ex:
         LOG.fw("CMD $93 ERROR: ", "{0}".format(ex))
@@ -1181,7 +1181,7 @@ def topup_bca_topup1(ATD, accescard, accescode, datetimes, amounthex):
     return res_str, session
 
 @func_set_timeout(30)
-def topup_bca_topup2(confirm1, confirm2):
+def topup_bca_lib_topup2(confirm1, confirm2):
     # global DLL_LOAD
     res_str = ""
     balance = "0"
@@ -1199,7 +1199,7 @@ def topup_bca_topup2(confirm1, confirm2):
 
         # structTopUp = ResponBCATopup2()
         # p_structTopUp = pointer(structTopUp)
-        # func = DLL_LOAD.topup_bca_topup2
+        # func = DLL_LOAD.topup_bca_lib_topup2
         # res = func(C_confirm1, C_confirm2, p_structTopUp)
 
         # respon = structTopUp.rep.decode("cp437")
@@ -1208,7 +1208,7 @@ def topup_bca_topup2(confirm1, confirm2):
 
         # res_str = utils.to_4digit(res)
 
-        res_str, respon = lib.topup_bca_topup2(C_confirm1, C_confirm2)
+        res_str, respon = lib.topup_bca_lib_topup2(C_confirm1, C_confirm2)
 
     except Exception as ex:
         LOG.fw("CMD $94 ERROR: ", "{0}".format(ex))
@@ -1223,7 +1223,7 @@ def topup_bca_topup2(confirm1, confirm2):
     return res_str, balance, respon, debErrorStr
 
 @func_set_timeout(30)
-def topup_bca_lastreport():
+def topup_bca_lib_lastreport():
     # global DLL_LOAD
     res_str = ""
     session = ""
@@ -1232,12 +1232,12 @@ def topup_bca_lastreport():
         
         # structTopUp = ResponBCATopup1()
         # p_structTopUp = pointer(structTopUp)
-        # func = DLL_LOAD.topup_bca_lastreport
+        # func = DLL_LOAD.topup_bca_lib_lastreport
 
         # res = func(p_structTopUp)
         # res_str = utils.to_4digit(res)
         # session = structTopUp.repDATA.decode("cp437")
-        res_str, session = lib.topup_bca_lastreport()
+        res_str, session = lib.topup_bca_lib_lastreport()
 
     except Exception as ex:
         LOG.fw("CMD $96 ERROR: ", "{0}".format(ex))
@@ -1249,7 +1249,7 @@ def topup_bca_lastreport():
     return res_str, session
 
 @func_set_timeout(30)
-def topup_bca_reversal(ATD):
+def topup_bca_lib_reversal(ATD):
     # global DLL_LOAD
     session = ""
     res_str = ""
@@ -1262,13 +1262,13 @@ def topup_bca_reversal(ATD):
         
         # structReversal = ResponBCAReversal()
         # p_structReversal = pointer(structReversal)    
-        # func = DLL_LOAD.topup_bca_reversal
+        # func = DLL_LOAD.topup_bca_lib_reversal
 
         # res = func(C_ATD, p_structReversal)
         # res_str = utils.to_4digit(res)
         # session = structReversal.repDATA.decode("cp437")
 
-        res_str, session = lib.topup_bca_reversal(C_ATD)
+        res_str, session = lib.topup_bca_lib_reversal(C_ATD)
 
     except Exception as ex:
         LOG.fw("CMD $95 ERROR: ", "{0}".format(ex))

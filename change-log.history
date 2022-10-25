@@ -1,3 +1,13 @@
+15.2.3-GLOBAL:
+- Enable Eco Mode Data Syncing,
+- Disable Sentry Logging,
+- Disable Chatbot,
+- Add Endpoint Success Validation,
+- Add Check Connection Fot Topup Online,
+- Add ping_interval (Set on Dashboard),
+- Refactor BCA Topup Library,
+- ...
+
 15.2.2-GLOBAL:
 - Enhance Payment Time (3 Times Multiply From Default),
 - Add New Interractive Commands,

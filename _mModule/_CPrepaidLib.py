@@ -234,7 +234,7 @@ def topup_apdusend(C_Slot, C_APDU):
 
     return res_str.decode("utf-8"), report
 
-def topup_bca_update(C_TID, C_MID):
+def topup_bca_lib_config(C_TID, C_MID):
     global COMPORT
     if not is_serial_valid():
         return "FFFE"
@@ -252,7 +252,7 @@ def topup_get_sn():
 
     return res_str.decode("utf-8"), uid.decode("utf-8"), sn.decode("utf-8")
 
-def topup_bca_cardinfo(C_ATD):
+def topup_bca_lib_cardinfo(C_ATD):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""
@@ -282,7 +282,7 @@ def topup_card_disconnect():
     else:
         return "FFFF"
 
-def topup_bca_session1(atd, datetimes):
+def topup_bca_lib_session1(atd, datetimes):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""
@@ -291,7 +291,7 @@ def topup_bca_session1(atd, datetimes):
 
     return res_str.decode("utf-8"), session
 
-def topup_bca_session2(session):
+def topup_bca_lib_session2(session):
     global COMPORT
     if not is_serial_valid():
         return "FFFE"
@@ -300,7 +300,7 @@ def topup_bca_session2(session):
 
     return res_str.decode("utf-8")
 
-def topup_bca_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex):
+def topup_bca_lib_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""
@@ -309,7 +309,7 @@ def topup_bca_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex):
 
     return res_str.decode("utf-8"), rep
 
-def topup_bca_topup2(C_confirm1, C_confirm2):
+def topup_bca_lib_topup2(C_confirm1, C_confirm2):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""
@@ -318,7 +318,7 @@ def topup_bca_topup2(C_confirm1, C_confirm2):
 
     return res_str.decode("utf-8"), rep    
 
-def topup_bca_lastreport():
+def topup_bca_lib_lastreport():
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""
@@ -327,7 +327,7 @@ def topup_bca_lastreport():
 
     return res_str.decode("utf-8"), rep    
 
-def topup_bca_reversal(ATD):
+def topup_bca_lib_reversal(ATD):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""

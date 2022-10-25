@@ -39,7 +39,7 @@ import sentry_sdk
 if _Common.IS_WINDOWS:
     import wmi
 
-if _Common.validate_system_version():
+if _Common.chatbot_feature():
     from _sService import _ChatbotService
 
 
@@ -1204,8 +1204,7 @@ def startup_task():
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Do Pending Request Jobs...')
         sleep(1)
         _Sync.start_do_pending_request_job()
-        # Dependency Issue (Must Be Python 3.5 and Up)
-        if _Common.validate_system_version():
+        if _Common.chatbot_feature():
             print("pyt: Init Chatbot Engine...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Initiate Chatbot Engine...')
             sleep(1)

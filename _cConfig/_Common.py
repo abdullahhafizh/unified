@@ -18,19 +18,17 @@ import subprocess
 IS_LINUX = platform.system() == 'Linux'
 IS_WINDOWS = not IS_LINUX
 
-SYSTEM_VERSION = sys.version.split(' ')[0]
-MINIMUM_SYSTEM_VERSION = (3*100*8*10*1)
+SYSTEM_VERSION = sys.version_info
+MINIMUM_SYSTEM_VERSION = (3, 8)
 
 
 def validate_system_version():
-    version_value = 1
-    for v in SYSTEM_VERSION.split('.'):
-        if int(v) == 0: v = '1'
-        if v == SYSTEM_VERSION.split('.')[0]: version_value = (version_value * 100)
-        if v == SYSTEM_VERSION.split('.')[1]: version_value = (version_value * 10)
-        version_value = (version_value * int(v))
-    LOGGER.debug(('SYSTEM_VERSION', MINIMUM_SYSTEM_VERSION, version_value))
-    return version_value >= MINIMUM_SYSTEM_VERSION
+    LOGGER.debug(('SYSTEM_VERSION', MINIMUM_SYSTEM_VERSION, SYSTEM_VERSION))
+    return SYSTEM_VERSION >= MINIMUM_SYSTEM_VERSION
+
+
+def chatbot_feature():
+    return validate_system_version() and '15.2.3' not in VERSION
 
 
 LOGGER = logging.getLogger()
@@ -307,6 +305,9 @@ EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
+
+DISABLE_SENTRY_LOGGING = True if _ConfigParser.get_set_value('GENERAL', 'disable^sentry^logging', '1') == '1' else False
+
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
@@ -652,7 +653,6 @@ if len(VIEW_CONFIG.keys()) == 0:
     if THEME_NAME.lower() in ['kai', 'kci']:
         VIEW_CONFIG = KAI_VIEW_CONFIG
         
-VIEW_CONFIG['check_topup_period'] = int(_ConfigParser.get_set_value('GENERAL', 'check^topup^period', '3'))
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
 VIEW_CONFIG['tnc_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'tnc^timer', '4'))
@@ -660,6 +660,7 @@ VIEW_CONFIG['success_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
 VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 VIEW_CONFIG['disable_print_on_cancel'] = True if _ConfigParser.get_set_value('EDC', 'disable^print^on^cancel', '1') == '1' else False
+VIEW_CONFIG['ping_interval'] =  int(_ConfigParser.get_set_value('GENERAL', 'ping^interval', '3'))
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
@@ -731,6 +732,10 @@ ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'topup-dki/reversal',
     'topup-dki/confirm',
     'topup-bni/confirm',
+    'topup-bca/confirm',
+    'topup-bca/reversal',
+    'topup-bri/confirm',
+    'topup-bri/reversal',
     ]
 
 ENDPOINT_SUCCESS_BY_ANY_HTTP_HEADER = [
@@ -1763,6 +1768,8 @@ def online_logger(e='', mode='service'):
 
 def async_online_logger(e='', mode='service'):
     # pass
+    if DISABLE_SENTRY_LOGGING:
+        return
     e = serialize_error_message(e)
     if mode == 'service':
         capture_exception(KioskServiceErrorResponse(e))
@@ -2129,6 +2136,8 @@ def validate_usage_pending_code(reff_no):
 IDLE_MODE = True
 MAINTENANCE_MODE = False
 IS_ONLINE = False
+ECO_MODE = True if _ConfigParser.get_set_value('GENERAL', 'eco^mode', '0') == '1' else False
+
 
 
 def is_online(source=''):
@@ -2136,7 +2145,7 @@ def is_online(source=''):
     if not LIVE_MODE:
         LOGGER.info((source, IS_ONLINE))
     # Hit Actual Ping Into Host If Only in Maintenance Mode
-    if MAINTENANCE_MODE:
+    if MAINTENANCE_MODE or not ECO_MODE:
         IS_ONLINE = _Helper.is_online(source)
     return IS_ONLINE
 
