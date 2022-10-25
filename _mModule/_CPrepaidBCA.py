@@ -270,7 +270,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
-            valuetext,ErrMsg = send_get_session_bca(url, TOKEN, TID,MID, cardno, report)
+            valuetext, ErrMsg = send_get_session_bca(url, TOKEN, TID,MID, cardno, report)
 
             if valuetext == "1":
                 valuetext = ErrMsg
@@ -595,7 +595,13 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
 
     try:
         sURL = URL_Server + "topup-bca/check-session"
-        payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no}
+        payload = {
+            "token": token.decode('utf-8'), 
+            "tid": tid.decode('utf-8'), 
+            "mid": mid.decode('utf-8'), 
+            "card_no":card_no
+            }
+        
         LOG.fw(":CheckSessionBCA url = ", sURL)
         LOG.fw(":CheckSessionBCA json = ", payload)
 
@@ -604,11 +610,8 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
         ValueText = r.text
 
         LOG.fw(":CheckSessionBCA = ", ValueText)
-        # Must Failed The Session Process If Empty
-        # if r.status_code != 200:
-        #     return "1", r.text
-        errorcode = "0000"
 
+        errorcode = "0000"
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "CheckSessionBCA error: {0}".format(ex)
@@ -620,14 +623,19 @@ def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
 
     try:
         sURL = URL_Server + "topup-bca/get-session"
-        payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "session_data": session_data}
+        payload = {
+            "token": token.decode('utf-8'), 
+            "tid": tid.decode('utf-8'), 
+            "mid": mid.decode('utf-8'), 
+            "card_no": card_no, 
+            "session_data": session_data.decode('utf-8')
+            }
         LOG.fw(":SessionBCA url = ", sURL)
         LOG.fw(":SessionBCA json = ", payload)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
         ValueText = r.text
-
         LOG.fw(":SessionBCA = ", ValueText)
 
         errorcode = "0000"
@@ -680,14 +688,21 @@ def send_post_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, 
 
     try:
         sURL = URL_Server + "topup-bca/reversal"
-        payload = {"token":token.decode('utf-8'), "tid":tid.decode('utf-8'), "mid":mid.decode('utf-8'), "card_no":card_no, "reversal_data": reversal_data, "last_balance":last_balance, "reference_id":reference_id}
+        payload = {
+            "token": token.decode('utf-8'), 
+            "tid": tid.decode('utf-8'), 
+            "mid": mid.decode('utf-8'), 
+            "card_no": card_no, 
+            "reversal_data": reversal_data, 
+            "last_balance": last_balance, 
+            "reference_id": reference_id
+            }
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
         ValueText = r.text
-
         LOG.fw(":ReversalBCA = ", ValueText)
 
         errorcode = "0000"
@@ -703,13 +718,13 @@ def send_post_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_
     try:
         sURL = URL_Server + "topup-bca/update"
         payload = {
-            "token":token.decode('utf-8'), 
-            "tid":tid.decode('utf-8'), 
-            "mid":mid.decode('utf-8'), 
-            "card_no":card_no, 
+            "token": token.decode('utf-8'), 
+            "tid": tid.decode('utf-8'), 
+            "mid": mid.decode('utf-8'), 
+            "card_no": card_no, 
             "topup_data": topup_data, 
-            "prev_balance":prev_balance, 
-            "reference_id":reference_id
+            "prev_balance": prev_balance, 
+            "reference_id": reference_id
             }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
@@ -717,7 +732,6 @@ def send_post_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
         ValueText = r.text
-
         LOG.fw(":UpdateBCA = ", ValueText)
 
         errorcode = "0000"
