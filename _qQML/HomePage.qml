@@ -146,7 +146,7 @@ Base{
 
     function topup_readiness(t){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('topup_readiness', now, t);
+//        console.log('topup_readiness', now, t);
         if (t=='TOPUP_READY|ERROR'){
             show_message_notification();
             return;
