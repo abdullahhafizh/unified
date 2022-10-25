@@ -535,16 +535,17 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                         if report == "":
                                             _ = prepaid.topup_card_disconnect()
                                             _, recheck_balance, recheck_cardno, sign = prepaid.topup_balance_with_sn()    
+                                            LOG.fw("044:BCATopup2 Recheck Card = ", recheck_cardno, recheck_balance)
                                             ErrMsg = "BCATopup2_BCATopupLastReport_Failed"
                                 # Normal Define
                                 lastbalance = int(balance) + int(amount)
                                 # Redefine Balance From Card On The Same Card
                                 if cardno == recheck_cardno:
-                                    if int(recheck_balance) == int(last_balance): 
+                                    if int(recheck_balance) == int(lastbalance): 
                                         success_topup = True
                                 
                                 if not success_topup:
-                                    last_balance = int(balance)
+                                    lastbalance = int(balance)
                                     
                                 reporttopup = report
                                 valuetext, ErrMsg = send_post_confirm_bca(url, TOKEN, TID, MID, cardno, report, lastbalance, reference_id, success_topup)
