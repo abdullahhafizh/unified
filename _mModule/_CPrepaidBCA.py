@@ -671,7 +671,7 @@ def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, la
         # Store To Job If Push Failed
         if r.status_code != 200:
             payload['endpoint'] = 'topup-bca/confirm'
-            _Common.store_request_to_job(name=send_post_confirm_bca, url=sURL, payload=payload)
+            _Common.store_request_to_job(name='send_post_confirm_bca', url=sURL, payload=payload)
 
         ValueText = r.text
         LOG.fw(":ConfirmBCA = ", ValueText)
