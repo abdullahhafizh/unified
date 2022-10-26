@@ -28,7 +28,7 @@ def validate_system_version():
 
 
 def chatbot_feature():
-    return validate_system_version() and '15.2.3' not in VERSION
+    return validate_system_version() and (IS_LINUX or '15.2.3' not in VERSION)
 
 
 LOGGER = logging.getLogger()
