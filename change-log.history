@@ -3,9 +3,10 @@
 - Disable Sentry Logging,
 - Disable Chatbot,
 - Add Endpoint Success Validation,
-- Add Check Connection Fot Topup Online,
+- Add Check Connection on Balance Check For Topup Online,
 - Add ping_interval (Set on Dashboard),
 - Refactor BCA Topup Library,
+- Send BCA ACK On Topup Failure,
 - ...
 
 15.2.2-GLOBAL:

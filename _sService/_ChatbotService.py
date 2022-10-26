@@ -13,7 +13,7 @@ from newsapi import NewsApiClient
 NEWSAPI = None
 
 import socketio
-SOCKET_IO = socketio.Client()
+SOCKET_IO = socketio.AsyncClient(True)
     
 @SOCKET_IO.event
 def connect():
