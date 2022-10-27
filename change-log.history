@@ -1,7 +1,7 @@
 15.2.3-GLOBAL:
 - Enable Eco Mode Data Syncing,
 - Disable Sentry Logging,
-- Disable Chatbot,
+- Disable Chatbot On This Version For Windows OS,
 - Add Endpoint Success Validation,
 - Add Check Connection on Balance Check For Topup Online,
 - Add ping_interval (Set on Dashboard),
