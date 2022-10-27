@@ -7,6 +7,7 @@
 - Add ping_interval (Set on Dashboard),
 - Refactor BCA Topup Library,
 - Send BCA ACK On Topup Failure,
+- Add Reader Contact Reset After Topup Failure,
 - ...
 
 15.2.2-GLOBAL:

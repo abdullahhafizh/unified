@@ -30,7 +30,9 @@ def send_command(cmd, param):
     
     try:
         LOG.fw("{0}:Mulai".format(cmd))
-        if cmd == "000":
+        if cmd == "ST0":
+            prepaid_common.reset_contactless(__global_response__)
+        elif cmd == "000":
             prepaid_common.open_only(param, __global_response__)
         elif cmd == "001":
             prepaid_common.init_topup(param, __global_response__)

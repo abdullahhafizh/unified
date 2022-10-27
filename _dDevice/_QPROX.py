@@ -44,6 +44,7 @@ BNI_SAM_SLOT = {
 
 
 QPROX = {
+    "RESET_CONTACTLESS": "ST0",
     "OPEN": "000",
     "INIT": "001",
     "AUTH": "002",
@@ -798,6 +799,9 @@ FORCE_MANDIRI_CHECK_NO = True
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
     # Check Correction Result
+    # Add Reset Reader Card Contactlerr
+    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((response, result))
     # Add Check Card Number First Before Correction - Optional
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))
@@ -846,6 +850,9 @@ def top_up_mandiri_correction(amount, trxid=''):
 
 def topup_bni_correction(amount, trxid=''):
     # Check Correction Result
+    # Add Reset Reader Card Contactlerr
+    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((response, result))
     # Add Check Card Number First Before Correction - Optional
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))

@@ -1335,6 +1335,8 @@ def start_retry_topup_online_bca(amount, trxid):
 
 
 def retry_topup_online_bca(amount, trxid):
+    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((response, result))
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     previous_card_no = last_card_check['card_no']
     previous_card_balance = last_card_check['balance']
@@ -1395,6 +1397,8 @@ def start_retry_topup_online_bri(amount, trxid):
 
 
 def retry_topup_online_bri(amount, trxid):
+    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((response, result))
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     previous_card_no = last_card_check['card_no']
     previous_card_balance = last_card_check['balance']
@@ -1450,6 +1454,8 @@ def start_retry_topup_online_dki(amount, trxid):
 
 
 def retry_topup_online_dki(amount, trxid):
+    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((response, result))
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     previous_card_no = last_card_check['card_no']
     previous_card_balance = last_card_check['balance']

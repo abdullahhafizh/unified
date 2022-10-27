@@ -9,6 +9,21 @@ SLOT_KA = ""
 COM_PORT = None
 LOAD_DLL = False
 
+# ST0
+def reset_contactless(__global_response__=None):
+    res_str = prepaid.topup_card_disconnect()
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("ST0:Result = ", res_str)
+        LOG.fw("ST0:Sukses")
+    else:
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("ST0:Result = ", res_str, True)
+        LOG.fw("ST0:Gagal", None, True)
+        
+    return res_str
+
 #000
 def open_only(param=None, __global_response__=None):
     global COM_PORT
