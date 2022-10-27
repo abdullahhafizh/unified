@@ -1009,12 +1009,13 @@ def update_task(task, result='TRIGGERED_TO_SYSTEM'):
         return result
     # Update Remote Task Into Host By API
     _url = _Common.BACKEND_URL + 'task/finish'
+    if type(result) != str: result = str(result)
     task['result'] = result
     while True:
         status, response = _HTTPAccess.post_to_url(url=_url, param=task)
         if status == 200 and response['result'] == 'OK':
             return True
-        sleep(11.1)
+        sleep(5)
 
 
 def start_sync_product_stock():
@@ -1068,7 +1069,7 @@ def sync_topup_amount():
         if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
             break
-        sleep(333.3)
+        sleep(60*5)
 
 
 def get_amount(idx, listx):

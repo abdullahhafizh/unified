@@ -13,7 +13,7 @@ from newsapi import NewsApiClient
 NEWSAPI = None
 
 import socketio
-SOCKET_IO = socketio.Client(reconnection=True, logger=True, engineio_logger=True)
+SOCKET_IO = socketio.Client(reconnection=True, logger=False, engineio_logger=False)
     
 @SOCKET_IO.event
 def connect():
