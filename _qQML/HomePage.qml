@@ -877,7 +877,7 @@ Base{
         border.width: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        width: 300
+        width: 450
         height: 30
         Row{
             anchors.horizontalCenter: parent.horizontalCenter
@@ -888,7 +888,7 @@ Base{
                 font.bold: true
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
-                color: (parent.color == 'orange') ? 'black' : 'orange'
+                color: (info_topup_single_denom.color == 'orange') ? 'black' : 'orange'
                 text: "METODE BAYAR TUNAI DENGAN SATU LEMBAR UANG"
                 font.pixelSize: 14
                 font.family:"Ubuntu"
