@@ -8,6 +8,11 @@
 - Refactor BCA Topup Library,
 - Send BCA ACK On Topup Failure,
 - Add Reader Contact Reset After Topup Failure,
+- Fix Topup Denom Multi Trigger,
+- Disable Sync Device State Realtime,
+- Enable Single Notes For Topup TRX,
+- OS Version For Multimedia Support,
+- New Topup Failure Handler,
 - ...
 
 15.2.2-GLOBAL:

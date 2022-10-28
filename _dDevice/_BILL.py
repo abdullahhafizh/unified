@@ -97,6 +97,8 @@ MEI = {
 class BILLSignalHandler(QObject):
     __qualname__ = 'BILLSignalHandler'
     SIGNAL_BILL_RECEIVE = pyqtSignal(str)
+    SIGNAL_BILL_STORE = pyqtSignal(str)
+    SIGNAL_BILL_REJECT = pyqtSignal(str)
     SIGNAL_BILL_STOP = pyqtSignal(str)
     SIGNAL_BILL_STATUS = pyqtSignal(str)
     SIGNAL_BILL_INIT = pyqtSignal(str)
@@ -313,8 +315,7 @@ def start_receive_note(trxid):
                     LOGGER.info(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
                     break
                 attempt += 1
-                param = BILL["RECEIVE"] + '|'
-                _response, _result = send_command_to_bill(param=param, output=None)
+                _response, _result = send_command_to_bill(param=BILL["RECEIVE"] + '|', output=None)
                 # _Helper.dump([_response, _result])
                 if BILL['KEY_BOX_FULL'].lower() in _result.lower():
                     set_cashbox_full()
@@ -336,25 +337,37 @@ def start_receive_note(trxid):
                     # -------------------------
                     # _Helper.dump(cash_in)
                     if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
+                        # Handle Single Denom
+                        if _Common.single_denom_trx_detected(trxid):
+                            if int(cash_in) != int(TARGET_CASH_AMOUNT):
+                                sleep(.5)
+                                send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
+                                BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                                break
                         if cash_in in SMALL_NOTES_NOT_ALLOWED:
                             sleep(.5)
-                            param = BILL["REJECT"] + '|'
-                            send_command_to_bill(param=param, output=None)
+                            send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             break
                         if is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH) is True:
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             sleep(.5)
-                            param = BILL["REJECT"] + '|'
-                            send_command_to_bill(param=param, output=None)
+                            send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
                             LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
                                                                                 'COLLECTED': COLLECTED_CASH,
                                                                                 'TARGET': TARGET_CASH_AMOUNT})))
                             break
-                    # Process Store and Update Data Cash
-                    if _Common.store_notes_activity(cash_in, trxid) is True:
+                    # Handle Single Denom TRX
+                    if _Common.single_denom_trx_detected(trxid):
                         # Somehow, Trigger OSError accidentally
-                        store_result = store_cash_into_cashbox()
+                        store_result = store_cash_into_cashbox(trxid)
+                        if store_result is True:
+                            update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
+                            LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
+                            # _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                    # Process Store and Update Data Cash
+                    elif _Common.store_notes_activity(cash_in, trxid) is True:
+                        store_result = store_cash_into_cashbox(trxid)
                         if store_result is True:
                             update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                             LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
@@ -386,8 +399,6 @@ def start_receive_note(trxid):
                                                                         'RECEIVED_TIMESTAMP': CASH_TIME_HISTORY})))
                     # Call API To Force Update Into Server
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
-                    # sleep(1.5)
-                    # init_bill()
                     break
                 if attempt == MAX_EXECUTION_TIME:
                     LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
@@ -404,7 +415,7 @@ def start_receive_note(trxid):
                 if _result is not None:
                     cash_in = parse_notes(_result)
                     if int(cash_in) > 0:
-                        store_result = store_cash_into_cashbox()
+                        store_result = store_cash_into_cashbox(trxid)
                         if store_result is True:
                             update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                             LOGGER.debug(('#2 Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
@@ -435,9 +446,12 @@ def start_receive_note(trxid):
         _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, TARGET_CASH_AMOUNT, CASH_TIME_HISTORY], 'device')
 
 
-def store_cash_into_cashbox():
+def store_cash_into_cashbox(trxid):
     try:
         # print("pyt: ", _Helper.whoami())
+        if _Common.single_denom_trx_detected(trxid):
+            # Handle Single Denom TRX
+            return True
         if BILL_TYPE == 'MEI':
             # Dummy Store Per Notes, MEI Actually Doing Bulk Storing in Stop Event
             return True
@@ -531,15 +545,28 @@ def is_exceed_payment(target, value_in, current_value):
         return False
 
 
-def stop_bill_receive_note():
-    _Helper.get_thread().apply_async(stop_receive_note)
+def stop_bill_receive_note(trxid):
+    _Helper.get_thread().apply_async(stop_receive_note, (trxid,))
 
 
-def stop_receive_note():
+def stop_receive_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
     # sleep(_Common.BILL_STORE_DELAY)
     try:
+        if _Common.single_denom_trx_detected(trxid):
+            if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
+                cash_received = {
+                    'history': get_cash_history(),
+                    'total': get_collected_cash()
+                }
+                BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS-'+json.dumps(cash_received))
+                sleep(.5)
+                GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
+            else:
+                BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS')
+            return
+        
         if BILL_TYPE == 'MEI' and COLLECTED_CASH > 0:
             # Do Store Any Notes that stored in Escrow
             r, s = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
@@ -564,11 +591,74 @@ def stop_receive_note():
             CASH_TIME_HISTORY = []
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
-            LOGGER.warning((str(response), str(result)))
+            LOGGER.warning((trxid, str(response), str(result)))
     except Exception as e:
         _Common.BILL_ERROR = 'FAILED_STOP_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
         LOGGER.warning(e)
+
+# TODO: Recheck This
+def start_bill_store_note(trxid):
+    _Helper.get_thread().apply_async(bill_store_note, (trxid,))
+
+
+def bill_store_note(trxid):
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
+    IS_RECEIVING = False
+    try:
+        if not _Common.single_denom_trx_detected(trxid):
+            return
+        response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
+        LOGGER.debug((BILL['TYPE'], trxid, response, result))
+        if response == 0:
+            LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
+            BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
+            for cash_in in CASH_HISTORY:
+                _Common._Common.store_notes_activity(cash_in, trxid)
+                _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+            COLLECTED_CASH = 0
+            CASH_HISTORY = []
+            CASH_TIME_HISTORY = []
+        else:
+            BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
+            LOGGER.warning((trxid, str(response), str(result)))
+    except Exception as e:
+        _Common.BILL_ERROR = 'FAILED_STORE_BILL'
+        BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
+        LOGGER.warning(e)
+    finally:
+        response, result = send_command_to_bill(param=BILL["STOP"]+'|', output=None)
+        LOGGER.debug((BILL['TYPE'], trxid, response, result))
+        
+
+# TODO: Recheck This
+def start_bill_reject_note(trxid):
+    _Helper.get_thread().apply_async(bill_reject_note, (trxid,))
+
+
+def bill_reject_note(trxid):
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
+    IS_RECEIVING = False
+    try:
+        if not _Common.single_denom_trx_detected(trxid):
+            return
+        response, result = send_command_to_bill(param=BILL["REJECT"]+'|', output=None)
+        LOGGER.debug((BILL['TYPE'], trxid, response, result))
+        if response == 0:
+            BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('REJECT_BILL|SUCCESS')
+            COLLECTED_CASH = 0
+            CASH_HISTORY = []
+            CASH_TIME_HISTORY = []
+        else:
+            BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('REJECT_BILL|ERROR')
+            LOGGER.warning((trxid, str(response), str(result)))
+    except Exception as e:
+        _Common.BILL_ERROR = 'FAILED_REJECT_BILL'
+        BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('REJECT_BILL|ERROR')
+        LOGGER.warning(e)
+    finally:
+        response, result = send_command_to_bill(param=BILL["STOP"]+'|', output=None)
+        LOGGER.debug((BILL['TYPE'], trxid, response, result))
 
 
 def start_get_status_bill():

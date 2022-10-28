@@ -101,6 +101,8 @@ Base{
         base.result_store_topup.connect(store_result);
         base.result_bill_receive.connect(bill_payment_result);
         base.result_bill_stop.connect(bill_payment_result);
+        base.result_bill_store.connect(bill_payment_result);
+        base.result_bill_reject.connect(bill_payment_result);
         base.result_bill_status.connect(bill_payment_result);
         base.result_get_qr.connect(qr_get_result);
         base.result_check_qr.connect(qr_check_result);
@@ -123,6 +125,8 @@ Base{
         base.result_store_topup.disconnect(store_result);
         base.result_bill_receive.disconnect(bill_payment_result);
         base.result_bill_stop.disconnect(bill_payment_result);
+        base.result_bill_store.disconnect(bill_payment_result);
+        base.result_bill_reject.disconnect(bill_payment_result);
         base.result_bill_status.disconnect(bill_payment_result);
         base.result_get_qr.disconnect(qr_get_result);
         base.result_check_qr.disconnect(qr_check_result);
@@ -432,6 +436,12 @@ Base{
         if (successTransaction) {
             // Delete Duplication Promo Data Record
             if (details.promo_data !== undefined) delete details.promo_data;
+            //Trigger Store Bill If Payment Cash
+            if (details.payment == 'cash'){
+                if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                    _SLOT.start_bill_store_note(details.shop_type + details.epoch.toString());
+                }
+            }
             //Trigger Confirm Promo Here
             if (details.promo_code_active == true){
                 var payload = {
@@ -459,11 +469,26 @@ Base{
                 _SLOT.start_play_audio('please_take_new_card_with_receipt');
             }
         }
-        _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-        console.log('release_print', now, title, msg);
-        switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
+        //Trigger Reject Bill If Payment Cash
+        if (details.payment == 'cash'){
+            if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                _SLOT.start_bill_reject_note(details.shop_type + details.epoch.toString());
+                title = 'Mohon Maaf Transaksi Gagal';
+                msg = 'Silakan Ambil Kembali Uang Anda Dari Bill Acceptor';
+                switch_frame('source/insert_money.png', title, msg, 'backToMain|3', true );
+                // Finalise To Store Transaction Failure Data For Certain Condition
+                _SLOT.start_finalise_transaction(JSON.stringify(details));
+            } else {
+                _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+                console.log('release_print', now, title, msg);
+                switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
+            }
+        } else {
+            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+            console.log('release_print', now, title, msg);
+            switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
+        }
         hide_all_cancel_button();
-//        abc.counter = 3;
         reset_variables_to_default();
         // Trigger Deposit Update Balance Check
         if (cardNo.substring(0, 4) == '6032'){
@@ -690,7 +715,10 @@ Base{
             // Do not return here to handle refund for failed topup response
         }
         details.process_error = 1;
-        details_error_history_push(t)
+        details_error_history_push(t);
+        if (t.indexOf('TOPUP_FAILURE_') > -1){
+            details.failure_type = t.split('#')[1];
+        }
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
         _SLOT.start_play_audio('transaction_failed');
@@ -891,7 +919,7 @@ Base{
                                 JSON.stringify(details), 'debug')
     }
 
-
+// TODO: Recheck This To Handle Reject & Store
     function bill_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("bill_payment_result : ", now, r, receivedPayment, totalPrice, proceedAble);
@@ -912,7 +940,7 @@ Base{
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
                 transactionInProcess = true;
-                _SLOT.stop_bill_receive_note();
+                _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                 return;
             } else if (billResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){
@@ -921,7 +949,7 @@ Base{
                     switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
                 } else {
-                    _SLOT.stop_bill_receive_note();
+                    _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                     exit_with_message(3);
                     return;
                 }
@@ -1246,9 +1274,20 @@ Base{
                         return;
                     } else if (details.payment=='cash') {
                         proceedAble = false;
-                        _SLOT.stop_bill_receive_note();
-                    }
+                        if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                            console.log('Timer Timeout Detected on Single Denom TRX';)
+                        } else {
+                            _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
+                        }
+                                            }
                     if (receivedPayment > 0){
+                        if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                            details.process_error = 1;
+                            details_error_history_push('user_payment_timeout')
+                            details.payment_error = 1;
+                            release_print();
+                            return;
+                        }
                         //Disable Auto Manual Refund
                         if (!successTransaction){
                             details.process_error = 1;
@@ -1481,7 +1520,7 @@ Base{
         customerPhone = n;
         details.refund_number = customerPhone;
         console.log('customerPhone as refund_number', customerPhone, now);
-   }
+    }
 
     function validate_transaction_success(mode){
         if (mode == undefined) mode = 'Transaksi Sukses';
@@ -1494,16 +1533,16 @@ Base{
         }
         refundAmount = exceed;
 //        if (message != undefined && message.length > 0){
-//            transaction_completeness.textFirst = message[0];
-//            transaction_completeness.textSecond = (message[1] != undefined) ? message[1]  : '';
-//            transaction_completeness.textThird = (message[2] != undefined) ? message[2]  : '';
-//            transaction_completeness.textFourth = (message[3] != undefined) ? message[3]  : '';
+//            exceed_payment_transaction.textFirst = message[0];
+//            exceed_payment_transaction.textSecond = (message[1] != undefined) ? message[1]  : '';
+//            exceed_payment_transaction.textThird = (message[2] != undefined) ? message[2]  : '';
+//            exceed_payment_transaction.textFourth = (message[3] != undefined) ? message[3]  : '';
 //        }
         press = '0';
         my_timer.stop();
         
-        transaction_completeness.mainTitle = mode;
-        transaction_completeness.open();
+        exceed_payment_transaction.mainTitle = mode;
+        exceed_payment_transaction.open();
         _SLOT.start_play_audio('please_input_wa_no');
     }
 
@@ -1511,17 +1550,25 @@ Base{
         if (transactionInProcess){
             console.log('[WARNING] Transaction In Process Not Allowed Cancellation', t);
             return;
-        }
+        } d
         details.receipt_title = 'Transaksi Anda Batal';
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
             proceedAble = false;
-            _SLOT.stop_bill_receive_note();
+            if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                console.log('User Cancellation Detected on Single Denom TRX';)
+            } else {
+                _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
+            }
             if (receivedPayment > 0){
                 console.log('[CANCELLATION] User Payment', receivedPayment);
                 details.process_error = 1;
                 details_error_history_push('user_cancellation')
                 details.payment_error = 1;
+                if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                    release_print();
+                    return;
+                }
                 if (!refundFeature){
 //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                     details.payment_received = receivedPayment.toString();
@@ -2139,7 +2186,7 @@ Base{
     }
 
     TransactionCompleteness{
-        id: transaction_completeness
+        id: exceed_payment_transaction
         z: 101
         textFirst: 'Transaksi Kembalian akan dimasukkan ke Whatsapp Voucher.'
         textSecond: 'Silakan masukkan nomor Whatsapp Anda untuk transaksi kembalian.'
@@ -2150,7 +2197,7 @@ Base{
 
 
         CircleButton{
-            id: cancel_button_transaction_completeness
+            id: cancel_button_exceed_payment_transaction
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
@@ -2181,14 +2228,14 @@ Base{
                     }
                     _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
                     console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
-                    transaction_completeness.close();
+                    exceed_payment_transaction.close();
                     release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                 }
             }
         }
 
         CircleButton{
-            id: next_button_transaction_completeness
+            id: next_button_exceed_payment_transaction
             anchors.right: parent.right
             anchors.rightMargin: 30
             anchors.bottom: parent.bottom
@@ -2203,7 +2250,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" in Transaction Completeness');
-                    transaction_completeness.close();
+                    exceed_payment_transaction.close();
                     do_refund_or_print();
                     // proceedAble = true;
                     // initial_process();

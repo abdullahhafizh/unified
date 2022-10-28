@@ -220,12 +220,13 @@ Base{
             return;
         }
         selectedPayment = p;
-        press = '0';
         //Auto Payment Process Base on UI Simplification
         if (VIEW_CONFIG.ui_simplify) {
             var get_details = get_cart_details(p);
             my_layer.push(general_payment_process, {details: get_details});
         }
+        //Must Press Flagging Here To Avoid Multi Trigger
+        press = '0';
     }
 
     function get_status_multiple(m){
@@ -233,12 +234,9 @@ Base{
         console.log('get_status_multiple', m, now);
         if (m == 'AVAILABLE'){
             multipleEject = true;
-//            small_notif.text = "*Silakan Tentukan Jumlah Kartu Yang Akan Dibeli.";
         } else {
             itemCount = 1;
-//            small_notif.text = "*Saat Ini Anda Hanya Dapat Membeli 1 (satu) Kartu Tiap Sesi.";
         }
-//        small_notif.visible = true;
     }
 
     function get_balance(text){

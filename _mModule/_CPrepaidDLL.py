@@ -43,30 +43,25 @@ def direct_load_dll():
 def open_only(PORT):
     # global DLL_LOAD
     res_str = ""
+    error_msg = ""
     try:
-        LOG.fw("--> CMD READER = $open_only")
-                
+        # LOG.fw("--> CMD READER = $open_only")
         LOG.fw("--> C_PORT = ",PORT)
 
         # C_PORT = utils.str_to_bytes(PORT)
         # LOG.fw("--> C_PORT = ", C_PORT)
-
         # func = DLL_LOAD.open_only
         # res = func(C_PORT)
         # res_str = utils.to_4digit(res)
-        
         res_str, error_msg = lib.open_only(PORT.decode('utf-8'))
-
-        if res_str != "0000":
-            LOG.fw("CMD $open_only ERROR: ", error_msg)
 
     except Exception as ex:
         LOG.fw("CMD $open_only ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
 
-
+    if res_str != "0000":
+        LOG.fw("CMD ERROR = ", error_msg)
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str
 
 #001

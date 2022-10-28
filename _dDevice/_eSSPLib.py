@@ -159,7 +159,6 @@ class eSSP(object):  # noqa
     def disable(self):
         """
         Disable the device.
-
         Will resume to work only when beeing enable()'d again.
         """
         result = self.send([self.getseq(), '0x1', '0x9'])

@@ -21,6 +21,8 @@ IS_WINDOWS = not IS_LINUX
 SYSTEM_VERSION = sys.version_info
 MINIMUM_SYSTEM_VERSION = (3, 8)
 
+LOGGER = logging.getLogger()
+
 
 def validate_system_version():
     LOGGER.debug(('SYSTEM_VERSION', MINIMUM_SYSTEM_VERSION, SYSTEM_VERSION))
@@ -31,7 +33,8 @@ def chatbot_feature():
     return validate_system_version() and (IS_LINUX or '15.2.3' not in VERSION)
 
 
-LOGGER = logging.getLogger()
+def support_multimedia():
+    return SYSTEM_VERSION < MINIMUM_SYSTEM_VERSION and IS_WINDOWS
 
 
 def get_config_value(option='', section='TEMPORARY', digit=False):
@@ -104,6 +107,9 @@ BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '
 BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False
 # Hardcoded Active Bill Notes
 BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
+# Handle Single Denom For Spesific Transaction Type
+BILL_SINGLE_DENOM_TRX = _ConfigParser.get_set_value('BILL', 'single^denom^trx', 'topup').split('|')
+BILL_SINGLE_DENOM_TYPE = _ConfigParser.get_set_value('BILL', 'single^denom^type', 'GRG|MEI').split('|')
 
 AMQP_ENABLE = True if _ConfigParser.get_set_value('AMQP', 'active', '0') == '1' else False
 AMQP_HOST = _ConfigParser.get_set_value('AMQP', 'host', 'amqp.mdd.co.id')
@@ -307,6 +313,7 @@ PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
 
 DISABLE_SENTRY_LOGGING = True if _ConfigParser.get_set_value('GENERAL', 'disable^sentry^logging', '1') == '1' else False
+NEW_TOPUP_FAILURE_HANDLER = True if _ConfigParser.get_set_value('GENERAL', 'new^topup^failure^handler', '1') == '1' else False
 
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
@@ -661,6 +668,9 @@ VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'pr
 VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 VIEW_CONFIG['disable_print_on_cancel'] = True if _ConfigParser.get_set_value('EDC', 'disable^print^on^cancel', '1') == '1' else False
 VIEW_CONFIG['ping_interval'] =  int(_ConfigParser.get_set_value('GENERAL', 'ping^interval', '3'))
+VIEW_CONFIG['single_denom_trx'] =  BILL_SINGLE_DENOM_TRX
+VIEW_CONFIG['single_denom_type'] =  BILL_SINGLE_DENOM_TYPE
+VIEW_CONFIG['support_multimedia'] = support_multimedia()
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
@@ -822,12 +832,14 @@ def mandiri_sam_status():
 
 BANKS = [{
     "BANK": "MANDIRI",
+    "TOPUP_CHANNEL": "OFFLINE",
     "STATUS": mandiri_sam_status(),
     "MID": C2C_MID if C2C_MODE is True else MID_MAN,
     "TID": C2C_TID if C2C_MODE is True else TID_MAN,
     "SAM": C2C_SAM_PIN if C2C_MODE is True else SAM_MAN,
 }, {
     "BANK": "BNI",
+    "TOPUP_CHANNEL": "OFFLINE",
     "STATUS": True if ('---' not in MID_BNI and len(MID_BNI) > 3) else False,
     "MID": MID_BNI,
     "TID": TID_BNI,
@@ -838,16 +850,27 @@ BANKS = [{
     "DEFAULT_TOPUP": BNI_TOPUP_AMOUNT
 }, {
     "BANK": "BRI",
+    "TOPUP_CHANNEL": "ONLINE",
     "STATUS": True if ('---' not in MID_BRI and len(MID_BRI) > 3) else False,
     "MID": MID_BRI,
     "TID": TID_BRI,
     "PROCODE": PROCODE_BRI
 }, {
     "BANK": "BCA",
+    "TOPUP_CHANNEL": "ONLINE",
     "STATUS": True if ('---' not in MID_BCA and len(MID_BCA) > 3) else False,
     "MID": MID_BCA,
     "TID": TID_BCA,
+}, {
+    "BANK": "DKI",
+    "TOPUP_CHANNEL": "ONLINE",
+    "STATUS": True if ('---' not in TID_DKI and len(MID_DKI) > 3) else False,
+    "MID": MID_DKI,
+    "TID": TID_DKI,
 }]
+
+
+TOPUP_ONLINE_BANK = [b for b in BANKS if b['TOPUP_CHANNEL'] == 'ONLINE']
 
 SFTP_MANDIRI = {
     'status': True,
@@ -957,6 +980,10 @@ EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
 LAST_EDC_TRX_RECEIPT = None
 
 LAST_READER_ERR_CODE = '0000'
+LAST_PPOB_TRX = None
+
+DISABLE_CARD_RETRY_CODE = True if _ConfigParser.get_set_value('GENERAL', 'disable^card^retry^code', '1') == '1' else False
+DISABLE_SYNC_DEVICE_STATE = True if _ConfigParser.get_set_value('GENERAL', 'disable^sync^device^state', '1') == '1' else False
 
 ALLOWED_SYNC_TASK = [
     'sync_product_data',
@@ -1219,6 +1246,8 @@ CODE_BANK = {
     '8': 'BTN'
 }
 
+CODE_BANK_BY_NAME = dict((v, k) for k, v in CODE_BANK.items())
+
 BRI_LOG_LEGEND = {
     'EB': 'PURCHASE', # Payment
     'EC': 'TOPUP', # Topup Online
@@ -1381,7 +1410,7 @@ def start_upload_device_state(device, status):
 
 
 def upload_device_state(device, status):
-    if device not in ['nfc', 'mei', 'edc', 'printer', 'scanner', 'webcam', 'cd1', 'cd2', 'cd3', 'cd4', 'cd5', 'cd6']:
+    if DISABLE_SYNC_DEVICE_STATE or device not in ['nfc', 'mei', 'edc', 'printer', 'scanner', 'webcam', 'cd1', 'cd2', 'cd3', 'cd4', 'cd5', 'cd6']:
         return False
     try:
         param = {
@@ -1493,7 +1522,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'cardNo': '',
             'failureType': failure_type,
             'paymentMethod': payment_method,
-            'remarks': remarks,
+            'remarks': remarks
         }
         if payment_method.lower() in ['dana', 'shopeepay', 'jakone', 'linkaja', 'gopay', 'shopee', 'bca-qris', 'bni-qris']:
             remarks = json.loads(remarks)
@@ -1924,10 +1953,6 @@ def generate_collection_data():
         return __
 
 
-LAST_PPOB_TRX = None
-
-DISABLE_CARD_RETRY_CODE = True if _ConfigParser.get_set_value('GENERAL', 'disable^card^retry^code', '1') == '1' else False
-
 # SHOP 
 # {'details': '{"date":"08/06/20","epoch":1591589266780,"payment":"cash","shop_type":"shop","time":"11:07:46","qty":1,"value":"5000","provider":"Test Card 2","admin_fee":"0","status":102,"raw":{"stock":74,"image":"source/card/20200306163800DF0FfQIKJ31s6ZEt33.png","remarks":"Test Card 2","init_price":5000,"pid":"dfaw2","stid":"dfaw2-102-001122334455","tid":"001122334455","syncFlag":1,"name":"Test Card 2","status":102,"createdAt":1591589169000,"sell_price":5000},"payment_details":{"total":"10000","history":"10000"},"payment_received":"10000"}', 'name': 'Test Card 2', 'price': 5000, 'syncFlag': 0, 'createdAt': 1591589279000, 'status': 1, 'pid': 'shop1591589266780'}
 
@@ -2251,3 +2276,8 @@ def send_stock_opname(key):
     except Exception as e:
         LOGGER.warning((e))
         return False
+
+
+def single_denom_trx_detected(trxid):
+    # Must Be Match With Pattern And Bill Type
+    return _Helper.get_char_from(trxid) in BILL_SINGLE_DENOM_TRX and BILL_TYPE in BILL_SINGLE_DENOM_TYPE

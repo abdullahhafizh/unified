@@ -228,3 +228,7 @@ def url_to_endpoint(url):
         return ''
     new_url = url.split('://')[1].split('/')
     return "/".join(new_url[1:])
+
+
+def get_char_from(s):
+    return ''.join([i for i in s if not i.isdigit()])

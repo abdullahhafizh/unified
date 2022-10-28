@@ -70,6 +70,8 @@ Rectangle {
     signal result_bill_status(string str)
     signal result_bill_receive(string str)
     signal result_bill_stop(string str)
+    signal result_bill_store(string str)
+    signal result_bill_reject(string str)
     signal result_do_topup_deposit_bni(string str)
     signal result_admin_print(string str)
     signal result_reprint_global(string str)
@@ -138,7 +140,6 @@ Rectangle {
         AdministratorPage{}
     }
 
-
     Component{id: admin_login
         AdministratorLogin{}
     }
@@ -192,9 +193,13 @@ Rectangle {
         HomePageEvent{}
     }
 
-     Component {id: media_page
-         MediaPage{}
-     }
+    Component {id: media_page
+        MediaPage{}
+    }
+
+    Component {id: no_media_page
+        NoMediaPage{}
+    }
 
     Component {id: coming_soon
         ComingSoon{}

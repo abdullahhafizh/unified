@@ -1,5 +1,6 @@
 __author__ = 'wahyudi@multidaya.id'
 
+from typing_extensions import final
 from _cConfig import _ConfigParser, _Common
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -557,9 +558,9 @@ def check_card_balance():
             'bank_name': bank_name,
             # 'able_topup': result.split('|')[3].replace('#', ''),
             'able_check_log': able_check_log,
-            'able_topup': '0000', #Force Allowed Topup For All Non BNI
+            'able_topup': '0000', #Default
         }
-        # Special Handling For BNI Tapcash
+        # Spesific Card Handling Per Bank
         if bank_name == 'MANDIRI':
             if card_no in _Common.MANDIRI_CARD_BLOCKED_LIST:
                 output['able_topup'] = '1004'
@@ -571,16 +572,11 @@ def check_card_balance():
             # Drop Balance Check If Not Available For Topup
             if output['able_topup'] not in ERROR_TOPUP.keys():
                 output['able_topup'] = '0000'
-        else: # BRI, BCA, DKI
+        elif bank_name in _Common.TOPUP_ONLINE_BANK: # BRI, BCA, DKI
             _Common.IS_ONLINE = _Helper.is_online(bank_name.lower()+'_balance_check')
             _Common.KIOSK_STATUS = 'ONLINE' if _Common.IS_ONLINE else 'OFFLINE'
             output['able_topup'] = '0000' if _Common.IS_ONLINE else '9999'
-        # elif bank_name == 'DKI':
-        #     prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
-        #     if not _Common.empty(prev_last_balance):
-        #         output['balance'] = prev_last_balance
-        #     else:
-        #         _Common.log_to_temp_config(card_no, balance)
+            
         LAST_CARD_CHECK = output
         _Common.store_to_temp_data('last-card-check', json.dumps(output))
         _Common.NFC_ERROR = ''
@@ -799,9 +795,7 @@ FORCE_MANDIRI_CHECK_NO = True
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
 def top_up_mandiri_correction(amount, trxid=''):
     # Check Correction Result
-    # Add Reset Reader Card Contactlerr
-    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
-    LOGGER.debug((response, result))
+    reset_card_contactless()
     # Add Check Card Number First Before Correction - Optional
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))
@@ -850,9 +844,7 @@ def top_up_mandiri_correction(amount, trxid=''):
 
 def topup_bni_correction(amount, trxid=''):
     # Check Correction Result
-    # Add Reset Reader Card Contactlerr
-    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
-    LOGGER.debug((response, result))
+    reset_card_contactless()
     # Add Check Card Number First Before Correction - Optional
     response, result = _Command.send_request(param=QPROX['BALANCE'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))
@@ -991,16 +983,17 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         return
     try:
         topup_result = json.loads(_result)
-
+        
         LAST_C2C_APP_TYPE = '0'
         if topup_result["Response"] == '83' or topup_result["Result"] in ["6208"]:
             LAST_C2C_APP_TYPE = '1'
+        
+        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
         # validate if deposit balance is deducted
         mdr_c2c_balance_info()
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
         LOGGER.info(('PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
         LOGGER.info(('LAST_BALANCE_DEPOSIT', last_deposit_balance ))
-        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
         
         rc = topup_result.get("Result", 'FFFF').upper()
         
@@ -1013,10 +1006,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 sleep(1)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
-        
-        # "6987", "100C", "10FC" Another Captured Error Code
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#RC_'+rc)
-        
+                
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
                 'samCardNo': _Common.MANDIRI_SAM_NO_1,
@@ -1034,6 +1024,13 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
+        # New Topup Failure Handler
+        if _Common.NEW_TOPUP_FAILURE_HANDLER:
+            topup_failure_handler('MANDIRI', trxid, amount)
+        # Old Handler
+        else:
+        # "6987", "100C", "10FC" Another Captured Error Code
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#RC_'+rc)
     except Exception as e:
         LOGGER.warning((e))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
@@ -1379,7 +1376,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
         # Real False Condition
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_'+rc)
         topup_result = json.loads(_result)
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
@@ -1398,6 +1394,12 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
+        # New Handler
+        if _Common.NEW_TOPUP_FAILURE_HANDLER:
+            topup_failure_handler('BNI', trxid, amount)
+        # Old Handler
+        else:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_'+rc)
     else:
         LOGGER.warning(('INIT_BNI', init_result))
         init_topup_result = json.loads(init_result)
@@ -1834,3 +1836,245 @@ def parse_card_history(bank, raw):
         return card_history
     else:
         return card_history
+
+
+def reset_card_contactless():
+    # Add Reset Reader Card Contactlerr
+    response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
+    LOGGER.debug((response, result))
+
+
+def topup_failure_handler(bank, trxid, amount, pending_data=None):
+    # output = {
+        #     'balance': balance,
+        #     'card_no': card_no,
+        #     'bank_type': bank_type,
+        #     'bank_name': bank_name,
+        #     'able_check_log': able_check_log,
+        #     'able_topup': '0000', #Default
+        # }
+    LOGGER.info((_Common.NEW_TOPUP_FAILURE_HANDLER))
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    if last_card_check.get('bank_name') != bank:
+        LOGGER.warning(('Card Bank Not Match'))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_03')
+        return
+    
+    card_check = False
+    attempt = 3
+    while card_check is False:
+        reset_card_contactless()
+        card_check = direct_card_balance()
+        if card_check is not False:
+            break
+        attempt -= 1
+        sleep(2)
+        
+    if card_check is False:
+        LOGGER.warning(('FAILED TO READ CARD'))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_03')
+        return
+    
+    if bank == 'MANDIRI':
+        amount = int(amount) - _Common.C2C_ADMIN_FEE[0]
+    
+    card_check['prev_balance'] = last_card_check['balance']
+    
+    if int(card_check['balance']) != int(last_card_check['balance']) or int(card_check['balance']) == int(last_card_check['balance']) + int(amount) :
+        # Removal Data Pending Lock For Topup Online
+        _Common.remove_temp_data(trxid)
+        _Common.remove_temp_data(card_check.get('card_no'))
+        handle_topup_success_event(bank, amount, trxid, card_check, pending_data)
+        return
+    
+    # Handle Negative Result
+    handle_topup_failure_event(bank, amount, trxid, card_check, pending_data)  
+    
+
+def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
+    last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    # 'trxid': trxid+'_FAILED',
+    # 'samCardNo': _Common.MANDIRI_SAM_NO_1,
+    # 'samCardSlot': _Common.MANDIRI_ACTIVE,
+    # 'samPrevBalance': prev_deposit_balance,
+    # 'samLastBalance': _Common.MANDIRI_ACTIVE_WALLET,
+    # 'topupCardNo': last_card_check['card_no'],
+    # 'topupPrevBalance': last_card_check['balance'],
+    # 'topupLastBalance': last_card_check['balance'],
+    # 'status': 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED',
+    # 'remarks': {},
+    # 'last_result': topup_result,
+    # 'err_code': topup_result.get('Result'),
+    if bank == 'MANDIRI':
+        # redefine amount, previouly already deducted with admin fee
+        amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
+        _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+        _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+        LOGGER.debug((_param, _response, _result))
+        if _response == 0 and len(_result) >= 196:
+            parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='0000')
+        else:
+            # Force Success If Not Get Force Settlement Report
+            output = {
+                'last_balance': card_data.get('balance'),
+                'report_sam': 'N/A',
+                'card_no': card_data.get('card_no'),
+                'report_ka': 'N/A',
+                'bank_id': '1',
+                'bank_name': 'MANDIRI',
+                'prev_balance': card_data.get('prev_balance'),
+                'deposit_no': last_audit_result.get('samCardNo'),
+                'deposit_prev_balance': last_audit_result.get('samPrevBalance'),
+                'deposit_last_balance': last_audit_result.get('samLastBalance'),
+                'topup_report': 'N/A',
+            }
+            LOGGER.info((bank, str(output), 'SUCCESS_TOPUP_BUT_NOT_FOUND_REPORT'))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    elif bank == 'BNI':
+        output = {
+            'last_balance': card_data.get('balance'),
+            'report_sam': 'N/A',
+            'card_no': card_data.get('card_no'),
+            'report_ka': 'N/A',
+            'bank_id': '2',
+            'bank_name': 'BNI',
+            'prev_balance': card_data.get('balance'),
+            'deposit_no': last_audit_result.get('samCardNo'),
+            'deposit_prev_balance': last_audit_result.get('samPrevBalance'),
+            'deposit_last_balance': last_audit_result.get('samLastBalance'),
+            'topup_report': 'N/A',
+        }
+        LOGGER.info((bank, str(output)))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    else :
+        output = {
+            # 'prev_wallet': pending_result['prev_wallet'],
+            # 'last_wallet': pending_result['last_wallet'],
+            'last_balance': card_data.get('balance'),
+            'topup_amount': amount,
+            'other_channel_topup': '0',
+            'report_sam': 'N/A',
+            'card_no': card_data.get('card_no'),
+            'report_ka': 'N/A',
+            'bank_id': _Common.CODE_BANK_BY_NAME.get(bank),
+            'bank_name': bank,
+            'prev_balance': card_data.get('prev_balance'),
+            'deposit_no': 'N/A',
+            'deposit_prev_balance': 'N/A',
+            'deposit_last_balance': 'N/A',
+            'topup_report': json.dumps(pending_data)
+            }
+        LOGGER.info((bank, str(output)))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    
+
+def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
+    last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    if bank == 'MANDIRI':
+        try:
+            amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
+            _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+            _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+            LOGGER.debug((_param, _response, _result))
+            if _response == 0 and len(_result) >= 196:
+                # Call Parse To Submit SAM Audit Report
+                parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+        except Exception as e:
+            LOGGER.warning((e))
+        finally:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_02')
+    elif bank == 'BNI':
+        # Get Card Log And Push SAM Audit
+        try:    
+            param = last_audit_result
+            if 'topup_result' in param.keys():
+                param.pop('topup_result')
+            if 'last_result' in param.keys():
+                param.pop('last_result')
+            # Will Change To Card Purse
+            # sam_purse = last_audit_result.get('sam_purse')
+            sam_history = last_audit_result.get('sam_history', '') 
+            card_purse, card_history = bni_card_history_direct(10)
+            param['remarks'] = json.dumps({
+                'mid': _Common.MID_BNI,
+                'tid': _Common.TID_BNI,
+                'can': card_data.get('card_no'),
+                'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
+                'card_history': card_history,
+                'amount': amount,
+                'sam_history': sam_history,
+                # 'sam_purse': sam_purse,
+                'card_purse': card_purse,
+                'err_code': param.get('err_code'),
+            })
+            _Common.store_upload_sam_audit(param)
+        except Exception as e:
+            LOGGER.warning((e))
+        finally:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_02')
+    
+    # Below Will Handle Topup Online Failure Which Must Be Handling Reversal/Topup As Well
+    elif bank == 'BRI':
+        try:
+            _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
+            response, result = _Command.send_request(param=_param, output=None)
+            # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
+            # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+            LOGGER.debug((response, result))
+            # Whatever The Reversal Result, Continue To Do Refund
+            param = {
+                'token': _Common.CORE_TOKEN,
+                'mid': _Common.CORE_MID,
+                'tid': _Common.TID,
+                'reff_no_host': pending_data.get('reff_no_trx'),
+                'card_no': card_data.get('card_no'),
+            }
+            status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
+            LOGGER.debug((bank, str(param), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                _Common.remove_temp_data(trxid)
+        except Exception as e:
+            LOGGER.warning((e))
+        finally:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')
+    elif bank == 'BCA':
+        try:
+            res_bca_card_info, bca_card_info = bca_card_info()
+            if res_bca_card_info is False:
+                LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
+                bca_card_info = json.loads(bca_card_info)
+                # rc = bca_card_info.get('Result', 'FFFF')
+            param = {
+                'token': _Common.CORE_TOKEN,
+                'mid': _Common.CORE_MID,
+                'tid': _Common.TID,
+                'card_data': bca_card_info,
+                'card_no': card_data.get('card_no'),
+                'last_balance': card_data.get('balance')
+            }
+            # Send ACK
+            status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
+            LOGGER.debug((bank, str(param), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                _Common.remove_temp_data(trxid)            
+        except Exception as e:
+            LOGGER.warning((e))
+        finally:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')
+    elif bank == 'DKI':
+        try:
+            param = {
+                'token': _Common.CORE_TOKEN,
+                'mid': _Common.CORE_MID,
+                'tid': _Common.TID,
+                'card_no': card_data.get('card_no'),
+                'reff_no': trxid
+            }
+            status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
+            LOGGER.debug((bank, str(param), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                _Common.remove_temp_data(trxid)            
+        except Exception as e:
+            LOGGER.warning((e))
+        finally:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')

@@ -535,6 +535,19 @@ Base{
 		width: globalWidth
     }
 
+//    BoxTitle{
+//        id: notice_single_denom
+//        width: globalWidth
+//        height: 40
+//        visible: (VIEW_CONFIG.single_denom_trx.length > 0) && (globalBoxName !== "")
+//        fontSize: 30
+//        anchors.bottom: parent.bottom
+//        anchors.bottomMargin: (smallHeight) ? 0 : 50
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        title_text: 'METODE BAYAR TUNAI DENGAN SATU LEMBAR UANG'
+//        boxColor: VIEW_CONFIG.frame_color
+//    }
+
     MainTitle{
         id: startup_process
         anchors.horizontalCenter: parent.horizontalCenter
@@ -545,7 +558,6 @@ Base{
         size_: 30
         color_: "yellow"
         setItalic: true
-
     }
 
 
@@ -611,18 +623,27 @@ Base{
                 if (tvc_loading.counter%2==0){
                     search_trx_button.color = 'white';
                     wa_voucher_button.color = '#4FCE5D';
+                    info_topup_single_denom.color = 'orange';
                 } else {
                     search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
+                    info_topup_single_denom.color = 'black';
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     if (!mediaOnPlaying) {
-                            //  console.log("starting tvc player...", now);
-                            //  my_layer.push(media_page, {mode: 'mediaPlayer',
-                            //                  mandiri_update_schedule: mandiri_update_schedule,
-                            //                  edc_settlement_schedule: edc_settlement_schedule
-                            //              });
+                        if (VIEW_CONFIG.support_multimedia){
+                            console.log("Starting TVC Player...", now);
+                            my_layer.push(media_page, {mode: 'mediaPlayer',
+                                            mandiri_update_schedule: mandiri_update_schedule,
+                                            edc_settlement_schedule: edc_settlement_schedule
+                                        });
+                        } else {
+                            my_layer.push(no_media_page, {mode: 'standbyMode',
+                                            mandiri_update_schedule: mandiri_update_schedule,
+                                            edc_settlement_schedule: edc_settlement_schedule
+                                        });
+                        }
                     }
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
@@ -707,7 +728,6 @@ Base{
             }
         }
     }
-
 
     Rectangle{
         id: search_trx_button
@@ -841,6 +861,35 @@ Base{
                 verticalAlignment: Text.AlignVCenter
                 color: 'black'
                 text: last_money_insert
+                font.pixelSize: 14
+                font.family:"Ubuntu"
+            }
+        }
+
+    }
+
+    Rectangle{
+        id: info_topup_single_denom
+        visible: (VIEW_CONFIG.single_denom_trx.length > 0) && (globalBoxName !== "")
+        color: "black"
+        anchors.left: info_last_money.right
+        opacity: 0.75
+        border.width: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        width: 300
+        height: 30
+        Row{
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            spacing: 20
+            Text{
+                font.bold: true
+                height: parent.height
+                verticalAlignment: Text.AlignVCenter
+                color: (parent.color == 'orange') ? 'black' : 'orange'
+                text: "METODE BAYAR TUNAI DENGAN SATU LEMBAR UANG"
                 font.pixelSize: 14
                 font.family:"Ubuntu"
             }

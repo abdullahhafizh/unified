@@ -304,22 +304,12 @@ Base{
         }
         selectedPayment = method;
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
-        press = '0';
         //Auto Payment Process Base on UI Simplification
         if (VIEW_CONFIG.ui_simplify) {
             do_set_confirm(method);
         }
-//        do_set_confirm('process_selected_payment');
-//        var rows = [
-//            {label: 'Tanggal', content: now},
-//            {label: 'Produk', content: 'Isi Ulang Prabayar'},
-//            {label: 'Provider', content: provider},
-//            {label: 'Nilai Topup', content: FUNC.insert_dot(selectedDenom.toString())},
-//            {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
-//            {label: 'Total', content: FUNC.insert_dot(totalPay.toString())},
-//            {label: 'Metode Bayar', content: selectedPayment.toUpperCase()},
-//        ]
-//        generateConfirm(rows, true);
+        //Must Press Flagging Here To Avoid Multi Trigger
+        press = '0';
     }
 
     function define_price(p){

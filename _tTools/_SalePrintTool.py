@@ -204,6 +204,24 @@ def start_direct_sale_print_global(payload):
     _Helper.get_thread().apply_async(sale_print_global, )
 
 
+def start_finalise_transaction(payload):
+    p = json.loads(payload)
+    if p.get('shop_type') != 'topup':
+        LOGGER.debug(('Shop Type Not Match'))
+        return
+    if p.get('raw') is None or p['raw'].get('bank_name') is None:
+        LOGGER.debug(('Bank Name Not Found'))
+        return
+    bank_name = p['raw']['bank_name']
+    if bank_name not in _Common.TOPUP_ONLINE_BANK:
+        LOGGER.debug(('Bank Type Non Topup Online'))
+        return
+    trxid = p['shop_type']+str(p['epoch'])
+    cash = int(p.get('payment_received', 0))
+    failure = p.get('failure_type', 'TOPUP_FAILURE')
+    _Helper.get_thread().apply_async(finalize_trx_process, (trxid, p, cash, failure))
+
+
 def start_push_pending_trx_global(payload):
     _Helper.get_thread().apply_async(push_pending_trx_global, (payload,),)
 
@@ -233,7 +251,8 @@ def push_pending_trx_global(p):
     trxid = p['shop_type']+str(p['epoch'])
     cash = int(p.get('payment_received', 0))
     result = _Common.store_upload_failed_trx(
-        trxid, p.get('pid', ''), 
+        trxid, 
+        p.get('pid', ''), 
         cash, 
         'PENDING_SHOP', 
         p.get('payment', 'cash'),
@@ -333,10 +352,6 @@ def get_retry_code_tnc():
     return max_attempt+"x coba / "+day_duration+"x24 jam"
 
 
-def start_finalize_trx_process(trxid, data, cash):
-    _Helper.get_thread().apply_async(finalize_trx_process, (trxid, data, cash,))
-
-
 def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION'):
     p = data
     if p['payment'].upper() == 'CASH':
@@ -347,8 +362,13 @@ def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION')
         if 'pending_trx_code' in p.keys():
             failure = 'PENDING_TRANSACTION'
         # Send Failure To Backend
-        _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
-                                        json.dumps(p))
+        _Common.store_upload_failed_trx(trxid, 
+                                        p.get('pid', ''), 
+                                        cash, 
+                                        failure, 
+                                        p.get('payment', 'cash'),
+                                        json.dumps(p)
+                                        )
     # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
     if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
         print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)

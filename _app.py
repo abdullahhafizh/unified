@@ -284,9 +284,9 @@ class SlotHandler(QObject):
         _BILL.start_bill_receive_note(trxid)
     start_bill_receive_note = pyqtSlot(str)(start_bill_receive_note)
 
-    def stop_bill_receive_note(self):
-        _BILL.stop_bill_receive_note()
-    stop_bill_receive_note = pyqtSlot()(stop_bill_receive_note)
+    def stop_bill_receive_note(self, trxid):
+        _BILL.stop_bill_receive_note(trxid)
+    stop_bill_receive_note = pyqtSlot(str)(stop_bill_receive_note)
 
     def start_get_status_bill(self):
         _BILL.start_get_status_bill()
@@ -532,6 +532,10 @@ class SlotHandler(QObject):
         _SalePrintTool.start_direct_sale_print_global(payload)
     start_direct_sale_print_global = pyqtSlot(str)(start_direct_sale_print_global)
     
+    def start_finalise_transaction(self, payload):
+        _SalePrintTool.start_finalise_transaction(payload)
+    start_finalise_transaction = pyqtSlot(str)(start_finalise_transaction)
+    
     def start_push_pending_trx_global(self, payload):
         _SalePrintTool.start_push_pending_trx_global(payload)
     start_push_pending_trx_global = pyqtSlot(str)(start_push_pending_trx_global)
@@ -670,6 +674,16 @@ class SlotHandler(QObject):
     def start_recheck_bni_sam_balance(self):
         _QPROX.start_recheck_bni_sam_balance()
     start_recheck_bni_sam_balance = pyqtSlot()(start_recheck_bni_sam_balance)
+    
+    
+    def start_bill_store_note(self, trxid):
+        _BILL.start_bill_store_note(trxid)
+    start_bill_store_note = pyqtSlot(str)(start_bill_store_note)
+
+ 
+    def start_bill_reject_note(self, trxid):
+        _BILL.start_bill_reject_note(trxid)
+    start_bill_reject_note = pyqtSlot(str)(start_bill_reject_note)
 
 
 
@@ -717,6 +731,8 @@ def set_signal_handler():
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_STATUS.connect(view.rootObject().result_bill_status)
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.connect(view.rootObject().result_bill_receive)
     _BILL.BILL_SIGNDLER.SIGNAL_BILL_STOP.connect(view.rootObject().result_bill_stop)
+    _BILL.BILL_SIGNDLER.SIGNAL_BILL_STORE.connect(view.rootObject().result_bill_store)
+    _BILL.BILL_SIGNDLER.SIGNAL_BILL_REJECT.connect(view.rootObject().result_bill_reject)
     _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.connect(view.rootObject().result_do_topup_deposit_bni)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.connect(view.rootObject().result_admin_print)
     _SalePrintTool.SPRINTTOOL_SIGNDLER.SIGNAL_SALE_REPRINT_GLOBAL.connect(view.rootObject().result_reprint_global)

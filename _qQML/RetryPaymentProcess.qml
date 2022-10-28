@@ -104,6 +104,7 @@ Base{
         base.result_store_topup.connect(store_result);
         base.result_bill_receive.connect(bill_payment_result);
         base.result_bill_stop.connect(bill_payment_result);
+        base.result_bill_store.connect(bill_payment_result);
         base.result_bill_status.connect(bill_payment_result);
         base.result_get_qr.connect(qr_get_result);
         base.result_check_qr.connect(qr_check_result);
@@ -125,6 +126,7 @@ Base{
         base.result_store_topup.disconnect(store_result);
         base.result_bill_receive.disconnect(bill_payment_result);
         base.result_bill_stop.disconnect(bill_payment_result);
+        base.result_bill_store.disconnect(bill_payment_result);
         base.result_bill_status.disconnect(bill_payment_result);
         base.result_get_qr.disconnect(qr_get_result);
         base.result_check_qr.disconnect(qr_check_result);
@@ -821,7 +823,7 @@ Base{
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
                 transactionInProcess = true;
-                _SLOT.stop_bill_receive_note();
+                _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                 return;
             } else if (billResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > initialPayment){
@@ -830,7 +832,7 @@ Base{
                     switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
                 } else {
-                    _SLOT.stop_bill_receive_note();
+                    _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                     exit_with_message(3);
                     return;
                 }
@@ -1392,16 +1394,16 @@ Base{
             return;
         }
 //        if (message != undefined && message.length > 0){
-//            transaction_completeness.textFirst = message[0];
-//            transaction_completeness.textSecond = (message[1] != undefined) ? message[1]  : '';
-//            transaction_completeness.textThird = (message[2] != undefined) ? message[2]  : '';
-//            transaction_completeness.textFourth = (message[3] != undefined) ? message[3]  : '';
+//            exceed_payment_transaction.textFirst = message[0];
+//            exceed_payment_transaction.textSecond = (message[1] != undefined) ? message[1]  : '';
+//            exceed_payment_transaction.textThird = (message[2] != undefined) ? message[2]  : '';
+//            exceed_payment_transaction.textFourth = (message[3] != undefined) ? message[3]  : '';
 //        }
         refundAmount = exceed;
         press = '0';
         my_timer.stop();
-        transaction_completeness.mainTitle = mode;
-        transaction_completeness.open();
+        exceed_payment_transaction.mainTitle = mode;
+        exceed_payment_transaction.open();
         _SLOT.start_play_audio('please_input_wa_no');
     }
 
@@ -1670,7 +1672,7 @@ Base{
                     if (details.payment=='cash') {
                         console.log('[CANCELLATION] Cash Method Payment Detected..!')
                         proceedAble = false;
-                        _SLOT.stop_bill_receive_note();
+                        _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                         if (receivedPayment > initialPayment){
                             console.log('[CANCELLATION] User Payment', receivedPayment)
                             do_refund_or_print('user_cancellation');
@@ -2019,7 +2021,7 @@ Base{
 
 
     TransactionCompleteness{
-        id: transaction_completeness
+        id: exceed_payment_transaction
         z: 101
         textFirst: 'Transaksi Kembalian akan dimasukkan ke Whatsapp Voucher.'
         textSecond: 'Silakan masukkan nomor Whatsapp Anda untuk transaksi kembalian.'
@@ -2030,7 +2032,7 @@ Base{
 
 
         CircleButton{
-            id: cancel_button_transaction_completeness
+            id: cancel_button_exceed_payment_transaction
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
@@ -2061,14 +2063,14 @@ Base{
                     }
                     _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
                     console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
-                    transaction_completeness.close();
+                    exceed_payment_transaction.close();
                     release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                 }
             }
         }
 
         CircleButton{
-            id: next_button_transaction_completeness
+            id: next_button_exceed_payment_transaction
             anchors.right: parent.right
             anchors.rightMargin: 30
             anchors.bottom: parent.bottom
@@ -2083,7 +2085,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" in Transaction Completeness');
-                    transaction_completeness.close();
+                    exceed_payment_transaction.close();
                     do_refund_or_print();
                     // proceedAble = true;
                     // initial_process();
