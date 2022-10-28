@@ -1275,7 +1275,7 @@ Base{
                     } else if (details.payment=='cash') {
                         proceedAble = false;
                         if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
-                            console.log('Timer Timeout Detected on Single Denom TRX';)
+                            console.log('Timer Timeout Detected on Single Denom TRX');
                         } else {
                             _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                         }
@@ -1556,7 +1556,7 @@ Base{
             console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
             proceedAble = false;
             if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
-                console.log('User Cancellation Detected on Single Denom TRX';)
+                console.log('User Cancellation Detected on Single Denom TRX');
             } else {
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
             }
