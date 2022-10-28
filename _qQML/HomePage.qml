@@ -889,7 +889,7 @@ Base{
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: (info_topup_single_denom.color == 'orange') ? 'black' : 'orange'
-                text: "METODE BAYAR TUNAI DENGAN SATU LEMBAR UANG"
+                text: "TOPUP HANYA MENERIMA 1 LEMBAR UANG SESUAI DENOM"
                 font.pixelSize: 14
                 font.family:"Ubuntu"
             }
