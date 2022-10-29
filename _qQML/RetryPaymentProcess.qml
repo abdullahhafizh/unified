@@ -1316,6 +1316,7 @@ Base{
 //            global_frame.closeMode = 'closeWindow';
 //            global_frame.timerDuration = 30;
 //        }
+        if (global_frame.closeMode=='backToMain') my_timer.stop();
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
