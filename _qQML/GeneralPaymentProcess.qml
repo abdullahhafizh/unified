@@ -478,6 +478,8 @@ Base{
                     reset_variables_to_default();
                     return;
                     //Must Stop Here
+                } else {
+                    _SLOT.start_bill_store_note(details.shop_type + details.epoch.toString());
                 }
             }
         }
