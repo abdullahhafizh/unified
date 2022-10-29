@@ -13,6 +13,7 @@
 - Enable Single Notes For Topup TRX,
 - OS Version For Multimedia Support,
 - New Topup Failure Handler,
+- Disable Printer Type Validation For Success TRX,
 - ...
 
 15.2.2-GLOBAL:

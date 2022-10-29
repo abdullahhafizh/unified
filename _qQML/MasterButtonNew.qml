@@ -1,11 +1,11 @@
 import QtQuick 2.0
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 
 Rectangle {
     property bool isActivated: true
     property bool modeReverse: false
     property var color_: (modeReverse) ? "white" : "black"
-    property var img_:"source/phone_qr.png"
+    property var img_:"source/shop_cart.png"
     property var text_:"Tiket Pesawat"
     property var text2_:"Flight Ticket"
     property var text_color: (modeReverse) ? "black" : "white"
@@ -20,16 +20,8 @@ Rectangle {
         id: background_base
         anchors.fill: parent
         color: 'white'
-        opacity: .3
-        visible: (mode3d==undefined)
+        opacity: 1
         radius: (rounded) ? width/2 : 0
-    }
-    Image{
-        id: base_3d_button
-        anchors.fill: parent
-        source: "source/3d_button/__"+mode3d+".png"
-        fillMode: Image.PreserveAspectFit
-        visible: !background_base.visible
     }
     Image{
         id: button_image
@@ -41,16 +33,14 @@ Rectangle {
         visible: modeReverse
     }
     ColorOverlay {
-        visible: !modeReverse
         anchors.fill: button_image
         source: button_image
         scale: 0.4
-        color: "#ffffff"
+        color: "black"
     }
     Text{
         id: text_button
-        color: 'white'
-//        text: text_.toUpperCase()
+        color: 'black'
         text: text_
         font.pixelSize: 27
         anchors.bottomMargin: 40

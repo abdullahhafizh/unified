@@ -614,7 +614,7 @@ def bill_store_note(trxid):
             LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
             for cash_in in CASH_HISTORY:
-                _Common._Common.store_notes_activity(cash_in, trxid)
+                _Common.store_notes_activity(cash_in, trxid)
                 _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
             COLLECTED_CASH = 0
             CASH_HISTORY = []
