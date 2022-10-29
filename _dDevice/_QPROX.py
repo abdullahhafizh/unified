@@ -1010,6 +1010,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             return
         
         if rc == '100C':
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
             reset_card_contactless()
             param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
             _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
