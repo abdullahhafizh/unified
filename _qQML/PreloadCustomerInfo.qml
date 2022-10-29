@@ -62,7 +62,6 @@ Base{
             _textSize: textSize
             textContent: textMain
             imageSource: "source/whatsapp_icon_tnc.png"
-            visible: (VIEW_CONFIG.bill_type !== 'MEI')
         }
 
         InfographBox{
