@@ -1574,7 +1574,7 @@ Base{
         if (transactionInProcess){
             console.log('[WARNING] Transaction In Process Not Allowed Cancellation', t);
             return;
-        } d
+        }
         details.receipt_title = 'Transaksi Anda Batal';
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
