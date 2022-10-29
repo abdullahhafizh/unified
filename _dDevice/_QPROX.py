@@ -1911,6 +1911,7 @@ def topup_failure_handler(bank, trxid, amount, pending_data=None):
 
 def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    rc = last_audit_result.get('err_code')
     # 'trxid': trxid+'_FAILED',
     # 'samCardNo': _Common.MANDIRI_SAM_NO_1,
     # 'samCardSlot': _Common.MANDIRI_ACTIVE,
@@ -1926,7 +1927,11 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
     if bank == 'MANDIRI':
         # redefine amount, previouly already deducted with admin fee
         amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
-        _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+        if rc == '100C':
+            # Slot SAM or Deposit
+            _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_DEPOSIT_SLOT + '|'
+        else:
+            _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
         LOGGER.debug((_param, _response, _result))
         if _response == 0 and len(_result) >= 196:
@@ -1990,12 +1995,17 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     if bank == 'MANDIRI':
         try:
+            rc = last_audit_result.get('err_code')
             amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
             attempt = 2
             while True:
                 if attempt == 0:
                     break
-                _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+                if rc == '100C':
+                    # Slot SAM or Deposit
+                    _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_DEPOSIT_SLOT + '|'
+                else:
+                    _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
                 _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
                 LOGGER.debug((_param, _response, _result))
                 if _response == 0 and len(_result) >= 196:
