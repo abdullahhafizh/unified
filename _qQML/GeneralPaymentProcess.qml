@@ -858,7 +858,6 @@ Base{
         do_promo_data_adjustment(mode);
         // Send TRX Shop Data Pending To Host
         if (trx_type == 'shop') _SLOT.start_push_pending_trx_global(JSON.stringify(details));
-        transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
         abc.counter = 120;
@@ -947,7 +946,6 @@ Base{
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
-                transactionInProcess = true;
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                 return;
             } else if (billResult == 'SERVICE_TIMEOUT'){

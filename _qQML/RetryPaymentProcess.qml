@@ -736,7 +736,6 @@ Base{
         delete details.pending_trx_code;
         delete details.payment_error;
         delete details.process_error;
-        transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();
         abc.counter = 90;
@@ -749,6 +748,10 @@ Base{
     //        popup_loading.close();
         if (receivedPayment == 0){
             console.log('EMPTY_PAYMENT', now);
+            return;
+        }
+        if (transactionInProcess){
+            console.log('Transaction_In_Process', transactionInProcess);
             return;
         }
         transactionInProcess = true;
@@ -822,7 +825,6 @@ Base{
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
-                transactionInProcess = true;
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                 return;
             } else if (billResult == 'SERVICE_TIMEOUT'){
