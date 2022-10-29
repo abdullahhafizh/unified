@@ -624,10 +624,12 @@ Base{
                     search_trx_button.color = 'white';
                     wa_voucher_button.color = '#4FCE5D';
                     info_topup_single_denom.color = 'orange';
+                    text_info_topup_single_denom.color = 'black';
                 } else {
                     search_trx_button.color = 'orange';
                     wa_voucher_button.color = 'white';
                     info_topup_single_denom.color = 'black';
+                    text_info_topup_single_denom.color = 'orange';
                 }
                 if(tvc_loading.counter == 0 && tvc_timeout < 300){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -885,6 +887,7 @@ Base{
             anchors.top: parent.top
             spacing: 20
             Text{
+                id: text_info_topup_single_denom
                 font.bold: true
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter

@@ -436,11 +436,9 @@ Base{
         if (successTransaction) {
             // Delete Duplication Promo Data Record
             if (details.promo_data !== undefined) delete details.promo_data;
-            //Trigger Store Bill If Payment Cash
-            if (details.payment == 'cash'){
-                if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
-                    _SLOT.start_bill_store_note(details.shop_type + details.epoch.toString());
-                }
+            //Validate Single Denom TRX
+            if (validate_single_denom_trx()){
+               _SLOT.start_bill_store_note(details.shop_type + details.epoch.toString());
             }
             //Trigger Confirm Promo Here
             if (details.promo_code_active == true){
@@ -469,27 +467,35 @@ Base{
                 _SLOT.start_play_audio('please_take_new_card_with_receipt');
             }
         }
-        //Trigger Reject Bill If Payment Cash
+
+        title = 'Mohon Maaf Transaksi Anda Gagal';
+        msg = 'Silakan Ambil Struk Transaksi Anda dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.';
+
+        //Trigger Reject Bill If Payment Cash For Topup If Not Failure 03
         if (details.payment == 'cash'){
-            if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
-                _SLOT.start_bill_reject_note(details.shop_type + details.epoch.toString());
-                title = 'Mohon Maaf Transaksi Gagal';
-                msg = 'Silakan Ambil Kembali Uang Anda Dari Bill Acceptor';
-                switch_frame('source/insert_money.png', title, msg, 'backToMain|3', true );
-                // Finalise To Store Transaction Failure Data For Certain Condition
-                _SLOT.start_finalise_transaction(JSON.stringify(details));
-            } else {
-                _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-                console.log('release_print', now, title, msg);
-                switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
+            if (validate_single_denom_trx()){
+                if (!validate_topup_failure_03()){
+                    _SLOT.start_bill_reject_note(details.shop_type + details.epoch.toString());
+                    msg = 'Silakan Ambil Kembali Uang Anda Dari Bill Acceptor';
+                    switch_frame('source/insert_money.png', title, msg, 'backToMain|3', true );
+                    // Finalise To Store Transaction Failure Data For Certain Condition
+                    _SLOT.start_finalise_transaction(JSON.stringify(details));
+                    hide_all_cancel_button();
+                    reset_variables_to_default();
+                    return;
+                    //Must Stop Here
+                }
             }
-        } else {
-            _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-            console.log('release_print', now, title, msg);
-            switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
         }
+
+        //TOPUP_FAILURE_03 Will be handled as well with sale_print_global to sync the failure data
+        _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+        console.log('release_print', now, title, msg);
+        switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
+
         hide_all_cancel_button();
         reset_variables_to_default();
+
         // Trigger Deposit Update Balance Check
         if (cardNo.substring(0, 4) == '6032'){
             if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
@@ -512,7 +518,6 @@ Base{
             details.receipt_title = 'Transaksi Anda Gagal';
             _SLOT.start_play_audio('transaction_failed');
             if (!refundFeature){
-            // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
@@ -556,7 +561,6 @@ Base{
         }
         if (['TIMEOUT'].indexOf(result) > -1){
             if (!refundFeature){
-//              details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.process_error = 1;
                 details_error_history_push(r)
                 details.payment_error = 1;
@@ -717,13 +721,13 @@ Base{
         details.process_error = 1;
         details_error_history_push(t);
         if (t.indexOf('TOPUP_FAILURE_') > -1){
+            //Special Treatment For TOPUP_FAILURE_03 ->Store The Notes Not Reject
             details.failure_type = t.split('#')[1];
         }
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
         _SLOT.start_play_audio('transaction_failed');
         if (!refundFeature){
-        // details.pending_trx_code = details.epoch.toString().substr(-6);
             details.payment_received = receivedPayment.toString();
             details.pending_trx_code = uniqueCode;
             console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
@@ -791,7 +795,6 @@ Base{
             details.receipt_title = 'Transaksi Anda Gagal';
             _SLOT.start_play_audio('transaction_failed');
             if (!refundFeature){
-            // details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
@@ -1259,7 +1262,6 @@ Base{
 //                        details.payment_received = '0';
 //                        release_print();
                         if (!refundFeature){
-//                            details.pending_trx_code = details.epoch.toString().substr(-6);
                             details.process_error = 1;
                             details_error_history_push('user_payment_timeout_debit')
                             details.payment_error = 1;
@@ -1274,14 +1276,14 @@ Base{
                         return;
                     } else if (details.payment=='cash') {
                         proceedAble = false;
-                        if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                        if (validate_single_denom_trx()){
                             console.log('Timer Timeout Detected on Single Denom TRX');
                         } else {
                             _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                         }
                                             }
                     if (receivedPayment > 0){
-                        if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                        if (validate_single_denom_trx()){
                             details.process_error = 1;
                             details_error_history_push('user_payment_timeout')
                             details.payment_error = 1;
@@ -1294,7 +1296,6 @@ Base{
                             details_error_history_push('user_payment_timeout')
                             details.payment_error = 1;
                             if (!refundFeature){
-    //                            details.pending_trx_code = details.epoch.toString().substr(-6);
                                 details.payment_received = receivedPayment.toString();
                                 details.pending_trx_code = uniqueCode;
                                 console.log('Disable Auto Manual Refund, Generate Pending Code', uniqueCode);
@@ -1496,7 +1497,6 @@ Base{
             case 'PRINT_QR_TIMEOUT_RECEIPT':
                 // _SLOT.start_play_audio('transaction_failed');
                 if (!refundFeature){
-//                            details.pending_trx_code = details.epoch.toString().substr(-6);
                     details.process_error = 1;
                     details_error_history_push('user_payment_timeout_qr')
                     details.payment_error = 1;
@@ -1513,6 +1513,26 @@ Base{
                 break;
             }
         }
+    }
+
+    function validate_single_denom_trx(){
+        var single_denom = VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1 &&
+                VIEW_CONFIG.single_denom_type.indexOf(VIEW_CONFIG.bill_type) > -1 &&
+                details.payment == 'cash';
+        console.log('Validate TRX Single Denom', single_denom)
+        return single_denom;
+    }
+
+
+    function validate_topup_failure_03(){
+        var failure_03 = false;
+        if (details.shop_type == 'topup'){
+            if (details.failure_type !== undefined){
+                if (details.failure_type == 'TOPUP_FAILURE_03') failure_03 = true;
+            }
+        }
+        console.log('Validate Topup Failure 03', failure_03)
+        return failure_03;
     }
 
     function set_refund_number(n){
@@ -1555,7 +1575,7 @@ Base{
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
             proceedAble = false;
-            if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+            if (validate_single_denom_trx()){
                 console.log('User Cancellation Detected on Single Denom TRX');
             } else {
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
@@ -1565,12 +1585,11 @@ Base{
                 details.process_error = 1;
                 details_error_history_push('user_cancellation')
                 details.payment_error = 1;
-                if (VIEW_CONFIG.single_denom_trx.indexOf(details.shop_type) > -1){
+                if (validate_single_denom_trx()){
                     release_print();
                     return;
                 }
                 if (!refundFeature){
-//                            details.pending_trx_code = details.epoch.toString().substr(-6);
                     details.payment_received = receivedPayment.toString();
                     details.pending_trx_code = uniqueCode;
                     console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);
@@ -1606,7 +1625,6 @@ Base{
                 return;
             }
             if (!refundFeature){
-//                            details.pending_trx_code = details.epoch.toString().substr(-6);
                 details.payment_received = receivedPayment.toString();
                 details.pending_trx_code = uniqueCode;
                 console.log('User Cancellation Without Refund, Generate Pending Code', uniqueCode);

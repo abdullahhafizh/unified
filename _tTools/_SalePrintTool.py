@@ -358,8 +358,8 @@ def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION')
         _BILL.log_book_cash(trxid, p['payment_received'], p['shop_type'])
     if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
         if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
-            failure = 'TOPUP_FAILURE'
-        if 'pending_trx_code' in p.keys():
+            failure = p.get('failure_type', 'TOPUP_FAILURE')
+        if 'pending_trx_code' in p.keys() and not _Helper.empty(p.get('pending_trx_code')):
             failure = 'PENDING_TRANSACTION'
         # Send Failure To Backend
         _Common.store_upload_failed_trx(trxid, 
