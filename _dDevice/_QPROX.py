@@ -992,6 +992,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         
         LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
         # validate if deposit balance is deducted
+        sleep(1)
         mdr_c2c_balance_info()
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
         LOGGER.info(('PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
@@ -1048,7 +1049,28 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#RC_'+rc)
     except Exception as e:
         LOGGER.warning((e))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
+        last_audit_report = json.dumps({
+                'trxid': trxid+'_FAILED',
+                'samCardNo': _Common.MANDIRI_SAM_NO_1,
+                'samCardSlot': _Common.MANDIRI_ACTIVE,
+                'samPrevBalance': prev_deposit_balance,
+                'samLastBalance': _Common.MANDIRI_ACTIVE_WALLET,
+                'topupCardNo': last_card_check['card_no'],
+                'topupPrevBalance': last_card_check['balance'],
+                'topupLastBalance': last_card_check['balance'],
+                'status': 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED',
+                'remarks': {},
+                'last_result': topup_result,
+                'err_code': topup_result.get('Result'),
+                # 'sam_purse': init_result,
+                # 'sam_history': bni_sam_history_direct()
+        })
+        _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
+        if _Common.NEW_TOPUP_FAILURE_HANDLER:
+            topup_failure_handler('MANDIRI', trxid, amount)
+        # Old Handler
+        else:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
 
 
 def topup_offline_mandiri(amount, trxid='', slot=None):
@@ -1422,8 +1444,12 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         LOGGER.warning(('INIT_BNI', init_result))
         init_topup_result = json.loads(init_result)
         rc = init_topup_result.get('Result', 'FFFF')
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
-        _Common.NFC_ERROR = 'TOPUP_BNI_ERROR'
+        if _Common.NEW_TOPUP_FAILURE_HANDLER:
+            topup_failure_handler('BNI', trxid, amount)
+        # Old Handler
+        else:
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
+            _Common.NFC_ERROR = 'TOPUP_BNI_ERROR'
 
 
 def start_ka_info():
