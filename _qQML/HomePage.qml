@@ -390,6 +390,7 @@ Base{
             text2_: qsTr("Check/Update Balance")
             modeReverse: false
             visible: false
+            rounded: true
 //            mode3d: 'gray'
             MouseArea{
                 anchors.fill: parent
@@ -416,6 +417,7 @@ Base{
             text2_: qsTr("Topup Balance")
             modeReverse: false
             visible: false
+            rounded: true
 //            mode3d: 'gray'
             MouseArea{
                 anchors.fill: parent
@@ -448,6 +450,7 @@ Base{
             color_: (productCountAll > 0) ? 'white' : 'gray'
             opacity: 1
             visible: false
+            rounded: true
 //            mode3d: 'gray'
             MouseArea{
                 enabled: (productCountAll > 0 && !maintenance_mode.visible) ? true : false
@@ -503,6 +506,7 @@ Base{
             text2_: qsTr("Pay/Buy")
             modeReverse: false
             visible: false
+            rounded: true
 //            mode3d: 'gray'
             MouseArea{
                 anchors.fill: parent

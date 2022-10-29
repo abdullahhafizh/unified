@@ -11,15 +11,18 @@ Rectangle {
     property var text_color: (modeReverse) ? "black" : "white"
     property var mode3d: undefined
     property int size: 350
+    property bool rounded: false
     width: size
     height: size
     color: 'transparent'
+    radius: (rounded) ? width/2 : 0
     Rectangle{
         id: background_base
         anchors.fill: parent
         color: 'white'
         opacity: .3
         visible: (mode3d==undefined)
+        radius: (rounded) ? width/2 : 0
     }
     Image{
         id: base_3d_button
@@ -69,6 +72,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         opacity: .8
+        radius: (rounded) ? width/2 : 0
     }
 
     Text {
