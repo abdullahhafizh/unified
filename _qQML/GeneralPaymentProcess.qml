@@ -448,25 +448,19 @@ Base{
                     }
                 _SLOT.start_do_confirm_promo(JSON.stringify(payload));
             }
-            if (VIEW_CONFIG.printer_type.toLowerCase()=='whatsapp'){
-                hide_all_cancel_button();
-                reset_variables_to_default();
-                // Trigger Deposit Update Balance Check
-                if (cardNo.substring(0, 4) == '6032'){
-                    if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
-                } else if (cardNo.substring(0, 4) == '7546'){
-                    _SLOT.start_check_bni_deposit();
-                }
-                my_layer.push(ereceipt_view, {details:details});
-                return;
+            hide_all_cancel_button();
+            reset_variables_to_default();
+            // Trigger Deposit Update Balance Check
+            if (cardNo.substring(0, 4) == '6032'){
+                if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
+            } else if (cardNo.substring(0, 4) == '7546'){
+                _SLOT.start_check_bni_deposit();
             }
-            title = 'Transaksi Berhasil';
-            if (details.shop_type == 'topup') msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Anda Dari Reader';
-            if (details.shop_type == 'shop'){
-                msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
-                _SLOT.start_play_audio('please_take_new_card_with_receipt');
-            }
+            my_layer.push(ereceipt_view, {details:details});
+            return;
         }
+
+        //Transaction Failure Here
 
         title = 'Mohon Maaf Transaksi Anda Gagal';
         msg = 'Silakan Ambil Struk Transaksi Anda dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.';
