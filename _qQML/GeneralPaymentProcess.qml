@@ -471,7 +471,7 @@ Base{
                 if (!validate_topup_failure_03()){
                     _SLOT.start_bill_reject_note(details.shop_type + details.epoch.toString());
                     msg = 'Silakan Ambil Kembali Uang Anda Dari Bill Acceptor';
-                    switch_frame('source/insert_money.png', title, msg, 'backToMain|'+, true );
+                    switch_frame('source/insert_money.png', title, msg, 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true );
                     // Finalise To Store Transaction Failure Data For Certain Condition
                     _SLOT.start_finalise_transaction(JSON.stringify(details));
                     hide_all_cancel_button();
