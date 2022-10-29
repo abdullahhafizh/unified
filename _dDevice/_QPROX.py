@@ -1042,7 +1042,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
         # New Topup Failure Handler
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
-            topup_failure_handler('MANDIRI', trxid, amount)
+            new_topup_failure_handler('MANDIRI', trxid, amount)
         # Old Handler
         else:
         # "6987", "100C", "10FC" Another Captured Error Code
@@ -1067,7 +1067,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
-            topup_failure_handler('MANDIRI', trxid, amount)
+            new_topup_failure_handler('MANDIRI', trxid, amount)
         # Old Handler
         else:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
@@ -1436,7 +1436,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
         # New Handler
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
-            topup_failure_handler('BNI', trxid, amount)
+            new_topup_failure_handler('BNI', trxid, amount)
         # Old Handler
         else:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_'+rc)
@@ -1445,7 +1445,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         init_topup_result = json.loads(init_result)
         rc = init_topup_result.get('Result', 'FFFF')
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
-            topup_failure_handler('BNI', trxid, amount)
+            new_topup_failure_handler('BNI', trxid, amount)
         # Old Handler
         else:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
@@ -1888,7 +1888,7 @@ def reset_card_contactless():
     LOGGER.debug((response, result))
 
 
-def topup_failure_handler(bank, trxid, amount, pending_data=None):
+def new_topup_failure_handler(bank, trxid, amount, pending_data=None):
     # output = {
         #     'balance': balance,
         #     'card_no': card_no,
@@ -1917,7 +1917,7 @@ def topup_failure_handler(bank, trxid, amount, pending_data=None):
         sleep(2)
         
     if card_check is False:
-        LOGGER.warning(('FAILED TO READ CARD'))
+        LOGGER.warning(('TOPUP_FAILURE_03', 'CARD_NOT_DETECTED_3_ATTEMPTS'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_03')
         return
     
@@ -2102,16 +2102,16 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')
     elif bank == 'BCA':
         try:
-            res_bca_card_info, bca_card_info = bca_card_info()
+            res_bca_card_info, bca_card_info_data = bca_card_info()
             if res_bca_card_info is False:
-                LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info))
-                bca_card_info = json.loads(bca_card_info)
+                LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info_data))
+                bca_card_info_data = json.loads(bca_card_info)
                 # rc = bca_card_info.get('Result', 'FFFF')
             param = {
                 'token': _Common.CORE_TOKEN,
                 'mid': _Common.CORE_MID,
                 'tid': _Common.TID,
-                'card_data': bca_card_info,
+                'card_data': bca_card_info_data,
                 'card_no': card_data.get('card_no'),
                 'last_balance': card_data.get('balance')
             }
