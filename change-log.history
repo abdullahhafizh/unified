@@ -1,4 +1,4 @@
-15.2.3-GLOBAL:
+16.0.0-GLOBAL:
 - Enable Eco Mode Data Syncing,
 - Disable Sentry Logging,
 - Disable Chatbot On This Version For Windows OS,
@@ -16,6 +16,7 @@
 - Disable Printer Type Validation For Success TRX,
 - Timer Failure Notification into setting.ini,
 - Retry Force Settlement 3x timer on Handler Failure Topup,
+- Enhance Wording Single Topup Denom,
 - ...
 
 15.2.2-GLOBAL:

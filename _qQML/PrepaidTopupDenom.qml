@@ -830,7 +830,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'MOHON PERHATIAN\nPEMBAYARAN TOPUP DENGAN TUNAI HANYA MENERIMA 1 LEMBAR UANG SESUAI DENOM'
+        title_text: 'MOHON PERHATIAN\nMESIN INI HANYA DAPAT MELAKUKAN TOPUP DENGAN 1 UANG KERTAS SESUAI DENGAN PILIHAN DI ATAS'
         boxColor: VIEW_CONFIG.frame_color
     }
 

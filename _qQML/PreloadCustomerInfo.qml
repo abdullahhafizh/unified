@@ -12,7 +12,7 @@ Base{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     property var whatsappNo: ''
-    property var textMain: 'Selain Transaksi Topup, Mesin ini tidak mengembalikan uang. Proses pengembalian uang akan dilakukan melalui Whatsapp Voucher.'
+    property var textMain: 'Untuk transaksi topup dengan uang tunai, Anda diharuskan memilih pecahan uang yang sesuai dan hanya dapat melakukan transaksi dengan 1 lembar uang kertas.'
     property var textSlave: 'Anda dapat melakukan transaksi ulang untuk transaksi yang gagal/batal setelah uang masuk ke dalam Bill Acceptor dengan memasukkan kode ulang.'
     property var textThird: 'Mesin ini akan menggunakan bukti elektronik via WhatsApps dan tidak mengeluarkan Struk Pembelian/Transaksi.'
     property bool smallerSlaveSize: true
