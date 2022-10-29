@@ -1010,6 +1010,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             return
         
         if rc == '100C':
+            reset_card_contactless()
             param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
             _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             LOGGER.info((_response, _result))    
@@ -1929,7 +1930,7 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
         amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
         if rc == '100C':
             # Slot SAM or Deposit
-            _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_DEPOSIT_SLOT + '|'
+            _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
         else:
             _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
@@ -2003,7 +2004,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     break
                 if rc == '100C':
                     # Slot SAM or Deposit
-                    _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_DEPOSIT_SLOT + '|'
+                    _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
                 else:
                     _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
                 _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
