@@ -874,6 +874,10 @@ Base{
             console.log('EMPTY_PAYMENT', now);
             return;
         }
+        if (transactionInProcess){
+            console.log('Transaction_In_Process', transactionInProcess);
+            return;
+        }
         transactionInProcess = true;
         // Force Disable All Cancel Button
         hide_all_cancel_button();

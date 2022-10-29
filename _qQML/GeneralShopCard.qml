@@ -47,7 +47,7 @@ Base{
     property var cashboxFull
     property var activePayment: []
 
-    property var onProgressTask
+    property bool onProgressTask
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
@@ -66,6 +66,7 @@ Base{
             console.log('shop_type', shop_type);
             mainVisible = true;
             cdReadiness = undefined;
+            onProgressTask = false;
             popup_loading.open();
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_payments();
@@ -205,11 +206,11 @@ Base{
     function process_selected_payment(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('process_selected_payment', p, now);
-        if (onProgressTask == now){
+        if (onProgressTask){
             console.log('process_selected_payment', now, p, 'ALREADY_ON_PROGRESS_TASK');
             return;
         }
-        onProgressTask = now;
+        onProgressTask = true;
         if (p=='MULTI_QR'){
             press = '0';
             if (activeQRISProvider.length == 1){
