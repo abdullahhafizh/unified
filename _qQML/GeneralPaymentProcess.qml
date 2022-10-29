@@ -947,7 +947,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
-                    exit_with_message(2);
+                    exit_with_message(5);
                     return;
                 }
             } else if (billResult == 'EXCEED'){
@@ -1598,7 +1598,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                exit_with_message(2);
+                exit_with_message(5);
                 return;
             }
         }

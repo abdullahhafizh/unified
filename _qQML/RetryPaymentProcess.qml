@@ -833,7 +833,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
-                    exit_with_message(2);
+                    exit_with_message(5);
                     return;
                 }
             } else if (billResult == 'EXCEED'){
@@ -1159,7 +1159,7 @@ Base{
                         if (initialPayment < totalPrice) _SLOT.stop_bill_receive_note();
                     }
                     if (receivedPayment == initialPayment){
-                        exit_with_message(2);
+                        exit_with_message(5);
                         return;
                     } else if (receivedPayment >= initialPayment){
                         //Disable Auto Manual Refund
@@ -1238,7 +1238,7 @@ Base{
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (receivedPayment == initialPayment){
                     if (details.payment=='cash') _SLOT.stop_bill_receive_note();
-                    exit_with_message(2);
+                    exit_with_message(5);
                     return;
                 }
                 cancel_transaction('MAIN_FRAME');
@@ -1432,7 +1432,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                exit_with_message(2);
+                exit_with_message(5);
                 return;
             }
         }
