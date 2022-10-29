@@ -52,8 +52,8 @@ Rectangle {
         color: 'white'
 //        text: text_.toUpperCase()
         text: text_
-        font.pixelSize: 30
-        anchors.bottomMargin: 30
+        font.pixelSize: 27
+        anchors.bottomMargin: 40
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
