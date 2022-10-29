@@ -15,6 +15,7 @@
 - New Topup Failure Handler,
 - Disable Printer Type Validation For Success TRX,
 - Timer Failure Notification into setting.ini,
+- Retry Force Settlement 3x timer on Handler Failure Topup,
 - ...
 
 15.2.2-GLOBAL:

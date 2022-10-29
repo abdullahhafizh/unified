@@ -566,7 +566,7 @@ def check_card_balance():
                 output['able_topup'] = '1004'
             if card_no[:10] in _Common.MANDIRI_CLOSE_TOPUP_BIN_RANGE:
                 output['able_topup'] = '1031'
-            LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
+            # LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
         elif bank_name == 'BNI':
             output['able_topup'] = result.split('|')[3].replace('#', '')
             # Drop Balance Check If Not Available For Topup
@@ -657,7 +657,7 @@ def direct_card_balance():
                 output['able_topup'] = '1004'
             if card_no[:10] in _Common.MANDIRI_CLOSE_TOPUP_BIN_RANGE:
                 output['able_topup'] = '1031'
-            LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
+            # LOGGER.debug((card_no, _Common.MANDIRI_CARD_BLOCKED_LIST, output))
         elif bank_name == 'BNI':
             output['able_topup'] = result.split('|')[3].replace('#', '')
             # Drop Balance Check If Not Available For Topup
@@ -1313,6 +1313,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     LOGGER.debug((attempt, amount, trxid, slot, init_result))
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
+    LOGGER.info(('PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
 
     if response == 0:
         _param = QPROX['TOPUP_BNI'] + '|' + str(amount) + '|' + str(_slot)
@@ -1329,7 +1330,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
             _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
             
-            LOGGER.info(('PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
             LOGGER.info(('LAST_BALANCE_DEPOSIT', deposit_last_balance ))
             
             output = {
@@ -1373,6 +1373,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         rc = topup_result.get('Result', 'FFFF')
         
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
+        
+        LOGGER.info(('LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
+
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
@@ -1865,6 +1868,8 @@ def topup_failure_handler(bank, trxid, amount, pending_data=None):
     card_check = False
     attempt = 3
     while card_check is False:
+        if attempt == 0:
+            break
         reset_card_contactless()
         card_check = direct_card_balance()
         if card_check is not False:
@@ -1975,12 +1980,19 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     if bank == 'MANDIRI':
         try:
             amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
-            _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-            _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
-            LOGGER.debug((_param, _response, _result))
-            if _response == 0 and len(_result) >= 196:
-                # Call Parse To Submit SAM Audit Report
-                parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+            attempt = 3
+            while True:
+                if attempt == 0:
+                    break
+                _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+                _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+                LOGGER.debug((_param, _response, _result))
+                if _response == 0 and len(_result) >= 196:
+                    # Call Parse To Submit SAM Audit Report
+                    parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+                    break
+                attempt -= 1
+                sleep(1)
         except Exception as e:
             LOGGER.warning((e))
         finally:

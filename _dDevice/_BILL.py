@@ -610,7 +610,7 @@ def bill_store_note(trxid):
         if not _Common.single_denom_trx_detected(trxid):
             return
         response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
-        LOGGER.debug((BILL['TYPE'], trxid, response, result))
+        LOGGER.info((trxid, 'STORE_NOTES', BILL['TYPE'], response, result))
         if response == 0:
             LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
@@ -644,7 +644,7 @@ def bill_reject_note(trxid):
         if not _Common.single_denom_trx_detected(trxid):
             return
         response, result = send_command_to_bill(param=BILL["REJECT"]+'|', output=None)
-        LOGGER.debug((BILL['TYPE'], trxid, response, result))
+        LOGGER.info((trxid, 'REJECT_NOTES', BILL['TYPE'], response, result))
         if response == 0:
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('REJECT_BILL|SUCCESS')
             COLLECTED_CASH = 0

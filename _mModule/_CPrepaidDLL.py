@@ -799,7 +799,8 @@ def topup_C2C_setfee(Flag, Response):
     return res_str
 
 #031
-@func_set_timeout(30)
+# Forxe Settlement Timeout For 5 Seconds
+@func_set_timeout(5)
 def topup_C2C_force(Flag):
     # global DLL_LOAD
     res_str = ""
