@@ -280,6 +280,8 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                parent.visible = false;
+                enabled = false;
                 var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                 if (press != '0') return;
                 press = '1';
