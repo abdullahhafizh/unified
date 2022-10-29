@@ -540,6 +540,7 @@ def check_card_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(dummy_output))
         return
     # End Force Testing Mode ==========================
+    reset_card_contactless()
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
     if response == 0 and '|' in result:
