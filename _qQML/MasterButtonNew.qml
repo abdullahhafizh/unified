@@ -43,7 +43,7 @@ Rectangle {
         color: 'black'
         text: text_
         font.pixelSize: 27
-        anchors.bottomMargin: 40
+        anchors.bottomMargin: 50
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
