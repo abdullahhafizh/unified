@@ -30,7 +30,6 @@ Rectangle {
         scale: 0.4
         source: img_
         fillMode: Image.PreserveAspectFit
-        visible: modeReverse
     }
     ColorOverlay {
         anchors.fill: button_image
