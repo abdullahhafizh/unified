@@ -953,7 +953,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
-                    exit_with_message(3);
+                    exit_with_message(2);
                     return;
                 }
             } else if (billResult == 'EXCEED'){
@@ -1575,6 +1575,7 @@ Base{
             console.log('[WARNING] Transaction In Process Not Allowed Cancellation', t);
             return;
         }
+        if (cancel_confirmation.visible) cancel_confirmation.close();
         details.receipt_title = 'Transaksi Anda Batal';
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
@@ -1603,7 +1604,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                exit_with_message(3);
+                exit_with_message(2);
                 return;
             }
         }
