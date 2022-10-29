@@ -254,7 +254,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('do_set_confirm', now, triggered);
         if (onProgressTask == now){
-            console.log('do_set_confirm', now, method, 'ALREADY_ON_PROGRESS_TASK');
+            console.log('do_set_confirm', now, 'ALREADY_ON_PROGRESS_TASK');
             return;
         }
         onProgressTask = now;
