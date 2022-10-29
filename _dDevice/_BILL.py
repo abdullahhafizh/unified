@@ -325,10 +325,11 @@ def start_receive_note(trxid):
                     break
                 if _response == -1:
                     if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
-                        stop_receive_note()
-                        sleep(2)
-                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
-                        break
+                        continue
+                        # stop_receive_note(trxid)
+                        # sleep(2)
+                        # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
+                        # break
                     # else: 
                         # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
                         # break
