@@ -1528,7 +1528,11 @@ Base{
         var failure_03 = false;
         if (details.shop_type == 'topup'){
             if (details.failure_type !== undefined){
-                if (details.failure_type == 'TOPUP_FAILURE_03') failure_03 = true;
+                if (details.failure_type == 'TOPUP_FAILURE_03') {
+                    //Reset Pending Code, To Keep The Topup Failure Status on TRX Failure Data
+                    details.pending_trx_code = undefined;
+                    failure_03 = true;
+                }
             }
         }
         console.log('Validate Topup Failure 03', failure_03)
