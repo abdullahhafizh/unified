@@ -72,6 +72,7 @@ Base{
     property int maxBalance: 1000000
 
     property var cashboxFull
+    property var onProgressTask
 
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
@@ -252,6 +253,11 @@ Base{
     function do_set_confirm(triggered){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('do_set_confirm', now, triggered);
+        if (onProgressTask == now){
+            console.log('do_set_confirm', now, method, 'ALREADY_ON_PROGRESS_TASK');
+            return;
+        }
+        onProgressTask = now;
         var details = {
             payment: selectedPayment,
             shop_type: 'topup',
@@ -286,6 +292,7 @@ Base{
     function process_selected_payment(method){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('process_selected_payment', now, method);
+
         if (method=='MULTI_QR'){
             press = '0';
             if (activeQRISProvider.length == 1){
