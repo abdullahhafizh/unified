@@ -943,7 +943,11 @@ Base{
                 return;
             } else if (billResult == 'COMPLETE'){
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
-                popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
+                if (validate_single_denom_trx(){
+                    popup_loading.textSlave = 'Sinkronisasi Pembayaran Anda';
+                } else {
+                    popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
+                }
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
