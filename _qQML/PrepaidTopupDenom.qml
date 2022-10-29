@@ -523,7 +523,8 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                abc.counter -= 1
+                abc.counter -= 1;
+                notice_topup_single_denom.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
@@ -808,6 +809,21 @@ Base{
                 }
             }
         }
+    }
+
+    BoxTitle{
+        id: notice_topup_single_denom
+        width: 1200
+        height: 120
+        visible: (!select_payment.visible && VIEW_CONFIG.single_denom_trx.indexOf('topup') > -1)
+        radius: 50
+        fontSize: 30
+        border.width: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        title_text: 'MOHON PERHATIAN\nPEMBAYARAN TOPUP DENGAN TUNAI HANYA MENERIMA 1 LEMBAR UANG SESUAI DENOM'
+        boxColor: VIEW_CONFIG.frame_color
     }
 
     SelectPaymentInline{
