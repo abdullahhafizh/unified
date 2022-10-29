@@ -336,7 +336,7 @@ Base{
         case 'cash_device_error':
             if (receivedPayment == 0) {
                 press = '0';
-                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain|10', false);
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), false);
                 _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
                 abc.counter = 5;
                 return;
@@ -350,7 +350,7 @@ Base{
         case 'cash_device_timeout':
             if (receivedPayment == 0) {
                 press = '0';
-                switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain|10', false);
+                switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), false);
                 _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED')
                 abc.counter = 5;
                 return;
@@ -471,7 +471,7 @@ Base{
                 if (!validate_topup_failure_03()){
                     _SLOT.start_bill_reject_note(details.shop_type + details.epoch.toString());
                     msg = 'Silakan Ambil Kembali Uang Anda Dari Bill Acceptor';
-                    switch_frame('source/insert_money.png', title, msg, 'backToMain|5', true );
+                    switch_frame('source/insert_money.png', title, msg, 'backToMain|'+, true );
                     // Finalise To Store Transaction Failure Data For Certain Condition
                     _SLOT.start_finalise_transaction(JSON.stringify(details));
                     hide_all_cancel_button();
@@ -550,7 +550,7 @@ Base{
         var result = r.split('|')[2]
         popup_loading.close();
         if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|10', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true )
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
@@ -600,7 +600,7 @@ Base{
         var result = r.split('|')[2]
         popup_loading.close();
         if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR', 'MODE_NOT_FOUND'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|10', true );
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true );
             return;
         }
         if (['TIMEOUT'].indexOf(result) > -1){
@@ -947,7 +947,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
-                    exit_with_message(5);
+                    exit_with_message(VIEW_CONFIG.failure_page_timer);
                     return;
                 }
             } else if (billResult == 'EXCEED'){
@@ -981,7 +981,7 @@ Base{
             }
         } else if (billFunction == 'STATUS_BILL'){
             if(billResult=='ERROR') {
-                false_notif('backToMain|10', 'Terjadi Kegagalan Pada Bill Acceptor');
+                false_notif('backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), 'Terjadi Kegagalan Pada Bill Acceptor');
                 return;
             }
         }
@@ -996,7 +996,7 @@ Base{
         popup_loading.close();
         if (['ERROR'].indexOf(edcResult) > -1){
             next_button_global.visible = false;
-            switch_frame_with_button('source/smiley_down.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain|5', true );
+            switch_frame_with_button('source/smiley_down.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true );
             //To Avoid Printing If EDC Error
             abc.counter = 5;
             return;
@@ -1598,7 +1598,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                exit_with_message(5);
+                exit_with_message(VIEW_CONFIG.failure_page_timer);
                 return;
             }
         }
@@ -1618,7 +1618,7 @@ Base{
             details_error_history_push('user_cancellation_debit')
             details.payment_error = 1;
             if (VIEW_CONFIG.disable_print_on_cancel){
-                switch_frame_with_button('source/smiley_down.png', 'Pembayaran Debit Dibatalkan', 'Periksa kembali history transaksi kartu Anda', 'backToMain|5', true );
+                switch_frame_with_button('source/smiley_down.png', 'Pembayaran Debit Dibatalkan', 'Periksa kembali history transaksi kartu Anda', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true );
                 //To Avoid Printing If EDC Error
                 abc.counter = 5;
                 return;

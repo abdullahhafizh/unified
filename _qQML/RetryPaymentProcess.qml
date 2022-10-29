@@ -420,7 +420,7 @@ Base{
             //Do Print If Only Status Payment is Changed Or Force Settlement
             if (parseInt(receivedPayment) > parseInt(initialPayment))
                 _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-            switch_frame('source/smiley_down.png', title, msg, 'backToMain|10', true );
+            switch_frame('source/smiley_down.png', title, msg, 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true );
         }
         my_timer.stop();
         reset_variables_to_default();
@@ -833,7 +833,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
-                    exit_with_message(5);
+                    exit_with_message(VIEW_CONFIG.failure_page_timer);
                     return;
                 }
             } else if (billResult == 'EXCEED'){
@@ -1159,7 +1159,7 @@ Base{
                         if (initialPayment < totalPrice) _SLOT.stop_bill_receive_note();
                     }
                     if (receivedPayment == initialPayment){
-                        exit_with_message(5);
+                        exit_with_message(VIEW_CONFIG.failure_page_timer);
                         return;
                     } else if (receivedPayment >= initialPayment){
                         //Disable Auto Manual Refund
@@ -1238,7 +1238,7 @@ Base{
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (receivedPayment == initialPayment){
                     if (details.payment=='cash') _SLOT.stop_bill_receive_note();
-                    exit_with_message(5);
+                    exit_with_message(VIEW_CONFIG.failure_page_timer);
                     return;
                 }
                 cancel_transaction('MAIN_FRAME');
@@ -1432,7 +1432,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                exit_with_message(5);
+                exit_with_message(VIEW_CONFIG.failure_page_timer);
                 return;
             }
         }

@@ -664,6 +664,7 @@ VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
 VIEW_CONFIG['tnc_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'tnc^timer', '4'))
 VIEW_CONFIG['success_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'success^page^timer', '7'))
+VIEW_CONFIG['failure_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'failure^page^timer', '5'))
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
 VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 VIEW_CONFIG['disable_print_on_cancel'] = True if _ConfigParser.get_set_value('EDC', 'disable^print^on^cancel', '1') == '1' else False

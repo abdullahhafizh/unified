@@ -14,6 +14,7 @@
 - OS Version For Multimedia Support,
 - New Topup Failure Handler,
 - Disable Printer Type Validation For Success TRX,
+- Timer Failure Notification into setting.ini,
 - ...
 
 15.2.2-GLOBAL:

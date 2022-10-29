@@ -164,7 +164,7 @@ Base{
                 msg = 'Silakan Ambil Struk Transaksi Dan Kartu Prepaid Baru Anda';
                 _SLOT.start_play_audio('please_take_new_card_with_receipt');
             }
-            switch_frame('source/take_receipt.png', title, msg, 'backToMain|10', true );
+            switch_frame('source/take_receipt.png', title, msg, 'backToMain|'+VIEW_CONFIG.success_page_timer.toString(), true );
             return;
         }
         if (result == 'DONE') return;

@@ -914,7 +914,7 @@ Base{
         var device = JSON.parse(s);
         // if (device.PRINTER_STATUS != 'OK'){
         //     popup_loading.close();
-        //     switch_frame('source/smiley_down.png', 'Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.', 'backToMain|10', false );
+        //     switch_frame('source/smiley_down.png', 'Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), false );
         //     my_timer.stop();
         //     return;
         // }
@@ -1223,7 +1223,7 @@ Base{
                     console.log('Press "BATAL" For Retry Transaction');
                     if (retryAbleTransaction){
                         global_confirmation_frame.close();
-                        exit_with_message(5);
+                        exit_with_message(VIEW_CONFIG.failure_page_timer);
                         return;
                     } else {
                         console.log('[GLOBAL-INPUT]', 'CANCEL-BUTTON', 'BACK-TO-HOMEPAGE');

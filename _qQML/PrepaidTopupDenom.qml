@@ -146,7 +146,7 @@ Base{
         var device = JSON.parse(s);
         // if (device.PRINTER_STATUS != 'OK'){
         //     popup_loading.close();
-        //     switch_frame('source/smiley_down.png', 'Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.', 'backToMain|10', false );
+        //     switch_frame('source/smiley_down.png', 'Mohon Maaf, Struk Habis.', 'Saat Ini mesin tidak dapat mengeluarkan bukti transaksi.', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), false );
         //     my_timer.stop();
         //     return;
         // }
