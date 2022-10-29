@@ -1008,7 +1008,18 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 sleep(1)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
             return
-                
+        
+        if rc == '100C':
+            param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
+            _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+            LOGGER.info((_response, _result))    
+            sleep(1)
+            mdr_c2c_balance_info()
+            last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
+            LOGGER.info(('PREV_BALANCE_DEPOSIT - 100C', prev_deposit_balance ))
+            LOGGER.info(('LAST_BALANCE_DEPOSIT - 100C', last_deposit_balance ))     
+            
+        
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
                 'samCardNo': _Common.MANDIRI_SAM_NO_1,
@@ -1330,7 +1341,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
             _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
             
-            LOGGER.info(('LAST_BALANCE_DEPOSIT', deposit_last_balance ))
+            LOGGER.info(('LAST_BALANCE_DEPOSIT', int(deposit_last_balance) ))
             
             output = {
                 'last_balance': card_last_balance,
@@ -1980,7 +1991,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     if bank == 'MANDIRI':
         try:
             amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
-            attempt = 3
+            attempt = 2
             while True:
                 if attempt == 0:
                     break
