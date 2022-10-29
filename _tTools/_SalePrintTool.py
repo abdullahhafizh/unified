@@ -212,10 +212,11 @@ def start_finalise_transaction(payload):
     if p.get('raw') is None or p['raw'].get('bank_name') is None:
         LOGGER.debug(('Bank Name Not Found'))
         return
-    bank_name = p['raw']['bank_name']
-    if bank_name not in _Common.TOPUP_ONLINE_BANK:
-        LOGGER.debug(('Bank Type Non Topup Online'))
-        return
+    # Keep Sending Event Not Topup Online
+    # bank_name = p['raw']['bank_name']
+    # if bank_name not in _Common.TOPUP_ONLINE_BANK:
+    #     LOGGER.debug(('Bank Type Non Topup Online'))
+    #     return
     trxid = p['shop_type']+str(p['epoch'])
     cash = int(p.get('payment_received', 0))
     failure = p.get('failure_type', 'TOPUP_FAILURE')

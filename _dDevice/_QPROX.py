@@ -1910,6 +1910,7 @@ def new_topup_failure_handler(bank, trxid, amount, pending_data=None):
         if attempt == 0:
             break
         reset_card_contactless()
+        sleep(.5)
         card_check = direct_card_balance()
         if card_check is not False:
             break

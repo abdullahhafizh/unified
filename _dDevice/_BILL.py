@@ -317,22 +317,16 @@ def start_receive_note(trxid):
                 attempt += 1
                 _response, _result = send_command_to_bill(param=BILL["RECEIVE"] + '|', output=None)
                 # _Helper.dump([_response, _result])
+                if _response == -1:
+                    if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
+                        sleep(1)
+                        continue
                 if BILL['KEY_BOX_FULL'].lower() in _result.lower():
                     set_cashbox_full()
                     IS_RECEIVING = False
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
                     _Common.store_notes_activity('ERROR', trxid)
                     break
-                if _response == -1:
-                    if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
-                        continue
-                        # stop_receive_note(trxid)
-                        # sleep(2)
-                        # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SERVICE_TIMEOUT')
-                        # break
-                    # else: 
-                        # BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|SHOW_BACK_BUTTON')
-                        # break
                 if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                     cash_in = parse_notes(_result)
                     # -------------------------
@@ -598,7 +592,7 @@ def stop_receive_note(trxid):
         BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|ERROR')
         LOGGER.warning(e)
 
-# TODO: Recheck This
+
 def start_bill_store_note(trxid):
     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
 
@@ -632,7 +626,6 @@ def bill_store_note(trxid):
         LOGGER.debug((BILL['TYPE'], trxid, response, result))
         
 
-# TODO: Recheck This
 def start_bill_reject_note(trxid):
     _Helper.get_thread().apply_async(bill_reject_note, (trxid,))
 
