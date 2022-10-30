@@ -943,7 +943,7 @@ Base{
                 return;
             } else if (billResult == 'COMPLETE'){
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
-                if (validate_single_denom_trx(){
+                if (validate_single_denom_trx()){
                     popup_loading.textSlave = 'Sinkronisasi Pembayaran Anda';
                 } else {
                     popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
