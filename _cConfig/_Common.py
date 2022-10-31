@@ -1370,6 +1370,8 @@ MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^
 if '---' in MANDIRI_CARD_BLOCKED_URL:
     _ConfigParser.set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
 
+GENERAL_CARD_BLOCKED_LIST = load_from_temp_data('general_card_blocked_list', 'text').split('\n')
+
 DAILY_SYNC_SUMMARY_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^sync^summary^time', '23:55')
 DAILY_C2C_SETTLEMENT_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^c2c^settlement^time', '23:59')
 DAILY_REBOOT_TIME = _ConfigParser.get_set_value('GENERAL', 'daily^reboot^time', '02:30')

@@ -1160,6 +1160,10 @@ def startup_task():
             else:
                 print("pyt: [ERROR] Connect to Prepaid Reader...")
                 _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Init Prepaid Reader...ERROR')
+        sleep(1)
+        print("pyt: Resync Data MDD Global Card Blacklist...")
+        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Data MDD Global Card Blacklist...')
+        _TopupService.get_mdd_card_blocked_list()
         if _QPROX.INIT_MANDIRI is True:
             sleep(1)
             print("pyt: Check Mandiri Deposit Update Balance...")

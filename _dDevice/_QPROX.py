@@ -576,7 +576,11 @@ def check_card_balance():
             _Common.IS_ONLINE = _Helper.is_online(bank_name.lower()+'_balance_check')
             _Common.KIOSK_STATUS = 'ONLINE' if _Common.IS_ONLINE else 'OFFLINE'
             output['able_topup'] = '0000' if _Common.IS_ONLINE else '9999'
-            
+        
+        # Global Blacklist Validation
+        if card_no in _Common.GENERAL_CARD_BLOCKED_LIST:
+            output['able_topup'] = 'BLOCKED'
+
         LAST_CARD_CHECK = output
         _Common.store_to_temp_data('last-card-check', json.dumps(output))
         _Common.NFC_ERROR = ''
@@ -665,6 +669,11 @@ def direct_card_balance():
                 output['able_topup'] = '1004'
             else:
                 output['able_topup'] = '0000'
+        
+        # Validate MDD General Black List
+        if card_no in _Common.GENERAL_CARD_BLOCKED_LIST:
+            output['able_topup'] = 'BLOCKED'
+        
         return output
     else:
         return False

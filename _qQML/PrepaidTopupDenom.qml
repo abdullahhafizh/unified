@@ -468,6 +468,10 @@ Base{
                 switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar Anda Tidak Dapat Dilakukan Isi Ulang Saat Ini', 'backToMain', false );
                 return;
             }
+            if (ableTopupCode == "BLOCKED"){
+                switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar Anda Tidak Dapat Melakukan Isi Ulang Pada Mesin Ini', 'backToMain', false );
+                return;
+            }
             if (ableTopupCode == "9999"){
                 switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Topup Online '+bankName+' Sedang Terkendala Saat ini', 'backToMain', false );
                 return;

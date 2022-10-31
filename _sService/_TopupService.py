@@ -2107,6 +2107,25 @@ def get_mandiri_card_blocked_list():
         return False
 
 
+def get_mdd_card_blocked_list():
+    try:
+        status, response = _HTTPAccess.get_from_url(url=_Common.BACKEND_URL + 'card/blacklist')
+        if status == 200 and response['response']['code'] == 200:
+            if not _Helper.empty(response['data']['blacklist']):
+                content = ''
+                for data in response['data']['blacklist']:
+                    content += data + '\n'
+                _Common.store_to_temp_data('general_card_blocked_list', content)
+                _Common.GENERAL_CARD_BLOCKED_LIST = response['data']['blacklist']
+                LOGGER.info(('GENERAL_CARD_BLOCKED_LIST UPDATED'))
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+
+
 def start_change_denom(seq, amount):
     _Helper.get_thread().apply_async(change_denom, (seq, amount),)
 
