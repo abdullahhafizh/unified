@@ -780,6 +780,10 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'remarks': __data,
             'c2c_mode': '1',
         }
+        # Update Last Audit Result
+        last_audit_result = _Common.load_from_temp_data(reff_no+'-last-audit-result', 'json')
+        last_audit_result['remarks'] = __data
+        _Common.store_to_temp_data(reff_no+'-last-audit-result', json.dumps(last_audit_result))
         _Common.store_upload_sam_audit(param)
         # Update to server
         _Common.upload_mandiri_wallet()
@@ -2080,6 +2084,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 'card_purse': card_purse,
                 'err_code': param.get('err_code'),
             })
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
             _Common.store_upload_sam_audit(param)
         except Exception as e:
             LOGGER.warning((e))

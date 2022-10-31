@@ -452,6 +452,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             #       "prev_amount":"N\/A"
             #    }
             # }
+                reff_no = _param.get('invoice_no')
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -491,6 +493,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 #       "pending_balance":"1"
                 #    }
                 # }
+                reff_no = _param.get('invoice_no')
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -533,6 +537,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 #       "pending_balance":"1"
                 #    }
                 # }
+                reff_no = _param.get('invoice_no')
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -596,6 +602,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
+                reff_no = _param.get('invoice_no')
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')

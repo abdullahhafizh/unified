@@ -565,6 +565,8 @@ def store_to_temp_data(temp, content, log=True):
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
+    if type(content) != str:
+        content = json.dumps(content)
     if len(clean_white_space(content)) == 0:
         content = '{}'
     with open(temp_path, 'w+') as t:
@@ -1532,6 +1534,11 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)
             __param['remarks'] = remarks
+        
+        if 'topup' in trxid:
+            __param['remarks2'] = load_from_temp_data(trxid+'-last-pending-result', 'json')
+            __param['remarks3'] = load_from_temp_data(trxid+'-last-audit-result', 'json')
+        
         # Only Store Pending Transaction To Transaction Failure Table
         if failure_type == 'PENDING_TRANSACTION':
             _DAO.delete_transaction_failure({
