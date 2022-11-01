@@ -607,6 +607,7 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
         LOG.fw(":CheckSessionBCA json = ", payload)
+        LOG.fw(":CheckSessionBCA headers = ", HTTP_HEADERS)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
         
@@ -638,6 +639,7 @@ def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
         
         LOG.fw(":GetSessionBCA url = ", sURL)
         LOG.fw(":GetSessionBCA json = ", payload)
+        LOG.fw(":GetSessionBCA headers = ", HTTP_HEADERS)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
@@ -672,6 +674,7 @@ def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, la
         
         LOG.fw(":ConfirmBCA url = ", sURL)
         LOG.fw(":ConfirmBCA json = ", payload)
+        LOG.fw(":ConfirmBCA headers = ", HTTP_HEADERS)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
         
@@ -705,6 +708,7 @@ def send_post_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, 
             }
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
+        LOG.fw(":ReversalBCA headers = ", HTTP_HEADERS)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
@@ -734,6 +738,7 @@ def send_post_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_
             }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
+        LOG.fw(":UpdateBCA headers = ", HTTP_HEADERS)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
