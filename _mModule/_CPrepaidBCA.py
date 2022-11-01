@@ -26,9 +26,7 @@ if _Common.PTR_MODE is True:
     BCA_ACCESS_CODE = "NOT_SET"
 
 # New Param
-
 BCA_ACTIVE_TOPUP_SESSION = ''
-
 
 TIMEOUT_REQUESTS = 50
 
@@ -328,7 +326,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
             ErrorCode = resultStr
             if resultStr == "0000":
-                valuetext, ErrMsg = send_post_update_bca(url, cardno, report, balance, reference_id)
+                valuetext, ErrMsg = do_post_update_bca(url, cardno, report, balance, reference_id)
                 if valuetext == -1:
                     valuetext = ErrMsg
 
@@ -514,7 +512,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                     LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
                     ErrorCode = resultStr
                     if resultStr == "0000":
-                        valuetext, ErrMsg = send_post_update_bca(url, cardno, report, balance, reference_id)
+                        valuetext, ErrMsg = do_post_update_bca(url, cardno, report, balance, reference_id)
                         if valuetext == -1:
                             valuetext = ErrMsg
 
@@ -613,10 +611,10 @@ def do_check_session_bca(URL_Server, card_no):
     try:
         sURL = URL_Server + "topup-bca/check-session"
         payload = {
-            "token": _Common.CORE_TOKEN, 
-            "tid": _Common.TID, 
-            "mid": _Common.MID, 
-            "card_no": card_no
+            "token": _Common.CORE_TOKEN.decode('utf-8'), 
+            "tid": _Common.TID.decode('utf-8'), 
+            "mid": _Common.MID.decode('utf-8'), 
+            "card_no": card_no.decode('utf-8')
             }
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
@@ -645,11 +643,11 @@ def do_get_session_bca(URL_Server, card_no, session_data):
     try:
         sURL = URL_Server + "topup-bca/get-session"
         payload = {
-            "token": _Common.CORE_TOKEN, 
-            "tid": _Common.TID, 
-            "mid": _Common.MID, 
-            "card_no": card_no, 
-            "session_data": session_data
+            "token": _Common.CORE_TOKEN.decode('utf-8'), 
+            "tid": _Common.TID.decode('utf-8'), 
+            "mid": _Common.MID.decode('utf-8'), 
+            "card_no": card_no.decode('utf-8'), 
+            "session_data": session_data.decode('utf-8')
             }
         
         LOG.fw(":GetSessionBCA url = ", sURL)
@@ -678,17 +676,17 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
     try:
         sURL = URL_Server + "topup-bca/confirm"
         payload = {
-            "token": _Common.CORE_TOKEN, 
-            "tid": _Common.TID, 
-            "mid": _Common.MID, 
-            "card_no": card_no, 
-            "confirm_data":  confirm_data, 
-            "last_balance": last_balance, 
-            "reference_id": reference_id
+            "token": _Common.CORE_TOKEN.decode('utf-8'), 
+            "tid": _Common.TID.decode('utf-8'), 
+            "mid": _Common.MID.decode('utf-8'), 
+            "card_no": card_no.decode('utf-8'), 
+            "confirm_data":  confirm_data.decode('utf-8'), 
+            "last_balance": last_balance.decode('utf-8'), 
+            "reference_id": reference_id.decode('utf-8')
             }
         
         if not success:
-            payload['card_data'] = confirm_data
+            payload['card_data'] = confirm_data.decode('utf-8')
             payload.pop('confirm_data')
         
         LOG.fw(":ConfirmBCA url = ", sURL)
@@ -721,13 +719,13 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
     try:
         sURL = URL_Server + "topup-bca/reversal"
         payload = {
-            "token": _Common.CORE_TOKEN, 
-            "tid": _Common.TID, 
-            "mid": _Common.MID, 
-            "card_no": card_no, 
-            "reversal_data": reversal_data, 
-            "last_balance": last_balance, 
-            "reference_id": reference_id
+            "token": _Common.CORE_TOKEN.decode('utf-8'), 
+            "tid": _Common.TID.decode('utf-8'), 
+            "mid": _Common.MID.decode('utf-8'), 
+            "card_no": card_no.decode('utf-8'), 
+            "reversal_data": reversal_data.decode('utf-8'), 
+            "last_balance": last_balance.decode('utf-8'), 
+            "reference_id": reference_id.decode('utf-8')
             }
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
@@ -749,19 +747,19 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
         return -1, errorcode
 
 
-def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_id):
+def do_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_id):
     global TIMEOUT_REQUESTS
 
     try:
         sURL = URL_Server + "topup-bca/update"
         payload = {
-            "token": _Common.CORE_TOKEN, 
-            "tid": _Common.TID, 
-            "mid": _Common.MID, 
-            "card_no": card_no, 
-            "topup_data": topup_data, 
-            "prev_balance": prev_balance, 
-            "reference_id": reference_id
+            "token": _Common.CORE_TOKEN.decode('utf-8'), 
+            "tid": _Common.TID.decode('utf-8'), 
+            "mid": _Common.MID.decode('utf-8'), 
+            "card_no": card_no.decode('utf-8'), 
+            "topup_data": topup_data.decode('utf-8'), 
+            "prev_balance": prev_balance.decode('utf-8'), 
+            "reference_id": reference_id.decode('utf-8')
             }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
