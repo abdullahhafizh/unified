@@ -600,7 +600,7 @@ def send_check_session_bca(URL_Server, card_no):
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": card_no
+            "card_no": str(card_no)
             }
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
@@ -630,8 +630,8 @@ def send_get_session_bca(URL_Server, card_no, session_data):
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": card_no, 
-            "session_data": session_data
+            "card_no": str(card_no), 
+            "session_data": str(session_data)
             }
         
         LOG.fw(":GetSessionBCA url = ", sURL)
@@ -661,10 +661,10 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": card_no, 
-            "confirm_data":  confirm_data, 
-            "last_balance": last_balance, 
-            "reference_id": reference_id
+            "card_no": str(card_no), 
+            "confirm_data":  str(confirm_data), 
+            "last_balance": str(last_balance), 
+            "reference_id": str(reference_id)
             }
         
         if not success:
@@ -700,10 +700,10 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": card_no, 
-            "reversal_data": reversal_data, 
-            "last_balance": last_balance, 
-            "reference_id": reference_id
+            "card_no": str(card_no), 
+            "reversal_data": str(reversal_data), 
+            "last_balance": str(last_balance), 
+            "reference_id": str(reference_id)
             }
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
@@ -732,10 +732,10 @@ def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, referenc
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": card_no, 
-            "topup_data": topup_data, 
-            "prev_balance": prev_balance, 
-            "reference_id": reference_id
+            "card_no": str(card_no), 
+            "topup_data": str(topup_data), 
+            "prev_balance": str(prev_balance), 
+            "reference_id": str(reference_id)
             }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
