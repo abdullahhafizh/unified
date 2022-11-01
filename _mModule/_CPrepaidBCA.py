@@ -609,7 +609,7 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
         LOG.fw(":CheckSessionBCA json = ", payload)
         LOG.fw(":CheckSessionBCA headers = ", HTTP_HEADERS)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
         
         print(r.text)
         print(r.status_code)
@@ -641,7 +641,7 @@ def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
         LOG.fw(":GetSessionBCA json = ", payload)
         LOG.fw(":GetSessionBCA headers = ", HTTP_HEADERS)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
         ValueText = r.text
         LOG.fw(":GetSessionBCA = ", ValueText)
@@ -676,7 +676,7 @@ def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, la
         LOG.fw(":ConfirmBCA json = ", payload)
         LOG.fw(":ConfirmBCA headers = ", HTTP_HEADERS)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
         
         # Store To Job If Push Failed
         if r.status_code != 200:
@@ -710,7 +710,7 @@ def send_post_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, 
         LOG.fw(":ReversalBCA json = ", payload)
         LOG.fw(":ReversalBCA headers = ", HTTP_HEADERS)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
         ValueText = r.text
         LOG.fw(":ReversalBCA = ", ValueText)
@@ -740,7 +740,7 @@ def send_post_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_
         LOG.fw(":UpdateBCA json = ", payload)
         LOG.fw(":UpdateBCA headers = ", HTTP_HEADERS)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
         ValueText = r.text
         LOG.fw(":UpdateBCA = ", ValueText)
