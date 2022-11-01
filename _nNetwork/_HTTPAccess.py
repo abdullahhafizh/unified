@@ -250,14 +250,15 @@ def direct_post(url, param, header=None, custom_timeout=60):
         return -13, TIMEOUT
     except Exception as e:
         LOGGER.warning((url, NO_INTERNET, e))
-        return -1, NO_INTERNET
+        return -1, {'error': e}
 
     try:
-        LOGGER.debug((url, r.status_code, r.text))
         response = r.json()
         response = json.dumps(response)
     except Exception as e:
         LOGGER.warning((url, ERROR_RESPONSE, e))
         return r.status_code, ERROR_RESPONSE
-
+    print(url)
+    print(r.status_code)
+    print(response)
     return r.status_code, response
