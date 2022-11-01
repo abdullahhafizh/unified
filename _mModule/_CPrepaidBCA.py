@@ -3,6 +3,7 @@ __author__ = 'wahyudi@multidaya.id'
 from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
+from _nNetwork import _HTTPAccess
 from _cConfig import _Common
 import requests
 import os
@@ -26,6 +27,8 @@ if _Common.PTR_MODE is True:
     BCA_ACCESS_CODE = "NOT_SET"
 
 TIMEOUT_REQUESTS = 50
+
+HTTP_HEADERS = _HTTPAccess.get_header()
 
 #046
 def update_bca(param, __global_response__):
@@ -599,13 +602,16 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
             "token": token, 
             "tid": tid, 
             "mid": mid, 
-            "card_no":card_no
+            "card_no": card_no
             }
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
         LOG.fw(":CheckSessionBCA json = ", payload)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
+        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        
+        print(r.text)
+        print(r.status_code)
 
         ValueText = r.text
         LOG.fw(":CheckSessionBCA = ", ValueText)
@@ -633,10 +639,8 @@ def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
         LOG.fw(":GetSessionBCA url = ", sURL)
         LOG.fw(":GetSessionBCA json = ", payload)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
+        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
-        print(r.text)
-        print(r.status_code)
         ValueText = r.text
         LOG.fw(":GetSessionBCA = ", ValueText)
 
@@ -669,7 +673,7 @@ def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, la
         LOG.fw(":ConfirmBCA url = ", sURL)
         LOG.fw(":ConfirmBCA json = ", payload)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
+        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
         
         # Store To Job If Push Failed
         if r.status_code != 200:
@@ -702,7 +706,7 @@ def send_post_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, 
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
+        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
         ValueText = r.text
         LOG.fw(":ReversalBCA = ", ValueText)
@@ -731,7 +735,7 @@ def send_post_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
 
-        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
+        r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
         ValueText = r.text
         LOG.fw(":UpdateBCA = ", ValueText)
