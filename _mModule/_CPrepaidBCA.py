@@ -407,11 +407,13 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("044:cardno = ", cardno)
         LOG.fw("044:uid = ", uid)
-        LOG.fw("044:do_check_session_bca")
+        LOG.fw("044:do_check_session_bca START")
         # Failure Here
         valuetext, ErrMsg = do_check_session_bca(url, cardno)
         if valuetext == -1:
             valuetext = ErrMsg
+        
+        LOG.fw("044:do_check_session_bca Result = ", valuetext)
         
         dataJ = json.loads(valuetext)
         
@@ -462,11 +464,13 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ",  { "resultStr": resultStr, "report": report})
-            LOG.fw("044:do_get_session_bca")
+            LOG.fw("044:do_get_session_bca START")
             valuetext, ErrMsg = do_get_session_bca(url, cardno, report)
 
             if valuetext == -1:
                 valuetext = ErrMsg
+
+            LOG.fw("044:do_get_session_bca Result =", valuetext)
 
             dataJ = json.loads(valuetext)
 
