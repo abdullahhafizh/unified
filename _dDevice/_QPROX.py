@@ -2112,10 +2112,14 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 LOGGER.debug((bank, str(param), str(response)))
                 if status == 200 and response['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
+                else:
+                    _Common.LAST_BRI_ERR_CODE = '33'
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+_Common.LAST_BRI_ERR_CODE)
+            sub_rc = _Common.LAST_BRI_ERR_CODE
+            if sub_rc == '': sub_rc = '01'
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
     elif bank == 'BCA':
         try:
             if pending_data is not None:
@@ -2136,11 +2140,15 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
                 LOGGER.debug((bank, str(param), str(response)))
                 if status == 200 and response['response']['code'] == 200:
-                    _Common.remove_temp_data(trxid)            
+                    _Common.remove_temp_data(trxid)
+                else:
+                    _Common.LAST_BCA_ERR_CODE = '44'
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+_Common.LAST_BCA_ERR_CODE)
+            sub_rc = _Common.LAST_BCA_ERR_CODE
+            if sub_rc == '': sub_rc = '01'
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
     elif bank == 'DKI':
         try:
             if pending_data is not None:
@@ -2154,8 +2162,12 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
                 LOGGER.debug((bank, str(param), str(response)))
                 if status == 200 and response['response']['code'] == 200:
-                    _Common.remove_temp_data(trxid)            
+                    _Common.remove_temp_data(trxid)      
+                else:
+                    _Common.LAST_DKI_ERR_CODE = '52'
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+_Common.LAST_DKI_ERR_CODE)
+            sub_rc = _Common.LAST_DKI_ERR_CODE
+            if sub_rc == '': sub_rc = '01'
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)

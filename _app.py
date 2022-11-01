@@ -680,11 +680,15 @@ class SlotHandler(QObject):
         _BILL.start_bill_store_note(trxid)
     start_bill_store_note = pyqtSlot(str)(start_bill_store_note)
 
- 
+
     def start_bill_reject_note(self, trxid):
         _BILL.start_bill_reject_note(trxid)
     start_bill_reject_note = pyqtSlot(str)(start_bill_reject_note)
 
+
+    def start_reset_cd_status(self, slot):
+        _CD.start_reset_cd_status(slot)
+    start_reset_cd_status = pyqtSlot(str)(start_reset_cd_status)
 
 
 def set_signal_handler():

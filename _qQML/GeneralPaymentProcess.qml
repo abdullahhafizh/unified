@@ -1537,9 +1537,12 @@ Base{
         if (details.shop_type == 'topup'){
             if (details.failure_type !== undefined){
                 if (details.failure_type == 'TOPUP_FAILURE_03') {
+                    //Place Pending Code, Be Able Print On Receipt and Stored on Local DB
+                    details.pending_trx_code = uniqueCode;
+                    failure_03 = true;
+                } else {
                     //Reset Pending Code, To Keep The Topup Failure Status on TRX Failure Data
                     details.pending_trx_code = undefined;
-                    failure_03 = true;
                 }
             }
         }

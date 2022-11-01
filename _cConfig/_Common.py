@@ -154,6 +154,19 @@ PRINTER_PAPER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^paper^type'
 ALLOW_REPRINT_RECEIPT = True if _ConfigParser.get_set_value('PRINTER', 'allow^reprint^receipt', '0') == '1' else False
 
 
+def load_from_temp_config(section='test^section', default=''):
+    section = str(section)
+    default = str(default)
+    return _ConfigParser.get_set_value('TEMPORARY', section, default)
+
+
+def log_to_config(option='TEMPORARY', section='last^auth', content=''):
+    content = str(content)
+    section = str(section)
+    LOGGER.info((option, section, content))
+    _ConfigParser.set_value(option, section, content)
+
+
 def linux_get_printer_address():
     global PRINTER_PORT
     try:
@@ -958,12 +971,15 @@ BILL_ERROR = ''
 PRINTER_ERROR = ''
 SCANNER_ERROR = ''
 WEBCAM_ERROR = ''
-CD1_ERROR = ''
-CD2_ERROR = ''
-CD3_ERROR = ''
-CD4_ERROR = ''
-CD5_ERROR = ''
-CD6_ERROR = ''
+
+# Load From Temp Config Data
+CD1_ERROR = load_from_temp_config('cd1^error')
+CD2_ERROR = load_from_temp_config('cd2^error')
+CD3_ERROR = load_from_temp_config('cd3^error')
+CD4_ERROR = load_from_temp_config('cd4^error')
+CD5_ERROR = load_from_temp_config('cd5^error')
+CD6_ERROR = load_from_temp_config('cd6^error')
+
 
 RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
 RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '750'))
@@ -1072,19 +1088,6 @@ def log_to_temp_config(section='last^auth', content=''):
     else:
         content = str(content)
     log_to_config('TEMPORARY', section, content)
-
-
-def load_from_temp_config(section='test^section', default=''):
-    section = str(section)
-    default = str(default)
-    return _ConfigParser.get_set_value('TEMPORARY', section, default)
-
-
-def log_to_config(option='TEMPORARY', section='last^auth', content=''):
-    content = str(content)
-    section = str(section)
-    LOGGER.info((option, section, content))
-    _ConfigParser.set_value(option, section, content)
     
 
 def load_from_custom_config(option='BILL', section='last^money^inserted', default=''):
@@ -1552,7 +1555,8 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             _DAO.insert_transaction_failure(__param)
             # Auto Assign syncFlag
             __param['key'] = __param['trxid']
-            _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')                
+            _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')         
+
         status, response = _HTTPAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
         LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':

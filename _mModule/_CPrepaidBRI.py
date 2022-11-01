@@ -352,6 +352,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
         jsonT = resultStr
 
         if resultStr == "1":
+            _Common.LAST_BRI_ERR_CODE = '32'
             msg = ErrMsg
         else:
             try:

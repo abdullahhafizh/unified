@@ -1058,9 +1058,8 @@ Base{
 
                     NextButton{
                        id: button_test_slot1
-                       visible: enableCDTest
                        enabled: (_total_stock_101!='---') ? true : false
-                       button_text: 'test'
+                       button_text: 'reset'
                        width: 80
                        height: 40
                        fontSize: 15
@@ -1069,10 +1068,12 @@ Base{
                        MouseArea{
                            anchors.fill: parent
                            onClicked: {
-                               _SLOT.user_action_log('Admin Page "Test Slot 1"');
-                               console.log('Test Slot 1 Button is Pressed..!');
-                               _SLOT.start_multiple_eject('101', '1');
-                               popup_loading.open();
+                                _SLOT.user_action_log('Admin Page "Reset CD Slot 1"');
+                                console.log('Reset CD Slot 1 Button is Pressed..!');
+                                _SLOT.start_reset_cd_status('101');
+                                popup_loading.open();
+                                _SLOT.kiosk_get_machine_summary();
+                                _SLOT.kiosk_get_product_stock();
                            }
                        }
                     }
@@ -1089,13 +1090,13 @@ Base{
                        MouseArea{
                            anchors.fill: parent
                            onClicked: {
-                               _SLOT.user_action_log('Admin Page "Update Slot 1"');
-                               console.log('Update Stock Button 1 is Pressed..!')
-                               if (userData.isAbleCollect==1){
-                                   popup_update_stock.open('101');
-                               } else {
-                                   switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
-                               }
+                                _SLOT.user_action_log('Admin Page "Update Slot 1"');
+                                console.log('Update Stock Button 1 is Pressed..!')
+                                if (userData.isAbleCollect==1){
+                                    popup_update_stock.open('101');
+                                } else {
+                                    switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                                }
                            }
                        }
                     }
@@ -1118,9 +1119,8 @@ Base{
                     layoutDirection: Qt.RightToLeft
                     NextButton{
                        id: button_test_slot2
-                       visible: enableCDTest
                        enabled: (_total_stock_102!='---') ? true : false
-                       button_text: 'test'
+                       button_text: 'reset'
                        width: 80
                        height: 40
                        fontSize: 15
@@ -1129,10 +1129,12 @@ Base{
                        MouseArea{
                            anchors.fill: parent
                            onClicked: {
-                               _SLOT.user_action_log('Admin Page "Test Slot 2"');
-                               console.log('Test Slot 2 Button is Pressed..!');
-                               _SLOT.start_multiple_eject('102', '1');
-                               popup_loading.open();
+                                _SLOT.user_action_log('Admin Page "Reset CD Slot 2"');
+                                console.log('Reset CD Slot 2 Button is Pressed..!');
+                                _SLOT.start_reset_cd_status('102');
+                                popup_loading.open();
+                                _SLOT.kiosk_get_machine_summary();
+                                _SLOT.kiosk_get_product_stock();
                            }
                        }
                     }
@@ -1174,9 +1176,8 @@ Base{
                     layoutDirection: Qt.RightToLeft
                     NextButton{
                        id: button_test_slot3
-                       visible: enableCDTest
                        enabled: (_total_stock_103!='---') ? true : false
-                       button_text: 'test'
+                       button_text: 'reset'
                        width: 80
                        height: 40
                        fontSize: 15
@@ -1185,10 +1186,12 @@ Base{
                        MouseArea{
                            anchors.fill: parent
                            onClicked: {
-                               _SLOT.user_action_log('Admin Page "Test Slot 3"');
-                               console.log('Test Slot 3 Button is Pressed..!');
-                               _SLOT.start_multiple_eject('103', '1');
-                               popup_loading.open();
+                                _SLOT.user_action_log('Admin Page "Reset CD Slot 3"');
+                                console.log('Reset CD Slot 3 Button is Pressed..!');
+                                _SLOT.start_reset_cd_status('103');
+                                popup_loading.open();
+                                _SLOT.kiosk_get_machine_summary();
+                                _SLOT.kiosk_get_product_stock();
                            }
                        }
                     }

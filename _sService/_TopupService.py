@@ -983,6 +983,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
                 _Common.remove_temp_data(_param['reff_no'])
                 return response['data']
             else:
+                _Common.LAST_DKI_ERR_CODE = '52'
                 if not _Common.exist_temp_data(_param['reff_no']):
                     _param['endpoint'] = 'topup-dki/reversal'
                     _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-dki/reversal', payload=_param)
@@ -2109,6 +2110,7 @@ def refund_bri_pending(data=None):
             _Common.remove_temp_data(data['trxid'])
             return True
         else:
+            _Common.LAST_BRI_ERR_CODE = '33'
             # _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bri/refund', payload=param)
             return False
     except Exception as e:

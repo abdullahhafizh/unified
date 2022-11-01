@@ -1,14 +1,21 @@
-16.1.0-GLOBAL:
-- Add MDD General Blacklist Card (FDS Enabled),
+TODO:
+- Feature Panel Setting (WIP),
 - Add NV Hold Notes Mechanism (WIP),
+
+16.1.1-GLOBAL:
+- Fix Command ST0 Routing,
+- Add Reset CD Error,
+- Enhance Topup Error Status,
+- Re-Open Non-Cash Payment Channel For Topup Online Flazz,
+- Retry Code For Failure Stacked TRX,
+- Add Reader RC In Topup Failure in Remarks3,
+- ...
+
+16.1.0-GLOBAL:
+- Add MDD General Blacklist Card (FDS Ready),
 - Add Details Failure Data For Topup Failure,
 - Update Last Audit Report for OFFLINE TRX,
 - Store Pending Result Into Temp Data,
-- Fix Command ST0 Routing,
-- Reopen Topup BCA Payment Channel,
-- Add Reset CD Error (WIP),
-- Enhance Topup Error Status (WIP),
-- Feature Panel Setting (WIP),
 - ...
 
 16.0.0-GLOBAL:

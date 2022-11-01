@@ -543,9 +543,14 @@ def machine_summary():
         'printer_error': _Common.PRINTER_ERROR,
         'scanner_error': _Common.SCANNER_ERROR,
         'webcam_error': _Common.WEBCAM_ERROR,
-        'cd1_error': _Common.CD1_ERROR,
-        'cd2_error': _Common.CD2_ERROR,
-        'cd3_error': _Common.CD3_ERROR,
+        
+        'cd1_error': _Common.load_from_temp_config('cd1^error'),
+        'cd2_error': _Common.load_from_temp_config('cd2^error'),
+        'cd3_error': _Common.load_from_temp_config('cd3^error'),
+        'cd4_error': _Common.load_from_temp_config('cd4^error'),
+        'cd5_error': _Common.load_from_temp_config('cd5^error'),
+        'cd6_error': _Common.load_from_temp_config('cd6^error'),
+        
         'mandiri_wallet': str(_Common.MANDIRI_ACTIVE_WALLET),
         'bni_wallet': str(_Common.BNI_ACTIVE_WALLET),
         'bri_wallet': str(_Common.BRI_WALLET),

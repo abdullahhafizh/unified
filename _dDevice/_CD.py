@@ -161,26 +161,52 @@ def voucher_trigger_card_dispenser(port, slot, multiply='1', vcode=''):
 
 def emit_eject_error(attempt, error_message, method='eject_full_round'):
     if attempt == '101':
-        _Common.CD1_ERROR = 'DEVICE_RESPONSE_ERROR'
-        _Common.upload_device_state('cd1', _Common.CD1_ERROR)
+        _Common.log_to_temp_config('cd1^error', 'DEVICE_RESPONSE_ERROR')
+        _Common.upload_device_state('cd1', 'DEVICE_RESPONSE_ERROR')
     if attempt == '102':
-        _Common.CD2_ERROR = 'DEVICE_RESPONSE_ERROR'
-        _Common.upload_device_state('cd2', _Common.CD2_ERROR)
+        _Common.log_to_temp_config('cd2^error', 'DEVICE_RESPONSE_ERROR')
+        _Common.upload_device_state('cd2', 'DEVICE_RESPONSE_ERROR')
     if attempt == '103':
-        _Common.CD3_ERROR = 'DEVICE_RESPONSE_ERROR'
-        _Common.upload_device_state('cd3', _Common.CD3_ERROR)
+        _Common.log_to_temp_config('cd3^error', 'DEVICE_RESPONSE_ERROR')
+        _Common.upload_device_state('cd3', 'DEVICE_RESPONSE_ERROR')
     if attempt == '104':
-        _Common.CD4_ERROR = 'DEVICE_RESPONSE_ERROR'
-        _Common.upload_device_state('cd4', _Common.CD4_ERROR)
+        _Common.log_to_temp_config('cd4^error', 'DEVICE_RESPONSE_ERROR')
+        _Common.upload_device_state('cd4', 'DEVICE_RESPONSE_ERROR')
     if attempt == '105':
-        _Common.CD5_ERROR = 'DEVICE_RESPONSE_ERROR'
-        _Common.upload_device_state('cd5', _Common.CD5_ERROR)
+        _Common.log_to_temp_config('cd5^error', 'DEVICE_RESPONSE_ERROR')
+        _Common.upload_device_state('cd5', 'DEVICE_RESPONSE_ERROR')
     if attempt == '106':
-        _Common.CD6_ERROR = 'DEVICE_RESPONSE_ERROR'
-        _Common.upload_device_state('cd6', _Common.CD6_ERROR)
+        _Common.log_to_temp_config('cd6^error', 'DEVICE_RESPONSE_ERROR')
+        _Common.upload_device_state('cd6', 'DEVICE_RESPONSE_ERROR')
     _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR|'+error_message)
+
+
+
+def start_reset_cd_status(slot):
+    _Helper.get_thread().apply_async(reset_cd_status, (slot,))
+    
+
+def reset_cd_status(slot):
+    if slot == '101':
+        _Common.log_to_temp_config('cd1^error', '')
+        _Common.upload_device_state('cd1', '')
+    if slot == '102':
+        _Common.log_to_temp_config('cd2^error', '')
+        _Common.upload_device_state('cd2', '')
+    if slot == '103':
+        _Common.log_to_temp_config('cd3^error', '')
+        _Common.upload_device_state('cd3', '')
+    if slot == '104':
+        _Common.log_to_temp_config('cd4^error', '')
+        _Common.upload_device_state('cd4', '')
+    if slot == '105':
+        _Common.log_to_temp_config('cd5^error', '')
+        _Common.upload_device_state('cd5', '')
+    if slot == '106':
+        _Common.log_to_temp_config('cd6^error', '')
+        _Common.upload_device_state('cd6', '')
 
 
 def kiosk_get_cd_readiness():

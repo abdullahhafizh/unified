@@ -30,7 +30,6 @@ BCA_ACTIVE_TOPUP_SESSION = ''
 
 TIMEOUT_REQUESTS = 50
 
-HTTP_HEADERS = _HTTPAccess.get_header()
 
 #046
 def update_bca(param, __global_response__):
@@ -580,7 +579,10 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 # ErrorCode = "0000"
                                 # ErrorCode = code
                                 # if code == "200" or code == 200:
+                            else:
+                                _Common.LAST_BCA_ERR_CODE = '42'
                         else:
+                            _Common.LAST_BCA_ERR_CODE = '41'
                             resultStr, report = bca_topup_reversal(bcaStaticATD)
                             LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                             ErrorCode = resultStr
@@ -598,6 +600,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 else:
                                     ErrMsg = "UpdateAPI_Failed_Reversal_Failed"
                             else:
+                                _Common.LAST_BCA_ERR_CODE = '43'
                                 ErrMsg = "UpdateAPI_Failed_Card_Reversal_Failed"
                             
                             resultStr = "FAIL" 
@@ -623,14 +626,13 @@ def do_check_session_bca(URL_Server, card_no):
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
         LOG.fw(":CheckSessionBCA json = ", payload)
-        LOG.fw(":CheckSessionBCA headers = ", HTTP_HEADERS)
 
         # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
         # ValueText = response
         # if errorcode == 200:
         #     errorcode = "0000"
         errorcode = "0000"
-        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=_HTTPAccess.get_header())
 
         ValueText = r.text
         LOG.fw(":CheckSessionBCA = ", ValueText)
@@ -656,7 +658,6 @@ def do_get_session_bca(URL_Server, card_no, session_data):
         
         LOG.fw(":GetSessionBCA url = ", sURL)
         LOG.fw(":GetSessionBCA json = ", payload)
-        LOG.fw(":GetSessionBCA headers = ", HTTP_HEADERS)
 
         # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
         # ValueText = response
@@ -664,7 +665,7 @@ def do_get_session_bca(URL_Server, card_no, session_data):
         #     errorcode = "0000"
         
         errorcode = "0000"
-        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=_HTTPAccess.get_header())
         ValueText = r.text
         LOG.fw(":GetSessionBCA = ", ValueText)
             
@@ -695,17 +696,17 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
         
         LOG.fw(":ConfirmBCA url = ", sURL)
         LOG.fw(":ConfirmBCA json = ", payload)
-        LOG.fw(":ConfirmBCA headers = ", HTTP_HEADERS)
 
         # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
         # ValueText = response
         
         errorcode = "0000"
-        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=_HTTPAccess.get_header())
         ValueText = r.text
         
         # Store To Job If Push Failed
         if r.status_code != 200:
+            _Common.LAST_BCA_ERR_CODE = '44'
             payload['endpoint'] = 'topup-bca/confirm'
             _Common.store_request_to_job(name='send_post_confirm_bca', url=sURL, payload=payload)
 
@@ -733,14 +734,13 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
             }
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
-        LOG.fw(":ReversalBCA headers = ", HTTP_HEADERS)
 
         # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
         # if errorcode == 200:
         #     errorcode = "0000"
         # ValueText = response
         errorcode = '0000'
-        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=_HTTPAccess.get_header())
         ValueText = r.text
         
         LOG.fw(":ReversalBCA = ", ValueText)
@@ -767,13 +767,12 @@ def do_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_
             }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
-        LOG.fw(":UpdateBCA headers = ", HTTP_HEADERS)
 
         # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
         # ValueText = response
         
         errorcode = '0000'
-        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=_HTTPAccess.get_header())
         ValueText = r.text
         
         LOG.fw(":UpdateBCA = ", ValueText)
