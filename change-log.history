@@ -4,6 +4,10 @@
 - Add Details Failure Data For Topup Failure,
 - Update Last Audit Report for OFFLINE TRX,
 - Store Pending Result Into Temp Data,
+- Fix Command ST0 Routing,
+- Add Reset CD Error (WIP),
+- Enhance Topup Error Status (WIP),
+- Feature Panel Setting (WIP),
 - ...
 
 16.0.0-GLOBAL:

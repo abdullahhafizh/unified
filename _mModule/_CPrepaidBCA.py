@@ -224,7 +224,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("045:cardno = ", cardno)
         LOG.fw("045:uid = ", uid)
-        valuetext, ErrMsg = send_check_session_bca(url, TOKEN, TID, MID,cardno)
+        valuetext, ErrMsg = send_check_session_bca(url, cardno)
         if valuetext == "1":
             valuetext = ErrMsg
         
@@ -271,7 +271,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
-            valuetext, ErrMsg = send_get_session_bca(url, TOKEN, TID,MID, cardno, report)
+            valuetext, ErrMsg = send_get_session_bca(url, cardno, report)
 
             if valuetext == "1":
                 valuetext = ErrMsg
@@ -317,7 +317,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
             ErrorCode = resultStr
             if resultStr == "0000":
-                valuetext, ErrMsg = send_post_update_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
+                valuetext, ErrMsg = send_post_update_bca(url, cardno, report, balance, reference_id)
                 if valuetext == "1":
                     valuetext = ErrMsg
 
@@ -339,7 +339,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
                     LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                     ErrorCode = resultStr
                     if resultStr == "0000":
-                        valuetext, ErrMsg = send_post_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
+                        valuetext, ErrMsg = send_post_reversal_bca(url, cardno, report, balance, reference_id)
                         if valuetext == "1":
                             valuetext = ErrMsg
                         dataJ = json.loads(valuetext)
@@ -397,7 +397,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("044:cardno = ", cardno)
         LOG.fw("044:uid = ", uid)
-        valuetext, ErrMsg = send_check_session_bca(url, TOKEN, TID, MID,cardno)
+        valuetext, ErrMsg = send_check_session_bca(url, cardno)
         if valuetext == "1":
             valuetext = ErrMsg
         
@@ -450,7 +450,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
-            valuetext, ErrMsg = send_get_session_bca(url, TOKEN, TID,MID, cardno, report)
+            valuetext, ErrMsg = send_get_session_bca(url, cardno, report)
 
             if valuetext == "1":
                 valuetext = ErrMsg
@@ -498,7 +498,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                     LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
                     ErrorCode = resultStr
                     if resultStr == "0000":
-                        valuetext, ErrMsg = send_post_update_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
+                        valuetext, ErrMsg = send_post_update_bca(url, cardno, report, balance, reference_id)
                         if valuetext == "1":
                             valuetext = ErrMsg
 
@@ -549,7 +549,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                     lastbalance = int(balance)
                                     
                                 reporttopup = report
-                                valuetext, ErrMsg = send_post_confirm_bca(url, TOKEN, TID, MID, cardno, report, lastbalance, reference_id, success_topup)
+                                valuetext, ErrMsg = send_post_confirm_bca(url, cardno, report, lastbalance, reference_id, success_topup)
                                 # if valuetext == "1":
                                     # valuetext = ErrMsg
                                 
@@ -567,7 +567,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
                             ErrorCode = resultStr
                             if resultStr == "0000":
-                                valuetext, ErrMsg = send_post_reversal_bca(url, TOKEN, TID, MID, cardno, report, balance, reference_id)
+                                valuetext, ErrMsg = send_post_reversal_bca(url, cardno, report, balance, reference_id)
                                 if valuetext == "1":
                                     valuetext = ErrMsg
                                 dataJ = json.loads(valuetext)
@@ -591,15 +591,15 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     return ErrorCode, cardno, amount, lastbalance, reporttopup, ErrMsg
 
 
-def send_check_session_bca(URL_Server, token, tid, mid, card_no):
+def send_check_session_bca(URL_Server, card_no):
     global TIMEOUT_REQUESTS
 
     try:
         sURL = URL_Server + "topup-bca/check-session"
         payload = {
-            "token": token, 
-            "tid": tid, 
-            "mid": mid, 
+            "token": _Common.CORE_TOKEN, 
+            "tid": _Common.TID, 
+            "mid": _Common.MID, 
             "card_no": card_no
             }
         
@@ -621,15 +621,15 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
         return "1", errorcode
 
 
-def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
+def send_get_session_bca(URL_Server, card_no, session_data):
     global TIMEOUT_REQUESTS
 
     try:
         sURL = URL_Server + "topup-bca/get-session"
         payload = {
-            "token": token, 
-            "tid": tid, 
-            "mid": mid, 
+            "token": _Common.CORE_TOKEN, 
+            "tid": _Common.TID, 
+            "mid": _Common.MID, 
             "card_no": card_no, 
             "session_data": session_data
             }
@@ -652,15 +652,15 @@ def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
         return "1", errorcode
 
 
-def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, last_balance, reference_id, success=True):
+def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, reference_id, success=True):
     global TIMEOUT_REQUESTS
 
     try:
         sURL = URL_Server + "topup-bca/confirm"
         payload = {
-            "token": token.decode('utf-8'), 
-            "tid": tid.decode('utf-8'), 
-            "mid": mid.decode('utf-8'), 
+            "token": _Common.CORE_TOKEN, 
+            "tid": _Common.TID, 
+            "mid": _Common.MID, 
             "card_no": card_no, 
             "confirm_data":  confirm_data, 
             "last_balance": last_balance, 
@@ -691,15 +691,15 @@ def send_post_confirm_bca(URL_Server, token, tid, mid, card_no, confirm_data, la
         return "1", errorcode
 
 
-def send_post_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, last_balance, reference_id):
+def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, reference_id):
     global TIMEOUT_REQUESTS
 
     try:
         sURL = URL_Server + "topup-bca/reversal"
         payload = {
-            "token": token.decode('utf-8'), 
-            "tid": tid.decode('utf-8'), 
-            "mid": mid.decode('utf-8'), 
+            "token": _Common.CORE_TOKEN, 
+            "tid": _Common.TID, 
+            "mid": _Common.MID, 
             "card_no": card_no, 
             "reversal_data": reversal_data, 
             "last_balance": last_balance, 
@@ -723,15 +723,15 @@ def send_post_reversal_bca(URL_Server, token, tid, mid, card_no, reversal_data, 
         return "1", errorcode
 
 
-def send_post_update_bca(URL_Server, token, tid, mid, card_no, topup_data, prev_balance, reference_id):
+def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_id):
     global TIMEOUT_REQUESTS
 
     try:
         sURL = URL_Server + "topup-bca/update"
         payload = {
-            "token": token.decode('utf-8'), 
-            "tid": tid.decode('utf-8'), 
-            "mid": mid.decode('utf-8'), 
+            "token": _Common.CORE_TOKEN, 
+            "tid": _Common.TID, 
+            "mid": _Common.MID, 
             "card_no": card_no, 
             "topup_data": topup_data, 
             "prev_balance": prev_balance, 
