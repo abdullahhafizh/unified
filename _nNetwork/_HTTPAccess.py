@@ -8,6 +8,7 @@ import time
 import os
 import shutil
 import urllib3
+import json
 urllib3.disable_warnings()
 
 
@@ -233,3 +234,30 @@ def stream_large_download(url, item, temp_path, final_path):
     LOGGER.debug(('stream down', file, url))
     del r
     return True, item
+
+
+def direct_post(url, param, header=None, custom_timeout=60):
+    if header is None:
+        header = HEADER
+    try:
+        s = requests.session()
+        s.keep_alive = False
+        s.headers['Connection'] = 'close'
+        __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
+        r = requests.post(url, headers=header, json=param, timeout=__timeout)
+    except requests.exceptions.Timeout as t:
+        LOGGER.warning((url, TIMEOUT, t))
+        return -13, TIMEOUT
+    except Exception as e:
+        LOGGER.warning((url, NO_INTERNET, e))
+        return -1, NO_INTERNET
+
+    try:
+        LOGGER.debug((url, r.status_code, r.text))
+        response = r.json()
+        response = json.dumps(response)
+    except Exception as e:
+        LOGGER.warning((url, ERROR_RESPONSE, e))
+        return r.status_code, ERROR_RESPONSE
+
+    return r.status_code, response
