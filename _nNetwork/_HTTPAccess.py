@@ -246,10 +246,10 @@ def direct_post(url, param, header=None, custom_timeout=60):
         __timeout = GLOBAL_TIMEOUT if custom_timeout is None else custom_timeout
         r = requests.post(url, headers=header, json=param, timeout=__timeout)
     except requests.exceptions.Timeout as t:
-        LOGGER.warning((url, TIMEOUT, t))
+        LOGGER.warning((url, t))
         return -13, TIMEOUT
     except Exception as e:
-        LOGGER.warning((url, NO_INTERNET, e))
+        LOGGER.warning((url, e))
         return -1, {'error': e}
 
     try:
@@ -258,7 +258,6 @@ def direct_post(url, param, header=None, custom_timeout=60):
     except Exception as e:
         LOGGER.warning((url, ERROR_RESPONSE, e))
         return r.status_code, ERROR_RESPONSE
-    print(url)
-    print(r.status_code)
     print(response)
     return r.status_code, response
+

@@ -6,6 +6,7 @@ from _mModule import _CPrepaidLog as LOG
 from _nNetwork import _HTTPAccess
 from _cConfig import _Common
 import json
+import requests
 import datetime
 
 BCA_ATD = "01BTESTDEVAOZ5L0LDraBjL9d5JKVhFR0RJ4dlZu0aWBs"
@@ -607,13 +608,15 @@ def send_check_session_bca(URL_Server, card_no):
         LOG.fw(":CheckSessionBCA json = ", payload)
         LOG.fw(":CheckSessionBCA headers = ", HTTP_HEADERS)
 
-        errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
-        
-        ValueText = response
-        LOG.fw(":CheckSessionBCA = ", ValueText)
+        # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
+        # ValueText = response
+        # if errorcode == 200:
+        #     errorcode = "0000"
+        errorcode = "0000"
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
 
-        if errorcode == 200:
-            errorcode = "0000"
+        ValueText = r.text
+        LOG.fw(":CheckSessionBCA = ", ValueText)
 
         return ValueText, errorcode
     except Exception as ex:
@@ -638,13 +641,15 @@ def send_get_session_bca(URL_Server, card_no, session_data):
         LOG.fw(":GetSessionBCA json = ", payload)
         LOG.fw(":GetSessionBCA headers = ", HTTP_HEADERS)
 
-        errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
-
-        ValueText = response
+        # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
+        # ValueText = response
+        # if errorcode == 200:
+        #     errorcode = "0000"
+        
+        errorcode = "0000"
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        ValueText = r.text
         LOG.fw(":GetSessionBCA = ", ValueText)
-
-        if errorcode == 200:
-            errorcode = "0000"
             
         return ValueText, errorcode
     except Exception as ex:
@@ -675,16 +680,20 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
         LOG.fw(":ConfirmBCA json = ", payload)
         LOG.fw(":ConfirmBCA headers = ", HTTP_HEADERS)
 
-        errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
+        # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
+        # ValueText = response
+        
+        errorcode = "0000"
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        ValueText = r.text
         
         # Store To Job If Push Failed
-        if errorcode != 200:
+        if r.status_code != 200:
             payload['endpoint'] = 'topup-bca/confirm'
             _Common.store_request_to_job(name='send_post_confirm_bca', url=sURL, payload=payload)
 
-        ValueText = response
         LOG.fw(":ConfirmBCA = ", ValueText)
-        errorcode = "0000"
+
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "ConfirmBCA error: {0}".format(ex)
@@ -709,12 +718,14 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
         LOG.fw(":ReversalBCA json = ", payload)
         LOG.fw(":ReversalBCA headers = ", HTTP_HEADERS)
 
-        errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
-
-        if errorcode == 200:
-            errorcode = "0000"
-            
-        ValueText = response
+        # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
+        # if errorcode == 200:
+        #     errorcode = "0000"
+        # ValueText = response
+        errorcode = '0000'
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        ValueText = r.text
+        
         LOG.fw(":ReversalBCA = ", ValueText)
 
         return ValueText, errorcode
@@ -741,13 +752,15 @@ def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, referenc
         LOG.fw(":UpdateBCA json = ", payload)
         LOG.fw(":UpdateBCA headers = ", HTTP_HEADERS)
 
-        errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
-
-        ValueText = response
+        # errorcode, response = _HTTPAccess.direct_post(url=sURL, param=payload)
+        # ValueText = response
+        
+        errorcode = '0000'
+        r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=HTTP_HEADERS)
+        ValueText = r.text
+        
         LOG.fw(":UpdateBCA = ", ValueText)
 
-        if errorcode == 200:
-            errorcode = "0000"
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "UpdateBCA error: {0}".format(ex)
