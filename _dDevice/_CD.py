@@ -232,17 +232,17 @@ def get_cd_readiness():
 
 def check_init_cd(port, attempt):
     # Validate Based On Error History
-    if attempt == '101' and _Common.CD1_ERROR == '':
+    if attempt == '101' and _Common.load_from_temp_config('cd1^error') == '':
         return True
-    if attempt == '102' and _Common.CD2_ERROR == '':
+    if attempt == '102' and _Common.load_from_temp_config('cd2^error') == '':
         return True
-    if attempt == '103' and _Common.CD3_ERROR == '':
+    if attempt == '103' and _Common.load_from_temp_config('cd3^error') == '':
         return True
-    if attempt == '104' and _Common.CD4_ERROR == '':
+    if attempt == '104' and _Common.load_from_temp_config('cd4^error') == '':
         return True
-    if attempt == '105' and _Common.CD5_ERROR == '':
+    if attempt == '105' and _Common.load_from_temp_config('cd5^error') == '':
         return True
-    if attempt == '106' and _Common.CD6_ERROR == '':
+    if attempt == '106' and _Common.load_from_temp_config('cd6^error') == '':
         return True
     return False
 
