@@ -2094,65 +2094,68 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     # Below Will Handle Topup Online Failure Which Must Be Handling Reversal/Topup As Well
     elif bank == 'BRI':
         try:
-            _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
-            response, result = _Command.send_request(param=_param, output=None)
-            # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
-            # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
-            LOGGER.debug((response, result))
-            # Whatever The Reversal Result, Continue To Do Refund
-            param = {
-                'token': _Common.CORE_TOKEN,
-                'mid': _Common.CORE_MID,
-                'tid': _Common.TID,
-                'reff_no_host': pending_data.get('reff_no_trx'),
-                'card_no': card_data.get('card_no'),
-            }
-            status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
-            LOGGER.debug((bank, str(param), str(response)))
-            if status == 200 and response['response']['code'] == 200:
-                _Common.remove_temp_data(trxid)
+            if pending_data is not None:
+                _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
+                response, result = _Command.send_request(param=_param, output=None)
+                # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
+                # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+                LOGGER.debug((response, result))
+                # Whatever The Reversal Result, Continue To Do Refund
+                param = {
+                    'token': _Common.CORE_TOKEN,
+                    'mid': _Common.CORE_MID,
+                    'tid': _Common.TID,
+                    'reff_no_host': pending_data.get('reff_no_trx'),
+                    'card_no': card_data.get('card_no'),
+                }
+                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
+                LOGGER.debug((bank, str(param), str(response)))
+                if status == 200 and response['response']['code'] == 200:
+                    _Common.remove_temp_data(trxid)
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+_Common.LAST_BRI_ERR_CODE)
     elif bank == 'BCA':
         try:
-            res_bca_card_info, bca_card_info_data = bca_card_info()
-            if res_bca_card_info is False:
-                LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info_data))
-                bca_card_info_data = json.loads(bca_card_info)
-                # rc = bca_card_info.get('Result', 'FFFF')
-            param = {
-                'token': _Common.CORE_TOKEN,
-                'mid': _Common.CORE_MID,
-                'tid': _Common.TID,
-                'card_data': bca_card_info_data,
-                'card_no': card_data.get('card_no'),
-                'last_balance': card_data.get('balance')
-            }
-            # Send ACK
-            status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
-            LOGGER.debug((bank, str(param), str(response)))
-            if status == 200 and response['response']['code'] == 200:
-                _Common.remove_temp_data(trxid)            
+            if pending_data is not None:
+                res_bca_card_info, bca_card_info_data = bca_card_info()
+                if res_bca_card_info is False:
+                    LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info_data))
+                    bca_card_info_data = json.loads(bca_card_info)
+                    # rc = bca_card_info.get('Result', 'FFFF')
+                param = {
+                    'token': _Common.CORE_TOKEN,
+                    'mid': _Common.CORE_MID,
+                    'tid': _Common.TID,
+                    'card_data': bca_card_info_data,
+                    'card_no': card_data.get('card_no'),
+                    'last_balance': card_data.get('balance')
+                }
+                # Send ACK
+                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
+                LOGGER.debug((bank, str(param), str(response)))
+                if status == 200 and response['response']['code'] == 200:
+                    _Common.remove_temp_data(trxid)            
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+_Common.LAST_BCA_ERR_CODE)
     elif bank == 'DKI':
         try:
-            param = {
-                'token': _Common.CORE_TOKEN,
-                'mid': _Common.CORE_MID,
-                'tid': _Common.TID,
-                'card_no': card_data.get('card_no'),
-                'reff_no': trxid
-            }
-            status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
-            LOGGER.debug((bank, str(param), str(response)))
-            if status == 200 and response['response']['code'] == 200:
-                _Common.remove_temp_data(trxid)            
+            if pending_data is not None:
+                param = {
+                    'token': _Common.CORE_TOKEN,
+                    'mid': _Common.CORE_MID,
+                    'tid': _Common.TID,
+                    'card_no': card_data.get('card_no'),
+                    'reff_no': trxid
+                }
+                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
+                LOGGER.debug((bank, str(param), str(response)))
+                if status == 200 and response['response']['code'] == 200:
+                    _Common.remove_temp_data(trxid)            
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+_Common.LAST_DKI_ERR_CODE)

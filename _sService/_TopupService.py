@@ -1594,8 +1594,13 @@ def topup_online(bank, cardno, amount, trxid=''):
             # pending_result = _MDSService.mds_online_topup(bank, _param)
             pending_result = False
             if not _Common.exist_temp_data(trxid):
+                _Common.LAST_BRI_ERR_CODE = ''
                 pending_result = pending_balance(_param, bank='BRI', mode='TOPUP')
                 if not pending_result:
+                    _Common.LAST_BRI_ERR_CODE = '30'
+                    if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                        _QPROX.new_topup_failure_handler('BRI', trxid, amount)
+                        return
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
@@ -1604,13 +1609,16 @@ def topup_online(bank, cardno, amount, trxid=''):
             update_result = update_balance(_param, bank='BRI', mode='TOPUP')
             if not update_result:
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
-                rc = _Common.LAST_READER_ERR_CODE
+                pending_result.update({'reader_rc': _Common.LAST_READER_ERR_CODE})
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(pending_result))
+                _Common.LAST_BRI_ERR_CODE = '31'
                 if _Common.NEW_TOPUP_FAILURE_HANDLER:
                     pending_result['trxid'] = trxid
                     pending_result['access_token'] = LAST_BRI_ACCESS_TOKEN
                     pending_result['bank_reff_no'] = LAST_BRI_REFF_NO_HOST
                     _QPROX.new_topup_failure_handler('BRI', trxid, amount, pending_result)
                     return
+                rc = _Common.LAST_READER_ERR_CODE
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_TOPUP_CORRECTION#RC_'+rc)
                 # Keep Push Data To MDS as Failure
                 # failed_data = {
@@ -1698,9 +1706,14 @@ def topup_online(bank, cardno, amount, trxid=''):
             #         _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
             #         return
             if not _Common.exist_temp_data(trxid):
+                _Common.LAST_BCA_ERR_CODE = ''
                 pending_result = pending_balance(_param, bank='BCA', mode='TOPUP')
                 # pending_result = _MDSService.mds_online_topup(bank, _param)
                 if not pending_result:
+                    _Common.LAST_BCA_ERR_CODE = '40'
+                    if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                        _QPROX.new_topup_failure_handler('BCA', trxid, amount)
+                        return False
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
@@ -1714,7 +1727,10 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
             #     return
             if update_result is False or update_result == 'BCA_TOPUP_CORRECTION':
-                if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                _Common.LAST_BCA_ERR_CODE = '41'
+                if _Common.NEW_TOPUP_FAILURE_HANDLER:            
+                    pending_result.update({'reader_rc': _Common.LAST_READER_ERR_CODE})
+                    _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(pending_result))
                     _QPROX.new_topup_failure_handler('BCA', trxid, amount, pending_result)
                     return False
                 rc = _Common.LAST_READER_ERR_CODE
@@ -1888,8 +1904,13 @@ def topup_online(bank, cardno, amount, trxid=''):
             # pending_result = _MDSService.mds_online_topup(bank, _param)
             pending_result = False
             if not _Common.exist_temp_data(trxid):
+                _Common.LAST_DKI_ERR_CODE = ''
                 pending_result = pending_balance(_param, bank='DKI', mode='TOPUP')
                 if not pending_result:
+                    _Common.LAST_DKI_ERR_CODE = '50'
+                    if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                        _QPROX.new_topup_failure_handler('DKI', trxid, amount)
+                        return False
                     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#PENDING_TOPUP')
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
@@ -1905,8 +1926,11 @@ def topup_online(bank, cardno, amount, trxid=''):
                 _param['prev_balance'] = last_card_check['balance']
                 update_result = update_balance(_param, bank='DKI', mode='TOPUP')
                 if not update_result:
+                    _Common.LAST_DKI_ERR_CODE = '51'
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
                     if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                        pending_result.update({'reader_rc': _Common.LAST_READER_ERR_CODE})
+                        _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(pending_result))
                         _QPROX.new_topup_failure_handler('DKI', trxid, amount, pending_result)
                         return False
                     rc = _Common.LAST_READER_ERR_CODE

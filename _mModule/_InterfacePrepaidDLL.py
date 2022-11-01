@@ -140,7 +140,7 @@ def send_command(cmd, param):
         formatted_lines = trace.splitlines()
         err_message = traceback._cause_message
         LOG.fw("LIB ERROR = ", formatted_lines[-1], True)
-        # print(trace)
+        print(err_message)
         __global_response__["Result"] = "EXCP"
         __global_response__["ErrorDesc"] = trace
     finally:

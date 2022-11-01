@@ -983,6 +983,10 @@ EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
 LAST_EDC_TRX_RECEIPT = None
 
 LAST_READER_ERR_CODE = '0000'
+LAST_BCA_ERR_CODE = ''
+LAST_DKI_ERR_CODE = ''
+LAST_BRI_ERR_CODE = ''
+
 LAST_PPOB_TRX = None
 
 DISABLE_CARD_RETRY_CODE = True if _ConfigParser.get_set_value('GENERAL', 'disable^card^retry^code', '1') == '1' else False

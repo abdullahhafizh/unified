@@ -596,9 +596,9 @@ def send_check_session_bca(URL_Server, token, tid, mid, card_no):
     try:
         sURL = URL_Server + "topup-bca/check-session"
         payload = {
-            "token": token.decode('utf-8'), 
-            "tid": tid.decode('utf-8'), 
-            "mid": mid.decode('utf-8'), 
+            "token": token, 
+            "tid": tid, 
+            "mid": mid, 
             "card_no":card_no
             }
         
@@ -623,24 +623,27 @@ def send_get_session_bca(URL_Server, token, tid, mid, card_no, session_data):
     try:
         sURL = URL_Server + "topup-bca/get-session"
         payload = {
-            "token": token.decode('utf-8'), 
-            "tid": tid.decode('utf-8'), 
-            "mid": mid.decode('utf-8'), 
+            "token": token, 
+            "tid": tid, 
+            "mid": mid, 
             "card_no": card_no, 
-            "session_data": session_data.decode('utf-8')
+            "session_data": session_data
             }
-        LOG.fw(":SessionBCA url = ", sURL)
-        LOG.fw(":SessionBCA json = ", payload)
+        
+        LOG.fw(":GetSessionBCA url = ", sURL)
+        LOG.fw(":GetSessionBCA json = ", payload)
 
         r = requests.post(sURL, timeout=TIMEOUT_REQUESTS, json=payload)
 
+        print(r.text)
+        print(r.status_code)
         ValueText = r.text
-        LOG.fw(":SessionBCA = ", ValueText)
+        LOG.fw(":GetSessionBCA = ", ValueText)
 
         errorcode = "0000"
         return ValueText, errorcode
     except Exception as ex:
-        errorcode = "SessionBCA error: {0}".format(ex)
+        errorcode = "GetSessionBCA error: {0}".format(ex)
         return "1", errorcode
 
 
