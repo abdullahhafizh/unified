@@ -25,6 +25,11 @@ if _Common.PTR_MODE is True:
     BCA_ACCESS_CARD_NUMBER = "NOT_SET"
     BCA_ACCESS_CODE = "NOT_SET"
 
+# New Param
+
+BCA_ACTIVE_TOPUP_SESSION = ''
+
+
 TIMEOUT_REQUESTS = 50
 
 HTTP_HEADERS = _HTTPAccess.get_header()
@@ -190,7 +195,8 @@ def reversal_bca(param, __global_response__):
 
 
 def reversal_bca_priv(TID, MID, TOKEN):
-    global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL
+    global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL, BCA_ACTIVE_TOPUP_SESSION
+    
     bcaAccessCardNumber = BCA_ACCESS_CARD_NUMBER
     bcaAccessCode =  BCA_ACCESS_CODE
     bcaStaticATD = BCA_ATD
@@ -225,8 +231,10 @@ def reversal_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("045:cardno = ", cardno)
         LOG.fw("045:uid = ", uid)
-        valuetext, ErrMsg = send_check_session_bca(url, cardno)
-        if valuetext == "1":
+        LOG.fw("045:do_check_session_bca")
+        valuetext, ErrMsg = do_check_session_bca(url, cardno)
+        
+        if valuetext == -1:
             valuetext = ErrMsg
         
         code = ""
@@ -244,12 +252,12 @@ def reversal_bca_priv(TID, MID, TOKEN):
                 
         if "Configuration Not Found" in message:
             raise SystemError("045:Missing Host Configuration: "+valuetext)
-            
                     
         if "data" in dataJ.keys():
             temp_json = dataJ["data"]
             if "topup_session" in temp_json.keys():
                 topup_session = temp_json["topup_session"]
+                BCA_ACTIVE_TOPUP_SESSION = topup_session
             if "reference_id" in temp_json.keys():
                 reference_id = temp_json["reference_id"]
             if "topup_amount" in temp_json.keys():
@@ -271,10 +279,11 @@ def reversal_bca_priv(TID, MID, TOKEN):
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
-            LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
-            valuetext, ErrMsg = send_get_session_bca(url, cardno, report)
+            LOG.fw("045:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
+            LOG.fw("045:do_get_session_bca")
+            valuetext, ErrMsg = do_get_session_bca(url, cardno, report)
 
-            if valuetext == "1":
+            if valuetext == -1:
                 valuetext = ErrMsg
 
             dataJ = json.loads(valuetext)
@@ -289,6 +298,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
 
                 if "topup_session" in temp_json.keys():
                     topup_session = temp_json["topup_session"]
+                    BCA_ACTIVE_TOPUP_SESSION = topup_session
                 if "reference_id" in temp_json.keys():
                     reference_id = temp_json["reference_id"]
                 if "topup_amount" in temp_json.keys():
@@ -319,7 +329,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
             ErrorCode = resultStr
             if resultStr == "0000":
                 valuetext, ErrMsg = send_post_update_bca(url, cardno, report, balance, reference_id)
-                if valuetext == "1":
+                if valuetext == -1:
                     valuetext = ErrMsg
 
                 dataJ = json.loads(valuetext)
@@ -341,7 +351,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
                     ErrorCode = resultStr
                     if resultStr == "0000":
                         valuetext, ErrMsg = send_post_reversal_bca(url, cardno, report, balance, reference_id)
-                        if valuetext == "1":
+                        if valuetext == -1:
                             valuetext = ErrMsg
                         dataJ = json.loads(valuetext)
                         if "response" in dataJ.keys():
@@ -360,7 +370,8 @@ def reversal_bca_priv(TID, MID, TOKEN):
 
 
 def update_balance_bca_priv(TID, MID, TOKEN):
-    global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL
+    global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL, BCA_ACTIVE_TOPUP_SESSION
+    
     bcaAccessCardNumber = BCA_ACCESS_CARD_NUMBER
     bcaAccessCode =  BCA_ACCESS_CODE
     bcaStaticATD = BCA_ATD
@@ -398,9 +409,10 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("044:cardno = ", cardno)
         LOG.fw("044:uid = ", uid)
+        LOG.fw("044:do_check_session_bca")
         # Failure Here
-        valuetext, ErrMsg = send_check_session_bca(url, cardno)
-        if valuetext == "1":
+        valuetext, ErrMsg = do_check_session_bca(url, cardno)
+        if valuetext == -1:
             valuetext = ErrMsg
         
         dataJ = json.loads(valuetext)
@@ -452,9 +464,10 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ",  { "resultStr": resultStr, "report": report})
-            valuetext, ErrMsg = send_get_session_bca(url, cardno, report)
+            LOG.fw("044:do_get_session_bca")
+            valuetext, ErrMsg = do_get_session_bca(url, cardno, report)
 
-            if valuetext == "1":
+            if valuetext == -1:
                 valuetext = ErrMsg
 
             dataJ = json.loads(valuetext)
@@ -469,6 +482,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
 
                 if "topup_session" in temp_json.keys():
                     topup_session = temp_json["topup_session"]
+                    BCA_ACTIVE_TOPUP_SESSION = topup_session
                 if "reference_id" in temp_json.keys():
                     reference_id = temp_json["reference_id"]
                 if "topup_amount" in temp_json.keys():
@@ -501,7 +515,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                     ErrorCode = resultStr
                     if resultStr == "0000":
                         valuetext, ErrMsg = send_post_update_bca(url, cardno, report, balance, reference_id)
-                        if valuetext == "1":
+                        if valuetext == -1:
                             valuetext = ErrMsg
 
                         dataJ = json.loads(valuetext)
@@ -552,7 +566,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                     
                                 reporttopup = report
                                 valuetext, ErrMsg = send_post_confirm_bca(url, cardno, report, lastbalance, reference_id, success_topup)
-                                # if valuetext == "1":
+                                # if valuetext == -1:
                                     # valuetext = ErrMsg
                                 
                                 # dataJ = json.loads(valuetext)
@@ -570,7 +584,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             ErrorCode = resultStr
                             if resultStr == "0000":
                                 valuetext, ErrMsg = send_post_reversal_bca(url, cardno, report, balance, reference_id)
-                                if valuetext == "1":
+                                if valuetext == -1:
                                     valuetext = ErrMsg
                                 dataJ = json.loads(valuetext)
                                 if "response" in dataJ.keys():
@@ -593,7 +607,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     return ErrorCode, cardno, amount, lastbalance, reporttopup, ErrMsg
 
 
-def send_check_session_bca(URL_Server, card_no):
+def do_check_session_bca(URL_Server, card_no):
     global TIMEOUT_REQUESTS
 
     try:
@@ -622,10 +636,10 @@ def send_check_session_bca(URL_Server, card_no):
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "CheckSessionBCA error: {0}".format(ex)
-        return "1", errorcode
+        return -1, errorcode
 
 
-def send_get_session_bca(URL_Server, card_no, session_data):
+def do_get_session_bca(URL_Server, card_no, session_data):
     global TIMEOUT_REQUESTS
 
     try:
@@ -655,7 +669,7 @@ def send_get_session_bca(URL_Server, card_no, session_data):
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "GetSessionBCA error: {0}".format(ex)
-        return "1", errorcode
+        return -1, errorcode
 
 
 def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, reference_id, success=True):
@@ -698,7 +712,7 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "ConfirmBCA error: {0}".format(ex)
-        return "1", errorcode
+        return -1, errorcode
 
 
 def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, reference_id):
@@ -732,7 +746,7 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "ReversalBCA error: {0}".format(ex)
-        return "1", errorcode
+        return -1, errorcode
 
 
 def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_id):
@@ -765,7 +779,7 @@ def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, referenc
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "UpdateBCA error: {0}".format(ex)
-        return "1", errorcode
+        return -1, errorcode
 
 
 def bca_lib_topup_session(ATD, datetimes):
