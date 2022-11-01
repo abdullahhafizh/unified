@@ -617,7 +617,7 @@ def do_check_session_bca(URL_Server, card_no):
         payload = {
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
-            "mid": _Common.MID, 
+            "mid": _Common.CORE_MID, 
             "card_no": card_no
             }
         
@@ -649,7 +649,7 @@ def do_get_session_bca(URL_Server, card_no, session_data):
         payload = {
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
-            "mid": _Common.MID, 
+            "mid": _Common.CORE_MID, 
             "card_no": card_no, 
             "session_data": session_data
             }
@@ -682,7 +682,7 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
         payload = {
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
-            "mid": _Common.MID, 
+            "mid": _Common.CORE_MID, 
             "card_no": card_no, 
             "confirm_data":  confirm_data, 
             "last_balance": last_balance, 
@@ -725,7 +725,7 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
         payload = {
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
-            "mid": _Common.MID, 
+            "mid": _Common.CORE_MID, 
             "card_no": card_no, 
             "reversal_data": reversal_data, 
             "last_balance": last_balance, 
@@ -759,7 +759,7 @@ def do_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_
         payload = {
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
-            "mid": _Common.MID, 
+            "mid": _Common.CORE_MID, 
             "card_no": card_no, 
             "topup_data": topup_data, 
             "prev_balance": prev_balance, 
