@@ -237,9 +237,9 @@ def reversal_bca_priv(TID, MID, TOKEN):
 
         if "response" in dataJ.keys():
             temp_json = dataJ["response"]
-            if "code" in temp_json:
+            if "code" in temp_json.keys():
                 code = temp_json["code"]
-            if "message" in temp_json:
+            if "message" in temp_json.keys():
                 message = temp_json["message"]
                 
         if "Configuration Not Found" in message:
@@ -398,6 +398,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("044:cardno = ", cardno)
         LOG.fw("044:uid = ", uid)
+        # Failure Here
         valuetext, ErrMsg = send_check_session_bca(url, cardno)
         if valuetext == "1":
             valuetext = ErrMsg
@@ -411,9 +412,9 @@ def update_balance_bca_priv(TID, MID, TOKEN):
 
         if "response" in dataJ.keys():
             temp_json = dataJ["response"]
-            if "code" in temp_json:
+            if "code" in temp_json.keys():
                 code = temp_json["code"]
-            if "message" in temp_json:
+            if "message" in temp_json.keys():
                 message = temp_json["message"]
         
         if "No Pending Balance" in message:
@@ -450,7 +451,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
-            LOG.fw("044:BCATopupSession1 = ",  { "resultStr":resultStr, "report": report})
+            LOG.fw("044:BCATopupSession1 = ",  { "resultStr": resultStr, "report": report})
             valuetext, ErrMsg = send_get_session_bca(url, cardno, report)
 
             if valuetext == "1":
@@ -601,7 +602,7 @@ def send_check_session_bca(URL_Server, card_no):
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": str(card_no)
+            "card_no": card_no
             }
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
@@ -633,8 +634,8 @@ def send_get_session_bca(URL_Server, card_no, session_data):
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": str(card_no), 
-            "session_data": str(session_data)
+            "card_no": card_no, 
+            "session_data": session_data
             }
         
         LOG.fw(":GetSessionBCA url = ", sURL)
@@ -666,10 +667,10 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": str(card_no), 
-            "confirm_data":  str(confirm_data), 
-            "last_balance": str(last_balance), 
-            "reference_id": str(reference_id)
+            "card_no": card_no, 
+            "confirm_data":  confirm_data, 
+            "last_balance": last_balance, 
+            "reference_id": reference_id
             }
         
         if not success:
@@ -709,10 +710,10 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": str(card_no), 
-            "reversal_data": str(reversal_data), 
-            "last_balance": str(last_balance), 
-            "reference_id": str(reference_id)
+            "card_no": card_no, 
+            "reversal_data": reversal_data, 
+            "last_balance": last_balance, 
+            "reference_id": reference_id
             }
         LOG.fw(":ReversalBCA url = ", sURL)
         LOG.fw(":ReversalBCA json = ", payload)
@@ -743,10 +744,10 @@ def send_post_update_bca(URL_Server, card_no, topup_data, prev_balance, referenc
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.MID, 
-            "card_no": str(card_no), 
-            "topup_data": str(topup_data), 
-            "prev_balance": str(prev_balance), 
-            "reference_id": str(reference_id)
+            "card_no": card_no, 
+            "topup_data": topup_data, 
+            "prev_balance": prev_balance, 
+            "reference_id": reference_id
             }
         LOG.fw(":UpdateBCA url = ", sURL)
         LOG.fw(":UpdateBCA json = ", payload)
