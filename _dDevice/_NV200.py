@@ -224,14 +224,15 @@ class NV200_BILL_ACCEPTOR(object):
 
 
     def parse_event(self, poll_data):
-        if _Common.BILL_LIBRARY_DEBUG is True:
-            try:
-                print('pyt: raw poll_data', str(poll_data))
-            except Exception as e:
-                traceback.format_exc()
+        # if _Common.BILL_LIBRARY_DEBUG is True:
+        #     try:
+        #         print('pyt: poll', str(poll_data))
+        #     except Exception as e:
+        #         traceback.format_exc()
         event = []
         event_data = []
         event_data.append(poll_data)
+        
         if len(poll_data[1]) == 2:
             event.append('0xff')
             event.append(poll_data[1][0])
@@ -326,37 +327,43 @@ class NV200_BILL_ACCEPTOR(object):
         return event_data
 
     def listen_poll(self, caller):
-        while True:
-            poll = self.nv200.poll()      
-            event = []
-            if len(poll) > 1:     
-                if len(poll[1]) == 2:
-                    if poll[1][0] == '0xef':
-                        if poll[1][1] != 0 and poll[1][1] < 8:
-                            event = self.parse_event(poll)
-                            event.append("")
-                            if self.command_mode == 'hold':
-                                self.async_hold()
-                            # return event
-                    elif poll[1][0] == '0xee':
-                        event = self.parseEvent(poll)
+        
+        poll = self.nv200.poll() 
+        if _Common.BILL_LIBRARY_DEBUG is True:
+            try:
+                print('pyt: [NV200] Poll Raw', str(poll))
+            except Exception as e:
+                traceback.format_exc()     
+                
+        event = []
+        if len(poll) > 1:     
+            if len(poll[1]) == 2:
+                if poll[1][0] == '0xef':
+                    if poll[1][1] != 0 and poll[1][1] < 8:
+                        event = self.parse_event(poll)
                         event.append("")
+                        if self.command_mode == 'hold':
+                            self.async_hold()
                         # return event
+                elif poll[1][0] == '0xee':
+                    event = self.parseEvent(poll)
+                    event.append("")
+                    # return event
+            else:
+                event = self.parse_event(poll)
+                if poll[1] == '0xed' or poll[1] == '0xec':
+                    last_reject = self.nv200.last_reject()
+                    event.append(self.parse_reject_code(last_reject))
                 else:
-                    event = self.parse_event(poll)
-                    if poll[1] == '0xed' or poll[1] == '0xec':
-                        last_reject = self.nv200.last_reject()
-                        event.append(self.parse_reject_code(last_reject))
-                    else:
-                        event.append('')
-                if _Common.BILL_LIBRARY_DEBUG is True:
-                    try:
-                        print('pyt: [NV200] Poll Event', str(self.command_mode), str(caller), str(event))
-                    except Exception as e:
-                        traceback.format_exc()
-                # Ensure This Will Break Here
-                return event
-            time.sleep(.5)
+                    event.append('')
+            
+        if _Common.BILL_LIBRARY_DEBUG is True:
+            try:
+                print('pyt: [NV200] Poll Event', str(self.command_mode), str(caller), str(event))
+            except Exception as e:
+                traceback.format_exc()
+            # Ensure This Will Break Here
+        return event
             
             
     def hold(self):
