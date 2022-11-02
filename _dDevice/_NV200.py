@@ -333,28 +333,25 @@ class NV200_BILL_ACCEPTOR(object):
                 traceback.format_exc()     
                 
         event = []
-        if len(poll) > 1:     
+        if len(poll) > 0:     
             if len(poll[1]) == 2:
                 # On Reading Notes
                 if poll[1][0] == '0xef':
                     if 0 < poll[1][1] < len(self.known_notes):
                         event = self.parse_event(poll)
-                        event.append("")
                         if self.command_mode == 'hold':
                             self.async_hold()
-                        # return event
                 # On Stacking Notes
                 elif poll[1][0] == '0xee':
                     event = self.parse_event(poll)
-                    event.append("")
                     # return event
             else:
                 event = self.parse_event(poll)
                 if poll[1] == '0xed' or poll[1] == '0xec':
                     last_reject = self.nv200.last_reject()
                     event.append(self.parse_reject_code(last_reject))
-                else:
-                    event.append('')
+        
+        event.append('')
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
