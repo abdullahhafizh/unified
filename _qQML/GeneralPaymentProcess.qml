@@ -955,6 +955,7 @@ Base{
             } else if (billResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){
                     back_button.visible = VIEW_CONFIG.payment_cancel;
+                    press = 0;
                     modeButtonPopup = 'retrigger_bill';
                     switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
@@ -970,6 +971,7 @@ Base{
                 return;
             } else if (billResult == 'BAD_NOTES'){
                 back_button.visible = VIEW_CONFIG.payment_cancel;
+                press = 0;
                 modeButtonPopup = 'retrigger_bill';
                 _SLOT.start_play_audio('insert_cash_with_good_condition');
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
