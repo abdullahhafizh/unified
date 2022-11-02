@@ -47,12 +47,14 @@ class NV200_BILL_ACCEPTOR(object):
             return self.open_status
 
 
-    def enable(self):
+    def enable(self, hold=False):
         try:
             if not self.check_active():
                 result = self.open()
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
+            if hold:
+                self.command_mode = 'hold'
             print('pyt: [NV200] Enabling', str(result))   
             print('pyt: [NV200] Command Mode', str(self.command_mode))   
             return True
@@ -460,9 +462,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             action = NV200.check_active()
             if action is True:
-                # Must Set Command Mode To Hold Notes
-                if hold_note: NV200.command_mode = 'hold'
-                NV200.enable()
+                NV200.enable(hold_note)
                 while True:
                     pool = NV200.listen_poll(command)
                     LOOP_ATTEMPT += 1
