@@ -333,7 +333,7 @@ class NV200_BILL_ACCEPTOR(object):
                 traceback.format_exc()     
                 
         event = []
-        if len(poll) > 0:     
+        if len(poll) > 1:     
             if len(poll[1]) == 2:
                 # On Reading Notes
                 if poll[1][0] == '0xef':
