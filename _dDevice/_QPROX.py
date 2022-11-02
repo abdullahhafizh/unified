@@ -2042,6 +2042,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     if bank == 'MANDIRI':
         try:
+            # Mandiri Deposit Not Deducted
             if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
                 failure_rc = '0511'
             else:
@@ -2072,6 +2073,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'BNI':
         # Get Card Log And Push SAM Audit
         try:
+            # BNI Deposit Not Deducted
             if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
                 failure_rc = '0521'
             else:
@@ -2108,11 +2110,13 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'BRI':
         try:
             if pending_data is not None:
-                _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
-                response, result = _Command.send_request(param=_param, output=None)
-                # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
-                # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
-                LOGGER.debug((response, result))
+                # Only Send Reversal If Already Get Access Token On Update Balance
+                if len(pending_data.get('access_token', '')) > 0:
+                    _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
+                    response, result = _Command.send_request(param=_param, output=None)
+                    # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
+                    # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
+                    LOGGER.debug((response, result))
                 # Whatever The Reversal Result, Continue To Do Refund
                 param = {
                     'token': _Common.CORE_TOKEN,
@@ -2136,6 +2140,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'BCA':
         try:
             if pending_data is not None:
+                # Sending ACK
                 res_bca_card_info, bca_card_info_data = bca_card_info()
                 if res_bca_card_info is False:
                     LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info_data))
