@@ -338,15 +338,17 @@ class NV200_BILL_ACCEPTOR(object):
         event = []
         if len(poll) > 1:     
             if len(poll[1]) == 2:
+                # On Reading Notes
                 if poll[1][0] == '0xef':
-                    if poll[1][1] != 0 and poll[1][1] < 8:
+                    if 0 < poll[1][1] < len(self.known_notes):
                         event = self.parse_event(poll)
                         event.append("")
                         if self.command_mode == 'hold':
                             self.async_hold()
                         # return event
+                # On Stacking Notes
                 elif poll[1][0] == '0xee':
-                    event = self.parseEvent(poll)
+                    event = self.parse_event(poll)
                     event.append("")
                     # return event
             else:
