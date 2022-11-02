@@ -194,7 +194,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 350
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Transaksi Berhasil\n'+ trxNotes
+        show_text: 'Transaksi Anda telah selesai. Silahkan ambil kartu Anda\n'+ trxNotes
         size_: 40
         color_: "white"
     }

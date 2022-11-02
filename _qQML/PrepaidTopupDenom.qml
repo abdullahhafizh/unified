@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 //import "config.js" as CONF
 
@@ -689,11 +689,12 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 150 : (smallHeight) ? 30 : 120
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Pilih nominal topup'
+        show_text: 'Pilih nominal topup ('+provider+')'
         size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
         visible: mainVisible
     }
+
 
     Text {
         id: label_current_balance

@@ -406,14 +406,11 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     if resultStr == "0000":
         LOG.fw("044:cardno = ", cardno)
         LOG.fw("044:uid = ", uid)
-        LOG.fw("044:do_check_session_bca START")
         # Failure Here
         valuetext, ErrMsg = do_check_session_bca(url, cardno)
         if valuetext == -1:
             valuetext = ErrMsg
-        
-        LOG.fw("044:do_check_session_bca Result = ", valuetext)
-        
+                
         dataJ = json.loads(valuetext)
         
         code = ""
@@ -463,13 +460,10 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ",  { "resultStr": resultStr, "report": report})
-            LOG.fw("044:do_get_session_bca START")
             valuetext, ErrMsg = do_get_session_bca(url, cardno, report)
 
             if valuetext == -1:
                 valuetext = ErrMsg
-
-            LOG.fw("044:do_get_session_bca Result =", valuetext)
 
             dataJ = json.loads(valuetext)
 
@@ -640,6 +634,7 @@ def do_check_session_bca(URL_Server, card_no):
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "CheckSessionBCA error: {0}".format(ex)
+        LOG.fw(":CheckSessionBCA error = ", ex)
         return -1, errorcode
 
 
@@ -672,6 +667,7 @@ def do_get_session_bca(URL_Server, card_no, session_data):
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "GetSessionBCA error: {0}".format(ex)
+        LOG.fw(":GetSessionBCA error = ", ex)
         return -1, errorcode
 
 
@@ -715,6 +711,7 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "ConfirmBCA error: {0}".format(ex)
+        LOG.fw(":ConfirmBCA error = ", ex)
         return -1, errorcode
 
 
@@ -748,6 +745,7 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "ReversalBCA error: {0}".format(ex)
+        LOG.fw(":ReversalBCA error = ", ex)
         return -1, errorcode
 
 
@@ -780,6 +778,7 @@ def do_post_update_bca(URL_Server, card_no, topup_data, prev_balance, reference_
         return ValueText, errorcode
     except Exception as ex:
         errorcode = "UpdateBCA error: {0}".format(ex)
+        LOG.fw(":UpdateBCA error = ", ex)
         return -1, errorcode
 
 

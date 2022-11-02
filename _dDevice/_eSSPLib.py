@@ -34,6 +34,8 @@ class eSSP(object):  # noqa
         self.__eSSPId = eSSPId
         self.__sequence = '0x80'
 
+        # self._logger = logging.getLogger(__name__)
+        # self._logger.debug("Startup at " + str(datetime.datetime.now()))
 
     def reset(self):
         """Reset the device completely."""
@@ -149,6 +151,7 @@ class eSSP(object):  # noqa
                 i += 1
             else:
                 poll_data.append(result[i])
+
         return poll_data
 
     def reject_note(self):
@@ -159,6 +162,7 @@ class eSSP(object):  # noqa
     def disable(self):
         """
         Disable the device.
+
         Will resume to work only when beeing enable()'d again.
         """
         result = self.send([self.getseq(), '0x1', '0x9'])
@@ -169,7 +173,7 @@ class eSSP(object):  # noqa
         result = self.send([self.getseq(), '0x1', '0xA'])
         return result
 
-    # SSP_CMD_PROGRAM 0xB not implemented
+    # SSP_CMD_PROGRAM 0xB not implented
 
     def serial_number(self):
         """Return formatted serialnumber."""
@@ -375,6 +379,7 @@ class eSSP(object):  # noqa
         crc = self.crc(command)
         prepedstring = '7F'
         command = command + crc
+        
         for i in range(0, len(command)):
             if (len(command[i]) % 2 == 1):
                 prepedstring += '0'
@@ -413,7 +418,7 @@ class eSSP(object):  # noqa
         # response = self.read(process)
         return ['0xf0']
 
-    def read(self, process=True):
+    def read(self, process=True, break_in_empty = False):
         """Read the requested data from the serial port."""
         bytes_read = []
         # initial response length is only the header.
@@ -426,7 +431,8 @@ class eSSP(object):  # noqa
             else:
                 # when the socket doesn't give us any data, evaluate the timeout
                 if datetime.datetime.now() > timeout_expired:
-                    raise eSSPTimeoutError('Unable to read the expected response of {} bytes within {} seconds'.format(expected_bytes, self.timeout))
+                    raise eSSPTimeoutError('Unable to read the expected response of {} bytes within {} seconds'.format(
+                                           expected_bytes, self.timeout))
 
             if expected_bytes == 3 and len(bytes_read) >= 3:
                 # extract the actual message length
@@ -435,6 +441,10 @@ class eSSP(object):  # noqa
             if expected_bytes > 3 and len(bytes_read) == expected_bytes:
                 # we've read the complete response
                 break
+
+            if break_in_empty:
+                if byte == b"":
+                    break
 
         response = self.arrayify_response(bytes_read)
         # self._logger.debug("IN:  " + ' '.join(response))
@@ -469,6 +479,7 @@ class eSSP(object):  # noqa
             crc_command = []
             for i in range(1, int(response[2], 16) + 3):
                 crc_command.append(response[i])
+
             crc = self.crc(crc_command)
 
             if (response[len(response) - 2] != crc[0]) & (response[len(response) - 1] != crc[1]):
@@ -500,3 +511,32 @@ class eSSP(object):  # noqa
 
         bitmask = hex(bitmask)
         return bitmask
+    
+    def accept_note(self):
+        self.send_and_flush([self.getseq(), '0x1', '0x7'])
+        # print("SYNC")
+        # self.sync()
+    
+    def send_and_flush(self, command):
+        crc = self.crc(command)
+
+        prepedstring = '7F'
+
+        command = command + crc
+
+        for i in range(0, len(command)):
+            if (len(command[i]) % 2 == 1):
+                prepedstring += '0'
+
+            prepedstring += command[i][2:]
+
+        # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
+        #                    for x in range(0, len(prepedstring), 2)]))
+
+        prepedstring = bytes.fromhex(prepedstring)
+        #prepedstring = prepedstring.decode('hex')
+
+        self.__ser.write(prepedstring)
+
+        response = self.read(False, True)
+        return response

@@ -2,6 +2,11 @@ TODO:
 - Feature Panel Setting (WIP),
 - Add NV Hold Notes Mechanism (WIP),
 
+16.1.2-GLOBAL:
+- Add Wording After Success Topup,
+- Change Payment Option Button Style,
+- ...
+
 16.1.1-GLOBAL:
 - Fix Command ST0 Routing,
 - Add Reset CD Error,

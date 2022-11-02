@@ -16,17 +16,18 @@ Rectangle {
     visible: true
 
     Rectangle {
-        visible: !isSelected
+        // visible: !isSelected
+        visible: false
         anchors.fill: parent
         color: (modeReverse) ? "white" : "black"
         opacity: .2
     }
 
     Rectangle {
-        visible: isSelected
+//        visible: isSelected
         anchors.fill: parent
-        color: "black"
-        opacity: .8
+        color: "white"
+        opacity: 1
     }
 
     Image{
@@ -41,15 +42,15 @@ Rectangle {
     }
 
     ColorOverlay {
-        visible: modeReverse
+//        visible: modeReverse
         anchors.fill: raw_image
         source: raw_image
         scale: raw_image.scale
-        color: "#ffffff"
+        color: "black"
     }
 
     Text{
-        color: "white"
+        color: "black"
         text: itemName
         style: Text.Sunken
         anchors.horizontalCenter: parent.horizontalCenter
