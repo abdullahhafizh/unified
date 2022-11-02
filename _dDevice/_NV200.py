@@ -1,15 +1,12 @@
 __author__ = 'wahyudi@multidaya.id'
 
-from tempfile import TemporaryFile
 import time
 import serial.tools.list_ports
 from _tTools import _Helper
 from . import _eSSPLib
-import json
 import logging
 from _cConfig import _Common
 import traceback
-import binascii
 
 LOGGER = logging.getLogger()
 
@@ -17,8 +14,11 @@ ERROR_COUNT = 0
 ERROR_FILE = "error_print_nv200_event_"
 SOCKET_TIMEOUT = 10
 
+COMMAND_MODE = ''
+
 
 class NV200_BILL_ACCEPTOR(object):
+    global COMMAND_MODE
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000"]):
         self.nv200 = _eSSPLib.eSSP(serial_port, 0, SOCKET_TIMEOUT)
         self.serial_port = serial_port
@@ -28,7 +28,6 @@ class NV200_BILL_ACCEPTOR(object):
         if len(restricted_denom) == 4 and restricted_denom == ["1000", "2000", "5000", "10000"]:
             self.default_channel = [0,0,0,0,1,1,1,1]
         self.open_status = False
-        self.command_mode = ''
         self.known_notes = [0, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
 
 
@@ -47,16 +46,14 @@ class NV200_BILL_ACCEPTOR(object):
             return self.open_status
 
 
-    def enable(self, hold=False):
+    def enable(self):
         try:
             if not self.check_active():
                 result = self.open()
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
-            if hold is True:
-                self.command_mode = 'hold'
             print('pyt: [NV200] Enabling', str(result))   
-            print('pyt: [NV200] Command Mode', str(self.command_mode))   
+            print('pyt: [NV200] Command Mode', str(COMMAND_MODE))   
             return True
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
@@ -68,7 +65,6 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.disable()
             print('pyt: [NV200] Disabling', str(result))   
-            self.command_mode = ''
             return True
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
@@ -80,7 +76,6 @@ class NV200_BILL_ACCEPTOR(object):
             # result = self.nv200.bulb_off()
             result = self.nv200.disable()
             print('pyt: [NV200] Disabling', str(result))   
-            self.command_mode = ''
             return True
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
@@ -92,7 +87,6 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.reject_note()
             print('pyt: [NV200] Rejecting', str(result))   
-            self.command_mode = ''
             return True
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
@@ -143,7 +137,6 @@ class NV200_BILL_ACCEPTOR(object):
                 if port.device == self.serial_port:
                     if self.check_active():
                         print('pyt: [NV200] Resetting', 'Bill Re/Activated')
-                        self.command_mode = ''
                         return True
             if attempt >= 5:
                 return False
@@ -238,7 +231,7 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][0])
             event.append(poll_data[1][1])
         else:
-            # TODO: ReCheck Pattern Loop Response
+            # ReCheck Pattern Loop Response
             for p in poll_data:
                 if type(p) != list:
                     if len(p) < 4:
@@ -256,7 +249,7 @@ class NV200_BILL_ACCEPTOR(object):
         if event[1] == '0xf1':
             event_data.append("Slave reset")
         elif  event[1] == '0xef':
-            if not (self.command_mode == 'hold'):
+            if not (COMMAND_MODE == 'hold'):
                 event_data.append("Reading Note")
             else:
                 # Do Return The Bite Value And Trigger Hold in Other Thread
@@ -328,7 +321,7 @@ class NV200_BILL_ACCEPTOR(object):
         poll = self.nv200.poll() 
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                print('pyt: [NV200] Poll Raw', str(poll))
+                print('pyt: [NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE)
             except Exception as e:
                 traceback.format_exc()     
                 
@@ -339,7 +332,7 @@ class NV200_BILL_ACCEPTOR(object):
                 if poll[1][0] == '0xef':
                     if 0 < poll[1][1] < len(self.known_notes):
                         event = self.parse_event(poll)
-                        if self.command_mode == 'hold':
+                        if COMMAND_MODE == 'hold':
                             self.async_hold()
                 # On Stacking Notes
                 elif poll[1][0] == '0xee':
@@ -355,7 +348,7 @@ class NV200_BILL_ACCEPTOR(object):
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                print('pyt: [NV200] Poll Event', str(self.command_mode), str(caller), str(event))
+                print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event))
             except Exception as e:
                 traceback.format_exc()
             # Ensure This Will Break Here
@@ -364,8 +357,8 @@ class NV200_BILL_ACCEPTOR(object):
             
     def hold(self):
         while True:
-            if self.command_mode == 'hold':
-                print('pyt: [NV200] Trigger Hold Notes')
+            if COMMAND_MODE == 'hold':
+                print('pyt: [NV200] Trigger Hold Notes')a
                 self.nv200.hold()
             else:
                 break
@@ -373,14 +366,14 @@ class NV200_BILL_ACCEPTOR(object):
             
             
     def reject(self):
-        if self.command_mode == 'hold':
-            self.command_mode = 'reject'
+        if COMMAND_MODE == 'hold':
+            COMMAND_MODE = 'reject'
             self.nv200.reject_note()
     
     
     def accept(self):
-        if self.command_mode == 'hold':
-            self.command_mode = 'accept'
+        if COMMAND_MODE == 'hold':
+            COMMAND_MODE = 'accept'
             self.nv200.accept_note()
     
     
@@ -435,10 +428,8 @@ MAX_LOOP_ATTEMPT = 90
 
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
-    global NV200, LOOP_ATTEMPT
+    global NV200, LOOP_ATTEMPT, COMMAND_MODE
     try:
-        # if _Helper.empty(param) or _Helper.empty(config):
-        #     return -1, ""
         if NV200 is None:
             NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
         args = param.split('|')
@@ -459,7 +450,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             action = NV200.check_active()
             if action is True:
-                NV200.enable(hold_note)
+                if hold_note: COMMAND_MODE = 'hold'
+                NV200.enable()
                 while True:
                     pool = NV200.listen_poll(command)
                     LOOP_ATTEMPT += 1
