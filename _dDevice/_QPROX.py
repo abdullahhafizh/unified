@@ -1020,8 +1020,11 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 LAST_C2C_APP_TYPE == '1'
                 get_force_settlement(amount, trxid, 'FAILED')
                 sleep(1)
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
-            return
+            
+            # Set To Old Handler Conditionally
+            if not _Common.NEW_TOPUP_FAILURE_HANDLER:
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
+                return
         
         if rc == '100C':
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
@@ -1426,10 +1429,12 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
 
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
-            return
+            
+            # Set To Old Handler Conditionally
+            if not _Common.NEW_TOPUP_FAILURE_HANDLER:
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
+                return
         # Real False Condition
-        topup_result = json.loads(_result)
         last_audit_report = json.dumps({
                 'trxid': trxid+'_FAILED',
                 'samCardNo': _Common.BNI_SAM_1_NO,
@@ -2037,59 +2042,67 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     if bank == 'MANDIRI':
         try:
-            rc = last_audit_result.get('err_code')
-            amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
-            attempt = 2
-            while True:
-                if attempt == 0:
-                    break
-                if rc == '100C':
-                    # Slot SAM or Deposit
-                    _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
-                else:
-                    _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-                _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
-                LOGGER.debug((_param, _response, _result))
-                if _response == 0 and len(_result) >= 196:
-                    # Call Parse To Submit SAM Audit Report
-                    parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
-                    break
-                attempt -= 1
-                sleep(1)
+            if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
+                failure_rc = '0511'
+            else:
+                failure_rc = '02'
+                rc = last_audit_result.get('err_code')
+                amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
+                attempt = 2
+                while True:
+                    if attempt == 0:
+                        break
+                    if rc == '100C':
+                        # Slot SAM or Deposit
+                        _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
+                    else:
+                        _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+                    _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+                    LOGGER.debug((_param, _response, _result))
+                    if _response == 0 and len(_result) >= 196:
+                        # Call Parse To Submit SAM Audit Report
+                        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+                        break
+                    attempt -= 1
+                    sleep(1)
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_02')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_'+failure_rc)
     elif bank == 'BNI':
         # Get Card Log And Push SAM Audit
-        try:    
-            param = last_audit_result
-            if 'topup_result' in param.keys():
-                param.pop('topup_result')
-            if 'last_result' in param.keys():
-                param.pop('last_result')
-            # Will Change To Card Purse
-            # sam_purse = last_audit_result.get('sam_purse')
-            sam_history = last_audit_result.get('sam_history', '') 
-            card_purse, card_history = bni_card_history_direct(10)
-            param['remarks'] = json.dumps({
-                'mid': _Common.MID_BNI,
-                'tid': _Common.TID_BNI,
-                'can': card_data.get('card_no'),
-                'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
-                'card_history': card_history,
-                'amount': amount,
-                'sam_history': sam_history,
-                # 'sam_purse': sam_purse,
-                'card_purse': card_purse,
-                'err_code': param.get('err_code'),
-            })
-            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
-            _Common.store_upload_sam_audit(param)
+        try:
+            if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
+                failure_rc = '0521'
+            else:
+                failure_rc = '02'
+                param = last_audit_result
+                if 'topup_result' in param.keys():
+                    param.pop('topup_result')
+                if 'last_result' in param.keys():
+                    param.pop('last_result')
+                # Will Change To Card Purse
+                # sam_purse = last_audit_result.get('sam_purse')
+                sam_history = last_audit_result.get('sam_history', '') 
+                card_purse, card_history = bni_card_history_direct(10)
+                param['remarks'] = json.dumps({
+                    'mid': _Common.MID_BNI,
+                    'tid': _Common.TID_BNI,
+                    'can': card_data.get('card_no'),
+                    'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
+                    'card_history': card_history,
+                    'amount': amount,
+                    'sam_history': sam_history,
+                    # 'sam_purse': sam_purse,
+                    'card_purse': card_purse,
+                    'err_code': param.get('err_code'),
+                })
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
+                _Common.store_upload_sam_audit(param)
         except Exception as e:
             LOGGER.warning((e))
         finally:
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_02')
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_'+failure_rc)
     
     # Below Will Handle Topup Online Failure Which Must Be Handling Reversal/Topup As Well
     elif bank == 'BRI':
