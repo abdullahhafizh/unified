@@ -1,10 +1,12 @@
 TODO:
 - Feature Panel Setting (WIP),
-- Add NV Hold Notes Mechanism (WIP),
 
 16.1.2-GLOBAL:
 - Add Wording After Success Topup,
 - Change Payment Option Button Style,
+- Fix Topup BCA Missing Var,
+- Fix Cancel Cash Payment,
+- Integration NV (WIP),
 - ...
 
 16.1.1-GLOBAL:

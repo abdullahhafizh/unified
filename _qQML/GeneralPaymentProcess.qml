@@ -1537,8 +1537,8 @@ Base{
         if (details.shop_type == 'topup'){
             if (details.failure_type !== undefined){
                 if (details.failure_type == 'TOPUP_FAILURE_03') {
-                    //Place Pending Code, Be Able Print On Receipt and Stored on Local DB
-                    details.pending_trx_code = uniqueCode;
+                    //Reset Pending Code, To Keep The Topup Failure Status on TRX Failure Data
+                    details.pending_trx_code = undefined;
                     failure_03 = true;
                 } else {
                     //Reset Pending Code, To Keep The Topup Failure Status on TRX Failure Data
@@ -1575,7 +1575,7 @@ Base{
 //        }
         press = '0';
         my_timer.stop();
-        
+
         exceed_payment_transaction.mainTitle = mode;
         exceed_payment_transaction.open();
         _SLOT.start_play_audio('please_input_wa_no');
@@ -1593,6 +1593,7 @@ Base{
             proceedAble = false;
             if (validate_single_denom_trx()){
                 console.log('User Cancellation Detected on Single Denom TRX');
+                _SLOT.start_bill_reject_note(details.shop_type + details.epoch.toString());
             } else {
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
             }
