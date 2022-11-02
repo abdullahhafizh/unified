@@ -687,6 +687,7 @@ VIEW_CONFIG['ping_interval'] =  int(_ConfigParser.get_set_value('GENERAL', 'ping
 VIEW_CONFIG['single_denom_trx'] =  BILL_SINGLE_DENOM_TRX
 VIEW_CONFIG['single_denom_type'] =  BILL_SINGLE_DENOM_TYPE
 VIEW_CONFIG['support_multimedia'] = support_multimedia()
+VIEW_CONFIG['payment_cancel'] = True if PAYMENT_CANCEL == '1' else False
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')

@@ -926,7 +926,7 @@ Base{
                                 JSON.stringify(details), 'debug')
     }
 
-// TODO: Recheck This To Handle Reject & Store
+// Recheck This To Handle Reject & Store
     function bill_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("bill_payment_result : ", now, r, receivedPayment, totalPrice, proceedAble);
@@ -954,7 +954,7 @@ Base{
                 return;
             } else if (billResult == 'SERVICE_TIMEOUT'){
                 if (receivedPayment > 0){
-                    back_button.visible = false;
+                    back_button.visible = VIEW_CONFIG.payment_cancel;
                     modeButtonPopup = 'retrigger_bill';
                     switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
@@ -969,7 +969,7 @@ Base{
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (billResult == 'BAD_NOTES'){
-                back_button.visible = false;
+                back_button.visible = VIEW_CONFIG.payment_cancel;
                 modeButtonPopup = 'retrigger_bill';
                 _SLOT.start_play_audio('insert_cash_with_good_condition');
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
@@ -1396,6 +1396,7 @@ Base{
     }
 
     function exit_with_message(second){
+        global_frame.close();
         closeTrxSession = true;
         popup_loading.open();
         popup_loading.textMain = 'Harap Tunggu Sebentar';
@@ -1497,7 +1498,7 @@ Base{
             case 'RETRIGGER_BILL':
                 if (details.payment=='cash'){
                     _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
-                    back_button.visible = false;
+                    back_button.visible = VIEW_CONFIG.payment_cancel;
                 }
                 modeButtonPopup = undefined;
                 global_frame.modeAction = "";
@@ -1905,7 +1906,6 @@ Base{
                     switch(modeButtonPopup){
                     case 'retrigger_bill':
                         _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
-                        back_button.visible = false;
                         modeButtonPopup = undefined;
                         global_frame.modeAction = "";
                         global_frame.close();
