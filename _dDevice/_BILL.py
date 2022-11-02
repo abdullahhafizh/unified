@@ -139,6 +139,9 @@ CASH_TIME_HISTORY = []
 MAX_EXECUTION_TIME = 180
 IS_RECEIVING = False
 
+# Handle Single Denom TRX With Holding Notes
+HOLD_NOTES = False
+
 
 def rewrite_config_init():
     __config = '''
@@ -192,7 +195,7 @@ def init_bill():
 
 def send_command_to_bill(param=None, output=None):
     if BILL["DIRECT_MODULE"] is True and BILL_TYPE == 'NV':
-        result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED)
+        result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
         # code, message = result
         # Retry Command if Exception Raise
         # if code == -99:
@@ -296,14 +299,16 @@ def parse_notes(_result):
         # Insert Into Table Cashbox
         # _DAO.insert_cashbox(cash_in)
         return cash_in
-
+    
 
 def start_receive_note(trxid):
-    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY, HOLD_NOTES
     if _Common.IDLE_MODE is True:
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
     LOGGER.info(('Trigger Bill', trxid, TARGET_CASH_AMOUNT))
+    HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
+    LOGGER.info(('Hold Notes or Single Denom TRX', trxid, HOLD_NOTES))
     try:
         attempt = 0
         IS_RECEIVING = True
@@ -333,7 +338,7 @@ def start_receive_note(trxid):
                     # _Helper.dump(cash_in)
                     if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
                         # Handle Single Denom
-                        if _Common.single_denom_trx_detected(trxid):
+                        if HOLD_NOTES:
                             if int(cash_in) != int(TARGET_CASH_AMOUNT):
                                 sleep(.5)
                                 send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
@@ -352,8 +357,7 @@ def start_receive_note(trxid):
                                                                                 'COLLECTED': COLLECTED_CASH,
                                                                                 'TARGET': TARGET_CASH_AMOUNT})))
                             break
-                    # Handle Single Denom TRX
-                    if _Common.single_denom_trx_detected(trxid):
+                    if HOLD_NOTES:
                         # Somehow, Trigger OSError accidentally
                         store_result = store_cash_into_cashbox(trxid)
                         if store_result is True:
@@ -444,7 +448,7 @@ def start_receive_note(trxid):
 def store_cash_into_cashbox(trxid):
     try:
         # print("pyt: ", _Helper.whoami())
-        if _Common.single_denom_trx_detected(trxid):
+        if HOLD_NOTES:
             # Handle Single Denom TRX
             return True
         if BILL_TYPE == 'MEI':
@@ -549,7 +553,7 @@ def stop_receive_note(trxid):
     IS_RECEIVING = False
     # sleep(_Common.BILL_STORE_DELAY)
     try:
-        if _Common.single_denom_trx_detected(trxid):
+        if HOLD_NOTES:
             if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
                 cash_received = {
                     'history': get_cash_history(),
@@ -601,7 +605,7 @@ def bill_store_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
     try:
-        if not _Common.single_denom_trx_detected(trxid):
+        if not HOLD_NOTES:
             return
         response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.info((trxid, 'STORE_NOTES', BILL['TYPE'], response, result))
@@ -634,7 +638,7 @@ def bill_reject_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
     try:
-        if not _Common.single_denom_trx_detected(trxid):
+        if not HOLD_NOTES:
             return
         response, result = send_command_to_bill(param=BILL["REJECT"]+'|', output=None)
         LOGGER.info((trxid, 'REJECT_NOTES', BILL['TYPE'], response, result))

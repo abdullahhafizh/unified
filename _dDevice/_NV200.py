@@ -54,6 +54,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
             print('pyt: [NV200] Enabling', str(result))   
+            print('pyt: [NV200] Command Mode', str(self.command_mode))   
             return True
         except Exception as e:
             LOGGER.warning(('NV200_Module', e))
@@ -224,15 +225,12 @@ class NV200_BILL_ACCEPTOR(object):
 
 
     def parse_event(self, poll_data):
-        # if _Common.BILL_LIBRARY_DEBUG is True:
-        #     try:
-        #         print('pyt: poll', str(poll_data))
-        #     except Exception as e:
-        #         traceback.format_exc()
+
         event = []
         event_data = []
         event_data.append(poll_data)
         
+        # Serializing Poll Event
         if len(poll_data[1]) == 2:
             event.append('0xff')
             event.append(poll_data[1][0])
@@ -252,9 +250,6 @@ class NV200_BILL_ACCEPTOR(object):
             if len(event) == 0:
                 event.append(poll_data[0])
                 event.append(poll_data[-1])
-            # if len(poll_data) == 3:
-            #     del poll_data[1]
-            # event = poll_data
             
         if event[1] == '0xf1':
             event_data.append("Slave reset")
@@ -371,6 +366,7 @@ class NV200_BILL_ACCEPTOR(object):
     def hold(self):
         while True:
             if self.command_mode == 'hold':
+                print('pyt: [NV200] Trigger Hold Notes')
                 self.nv200.hold()
             else:
                 break
@@ -387,6 +383,7 @@ class NV200_BILL_ACCEPTOR(object):
         if self.command_mode == 'hold':
             self.command_mode = 'accept'
             self.nv200.accept_note()
+    
     
     def poll_once(self):
         poll = self.nv200.poll()
@@ -463,6 +460,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             action = NV200.check_active()
             if action is True:
+                # Must Set Command Mode To Hold Notes
                 if hold_note: NV200.command_mode = 'hold'
                 NV200.enable()
                 while True:
