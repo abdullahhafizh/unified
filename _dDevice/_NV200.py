@@ -53,7 +53,7 @@ class NV200_BILL_ACCEPTOR(object):
                 result = self.open()
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
-            if hold:
+            if hold is True:
                 self.command_mode = 'hold'
             print('pyt: [NV200] Enabling', str(result))   
             print('pyt: [NV200] Command Mode', str(self.command_mode))   
