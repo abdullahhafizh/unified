@@ -358,7 +358,7 @@ class NV200_BILL_ACCEPTOR(object):
     def hold(self):
         while True:
             if COMMAND_MODE == 'hold':
-                print('pyt: [NV200] Trigger Hold Notes')a
+                print('pyt: [NV200] Trigger Hold Notes')
                 self.nv200.hold()
             else:
                 break
