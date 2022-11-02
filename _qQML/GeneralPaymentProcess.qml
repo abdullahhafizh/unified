@@ -1401,7 +1401,7 @@ Base{
         popup_loading.open();
         popup_loading.textMain = 'Harap Tunggu Sebentar';
         popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
-        popup_loading.z: 999
+        popup_loading.z = 999;
         back_button.visible = false;
         cancel_button_global.visible = false;
         delay(second*1000, function(){
