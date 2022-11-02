@@ -1401,6 +1401,7 @@ Base{
         popup_loading.open();
         popup_loading.textMain = 'Harap Tunggu Sebentar';
         popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
+        popup_loading.z: 999
         back_button.visible = false;
         cancel_button_global.visible = false;
         delay(second*1000, function(){
@@ -1588,6 +1589,7 @@ Base{
             return;
         }
         if (cancel_confirmation.visible) cancel_confirmation.close();
+        global_frame.close();
         details.receipt_title = 'Transaksi Anda Batal';
         if (details.payment=='cash') {
             console.log('[CANCELLATION] Cash Method Payment Detected..!', t);
