@@ -1913,7 +1913,9 @@ Base{
                         modeButtonPopup = undefined;
                         global_frame.modeAction = "";
                         global_frame.close();
-//                        open_preload_notif();
+                        delay(2*1000, function (){
+                            press = 0;
+                        });
                         break;
                     case 'do_topup':
                         perform_do_topup();
