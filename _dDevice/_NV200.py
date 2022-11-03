@@ -496,15 +496,15 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             time.sleep(1)
             NV200.disable()
             LOOP_ATTEMPT = 0
-            while True:
-                pool = NV200.listen_poll(command)
-                LOOP_ATTEMPT += 1
-                if "Rejected" in pool[1]:
-                    return 0, pool[1]
-                if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                    break
-                time.sleep(1)
-            return -1, ""
+            # while True:
+            #     pool = NV200.listen_poll(command)
+            #     LOOP_ATTEMPT += 1
+            #     if "Rejected" in pool[1]:
+            #         return 0, pool[1]
+            #     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+            #         break
+            #     time.sleep(1)
+            return 0, "Host Rejected"
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
