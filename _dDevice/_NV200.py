@@ -452,6 +452,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             action = NV200.check_active()
             if action is True:
+                COMMAND_MODE = ''
                 if hold_note: COMMAND_MODE = 'hold'
                 NV200.enable()
                 while True:
