@@ -336,7 +336,7 @@ def start_receive_note(trxid):
                     cash_in = parse_notes(_result)
                     # -------------------------
                     # _Helper.dump(cash_in)
-                    if BILL_TYPE != 'NV' or BILL["DIRECT_MODULE"] is False:
+                    if BILL["DIRECT_MODULE"]:
                         # Handle Single Denom
                         if HOLD_NOTES:
                             if int(cash_in) != int(TARGET_CASH_AMOUNT):

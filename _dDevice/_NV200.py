@@ -366,15 +366,17 @@ class NV200_BILL_ACCEPTOR(object):
             
             
     def reject(self):
-        if COMMAND_MODE == 'hold':
-            COMMAND_MODE = 'reject'
-            self.nv200.reject_note()
+        global COMMAND_MODE
+        # if COMMAND_MODE == 'hold':
+        COMMAND_MODE = 'reject'
+        self.nv200.reject_note()
     
     
     def accept(self):
-        if COMMAND_MODE == 'hold':
-            COMMAND_MODE = 'accept'
-            self.nv200.accept_note()
+        global COMMAND_MODE
+        # if COMMAND_MODE == 'hold':
+        COMMAND_MODE = 'accept'
+        self.nv200.accept_note()
     
     
     def poll_once(self):
