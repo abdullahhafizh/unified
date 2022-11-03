@@ -101,9 +101,9 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
         if resultStr == "0000":
             lastbalance = balance
             prepaid.topup_card_disconnect()
-            resultStr, data = GetTokenBRI()
+            resultStr, data = get_bri_card_token()
             if resultStr == "0000":
-                resultStr, ErrMsg = SendUpdateBalanceBRI(url, TOKEN, TID, MID, cardno, data, balance)
+                resultStr, ErrMsg = do_send_update_balance_bri(url, TOKEN, TID, MID, cardno, data, balance)
 
                 if resultStr == "1":
                     msg = ErrMsg
@@ -158,7 +158,7 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
                                         if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
                                             resultStr, rapdu = prepaid.topup_apdusend("255", card_commit_trx)
                                             if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
-                                                resultStr, ErrMsg = SendConfirmBRI(url, TOKEN, TID, MID, cardno, data, reffnohost)
+                                                resultStr, ErrMsg = do_send_confirm_bri(url, TOKEN, TID, MID, cardno, data, reffnohost)
                                                 if resultStr == "1":
                                                     resultStr = ErrMsg
                                                 try:
@@ -196,70 +196,7 @@ def update_balance_bri_priv(TID, MID, TOKEN, SAMSLOT, cardno, amount):
             LOG.fw("ErrMsg = ",ErrMsg)
             LOG.fw("resultStr = ",resultStr)
 
-            # if not (resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or CodeStatus == "ZB"):
-            #     #Start Reversal
-            #     resultStr, ErrMsg = SendReversalBRI(url, TOKEN, TID, MID, cardno, data, reffnohost)
-            #     jsonT = resultStr
 
-            #     if resultStr == "1":
-            #         msg = ErrMsg
-            #     else:
-            #         try:
-            #             jsonD = json.loads(resultStr)
-            #             if "response" in jsonD.keys():
-            #                 code = str(jsonD["response"]["code"])
-            #             else:
-            #                 msg = "result don't have response: {0}".format(str(jsonD))
-            #                 resultStr = "1"
-
-            #             if "data" in jsonD.keys():
-            #                 dataToCard = str(jsonD["data"])
-            #             else:
-            #                 msg = "result don't have data: {0}".format(str(jsonD))
-            #                 resultStr = "1"
-
-            #             resultStr = str(code)
-            #         except json.JSONDecodeError:
-            #             msg = "Invalid JSON: {0}".format(str(resultStr))
-            #             resultStr = "1"
-            #         except Exception as ex:
-            #             msg = "Error while parse: {0}".format(ex)                    
-            #             resultStr = "1"
-                    
-            #         if resultStr == "200":
-            #             msg = "SUCCESS REVERSAL\n" + jsonT
-            #         else:
-            #             resultStr, ErrMsg = SendRefundBRI(url, TOKEN, TID, MID, cardno,reffnohost)
-            #             jsonT = resultStr
-            #             if resultStr == "1":
-            #                 msg = ErrMsg
-            #             else:
-            #                 try:
-            #                     jsonD = json.loads(resultStr)
-            #                     if "response" in jsonD.keys():
-            #                         code = str(jsonD["response"]["code"])
-            #                     else:
-            #                         ErrMsg = "result don't have response: {0}".format(str(jsonD))
-            #                         resultStr = "1"
-
-            #                     if "data" in jsonD.keys():
-            #                         dataToCard = str(jsonD["data"])
-            #                     else:
-            #                         ErrMsg = "result don't have data: {0}".format(str(jsonD))
-            #                         resultStr = "1"
-
-            #                     resultStr = str(code)
-            #                 except json.JSONDecodeError:
-            #                     ErrMsg = "Invalid JSON: {0}".format(str(resultStr))
-            #                     resultStr = "1"
-            #                 except Exception as ex:
-            #                     ErrMsg = "Error while parse: {0}".format(ex)                    
-            #                     resultStr = "1"
-                            
-            #                 if resultStr == "200":
-            #                     msg = "SUCCESS REFUND\n"+ jsonT
-            #                 else:
-            #                     msg = ErrMsg
     except Exception as ex:
         resultStr = "1"
         msg = "{0}".format(ex)
@@ -348,7 +285,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
         sleep(1)
 
         #Start Reversal
-        resultStr, ErrMsg = SendReversalBRI(url, TOKEN, TID, MID, cardno, bri_token, reffnohost)
+        resultStr, ErrMsg = do_send_reversal_bri(url, TOKEN, TID, MID, cardno, bri_token, reffnohost)
         jsonT = resultStr
 
         if resultStr == "1":
@@ -382,38 +319,6 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
                 msg = "SUCCESS REVERSAL\n" + jsonT
             else:
                 msg = "FAILED REVERSAL\n" + jsonT 
-                # resultStr, ErrMsg = SendRefundBRI(url, TOKEN, TID, MID, cardno, reffnohost)
-                # jsonT = resultStr
-                # if resultStr == "1":
-                #     msg = ErrMsg
-                # else:
-                #     try:
-                #         jsonD = json.loads(resultStr)
-                #         if "response" in jsonD.keys():
-                #             code = str(jsonD["response"]["code"])
-                #         else:
-                #             ErrMsg = "result don't have response: {0}".format(str(jsonD))
-                #             resultStr = "1"
-
-                #         if "data" in jsonD.keys():
-                #             dataToCard = str(jsonD["data"])
-                #         else:
-                #             ErrMsg = "result don't have data: {0}".format(str(jsonD))
-                #             resultStr = "1"
-
-                #         resultStr = str(code)
-                #     # except json.JSONDecodeError:
-                #     #     ErrMsg = "Invalid JSON: {0}".format(str(resultStr))
-                #     #     resultStr = "1"
-                #     except Exception as ex:
-                #         ErrMsg = "Error while parse: {0}".format(ex)                    
-                #         resultStr = "1"
-                    
-                #     if resultStr == "200":
-                #         resultStr = '0000'
-                #         msg = "SUCCESS REFUND\n"+ jsonT
-                #     else:
-                #         msg = ErrMsg
 
     except Exception as ex:
         resultStr = "1"
@@ -422,7 +327,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
     return resultStr, msg, cardno, amount, lastbalance
 
 
-def GetTokenBRI():
+def get_bri_card_token():
     res_str, CardData = prepaid.topup_get_tokenbri()
     _CardData = utils.fix_report(CardData)
     LOG.fw("_CardData = ", _CardData)
@@ -430,7 +335,7 @@ def GetTokenBRI():
     return res_str, CardData
 
 
-def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token, last_balance):
+def do_send_update_balance_bri(URL_Server, token, tid, mid, card_no, random_token, last_balance):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
@@ -459,7 +364,7 @@ def SendUpdateBalanceBRI(URL_Server, token, tid, mid, card_no, random_token, las
         return "1", errorcode
 
 
-def SendConfirmBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_host):
+def do_send_confirm_bri(URL_Server, token, tid, mid, card_no, random_token, reff_no_host):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
@@ -481,7 +386,7 @@ def SendConfirmBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_h
         return "1", errorcode
 
 
-def SendReversalBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_host):
+def do_send_reversal_bri(URL_Server, token, tid, mid, card_no, random_token, reff_no_host):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
@@ -503,7 +408,7 @@ def SendReversalBRI(URL_Server, token, tid, mid, card_no, random_token, reff_no_
         return "1", errorcode
 
 
-def SendRefundBRI(URL_Server, token, tid, mid, card_no, reff_no_host):
+def do_send_refund_bri(URL_Server, token, tid, mid, card_no, reff_no_host):
     global TIMEOUT_REQUESTS
     errorcode = ""
     try:
@@ -525,11 +430,11 @@ def SendRefundBRI(URL_Server, token, tid, mid, card_no, reff_no_host):
         return "1", errorcode
 
 
-def GetLogBRI(param, __global_response__):
+def bri_card_get_log(param, __global_response__):
     LOG.fw("025:Mulai")
 
     Param = param.split('|')
-    if len(Param) == 1:
+    if len(Param) > 0:
         C_SAMSLOT = Param[0]
     else:
         LOG.fw("025:Missing Parameter", param)
@@ -539,8 +444,11 @@ def GetLogBRI(param, __global_response__):
 
     errmsg = ""
 
-    result_str, errmsg = get_log_bri_priv(C_SAMSLOT, errmsg)
-
+    if len(Param) > 1 and Param[1] == 'MODE_RAW':
+        result_str, errmsg = get_raw_log_bri_priv(C_SAMSLOT, errmsg)
+    else:
+        result_str, errmsg = get_log_bri_priv(C_SAMSLOT, errmsg)
+        
     __global_response__["Result"] = result_str
     if result_str == "0000":
         __global_response__["Response"] = errmsg
@@ -628,6 +536,72 @@ def get_log_bri_priv(SAMSLOT, msg):
                 
                 msg = resreport
 
+    except Exception as ex:
+        resultStr = "1"
+        msg = "{0}".format(ex)
+    
+    return resultStr, msg
+
+
+def get_raw_log_bri_priv(SAMSLOT, msg):
+    resultStr = ""
+    ErrorCode = ""
+    resreport = ""
+    ErrMsg = ""
+
+    try:
+        cardno = ""
+        uid = ""
+        value = ""
+        rapdu = ""
+        sapdu = ""
+        Data = ""
+        resultStr, value = prepaid.topup_balance()
+        sleep(1)
+        resultStr, uid, cardno = prepaid.topup_get_sn()
+        LOG.fw("025:cardno = ",cardno)
+        LOG.fw("025:uid = ",uid)
+        if resultStr == "0000":
+            prepaid.topup_card_disconnect()
+            resultStr, CardData = prepaid.topup_get_tokenbri()
+            if resultStr == "0000":
+                resultStr, rapdu = prepaid.topup_apdusend("255", "91AF")
+                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6700":
+                    resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, "00A4040C09A00000000000000011")
+                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                        resultStr, rapdu = prepaid.topup_apdusend("255", "905A00000301000000")
+                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                            resultStr, rapdu = prepaid.topup_apdusend("255", "90BD0000070000000017000000")
+                            if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                                resultStr, rapdu = prepaid.topup_apdusend("255", "90BD0000070100000020000000")
+                                resultStr = rapdu[6:10]
+                                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6161":
+                                    resultStr, rapdu = prepaid.topup_apdusend("255", "905A00000303000000")
+                                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                                        resultStr, rapdu = prepaid.topup_apdusend("255", "900A0000010000")
+                                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                            sapdu = "80B0000020" + cardno + uid + "FF0000030080000000" + rapdu
+                                            resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, sapdu)
+                                            if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                sapdu = rapdu[32:]
+                                                sapdu = "90AF000010" + sapdu + "00"
+                                                resultStr, rapdu = prepaid.topup_apdusend("255", sapdu)
+                                                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                    resultStr, rapdu = prepaid.topup_apdusend("255", "90BB0000070100000000000000")
+                                                    resreport = resreport + rapdu
+                                                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                        while resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                            resultStr, rapdu = prepaid.topup_apdusend("255", "90AF000000")
+                                                            resreport = resreport + rapdu
+                
+                n = 64
+                result1 = [resreport[i:i+n] for i in range(0, len(resreport), n)]
+                
+                if resultStr.upper() == "911C":
+                    resultStr = "0000"
+                
+                msg = ",".join(result1)
+                
     except Exception as ex:
         resultStr = "1"
         msg = "{0}".format(ex)

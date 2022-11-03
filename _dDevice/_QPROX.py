@@ -94,7 +94,8 @@ QPROX = {
     "REVERSAL_ONLINE_DKI": "050", #parameter sm dengan top up dki nya,
     "REQUEST_TOPUP_DKI": "051", #parameter amount
     "CONFIRM_TOPUP_DKI": "052", #parameter data_to_card (From API)
-    "REVERSAL_ONLINE_BRI_2": "064"
+    "REVERSAL_ONLINE_BRI_2": "064",
+    "CARD_HISTORY_BRI_RAW": "078"
 }
 
 
@@ -1827,6 +1828,15 @@ def bni_card_history_direct(row=30):
         return "", ""
 
 
+def bri_card_history_direct():
+    param = QPROX['CARD_HISTORY_BRI_RAW'] + '|' + _Common.SLOT_BRI + '|' + 'MODE_RAW' + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0:
+        return result
+    else:
+        return ""
+
+
 def bni_sam_history_direct():
     # TODO CHECK SLOT VALUE
     sam_slot = _Common.BNI_ACTIVE - 1
@@ -1931,6 +1941,10 @@ def new_topup_failure_handler(bank, trxid, amount, pending_data=None):
         sleep(.5)
         card_check = direct_card_balance()
         if card_check is not False:
+            if card_check['card_no'] != last_card_check['card_no']:
+                LOGGER.warning(('TOPUP_FAILURE_03', 'CARD_NO_NOT_MATCH'))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_03')
+                return
             break
         attempt -= 1
         sleep(2)
@@ -2062,6 +2076,14 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     LOGGER.debug((_param, _response, _result))
                     if _response == 0 and len(_result) >= 196:
                         # Call Parse To Submit SAM Audit Report
+                        param['remarks'] = json.dumps({
+                            'mid': _Common.C2C_MID,
+                            'tid': _Common.C2C_TID,
+                            'amount': amount,
+                            'force_report': _result,
+                            'err_code': param.get('err_code'),
+                        })
+                        _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
                         parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
                         break
                     attempt -= 1
@@ -2127,6 +2149,13 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 }
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
                 LOGGER.debug((bank, str(param), str(response)))
+                card_history = bri_card_history_direct()
+                param['remarks'] = json.dumps({
+                    'card_history': card_history,
+                    'amount': amount,
+                    'err_code': param.get('err_code'),
+                })
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
                 if status == 200 and response['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
                 else:

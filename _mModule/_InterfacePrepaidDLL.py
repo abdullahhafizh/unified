@@ -84,8 +84,8 @@ def send_command(cmd, param):
             prepaid_common.debit_no_init_single_report(param, __global_response__)
         elif cmd == "024":
             prepaid_bri.update_balance_bri(param,__global_response__)
-        elif cmd == "025":
-            prepaid_bri.GetLogBRI(param, __global_response__)
+        elif cmd in ["025", "078"]:
+            prepaid_bri.bri_card_get_log(param, __global_response__)
         elif cmd == "026":
             prepaid_mandiri.mandiri_C2C_refill(param, __global_response__)
         elif cmd == "027":

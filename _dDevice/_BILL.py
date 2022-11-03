@@ -390,7 +390,7 @@ def start_receive_note(trxid):
                     break
                 if BILL["CODE_JAM"] is not None and BILL["CODE_JAM"] in _result:
                     _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
-                    _Common.BILL_ERROR = 'BILL_DEVICE_JAM'
+                    _Common.BILL_ERROR = 'BILL_JAMMED_('+trxid+')'
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|JAMMED')
                     LOGGER.warning(('BILL Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
                                                                         'COLLECTED': COLLECTED_CASH,

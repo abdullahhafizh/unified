@@ -683,6 +683,10 @@ def bni_card_get_log_priv(max_t=29):
                             continue
                         listRAPDU.append(rapdu)
                         types = rapdu[:2]
+                        # 01 
+                        # FFF254 
+                        # 3455A739
+                        # 0000138841420235
                         amount = get_amount_for_log(rapdu[2:8])
                         dates = get_date(rapdu[8:16])
                         resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
@@ -760,11 +764,18 @@ def bni_sam_get_log_priv(slot, max_t=29):
 
 
 def get_amount_for_log(data):
-    if data[2:] == "FF":
-        return 1
+    if data[:2] == "FF":
+        return twos_complement(data, 24)
     else:        
         return int(data, 16)
 
+
+def twos_complement(hexstr, bits):
+    value = int(hexstr, 16)
+    if value & (1 << (bits-1)):
+        value -= 1 << bits
+    return value
+    
 
 def get_date(data):
     epoch = int(data, 16)
