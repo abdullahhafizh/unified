@@ -492,6 +492,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             return 0, "Noted stacked forcely"
         elif command == config['REJECT']:
             NV200.reject()
+            time.sleep(1)
+            NV200.disable()
             LOOP_ATTEMPT = 0
             while True:
                 pool = NV200.listen_poll(command)
