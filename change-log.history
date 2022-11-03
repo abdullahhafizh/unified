@@ -1,8 +1,12 @@
 TODO:
 - Feature Panel Setting (WIP),
 
+16.1.4-GLOBAL:
+- Integration NV - Hold Note Feature,
+- Enable All Bill For Hold Notes Feature,
+- ...
+
 16.1.3-GLOBAL:
-- Integration NV (WIP),
 - Handle Failure Topup Offline Into Topup Failure,
 - Fix Flow Reversal & Refund on BRI Failure,
 - Fix Flow Session BCA Reversal,
