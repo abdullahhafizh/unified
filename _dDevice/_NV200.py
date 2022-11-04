@@ -472,22 +472,22 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 if hold_note: COMMAND_MODE = 'hold'
                 NV200.enable()
                 while True:
-                    pool = NV200.listen_poll(command)
-                    if len(pool) == 1:
+                    event = NV200.listen_poll(command)
+                    if len(event) == 1:
                         time.sleep(1)
                         continue
                     LOOP_ATTEMPT += 1
-                    if config['KEY_RECEIVED'] in pool[1]:
+                    if config['KEY_RECEIVED'] in event[1]:
                         if COMMAND_MODE == 'hold':
                             time.sleep(.5)
                             NV200.async_hold()
-                        return 0, pool[1]
-                    if config['KEY_BOX_FULL'] in pool[1]:
+                        return 0, event[1]
+                    if config['KEY_BOX_FULL'] in event[1]:
                         NV200.disable()
-                        return -1, pool[1]
-                    if config['CODE_JAM'] in pool[1]:
+                        return -1, event[1]
+                    if config['CODE_JAM'] in event[1]:
                         NV200.disable_only()
-                        return -1, pool[1]
+                        return -1, event[1]
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
@@ -498,18 +498,18 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             else:
                 LOOP_ATTEMPT = 0
                 while True:
-                    pool = NV200.listen_poll(command)
-                    if len(pool) == 1:
+                    event = NV200.listen_poll(command)
+                    if len(event) == 1:
                         time.sleep(1)
                         continue
                     LOOP_ATTEMPT += 1
-                    if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
-                        return 0, pool[1]
-                    if config['KEY_BOX_FULL'] in pool[1]:
-                        return -1, pool[1]
-                    if config['CODE_JAM'] in pool[1]:
+                    if config['KEY_RECEIVED'] in event[1] or config['KEY_STORED'] in event[1]:
+                        return 0, event[1]
+                    if config['KEY_BOX_FULL'] in event[1]:
+                        return -1, event[1]
+                    if config['CODE_JAM'] in event[1]:
                         NV200.disable_only()
-                        return -1, pool[1]
+                        return -1, event[1]
                     # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                     # Set Harcoded only wait for 3 Seconds
                     if LOOP_ATTEMPT >= 3: 
