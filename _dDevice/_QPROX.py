@@ -980,16 +980,16 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
 def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     global LAST_C2C_APP_TYPE
     
-    validate_card = revalidate_card()
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    validate_card = revalidate_card(last_card_check['card_no'])
     if not validate_card:
         return
-    
-    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     
     if last_card_check['card_no'] in _Common.MANDIRI_CARD_BLOCKED_LIST:
         LOGGER.warning(('Card No: ', last_card_check['card_no'], 'Found in Mandiri Card Blocked Data'))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_BLOCKED')
         return
+    
     prev_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
@@ -1357,7 +1357,8 @@ def start_topup_offline_bni_with_attempt(amount, trxid, attempt):
 
 def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     
-    validate_card = revalidate_card()
+    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    validate_card = revalidate_card(last_card_check['card_no'])
     if not validate_card:
         return
     
@@ -1372,7 +1373,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     param = QPROX['INIT_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, init_result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((attempt, amount, trxid, slot, init_result))
-    last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
     LOGGER.info(('PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
 
