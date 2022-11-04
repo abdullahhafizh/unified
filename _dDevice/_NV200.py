@@ -39,9 +39,10 @@ class NV200_BILL_ACCEPTOR(object):
             inhibits = self.nv200.easy_inhibit(self.default_channel)
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             print('pyt: [NV200] Channel Setting', str(inhibits), str(result))   
+            LOGGER.debug(('[NV200] Channel Setting', str(inhibits), str(result)))
             self.open_status =  True
         except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+            LOGGER.warning(('[NV200]', e))
         finally:
             return self.open_status
 
@@ -54,9 +55,10 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.enable()
             print('pyt: [NV200] Enabling', str(result))   
             print('pyt: [NV200] Command Mode', str(COMMAND_MODE))   
+            LOGGER.debug(('[NV200] Enabling', str(result), str(COMMAND_MODE)))
             return True
         except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+            LOGGER.warning(('[NV200]', e))
             return False
 
 
@@ -65,9 +67,10 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.disable()
             print('pyt: [NV200] Disabling', str(result))   
+            LOGGER.debug(('[NV200] Disabling', str(result)))
             return True
         except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+            LOGGER.warning(('[NV200]', e))
             return False
         
     
@@ -76,9 +79,10 @@ class NV200_BILL_ACCEPTOR(object):
             # result = self.nv200.bulb_off()
             result = self.nv200.disable()
             print('pyt: [NV200] Disabling', str(result))   
+            LOGGER.debug(('[NV200] Disabling', str(result)))
             return True
         except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+            LOGGER.warning(('[NV200]', e))
             return False
 
 
@@ -87,9 +91,10 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.reject_note()
             print('pyt: [NV200] Rejecting', str(result))   
+            LOGGER.debug(('[NV200] Rejecting', str(result)))
             return True
         except Exception as e:
-            LOGGER.warning(('NV200_Module', e))
+            LOGGER.warning(('[NV200', e))
             return False
     
     # def store(self):
@@ -116,6 +121,7 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()            
             print('pyt: [NV200] Active Check', str(result))
+            LOGGER.debug(('[NV200] Active Check', str(result)))
         except Exception as e:
             # LOGGER.warning(('NV200_Module', e))
             pass
@@ -137,6 +143,7 @@ class NV200_BILL_ACCEPTOR(object):
                 if port.device == self.serial_port:
                     if self.check_active():
                         print('pyt: [NV200] Resetting', 'Bill Re/Activated')
+                        LOGGER.debug(('[NV200] Resetting', 'Bill Re/Activated'))
                         return True
             if attempt >= 5:
                 return False
@@ -322,6 +329,7 @@ class NV200_BILL_ACCEPTOR(object):
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
                 print('pyt: [NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE)
+                LOGGER.debug(('[NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE))
             except Exception as e:
                 traceback.format_exc()     
                 
@@ -349,6 +357,7 @@ class NV200_BILL_ACCEPTOR(object):
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
                 print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event))
+                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event)))
             except Exception as e:
                 traceback.format_exc()
             # Ensure This Will Break Here
@@ -359,6 +368,7 @@ class NV200_BILL_ACCEPTOR(object):
         while True:
             if COMMAND_MODE == 'hold':
                 print('pyt: [NV200] Trigger Hold Notes')
+                LOGGER.debug(('[NV200] Trigger Hold Notes'))
                 self.nv200.hold()
             else:
                 break
