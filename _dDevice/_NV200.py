@@ -467,6 +467,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 NV200.enable()
                 while True:
                     pool = NV200.listen_poll(command)
+                    if len(pool) == 1:
+                        continue
                     LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1]:
                         return 0, pool[1]
@@ -490,6 +492,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 LOOP_ATTEMPT = 0
                 while True:
                     pool = NV200.listen_poll(command)
+                    if len(pool) == 1:
+                        continue
                     LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
                         return 0, pool[1]
