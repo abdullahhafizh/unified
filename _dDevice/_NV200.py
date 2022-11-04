@@ -534,7 +534,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             #     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
             #         break
             #     time.sleep(1)
-            return 0, "Host Rejected"
+            return 0, "Note Rejected"
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
