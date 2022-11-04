@@ -6,6 +6,7 @@ TODO:
 - Revalidate Card Before Payment and Before Topup,
 - Enhance NV Bill Store,
 - Adjust RC Failed Topup BCA Reversal,
+- Serialize Reader Response on Anomali (Missing First Byte Header),
 - ...
 
 16.1.5-GLOBAL:
