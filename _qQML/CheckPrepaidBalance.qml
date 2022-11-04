@@ -8,10 +8,11 @@ import "base_function.js" as FUNC
 Base{
     id: check_prepaid_balance
 
-//            property var globalScreenType: '1'
-//            height: (globalScreenType=='2') ? 1024 : 1080
-//            width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: (VIEW_CONFIG.page_timer * 2)
+//    property var globalScreenType: '1'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
+//    property int timer_value: (VIEW_CONFIG.page_timer * 2)
+    property int timer_value: 3
     property var press: '0'
     property var cardNo: ''
     property var balance: '0'
@@ -27,7 +28,7 @@ Base{
     property bool jakcardAvailable: false
     property bool autoTrigger: true
 
-    property int durationCheckCard: 5
+    property int durationCheckCard: 3
 
     property bool buttonCardHistory: false
     property var bigButtonPadding: 100
@@ -396,6 +397,28 @@ Base{
                     return;
                 }
             }
+        }
+    }
+
+    AnimatedImage  {
+        width: 100
+        height: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        scale: 1
+        source: 'source/blue_gradient_circle_loading.gif'
+        fillMode: Image.PreserveAspectFit
+        Text{
+            id: text_timer_show
+            anchors.fill: parent
+            text: abc.counter
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            font.pixelSize: 25
+            color: 'yellow'
+            verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
         }
     }
 

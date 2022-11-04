@@ -1,6 +1,13 @@
 TODO:
 - Feature Panel Setting (WIP),
 
+16.1.6-GLOBAL:
+- Set Balance Check Page Timer Timeout to 3 seconds,
+- Revalidate Card Before Payment and Before Topup,
+- Enhance NV Bill Store,
+- Adjust RC Failed Topup BCA Reversal,
+- ...
+
 16.1.5-GLOBAL:
 - Details Force Settlement in Topup Failure,
 - Fix BNI Card Log History,
@@ -9,7 +16,6 @@ TODO:
 - Add Validation Card Number Mismatch As Non-Tapped Card,
 - Re-enable BRI Card Log History,
 - ...
-
 
 16.1.4-GLOBAL:
 - Integration NV - Hold Note Feature,

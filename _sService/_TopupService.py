@@ -1547,6 +1547,14 @@ LAST_BRI_PENDING_RESULT = None
 
 def topup_online(bank, cardno, amount, trxid=''):
     global LAST_MANDIRI_C2C_SUCCESS_RESULT, LAST_BRI_PENDING_RESULT
+    
+    try:
+        validate_card = _QPROX.revalidate_card(cardno)
+        if not validate_card:
+            return False
+    except Exception as e:
+        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
+        return False
     # if bank in ['BRI', 'BCA'] and _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
     #     sleep(2)
     #     output = {
@@ -1934,9 +1942,11 @@ def topup_online(bank, cardno, amount, trxid=''):
                         _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(pending_result))
                         _QPROX.new_topup_failure_handler('DKI', trxid, amount, pending_result)
                         return False
-                    rc = _Common.LAST_READER_ERR_CODE
-                    _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_TOPUP_CORRECTION#RC_'+rc)
-                    return False
+                    else:
+                        rc = _Common.LAST_READER_ERR_CODE
+                        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_TOPUP_CORRECTION#RC_'+rc)
+                        return False
+                
                 ___param = QPROX_COMMAND['CONFIRM_TOPUP_DKI'] + '|' + update_result['data_to_card'] + '|'
                 response, result = _Command.send_request(param=___param, output=None)
                 LOGGER.debug((___param, bank, response, result))

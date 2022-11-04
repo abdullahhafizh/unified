@@ -463,7 +463,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 _Common.LAST_BCA_ERR_CODE = '43'
                                 ErrMsg = "UpdateAPI_Failed_Card_Reversal_Failed"
                             
-                            resultStr = "FAIL" 
+                            resultStr = "0442" 
                     else:
                         ErrMsg = "BCATopup1_Failed_Card"
 

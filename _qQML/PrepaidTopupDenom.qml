@@ -97,6 +97,7 @@ Base{
             totalPay = 0;
             denomTopup = undefined;
             provider = undefined;
+            selectedPayment = undefined;
             onProgressTask = false;
             activeQRISProvider = [];
             activePayment = [];
@@ -107,8 +108,7 @@ Base{
                     console.log('Direct Call Check Balance');
                     var textMain = 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda';
                     var textSlave = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai';
-                    switch_frame('source/reader_sign.png', textMain, textSlave, 'closeWindow|10', false );
-                    _SLOT.start_check_card_balance();
+                    check_user_card(textMain, textSlave);
                 } else {
                     open_preload_notif();
                 }
@@ -140,6 +140,11 @@ Base{
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_price_setting.disconnect(define_price);
 
+    }
+
+    function check_user_card(textMain, textSlave){
+        switch_frame('source/reader_sign.png', textMain, textSlave, 'closeWindow|10', false );
+        _SLOT.start_check_card_balance();
     }
 
     function get_payments(s){
@@ -310,11 +315,16 @@ Base{
             switch_frame('source/smiley_down.png', 'Mohon Maaf, Pembayaran Tunai tidak dapat dilakukan saat ini.', ' Silakan Pilih Metode Pembayaran lain yang tersedia.', 'closeWindow|3', false );
             return;
         }
+        //This Var Will be used for Revalidation Card Number
         selectedPayment = method;
+        //===
+
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
         //Auto Payment Process Base on UI Simplification
         if (VIEW_CONFIG.ui_simplify) {
-            do_set_confirm(method);
+            var textMain = 'Memeriksa kembali kartu prabayar Anda';
+            var textSlave = 'Pastikan kartu yang ditempel adalah kartu yang sama pada saat awal transaksi';
+            check_user_card(textMain, textSlave);
         }
         //Must Press Flagging Here To Avoid Multi Trigger
         press = '0';
@@ -452,6 +462,18 @@ Base{
             var info = JSON.parse(result);
             var bankName = info.bank_name;
             var ableTopupCode = info.able_topup;
+
+            //Put Extra Validation Here Before Go To Payment Layer
+            if (selectedPayment !== undefined){
+                if (cardData.card_no !== info.card_no){
+                    switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar Tidak Sama, Silakan Ulangi Transaksi Isi Ulang Anda', 'backToMain', false );
+                    return;
+                } else {
+                    do_set_confirm(selectedPayment);
+                    return;
+                }
+            }
+
             cardBalance = parseInt(info.balance);
             cardData = {
                 balance: info.balance,

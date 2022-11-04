@@ -725,12 +725,21 @@ Base{
             //Special Treatment For TOPUP_FAILURE_03 ->Store The Notes Not Reject
             details.failure_type = t.split('#')[1];
         }
+        details.validate_card = true;
+        if (t.indexOf('CARD_MISSMATCH') > -1){
+            //Special Treatment For TOPUP_FAILURE_03 ->Store The Notes Not Reject
+            details.validate_card = false;
+        }
         details.payment_error = 1;
         details.receipt_title = 'Transaksi Anda Gagal';
         _SLOT.start_play_audio('transaction_failed');
         if (!refundFeature){
             details.payment_received = receivedPayment.toString();
-            details.pending_trx_code = uniqueCode;
+            if (details.validate_card) {
+                details.pending_trx_code = uniqueCode;
+            } else {
+                details.pending_trx_code = undefined;
+            }
             console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
             release_print('Transaksi Anda Gagal', 'Silakan Ambil Struk Transaksi Anda Dan Lakukan Instruksi Sesuai Yang Tertera Pada Struk.');
             return;

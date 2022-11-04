@@ -980,6 +980,10 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
 def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     global LAST_C2C_APP_TYPE
     
+    validate_card = revalidate_card()
+    if not validate_card:
+        return
+    
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     
     if last_card_check['card_no'] in _Common.MANDIRI_CARD_BLOCKED_LIST:
@@ -1352,6 +1356,11 @@ def start_topup_offline_bni_with_attempt(amount, trxid, attempt):
 
 
 def topup_offline_bni(amount, trxid, slot=None, attempt=None):
+    
+    validate_card = revalidate_card()
+    if not validate_card:
+        return
+    
     _slot = 1
     if slot is None:
         slot = _Common.BNI_ACTIVE
@@ -2218,3 +2227,16 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             sub_rc = _Common.LAST_DKI_ERR_CODE
             if sub_rc == '': sub_rc = '01'
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
+
+
+def revalidate_card(cardno):
+    reset_card_contactless()
+    validate_card = direct_card_balance()
+    LOGGER.debug(str(validate_card))
+    if validate_card is False:
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
+        return False
+    if validate_card.get('card_no') != cardno:
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
+        return False
+    return True

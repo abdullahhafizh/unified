@@ -363,6 +363,8 @@ def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION')
         # Remarks Status Transaction
         if 'pending_trx_code' in p.keys() and not _Helper.empty(p.get('pending_trx_code')):
             failure = 'PENDING_TRANSACTION'
+        if 'validate_card' in p.keys() and p.get('validate_card') is False:
+            failure = 'CARD_MISSMATCH'
         # Send Failure To Backend
         _Common.store_upload_failed_trx(trxid, 
                                         p.get('pid', ''), 
