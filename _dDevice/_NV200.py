@@ -340,8 +340,8 @@ class NV200_BILL_ACCEPTOR(object):
                 if poll[1][0] == '0xef':
                     if 0 < poll[1][1] < len(self.known_notes):
                         event = self.parse_event(poll)
-                        if COMMAND_MODE == 'hold':
-                            self.async_hold()
+                        # if COMMAND_MODE == 'hold':
+                        #     self.async_hold()
                 # On Stacking Notes
                 elif poll[1][0] == '0xee':
                     event = self.parse_event(poll)
@@ -468,9 +468,12 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 while True:
                     pool = NV200.listen_poll(command)
                     if len(pool) == 1:
+                        time.sleep(1)
                         continue
                     LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1]:
+                        if COMMAND_MODE == 'hold':
+                            NV200.async_hold()
                         return 0, pool[1]
                     if config['KEY_BOX_FULL'] in pool[1]:
                         NV200.disable()
@@ -493,6 +496,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 while True:
                     pool = NV200.listen_poll(command)
                     if len(pool) == 1:
+                        time.sleep(1)
                         continue
                     LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
