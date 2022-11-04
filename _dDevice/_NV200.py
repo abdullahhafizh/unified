@@ -473,24 +473,27 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             else:
                 return -1, ""
         elif command == config['STORE']:
-            NV200.accept()
-            LOOP_ATTEMPT = 0
-            while True:
-                pool = NV200.listen_poll(command)
-                LOOP_ATTEMPT += 1
-                if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
-                    return 0, pool[1]
-                if config['KEY_BOX_FULL'] in pool[1]:
-                    return -1, pool[1]
-                if config['CODE_JAM'] in pool[1]:
-                    NV200.disable_only()
-                    return -1, pool[1]
-                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                # Set Harcoded only wait for 3 Seconds
-                if LOOP_ATTEMPT >= 3: 
-                    break
+            if COMMAND_MODE != '':
+                NV200.accept()
                 time.sleep(1)
-            return 0, "Noted stacked forcely"
+            else:
+                LOOP_ATTEMPT = 0
+                while True:
+                    pool = NV200.listen_poll(command)
+                    LOOP_ATTEMPT += 1
+                    if config['KEY_RECEIVED'] in pool[1] or config['KEY_STORED'] in pool[1]:
+                        return 0, pool[1]
+                    if config['KEY_BOX_FULL'] in pool[1]:
+                        return -1, pool[1]
+                    if config['CODE_JAM'] in pool[1]:
+                        NV200.disable_only()
+                        return -1, pool[1]
+                    # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                    # Set Harcoded only wait for 3 Seconds
+                    if LOOP_ATTEMPT >= 3: 
+                        break
+                    time.sleep(1)
+            return 0, "Noted stacked"
         elif command == config['REJECT']:
             NV200.reject()
             time.sleep(1)
