@@ -464,6 +464,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             if result is True:
                 return 0, "0000"
             NV200 = None
+        #===
         elif command == config['RECEIVE']:
             LOOP_ATTEMPT = 0
             action = NV200.check_active()
@@ -491,6 +492,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         break
                     time.sleep(1)
+        #===
         elif command == config['STORE']:
             if COMMAND_MODE != '':
                 NV200.accept()
@@ -516,6 +518,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                         break
                     time.sleep(1)
             return 0, "Noted stacked"
+        #===
         elif command == config['REJECT']:
             NV200.reject()
             time.sleep(1)
@@ -530,12 +533,14 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             #         break
             #     time.sleep(1)
             return 0, "Note Rejected"
+        #===
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
                 # Add Open to Re-enable Bill
                 NV200.open()
                 return 0, "Bill Reset"
+        #===
         elif command == config['STOP']:
             LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
