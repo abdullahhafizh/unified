@@ -329,7 +329,7 @@ class NV200_BILL_ACCEPTOR(object):
         event_data.append(0)
         return event_data
 
-    def listen_poll(self, caller):
+    def get_event(self, caller):
         
         poll = self.nv200.poll() 
         if _Common.BILL_LIBRARY_DEBUG is True:
@@ -472,7 +472,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 if hold_note: COMMAND_MODE = 'hold'
                 NV200.enable()
                 while True:
-                    event = NV200.listen_poll(command)
+                    event = NV200.get_event(command)
                     if len(event) == 1:
                         time.sleep(1)
                         continue
@@ -498,7 +498,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             else:
                 LOOP_ATTEMPT = 0
                 while True:
-                    event = NV200.listen_poll(command)
+                    event = NV200.get_event(command)
                     if len(event) == 1:
                         time.sleep(1)
                         continue
@@ -522,7 +522,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             NV200.disable()
             LOOP_ATTEMPT = 0
             # while True:
-            #     pool = NV200.listen_poll(command)
+            #     pool = NV200.get_event(command)
             #     LOOP_ATTEMPT += 1
             #     if "Rejected" in pool[1]:
             #         return 0, pool[1]
@@ -541,7 +541,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             action = NV200.disable()
             if action is True:
                 # while True:
-                #     # pool = NV200.listen_poll()
+                #     # pool = NV200.get_event()
                 #     LOOP_ATTEMPT += 1
                 #     # if config['KEY_RECEIVED'] in pool[1]:
                 #     #     return 0, pool[1]
