@@ -497,26 +497,26 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             if COMMAND_MODE != '':
                 NV200.accept()
                 time.sleep(1)
-            else:
-                LOOP_ATTEMPT = 0
-                while True:
-                    event = NV200.get_event(command)
-                    if len(event) == 1:
-                        time.sleep(1)
-                        continue
-                    LOOP_ATTEMPT += 1
-                    if config['KEY_RECEIVED'] in event[1] or config['KEY_STORED'] in event[1]:
-                        return 0, event[1]
-                    if config['KEY_BOX_FULL'] in event[1]:
-                        return -1, event[1]
-                    if config['CODE_JAM'] in event[1]:
-                        NV200.disable_only()
-                        return -1, event[1]
-                    # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                    # Set Harcoded only wait for 3 Seconds
-                    if LOOP_ATTEMPT >= 3: 
-                        break
+            
+            LOOP_ATTEMPT = 0
+            while True:
+                event = NV200.get_event(command)
+                if len(event) == 1:
                     time.sleep(1)
+                    continue
+                LOOP_ATTEMPT += 1
+                if config['KEY_RECEIVED'] in event[1] or config['KEY_STORED'] in event[1]:
+                    return 0, event[1]
+                if config['KEY_BOX_FULL'] in event[1]:
+                    return -1, event[1]
+                if config['CODE_JAM'] in event[1]:
+                    NV200.disable_only()
+                    return -1, event[1]
+                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                # Set Harcoded only wait for 3 Seconds
+                if LOOP_ATTEMPT >= 3: 
+                    break
+                time.sleep(1)
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
