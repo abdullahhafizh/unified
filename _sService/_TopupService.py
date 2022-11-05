@@ -1548,13 +1548,6 @@ LAST_BRI_PENDING_RESULT = None
 def topup_online(bank, cardno, amount, trxid=''):
     global LAST_MANDIRI_C2C_SUCCESS_RESULT, LAST_BRI_PENDING_RESULT
     
-    try:
-        validate_card = _QPROX.revalidate_card(cardno)
-        if not validate_card:
-            return False
-    except Exception as e:
-        _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
-        return False
     # if bank in ['BRI', 'BCA'] and _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
     #     sleep(2)
     #     output = {
@@ -1591,6 +1584,9 @@ def topup_online(bank, cardno, amount, trxid=''):
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
 
         if bank == 'BRI':
+            validate_card = _QPROX.revalidate_card(cardno)
+            if not validate_card:
+                return False
             if not _Common.BRI_SAM_ACTIVE:
                 _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#SAM_NOT_ACTIVE')
                 return False
@@ -1686,6 +1682,9 @@ def topup_online(bank, cardno, amount, trxid=''):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
             return True
         elif bank == 'BCA':
+            validate_card = _QPROX.revalidate_card(cardno)
+            if not validate_card:
+                return False
             # last_check = _QPROX.LAST_CARD_CHECK            
             _param = {
                 'card_no': cardno,
@@ -1903,6 +1902,9 @@ def topup_online(bank, cardno, amount, trxid=''):
             _Helper.get_thread().apply_async(check_mandiri_deposit_update_balance,)
             return output        
         elif bank == 'DKI':
+            validate_card = _QPROX.revalidate_card(cardno)
+            if not validate_card:
+                return False
             _param = {
                 'card_no': cardno,
                 'amount': amount,
