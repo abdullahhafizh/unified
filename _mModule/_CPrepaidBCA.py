@@ -404,19 +404,21 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             resultStr, last_balance, report = bca_lib_topup2(confirm_data)
                             # TODO: Must Send ACK Data Into BCA Host
                             # High Potential Not Receiving Return
-                            LOG.fw("044:BCATopup2 = ", { "resultStr":resultStr, "report": report, "last_balance": last_balance})
+                            LOG.fw("044:BCATopup2 = ", { "rc": resultStr, "report": report})
                             ErrorCode = resultStr
                             
                             # Normal Success
                             if resultStr == "0000" and len(report) == 512:
                                 success_topup = True
                                 lastbalance = (int(balance) + int(amount))
+                                
+                            # Not Success 0000 But Have Report
                             elif cardno in report:
-                                # Not Success 0000 But Have Report
                                 success_topup = False
                                 lastbalance = int(balance)
+                                
+                            # Report 0000 But Have No Report
                             elif report == "":
-                                # Report 0000 But Have No Report
                                 report = bca_topup_lastreport()
                                 LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     
@@ -431,9 +433,11 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                         report = "0" * 512
                                     # Balance Not Changes
                                     lastbalance = int(balance)
-                                    _Common.LAST_BCA_ERR_CODE = '42'
+                            
+                            if not success_topup:
+                                _Common.LAST_BCA_ERR_CODE = '42'
                                     
-                            # Must Call Confirm Whatever The Result
+                            # Must Call Confirm Whatever The Topup Result
                             reporttopup = report
                             valuetext, ErrMsg = send_post_confirm_bca(url, cardno, report, lastbalance, reference_id, success_topup)
 
