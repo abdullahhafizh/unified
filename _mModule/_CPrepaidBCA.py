@@ -410,25 +410,36 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             # Must Accomodate Other Status Not Just 0000
                             if resultStr == "0000" or cardno in report:
                                 # Re-read the card to ensure the topup process
-                                prepaid.topup_card_disconnect()
-                                _resultStr, _lastbalance, _cardno, _sign = prepaid.topup_balance_with_sn()   
-                                if int(_lastbalance) == int(balance) + int(amount):
+                                if resultStr == "0000" and len(report) == 512:
                                     success_topup = True
-                                    lastbalance = _lastbalance
-                                else:
+                                    lastbalance = (int(balance) + int(amount))
+                                elif cardno in report:
+                                    success_topup = False
+                                    lastbalance = int(balance)
+                                    # Should Call Card Disconnect ?
+                                    # prepaid.topup_card_disconnect()
+                                    # _resultStr, _lastbalance, _cardno, _sign = prepaid.topup_balance_with_sn()   
+                                    # if int(_lastbalance) == (int(balance) + int(amount)):
+                                    # success_topup = True
+                                    # lastbalance = _lastbalance
+                                elif report == "":
                                     LOG.fw("044:BCATopup2 Card Last Balance Not Updated")
                                     report = bca_topup_lastreport()
                                     LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     
-                                    if report == "":
+                                    if len(report) == 512:
+                                        success_topup = True
+                                        lastbalance = (int(balance) + int(amount))
+                                    elif report == "":
                                         success_topup = False
                                         resultStr, report = topup_card_info(bcaStaticATD)
                                         LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
                                         if report == "":
                                             ErrMsg = "BCATopup2_BCATopupLastReport_Failed"
-                                    # Balance Not Changes
-                                    lastbalance = int(balance)
+                                        # Balance Not Changes
+                                        lastbalance = int(balance)
                                     
+                                # Must Call Confirm
                                 reporttopup = report
                                 valuetext, ErrMsg = send_post_confirm_bca(url, cardno, report, lastbalance, reference_id, success_topup)
 
