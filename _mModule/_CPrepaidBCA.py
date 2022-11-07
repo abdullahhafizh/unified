@@ -406,40 +406,37 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             # High Potential Not Receiving Return
                             LOG.fw("044:BCATopup2 = ", { "resultStr":resultStr, "report": report, "last_balance": last_balance})
                             ErrorCode = resultStr
-
-                            # Must Accomodate Other Status Not Just 0000
-                            if resultStr == "0000" or cardno in report:
-                                # Normal Success
-                                if resultStr == "0000" and len(report) == 512:
+                            
+                            # Normal Success
+                            if resultStr == "0000" and len(report) == 512:
+                                success_topup = True
+                                lastbalance = (int(balance) + int(amount))
+                            elif cardno in report:
+                                # Not Success 0000 But Have Report
+                                success_topup = False
+                                lastbalance = int(balance)
+                            elif report == "":
+                                # Report 0000 But Have No Report
+                                report = bca_topup_lastreport()
+                                LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
+                                    
+                                if len(report) == 512:
                                     success_topup = True
                                     lastbalance = (int(balance) + int(amount))
-                                elif cardno in report:
-                                    # Not Success 0000 But Have Report
-                                    success_topup = False
-                                    lastbalance = int(balance)
                                 elif report == "":
-                                    # Report 0000 But Have No Report
-                                    report = bca_topup_lastreport()
-                                    LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
+                                    success_topup = False
+                                    resultStr, report = topup_card_info(bcaStaticATD)
+                                    LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
+                                    if report == "":
+                                        report = "0" * 512
+                                    # Balance Not Changes
+                                    lastbalance = int(balance)
+                                    _Common.LAST_BCA_ERR_CODE = '42'
                                     
-                                    if len(report) == 512:
-                                        success_topup = True
-                                        lastbalance = (int(balance) + int(amount))
-                                    elif report == "":
-                                        success_topup = False
-                                        resultStr, report = topup_card_info(bcaStaticATD)
-                                        LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
-                                        if report == "":
-                                            report = "0" * 512
-                                        # Balance Not Changes
-                                        lastbalance = int(balance)
-                                    
-                                # Must Call Confirm
-                                reporttopup = report
-                                valuetext, ErrMsg = send_post_confirm_bca(url, cardno, report, lastbalance, reference_id, success_topup)
+                            # Must Call Confirm Whatever The Result
+                            reporttopup = report
+                            valuetext, ErrMsg = send_post_confirm_bca(url, cardno, report, lastbalance, reference_id, success_topup)
 
-                            else:
-                                _Common.LAST_BCA_ERR_CODE = '42'
                         else:
                             _Common.LAST_BCA_ERR_CODE = '41'
                             resultStr, report = bca_topup_reversal(bcaStaticATD)
