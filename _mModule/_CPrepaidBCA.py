@@ -409,21 +409,16 @@ def update_balance_bca_priv(TID, MID, TOKEN):
 
                             # Must Accomodate Other Status Not Just 0000
                             if resultStr == "0000" or cardno in report:
-                                # Re-read the card to ensure the topup process
+                                # Normal Success
                                 if resultStr == "0000" and len(report) == 512:
                                     success_topup = True
                                     lastbalance = (int(balance) + int(amount))
                                 elif cardno in report:
+                                    # Not Success 0000 But Have Report
                                     success_topup = False
                                     lastbalance = int(balance)
-                                    # Should Call Card Disconnect ?
-                                    # prepaid.topup_card_disconnect()
-                                    # _resultStr, _lastbalance, _cardno, _sign = prepaid.topup_balance_with_sn()   
-                                    # if int(_lastbalance) == (int(balance) + int(amount)):
-                                    # success_topup = True
-                                    # lastbalance = _lastbalance
                                 elif report == "":
-                                    LOG.fw("044:BCATopup2 Card Last Balance Not Updated")
+                                    # Report 0000 But Have No Report
                                     report = bca_topup_lastreport()
                                     LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     
