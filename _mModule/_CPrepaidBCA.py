@@ -435,7 +435,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                         resultStr, report = topup_card_info(bcaStaticATD)
                                         LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
                                         if report == "":
-                                            ErrMsg = "BCATopup2_BCATopupLastReport_Failed"
+                                            report = "0" * 512
                                         # Balance Not Changes
                                         lastbalance = int(balance)
                                     
