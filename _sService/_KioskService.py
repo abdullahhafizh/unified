@@ -422,7 +422,7 @@ def start_get_price_setting():
 def kiosk_price_setting():
     admin_fee = _Common.KIOSK_ADMIN
     if _Common.C2C_MODE is True:
-        admin_fee = _Common.C2C_ADMIN_FEE[0] #Assuming Index 0 as Default Fee
+        admin_fee = _Common.KIOSK_ADMIN #Assuming Index 0 as Default Fee
     K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
         'margin': _Common.KIOSK_MARGIN,
         'adminFee': admin_fee,

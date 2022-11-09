@@ -732,14 +732,14 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
 
         if status == '0000' and __card_last_balance == 0:
-            __card_last_balance = int(last_card_check['balance']) + (int(amount) - int(_Common.C2C_ADMIN_FEE[0]))
+            __card_last_balance = int(last_card_check['balance']) + (int(amount) - int(_Common.KIOSK_ADMIN))
             LOGGER.info(('REDEFINE EMONEY LAST BALANCE FROM FORCE_SETTLEMENT', __card_last_balance))
         # if not _Helper.empty(r[0].strip()) or r[0] != '0':
         #     __card_last_balance = r[0].strip()
         if __report_emoney[:16] == last_card_check['card_no']:
             __card_prev_balance = last_card_check['balance']
         else:
-            __card_prev_balance = (int(__card_last_balance) - int(amount)) - int(_Common.C2C_ADMIN_FEE[0])
+            __card_prev_balance = (int(__card_last_balance) - int(amount)) - int(_Common.KIOSK_ADMIN)
         output = {
             'last_balance': __card_last_balance,
             'report_sam': __report_emoney,
@@ -1964,7 +1964,7 @@ def new_topup_failure_handler(bank, trxid, amount, pending_data=None):
         return
     
     if bank == 'MANDIRI':
-        amount = int(amount) - _Common.C2C_ADMIN_FEE[0]
+        amount = int(amount) - _Common.KIOSK_ADMIN
     
     card_check['prev_balance'] = last_card_check['balance']
     
@@ -1996,7 +1996,7 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
     # 'err_code': topup_result.get('Result'),
     if bank == 'MANDIRI':
         # redefine amount, previouly already deducted with admin fee
-        amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
+        amount = int(amount) + _Common.KIOSK_ADMIN
         if rc == '100C':
             # Slot SAM or Deposit
             _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
@@ -2071,7 +2071,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             else:
                 failure_rc = '02'
                 rc = last_audit_result.get('err_code')
-                amount = int(amount) + _Common.C2C_ADMIN_FEE[0]
+                amount = int(amount) + _Common.KIOSK_ADMIN
                 attempt = 2
                 while True:
                     if attempt == 0:
