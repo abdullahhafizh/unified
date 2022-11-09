@@ -332,7 +332,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
-            LOG.fw("044:BCATopupSession1 = ",  { "resultStr": resultStr, "report": report})
+            LOG.fw("044:BCATopupSession1 = ", { "rc": resultStr, "report": report})
             valuetext, ErrMsg = do_get_session_bca(url, cardno, report)
 
             if valuetext == -1:
@@ -381,7 +381,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                 datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                 topup_amount_hex = format(int(topup_amount), "x")
                 resultStr, report = bca_lib_topup1(bcaStaticATD, bcaAccessCardNumber, bcaAccessCode, datenow, topup_amount_hex)
-                LOG.fw("044:BCATopup1 = ", { "resultStr":resultStr, "report": report})
+                LOG.fw("044:BCATopup1 = ", { "rc": resultStr, "report": report})
                 ErrorCode = resultStr
                 if resultStr == "0000":
                     valuetext, ErrMsg = do_post_update_bca(url, cardno, report, balance, reference_id)
