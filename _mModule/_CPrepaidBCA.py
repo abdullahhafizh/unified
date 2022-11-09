@@ -404,7 +404,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                         resultStr, last_balance, report = bca_lib_topup2(confirm_data)
                         # TODO: Must Send ACK Data Into BCA Host
                         # High Potential Not Receiving Return
-                        LOG.fw("044:BCATopup2 = ", { "rc": resultStr, "report": report})
+                        LOG.fw("044:BCATopup2 = ", {"rc": resultStr, "report": report})
                         ErrorCode = resultStr
                             
                         # Normal Success
@@ -444,7 +444,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                     else:
                         _Common.LAST_BCA_ERR_CODE = '41'
                         resultStr, report = bca_topup_reversal(bcaStaticATD)
-                        LOG.fw("044:BCATopupReversal = ", { "resultStr":resultStr, "report": report})
+                        LOG.fw("044:BCATopupReversal = ", {"rc": resultStr, "report": report})
                         ErrorCode = resultStr
                         if resultStr == "0000":
                             valuetext, ErrMsg = send_post_reversal_bca(url, cardno, report, balance, reference_id)
