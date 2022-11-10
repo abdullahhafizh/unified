@@ -375,7 +375,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
         if code == "200" or code == 200:
             # Release Detect Card
             # if resultStr == "0000":
-                # resultStr, csn, uid = on_detect()
+            resultStr, csn, uid = on_detect()
 
             if resultStr == "0000":
                 datenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
