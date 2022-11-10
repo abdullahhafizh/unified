@@ -232,6 +232,11 @@ def get_cd_readiness():
 
 def check_init_cd(port, attempt):
     # Validate Based On Error History
+    # Detect Bank ID Based On Attempt
+    bank_id = _DAO.get_product_bank_by_slot_status(attempt) 
+    if not _Common.CARD_SALE_FEATURES.get(bank_id, False):
+        return False
+    
     if attempt == '101' and _Common.load_from_temp_config('cd1^error') == '':
         return True
     if attempt == '102' and _Common.load_from_temp_config('cd2^error') == '':

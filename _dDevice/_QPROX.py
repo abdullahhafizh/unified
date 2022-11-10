@@ -581,6 +581,10 @@ def check_card_balance():
         # Global Blacklist Validation
         if card_no in _Common.GENERAL_CARD_BLOCKED_LIST:
             output['able_topup'] = 'BLOCKED'
+            
+        # Final Validation From Topup Feature Setting
+        if not _Common.CARD_TOPUP_FEATURES.get(bank_name, False):
+            output['able_topup'] = 'DISABLED'
 
         LAST_CARD_CHECK = output
         _Common.store_to_temp_data('last-card-check', json.dumps(output))

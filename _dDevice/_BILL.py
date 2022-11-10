@@ -607,8 +607,17 @@ def bill_store_note(trxid):
     try:
         if not HOLD_NOTES:
             return
-        response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
-        LOGGER.info((trxid, 'STORE_NOTES', BILL['TYPE'], response, result))
+        
+        attempt = 1
+        if BILL_TYPE == 'GRG': attempt = 3
+        
+        while True:
+            attempt = attempt - 1
+            response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
+            LOGGER.info((trxid, 'STORE_NOTES', attempt, BILL['TYPE'], response, result))
+            if attempt == 0: break
+            sleep(1)
+
         if response == 0:
             LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
@@ -619,6 +628,9 @@ def bill_store_note(trxid):
             CASH_HISTORY = []
             CASH_TIME_HISTORY = []
         else:
+            if BILL_TYPE == 'GRG':
+                # Do Reset Bill For GRG
+                init_bill()
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
             LOGGER.warning((trxid, str(response), str(result)))
     except Exception as e:

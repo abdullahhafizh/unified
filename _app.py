@@ -580,36 +580,29 @@ class SlotHandler(QObject):
         _SettlementService.start_check_mandiri_deposit()
     start_check_mandiri_deposit = pyqtSlot()(start_check_mandiri_deposit)
 
-
     def start_mandiri_c2c_force_settlement(self, amount, trxid):
         _QPROX.start_mandiri_c2c_force_settlement(amount, trxid)
     start_mandiri_c2c_force_settlement = pyqtSlot(str, str)(start_mandiri_c2c_force_settlement)
-
 
     def start_topup_online_dki(self, card_no, amount, trxid):
         _TopupService.start_topup_online_dki(card_no, amount, trxid)
     start_topup_online_dki = pyqtSlot(str, str, str)(start_topup_online_dki)
 
-
     def start_topup_online_bca(self, cardno, amount, trxid):
         _TopupService.start_topup_online_bca(cardno, amount, trxid)
     start_topup_online_bca = pyqtSlot(str, str, str)(start_topup_online_bca)
     
-
     def start_retry_topup_online_bca(self, amount, trxid):
         _TopupService.start_retry_topup_online_bca(amount, trxid)
     start_retry_topup_online_bca = pyqtSlot(str, str)(start_retry_topup_online_bca)
-    
     
     def start_retry_topup_online_bri(self, amount, trxid):
         _TopupService.start_retry_topup_online_bri(amount, trxid)
     start_retry_topup_online_bri = pyqtSlot(str, str)(start_retry_topup_online_bri)
     
-    
     def start_retry_topup_online_dki(self, amount, trxid):
         _TopupService.start_retry_topup_online_dki(amount, trxid)
     start_retry_topup_online_dki = pyqtSlot(str, str)(start_retry_topup_online_dki)
-    
     
     def start_trigger_explorer(self):
         _KioskService.start_trigger_explorer()
@@ -675,16 +668,13 @@ class SlotHandler(QObject):
         _QPROX.start_recheck_bni_sam_balance()
     start_recheck_bni_sam_balance = pyqtSlot()(start_recheck_bni_sam_balance)
     
-    
     def start_bill_store_note(self, trxid):
         _BILL.start_bill_store_note(trxid)
     start_bill_store_note = pyqtSlot(str)(start_bill_store_note)
 
-
     def start_bill_reject_note(self, trxid):
         _BILL.start_bill_reject_note(trxid)
     start_bill_reject_note = pyqtSlot(str)(start_bill_reject_note)
-
 
     def start_reset_cd_status(self, slot):
         _CD.start_reset_cd_status(slot)

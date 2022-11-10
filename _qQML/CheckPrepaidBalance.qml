@@ -370,6 +370,10 @@ Base{
                         switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar Anda Tidak Dapat Dilakukan Isi Ulang Saat Ini', 'backToMain', false );
                         return;
                     }
+                    // if (ableTopupCode == "DISABLED"){
+                    //     switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Layanan Isi Ulang Kartu Prabayar '+bankName+' Tidak Aktif Saat Ini', 'backToMain', false );
+                    //     return;
+                    // }
                     if (ableTopupCode == "BLOCKED"){
                         switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Kartu Prabayar Anda Tidak Dapat Melakukan Isi Ulang Pada Mesin Ini', 'backToMain', false );
                         return;

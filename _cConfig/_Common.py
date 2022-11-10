@@ -2300,3 +2300,21 @@ def send_stock_opname(key):
 def single_denom_trx_detected(trxid):
     # Must Be Match With Pattern And Bill Type
     return _Helper.get_char_from(trxid) in BILL_SINGLE_DENOM_TRX and BILL_TYPE in BILL_SINGLE_DENOM_TYPE
+
+
+# New Feature Override
+CARD_SALE_FEATURES = {
+    '1': True if _ConfigParser.get_set_value('FEATURES', 'card^sale^mdr', '1') == '1' else False,
+    '2': True if _ConfigParser.get_set_value('FEATURES', 'card^sale^bni', '1') == '1' else False,
+    '3': True if _ConfigParser.get_set_value('FEATURES', 'card^sale^bri', '1') == '1' else False,
+    '4': True if _ConfigParser.get_set_value('FEATURES', 'card^sale^bca', '1') == '1' else False,
+    '5': True if _ConfigParser.get_set_value('FEATURES', 'card^sale^dki', '1') == '1' else False,
+}
+
+CARD_TOPUP_FEATURES = {
+    'MANDIRI': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^mdr', '1') == '1' else False,
+    'BNI': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^bni', '1') == '1' else False,
+    'BRI': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^bri', '1') == '1' else False,
+    'BCA': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^bca', '1') == '1' else False,
+    'DKI': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^dki', '1') == '1' else False,
+}

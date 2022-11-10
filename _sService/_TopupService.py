@@ -1131,12 +1131,16 @@ def get_topup_readiness():
         connection_online = _Common.is_online('get_topup_readiness')
         # Assuming always check card balance first before check topup readiness validation
         if not _Helper.empty(last_card_check):
+            if last_card_check['bank_name'] == 'MANDIRI':
+                ready['mandiri'] = 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0 and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS and _Common.CARD_TOPUP_FEATURES['MANDIRI']) is True else 'N/A'
+            if last_card_check['bank_name'] == 'BNI':
+                ready['bni'] = 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS and _Common.CARD_TOPUP_FEATURES['BNI']) is True else 'N/A',
             if last_card_check['bank_name'] == 'BRI':
-                ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and connection_online is True) else 'N/A'
+                ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and connection_online is True and _Common.CARD_TOPUP_FEATURES['BRI']) else 'N/A'
             if last_card_check['bank_name'] == 'BCA':
-                ready['bca'] = 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and connection_online is True) else 'N/A'
+                ready['bca'] = 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and connection_online is True and _Common.CARD_TOPUP_FEATURES['BCA']) else 'N/A'
             if last_card_check['bank_name'] == 'DKI':
-                ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE is True and connection_online is True) else 'N/A'
+                ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE is True and connection_online is True and _Common.CARD_TOPUP_FEATURES['DKI']) else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
         #     ready['balance_bni'] = '999002'

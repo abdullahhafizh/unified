@@ -330,6 +330,15 @@ def get_all_product_stock():
     return _Database.get_query(sql=sql, parameter={})
 
 
+def get_product_bank_by_slot_status(status):
+    sql = " SELECT bid FROM ProductStock WHERE status = {} ".format(str(status))
+    result = _Database.get_query(sql=sql, parameter={})
+    if len(result) > 0:
+        return str(result[0].get('bid', 0))
+    else:
+        return '0'
+
+
 def get_product_stock_by_slot_status(status):
     sql = " SELECT stock FROM ProductStock WHERE status = {} ".format(str(status))
     return _Database.get_query(sql=sql, parameter={})
