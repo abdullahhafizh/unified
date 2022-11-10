@@ -608,8 +608,7 @@ def bill_store_note(trxid):
         if not HOLD_NOTES:
             return
         
-        attempt = 1
-        if BILL_TYPE == 'GRG': attempt = 3
+        attempt = 1 if BILL_TYPE == 'GRG' else 3
         
         while True:
             attempt = attempt - 1
