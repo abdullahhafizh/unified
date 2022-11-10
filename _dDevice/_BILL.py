@@ -615,6 +615,7 @@ def bill_store_note(trxid):
             response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
             LOGGER.info((trxid, 'STORE_NOTES', attempt, BILL['TYPE'], response, result))
             if attempt == 0: break
+            if response == 0: break
             sleep(1)
 
         # Special Handling For GRG
