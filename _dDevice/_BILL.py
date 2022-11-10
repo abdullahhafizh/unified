@@ -631,8 +631,16 @@ def bill_store_note(trxid):
             if BILL_TYPE == 'GRG':
                 # Do Reset Bill For GRG
                 init_bill()
-            BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
-            LOGGER.warning((trxid, str(response), str(result)))
+                BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
+                for cash_in in CASH_HISTORY:
+                    _Common.store_notes_activity(cash_in, trxid)
+                    _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                COLLECTED_CASH = 0
+                CASH_HISTORY = []
+                CASH_TIME_HISTORY = []
+            else:
+                BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
+                LOGGER.warning((trxid, str(response), str(result)))
     except Exception as e:
         _Common.BILL_ERROR = 'FAILED_STORE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
