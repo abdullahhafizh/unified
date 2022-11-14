@@ -12,7 +12,7 @@ Base{
 //    height: (globalScreenType=='2') ? 1024 : 1080
 //    width: (globalScreenType=='2') ? 1280 : 1920
 //    property int timer_value: (VIEW_CONFIG.page_timer * 2)
-    property int timer_value: 3
+    property int timer_value: 5
     property var press: '0'
     property var cardNo: ''
     property var balance: '0'
@@ -107,6 +107,16 @@ Base{
                       });
     }
 
+    function adjust_timer(){
+        abc.counter = (VIEW_CONFIG.page_timer * 2);
+        my_timer.restart();
+    }
+
+    function reset_timer(){
+        abc.counter = timer_value;
+        my_timer.restart();
+    }
+
     function update_balance_online_result(u){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log("update_balance_online_result : ", now, u);
@@ -114,6 +124,7 @@ Base{
         var result = u.split('|')[1]
         press = '0';
         popup_loading.close();
+        reset_timer();
         if (['INVALID_CARD'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Kartu Prabayar Anda Tidak Aktif/Tidak Valid', 'closeWindow', false )
             press = '0';
@@ -312,6 +323,7 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "UPDATE SALDO" for Bank '+bankName);
                     actionMode = 'update_balance_online';
+                    adjust_timer();
                     preload_check_card.open();
                 }
             }
@@ -327,6 +339,7 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "LOG KARTU" for Bank '+bankName);
                     actionMode = 'get_card_log_history';
+                    adjust_timer();
                     preload_check_card.open();
                 }
             }

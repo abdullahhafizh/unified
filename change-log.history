@@ -1,8 +1,9 @@
-16.2.1-GLOBAL:
+16.2.1#-GLOBAL:
 - Feature Panel Setting Topup,
 - Feature Panel Setting Shop,
 - Enhance Store For GRG Bill,
 - Enhance BCA Topup Flow,
+- Adjust Check Balance Page Timer,
 - ...
 
 16.1.6-GLOBAL:
