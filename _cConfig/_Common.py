@@ -667,6 +667,8 @@ TJ_VIEW_CONFIG = load_from_temp_data('tj-view-config', 'json', sys.path[0] + '/_
 KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '/_cConfig/')
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
+# Handle External Customer Service Information
+EXT_CS_INFO = None
 
 # Re-write view config if missing
 if len(VIEW_CONFIG.keys()) == 0:
@@ -688,6 +690,7 @@ VIEW_CONFIG['single_denom_trx'] =  BILL_SINGLE_DENOM_TRX
 VIEW_CONFIG['single_denom_type'] =  BILL_SINGLE_DENOM_TYPE
 VIEW_CONFIG['support_multimedia'] = support_multimedia()
 VIEW_CONFIG['payment_cancel'] = True if PAYMENT_CANCEL == '1' else False
+VIEW_CONFIG['theme_name'] = THEME_NAME
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')

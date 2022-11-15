@@ -557,7 +557,10 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
-                    pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                    if _Common.EXT_CS_INFO is None:
+                        pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                    else:
+                        pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')
                 # pdf.ln(small_space)
                 # pdf.set_font(USED_FONT, 'B', regular_space-1)
                 # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -611,7 +614,10 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                if _Common.EXT_CS_INFO is None:
+                    pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                else:
+                    pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')            
             if 'force_settlement' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -854,7 +860,10 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                if _Common.EXT_CS_INFO is None:
+                    pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                else:
+                    pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')
                 # price_unit = str(int(int(p['value'])/p['qty']))
                 # sub_total = p['value']
                 # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
@@ -915,7 +924,10 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                if _Common.EXT_CS_INFO is None:
+                    pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                else:
+                    pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')
             # pdf.ln(small_space*3)
             # pdf.set_font(USED_FONT, 'B', regular_space)
             # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -1174,7 +1186,10 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                if _Common.EXT_CS_INFO is None:
+                    pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                else:
+                    pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')            
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, 'B', regular_space+2)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
@@ -1225,7 +1240,10 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                if _Common.EXT_CS_INFO is None:
+                    pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
+                else:
+                    pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')            
             # pdf.ln(small_space*3)
             # pdf.set_font(USED_FONT, 'B', regular_space)
             # pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
@@ -1338,7 +1356,10 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                 printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
-                printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
+                if _Common.EXT_CS_INFO is None:
+                    printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
+                else:
+                    printer.text((' '*padding_left)+ _Common.EXT_CS_INFO + "\n")
             total_pay = str(int(int(p['value']) * int(p['qty'])))
             if 'product_channel' in p.keys():
                 if p['product_channel'] == 'MDD':
@@ -1360,7 +1381,10 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                 printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
-                printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
+                if _Common.EXT_CS_INFO is None:
+                    printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
+                else:
+                    printer.text((' '*padding_left)+ _Common.EXT_CS_INFO + "\n")        
         # Footer Move Here
         printer.text("\n")
         if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
@@ -2497,7 +2521,11 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                     pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                     pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                     pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                    pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                    if _Common.EXT_CS_INFO is None:
+                        pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                    else:
+                        pdf.set_line(_Common.EXT_CS_INFO)
+        
         else:
             pdf.set_line('NO. KARTU   : ' + p['raw']['card_no'])
             pdf.set_line('SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']))
@@ -2514,8 +2542,10 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
-
+                if _Common.EXT_CS_INFO is None:
+                    pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                else:
+                    pdf.set_line(_Common.EXT_CS_INFO)
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
         if _Common.ERECEIPT_ASYNC_MODE is True:
@@ -2598,8 +2628,11 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
-
+                if _Common.EXT_CS_INFO is None:
+                    pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                else:
+                    pdf.set_line(_Common.EXT_CS_INFO)
+    
             pdf.set_line('')
             total_pay = str(int(int(p['value']) * int(p['qty'])))
             pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(total_pay))
@@ -2617,8 +2650,10 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
-
+                if _Common.EXT_CS_INFO is None:
+                    pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                else:
+                    pdf.set_line(_Common.EXT_CS_INFO)
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
         if _Common.ERECEIPT_ASYNC_MODE is True:
@@ -2724,8 +2759,10 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
-
+                if _Common.EXT_CS_INFO is None:
+                    pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                else:
+                    pdf.set_line(_Common.EXT_CS_INFO)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
             if 'product_channel' in p.keys():
                 if p['product_channel'] == 'MDD':
@@ -2745,8 +2782,10 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
-
+                if _Common.EXT_CS_INFO is None:
+                    pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
+                else:
+                    pdf.set_line(_Common.EXT_CS_INFO)
         # Send Print Data To DIVA Loyalty Service
         ereceipt_data = pdf.generate()
         if _Common.ERECEIPT_ASYNC_MODE is True:

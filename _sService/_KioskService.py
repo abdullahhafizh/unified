@@ -225,6 +225,10 @@ def build_view_config(d):
     _Common.CUSTOMER_SERVICE_NO = d.get('customer_service_no', _Common.CUSTOMER_SERVICE_NO)
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
+    
+    if 'ext_cs_info' in d.keys():
+        _Common.EXT_CS_INFO = d['ext_cs_info']
+        LOGGER.info(('FOUND EXTERNAL CS INFO', _Common.EXT_CS_INFO))
 
     _Common.VIEW_CONFIG['all_qr_provider'] = [x.lower() for x in _Common.ALL_QR_PROVIDER]
     _Common.VIEW_CONFIG['topup_status'] = d['name'].upper() in _Common.THEME_WITH_TOPUP_STATUS
