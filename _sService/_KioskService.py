@@ -226,7 +226,7 @@ def build_view_config(d):
     _Common.log_to_temp_config('customer^service^no', str(d['customer_service_no']))
     # ===
     
-    if 'ext_cs_info' in d.keys():
+    if not _Helper.empty(d.get('ext_cs_info')):
         _Common.EXT_CS_INFO = d['ext_cs_info']
         LOGGER.info(('FOUND EXTERNAL CS INFO', _Common.EXT_CS_INFO))
 
