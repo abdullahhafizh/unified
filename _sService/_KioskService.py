@@ -125,9 +125,9 @@ def update_kiosk_status(s=400, r=None):
                 _Common.KIOSK_MARGIN = int(_Common.KIOSK_SETTING['defaultMargin'])
                 _Common.KIOSK_ADMIN = int(_Common.KIOSK_SETTING['defaultAdmin'])
                 _Common.PAYMENT_SETTING = r['data']['payment']
-                if _Common.IS_WINDOWS:
-                    print("pyt: Syncing Payment Setting...")
-                    define_device_port_setting(_Common.PAYMENT_SETTING)
+                # if _Common.IS_WINDOWS:
+                #     print("pyt: Syncing Payment Setting...")
+                #     define_device_port_setting(_Common.PAYMENT_SETTING)
                 _Common.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
                 _Common.FEATURE_SETTING = r['data']['feature']
                 print("pyt: Syncing Feature Setting...")
