@@ -1771,7 +1771,7 @@ def get_card_history(bank):
         if not _Common.BRI_SAM_ACTIVE:
             LOGGER.warning((bank, 'SAM_NOT_ACTIVE', str(_Common.BRI_SAM_ACTIVE)))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
-            return        
+            return       
         param = QPROX['CARD_HISTORY_BRI'] + '|' + _Common.SLOT_BRI + '|'
         try:
             if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
@@ -1842,9 +1842,7 @@ def bni_card_history_direct(row=30):
 
 
 def bri_card_history_direct():
-    # Closed Temporarily
-    disabled = True
-    if disabled:
+    if 'BRI' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
         return ""
     param = QPROX['CARD_HISTORY_BRI_RAW'] + '|' + _Common.SLOT_BRI + '|' + 'MODE_RAW' + '|'
     response, result = _Command.send_request(param=param, output=None)
