@@ -1842,6 +1842,10 @@ def bni_card_history_direct(row=30):
 
 
 def bri_card_history_direct():
+    # Closed Temporarily
+    disabled = True
+    if disabled:
+        return ""
     param = QPROX['CARD_HISTORY_BRI_RAW'] + '|' + _Common.SLOT_BRI + '|' + 'MODE_RAW' + '|'
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:

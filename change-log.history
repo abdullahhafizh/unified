@@ -1,3 +1,8 @@
+16.2.3-GLOBAL:
+- Disable BRI Card Log History,
+- Force Success Mandiri New Applet Log History,
+- ...
+
 16.2.2-GLOBAL:
 - Adjust Check Balance Page Timer,
 - Add External Customer Info,

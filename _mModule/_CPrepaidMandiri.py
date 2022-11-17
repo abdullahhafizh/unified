@@ -515,6 +515,7 @@ def mandiri_get_log_priv():
             if resultStr == "0000":
                 resultStr, rapdu = prepaid.topup_apdusend("255", "00B300003F")
                 if resultStr == "0000":
+                    # New Applet
                     if attr.upper() == "6A86":
                         max_t = 4
                         i = 0
@@ -532,6 +533,10 @@ def mandiri_get_log_priv():
                                     resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
                                     msg = msg + resreport
                                     i = i + 1
+                                elif resultStr == '6986':
+                                    # New Applet Handle Error on 6986
+                                    resultStr = '0000'
+                                    break
                                 else:
                                     GetLogMandiri = rapdu
                             else:
