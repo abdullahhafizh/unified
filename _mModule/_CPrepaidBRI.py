@@ -466,71 +466,6 @@ def bri_card_get_log(param, __global_response__):
         LOG.fw("025:Gagal", None, True)
 
 
-def get_raw_log_bri_priv(SAMSLOT, msg):
-    resultStr = ""
-    ErrorCode = ""
-    resreport = ""
-    ErrMsg = ""
-
-    try:
-        cardno = ""
-        uid = ""
-        value = ""
-        rapdu = ""
-        sapdu = ""
-        Data = ""
-        resultStr, value = prepaid.topup_balance()
-        sleep(1)
-        resultStr, uid, cardno = prepaid.get_card_sn()
-        LOG.fw("025:cardno = ",cardno)
-        LOG.fw("025:uid = ",uid)
-        if resultStr == "0000":
-            prepaid.topup_card_disconnect()
-            resultStr, CardData = prepaid.topup_get_tokenbri()
-            if resultStr == "0000":
-                resultStr, rapdu = prepaid.topup_apdusend("255", "91AF")
-                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6700":
-                    resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, "00A4040C09A00000000000000011")
-                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
-                        resultStr, rapdu = prepaid.topup_apdusend("255", "905A00000301000000")
-                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
-                            resultStr, rapdu = prepaid.topup_apdusend("255", "90BD0000070000000017000000")
-                            if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
-                                resultStr, rapdu = prepaid.topup_apdusend("255", "90BD0000070100000020000000")
-                                resultStr = rapdu[6:10]
-                                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6161":
-                                    resultStr, rapdu = prepaid.topup_apdusend("255", "905A00000303000000")
-                                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
-                                        resultStr, rapdu = prepaid.topup_apdusend("255", "900A0000010000")
-                                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                            sapdu = "80B0000020" + cardno + uid + "FF0000030080000000" + rapdu
-                                            resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, sapdu)
-                                            if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                                sapdu = rapdu[32:]
-                                                sapdu = "90AF000010" + sapdu + "00"
-                                                resultStr, rapdu = prepaid.topup_apdusend("255", sapdu)
-                                                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                                    resultStr, rapdu = prepaid.topup_apdusend("255", "90BB0000070100000000000000")
-                                                    resreport = resreport + rapdu
-                                                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                                        while resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
-                                                            resultStr, rapdu = prepaid.topup_apdusend("255", "90AF000000")
-                                                            resreport = resreport + rapdu
-                
-                n = 64
-                result1 = [resreport[i:i+n] for i in range(0, len(resreport), n)]
-                
-                if resultStr.upper() == "911C":
-                    resultStr = "0000"
-                
-                msg = ",".join(result1)
-                
-    except Exception as ex:
-        resultStr = "1"
-        msg = "{0}".format(ex)
-    
-    return resultStr, msg
-
 
 def get_log_bri_priv(SAMSLOT, msg):
     resultStr = ""
@@ -600,24 +535,118 @@ def get_log_bri_priv(SAMSLOT, msg):
                                                                 resultStr, rapdu = prepaid.topup_apdusend("255", "90AF000000")
                                                                 resreport = resreport + rapdu
                 
+                # Parse Result
                 n = 64
-                result1 = [resreport[i:i+n] for i in range(0, len(resreport), n)]
-                for item in result1:
-                    MID = item[:16]
-                    TID = item[16:32]
-                    TRXDATE = item[32:38]
-                    TRXTIME = item[38:44]
-                    TRXTYPE = item[44:46]
-                    AMOUNT = utils.getint(item[46:52])
-                    BEFORE = utils.getint(item[52:58])
-                    AFTER = utils.getint(item[58:64])            
-                    itemDec = str(MID) + "|" + str(TID) + "|" + str(TRXDATE) + "|" + str(TRXTIME) + "|" + str(TRXTYPE) + "|" + str(AMOUNT) + "|" + str(BEFORE) + "|" + str(AFTER)
+                history = [resreport[i:i+n] for i in range(0, len(resreport), n)]
+                
+                for h in history:
+                    if len(h) < 64:
+                        history.remove(h)
+                        
+                for item in history:
+                    mid = item[:16]
+                    tid = item[16:32]
+                    trx_date = item[32:38]
+                    trx_time = item[38:44]
+                    trx_type = item[44:46]
+                    amount = utils.getint(item[46:52])
+                    prev_balance = utils.getint(item[52:58])
+                    last_balance = utils.getint(item[58:64])            
+                    itemDec = str(mid) + "|" + str(tid) + "|" + str(trx_date) + "|" + str(trx_time) + "|" + str(trx_type) + "|" + str(amount) + "|" + str(prev_balance) + "|" + str(last_balance)
                     resreport = resreport + itemDec + "#"
                 
                 if resultStr.upper() == "911C":
                     resultStr = "0000"
                 
                 msg = resreport
+
+    except Exception as ex:
+        resultStr = "1"
+        msg = "{0}".format(ex)
+    
+    return resultStr, msg
+
+
+def get_raw_log_bri_priv(SAMSLOT, msg):
+    resultStr = ""
+    ErrorCode = ""
+    resreport = ""
+    ErrMsg = ""
+
+    try:
+        cardno = ""
+        uid = ""
+        value = ""
+        rapdu = ""
+        sapdu = ""
+        card_token = ""
+        # resultStr, value = prepaid.topup_balance()
+        # sleep(1)
+        resultStr, uid, cardno = prepaid.get_card_sn()
+        LOG.fw("025:cardno #1= ", cardno)
+        LOG.fw("025:uid = ", uid)
+        # resultStr = prepaid.topup_card_disconnect()
+        if resultStr == "0000":
+            prepaid.topup_card_disconnect()
+            resultStr, card_token = prepaid.topup_get_tokenbri()
+            if resultStr == "0000":
+                resultStr, rapdu = prepaid.topup_apdusend("255", "91AF")
+                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6700":
+                    # Select AID
+                    resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, "00A4040C09A00000000000000011")
+                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                        # Card Select AID 1
+                        resultStr, rapdu = prepaid.topup_apdusend("255", "905A00000301000000")
+                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                            # CARD – Get Card Number, Perso Date & Issuer Code
+                            resultStr, rapdu = prepaid.topup_apdusend("255", "90BD0000070000000017000000")
+                            cardno = rapdu[6:22]
+                            LOG.fw("025:cardno #2= ",cardno)
+                            if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                                # CARD – Get Card Status
+                                resultStr, rapdu = prepaid.topup_apdusend("255", "90BD0000070100000020000000")
+                                resultStr = rapdu[6:10]
+                                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6161":
+                                    # CARD – Select AID 3
+                                    resultStr, rapdu = prepaid.topup_apdusend("255", "905A00000303000000")
+                                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000":
+                                        # CARD – Request Key Card 00
+                                        resultStr, rapdu = prepaid.topup_apdusend("255", "900A0000010000")
+                                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                            # CARD – Get UID
+                                            # resultStr, rapdu = prepaid.topup_apdusend("255", "FFCA000000")
+                                            # uid = rapdu
+                                            # LOG.fw("025:uid = ",uid)
+                                            if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                # SAM – Authenticate Key
+                                                sapdu = "80B0000020" + cardno + uid + "FF0000030080000000" + rapdu
+                                                resultStr, rapdu = prepaid.topup_apdusend(SAMSLOT, sapdu)
+                                                if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                    # CARD – Authenticate Card
+                                                    sapdu = rapdu[32:]
+                                                    sapdu = "90AF000010" + sapdu + "00"
+                                                    resultStr, rapdu = prepaid.topup_apdusend("255", sapdu)
+                                                    if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                        # CARD – GET LOG TRANSATION
+                                                        resultStr, rapdu = prepaid.topup_apdusend("255", "90BB0000070100000000000000")
+                                                        resreport = resreport + rapdu
+                                                        if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                            while resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
+                                                                resultStr, rapdu = prepaid.topup_apdusend("255", "90AF000000")
+                                                                resreport = resreport + rapdu
+                
+                # Parse Result
+                n = 64
+                history = [resreport[i:i+n] for i in range(0, len(resreport), n)]
+                
+                for h in history:
+                    if len(h) < 64:
+                        history.remove(h)
+                
+                if resultStr.upper() == "911C":
+                    resultStr = "0000"
+                
+                msg = ",".join(history)
 
     except Exception as ex:
         resultStr = "1"

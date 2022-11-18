@@ -76,6 +76,8 @@ def getint(data):
     data_str = data.zfill(8)
     data_str = "".join(reversed([data[i:i+2] for i in range(0, len(data), 2)]))
     valueDeposit = int(data_str, 16)
+    # Handle Anomali Where Amount Not Reversed
+    if valueDeposit > 2000000: return int(data, 16)
     return valueDeposit
 
 
