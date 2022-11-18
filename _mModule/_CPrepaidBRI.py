@@ -487,8 +487,8 @@ def get_log_bri_priv(SAMSLOT, msg):
         LOG.fw("025:extra_info = ", "-".join([__value, __uid, __cardno]))
         if resultStr == "0000":
             prepaid.topup_card_disconnect()
-            # resultStr, CardData = prepaid.topup_get_tokenbri()
-            resultStr = '0000'
+            resultStr, CardData = prepaid.topup_get_tokenbri()
+            # resultStr = '0000'
             if resultStr == "0000":
                 resultStr, rapdu = prepaid.topup_apdusend("255", "91AF")
                 # resultStr = '0000'
