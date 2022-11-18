@@ -522,7 +522,9 @@ def mandiri_get_log_priv():
                         while resultStr == "0000" and i <= max_t:
                             if i == 4:
                                 resultStr, rapdu = prepaid.topup_apdusend("255", "00D1050000")
-                                if rapdu == ('0'*240) or ('0'*100) in rapdu: continue
+                                if rapdu == ('0'*240) or ('0'*100) in rapdu: 
+                                    i = i + 1
+                                    continue
                                 if resultStr == "0000":
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
@@ -543,7 +545,9 @@ def mandiri_get_log_priv():
                             else:
                                 apdu = "00D10"+str(i)+"0000"
                                 resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
-                                if rapdu == ('0'*240) or ('0'*100) in rapdu: continue
+                                if rapdu == ('0'*240) or ('0'*100) in rapdu: 
+                                    i = i + 1
+                                    continue
                                 if resultStr == "0000":
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
