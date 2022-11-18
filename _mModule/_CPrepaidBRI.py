@@ -649,8 +649,9 @@ def get_log_bri_priv(SAMSLOT, msg):
         card_token = ""
         # resultStr, value = prepaid.topup_balance()
         # sleep(1)
-        resultStr, uid, cardno = prepaid.topup_get_sn()
-        # LOG.fw("025:cardno = ",cardno)
+        # resultStr, uid, cardno = prepaid.topup_get_sn()
+        resultStr, rapdu = prepaid.topup_apdusend("255", "FFCA000000")
+        uid = rapdu
         LOG.fw("025:uid = ",uid)
         # resultStr = prepaid.topup_card_disconnect()
         if resultStr == "0000":
