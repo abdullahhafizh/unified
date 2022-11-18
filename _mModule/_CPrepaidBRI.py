@@ -646,16 +646,16 @@ def get_log_bri_priv(SAMSLOT, msg):
         value = ""
         rapdu = ""
         sapdu = ""
-        Data = ""
+        card_token = ""
         # resultStr, value = prepaid.topup_balance()
         # sleep(1)
-        # resultStr, uid, cardno = prepaid.topup_get_sn()
+        resultStr, uid, cardno = prepaid.topup_get_sn()
         # LOG.fw("025:cardno = ",cardno)
-        # LOG.fw("025:uid = ",uid)
-        resultStr = prepaid.topup_card_disconnect()
+        LOG.fw("025:uid = ",uid)
+        # resultStr = prepaid.topup_card_disconnect()
         if resultStr == "0000":
             prepaid.topup_card_disconnect()
-            resultStr, CardData = prepaid.topup_get_tokenbri()
+            resultStr, card_token = prepaid.topup_get_tokenbri()
             if resultStr == "0000":
                 resultStr, rapdu = prepaid.topup_apdusend("255", "91AF")
                 if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "6700":
@@ -681,9 +681,9 @@ def get_log_bri_priv(SAMSLOT, msg):
                                         resultStr, rapdu = prepaid.topup_apdusend("255", "900A0000010000")
                                         if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
                                             # CARD – Get UID
-                                            resultStr, rapdu = prepaid.topup_apdusend("255", "FFCA000000")
-                                            uid = rapdu
-                                            LOG.fw("025:uid = ",uid)
+                                            # resultStr, rapdu = prepaid.topup_apdusend("255", "FFCA000000")
+                                            # uid = rapdu
+                                            # LOG.fw("025:uid = ",uid)
                                             if resultStr == "9000" or resultStr == "9100" or resultStr == "0000" or resultStr == "91AF":
                                                 # SAM – Authenticate Key
                                                 sapdu = "80B0000020" + cardno + uid + "FF0000030080000000" + rapdu
