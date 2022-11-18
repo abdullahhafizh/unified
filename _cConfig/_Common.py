@@ -715,7 +715,7 @@ SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '-
 COLOR_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'white')
 COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 
-UPDATE_BALANCE_URL_DEV = 'http://apidev.mdd.co.id:28194/v1/'
+UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
 UPDATE_BALANCE_URL = _ConfigParser.get_set_value('GENERAL', 'update^balance^url', 'http://apiv2.mdd.co.id:2020/v1/')
 
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
