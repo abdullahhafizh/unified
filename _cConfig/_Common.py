@@ -224,7 +224,7 @@ TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
 
 
 if not LIVE_MODE:
-    MID_BCA = '885000942678'
+    MID_BCA = '000942678'
     _ConfigParser.set_value('BCA', 'mid^topup', '000942678')
     TID_BCA = 'ELZSYB01'
     _ConfigParser.set_value('BCA', 'tid^topup', 'ELZSYB01')
