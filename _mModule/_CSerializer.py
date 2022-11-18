@@ -812,7 +812,7 @@ def GET_SN(Ser):
     del data
     del response
     
-    return result["code"], uid, sn
+    return result["code"], uid.encode('utf-8'), sn.encode('utf-8')
 
 
 def BCA_CARD_INFO(Ser, ATD):
