@@ -466,7 +466,6 @@ def bri_card_get_log(param, __global_response__):
         LOG.fw("025:Gagal", None, True)
 
 
-
 def get_raw_log_bri_priv(SAMSLOT, msg):
     resultStr = ""
     ErrorCode = ""
@@ -531,7 +530,6 @@ def get_raw_log_bri_priv(SAMSLOT, msg):
         msg = "{0}".format(ex)
     
     return resultStr, msg
-
 
 
 def get_log_bri_priv(SAMSLOT, msg):
@@ -604,29 +602,17 @@ def get_log_bri_priv(SAMSLOT, msg):
                 
                 n = 64
                 result1 = [resreport[i:i+n] for i in range(0, len(resreport), n)]
-                # history = []
-
                 for item in result1:
-                    item = item[-64:]
                     MID = item[:16]
                     TID = item[16:32]
                     TRXDATE = item[32:38]
                     TRXTIME = item[38:44]
                     TRXTYPE = item[44:46]
-                    AMOUNT = item[46:52]
-                    BEFORE = item[52:58]
-                    AFTER = item[58:64]       
-                    itemRow = str(MID) + "|" + str(TID) + "|" + str(TRXDATE) + "|" + str(TRXTIME) + "|" + str(TRXTYPE) + "|" + str(AMOUNT) + "|" + str(BEFORE) + "|" + str(AFTER)
-                    resreport = resreport + itemRow + "\r\n"
-                    # history.append({
-                    #     'type': _Common.BRI_LOG_LEGEND.get(TRXTYPE, ''),
-                    #     'trx_date': utils.serialize_str(str(TRXDATE), "/"),
-                    #     'trx_time': utils.serialize_str(str(TRXTIME), ":"),
-                    #     'amount': str(int("".join(reversed([AMOUNT[i:i+2] for i in range(0, 6, 2)])), 16)),
-                    #     'prev_balance': str(int("".join(reversed([BEFORE[i:i+2] for i in range(0, 6, 2)])), 16)),
-                    #     'last_balance': str(int("".join(reversed([AFTER[i:i+2] for i in range(0, 6, 2)])), 16)),
-                    #     # 'raw': item
-                    # })
+                    AMOUNT = utils.getint(item[46:52])
+                    BEFORE = utils.getint(item[52:58])
+                    AFTER = utils.getint(item[58:64])            
+                    itemDec = str(MID) + "|" + str(TID) + "|" + str(TRXDATE) + "|" + str(TRXTIME) + "|" + str(TRXTYPE) + "|" + str(AMOUNT) + "|" + str(BEFORE) + "|" + str(AFTER)
+                    resreport = resreport + itemDec + "#"
                 
                 if resultStr.upper() == "911C":
                     resultStr = "0000"
