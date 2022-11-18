@@ -912,7 +912,7 @@ def topup_apdusend(Slot, APDU):
 
         LOG.fw("<-- RAPDU = ", RAPDU)
         RAPDU = utils.only_alpanum(RAPDU)
-        LOG.fw("RAPDU = ", RAPDU)
+        # LOG.fw("RAPDU = ", RAPDU)
 
     except Exception as ex:
         LOG.fw("CMD $B0 ERROR: ", "{0}".format(ex))

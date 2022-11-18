@@ -717,7 +717,7 @@ def APDU_SEND(Ser, slot, info):
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
-    LOG.fw("RESPONSE:", result)
+    # LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
