@@ -792,22 +792,27 @@ def GET_SN(Ser):
     data = retrieve_rs232_data(Ser)
 
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
-    result = get_TSerialNumberres(response["data"])
+    result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
 
-    # Len = ((response["len"][0] << 8)+response["len"][1])-5
-    # rep = ''
-    # for i in range(0, Len-1):
-    #     rep = rep + chr(response["data"][i])
+    Len = ((response["len"][0] << 8)+response["len"][1])-5
 
+    #f70000 044580C21B5D80006013500433185031
+    uid = ''
+    for i in range(0, 14):
+        uid = uid + chr(result["rep"][i])
+
+    sn = ''
+    if Len > 16:
+        for i in range(16, 32):
+            sn = sn + chr(result["rep"][i])
+            
     del data
     del response
-
-    return result["code"], result["uid"], result["sn"]
+    
+    return result["code"], uid, sn
 
 
 def BCA_CARD_INFO(Ser, ATD):

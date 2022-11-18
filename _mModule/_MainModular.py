@@ -73,7 +73,7 @@ if __name__ == '__main__':
     
     # send_command("000", "COM9")
     # send_command("025", "3")
-    # prepaid.topup_get_sn()
+    # prepaid.get_card_sn()
 
     # test = '6013500433175495\xc3\xad'
     # print(utils.fix_report(test))

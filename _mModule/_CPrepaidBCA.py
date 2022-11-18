@@ -97,7 +97,7 @@ def get_card_info_bca(param, __global_response__):
     return res_str
 
 def on_detect():
-    res_str, CardUID, CardNo = prepaid.topup_get_sn()
+    res_str, CardUID, CardNo = prepaid.get_card_sn()
 
     LOG.fw("ONDetect CARDNO = ", CardNo)
     LOG.fw("ONDetect CARD_UID = ", CardUID)

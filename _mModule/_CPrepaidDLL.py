@@ -952,14 +952,14 @@ def topup_bca_lib_config(TID, MID):
 
 #---
 @func_set_timeout(30)
-def topup_get_sn():
+def get_card_sn():
     # global DLL_LOAD
     UID = ""
     SN = ""
     res_str = ""
     try:
 
-        # LOG.tracing("DLL: ", "topup_get_sn")
+        # LOG.tracing("DLL: ", "get_card_sn")
         LOG.fw("--> CMD READER = $F7")
 
         # structUID = ResponUID()
@@ -967,13 +967,13 @@ def topup_get_sn():
         # structSN = ResponSN()
         # p_structSN = pointer(structSN)
 
-        # func = DLL_LOAD.topup_get_sn
+        # func = DLL_LOAD.get_card_sn
         # res = func(p_structUID, p_structSN)
         # res_str = utils.to_4digit(res)
 
         # UID = structUID.repUID.decode("cp437")
         # SN = structSN.repSN.decode("cp437")
-        res_str, UID, SN = lib.topup_get_sn()
+        res_str, UID, SN = lib.get_card_sn()
     except Exception as ex:
         LOG.fw("CMD $F7 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())

@@ -243,7 +243,7 @@ def topup_bca_lib_config(C_TID, C_MID):
 
     return res_str.decode("utf-8")
 
-def topup_get_sn():
+def get_card_sn():
     global COMPORT
     if not is_serial_valid():
         return "FFFE", "", ""
