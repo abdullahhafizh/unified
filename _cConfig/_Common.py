@@ -347,8 +347,8 @@ ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 
 # Hardcoded Config For Bank Feature
 ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT', 'BCA', 'DKI']
-# ALLOWED_BANK_CHECK_CARD_LOG = ['MANDIRI', 'BNI']
-CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = _ConfigParser.get_set_value('GENERAL', 'allowed^card^history', 'MANDIRI|BNI')
+# CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = _ConfigParser.get_set_value('GENERAL', 'allowed^card^history', 'MANDIRI|BNI')
+CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = 'MANDIRI|BNI|BRI'
 ALLOWED_BANK_CHECK_CARD_LOG = CONFIG_ALLOWED_BANK_CHECK_CARD_LOG.split('|')
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
