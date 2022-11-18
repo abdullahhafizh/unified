@@ -473,17 +473,18 @@ def get_log_bri_priv(SAMSLOT, msg):
     ErrMsg = ""
 
     try:
-        cardno = ""
+        last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+        cardno = last_card_check['card_no']
+        LOG.fw("025:cardno = ",cardno)
         uid = ""
         value = ""
         rapdu = ""
         sapdu = ""
         Data = ""
-        # resultStr, value = prepaid.topup_balance()
-        # sleep(1)
-        resultStr, uid, cardno = prepaid.topup_get_sn()
-        LOG.fw("025:cardno = ",cardno)
-        # LOG.fw("025:uid = ",uid)
+        resultStr, __value = prepaid.topup_balance()
+        sleep(1)
+        resultStr, __uid, __cardno = prepaid.topup_get_sn()
+        LOG.fw("025:extra_info = ", __value, __uid, __cardno)
         if resultStr == "0000":
             prepaid.topup_card_disconnect()
             # resultStr, CardData = prepaid.topup_get_tokenbri()
