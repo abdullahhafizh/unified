@@ -196,6 +196,8 @@ def whoami():
 def empty(s):
     if s is None:
         return True
+    elif type(s) == dict and len(s.keys()) == 0:
+        return True
     elif type(s) == bool and s is False:
         return True
     elif type(s) == int and s == 0:

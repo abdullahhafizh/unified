@@ -1556,8 +1556,15 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             __param['remarks'] = remarks
         
         if 'topup' in trxid:
+            last_card_check = load_from_temp_data('last-card-check', 'json')
+
             __param['remarks2'] = load_from_temp_data(trxid+'-last-pending-result', 'json')
             __param['remarks3'] = load_from_temp_data(trxid+'-last-audit-result', 'json')
+            # Add Other Details 
+            __param['remarks3']['last_card_no'] = last_card_check.get('card_no', '')
+            __param['remarks3']['last_balance'] = last_card_check.get('balance', '')
+            __param['remarks3']['last_balance_time'] = last_card_check.get('timestamp', _Helper.time_string())
+            
         
         # Only Store Pending Transaction To Transaction Failure Table
         if failure_type == 'PENDING_TRANSACTION':

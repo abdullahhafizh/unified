@@ -1,3 +1,8 @@
+16.2.4-GLOBAL:
+- Add Detail (Stan, TID Bank, MID Bank) On Topup DKI Failure,
+- Add Detail (Last Balance, Timestamp) On Card Balance,
+- ...
+
 16.2.3-GLOBAL:
 - Disable BRI Card Log History,
 - Force Success Mandiri New Applet Log History,

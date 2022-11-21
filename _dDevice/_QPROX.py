@@ -586,6 +586,9 @@ def check_card_balance():
         if not _Common.CARD_TOPUP_FEATURES.get(bank_name, False):
             output['able_topup'] = 'DISABLED'
 
+        # Add Timestamp in Card Check
+        output['timestamp'] = _Helper.time_string()
+        
         LAST_CARD_CHECK = output
         _Common.store_to_temp_data('last-card-check', json.dumps(output))
         _Common.NFC_ERROR = ''
@@ -785,10 +788,10 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'remarks': __data,
             'c2c_mode': '1',
         }
-        # Update Last Audit Result
-        last_audit_result = _Common.load_from_temp_data(reff_no+'-last-audit-result', 'json')
-        last_audit_result['remarks'] = __data
-        _Common.store_to_temp_data(reff_no+'-last-audit-result', json.dumps(last_audit_result))
+        # # Update Last Audit Result
+        # last_audit_result = _Common.load_from_temp_data(reff_no+'-last-audit-result', 'json')
+        # last_audit_result['remarks'] = __data
+        # _Common.store_to_temp_data(reff_no+'-last-audit-result', json.dumps(last_audit_result))
         _Common.store_upload_sam_audit(param)
         # Update to server
         _Common.upload_mandiri_wallet()
@@ -969,6 +972,11 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
         _result = json.loads(_result)
         rc = _result.get('Result', 'FFFF').upper()
         if _response == 0 and len(_result) >= 196:
+            # Update Last Audit Result
+            last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+            if not _Helper.empty(last_audit_result):
+                last_audit_result['remarks'] = _result
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
             # Update Detail TRX Detail Attribute
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_FORCE_SETTLEMENT')
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
