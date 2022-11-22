@@ -4,6 +4,7 @@
 - Standardize Topup Failure Offline,
 - Fix Bug DKI Reversal,
 - Improve Handle Topup Mandiri Partial 100C,
+- Re-set limit Pending Topup,
 - ...
 
 16.2.3-GLOBAL:
