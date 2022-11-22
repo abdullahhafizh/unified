@@ -279,6 +279,7 @@ Base{
             prev_balance: cardData.balance,
             bank_type: cardData.bank_type,
             bank_name: cardData.bank_name,
+            timestamp: cardData.timestamp
         }
         var topup_amount = parseInt(selectedDenom) - parseInt(adminFee);
         var final_balance = parseInt(cardData.balance) + topup_amount;
@@ -480,6 +481,7 @@ Base{
                 card_no: info.card_no,
                 bank_type: info.bank_type,
                 bank_name: info.bank_name,
+                timestamp: info.timestamp,
             }
             //Define Data Card, Amount Button, Topup Availability
             if (ableTopupCode == "1008"){
