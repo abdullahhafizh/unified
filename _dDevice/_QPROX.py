@@ -2210,6 +2210,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 pending_data = {}
             # Re-write Last Audit Result
             last_audit_result.update({
+                    'tid': '',
+                    'mid': '',
                     'pending_result': pending_data,
                     'card_history': card_history.replace(',', ',\n'),
                     'amount': amount,
@@ -2259,6 +2261,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 pending_data = {}
             # Re-write Last Audit Result
             last_audit_result.update({
+                    'tid': _Common.TID_TOPUP_BCA,
+                    'mid': _Common.MID_TOPUP_BCA,
                     'pending_result': pending_data,
                     'card_history': '',
                     'amount': amount,
@@ -2299,6 +2303,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             # Re-write Last Audit Result
             last_audit_result.update({
                     'pending_result': pending_data,
+                    'tid': _Common.TID_TOPUP_ONLINE_DKI,
+                    'mid': _Common.MID_TOPUP_ONLINE_DKI,
                     'card_history': '',
                     'ack_result': '',
                     'refund_result': '',
