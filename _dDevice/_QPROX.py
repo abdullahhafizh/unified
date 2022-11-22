@@ -2173,7 +2173,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
                 LOGGER.debug((bank, str(param), str(response)))
                 card_history = bri_card_history_direct()
-                param['remarks'] = json.dumps({
+                param = pending_data.update({
                     'card_history': card_history,
                     'amount': amount,
                     'err_code': param.get('err_code'),
@@ -2212,7 +2212,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 if status == 200 and response['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
                 else:
-                    _Common.LAST_BCA_ERR_CODE = '44'
+                    # _Common.LAST_BCA_ERR_CODE = '44'
+                    pass
         except Exception as e:
             LOGGER.warning((e))
         finally:
