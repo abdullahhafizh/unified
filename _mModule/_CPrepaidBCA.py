@@ -606,6 +606,7 @@ def send_post_reversal_bca(URL_Server, card_no, reversal_data, last_balance, ref
         errorcode = '0000'
         r = requests.post(url=sURL, timeout=TIMEOUT_REQUESTS, json=payload, headers=_HTTPAccess.get_header())
         ValueText = r.text
+        _Common.LAST_BCA_REVERSAL_RESULT = r.text
         
         LOG.fw(":ReversalBCA = ", ValueText)
 

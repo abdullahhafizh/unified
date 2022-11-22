@@ -2078,7 +2078,6 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     if bank == 'MANDIRI':
         try:
-            param = last_audit_result
             # Mandiri Deposit Not Deducted
             if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
                 failure_rc = '0511'
@@ -2093,24 +2092,24 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     if rc == '100C':
                         # Slot SAM or Deposit
                         _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
-                        param['status'] = 'CORRECTION'
+                        last_audit_result['status'] = 'CORRECTION'
                         status = '0000'
                     else:
                         _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-                        param['status'] = 'FORCE_SETTLEMENT'
+                        last_audit_result['status'] = 'FORCE_SETTLEMENT'
                         status = 'FAILED'
                     _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
                     LOGGER.debug((_param, _response, _result))
                     if _response == 0 and len(_result) >= 196:
                         # Call Parse To Submit SAM Audit Report
-                        param['remarks'] = json.dumps({
+                        last_audit_result['remarks'] = json.dumps({
                             'mid': _Common.C2C_MID,
                             'tid': _Common.C2C_TID,
                             'amount': amount,
                             'force_report': _result,
-                            'err_code': param.get('err_code'),
+                            'err_code': last_audit_result.get('err_code'),
                         })
-                        _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
+                        _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
                         parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=status)
                         break
                     attempt -= 1
@@ -2119,6 +2118,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             LOGGER.warning((e))
         finally:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_'+failure_rc)
+    
     elif bank == 'BNI':
         # Get Card Log And Push SAM Audit
         try:
@@ -2146,7 +2146,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'sam_history': sam_history,
                     # 'sam_purse': sam_purse,
                     'card_purse': card_purse,
-                    'err_code': param.get('err_code'),
+                    'err_code': last_audit_result.get('err_code'),
                 })
                 _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
                 _Common.store_upload_sam_audit(param)
@@ -2159,13 +2159,14 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'BRI':
         try:
             if pending_data is not None:
+                reversal_result = ''
                 # Only Send Reversal If Already Get Access Token On Update Balance
                 if len(pending_data.get('access_token', '')) > 0:
                     _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
-                    response, result = _Command.send_request(param=_param, output=None)
+                    response, reversal_result = _Command.send_request(param=_param, output=None)
                     # {"Result":"0000","Command":"024","Parameter":"01234567|1234567abc|165eea86947a4e9483d1902f93495fc6|3",
                     # "Response":"6013500601505143|1000|66030","ErrorDesc":"Sukses"}
-                    LOGGER.debug((response, result))
+                    LOGGER.debug((response, reversal_result))
                 # Whatever The Reversal Result, Continue To Do Refund
                 param = {
                     'token': _Common.CORE_TOKEN,
@@ -2177,12 +2178,14 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
                 LOGGER.debug((bank, str(param), str(response)))
                 card_history = bri_card_history_direct()
-                param = pending_data.update({
+                last_audit_result = pending_data.update({
                     'card_history': card_history,
                     'amount': amount,
-                    'err_code': param.get('err_code'),
+                    'err_code': last_audit_result.get('err_code'),
+                    'refund_result': response,
+                    'reversal_result': reversal_result
                 })
-                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
                 if status == 200 and response['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
                 else:
@@ -2195,6 +2198,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
     elif bank == 'BCA':
         try:
+            bca_card_info_data = ''
             if pending_data is not None:
                 # Sending ACK
                 res_bca_card_info, bca_card_info_data = bca_card_info()
@@ -2213,6 +2217,14 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 # Send ACK
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
                 LOGGER.debug((bank, str(param), str(response)))
+                param = pending_data.update({
+                    'amount': amount,
+                    'err_code': last_audit_result.get('err_code'),
+                    'ack_result': response,
+                    'card_info': bca_card_info_data,
+                    'reversal_result': _Common.LAST_BCA_REVERSAL_RESULT
+                })
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
                 if status == 200 and response['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
                 else:
@@ -2221,6 +2233,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
         except Exception as e:
             LOGGER.warning((e))
         finally:
+            _Common.LAST_BCA_REVERSAL_RESULT = ''
             sub_rc = _Common.LAST_BCA_ERR_CODE
             if sub_rc == '': sub_rc = '01'
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
@@ -2236,6 +2249,12 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 }
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
                 LOGGER.debug((bank, str(param), str(response)))
+                param = pending_data.update({
+                    'amount': amount,
+                    'err_code': last_audit_result.get('err_code'),
+                    'reversal_result': response
+                })
+                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
                 if status == 200 and response['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)      
                 else:
