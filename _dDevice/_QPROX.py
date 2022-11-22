@@ -1037,6 +1037,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
                 return
         
+        topup_audit_status = 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED'
+        
         if rc == '100C':
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
             reset_card_contactless()
@@ -1048,10 +1050,10 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
             LOGGER.info(('PREV_BALANCE_DEPOSIT - 100C', prev_deposit_balance ))
             LOGGER.info(('LAST_BALANCE_DEPOSIT - 100C', last_deposit_balance ))     
-            
+            topup_audit_status = 'PARTIAL_FAILURE'
         
         last_audit_report = json.dumps({
-                'trxid': trxid+'_FAILED',
+                'trxid': trxid + '_FAILED',
                 'samCardNo': _Common.MANDIRI_SAM_NO_1,
                 'samCardSlot': _Common.MANDIRI_ACTIVE,
                 'samPrevBalance': prev_deposit_balance,
@@ -1059,8 +1061,11 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 'topupCardNo': last_card_check['card_no'],
                 'topupPrevBalance': last_card_check['balance'],
                 'topupLastBalance': last_card_check['balance'],
-                'status': 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED',
-                'remarks': {},
+                'status': topup_audit_status,
+                'remarks': {
+                    'mid': _Common.C2C_MID,
+                    'tid': _Common.C2C_TID
+                    },
                 'last_result': topup_result,
                 'err_code': topup_result.get('Result'),
                 # 'sam_purse': init_result,
@@ -1077,7 +1082,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     except Exception as e:
         LOGGER.warning((e))
         last_audit_report = json.dumps({
-                'trxid': trxid+'_FAILED',
+                'trxid': trxid + '_FAILED',
                 'samCardNo': _Common.MANDIRI_SAM_NO_1,
                 'samCardSlot': _Common.MANDIRI_ACTIVE,
                 'samPrevBalance': prev_deposit_balance,
@@ -1086,7 +1091,10 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 'topupPrevBalance': last_card_check['balance'],
                 'topupLastBalance': last_card_check['balance'],
                 'status': 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED',
-                'remarks': {},
+                'remarks': {
+                    'mid': _Common.C2C_MID,
+                    'tid': _Common.C2C_TID
+                    },
                 'last_result': topup_result,
                 'err_code': topup_result.get('Result'),
                 # 'sam_purse': init_result,
@@ -1452,7 +1460,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 return
         # Real False Condition
         last_audit_report = json.dumps({
-                'trxid': trxid+'_FAILED',
+                'trxid': trxid + '_FAILED',
                 'samCardNo': _Common.BNI_SAM_1_NO,
                 'samCardSlot': _Common.BNI_ACTIVE,
                 'samPrevBalance': deposit_prev_balance,
@@ -1461,7 +1469,10 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 'topupPrevBalance': last_card_check['balance'],
                 'topupLastBalance': last_card_check['balance'],
                 'status': 'FORCE_SETTLEMENT' if str(deposit_prev_balance) != str(_Common.BNI_ACTIVE_WALLET) else 'FAILED',
-                'remarks': {},
+                'remarks': {
+                    'tid': _Common.TID_BNI,
+                    'mid': _Common.MID_BNI
+                    },
                 'last_result': topup_result,
                 'err_code': topup_result.get('Result'),
                 # 'sam_purse': init_result,
