@@ -677,6 +677,9 @@ def direct_card_balance():
                 output['able_topup'] = '1004'
             else:
                 output['able_topup'] = '0000'
+                
+        # Add Check Balance Timestamp
+        output['timestamp'] = _Helper.time_string()
         
         # Validate MDD General Black List
         if card_no in _Common.GENERAL_CARD_BLOCKED_LIST:
@@ -769,7 +772,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
         elif status == 'FAILED':
             # Renew C2C Deposit Balance Info
-            mdr_c2c_balance_info()
+            mdr_c2c_balance_info()        
         # Ensure The C2C_DEPOSIT_NO same with Report
         if __report_deposit[:16] != _Common.C2C_DEPOSIT_NO:
             _Common.C2C_DEPOSIT_NO = __report_deposit[:16]
@@ -788,10 +791,6 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             'remarks': __data,
             'c2c_mode': '1',
         }
-        # # Update Last Audit Result
-        # last_audit_result = _Common.load_from_temp_data(reff_no+'-last-audit-result', 'json')
-        # last_audit_result['remarks'] = __data
-        # _Common.store_to_temp_data(reff_no+'-last-audit-result', json.dumps(last_audit_result))
         _Common.store_upload_sam_audit(param)
         # Update to server
         _Common.upload_mandiri_wallet()
@@ -972,11 +971,11 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
         _result = json.loads(_result)
         rc = _result.get('Result', 'FFFF').upper()
         if _response == 0 and len(_result) >= 196:
-            # Update Last Audit Result
-            last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
-            if not _Helper.empty(last_audit_result):
-                last_audit_result['remarks'] = _result
-                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
+            # # Update Last Audit Result
+            # last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+            # if not _Helper.empty(last_audit_result):
+            #     last_audit_result['force_report'] = _result
+            #     _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
             # Update Detail TRX Detail Attribute
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_FORCE_SETTLEMENT')
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
@@ -2079,6 +2078,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     if bank == 'MANDIRI':
         try:
+            param = last_audit_result
             # Mandiri Deposit Not Deducted
             if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
                 failure_rc = '0511'
@@ -2093,8 +2093,12 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     if rc == '100C':
                         # Slot SAM or Deposit
                         _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
+                        param['status'] = 'CORRECTION'
+                        status = '0000'
                     else:
                         _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+                        param['status'] = 'FORCE_SETTLEMENT'
+                        status = 'FAILED'
                     _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
                     LOGGER.debug((_param, _response, _result))
                     if _response == 0 and len(_result) >= 196:
@@ -2107,7 +2111,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                             'err_code': param.get('err_code'),
                         })
                         _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
-                        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='FAILED')
+                        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=status)
                         break
                     attempt -= 1
                     sleep(1)
