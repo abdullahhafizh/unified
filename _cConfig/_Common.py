@@ -1563,8 +1563,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             __param['remarks3'] = load_from_temp_data(trxid+'-last-audit-result', 'json')
             # Add Other Details 
             # __param['remarks3']['last_card_no'] = last_card_check.get('card_no', '')
-            __param['remarks3']['cardLastBalance'] = last_card_check.get('balance', '')
-            __param['remarks3']['recheckTime'] = last_card_check.get('timestamp', _Helper.time_string())
+            __param['remarks3']['last_card_check'] = last_card_check
             
         
         # Only Store Pending Transaction To Transaction Failure Table

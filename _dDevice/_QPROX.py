@@ -2158,8 +2158,10 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     # Below Will Handle Topup Online Failure Which Must Be Handling Reversal/Topup As Well
     elif bank == 'BRI':
         try:
+            card_history = bri_card_history_direct()   
+            reversal_result = ''
+            refund_result = ''
             if pending_data is not None:
-                reversal_result = ''
                 # Only Send Reversal If Already Get Access Token On Update Balance
                 if len(pending_data.get('access_token', '')) > 0:
                     _param = QPROX['REVERSAL_ONLINE_BRI'] + '|' + _Common.TID + '|' + _Common.CORE_MID + '|' + _Common.CORE_TOKEN +  '|' + _Common.SLOT_BRI + '|' + pending_data.get('access_token') + '|' + pending_data.get('bank_reff_no') + '|'
@@ -2175,21 +2177,26 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'reff_no_host': pending_data.get('reff_no_trx'),
                     'card_no': card_data.get('card_no'),
                 }
-                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
-                LOGGER.debug((bank, str(param), str(response)))
-                card_history = bri_card_history_direct()
-                last_audit_result = pending_data.update({
-                    'card_history': card_history,
-                    'amount': amount,
-                    'err_code': last_audit_result.get('err_code'),
-                    'refund_result': response,
-                    'reversal_result': reversal_result
-                })
-                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
-                if status == 200 and response['response']['code'] == 200:
+                status, refund_result = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
+                LOGGER.debug((bank, str(param), str(refund_result)))
+                
+                if status == 200 and refund_result['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
                 else:
                     _Common.LAST_BRI_ERR_CODE = '33'
+            else:
+                pending_data = last_audit_result
+            # Re-write Last Audit Result
+            last_audit_result = pending_data.update({
+                    'card_history': card_history,
+                    'amount': amount,
+                    'err_code': last_audit_result.get('err_code'),
+                    'ack_result': '',
+                    'refund_result': refund_result,
+                    'reversal_result': reversal_result,
+                    'card_info': ''
+                })
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
         except Exception as e:
             LOGGER.warning((e))
         finally:
@@ -2200,6 +2207,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'BCA':
         try:
             bca_card_info_data = ''
+            ack_result = ''
             if pending_data is not None:
                 # Sending ACK
                 res_bca_card_info, bca_card_info_data = bca_card_info()
@@ -2216,21 +2224,27 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'last_balance': card_data.get('balance')
                 }
                 # Send ACK
-                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
-                LOGGER.debug((bank, str(param), str(response)))
-                param = pending_data.update({
-                    'amount': amount,
-                    'err_code': last_audit_result.get('err_code'),
-                    'ack_result': response,
-                    'card_info': bca_card_info_data,
-                    'reversal_result': _Common.LAST_BCA_REVERSAL_RESULT
-                })
-                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
-                if status == 200 and response['response']['code'] == 200:
+                status, ack_result = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
+                LOGGER.debug((bank, str(param), str(ack_result)))
+                
+                if status == 200 and ack_result['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)
                 else:
                     # _Common.LAST_BCA_ERR_CODE = '44'
                     pass
+            else:
+                pending_data = last_audit_result
+            # Re-write Last Audit Result
+            param = pending_data.update({
+                    'card_history': '',
+                    'amount': amount,
+                    'err_code': last_audit_result.get('err_code'),
+                    'ack_result': ack_result,
+                    'refund_result': '',
+                    'card_info': bca_card_info_data,
+                    'reversal_result': _Common.LAST_BCA_REVERSAL_RESULT
+            })
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
         except Exception as e:
             LOGGER.warning((e))
         finally:
@@ -2241,6 +2255,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             
     elif bank == 'DKI':
         try:
+            reversal_result = ''
             if pending_data is not None:
                 param = {
                     'token': _Common.CORE_TOKEN,
@@ -2250,17 +2265,24 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'reff_no': trxid
                 }
                 status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
-                LOGGER.debug((bank, str(param), str(response)))
-                param = pending_data.update({
-                    'amount': amount,
-                    'err_code': last_audit_result.get('err_code'),
-                    'reversal_result': response
-                })
-                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
-                if status == 200 and response['response']['code'] == 200:
+                LOGGER.debug((bank, str(param), str(reversal_result)))
+                if status == 200 and reversal_result['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)      
                 else:
                     _Common.LAST_DKI_ERR_CODE = '52'
+            else:
+                pending_data = last_audit_result
+            # Re-write Last Audit Result
+            param = pending_data.update({
+                    'card_history': '',
+                    'ack_result': '',
+                    'refund_result': '',
+                    'card_info': '',
+                    'amount': amount,
+                    'err_code': last_audit_result.get('err_code'),
+                    'reversal_result': reversal_result
+            })
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
         except Exception as e:
             LOGGER.warning((e))
         finally:
