@@ -2154,7 +2154,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'tid': _Common.TID_BNI,
                     'can': card_data.get('card_no'),
                     'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
-                    'card_history': card_history,
+                    'card_history': card_history.replace(',', ',\n'),
                     'amount': amount,
                     'sam_history': sam_history,
                     'force_report': '',
@@ -2211,7 +2211,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             # Re-write Last Audit Result
             last_audit_result.update({
                     'pending_result': pending_data,
-                    'card_history': card_history,
+                    'card_history': card_history.replace(',', ',\n'),
                     'amount': amount,
                     'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                     'ack_result': '',
