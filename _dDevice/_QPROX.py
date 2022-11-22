@@ -971,11 +971,6 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
         _result = json.loads(_result)
         rc = _result.get('Result', 'FFFF').upper()
         if _response == 0 and len(_result) >= 196:
-            # # Update Last Audit Result
-            # last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
-            # if not _Helper.empty(last_audit_result):
-            #     last_audit_result['force_report'] = _result
-            #     _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
             # Update Detail TRX Detail Attribute
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_FORCE_SETTLEMENT')
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=set_status)
@@ -2118,7 +2113,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'tid': _Common.C2C_TID,
                     'amount': amount,
                     'force_report': force_report,
-                    'err_code': last_audit_result.get('err_code'),
+                    'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                     'can': '',
                     'csn': '',
                     'card_history': '',
@@ -2165,7 +2160,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'force_report': '',
                     # 'sam_purse': sam_purse,
                     'card_purse': card_purse,
-                    'err_code': last_audit_result.get('err_code'),
+                    'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                 }
                 
             param['remarks'] = json.dumps(extra_data)
@@ -2218,7 +2213,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'pending_result': pending_data,
                     'card_history': card_history,
                     'amount': amount,
-                    'err_code': last_audit_result.get('err_code'),
+                    'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                     'ack_result': '',
                     'refund_result': refund_result,
                     'reversal_result': reversal_result,
@@ -2267,7 +2262,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'pending_result': pending_data,
                     'card_history': '',
                     'amount': amount,
-                    'err_code': last_audit_result.get('err_code'),
+                    'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                     'ack_result': ack_result,
                     'refund_result': '',
                     'card_info': bca_card_info_data,
@@ -2309,7 +2304,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'refund_result': '',
                     'card_info': '',
                     'amount': amount,
-                    'err_code': last_audit_result.get('err_code'),
+                    'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                     'reversal_result': reversal_result
             })
             _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
