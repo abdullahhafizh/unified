@@ -2196,6 +2196,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             sub_rc = _Common.LAST_BRI_ERR_CODE
             if sub_rc == '': sub_rc = '01'
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
+            
     elif bank == 'BCA':
         try:
             bca_card_info_data = ''
@@ -2237,6 +2238,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             sub_rc = _Common.LAST_BCA_ERR_CODE
             if sub_rc == '': sub_rc = '01'
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_04'+sub_rc)
+            
     elif bank == 'DKI':
         try:
             if pending_data is not None:
