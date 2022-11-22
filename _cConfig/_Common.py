@@ -1564,6 +1564,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             __param['remarks3'] = load_from_temp_data(trxid+'-last-audit-result', 'json')
             # Add Other Details 
             # __param['remarks3']['last_card_no'] = last_card_check.get('card_no', '')
+            if type(__param['remarks3']) != dict: __param['remarks3'] = {}
             __param['remarks3']['last_card_check'] = last_card_check
             
         
