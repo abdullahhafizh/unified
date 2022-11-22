@@ -335,7 +335,8 @@ PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
 
 DISABLE_SENTRY_LOGGING = True if _ConfigParser.get_set_value('GENERAL', 'disable^sentry^logging', '1') == '1' else False
-NEW_TOPUP_FAILURE_HANDLER = True if _ConfigParser.get_set_value('GENERAL', 'new^topup^failure^handler', '1') == '1' else False
+# NEW_TOPUP_FAILURE_HANDLER = True if _ConfigParser.get_set_value('GENERAL', 'new^topup^failure^handler', '1') == '1' else False
+NEW_TOPUP_FAILURE_HANDLER = True
 
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):

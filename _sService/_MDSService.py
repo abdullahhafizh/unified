@@ -367,7 +367,7 @@ def push_trx_online(payload):
         }
         if 'transaction_status' in payload.keys():
             # param = {**param, **payload}
-            param = param.update(payload)
+            param.update(payload)
         else:
             new_param = {
                 "invoice_number": str(payload['shop_type']) + str(payload['epoch']),
@@ -386,7 +386,7 @@ def push_trx_online(payload):
                 "session_id": _Common.MDS_SESSION,
             }
             # param = {**param, **new_param}
-            param = param.update(new_param)
+            param.update(new_param)
         endpoint = '/unik-tablet-service/v1/push-trx/topup-online'
         status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))
@@ -432,7 +432,7 @@ def push_trx_offline(payload):
             card_force_report = payload['card_force_report']
             report_type = 'FORCE SETTLEMENT'
             # param = {**param, **payload}
-            param = param.update(payload)
+            param.update(payload)
         else:
             new_param = {
                 "trx_id": str(payload['shop_type']) + str(payload['epoch']),
@@ -453,7 +453,7 @@ def push_trx_offline(payload):
                 "deposit_prev_balance": payload['topup_details']['prev_deposit'],
                 "deposit_last_balance": payload['topup_details']['last_deposit'],
             }
-            param = param.update(new_param)
+            param.update(new_param)
         endpoint = '/unik-tablet-service/v1/push-trx/topup-offline'
         status, response = _HTTPAccess.post_to_url(url=MDS_HOST+endpoint, param=param, header=header)
         LOGGER.debug((status, response))

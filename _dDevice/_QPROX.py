@@ -2127,7 +2127,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'card_purse': '',
             }
             
-            last_audit_result = last_audit_result.update(extra_data)
+            last_audit_result.update(extra_data)
             _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
             
         except Exception as e:
@@ -2174,7 +2174,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 # Send To SAM Audit If Only Deduct Deposit Balance
                 _Common.store_upload_sam_audit(param)
             
-            last_audit_result = last_audit_result.update(extra_data)
+            last_audit_result.update(extra_data)
             _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
 
         except Exception as e:
@@ -2214,7 +2214,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             else:
                 pending_data = {}
             # Re-write Last Audit Result
-            last_audit_result = last_audit_result.update({
+            last_audit_result.update({
                     'pending_result': pending_data,
                     'card_history': card_history,
                     'amount': amount,
@@ -2263,7 +2263,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             else:
                 pending_data = {}
             # Re-write Last Audit Result
-            last_audit_result = last_audit_result.update({
+            last_audit_result.update({
                     'pending_result': pending_data,
                     'card_history': '',
                     'amount': amount,
@@ -2302,7 +2302,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             else:
                 pending_data = {}
             # Re-write Last Audit Result
-            last_audit_result = last_audit_result.update({
+            last_audit_result.update({
                     'pending_result': pending_data,
                     'card_history': '',
                     'ack_result': '',
