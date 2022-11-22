@@ -1090,7 +1090,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 'topupCardNo': last_card_check['card_no'],
                 'topupPrevBalance': last_card_check['balance'],
                 'topupLastBalance': last_card_check['balance'],
-                'status': 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED',
+                'status': 'FAILED',
                 'remarks': {
                     'mid': _Common.C2C_MID,
                     'tid': _Common.C2C_TID
