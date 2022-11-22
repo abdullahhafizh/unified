@@ -1,8 +1,9 @@
 16.2.4-GLOBAL:
-- Add Detail (Stan, TID Bank, MID Bank) On Topup DKI Failure,
-- Add Detail (Last Balance, Timestamp) On Card Balance,
-- Fix Detail Topup Failure Mandiri,
-- Add Detail Topup Failure Online With Reversal/Refund Result,
+- Add Detail Timestamp On Card Balance,
+- Standardize Topup Failure Online,
+- Standardize Topup Failure Offline,
+- Fix Bug DKI Reversal,
+- Improve Handle Topup Mandiri Partial 100C,
 - ...
 
 16.2.3-GLOBAL:

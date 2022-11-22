@@ -2036,6 +2036,7 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
             }
             LOGGER.info((bank, str(output), 'SUCCESS_TOPUP_BUT_NOT_FOUND_REPORT'))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+            
     elif bank == 'BNI':
         output = {
             'last_balance': card_data.get('balance'),
@@ -2078,6 +2079,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     if bank == 'MANDIRI':
         try:
+            force_report = ''
             # Mandiri Deposit Not Deducted
             if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
                 failure_rc = '0511'
@@ -2086,6 +2088,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 rc = last_audit_result.get('err_code')
                 amount = int(amount) + _Common.KIOSK_ADMIN
                 attempt = 2
+                
                 while True:
                     if attempt == 0:
                         break
@@ -2093,27 +2096,40 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                         # Slot SAM or Deposit
                         _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
                         last_audit_result['status'] = 'CORRECTION'
-                        status = '0000'
                     else:
                         _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
                         last_audit_result['status'] = 'FORCE_SETTLEMENT'
                         status = 'FAILED'
-                    _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
-                    LOGGER.debug((_param, _response, _result))
-                    if _response == 0 and len(_result) >= 196:
-                        # Call Parse To Submit SAM Audit Report
-                        last_audit_result['remarks'] = json.dumps({
-                            'mid': _Common.C2C_MID,
-                            'tid': _Common.C2C_TID,
-                            'amount': amount,
-                            'force_report': _result,
-                            'err_code': last_audit_result.get('err_code'),
-                        })
-                        _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
-                        parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status=status)
+                        
+                    _response, force_report = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+                    LOGGER.debug((_param, _response, force_report))
+                    if _response == 0 and len(force_report) >= 196:
+                        if rc == '100C': status = '0000'
+                        parse_c2c_report(report=force_report, reff_no=trxid, amount=amount, status=status)
+                        if status == '0000':
+                            LOGGER.info(('MANDIRI_TOPUP_PARTIAL_SUCCESS', rc, status, force_report))
+                            return
                         break
                     attempt -= 1
                     sleep(1)
+                    
+            extra_data = {
+                    'mid': _Common.C2C_MID,
+                    'tid': _Common.C2C_TID,
+                    'amount': amount,
+                    'force_report': force_report,
+                    'err_code': last_audit_result.get('err_code'),
+                    'can': '',
+                    'csn': '',
+                    'card_history': '',
+                    'sam_history': '',
+                    # 'sam_purse': sam_purse,
+                    'card_purse': '',
+            }
+            
+            last_audit_result = last_audit_result.update(extra_data)
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
+            
         except Exception as e:
             LOGGER.warning((e))
         finally:
@@ -2134,9 +2150,11 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     param.pop('last_result')
                 # Will Change To Card Purse
                 # sam_purse = last_audit_result.get('sam_purse')
-                sam_history = last_audit_result.get('sam_history', '') 
-                card_purse, card_history = bni_card_history_direct(10)
-                param['remarks'] = json.dumps({
+        
+            sam_history = last_audit_result.get('sam_history', '') 
+            card_purse, card_history = bni_card_history_direct(10)
+            
+            extra_data = {
                     'mid': _Common.MID_BNI,
                     'tid': _Common.TID_BNI,
                     'can': card_data.get('card_no'),
@@ -2144,12 +2162,21 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'card_history': card_history,
                     'amount': amount,
                     'sam_history': sam_history,
+                    'force_report': '',
                     # 'sam_purse': sam_purse,
                     'card_purse': card_purse,
                     'err_code': last_audit_result.get('err_code'),
-                })
-                _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
+                }
+                
+            param['remarks'] = json.dumps(extra_data)
+            
+            if failure_rc == '02':
+                # Send To SAM Audit If Only Deduct Deposit Balance
                 _Common.store_upload_sam_audit(param)
+            
+            last_audit_result = last_audit_result.update(extra_data)
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
+
         except Exception as e:
             LOGGER.warning((e))
         finally:
@@ -2185,9 +2212,10 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 else:
                     _Common.LAST_BRI_ERR_CODE = '33'
             else:
-                pending_data = last_audit_result
+                pending_data = {}
             # Re-write Last Audit Result
-            last_audit_result = pending_data.update({
+            last_audit_result = last_audit_result.update({
+                    'pending_result': pending_data,
                     'card_history': card_history,
                     'amount': amount,
                     'err_code': last_audit_result.get('err_code'),
@@ -2233,9 +2261,10 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     # _Common.LAST_BCA_ERR_CODE = '44'
                     pass
             else:
-                pending_data = last_audit_result
+                pending_data = {}
             # Re-write Last Audit Result
-            param = pending_data.update({
+            last_audit_result = last_audit_result.update({
+                    'pending_result': pending_data,
                     'card_history': '',
                     'amount': amount,
                     'err_code': last_audit_result.get('err_code'),
@@ -2244,7 +2273,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'card_info': bca_card_info_data,
                     'reversal_result': _Common.LAST_BCA_REVERSAL_RESULT
             })
-            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
         except Exception as e:
             LOGGER.warning((e))
         finally:
@@ -2264,16 +2293,17 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'card_no': card_data.get('card_no'),
                     'reff_no': trxid
                 }
-                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=_param)
+                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=param)
                 LOGGER.debug((bank, str(param), str(reversal_result)))
                 if status == 200 and reversal_result['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)      
                 else:
                     _Common.LAST_DKI_ERR_CODE = '52'
             else:
-                pending_data = last_audit_result
+                pending_data = {}
             # Re-write Last Audit Result
-            param = pending_data.update({
+            last_audit_result = last_audit_result.update({
+                    'pending_result': pending_data,
                     'card_history': '',
                     'ack_result': '',
                     'refund_result': '',
@@ -2282,7 +2312,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'err_code': last_audit_result.get('err_code'),
                     'reversal_result': reversal_result
             })
-            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(param))
+            _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
         except Exception as e:
             LOGGER.warning((e))
         finally:
