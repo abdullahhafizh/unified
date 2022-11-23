@@ -5,6 +5,7 @@
 - Fix Bug DKI Reversal,
 - Improve Handle Topup Mandiri Partial 100C,
 - Re-set limit Pending Topup,
+- Force Confirm Topup Online After Failure,
 - ...
 
 16.2.3-GLOBAL:

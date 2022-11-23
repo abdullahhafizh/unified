@@ -2079,7 +2079,86 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
             }
         LOGGER.info((bank, str(output)))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+        # Must Send Force ACK Success To Core API
+        # Merging Pending Data With Output
+        output.update(pending_data)
+        send_force_confirmation(bank, output)
+        
+TOPUP_URL = _Common.UPDATE_BALANCE_URL_DEV
+
+if _Common.LIVE_MODE is True or _Common.PTR_MODE is True:
+    TOPUP_URL = _Common.UPDATE_BALANCE_URL
     
+
+def send_force_confirmation(bank, data):
+    if bank == 'BRI':
+        try:
+            param = {
+                'invoice_no': data.get('invoice_no'),
+                'token': _Common.CORE_TOKEN,
+                'mid': _Common.CORE_MID,
+                'tid': _Common.TID,
+                'reff_no_host': data.get('reff_no_trx'),
+                'card_no': data.get('card_no'),
+                'last_balance': data.get('last_balance'),
+                'force_confirm': 1,
+                'random_token': 'N/A'
+            }
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bri/confirm', param=param)
+            LOGGER.debug((str(param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                pass
+            else:
+                param['endpoint'] = 'topup-bri/confirm'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bri/confirm', payload=param)
+        except Exception as e:
+            LOGGER.warning((e))
+            
+    elif bank == 'BCA':
+        try:
+            param = {
+                'invoice_no': data.get('invoice_no'),
+                'token': _Common.CORE_TOKEN,
+                'mid': _Common.CORE_MID,
+                'tid': _Common.TID,
+                'reference_id': data.get('reference_id'),
+                'card_no': data.get('card_no'),
+                'last_balance': data.get('last_balance'),
+                'force_confirm': 1,
+                'confirm_data': 'N/A'
+            }
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bca/confirm', param=param)
+            LOGGER.debug((str(param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                pass
+            else:
+                param['endpoint'] = 'topup-bca/confirm'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-bca/confirm', payload=param)
+        except Exception as e:
+            LOGGER.warning((e))
+            
+    elif bank == 'DKI':
+        try:
+            param = {
+                'invoice_no': data.get('invoice_no'),
+                'token': _Common.CORE_TOKEN,
+                'mid': _Common.CORE_MID,
+                'tid': _Common.TID,
+                'reff_no': data.get('reff_no'),
+                'card_no': data.get('card_no'),
+                'last_balance': data.get('last_balance'),
+                'force_confirm': 1,
+            }
+            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/confirm', param=param)
+            LOGGER.debug((str(param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                pass
+            else:
+                param['endpoint'] = 'topup-dki/confirm'
+                _Common.store_request_to_job(name=_Helper.whoami(), url=TOPUP_URL + 'topup-dki/confirm', payload=param)
+        except Exception as e:
+            LOGGER.warning((e))
+
 
 def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')

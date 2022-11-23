@@ -453,7 +453,9 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             #    }
             # }
                 reff_no = _param.get('invoice_no')
-                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
+                data = response['data']
+                data.update(_param)
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -494,7 +496,9 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 #    }
                 # }
                 reff_no = _param.get('invoice_no')
-                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
+                data = response['data']
+                data.update(_param)
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -538,7 +542,9 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 #    }
                 # }
                 reff_no = _param.get('invoice_no')
-                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
+                data = response['data']
+                data.update(_param)
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -603,7 +609,9 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 reff_no = _param.get('invoice_no')
-                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(response['data']))
+                data = response['data']
+                data.update(_param)
+                _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
                 _Common.online_logger([response, bank, _param], 'general')
@@ -1623,6 +1631,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                     pending_result['trxid'] = trxid
                     pending_result['access_token'] = LAST_BRI_ACCESS_TOKEN
                     pending_result['bank_reff_no'] = LAST_BRI_REFF_NO_HOST
+                    pending_result.update(_param)
                     _QPROX.new_topup_failure_handler('BRI', trxid, amount, pending_result)
                     return
                 rc = _Common.LAST_READER_ERR_CODE
@@ -1738,7 +1747,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     return
             if update_result is False or update_result == 'BCA_TOPUP_CORRECTION':
                 _Common.LAST_BCA_ERR_CODE = '41'
-                if _Common.NEW_TOPUP_FAILURE_HANDLER:            
+                if _Common.NEW_TOPUP_FAILURE_HANDLER:        
+                    pending_result.update(_param)
                     _QPROX.new_topup_failure_handler('BCA', trxid, amount, pending_result)
                     return False
                 rc = _Common.LAST_READER_ERR_CODE
@@ -1939,6 +1949,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                 if not update_result:
                     _Common.LAST_DKI_ERR_CODE = '51'
                     if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                        pending_result.update(_param)
                         _QPROX.new_topup_failure_handler('DKI', trxid, amount, pending_result)
                         return False
                     else:

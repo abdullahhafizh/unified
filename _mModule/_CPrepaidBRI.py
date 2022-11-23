@@ -369,7 +369,14 @@ def do_send_confirm_bri(URL_Server, token, tid, mid, card_no, random_token, reff
     errorcode = ""
     try:
         sURL = URL_Server + "topup-bri/confirm"
-        payload = {"token":token, "tid":tid, "mid":mid, "card_no":card_no, "random_token": random_token, "reff_no_host": reff_no_host}
+        payload = {
+            "token":token, 
+            "tid":tid, 
+            "mid":mid, 
+            "card_no":card_no, 
+            "random_token": random_token, 
+            "reff_no_host": reff_no_host
+            }
         LOG.fw(":confirmbri url = ", sURL)
         LOG.fw(":confirmbri json = ", payload)
 
