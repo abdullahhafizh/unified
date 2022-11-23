@@ -201,10 +201,11 @@ BNI_ACTIVATION_RETRY = '3'
 BNI_GET_REFERENCE_TIMEOUT = _ConfigParser.get_set_value('BNI', 'get^reference^timeout^minute', '30')
 URL_BNI_ACTIVATION = _ConfigParser.get_set_value('BNI', 'url^activation', 'http://axa.mdd.co.id:5000/')
 BNI_REMOTE_ACTIVATION = _ConfigParser.get_set_value('BNI', 'remote^activation', '0')
+
 if LIVE_MODE is True:
-    if not PTR_MODE:
-        URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
-        _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
+    # if not PTR_MODE:
+        # URL_BNI_ACTIVATION = 'http://axa.mdd.co.id:5000/'
+        # _ConfigParser.set_value('BNI', 'url^activation', URL_BNI_ACTIVATION)
     BNI_REMOTE_ACTIVATION = True
     _ConfigParser.set_value('BNI', 'remote^activation', '1')
     
