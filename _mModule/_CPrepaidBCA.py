@@ -413,19 +413,19 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             lastbalance = (int(balance) + int(amount))
                                 
                         # Not Success 0000 But Have Report
-                        elif cardno in report:
-                            success_topup = False
-                            lastbalance = int(balance)
+                        # elif cardno in report:
+                        #     success_topup = False
+                        #     lastbalance = int(balance)
                                 
                         # Report 0000 But Have No Report
-                        elif report == "":
+                        elif report == "" or len(report) != 512:
                             report = bca_topup_lastreport()
                             LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     
                             if len(report) == 512:
                                 success_topup = True
                                 lastbalance = (int(balance) + int(amount))
-                            elif report == "":
+                            elif report == "" or len(report) != 512:
                                 success_topup = False
                                 resultStr, report = topup_card_info(bcaStaticATD)
                                 LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
