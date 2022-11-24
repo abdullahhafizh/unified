@@ -419,7 +419,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 
                         # Report 0000 But Have No Report
                         elif report == "" or len(report) != 512:
-                            report = bca_topup_lastreport()
+                            resultStr, report = bca_topup_lastreport()
                             LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     
                             if len(report) == 512:
