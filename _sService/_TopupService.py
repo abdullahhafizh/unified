@@ -1622,8 +1622,8 @@ def topup_online(bank, cardno, amount, trxid=''):
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
             # _Common.update_to_temp_data('bri-success-pending', trxid)
-            _param = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|' 
-            update_result = update_balance(_param, bank='BRI', mode='TOPUP')
+            _param_command = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|' 
+            update_result = update_balance(_param_command, bank='BRI', mode='TOPUP')
             if not update_result:
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
                 _Common.LAST_BRI_ERR_CODE = '31'
@@ -1740,8 +1740,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     _param = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
             # else:
             #     _param = QPROX_COMMAND['REVERSAL_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
-            _param = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
-            update_result = update_balance(_param, bank='BCA', mode='TOPUP')
+            _param_command = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
+            update_result = update_balance(_param_command, bank='BCA', mode='TOPUP')
             # if update_result is False:
             #     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
             #     return
@@ -1936,9 +1936,9 @@ def topup_online(bank, cardno, amount, trxid=''):
                     return False
                 _Common.store_to_temp_data(trxid, json.dumps(_param))
             # _Common.update_to_temp_data('bri-success-pending', trxid)
-            __param = QPROX_COMMAND['REQUEST_TOPUP_DKI'] + '|' + amount + '|'
-            response, result = _Command.send_request(param=__param, output=None)
-            LOGGER.debug((__param, bank, response, result))
+            _param_command = QPROX_COMMAND['REQUEST_TOPUP_DKI'] + '|' + amount + '|'
+            response, result = _Command.send_request(param=_param_command, output=None)
+            LOGGER.debug((_param_command, bank, response, result))
             last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
 
             if response == 0 and '|' in result:
