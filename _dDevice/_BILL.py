@@ -306,7 +306,7 @@ def start_receive_note(trxid):
     if _Common.IDLE_MODE is True:
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
-    LOGGER.info(('Trigger Bill', trxid, TARGET_CASH_AMOUNT))
+    LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT))
     HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
     LOGGER.info(('Hold Notes or Single Denom TRX', trxid, HOLD_NOTES))
     try:
@@ -320,6 +320,7 @@ def start_receive_note(trxid):
                     LOGGER.info(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
                     break
                 attempt += 1
+                
                 _response, _result = send_command_to_bill(param=BILL["RECEIVE"] + '|', output=None)
                 # _Helper.dump([_response, _result])
                 if _response == -1:
@@ -334,6 +335,13 @@ def start_receive_note(trxid):
                     break
                 if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                     cash_in = parse_notes(_result)
+                    
+                    # Handle Double Read Anomalu in Single Denom TRX
+                    if len(CASH_HISTORY) > 0 and HOLD_NOTES:
+                        if CASH_HISTORY[0] == cash_in:
+                            LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', CASH_HISTORY, cash_in))
+                            # Return The Process
+                            return
                     # -------------------------
                     # Dummy True Condition (Must Be True)
                     if BILL_TYPE in _Common.BILL_SINGLE_DENOM_TYPE:
