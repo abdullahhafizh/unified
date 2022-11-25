@@ -336,17 +336,17 @@ def start_receive_note(trxid):
                 if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                     cash_in = parse_notes(_result)
                     
-                    # Handle Double Read Anomalu in Single Denom TRX
-                    if len(CASH_HISTORY) > 0 and HOLD_NOTES:
-                        if CASH_HISTORY[0] == cash_in:
-                            LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', str(CASH_HISTORY), cash_in))
-                            # Return The Process
-                            return
                     # -------------------------
                     # Dummy True Condition (Must Be True)
                     if BILL_TYPE in _Common.BILL_SINGLE_DENOM_TYPE:
                         # Handle Single Denom
                         if HOLD_NOTES:
+                            # Handle Double Read Anomalu in Single Denom TRX
+                            if len(CASH_HISTORY) > 0:
+                                if CASH_HISTORY[0] == cash_in:
+                                    LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', str(CASH_HISTORY), cash_in))
+                                    # Return The Process
+                                    return
                             if int(cash_in) != int(TARGET_CASH_AMOUNT):
                                 sleep(.5)
                                 send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
