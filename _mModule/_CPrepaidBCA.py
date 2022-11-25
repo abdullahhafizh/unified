@@ -422,7 +422,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                             resultStr, report = bca_topup_lastreport()
                             LOG.fw("044:BCATopup2 BCATopupLastReport = ", report)
                                     
-                            if len(report) == 512:
+                            if len(report) == 512 and cardno in report:
                                 resultStr = "0000" 
                                 success_topup = True
                                 lastbalance = (int(balance) + int(amount))
