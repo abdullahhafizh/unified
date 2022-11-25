@@ -339,7 +339,7 @@ def start_receive_note(trxid):
                     # Handle Double Read Anomalu in Single Denom TRX
                     if len(CASH_HISTORY) > 0 and HOLD_NOTES:
                         if CASH_HISTORY[0] == cash_in:
-                            LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', CASH_HISTORY, cash_in))
+                            LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', str(CASH_HISTORY), cash_in))
                             # Return The Process
                             return
                     # -------------------------
