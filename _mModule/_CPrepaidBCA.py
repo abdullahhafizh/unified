@@ -237,7 +237,7 @@ def reversal_bca_priv(TID, MID, TOKEN):
     return ErrorCode, cardno, amount, lastbalance, report, ErrMsg
 
 
-def update_balance_bca_priv(TID, MID, TOKEN):
+def update_balance_bca_priv(MID, TID, TOKEN):
     global BCA_ACCESS_CARD_NUMBER, BCA_ACCESS_CODE, BCA_ATD, UPDATE_BALANCE_URL, BCA_ACTIVE_TOPUP_SESSION, BCA_LAST_REFF_ID, BCA_LAST_TOPUP_AMOUNT
     
     bcaAccessCardNumber = BCA_ACCESS_CARD_NUMBER
@@ -274,12 +274,15 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     datenow = ""
     ErrMsg = ""
     success_topup = False
+    trxid = _Common.LAST_TOPUP_TRXID
+    
 
     if resultStr == "0000":
+        LOG.fw("044:trxid = ", trxid)
         LOG.fw("044:cardno = ", cardno)
         LOG.fw("044:uid = ", uid)
         # Failure Here
-        valuetext, ErrMsg = do_check_session_bca(url, cardno)
+        valuetext, ErrMsg = do_check_session_bca(url, cardno, trxid)
         if valuetext == -1:
             valuetext = ErrMsg
             
@@ -335,7 +338,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             resultStr, report = bca_lib_topup_session(bcaStaticATD, datenow)
             ErrorCode = resultStr
             LOG.fw("044:BCATopupSession1 = ", { "rc": resultStr, "report": report})
-            valuetext, ErrMsg = do_get_session_bca(url, cardno, report)
+            valuetext, ErrMsg = do_get_session_bca(url, cardno, report, trxid)
 
             if valuetext == -1:
                 valuetext = ErrMsg
@@ -477,7 +480,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
     return ErrorCode, cardno, amount, lastbalance, reporttopup, ErrMsg
 
 
-def do_check_session_bca(URL_Server, card_no):
+def do_check_session_bca(URL_Server, card_no, invoice_no=''):
     global TIMEOUT_REQUESTS
 
     try:
@@ -486,7 +489,8 @@ def do_check_session_bca(URL_Server, card_no):
             "token": _Common.CORE_TOKEN, 
             "tid": _Common.TID, 
             "mid": _Common.CORE_MID, 
-            "card_no": card_no
+            "card_no": card_no,
+            "invoice_no": invoice_no
             }
         
         LOG.fw(":CheckSessionBCA url = ", sURL)
@@ -509,7 +513,7 @@ def do_check_session_bca(URL_Server, card_no):
         return -1, errorcode
 
 
-def do_get_session_bca(URL_Server, card_no, session_data):
+def do_get_session_bca(URL_Server, card_no, session_data, invoice_no=''):
     global TIMEOUT_REQUESTS
 
     try:
@@ -519,7 +523,8 @@ def do_get_session_bca(URL_Server, card_no, session_data):
             "tid": _Common.TID, 
             "mid": _Common.CORE_MID, 
             "card_no": card_no, 
-            "session_data": session_data
+            "session_data": session_data,
+            "invoice_no": invoice_no
             }
         
         LOG.fw(":GetSessionBCA url = ", sURL)

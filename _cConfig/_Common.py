@@ -2344,3 +2344,5 @@ CARD_TOPUP_FEATURES = {
     'BCA': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^bca', '1') == '1' else False,
     'DKI': True if _ConfigParser.get_set_value('FEATURES', 'card^topup^dki', '1') == '1' else False,
 }
+
+LAST_TOPUP_TRXID = ''
