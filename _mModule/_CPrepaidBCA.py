@@ -560,8 +560,8 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
         if not success:
             disabled = True
             if disabled:
-                LOG.fw(":ConfirmBCA Direct = ", str(disabled))
-                return
+                LOG.fw(":ConfirmBCA Disabled = ", str(disabled))
+                return -1, 'Disabled'
             if len(confirm_data) != 512 or confirm_data == BCA_ATD:
                 sleep(.5)
                 resultStr, cardInfo = topup_card_info(confirm_data)

@@ -2162,6 +2162,7 @@ def send_force_confirmation(bank, data):
 
 def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
+    topup_url = _Common.UPDATE_BALANCE_URL if _Common.LIVE_MODE else _Common.UPDATE_BALANCE_URL_DEV
     if bank == 'MANDIRI':
         try:
             force_report = ''
@@ -2289,7 +2290,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'reff_no_host': pending_data.get('reff_no_trx'),
                     'card_no': card_data.get('card_no'),
                 }
-                status, refund_result = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bri/refund', param=param)
+                status, refund_result = _HTTPAccess.post_to_url(url=topup_url + 'topup-bri/refund', param=param)
                 LOGGER.debug((bank, str(param), str(refund_result)))
                 
                 if status == 200 and refund_result['response']['code'] == 200:
@@ -2340,7 +2341,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'reference_id': _Common.LAST_BCA_REFF_ID,
                 }
                 # Send ACK
-                status, ack_result = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)
+                status, ack_result = _HTTPAccess.post_to_url(url=topup_url + 'topup-bca/confirm', param=param)
                 LOGGER.debug((bank, str(param), str(ack_result)))
                 
                 if status == 200 and ack_result['response']['code'] == 200:
@@ -2383,7 +2384,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'card_no': card_data.get('card_no'),
                     'reff_no': trxid
                 }
-                status, response = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-dki/reversal', param=param)
+                status, response = _HTTPAccess.post_to_url(url=topup_url + 'topup-dki/reversal', param=param)
                 LOGGER.debug((bank, str(param), str(reversal_result)))
                 if status == 200 and reversal_result['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)      
