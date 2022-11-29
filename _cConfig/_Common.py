@@ -225,6 +225,7 @@ TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
 
 
 if not LIVE_MODE:
+    # Force Set MID/TID BCA On Development Stage
     MID_BCA = '000942678'
     _ConfigParser.set_value('BCA', 'mid^topup', '000942678')
     TID_BCA = 'ELZSYB01'
