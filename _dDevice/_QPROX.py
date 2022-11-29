@@ -2336,7 +2336,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'tid': _Common.TID,
                     'card_data': bca_card_info_data,
                     'card_no': card_data.get('card_no'),
-                    'last_balance': card_data.get('balance')
+                    'last_balance': card_data.get('balance'),
+                    'reference_id': _Common.LAST_BCA_REFF_ID,
                 }
                 # Send ACK
                 status, ack_result = _HTTPAccess.post_to_url(url=_Common.UPDATE_BALANCE_URL + 'topup-bca/confirm', param=param)

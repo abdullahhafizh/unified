@@ -312,6 +312,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
             if "reference_id" in temp_json.keys():
                 reference_id = temp_json["reference_id"]
                 BCA_LAST_REFF_ID = reference_id
+                _Common.LAST_BCA_REFF_ID = BCA_LAST_REFF_ID
             if "topup_amount" in temp_json.keys():
                 topup_amount = temp_json["topup_amount"]
                 BCA_LAST_TOPUP_AMOUNT = topup_amount
@@ -355,6 +356,7 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                 if "reference_id" in temp_json.keys():
                     reference_id = temp_json["reference_id"]
                     BCA_LAST_REFF_ID = reference_id
+                    _Common.LAST_BCA_REFF_ID = BCA_LAST_REFF_ID
                 if "topup_amount" in temp_json.keys():
                     topup_amount = temp_json["topup_amount"]
                     BCA_LAST_TOPUP_AMOUNT = topup_amount
@@ -556,6 +558,10 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
             }
         
         if not success:
+            disabled = True
+            if disabled:
+                LOG.fw(":ConfirmBCA Direct = ", str(disabled))
+                return
             if len(confirm_data) != 512 or confirm_data == BCA_ATD:
                 sleep(.5)
                 resultStr, cardInfo = topup_card_info(confirm_data)
