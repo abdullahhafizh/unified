@@ -5,6 +5,7 @@ from _mModule import _CPrepaidUtils as utils
 from _mModule import _CPrepaidLog as LOG
 from _nNetwork import _HTTPAccess
 from _cConfig import _Common
+from time import sleep
 import json
 import requests
 import datetime
@@ -430,8 +431,8 @@ def update_balance_bca_priv(TID, MID, TOKEN):
                                 success_topup = False
                                 resultStr, report = topup_card_info(bcaStaticATD)
                                 LOG.fw("044:BCATopup2 BCATopupCardInfo = ", report)
-                                if report == "":
-                                    report = "0" * 512
+                                # if report == "" or len(report) != 512:
+                                #     report = "0" * 512
                                 # Balance Not Changes
                                 lastbalance = int(balance)
                             
@@ -555,6 +556,12 @@ def send_post_confirm_bca(URL_Server, card_no, confirm_data, last_balance, refer
             }
         
         if not success:
+            if len(confirm_data) != 512 or confirm_data == BCA_ATD:
+                sleep(.5)
+                resultStr, cardInfo = topup_card_info(confirm_data)
+                LOG.fw("BCATopupCardInfo = ", resultStr)
+                LOG.fw("BCATopupCardInfo = ", cardInfo)
+                confirm_data = cardInfo
             payload['card_data'] = confirm_data
             payload.pop('confirm_data')
         
