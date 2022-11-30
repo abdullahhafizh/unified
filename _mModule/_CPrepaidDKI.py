@@ -265,6 +265,7 @@ def dki_card_get_log_priv():
     resreport = ""
     msg = ""
     GetLogDKI = ""
+    purseData = ""
     listRAPDU = []
     # Max History
     max_t = 10
@@ -311,6 +312,7 @@ def dki_card_get_log_raw_priv():
     resreport = ""
     msg = ""
     GetLogDKI = ""
+    purseData = ""
     listRAPDU = []
     # Max History
     max_t = 10
