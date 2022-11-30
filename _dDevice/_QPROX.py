@@ -2116,16 +2116,19 @@ def send_force_confirmation(bank, data):
             
     elif bank == 'BCA':
         try:
+            res_bca_card_info, bca_card_info_data = bca_card_info()
+            if res_bca_card_info is False:
+                LOGGER.warning(('BCA_CARD_INFO_FAILED', data.get('invoice_no'), bca_card_info_data))
+                bca_card_info_data = ''
             param = {
                 'invoice_no': data.get('invoice_no'),
                 'token': _Common.CORE_TOKEN,
                 'mid': _Common.CORE_MID,
                 'tid': _Common.TID,
-                'reference_id': data.get('reference_id'),
+                'reference_id': _Common.LAST_BCA_REFF_ID,
                 'card_no': data.get('card_no'),
                 'last_balance': data.get('last_balance'),
-                'force_confirm': 1,
-                'confirm_data': 'N/A'
+                'confirm_data': bca_card_info_data
             }
             status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bca/confirm', param=param)
             LOGGER.debug((str(param), str(status), str(response)))
@@ -2329,7 +2332,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 res_bca_card_info, bca_card_info_data = bca_card_info()
                 if res_bca_card_info is False:
                     LOGGER.warning(('BCA_CARD_INFO_FAILED', trxid, bca_card_info_data))
-                    bca_card_info_data = json.loads(bca_card_info)
+                    bca_card_info_data = ''
                     # rc = bca_card_info.get('Result', 'FFFF')
                 param = {
                     'token': _Common.CORE_TOKEN,
