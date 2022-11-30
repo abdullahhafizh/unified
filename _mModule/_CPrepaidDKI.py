@@ -216,7 +216,7 @@ def DKI_Topup_priv(DataToCard):
 #053
 def dki_card_get_log(param, __global_response__):
     
-    res_str, errmsg, desc = dki_card_get_log()
+    res_str, errmsg, desc = dki_card_get_log_priv()
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -239,7 +239,7 @@ def dki_card_get_log(param, __global_response__):
 #054
 def dki_card_get_log_raw(param, __global_response__):
     
-    res_str, errmsg, desc = dki_card_get_log_raw()
+    res_str, errmsg, desc = dki_card_get_log_raw_priv()
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -260,7 +260,7 @@ def dki_card_get_log_raw(param, __global_response__):
     return res_str
 
 
-def dki_card_get_log():
+def dki_card_get_log_priv():
     resultStr = ""
     resreport = ""
     msg = ""
@@ -306,7 +306,7 @@ def dki_card_get_log():
     return resultStr, purseData, listRAPDU
 
 
-def dki_card_get_log_raw():
+def dki_card_get_log_raw_priv():
     resultStr = ""
     resreport = ""
     msg = ""
