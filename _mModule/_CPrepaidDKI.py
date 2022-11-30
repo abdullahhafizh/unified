@@ -270,8 +270,8 @@ def dki_card_get_log_priv():
     max_t = 10
 
     try:
-        prepaid.topup_card_disconnect()
-        resultStr, purseData, errMessage = prepaid.topup_pursedata()
+        resultStr = prepaid.topup_card_disconnect()
+        # resultStr, purseData, errMessage = prepaid.topup_pursedata()
         if resultStr == "0000":
             i = 0
             while resultStr == "0000" and i <= max_t:
@@ -316,8 +316,8 @@ def dki_card_get_log_raw_priv():
     max_t = 10
 
     try:
-        prepaid.topup_card_disconnect()
-        resultStr, purseData, errMessage = prepaid.topup_pursedata()
+        resultStr = prepaid.topup_card_disconnect()
+        # resultStr, purseData, errMessage = prepaid.topup_pursedata()
         if resultStr == "0000":
             i = 0
             while resultStr == "0000" and i <= max_t:
