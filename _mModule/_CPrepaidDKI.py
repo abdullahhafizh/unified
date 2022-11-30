@@ -274,7 +274,7 @@ def dki_card_get_log_priv():
         resultStr = prepaid.topup_card_disconnect()
         # resultStr, purseData, errMessage = prepaid.topup_pursedata()
         if resultStr == "0000":
-            i = 0
+            i = 1
             while resultStr == "0000" and i <= max_t:
                 if i > max_t:
                     break
@@ -282,7 +282,6 @@ def dki_card_get_log_priv():
                     idx = hex_padding(i)
                     apdu = "00B2" + str(idx) + "242E"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
-                    # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
                     if resultStr in ["9000", "0000"]:
                         # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
                         # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
@@ -321,7 +320,7 @@ def dki_card_get_log_raw_priv():
         resultStr = prepaid.topup_card_disconnect()
         # resultStr, purseData, errMessage = prepaid.topup_pursedata()
         if resultStr == "0000":
-            i = 0
+            i = 1
             while resultStr == "0000" and i <= max_t:
                 if i > max_t:
                     break
@@ -329,7 +328,6 @@ def dki_card_get_log_raw_priv():
                     idx = hex_padding(i)
                     apdu = "00B2" + str(idx) + "242E"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
-                    # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
                     if resultStr in ["9000", "0000"]:
                         # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
                         # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
