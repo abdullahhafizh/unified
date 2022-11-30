@@ -351,7 +351,7 @@ ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 # Hardcoded Config For Bank Feature
 ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT', 'BCA', 'DKI']
 # CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = _ConfigParser.get_set_value('GENERAL', 'allowed^card^history', 'MANDIRI|BNI')
-CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = 'MANDIRI|BNI|BRI'
+CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = 'MANDIRI|BNI|BRI|DKI'
 ALLOWED_BANK_CHECK_CARD_LOG = CONFIG_ALLOWED_BANK_CHECK_CARD_LOG.split('|')
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
@@ -1308,6 +1308,10 @@ BNI_LOG_LEGEND = {
     '04': 'DIRECT TOPUP'
 }
 
+DKI_LOG_LEGEND = {
+    '05': 'PURCHASE',
+    '01': 'PURCHASE',
+}
 
 def start_get_devices():
     _Helper.get_thread().apply_async(get_devices)

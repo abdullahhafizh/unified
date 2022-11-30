@@ -94,7 +94,8 @@ QPROX = {
     "REVERSAL_ONLINE_DKI": "050", #parameter sm dengan top up dki nya,
     "REQUEST_TOPUP_DKI": "051", #parameter amount
     "CONFIRM_TOPUP_DKI": "052", #parameter data_to_card (From API)
-    "REVERSAL_ONLINE_BRI_2": "064",
+    "CARD_HISTORY_DKI": "053", 
+    "CARD_HISTORY_DKI_RAW": "054", 
     "CARD_HISTORY_BRI_RAW": "078"
 }
 
@@ -1840,8 +1841,21 @@ def get_card_history(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             return
+    elif bank == 'DKI':  
+        param = QPROX['CARD_HISTORY_DKI'] + '|'
+        try:
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                output = parse_card_history(bank, result)
+                _Common.LAST_CARD_LOG_HISTORY = output
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
+            else:
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
+        except Exception as e:
+            LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
     else:
-        QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('BNI_SAM_HISTORY|ERROR')
+        QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('SAM_HISTORY|ERROR')
         return
 
 
@@ -1929,6 +1943,22 @@ def parse_card_history(bank, raw):
                 'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d'),
                 'time': ':'.join(_Helper.strtolist(row[3][8:])),
                 'type': _Common.BNI_LOG_LEGEND.get(row[1], ''),
+                'amount': row[2],
+                'prev_balance': '',
+                'last_balance': ''
+            })
+        return card_history
+    elif bank == 'DKI':
+        histories = raw.split('#')
+        for history in histories:
+            history = history.replace(' ', '')
+            if _Helper.empty(history) is True:
+                continue
+            row = history.split('|')
+            card_history.append({
+                'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d') if row[3][:4] != '0000' else '-',
+                'time': ':'.join(_Helper.strtolist(row[3][8:])) if row[3][:4] == '0000' else '-',
+                'type': _Common.DKI_LOG_LEGEND.get(row[1], ''),
                 'amount': row[2],
                 'prev_balance': '',
                 'last_balance': ''
