@@ -1997,6 +1997,13 @@ def topup_online(bank, cardno, amount, trxid=''):
                     # Must Stop Process Here As Success TRX
                     return True        
             # rc = json.loads(result).get('Result', 'FFFF')    
+            # Failed Request Topup Set To New Handler
+            _param['prev_balance'] = last_card_check['balance']
+            _Common.LAST_DKI_ERR_CODE = '51'
+            if _Common.NEW_TOPUP_FAILURE_HANDLER:
+                pending_result.update(_param)
+                _QPROX.new_topup_failure_handler('DKI', trxid, amount, pending_result)
+                return False
             rc = _Common.LAST_READER_ERR_CODE
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('DKI_TOPUP_CORRECTION#RC_'+rc)
             return False
