@@ -854,7 +854,7 @@ Base{
 
     BoxTitle{
         id: notice_topup_single_denom
-        width: 1200
+        width: 1300
         height: 120
         visible: (!select_payment.visible && VIEW_CONFIG.single_denom_trx.indexOf('topup') > -1)
         radius: 50
