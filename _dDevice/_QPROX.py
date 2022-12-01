@@ -12,6 +12,8 @@ from _nNetwork import _HTTPAccess
 from datetime import datetime
 import random
 import os
+import sys, traceback
+
 
 if _Common.IS_WINDOWS:
     import win32com.client as client
@@ -1852,7 +1854,10 @@ def get_card_history(bank):
             else:
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
         except Exception as e:
-            LOGGER.warning(str(e))
+            trace = traceback.format_exc()
+            formatted_lines = trace.splitlines()
+            err_message = traceback._cause_message
+            LOGGER.warning((str(trace), str(formatted_lines), str(err_message)))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
     else:
         QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('SAM_HISTORY|ERROR')
@@ -1950,18 +1955,27 @@ def parse_card_history(bank, raw):
         return card_history
     elif bank == 'DKI':
         histories = raw.split('#')
+        # 1|02|8500|20221124121951|56000#
+        # 2|02|8500|20221103125415|47500#
+        # 3|01|1500|20220913163320|39000#
+        # 4|01|3500|20220913142306|40500#
+        # 5|02|8500|20220913141621|44000#
+        # 6|02|8500|20220913140819|35500#
+        # 7|02|8500|20220824175115|27000#
+        # 8|02|8500|20220819165251|18500#
+        # 9|02|10000|20210112185142|10000#
         for history in histories:
             history = history.replace(' ', '')
             if _Helper.empty(history) is True:
                 continue
             row = history.split('|')
             card_history.append({
-                'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d') if row[3][:4] != '0000' else '-',
-                'time': ':'.join(_Helper.strtolist(row[3][8:])) if row[3][:4] != '0000' else '-',
+                'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d'),
+                'time': ':'.join(_Helper.strtolist(row[3][8:])),
                 'type': _Common.DKI_LOG_LEGEND.get(row[1], ''),
                 'amount': row[2],
                 'prev_balance': '',
-                'last_balance': str(row[4])
+                'last_balance': row[4]
             })
         return card_history
     else:
