@@ -245,7 +245,8 @@ def dki_card_get_log_raw(param, __global_response__):
     if res_str == "0000":
         __global_response__["Response"] = errmsg
         if type(desc) == list and len(desc) > 0:
-            __global_response__["Response"] = ",".join(desc)
+            errmsg = ",".join(desc)
+            __global_response__["Response"] = errmsg
         LOG.fw("054:Response = ", errmsg)
         __global_response__["ErrorDesc"] = "Sukses"
         LOG.fw("054:Result = ", res_str)
