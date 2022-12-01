@@ -1311,6 +1311,7 @@ BNI_LOG_LEGEND = {
 DKI_LOG_LEGEND = {
     '05': 'PURCHASE',
     '01': 'PURCHASE',
+    '02': 'TOPUP'
 }
 
 def start_get_devices():
