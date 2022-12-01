@@ -282,7 +282,7 @@ def dki_card_get_log_priv():
                 else:
                     i = i + 1                        
 
-                    idx = hex_padding(i)
+                    idx = int_padding(i)
                     apdu = "00B2" + str(idx) + "242E"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                     if resultStr in ["9000", "0000"]:
@@ -332,7 +332,7 @@ def dki_card_get_log_raw_priv():
                     break
                 else:
                     i = i + 1                        
-                    idx = hex_padding(i)
+                    idx = int_padding(i)
                     apdu = "00B2" + str(idx) + "242E"
                     resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
                     if resultStr in ["9000", "0000"]:
@@ -384,3 +384,7 @@ def get_date(data):
 
 def hex_padding(i, pad=2):
     return format(int(i), 'x').zfill(pad).upper()
+
+
+def int_padding(i, pad=2):
+    return i.zfill(pad)

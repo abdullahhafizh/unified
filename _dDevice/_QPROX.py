@@ -1882,6 +1882,17 @@ def bri_card_history_direct():
         return result
     else:
         return ""
+    
+
+def dki_card_history_direct():
+    if 'DKI' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
+        return ""
+    param = QPROX['CARD_HISTORY_DKI_RAW'] + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0:
+        return result
+    else:
+        return ""
 
 
 def bni_sam_history_direct():
@@ -2425,6 +2436,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'DKI':
         try:
             reversal_result = ''
+            card_history = dki_card_history_direct()   
+
             if pending_data is not None:
                 param = {
                     'token': _Common.CORE_TOKEN,
@@ -2446,7 +2459,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'pending_result': pending_data,
                     'tid': _Common.TID_TOPUP_ONLINE_DKI,
                     'mid': _Common.MID_TOPUP_ONLINE_DKI,
-                    'card_history': '',
+                    'card_history': card_history,
                     'ack_result': '',
                     'refund_result': '',
                     'card_info': '',
