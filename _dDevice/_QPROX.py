@@ -1854,10 +1854,7 @@ def get_card_history(bank):
             else:
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
         except Exception as e:
-            trace = traceback.format_exc()
-            formatted_lines = trace.splitlines()
-            err_message = traceback._cause_message
-            LOGGER.warning((str(trace), str(formatted_lines), str(err_message)))
+            LOGGER.warning((e))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
     else:
         QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('SAM_HISTORY|ERROR')
@@ -2469,7 +2466,10 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             })
             _Common.store_to_temp_data(trxid+'-last-audit-result', json.dumps(last_audit_result))
         except Exception as e:
-            LOGGER.warning((e))
+            trace = traceback.format_exc()
+            formatted_lines = trace.splitlines()
+            err_message = traceback._cause_message
+            LOGGER.warning((str(trace), str(formatted_lines), str(err_message)))
         finally:
             sub_rc = _Common.LAST_DKI_ERR_CODE
             if sub_rc == '': sub_rc = '01'

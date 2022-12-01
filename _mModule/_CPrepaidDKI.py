@@ -265,7 +265,6 @@ def dki_card_get_log_priv():
     resreport = ""
     msg = ""
     GetLogDKI = ""
-    purseData = ""
     listRAPDU = []
     # Max History
     max_t = 10
@@ -313,10 +312,7 @@ def dki_card_get_log_priv():
 
 def dki_card_get_log_raw_priv():
     resultStr = ""
-    resreport = ""
     msg = ""
-    GetLogDKI = ""
-    purseData = ""
     listRAPDU = []
     # Max History
     max_t = 10
@@ -341,16 +337,7 @@ def dki_card_get_log_raw_priv():
                         if rapdu in listRAPDU:
                             continue
                         listRAPDU.append(rapdu)
-                        types = rapdu[:2]
-                        amount = int(rapdu[20:28], 16)
-                        balance = int(rapdu[4:12], 16)
-                        dates = rapdu[52:66]
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
-                        msg = msg + resreport + "#"
-                    else:
-                        GetLogDKI= rapdu
-
-        msg = msg + GetLogDKI
+                        msg = msg + rapdu
         
     except Exception as ex:
         resultStr = "1"
