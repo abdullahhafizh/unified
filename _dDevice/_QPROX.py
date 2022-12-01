@@ -1957,11 +1957,11 @@ def parse_card_history(bank, raw):
             row = history.split('|')
             card_history.append({
                 'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d') if row[3][:4] != '0000' else '-',
-                'time': ':'.join(_Helper.strtolist(row[3][8:])) if row[3][:4] == '0000' else '-',
+                'time': ':'.join(_Helper.strtolist(row[3][8:])) if row[3][:4] != '0000' else '-',
                 'type': _Common.DKI_LOG_LEGEND.get(row[1], ''),
                 'amount': row[2],
                 'prev_balance': '',
-                'last_balance': ''
+                'last_balance': str(row[4])
             })
         return card_history
     else:

@@ -271,7 +271,8 @@ def dki_card_get_log_priv():
     max_t = 10
 
     try:
-        resultStr = prepaid.topup_card_disconnect()
+        # resultStr = prepaid.topup_card_disconnect()
+        resultStr, uid, cardno = prepaid.get_card_sn()
         # resultStr, purseData, errMessage = prepaid.topup_pursedata()
         if resultStr == "0000":
             i = 1
@@ -291,8 +292,9 @@ def dki_card_get_log_priv():
                         listRAPDU.append(rapdu)
                         types = rapdu[:2]
                         amount = int(rapdu[20:28], 16)
+                        balance = int(rapdu[4:12], 16)
                         dates = rapdu[52:66]
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
                         msg = msg + resreport + "#"
                     else:
                         GetLogDKI= rapdu
@@ -303,7 +305,7 @@ def dki_card_get_log_priv():
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, purseData, listRAPDU
+    return resultStr, msg, listRAPDU
 
 
 def dki_card_get_log_raw_priv():
@@ -317,7 +319,8 @@ def dki_card_get_log_raw_priv():
     max_t = 10
 
     try:
-        resultStr = prepaid.topup_card_disconnect()
+        # resultStr = prepaid.topup_card_disconnect()
+        resultStr, uid, cardno = prepaid.get_card_sn()
         # resultStr, purseData, errMessage = prepaid.topup_pursedata()
         if resultStr == "0000":
             i = 1
@@ -337,8 +340,9 @@ def dki_card_get_log_raw_priv():
                         listRAPDU.append(rapdu)
                         types = rapdu[:2]
                         amount = int(rapdu[20:28], 16)
+                        balance = int(rapdu[4:12], 16)
                         dates = rapdu[52:66]
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
                         msg = msg + resreport + "#"
                     else:
                         GetLogDKI= rapdu
@@ -349,7 +353,7 @@ def dki_card_get_log_raw_priv():
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, purseData, listRAPDU
+    return resultStr, msg, listRAPDU
 
 
 def get_amount_for_log(data):
