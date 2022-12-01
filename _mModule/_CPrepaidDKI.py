@@ -387,4 +387,4 @@ def hex_padding(i, pad=2):
 
 
 def int_padding(i, pad=2):
-    return i.zfill(pad)
+    return str(i).zfill(pad)
