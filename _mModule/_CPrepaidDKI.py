@@ -305,6 +305,8 @@ def dki_card_get_log_priv():
         resultStr = "1"
         msg = "{0}".format(ex)
     
+    if len(listRAPDU) > 0: resultStr = '0000'
+    
     return resultStr, msg, listRAPDU
 
 
@@ -352,6 +354,8 @@ def dki_card_get_log_raw_priv():
     except Exception as ex:
         resultStr = "1"
         msg = "{0}".format(ex)
+    
+    if len(listRAPDU) > 0: resultStr = '0000'
     
     return resultStr, msg, listRAPDU
 
