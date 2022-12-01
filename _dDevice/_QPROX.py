@@ -1969,6 +1969,8 @@ def parse_card_history(bank, raw):
             if _Helper.empty(history) is True:
                 continue
             row = history.split('|')
+            if len(row) < 3:
+                continue
             card_history.append({
                 'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d'),
                 'time': ':'.join(_Helper.strtolist(row[3][8:])),
