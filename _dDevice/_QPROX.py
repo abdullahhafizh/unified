@@ -2443,8 +2443,9 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     'card_no': card_data.get('card_no'),
                     'reff_no': trxid
                 }
-                status, response = _HTTPAccess.post_to_url(url=topup_url + 'topup-dki/reversal', param=param)
+                status, reversal_result = _HTTPAccess.post_to_url(url=topup_url + 'topup-dki/reversal', param=param)
                 LOGGER.debug((bank, str(param), str(reversal_result)))
+                
                 if status == 200 and reversal_result['response']['code'] == 200:
                     _Common.remove_temp_data(trxid)      
                 else:
