@@ -205,6 +205,7 @@ def start_direct_sale_print_global(payload):
 
 
 def start_finalise_transaction(payload):
+    # Non TOPUP_FAILURE_03
     p = json.loads(payload)
     if p.get('shop_type') != 'topup':
         LOGGER.debug(('Shop Type Not Match'))
@@ -360,10 +361,12 @@ def finalize_trx_process(trxid='', data={}, cash=0, failure='USER_CANCELLATION')
     if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
         if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
             failure = p.get('failure_type', 'TOPUP_FAILURE')
+            
         # Remarks Status Transaction
-        if 'pending_trx_code' in p.keys() and not _Helper.empty(p.get('pending_trx_code')):
+        elif 'pending_trx_code' in p.keys() and not _Helper.empty(p.get('pending_trx_code')):
             failure = 'PENDING_TRANSACTION'
-        if 'validate_card' in p.keys() and p.get('validate_card') is False:
+            
+        elif 'validate_card' in p.keys() and p.get('validate_card') is False:
             failure = 'CARD_MISSMATCH'
         # Send Failure To Backend
         _Common.store_upload_failed_trx(trxid, 

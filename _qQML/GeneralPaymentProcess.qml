@@ -727,7 +727,7 @@ Base{
         }
         details.validate_card = true;
         if (t.indexOf('CARD_MISSMATCH') > -1){
-            //Special Treatment For TOPUP_FAILURE_03 ->Store The Notes Not Reject
+            //Special Treatment For CARD_MISSMATH -> Suspect Fraud
             details.validate_card = false;
         }
         details.payment_error = 1;
@@ -738,6 +738,7 @@ Base{
             if (details.validate_card) {
                 details.pending_trx_code = uniqueCode;
             } else {
+                // If CARD_MISSMATH -> Suspect Fraud Not Giving Pending Code
                 details.pending_trx_code = undefined;
             }
             console.log('Release Print Without Refund, Generate Pending Code', uniqueCode);
@@ -1551,7 +1552,8 @@ Base{
             if (details.failure_type !== undefined){
                 if (details.failure_type == 'TOPUP_FAILURE_03') {
                     //Reset Pending Code, To Keep The Topup Failure Status on TRX Failure Data
-                    details.pending_trx_code = undefined;
+                    // 2022-12-08 Re-enable Pending Code on this condition
+                    // details.pending_trx_code = undefined;
                     failure_03 = true;
                 } else {
                     //Reset Pending Code, To Keep The Topup Failure Status on TRX Failure Data

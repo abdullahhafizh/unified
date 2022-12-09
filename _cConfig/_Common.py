@@ -1579,7 +1579,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             
         
         # Only Store Pending Transaction To Transaction Failure Table
-        if failure_type == 'PENDING_TRANSACTION':
+        if failure_type in ['PENDING_TRANSACTION', 'TOPUP_FAILURE_03']:
             _DAO.delete_transaction_failure({
                 'reff_no': trxid,
                 'tid': TID,            

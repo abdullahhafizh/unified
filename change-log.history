@@ -1,3 +1,9 @@
+16.2.6-GLOBAL:
+- Re-Enable Pending Code For Topup Failure 03,
+- Adjustment on Revalidate Code on CARD_MISSMATCH,
+- Re-enable BNI Deposit Auto Reload After on App Bootup,
+- ...
+
 16.2.5-GLOBAL:
 - Add DKI Log History,
 - Panel Notice Buy Card Per Theme (Only On TJ Enabled),

@@ -2479,8 +2479,15 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
 
 def revalidate_card(cardno):
     reset_card_contactless()
-    validate_card = direct_card_balance()
-    LOGGER.debug(str(validate_card))
+    max_attempt = 3
+    attempt = 0
+    while True:
+        attempt += 1
+        validate_card = direct_card_balance()
+        LOGGER.debug((attempt, str(validate_card)))
+        if validate_card is not False or attempt == max_attempt:
+            break
+        sleep(1)
     if validate_card is False:
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_MISSMATCH')
         return False
