@@ -128,9 +128,9 @@ def send_command(cmd, param):
         elif cmd == "049":
             prepaid_bri.reversal_bri(param, __global_response__)
         elif cmd == "051":
-            prepaid_dki.DKI_RequestTopup(param, __global_response__)
+            prepaid_dki.topup_request_dki(param, __global_response__)
         elif cmd == "052":
-            prepaid_dki.DKI_Topup(param, __global_response__)
+            prepaid_dki.topup_confirm_dki(param, __global_response__)
         elif cmd == "053":
             prepaid_dki.dki_card_get_log(param, __global_response__)
         elif cmd == "054":

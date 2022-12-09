@@ -110,7 +110,7 @@ ISOMessageBuilder
 # DKI_REK_SUMBER = "43216000114"
 # DKI_REK_TUJUAN = "91192406095"
 
-def DKI_RequestTopup(param, __global_response__):
+def topup_request_dki(param, __global_response__):
     Param = param.split('|')
     if len(Param) == 1:
         C_Denom = Param[0]
@@ -120,7 +120,7 @@ def DKI_RequestTopup(param, __global_response__):
     
     LOG.fw("051:Parameter = ", C_Denom)
 
-    result_str, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report = DKI_RequestTopup_priv(C_Denom)
+    result_str, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report = topup_request_dki_priv(C_Denom)
 
     __global_response__["Result"] = result_str
     if result_str == "0000":
@@ -139,7 +139,7 @@ def DKI_RequestTopup(param, __global_response__):
         LOG.fw("051:Gagal", None, True)
 
 
-def DKI_RequestTopup_priv(Denom):
+def topup_request_dki_priv(Denom):
     ResultStr = ""
     DepositCard=""
     ExpireCardDate=""
@@ -174,7 +174,7 @@ def DKI_RequestTopup_priv(Denom):
     return ResultStr, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report
 
 
-def DKI_Topup(param, __global_response__):
+def topup_confirm_dki(param, __global_response__):
     Param = param.split('|')
     if len(Param) == 1:
         C_DataToCard = Param[0]
@@ -184,7 +184,7 @@ def DKI_Topup(param, __global_response__):
     
     LOG.fw("052:Parameter = ", C_DataToCard)
 
-    result_str, report = DKI_Topup_priv(C_DataToCard)
+    result_str, report = topup_confirm_dki_priv(C_DataToCard)
 
     __global_response__["Result"] = result_str
     if result_str == "0000":
@@ -203,7 +203,7 @@ def DKI_Topup(param, __global_response__):
         LOG.fw("052:Gagal", None, True)
 
 
-def DKI_Topup_priv(DataToCard):
+def topup_confirm_dki_priv(DataToCard):
     LOG.fw("052:DATACARD SEND 2 = ", DataToCard)
     DataToCard = "9042000010" + DataToCard
     ResultStr, reportRAPDU = prepaid.topup_apdusend("255", DataToCard)
