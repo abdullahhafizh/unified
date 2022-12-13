@@ -27,7 +27,7 @@ Base{
     property var trxNotes: ''
     property bool retryMode: false
     property bool manualButtonVisible: false
-    property int showManualPrintButton: 10
+    property int showManualPrintButton: 5
     property int delayExecution: 3000
 
     imgPanel: 'source/cek_saldo.png'
@@ -82,6 +82,7 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 showDuration = abc.counter.toString();
+                if (abc.counter < 0) showDuration = '0';
                 if(abc.counter == (timer_value-showManualPrintButton)){
                     console.log('Show Manual Print Button', abc.counter);
                     manualButtonVisible = true;
@@ -270,13 +271,14 @@ Base{
 
     CircleButton{
         id: manual_button
-        anchors.right: parent.right
-        anchors.rightMargin: 50
+        anchors.left: parent.left
+        anchors.leftMargin: 50
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         button_text: 'PRINT'
         modeReverse: true
         forceColorButton: 'orange'
+        scale: 0.75
         MouseArea{
             anchors.fill: parent
             onClicked: {
