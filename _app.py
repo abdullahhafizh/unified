@@ -1179,17 +1179,9 @@ def startup_task():
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance...')
             _QPROX.start_recheck_bni_sam_balance()
             sleep(1)
-            print("pyt: Check BNI Deposit Balance Refill...")
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance Refill...')
-            _Sync.start_check_bni_deposit()
-            sleep(1)
             print("pyt: Triggering BNI Settlement Sync...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering BNI Settlement Sync...')
             _Sync.start_sync_settlement_bni()
-            #Disable Automation
-            # sleep(2)
-            # print("pyt: Triggering BNI Balance Update Check...")
-            # _TopupService.start_define_topup_slot_bni()
         if _QPROX.INIT_BRI is True:
             # TODO Add Special Handler For BRI Initiation
             # sleep(.5)
@@ -1214,6 +1206,11 @@ def startup_task():
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Ads Content...')
             sleep(1)
         _KioskService.start_define_ads(3)
+        if _QPROX.INIT_BNI is True:
+            sleep(1)
+            print("pyt: Check BNI Deposit Balance Refill...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance Refill...')
+            _Sync.start_check_bni_deposit()
         print("pyt: Reset Open Previous Pending Jobs...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Reset Open Previous Pending Jobs...')
         sleep(2)
