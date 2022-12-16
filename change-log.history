@@ -3,6 +3,7 @@
 - Adjustment on Revalidate Code on CARD_MISSMATCH,
 - Re-enable BNI Deposit Auto Reload After on App Bootup,
 - Adjust Print Button Back to Left Bottom,
+- Fix Auto Topup BNI Signal,
 - ...
 
 16.2.5-GLOBAL:

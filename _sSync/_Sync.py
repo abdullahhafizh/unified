@@ -1090,8 +1090,8 @@ def check_bni_deposit():
     # Triggered After Success Transaction
     LOGGER.info(('BNI DEPOSIT', _Common.BNI_SAM_1_WALLET, 'BNI THRESHOLD', _Common.BNI_THRESHOLD))
     if _Common.BNI_SAM_1_WALLET <= _Common.BNI_THRESHOLD:
-        _TopupService.TP_SIGNDLER.MANUAL_DEPOSIT_REFILL.emit('MEMULAI_TOPUP_DEPOSIT_BNI')
+        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('MEMULAI_TOPUP_DEPOSIT_BNI')
         _TopupService.do_topup_deposit_bni(slot=1)
     else:
-        _TopupService.TP_SIGNDLER.MANUAL_DEPOSIT_REFILL.emit('DEPOSIT_BNI_MASIH_CUKUP')
+        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('DEPOSIT_BNI_MASIH_CUKUP')
 
