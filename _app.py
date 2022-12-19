@@ -1158,6 +1158,20 @@ def startup_task():
         print("pyt: Resync Data MDD Global Card Blacklist...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Data MDD Global Card Blacklist...')
         _TopupService.get_mdd_card_blocked_list()
+        if _QPROX.INIT_BCA is True:
+            # TODO Add Special Handler For BCA Initiation
+            sleep(1)
+            print("pyt: Triggering Topup BCA Init Config...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering Topup BCA Init Config...')
+            _QPROX.start_init_config_bca()
+            print("pyt: Triggering Topup BCA Reset Session...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering Topup BCA Reset Session...')
+            _TopupService.reset_bca_session()
+        if _QPROX.INIT_BRI is True:
+            # TODO Add Special Handler For BRI Initiation
+            # sleep(.5)
+            # print("pyt: Triggering BRI Balance Validation...")
+            pass
         if _QPROX.INIT_MANDIRI is True:
             sleep(1)
             print("pyt: Check Mandiri Deposit Update Balance...")
@@ -1182,20 +1196,10 @@ def startup_task():
             print("pyt: Triggering BNI Settlement Sync...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering BNI Settlement Sync...')
             _Sync.start_sync_settlement_bni()
-        if _QPROX.INIT_BRI is True:
-            # TODO Add Special Handler For BRI Initiation
-            # sleep(.5)
-            # print("pyt: Triggering BRI Balance Validation...")
-            pass
-        if _QPROX.INIT_BCA is True:
-            # TODO Add Special Handler For BCA Initiation
             sleep(1)
-            print("pyt: Triggering Topup BCA Init Config...")
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering Topup BCA Init Config...')
-            _QPROX.start_init_config_bca()
-            print("pyt: Triggering Topup BCA Reset Session...")
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Triggering Topup BCA Reset Session...')
-            _TopupService.reset_bca_session()
+            print("pyt: Check BNI Deposit Balance Refill...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance Refill...')
+            _Sync.start_check_bni_deposit()
         if _Common.EDC['mobile'] is True:
             sleep(1)
             print("pyt: [INFO] Re/Binding VM Machine Into EDC...")
@@ -1206,11 +1210,6 @@ def startup_task():
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Syncing Ads Content...')
             sleep(1)
         _KioskService.start_define_ads(3)
-        if _QPROX.INIT_BNI is True:
-            sleep(1)
-            print("pyt: Check BNI Deposit Balance Refill...")
-            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check BNI Deposit Balance Refill...')
-            _Sync.start_check_bni_deposit()
         print("pyt: Reset Open Previous Pending Jobs...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Reset Open Previous Pending Jobs...')
         sleep(2)
