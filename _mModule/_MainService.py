@@ -1,13 +1,11 @@
 __author__ = "wahyudi@multidaya.id"
 
-from _mModule import _CPrepaidDLL as dll
-from _mModule import _InterfaceCD as idll
+from . import _InterfaceCD as idll
 # import json
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 PORT = 5000
-LOAD_DLL = False
 
 @app.route('/')
 def hello_world():
@@ -28,11 +26,7 @@ def send_command():
     return jsonify(response)
 
 def start():
-    if LOAD_DLL is True:
-        dll.load_dll()
     app.run(host='0.0.0.0', port=PORT)
 
 if __name__ == '__main__':
-    if LOAD_DLL is True:
-        dll.load_dll()
-    app.run(host='0.0.0.0', port=PORT)
+    start()
