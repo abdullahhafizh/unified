@@ -614,6 +614,7 @@ def bill_store_note(trxid):
     IS_RECEIVING = False
     try:
         if not HOLD_NOTES:
+            LOGGER.warning((trxid, 'STORE_NOTES', BILL['TYPE'], 'HOLD_NOTES', HOLD_NOTES))
             return
         
         attempt = 3 if BILL_TYPE == 'GRG' else 1

@@ -438,7 +438,7 @@ Base{
             if (details.promo_data !== undefined) delete details.promo_data;
             //Validate Single Denom TRX
             if (validate_single_denom_trx()){
-               _SLOT.start_bill_store_note(details.shop_type + details.epoch.toString());
+                _SLOT.start_bill_store_note(details.shop_type + details.epoch.toString());
             }
             //Trigger Confirm Promo Here
             if (details.promo_code_active == true){
