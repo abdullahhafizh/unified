@@ -194,7 +194,7 @@ def init_bill():
 
 
 def send_command_to_bill(param=None, output=None):
-    if BILL["DIRECT_MODULE"] is True and BILL_TYPE == 'NV':
+    if BILL_TYPE == 'NV':
         result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
         # code, message = result
         # Retry Command if Exception Raise
