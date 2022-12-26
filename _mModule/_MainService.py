@@ -1,6 +1,6 @@
 __author__ = "wahyudi@multidaya.id"
 
-from . import _InterfaceCD as idll
+import _InterfaceCD as idll
 # import json
 from flask import Flask, request, jsonify
 
