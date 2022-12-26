@@ -11,7 +11,7 @@ import traceback
 
 
 DEBUG_MODE = True
-BAUD_RATE = 38400
+BAUD_RATE = 9600
 BAUD_RATE_KYT = 9600
 
 #ERROR STATUS
@@ -123,7 +123,7 @@ def simply_eject_priv(port="COM10", ADDR="00"):
     try:
         #Init
         ser = Serial(port, baudrate=BAUD_RATE, timeout=10)
-        response = func_timeout(4, func=cdLib.do_init, args=(ser, ADDR))
+        response = func_timeout(3, func=cdLib.do_init, args=(ser, ADDR))
         LOG.cdlog("[111]: CD Response: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cdLib.get_details_message(response), show_log=DEBUG_MODE)
 
         #Check First Status
