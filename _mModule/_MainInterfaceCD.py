@@ -851,8 +851,8 @@ def simply_eject_syn_priv(port="COM10"):
     C_DISPENSE = b'\x46\x43\x34'
     C_STATUS = b'\x41\x50'
     
-    ACK = b'\x06H'
-    NAK = b'\x15H'
+    ACK = 0x06
+    NAK = 0x15
     
     # Command Hex Descriptions
     # DC 44 43 Move card to front without holding card 
