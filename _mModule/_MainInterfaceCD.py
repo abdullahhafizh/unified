@@ -848,11 +848,13 @@ def simply_eject_syn_priv(port="COM10"):
     ETX = b"\x03"
     ADDR = b"\x31\x35" #Default Position 15
     
-    C_DISPENSE = b'\x46\x43\x34'
+    C_MOVE = b'\x46\x43\x34'
+    C_DISPENSE = b'\x44\x43'
     C_STATUS = b'\x41\x50'
     
     ACK = 0x06
     NAK = 0x15
+    ENQ = b'\x05'
     
     # Command Hex Descriptions
     # DC 44 43 Move card to front without holding card 
@@ -881,10 +883,13 @@ def simply_eject_syn_priv(port="COM10"):
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                    cmd_enq = ENQ + ADDR
+                    com.write(cmd_enq)
+                    LOG.cdlog("[SYN]: CD WRITE ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
                     cmd = C_STATUS
                     data_in = b""
                 elif data_in.__contains__(NAK):
-                    LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                    LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd_enq, show_log=DEBUG_MODE)
                     com.write(data_out)        
                     data_in = b""
                     retry = retry - 1
@@ -898,7 +903,6 @@ def simply_eject_syn_priv(port="COM10"):
             status = "C_DISPENSE"
             message = "Maksimum Retry Reached"
             raise SystemError('MAXR:'+message)
-
 
         #Get Status
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
