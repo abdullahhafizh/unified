@@ -790,7 +790,6 @@ def simply_eject_kyt_priv(port="COM10"):
     return status, message, response
 
 
-
 def simply_eject_syn(param, __output_response__):
     Param = param.split('|')
 
