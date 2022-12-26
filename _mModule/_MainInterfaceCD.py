@@ -883,9 +883,6 @@ def simply_eject_syn_priv(port="COM10"):
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
-                    cmd_enq = ENQ + ADDR
-                    com.write(cmd_enq)
-                    LOG.cdlog("[SYN]: CD WRITE ENQ : ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd_enq, show_log=DEBUG_MODE)
                     cmd = C_STATUS
                     data_in = b""
                 elif data_in.__contains__(NAK):
@@ -903,6 +900,17 @@ def simply_eject_syn_priv(port="COM10"):
             status = "C_DISPENSE"
             message = "Maksimum Retry Reached"
             raise SystemError('MAXR:'+message)
+
+        # Send Enquiry
+        data_out = STX + ENQ + ADDR + ETX
+        data_out = data_out + cdLib.get_bcc(data_out)
+        com.write(data_out)
+        LOG.cdlog("[SYN]: CD WRITE ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+
+        sleep(.5)
+        data_in = data_in + com.read_all()
+        if len(data_in) > 0:
+            LOG.cdlog("[SYN]: CD READ ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
 
         #Get Status
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
