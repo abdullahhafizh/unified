@@ -606,6 +606,9 @@ def stop_receive_note(trxid):
 
 
 def start_bill_store_note(trxid):
+    if BILL_TYPE == 'NV':
+        _Helper.get_thread().apply_async(bill_store_note, (trxid,))
+        sleep(3)
     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
 
 
