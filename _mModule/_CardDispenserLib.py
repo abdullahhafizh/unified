@@ -142,7 +142,7 @@ class CardDispenserError(Exception):
         return message
 
 
-# ------------- Function Domain -----------------
+# ------------- Function General CD Domain -----------------
 
 def get_bcc(data):
     c = 0
@@ -569,4 +569,16 @@ def kyt_get_status(status):
     is_cd_busy = binar[1] == '1'
     return is_stack_empty, is_card_on_sensor, is_motor_failed, is_cd_busy
 
+
+# ----------- SYNCOTEK DOMAIN ------------
+
+def syn_get_status(status):
+    binar = bin(status)[2:].zfill(8)
+    if DEBUG_MODE:
+        print("SYN BIN_STATS:", binar)
+    is_stack_empty = binar[7] == '1'
+    is_card_on_sensor = binar[5] == '1'
+    is_motor_failed = binar[3] == '1'
+    is_cd_busy = binar[1] == '1'
+    return is_stack_empty, is_card_on_sensor, is_motor_failed, is_cd_busy
 
