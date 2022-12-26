@@ -1,7 +1,7 @@
 __author__ = 'wahyudi@multidaya.id'
 
 import traceback
-import _CPrepaidLog as LOG
+import _MainCPrepaidLog as LOG
 import _CardDispenserLib as cdLib
 
 from time import sleep
