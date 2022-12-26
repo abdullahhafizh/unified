@@ -32,7 +32,7 @@ from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
 from _sService import _AudioService
-from _mModule import _MainService
+# from _mModule import _MainService
 import json
 import sentry_sdk
 
@@ -1049,7 +1049,8 @@ def init_local_setting_from_host():
 
             
 def start_webserver():
-    _MainService.start()
+    pass
+    # _MainService.start()
     
     
 def start_startup_task():
