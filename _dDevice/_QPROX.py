@@ -240,7 +240,6 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             _DAO.update_today_summary_multikeys(['bni_deposit_last_balance'], int(samLastBalance))
             _Common.store_upload_sam_audit(param)
             sleep(3)
-            #Upload To Server
             _Common.upload_bni_wallet()
             _Common.TRIGGER_MANUAL_TOPUP = True
             output['last_balance'] = samLastBalance
@@ -796,7 +795,8 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
         }
         _Common.store_upload_sam_audit(param)
         # Update to server
-        _Common.upload_mandiri_wallet()
+        # Disabled = 2022-12-27
+        # _Common.upload_mandiri_wallet()
     except Exception as e:
         LOGGER.warning((e, report, reff_no, amount, status))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#EXCEPTION_PARSING_REPORT')
@@ -1186,7 +1186,8 @@ def topup_offline_mandiri(amount, trxid='', slot=None):
         _Common.set_mandiri_uid(slot, __card_uid)
         _Common.store_upload_sam_audit(param)
         # Update to server
-        _Common.upload_mandiri_wallet()
+        # Disabled = 2022-12-27
+        # _Common.upload_mandiri_wallet()
     else:
         rc = _Common.LAST_READER_ERR_CODE
         LOGGER.warning((slot, _result))
@@ -1418,7 +1419,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 'bank_id': '2',
                 'bank_name': 'BNI',
             }
-            update_bni_wallet(slot, amount, deposit_last_balance)
+            # Disabled - 2022-12-27
+            # update_bni_wallet(slot, amount, deposit_last_balance)
             # Logic IF Only Success
             if status == '0000':
                 remarks = data[5]

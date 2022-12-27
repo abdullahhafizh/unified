@@ -1,3 +1,8 @@
+16.2.7-GLOBAL:
+- Add CD Syncotek,
+- Disabled SAM Balance Direct Sync After Topup TRX,
+- ...
+
 16.2.6-GLOBAL:
 - Re-Enable Pending Code For Topup Failure 03,
 - Adjustment on Revalidate Code on CARD_MISSMATCH,
