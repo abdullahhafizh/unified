@@ -889,6 +889,7 @@ def simply_eject_syn_priv(port="COM10"):
                     # cmd = C_STATUS
                     cmd = ENQ
                     data_in = b""
+                    break
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                     com.write(data_out)        
