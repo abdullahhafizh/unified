@@ -850,10 +850,11 @@ SYN_STX = b"\x02"
 SYN_ETX = b"\x03"
 SYN_ADDR = b"\x31\x35" #Default Position 15
     
-SYN_C_MOVE = 'FC'.encode('ascii')
+SYN_C_MOVE = 'FC'.encode('ascii') + b'\x30'
 SYN_C_DISPENSE = 'DC'.encode('ascii')
 SYN_C_STATUS = 'AP'.encode('ascii')
 SYN_C_BASIC_STATUS = 'RF'.encode('ascii')
+SYN_C_RESET = 'RS'.encode('ascii')
     
 SYN_ACK = 0x06
 SYN_NAK = 0x15
@@ -956,14 +957,25 @@ def simply_eject_syn_priv(port="COM10"):
 
     try:
         #Init
-        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT", show_log=DEBUG_MODE)
+        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT/RESET", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
+        
+        # Add Reset At First
+        cmd = SYN_C_RESET
+        data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+        data_out = data_out + cdLib.get_bcc(data_out)
+        com.write(data_out)
+            
+        LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+        
+        sleep(.5)
                 
         stat = basic_status_syn(com)
     
         if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
-            # Do Dispense
+            # Do Dispense/Move
             cmd = SYN_C_DISPENSE
+            # cmd = SYN_C_MOVE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
