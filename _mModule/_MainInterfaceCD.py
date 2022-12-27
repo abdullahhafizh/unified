@@ -888,6 +888,7 @@ SYN_SENSOR_1 = b"001"
 # RS 52 53 Reset Machine
 # FC 46 43 Move Card To Specific Position
 
+
 def basic_status_syn(com):
     cmd = SYN_C_BASIC_STATUS
     data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
@@ -936,7 +937,6 @@ def basic_status_syn(com):
                 LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                 message = "Normal State"
                 stat = data_in.split(b'SF')[1][:3]
-                    
                 LOG.cdlog("[SYN]: CD STAT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, stat.decode('utf-8'), show_log=DEBUG_MODE)
                 break
             else:
@@ -977,6 +977,8 @@ def simply_eject_syn_priv(port="COM10"):
                 com.write(data_out)
                 LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                 sleep(.5)
+                com.write(SYN_ENQ)
+                LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
             else:
                 break
     
