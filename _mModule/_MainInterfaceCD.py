@@ -969,8 +969,18 @@ def simply_eject_syn_priv(port="COM10"):
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
 
         stat = basic_status_syn(com)
+        
+        if stat == SYN_CARD_STILL_STACKED:
+            cmd = SYN_C_MOVE
+            data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+            data_out = data_out + cdLib.get_bcc(data_out)
+            com.write(data_out)
+            LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+            sleep(.5)
+            com.write(SYN_ENQ)
+            LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
     
-        if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+        elif stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
             # Do Dispense/Move
             cmd = SYN_C_DISPENSE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
