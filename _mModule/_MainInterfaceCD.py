@@ -894,10 +894,9 @@ def simply_eject_syn_priv(port="COM10"):
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    # cmd = C_STATUS
-                    # data_in = b""
                     # Send Enquiry
-                    send_enq_syn(com, ENQ)
+                    com.write(ENQ)
+                    LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, ENQ, show_log=DEBUG_MODE)
                     break
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
@@ -911,8 +910,8 @@ def simply_eject_syn_priv(port="COM10"):
                     continue
                 
         if retry <= 0 :
-            status = "C_DISPENSE"
-            message = "Maksimum Retry Reached"
+            status = "C_BASIC_STATUS"
+            message = "Maksimum Retry Reached [C_BASIC_STATUS]"
             raise SystemError('MAXR:'+message)
 
         # #Get Status
@@ -928,10 +927,16 @@ def simply_eject_syn_priv(port="COM10"):
         while retry > 0:
             data_in = data_in + com.read_all()
             if len(data_in) > 0:
-                if data_in.__contains__(ACK):
+                if data_in.__contains__(ETX):
                     LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                     status = ES_NO_ERROR
-                    message = "Unknown State"
+                    message = "Normal State"
+                    response = {}
+                    break
+                elif data_in.__contains__(ACK):
+                    LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                    status = ES_NO_ERROR
+                    message = "ACK State"
                     response = {}
                     break
                 elif data_in.__contains__(NAK):
