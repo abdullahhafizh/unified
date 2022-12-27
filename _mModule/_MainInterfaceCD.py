@@ -906,12 +906,12 @@ def simply_eject_syn_priv(port="COM10"):
             raise SystemError('MAXR:'+message)
 
         # Send Enquiry
-        data_out = STX + ENQ + ADDR + ETX
-        data_out = data_out + cdLib.get_bcc(data_out)
-        com.write(data_out)
-        LOG.cdlog("[SYN]: CD WRITE ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+        # data_out = STX + ENQ + ADDR + ETX
+        # data_out = data_out + cdLib.get_bcc(data_out)
+        # com.write(data_out)
+        # LOG.cdlog("[SYN]: CD WRITE ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
 
-        sleep(0.5)
+        # sleep(0.5)
 
         # #Get Status
         # LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
