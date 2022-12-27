@@ -953,8 +953,8 @@ def basic_status_syn(com):
 
 @func_set_timeout(10)
 def simply_eject_syn_priv(port="COM10"):
-    message = ""
-    status = None
+    message = "General Error"
+    status = ES_UNKNOWN_ERROR
     ser = None
     response = {
         "is_stack_empty": True,
@@ -1050,10 +1050,10 @@ def simply_eject_syn_priv(port="COM10"):
                         # LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                         status = ES_UNKNOWN_ERROR
             
-        if retry <= 0 :
-            status = "C_BASIC_STATUS"
-            message = "Maksimum Retry Reached [C_BASIC_STATUS]"
-            raise SystemError('MAXR:'+message)
+            if retry <= 0 :
+                status = "C_BASIC_STATUS"
+                message = "Maksimum Retry Reached [C_BASIC_STATUS]"
+                raise SystemError('MAXR:'+message)
         
     except FunctionTimedOut as ex:
         last_response = None
