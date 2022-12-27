@@ -886,7 +886,7 @@ def simply_eject_syn_priv(port="COM10"):
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    cmd = C_STATUS
+                    # cmd = C_STATUS
                     data_in = b""
                     break
                 elif data_in.__contains__(NAK):
@@ -923,7 +923,7 @@ def simply_eject_syn_priv(port="COM10"):
 
         data_in = b""
         retry = 5
-        while cmd == C_STATUS and retry > 0:
+        while retry > 0:
             data_in = data_in + com.read_all()
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
@@ -950,7 +950,7 @@ def simply_eject_syn_priv(port="COM10"):
                     else:
                         continue
                 elif data_in.__contains__(NAK):
-                    LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                    LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                     com.write(data_out)        
                     data_in = b""
                     retry = retry - 1
