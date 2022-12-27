@@ -844,6 +844,106 @@ def send_enq_syn(com, cmd):
         LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd, show_log=DEBUG_MODE)
     except:
         pass
+    
+
+SYN_STX = b"\x02"
+SYN_ETX = b"\x03"
+SYN_ADDR = b"\x31\x35" #Default Position 15
+    
+SYN_C_MOVE = 'FC'.encode('ascii')
+SYN_C_DISPENSE = 'DC'.encode('ascii')
+SYN_C_STATUS = 'AP'.encode('ascii')
+SYN_C_BASIC_STATUS = 'RF'.encode('ascii')
+    
+SYN_ACK = 0x06
+SYN_NAK = 0x15
+SYN_ENQ = b'\x05' + SYN_ADDR
+    
+# STAT CD
+SYN_DISPENSING = b"800" #Dispensing card 
+SYN_CAPTURING = b"400" #Capturing card 
+SYN_DISPENSE_ERROR = b"200" #Dispense error
+SYN_CAPTURE_ERROR = b"100" #Capture error
+
+SYN_GENERAL_ERROR = b"080"
+SYN_CARD_OVERLAP = b"040"
+SYN_CARD_JAMMED = b"020"
+SYN_CARD_STACK_WILL_EMPTY = b"010"
+SYN_CARD_NORMAL = b"000"
+
+SYN_STACK_EMPTY = b"008"
+SYN_SENSOR_3 = b"004"
+SYN_SENSOR_2 = b"002"
+SYN_SENSOR_1 = b"001"    
+    
+# Command Hex Descriptions
+# DC 44 43 Move card to front without holding card 
+# CP 43 50 Capture card
+# RF 52 46 Basic check status 
+# AP 41 50 Advanced check status
+# RS 52 53 Reset Machine
+# FC 46 43 Move Card To Specific Position
+
+def basic_status_syn(com):
+    cmd = SYN_C_BASIC_STATUS
+    data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+    data_out = data_out + cdLib.get_bcc(data_out)
+    com.write(data_out)
+            
+    LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+
+    data_in = b""
+    retry = 5
+    while True:
+        if retry == 0: break
+        data_in = data_in + com.read_all()
+        if len(data_in) > 0:
+            if data_in.__contains__(SYN_ACK):
+                LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                # Send Enquiry
+                com.write(SYN_ENQ)
+                LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
+                break
+            elif data_in.__contains__(SYN_NAK):
+                LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                com.write(data_out)        
+                data_in = b""
+                retry = retry - 1
+            else:
+                LOG.cdlog("[SYN]: CD RESPONSE UNKNOWN ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                data_in = b""
+                retry = retry - 1
+                sleep(0.5)
+                continue
+                
+    if retry <= 0 :
+        message = "Maksimum Retry Reached [C_BASIC_STATUS]"
+        raise SystemError('MAXR:'+message)
+    
+    data_in = b""
+    retry = 5
+    stat = None
+    
+    while True:
+        if retry == 0: break
+        data_in = data_in + com.read_all()
+        if len(data_in) > 0:
+            if data_in.__contains__(SYN_ETX):
+                LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                message = "Normal State"
+                stat = data_in.split(b'SF')[1][:3]
+                LOG.cdlog("[SYN]: CD STAT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, stat.decode('utf-8'), show_log=DEBUG_MODE)
+                break
+            else:
+                retry = retry - 1
+                sleep(0.5)
+                continue
+    
+    if retry <= 0 :
+        message = "Maksimum Retry Reached"
+        raise SystemError('MAXR:'+message)
+    
+    return stat
 
 
 @func_set_timeout(10)
@@ -851,75 +951,35 @@ def simply_eject_syn_priv(port="COM10"):
     message = ""
     status = None
     ser = None
-    response = None
-
-    STX = b"\x02"
-    ETX = b"\x03"
-    ADDR = b"\x31\x35" #Default Position 15
-    
-    C_MOVE = 'FC'.encode('ascii')
-    C_DISPENSE = 'DC'.encode('ascii')
-    C_STATUS = 'AP'.encode('ascii')
-    C_BASIC_STATUS = 'RF'.encode('ascii')
-    
-    ACK = 0x06
-    NAK = 0x15
-    ENQ = b'\x05' + ADDR
-    
-    # STAT CD
-    S_DISPENSING = b"800" #Dispensing card 
-    S_CAPTURING = b"400" #Capturing card 
-    S_DISPENSE_ERROR = b"200" #Dispense error
-    S_CAPTURE_ERROR = b"100" #Capture error
-    
-    S_GENERAL_ERROR = b"080"
-    S_CARD_OVERLAP = b"040"
-    S_CARD_JAMMED = b"020"
-    S_CARD_STACK_WILL_EMPTY = b"010"
-    S_CARD_NORMAL = b"000"
-
-    S_STACK_EMPTY = b"008"
-    S_SENSOR_3 = b"004"
-    S_SENSOR_2 = b"002"
-    S_SENSOR_1 = b"001"    
-    
-    # Command Hex Descriptions
-    # DC 44 43 Move card to front without holding card 
-    # CP 43 50 Capture card
-    # RF 52 46 Basic check status 
-    # AP 41 50 Advanced check status
-    # RS 52 53 Reset Machine
-    # FC 46 43 Move Card To Specific Position
 
     try:
         #Init
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
-        
-        trigger_dispense = False
-        
-        while True:
-
-            cmd = C_BASIC_STATUS
-            data_out = STX + ADDR + cmd + ETX
+                
+        stat = basic_status_syn(com)
+    
+        if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+            # Do Dispense
+            cmd = SYN_C_DISPENSE
+            data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
             
             LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-
             data_in = b""
             retry = 5
             while True:
                 if retry == 0: break
                 data_in = data_in + com.read_all()
                 if len(data_in) > 0:
-                    if data_in.__contains__(ACK):
+                    if data_in.__contains__(SYN_ACK):
                         LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                         # Send Enquiry
-                        com.write(ENQ)
-                        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, ENQ, show_log=DEBUG_MODE)
+                        com.write(SYN_ENQ)
+                        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
                         break
-                    elif data_in.__contains__(NAK):
+                    elif data_in.__contains__(SYN_NAK):
                         LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                         com.write(data_out)        
                         data_in = b""
@@ -927,88 +987,49 @@ def simply_eject_syn_priv(port="COM10"):
                     else:
                         LOG.cdlog("[SYN]: CD RESPONSE UNKNOWN ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                         data_in = b""
-                        retry = retry - 1
                         sleep(0.5)
                         continue
                     
             if retry <= 0 :
-                status = "C_BASIC_STATUS"
-                message = "Maksimum Retry Reached [C_BASIC_STATUS]"
+                status = "C_DISPENSE"
+                message = "Maksimum Retry Reached [C_DISPENSE]"
                 raise SystemError('MAXR:'+message)
-
-            data_in = b""
+            
             retry = 5
-            stat = None
             while True:
-                if retry == 0: break
-                data_in = data_in + com.read_all()
-                if len(data_in) > 0:
-                    if data_in.__contains__(ETX):
-                        LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                        status = ES_NO_ERROR
-                        message = "Normal State"
-                        stat = data_in.split(b'SF')[1][:3]
-                        LOG.cdlog("[SYN]: CD STAT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, stat.decode('utf-8'), show_log=DEBUG_MODE)
-                        response = {
-                            "is_stack_empty": stat == S_STACK_EMPTY,
-                            "is_card_on_sensor": stat in [S_SENSOR_1, S_SENSOR_2, S_SENSOR_3],
-                            "is_motor_failed": stat in [S_DISPENSE_ERROR, S_CAPTURE_ERROR, S_CARD_JAMMED, S_CARD_OVERLAP, S_GENERAL_ERROR],
-                            "is_cd_busy": stat in [S_DISPENSING, S_CAPTURING]
-                        }
-                        if trigger_dispense:
-                            # Stop Here After Trigger Dispense
-                            break
-                    else:
-                        retry = retry - 1
-                        sleep(0.5)
-                        continue
-            
-            if retry <= 0 :
-                status = "C_STATUS"
-                message = "Maksimum Retry Reached"
-                raise SystemError('MAXR:'+message)
-        
-            if stat in [S_CARD_NORMAL, S_CARD_STACK_WILL_EMPTY] and not trigger_dispense:
-                # Do Dispense
-                cmd = C_DISPENSE
-                data_out = STX + ADDR + cmd + ETX
-                data_out = data_out + cdLib.get_bcc(data_out)
-                com.write(data_out)
-                
-                LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-
-                data_in = b""
-                retry = 5
-                while True:
-                    if retry == 0: break
-                    data_in = data_in + com.read_all()
-                    if len(data_in) > 0:
-                        if data_in.__contains__(ACK):
-                            LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                            # Send Enquiry
-                            com.write(ENQ)
-                            LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, ENQ, show_log=DEBUG_MODE)
-                            break
-                        elif data_in.__contains__(NAK):
-                            LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                            com.write(data_out)        
-                            data_in = b""
-                            retry = retry - 1
-                        else:
-                            LOG.cdlog("[SYN]: CD RESPONSE UNKNOWN ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                            data_in = b""
-                            sleep(0.5)
-                            continue
-                        
-                if retry <= 0 :
-                    status = "C_DISPENSE"
-                    message = "Maksimum Retry Reached [C_DISPENSE]"
-                    raise SystemError('MAXR:'+message)
-                else:
-                    trigger_dispense = True
-            else:
                 sleep(0.5)
+                stat = basic_status_syn(com)
+                retry = retry - 1
+                response = {
+                    "is_stack_empty": stat == SYN_STACK_EMPTY,
+                    "is_card_on_sensor": stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3],
+                    "is_motor_failed": stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR],
+                    "is_cd_busy": stat in [SYN_DISPENSING, SYN_CAPTURING]
+                }
+                if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+                    status = ES_NO_ERROR
+                    message = 'Success'
+                    break
+                elif stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR]:
+                    status = ES_INTERNAL_ERROR
+                elif stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
+                    status = ES_INTERNAL_ERROR
+                elif stat == SYN_STACK_EMPTY:
+                    status = ES_CARDS_EMPTY
+                else:
+                    # ES_NO_ERROR = "0000"
+                    # ES_UNKNOWN_ERROR = "ER01"
+                    # ES_TRACK2_NOT_FOUND = "ER02"
+                    # ES_CARDS_EMPTY = "ER03"
+                    # ES_ERRORBIN_FULL = "ER04"
+                    # ES_INTERNAL_ERROR = "FF"
+                    status = ES_UNKNOWN_ERROR
             
+        if retry <= 0 :
+            status = "C_BASIC_STATUS"
+            message = "Maksimum Retry Reached [C_BASIC_STATUS]"
+            raise SystemError('MAXR:'+message)
+        
     except FunctionTimedOut as ex:
         last_response = None
 
