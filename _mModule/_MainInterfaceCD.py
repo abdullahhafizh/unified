@@ -424,6 +424,7 @@ def fast_eject(param, __output_response__):
     
     return status
 
+
 def fast_eject_priv(port="COM10", ADDR="00"):
     ADDR = bytes.fromhex(ADDR)
 
