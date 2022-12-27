@@ -866,6 +866,22 @@ def simply_eject_syn_priv(port="COM10"):
     NAK = 0x15
     ENQ = b'\x05' + ADDR
     
+    # STAT CD
+    S_DISPENSING = b"800" #Dispensing card 
+    S_CAPTURING = b"400" #Capturing card 
+    S_DISPENSE_ERROR = b"200" #Dispense error
+    S_CAPTURE_ERROR = b"100" #Capture error
+    
+    S_GENERAL_ERROR = b"080"
+    S_CARD_OVERLAP = b"040"
+    S_CARD_JAMMED = b"020"
+    S_CARD_STACK_WILL_EMPTY = b"010"
+
+    S_STACK_EMPTY = b"008"
+    S_SENSOR_3 = b"004"
+    S_SENSOR_2 = b"002"
+    S_SENSOR_1 = b"001"    
+    
     # Command Hex Descriptions
     # DC 44 43 Move card to front without holding card 
     # CP 43 50 Capture card
@@ -914,14 +930,6 @@ def simply_eject_syn_priv(port="COM10"):
             message = "Maksimum Retry Reached [C_BASIC_STATUS]"
             raise SystemError('MAXR:'+message)
 
-        # #Get Status
-        # LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
-        # data_out = STX + ADDR + cmd + ETX
-        # data_out = data_out + cdLib.get_bcc(data_out)
-        # com.write(data_out)
-
-        # LOG.cdlog("[SYN]: CD WRITE :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-
         data_in = b""
         retry = 5
         while retry > 0:
@@ -931,22 +939,18 @@ def simply_eject_syn_priv(port="COM10"):
                     LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                     status = ES_NO_ERROR
                     message = "Normal State"
-                    response = {}
+                    stat = data_in.split(b'SF')[1][:3]
+                    LOG.cdlog("[SYN]: CD STAT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, stat.decode('utf-8'), show_log=DEBUG_MODE)
+                    response = {
+                        "is_stack_empty": stat == S_STACK_EMPTY,
+                        "is_card_on_sensor": stat in [S_SENSOR_1, S_SENSOR_2, S_SENSOR_3],
+                        "is_motor_failed": stat in [S_DISPENSE_ERROR, S_CAPTURE_ERROR, S_CARD_JAMMED, S_CARD_OVERLAP, S_GENERAL_ERROR],
+                        "is_cd_busy": stat in [S_DISPENSING, S_CAPTURING]
+                    }
                     break
-                elif data_in.__contains__(ACK):
-                    LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    status = ES_NO_ERROR
-                    message = "ACK State"
-                    response = {}
-                    break
-                elif data_in.__contains__(NAK):
-                    LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    # com.write(data_out)        
-                    data_in = b""
-                    retry = retry - 1
                 else:
                     retry = retry - 1
-                    sleep(.5)
+                    sleep(0.5)
                     continue
         
         if retry <= 0 :
