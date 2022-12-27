@@ -852,6 +852,7 @@ def simply_eject_syn_priv(port="COM10"):
     C_MOVE = b'\x46\x43\x34'
     C_DISPENSE = b'\x44\x43'
     C_STATUS = b'\x41\x50'
+    C_BASIC_STATUS = b'\x52\x46'
     
     ACK = 0x06
     NAK = 0x15
@@ -870,7 +871,8 @@ def simply_eject_syn_priv(port="COM10"):
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
 
-        cmd = C_DISPENSE #Move Card at front with holding card
+        # cmd = C_DISPENSE #Move Card at front with holding card
+        cmd = C_BASIC_STATUS
         data_out = STX + ADDR + cmd + ETX
         data_out = data_out + cdLib.get_bcc(data_out)
         com.write(data_out)
@@ -879,12 +881,13 @@ def simply_eject_syn_priv(port="COM10"):
 
         data_in = b""
         retry = 5
-        while cmd == C_DISPENSE and retry > 0:
+        while retry > 0:
             data_in = data_in + com.read_all()
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    cmd = C_STATUS
+                    # cmd = C_STATUS
+                    cmd = ENQ
                     data_in = b""
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
@@ -903,15 +906,23 @@ def simply_eject_syn_priv(port="COM10"):
             raise SystemError('MAXR:'+message)
 
         # Send Enquiry
-        data_out = STX + ENQ + ADDR + ETX
+        data_out = STX + cmd + ADDR + ETX
         data_out = data_out + cdLib.get_bcc(data_out)
         com.write(data_out)
         LOG.cdlog("[SYN]: CD WRITE ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
 
-        sleep(.5)
-        data_in = data_in + com.read_all()
-        if len(data_in) > 0:
-            LOG.cdlog("[SYN]: CD READ ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+        data_in = b""
+        retry = 5
+        while retry > 0:
+            data_in = data_in + com.read_all()
+            if len(data_in) > 0:
+                LOG.cdlog("[SYN]: CD READ ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                retry = retry - 1
+            if retry <= 0 :
+                status = "C_STATUS"
+                message = "Maksimum Retry Reached"
+                raise SystemError('MAXR:'+message)
+
 
         #Get Status
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
