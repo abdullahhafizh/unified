@@ -7,7 +7,7 @@ import _CardDispenserLib as cdLib
 from time import sleep
 from serial import Serial
 from func_timeout import func_timeout, func_set_timeout, FunctionTimedOut
-import traceback
+import sys
 
 
 DEBUG_MODE = True
@@ -1089,3 +1089,37 @@ def simply_eject_syn_priv(port="COM10"):
                 ser.close()
 
     return status, message, response
+
+
+def arg_check():
+    print('Check Argument', len(sys.argv), str(sys.argv))
+    for arg in sys.argv:
+        if 'COM' in arg or '/dev/' in arg:
+            return arg
+        return None
+    
+
+def welcome():
+    print('--- '+__file__+' ---')
+    print('Card Dispenser Syncotek Simulator')
+    print('Version 1.0')
+    
+    
+def exit(msg, code=1):
+    print('Message :', msg)
+    sys.exit(code)
+
+
+if __name__ == '__main__':
+    welcome()
+    port = arg_check()
+    if port is None:
+        exit('Missing Argument')
+    response = {
+        "cmd": 'SIMPLY_EJECT_SYN',
+        "param": port + '|',
+        "message": "N/A",
+        "code": "9999"
+    }
+    output = simply_eject_syn(port, response)
+    print(output)
