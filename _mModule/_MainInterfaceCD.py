@@ -860,6 +860,8 @@ SYN_NAK = 0x15
 SYN_ENQ = b'\x05' + SYN_ADDR
     
 # STAT CD
+SYN_DISPENSED = b"804" #Card Successfully Dispensed
+ 
 SYN_DISPENSING = b"800" #Dispensing card 
 SYN_CAPTURING = b"400" #Capturing card 
 SYN_DISPENSE_ERROR = b"200" #Dispense error
@@ -1006,7 +1008,7 @@ def simply_eject_syn_priv(port="COM10"):
                     "is_motor_failed": stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR],
                     "is_cd_busy": stat in [SYN_DISPENSING, SYN_CAPTURING]
                 }
-                if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+                if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY, SYN_DISPENSED]:
                     status = ES_NO_ERROR
                     message = 'Success'
                     break
