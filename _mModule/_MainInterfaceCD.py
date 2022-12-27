@@ -940,9 +940,6 @@ def simply_eject_syn_priv(port="COM10"):
                     data_in = b""
                     retry = retry - 1
                 else:
-                    LOG.cdlog("[SYN]: CD RESPONSE UNKNOWN ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    data_in = b""
-                    sleep(0.5)
                     continue
         
         if retry <= 0 :
