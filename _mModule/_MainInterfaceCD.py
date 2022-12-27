@@ -838,6 +838,14 @@ def simply_eject_syn(param, __output_response__):
     return status
 
 
+def send_enq_syn(com, cmd):
+    try:
+        com.write(cmd)
+        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd, show_log=DEBUG_MODE)
+    except:
+        pass
+
+
 @func_set_timeout(10)
 def simply_eject_syn_priv(port="COM10"):
     message = ""
@@ -856,7 +864,7 @@ def simply_eject_syn_priv(port="COM10"):
     
     ACK = 0x06
     NAK = 0x15
-    ENQ = b'\x05'
+    ENQ = b'\x05' + ADDR
     
     # Command Hex Descriptions
     # DC 44 43 Move card to front without holding card 
@@ -889,9 +897,7 @@ def simply_eject_syn_priv(port="COM10"):
                     # cmd = C_STATUS
                     # data_in = b""
                     # Send Enquiry
-                    cmd_enq = ENQ + ADDR
-                    com.write(cmd_enq)
-                    LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd_enq, show_log=DEBUG_MODE)
+                    send_enq_syn(com, ENQ)
                     break
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
@@ -923,28 +929,11 @@ def simply_eject_syn_priv(port="COM10"):
             data_in = data_in + com.read_all()
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
-                    end = data_in.find(ETX)
-                    if len(data_in) > 3 and end != -1:
-                        LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                        stat = data_in[end-1]
-                        is_stack_empty, is_card_on_sensor, is_motor_failed, is_cd_busy = cdLib.syn_get_status(stat)
-                        response = {
-                            "is_stack_empty": is_stack_empty,
-                            "is_card_on_sensor": is_card_on_sensor,
-                            "is_motor_failed": is_motor_failed,
-                            "is_cd_busy": is_cd_busy
-                        }
-                        com.write(b"\x06")
-                        sleep(0.5)
-                        if is_cd_busy:
-                            data_in = b""
-                            data_out = STX + cmd + ETX
-                            data_out = data_out + cdLib.get_bcc(data_out)
-                            com.write(data_out)
-                        else:
-                            data_in = b""
-                    else:
-                        continue
+                    LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
+                    status = ES_NO_ERROR
+                    message = "Unknown State"
+                    response = {}
+                    break
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                     # com.write(data_out)        
@@ -960,61 +949,6 @@ def simply_eject_syn_priv(port="COM10"):
             status = "C_STATUS"
             message = "Maksimum Retry Reached"
             raise SystemError('MAXR:'+message)
-
-        if is_stack_empty:
-            status = ES_CARDS_EMPTY
-            message = "Stack Empty"
-            LOG.cdlog("[SYN]: CD STATUS ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
-        elif is_cd_busy:
-            status = ES_INTERNAL_ERROR
-            message = "CD Busy"
-            LOG.cdlog("[SYN]: CD STATUS ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
-        # elif is_motor_failed:
-        #     data_out = STX + C_ERROR_CLEAR + ETX
-        #     data_out = data_out + cdLib.get_bcc(data_out)
-        #     com.write(data_out)
-        #     status = ES_INTERNAL_ERROR
-        #     message = "Motor Failed"
-        #     LOG.cdlog("[SYN]: CD ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
-        else:
-            #Issued Card
-            LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "ELSE", show_log=DEBUG_MODE)
-            # data_out = STX + ADDR + cmd + ETX
-            # data_out = data_out + cdLib.get_bcc(data_out)
-            # com.write(data_out)
-
-            # data_in = b""
-            # retry = 5
-            # while retry > 0:
-            #     data_in = data_in + com.read_all()
-            #     if len(data_in) > 0:
-            #         if data_in.__contains__(ACK):
-            #             LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
-            #             cmd = C_STATUS
-            #         elif data_in.__contains__(NAK):
-            #             LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
-            #             com.write(data_out)        
-            #             data_in = b""
-            #             retry = retry - 1
-            #         elif data_in.__contains__(CAN):
-            #             LOG.cdlog("[SYN]: CD RESPONSE CAN ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
-            #             com.write(data_out)
-            #             data_in = b""
-            #             retry = retry - 1
-            #         elif data_in.__contains__(0x83) or data_in.__contains__(0x87):
-            #             data_in = b""
-            #             sleep(0.5)
-            #             continue
-            #         else:
-            #             LOG.cdlog("[SYN]: CD RESPONSE UNKNOWN ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-            #             data_in = b""
-            #             sleep(0.5)
-            #             continue
-            
-            # TODO: Fix State
-            status = "UNKNOWN"
-            message = "Unknown State"
-            raise SystemError('STOP:'+message)
             
     except FunctionTimedOut as ex:
         last_response = None
