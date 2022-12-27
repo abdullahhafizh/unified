@@ -886,8 +886,7 @@ def simply_eject_syn_priv(port="COM10"):
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    # cmd = C_STATUS
-                    cmd = ENQ
+                    cmd = C_STATUS
                     data_in = b""
                     break
                 elif data_in.__contains__(NAK):
@@ -907,31 +906,20 @@ def simply_eject_syn_priv(port="COM10"):
             raise SystemError('MAXR:'+message)
 
         # Send Enquiry
-        data_out = STX + cmd + ADDR + ETX
+        data_out = STX + ENQ + ADDR + ETX
         data_out = data_out + cdLib.get_bcc(data_out)
         com.write(data_out)
         LOG.cdlog("[SYN]: CD WRITE ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
 
-        data_in = b""
-        retry = 5
-        while retry > 0:
-            data_in = data_in + com.read_all()
-            if len(data_in) > 0:
-                LOG.cdlog("[SYN]: CD READ ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                retry = retry - 1
-            if retry <= 0 :
-                status = "C_STATUS"
-                message = "Maksimum Retry Reached"
-                raise SystemError('MAXR:'+message)
+        sleep(0.5)
 
+        # #Get Status
+        # LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
+        # data_out = STX + ADDR + cmd + ETX
+        # data_out = data_out + cdLib.get_bcc(data_out)
+        # com.write(data_out)
 
-        #Get Status
-        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
-        data_out = STX + ADDR + cmd + ETX
-        data_out = data_out + cdLib.get_bcc(data_out)
-        com.write(data_out)
-        
-        LOG.cdlog("[SYN]: CD WRITE :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+        # LOG.cdlog("[SYN]: CD WRITE :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
 
         data_in = b""
         retry = 5
@@ -941,7 +929,7 @@ def simply_eject_syn_priv(port="COM10"):
                 if data_in.__contains__(ACK):
                     end = data_in.find(ETX)
                     if len(data_in) > 3 and end != -1:
-                        LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                        LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                         stat = data_in[end-1]
                         is_stack_empty, is_card_on_sensor, is_motor_failed, is_cd_busy = cdLib.syn_get_status(stat)
                         response = {
@@ -980,11 +968,11 @@ def simply_eject_syn_priv(port="COM10"):
         if is_stack_empty:
             status = ES_CARDS_EMPTY
             message = "Stack Empty"
-            LOG.cdlog("[SYN]: CD ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD STATUS ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
         elif is_cd_busy:
             status = ES_INTERNAL_ERROR
             message = "CD Busy"
-            LOG.cdlog("[SYN]: CD ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD STATUS ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, message, show_log=DEBUG_MODE)
         # elif is_motor_failed:
         #     data_out = STX + C_ERROR_CLEAR + ETX
         #     data_out = data_out + cdLib.get_bcc(data_out)
