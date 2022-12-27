@@ -542,7 +542,7 @@ def simply_eject_kyt(param, __output_response__):
 def simply_eject_kyt_priv(port="COM10"):
     message = ""
     status = None
-    ser = None
+    com = None
     response = None
 
     STX = b"\x02"
@@ -785,9 +785,9 @@ def simply_eject_kyt_priv(port="COM10"):
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
-        if ser:
-            if ser.isOpen():
-                ser.close()
+        if com:
+            if com.isOpen():
+                com.close()
 
     return status, message, response
 
