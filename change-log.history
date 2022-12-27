@@ -1,6 +1,7 @@
 16.2.7-GLOBAL:
 - Add CD Syncotek,
-- Disabled SAM Balance Direct Sync After Topup TRX,
+- Disable SAM Balance Direct Sync After Topup TRX,
+- Add Multi Store Notes in NV Bill,
 - ...
 
 16.2.6-GLOBAL:

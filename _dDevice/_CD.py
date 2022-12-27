@@ -89,6 +89,9 @@ def trigger_card_dispenser(port, slot, multiply='1'):
         if cd_type == 'KYT':
             trigger_card_dispenser_kyt(port, slot, multiply)
             return
+        if cd_type == 'SYN':
+            trigger_card_dispenser_syn(port, slot, multiply)
+            return
         command = " ".join([CMD_CD_EXEC, str(port), "9600", multiply])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         # Multi replace below must be performed to get the response object
@@ -121,6 +124,33 @@ def trigger_card_dispenser_kyt(port, slot, multiply='1'):
             "code": "9999"
         }
         output = CDLibrary.simply_eject_kyt(port, response)
+        # LOGGER.debug((command, output, type(response), str(response)))
+        if response.get('code') is not None:
+            # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}
+            if response['code'] in ['0000']: #Set Card Jam Into Success Release
+                if multiply == '1':
+                    # Direct Reduce Slot Without Transaction Record Dependant
+                    _DAO.reduce_product_stock_by_slot_status(status=slot)
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+                else:
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
+            else:
+                emit_eject_error(slot, output, 'trigger_card_dispenser')
+        else:
+            emit_eject_error(slot, output, 'trigger_card_dispenser')
+    except Exception as e:
+        emit_eject_error(slot, str(e), 'trigger_card_dispenser')
+        
+        
+def trigger_card_dispenser_syn(port, slot, multiply='1'):
+    try:
+        response = {
+            "cmd": 'SIMPLY_EJECT_SYN',
+            "param": port + '|',
+            "message": "N/A",
+            "code": "9999"
+        }
+        output = CDLibrary.simply_eject_syn(port, response)
         # LOGGER.debug((command, output, type(response), str(response)))
         if response.get('code') is not None:
             # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}
