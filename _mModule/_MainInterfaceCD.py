@@ -1017,7 +1017,7 @@ def simply_eject_syn_priv(port="COM10"):
                     "is_motor_failed": stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR],
                     "is_cd_busy": stat in [SYN_DISPENSING, SYN_CAPTURING]
                 }
-                if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY, SYN_DISPENSED]:
+                if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
                     status = ES_NO_ERROR
                     message = 'Success'
                     break
