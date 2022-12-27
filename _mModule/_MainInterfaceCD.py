@@ -940,6 +940,8 @@ def simply_eject_syn_priv(port="COM10"):
                     data_in = b""
                     retry = retry - 1
                 else:
+                    retry = retry - 1
+                    sleep(.5)
                     continue
         
         if retry <= 0 :
