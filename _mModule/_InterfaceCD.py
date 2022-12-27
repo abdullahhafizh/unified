@@ -957,7 +957,7 @@ def basic_status_syn(com):
 def simply_eject_syn_priv(port="COM10"):
     message = "General Error"
     status = ES_UNKNOWN_ERROR
-    ser = None
+    com = None
     response = {
         "is_stack_empty": True,
         "is_card_on_sensor": True,
@@ -967,7 +967,7 @@ def simply_eject_syn_priv(port="COM10"):
 
     try:
 
-        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT", show_log=DEBUG_MODE)
+        LOG.cdlog("[SYN]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
 
         stat = basic_status_syn(com)
@@ -1068,26 +1068,21 @@ def simply_eject_syn_priv(port="COM10"):
                 raise SystemError('MAXR:'+message)
         
     except FunctionTimedOut as ex:
-        last_response = None
-
-        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format("INIT_GAGAL, CD Tidak Ada Response", status, message, last_response)
-        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
-            status = ES_UNKNOWN_ERROR
+        status = 'TIMEOUT'
+        message = "Exception: FunctionTimedOut"
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     except Exception as ex:
-        last_response = None
+        status = 'EXCP'
+        message = "Exception: General"
 
-        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format(ex, status, message, last_response)
-        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
-            status = ES_UNKNOWN_ERROR
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
-        if ser:
-            if ser.isOpen():
-                ser.close()
+        if com:
+            if com.isOpen():
+                com.close()
 
     return status, message, response
