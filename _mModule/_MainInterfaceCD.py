@@ -889,10 +889,9 @@ def simply_eject_syn_priv(port="COM10"):
                     # cmd = C_STATUS
                     # data_in = b""
                     # Send Enquiry
-                    # data_out = STX + ENQ + ADDR + ETX
-                    # data_out = data_out + cdLib.get_bcc(data_out)
-                    com.write(ENQ + ADDR)
-                    LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                    cmd_enq = ENQ + ADDR
+                    com.write(cmd_enq)
+                    LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd_enq, show_log=DEBUG_MODE)
                     break
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
@@ -921,7 +920,6 @@ def simply_eject_syn_priv(port="COM10"):
         data_in = b""
         retry = 5
         while retry > 0:
-            sleep(0.5)
             data_in = data_in + com.read_all()
             if len(data_in) > 0:
                 if data_in.__contains__(ACK):
