@@ -954,22 +954,18 @@ def simply_eject_syn_priv(port="COM10"):
     message = ""
     status = None
     ser = None
+    response = {
+        "is_stack_empty": True,
+        "is_card_on_sensor": True,
+        "is_motor_failed": True,
+        "is_cd_busy": True
+    }
 
     try:
         #Init
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT/RESET", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
-        
-        # Add Reset At First
-        cmd = SYN_C_RESET
-        data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-        data_out = data_out + cdLib.get_bcc(data_out)
-        com.write(data_out)
-            
-        LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-        
-        sleep(.5)
-                
+                        
         stat = basic_status_syn(com)
     
         if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
@@ -1037,6 +1033,13 @@ def simply_eject_syn_priv(port="COM10"):
                     # ES_CARDS_EMPTY = "ER03"
                     # ES_ERRORBIN_FULL = "ER04"
                     # ES_INTERNAL_ERROR = "FF"
+                    # Add Reset At Error
+                    cmd = SYN_C_RESET
+                    data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+                    data_out = data_out + cdLib.get_bcc(data_out)
+                    com.write(data_out)
+                        
+                    LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                     status = ES_UNKNOWN_ERROR
             
         if retry <= 0 :
