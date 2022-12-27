@@ -1129,5 +1129,5 @@ if __name__ == '__main__':
         "message": "N/A",
         "code": "9999"
     }
-    output = simply_eject_syn(port, response)
-    print(output)
+    simply_eject_syn(port, response)
+    print(str(response))
