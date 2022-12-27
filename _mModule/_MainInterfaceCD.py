@@ -849,14 +849,14 @@ def simply_eject_syn_priv(port="COM10"):
     ETX = b"\x03"
     ADDR = b"\x31\x35" #Default Position 15
     
-    C_MOVE = b'\x46\x43\x34'
-    C_DISPENSE = b'\x44\x43'
-    C_STATUS = b'\x41\x50'
-    C_BASIC_STATUS = b'\x52\x46'
+    C_MOVE = 'FC'.encode('ascii')
+    C_DISPENSE = 'DC'.encode('ascii')
+    C_STATUS = 'AP'.encode('ascii')
+    C_BASIC_STATUS = 'RF'.encode('ascii')
     
     ACK = 0x06
     NAK = 0x15
-    ENQ = b'\x05'
+    ENQ = 0x05
     
     # Command Hex Descriptions
     # DC 44 43 Move card to front without holding card 
@@ -888,6 +888,11 @@ def simply_eject_syn_priv(port="COM10"):
                     LOG.cdlog("[SYN]: CD RESPONSE ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                     # cmd = C_STATUS
                     # data_in = b""
+                    # Send Enquiry
+                    data_out = STX + ENQ + ADDR + ETX
+                    data_out = data_out + cdLib.get_bcc(data_out)
+                    com.write(data_out)
+                    LOG.cdlog("[SYN]: CD SEND ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                     break
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
@@ -905,13 +910,7 @@ def simply_eject_syn_priv(port="COM10"):
             message = "Maksimum Retry Reached"
             raise SystemError('MAXR:'+message)
 
-        # Send Enquiry
-        data_out = STX + ENQ + ADDR + ETX
-        data_out = data_out + cdLib.get_bcc(data_out)
-        com.write(data_out)
-        LOG.cdlog("[SYN]: CD SEND ENQ :", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-
-        sleep(0.5)
+        
 
         # #Get Status
         # LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "C_STATUS", show_log=DEBUG_MODE)
@@ -924,6 +923,7 @@ def simply_eject_syn_priv(port="COM10"):
         data_in = b""
         retry = 5
         while retry > 0:
+            sleep(0.5)
             data_in = data_in + com.read_all()
             print(data_in)
             if len(data_in) > 0:
@@ -952,7 +952,7 @@ def simply_eject_syn_priv(port="COM10"):
                         continue
                 elif data_in.__contains__(NAK):
                     LOG.cdlog("[SYN]: CD RESPONSE NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
-                    com.write(data_out)        
+                    # com.write(data_out)        
                     data_in = b""
                     retry = retry - 1
                 else:
