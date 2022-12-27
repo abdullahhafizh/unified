@@ -967,7 +967,7 @@ def simply_eject_syn_priv(port="COM10"):
 
     try:
 
-        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT/RESET", show_log=DEBUG_MODE)
+        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
 
         stat = basic_status_syn(com)

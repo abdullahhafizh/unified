@@ -241,21 +241,24 @@ def reset_cd_status(slot):
 
 def kiosk_get_cd_readiness():
     _Helper.get_thread().apply_async(get_cd_readiness, )
+    
+
+ALLOWED_CD_TYPE = ['OLD', 'NEW', 'KYT', 'SYN']
 
 
 def get_cd_readiness():
     if _Common.digit_in(_Common.CD_PORT1) is True:
-        _Common.CD_READINESS['cd1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1, '101') is True and _Common.CD_PORT1_TYPE in ['OLD', 'NEW', 'KYT'] else 'N/A'
+        _Common.CD_READINESS['cd1'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT1, '101') is True and _Common.CD_PORT1_TYPE in ALLOWED_CD_TYPE else 'N/A'
     if _Common.digit_in(_Common.CD_PORT2) is True:
-        _Common.CD_READINESS['cd2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2, '102') is True and _Common.CD_PORT2_TYPE in ['OLD', 'NEW', 'KYT'] else 'N/A'
+        _Common.CD_READINESS['cd2'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT2, '102') is True and _Common.CD_PORT2_TYPE in ALLOWED_CD_TYPE else 'N/A'
     if _Common.digit_in(_Common.CD_PORT3) is True:
-        _Common.CD_READINESS['cd3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3, '103') is True and _Common.CD_PORT3_TYPE in ['OLD', 'NEW', 'KYT'] else 'N/A'
+        _Common.CD_READINESS['cd3'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT3, '103') is True and _Common.CD_PORT3_TYPE in ALLOWED_CD_TYPE else 'N/A'
     if _Common.digit_in(_Common.CD_PORT4) is True:
-        _Common.CD_READINESS['cd4'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT4, '104') is True and _Common.CD_PORT4_TYPE in ['OLD', 'NEW', 'KYT'] else 'N/A'
+        _Common.CD_READINESS['cd4'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT4, '104') is True and _Common.CD_PORT4_TYPE in ALLOWED_CD_TYPE else 'N/A'
     if _Common.digit_in(_Common.CD_PORT5) is True:
-        _Common.CD_READINESS['cd5'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT5, '105') is True and _Common.CD_PORT5_TYPE in ['OLD', 'NEW', 'KYT'] else 'N/A'
+        _Common.CD_READINESS['cd5'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT5, '105') is True and _Common.CD_PORT5_TYPE in ALLOWED_CD_TYPE else 'N/A'
     if _Common.digit_in(_Common.CD_PORT6) is True:
-        _Common.CD_READINESS['cd6'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT6, '106') is True and _Common.CD_PORT6_TYPE in ['OLD', 'NEW', 'KYT'] else 'N/A'
+        _Common.CD_READINESS['cd6'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT6, '106') is True and _Common.CD_PORT6_TYPE in ALLOWED_CD_TYPE else 'N/A'
     CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Common.CD_READINESS))
     LOGGER.info((json.dumps(_Common.CD_READINESS)))
 
