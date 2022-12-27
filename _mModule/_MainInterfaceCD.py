@@ -862,6 +862,7 @@ SYN_ENQ = b'\x05' + SYN_ADDR
     
 # STAT CD
 SYN_DISPENSED = b"804" #Card Successfully Dispensed
+SYN_CARD_STILL_STACKED = b"003" #Card Successfully Dispensed
  
 SYN_DISPENSING = b"800" #Dispensing card 
 SYN_CAPTURING = b"400" #Capturing card 
@@ -935,6 +936,7 @@ def basic_status_syn(com):
                 LOG.cdlog("[SYN]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_in, show_log=DEBUG_MODE)
                 message = "Normal State"
                 stat = data_in.split(b'SF')[1][:3]
+                    
                 LOG.cdlog("[SYN]: CD STAT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, stat.decode('utf-8'), show_log=DEBUG_MODE)
                 break
             else:
@@ -965,13 +967,22 @@ def simply_eject_syn_priv(port="COM10"):
         #Init
         LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT/RESET", show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
-                        
-        stat = basic_status_syn(com)
+
+        while True:
+            stat = basic_status_syn(com)
+            if stat == SYN_CARD_STILL_STACKED:
+                cmd = SYN_C_MOVE
+                data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+                data_out = data_out + cdLib.get_bcc(data_out)
+                com.write(data_out)
+                LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                sleep(.5)
+            else:
+                break
     
         if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
             # Do Dispense/Move
             cmd = SYN_C_DISPENSE
-            # cmd = SYN_C_MOVE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
@@ -1012,7 +1023,7 @@ def simply_eject_syn_priv(port="COM10"):
                 retry = retry - 1
                 response = {
                     "is_stack_empty": stat == SYN_STACK_EMPTY,
-                    "is_card_on_sensor": stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3],
+                    "is_card_on_sensor": stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3, SYN_CARD_STILL_STACKED],
                     "is_motor_failed": stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR],
                     "is_cd_busy": stat in [SYN_DISPENSING, SYN_CAPTURING]
                 }
@@ -1027,19 +1038,13 @@ def simply_eject_syn_priv(port="COM10"):
                 elif stat == SYN_STACK_EMPTY:
                     status = ES_CARDS_EMPTY
                 else:
-                    # ES_NO_ERROR = "0000"
-                    # ES_UNKNOWN_ERROR = "ER01"
-                    # ES_TRACK2_NOT_FOUND = "ER02"
-                    # ES_CARDS_EMPTY = "ER03"
-                    # ES_ERRORBIN_FULL = "ER04"
-                    # ES_INTERNAL_ERROR = "FF"
                     # Add Reset At Error
-                    cmd = SYN_C_RESET
-                    data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-                    data_out = data_out + cdLib.get_bcc(data_out)
-                    com.write(data_out)
+                    # cmd = SYN_C_RESET
+                    # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+                    # data_out = data_out + cdLib.get_bcc(data_out)
+                    # com.write(data_out)
                         
-                    LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                    # LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                     status = ES_UNKNOWN_ERROR
             
         if retry <= 0 :
