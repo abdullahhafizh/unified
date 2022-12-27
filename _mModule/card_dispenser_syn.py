@@ -1092,11 +1092,18 @@ def simply_eject_syn_priv(port="COM10"):
 
 
 def arg_check():
+    global BAUD_RATE_SYN
     print('Check Argument', len(sys.argv), str(sys.argv))
+    if len(sys.argv) < 3:
+        exit('Missing Argument')
     for arg in sys.argv:
-        if 'COM' in arg or '/dev/' in arg:
+        if arg in ['9600', '19200', '38400']:
+            BAUD_RATE_SYN = int(arg)
+            print('Detected Baud Rate', arg)
+        elif 'COM' in arg or '/dev/' in arg:
+            print('Detected COM PORT', arg)
             return arg
-        return None
+    return False
     
 
 def welcome():
@@ -1107,14 +1114,15 @@ def welcome():
     
 def exit(msg, code=1):
     print('Message :', msg)
+    print('How To Use: python card_dispenser_syn 9600 COM2')
     sys.exit(code)
 
 
 if __name__ == '__main__':
     welcome()
     port = arg_check()
-    if port is None:
-        exit('Missing Argument')
+    if not port:
+        exit('Wrong Argument')
     response = {
         "cmd": 'SIMPLY_EJECT_SYN',
         "param": port + '|',
