@@ -856,7 +856,7 @@ def simply_eject_syn_priv(port="COM10"):
     
     ACK = 0x06
     NAK = 0x15
-    ENQ = 0x05
+    ENQ = b'\x05'
     
     # Command Hex Descriptions
     # DC 44 43 Move card to front without holding card 
