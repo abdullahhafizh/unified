@@ -241,7 +241,7 @@ def reset_cd_status(slot):
 
 def kiosk_get_cd_readiness():
     _Helper.get_thread().apply_async(get_cd_readiness, )
-    
+
 
 ALLOWED_CD_TYPE = ['OLD', 'NEW', 'KYT', 'SYN']
 
