@@ -849,7 +849,7 @@ def send_enq_syn(com, cmd):
 SYN_STX = b"\x02"
 SYN_ETX = b"\x03"
 SYN_ADDR = b"\x31\x35" #Default Position 15
-SYN_DISABLE_CAPTURE = "IN".decode('ascii') + b'\x30'
+SYN_DISABLE_CAPTURE = "IN".encode('ascii') + b'\x30'
     
 SYN_C_MOVE = 'FC'.encode('ascii') + b'\x30'
 SYN_C_DISPENSE = 'DC'.encode('ascii')
