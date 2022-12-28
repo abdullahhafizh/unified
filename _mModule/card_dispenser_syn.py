@@ -960,6 +960,9 @@ def set_disable_capture(com):
         data_out = data_out + cdLib.get_bcc(data_out)
         com.write(data_out)
         LOG.cdlog("[SYN]: CD SEND DISABLE CAPTURE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+        sleep(.5)
+        com.write(SYN_ENQ)
+        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
     except:
         pass
 
@@ -982,8 +985,6 @@ def simply_eject_syn_priv(port="COM10"):
         LOG.cdlog("[SYN]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
         
-        set_disable_capture(com)
-
         stat = basic_status_syn(com)
         
         # Experimental Below (Detected Capture Error)
