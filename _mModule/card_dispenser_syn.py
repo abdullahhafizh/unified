@@ -956,7 +956,7 @@ def basic_status_syn(com):
 def simply_eject_syn_priv(port="COM10"):
     message = "General Error"
     status = ES_UNKNOWN_ERROR
-    ser = None
+    com = None
     response = {
         "is_stack_empty": True,
         "is_card_on_sensor": True,
@@ -971,6 +971,7 @@ def simply_eject_syn_priv(port="COM10"):
 
         stat = basic_status_syn(com)
         
+        # Not Working
         if stat == SYN_CARD_DISPENSE_ERROR:
             cmd = SYN_C_RESET
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
@@ -994,12 +995,13 @@ def simply_eject_syn_priv(port="COM10"):
     
         if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
             # Do Dispense/Move
-            cmd = SYN_C_DISPENSE
+            # cmd = SYN_C_DISPENSE
+            cmd = SYN_C_MOVE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
             
-            LOG.cdlog("[SYN]: CD SEND DC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
             data_in = b""
             retry = 5
             while True:
@@ -1024,8 +1026,8 @@ def simply_eject_syn_priv(port="COM10"):
                         continue
                     
             if retry <= 0 :
-                status = "C_DISPENSE"
-                message = "Maksimum Retry Reached [C_DISPENSE]"
+                status = "SYN_C_MOVE"
+                message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
             
             retry = 5
@@ -1067,32 +1069,26 @@ def simply_eject_syn_priv(port="COM10"):
                         status = ES_UNKNOWN_ERROR
             
             if retry <= 0 :
-                status = "C_BASIC_STATUS"
-                message = "Maksimum Retry Reached [C_BASIC_STATUS]"
+                status = "SYN_C_MOVE"
+                message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
         
     except FunctionTimedOut as ex:
-        last_response = None
-
-        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format("INIT_GAGAL, CD Tidak Ada Response", status, message, last_response)
-        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
-            status = ES_UNKNOWN_ERROR
+        message = "Exception: FunctionTimedOut"
+        status = ES_UNKNOWN_ERROR
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     except Exception as ex:
-        last_response = None
-
-        message = "Exception: {0}.\r\n  LastStatus: {1}, LastMessage: {2}, LastResponse: {3}".format(ex, status, message, last_response)
-        if status != ES_CARDS_EMPTY or status != ES_ERRORBIN_FULL:
-            status = ES_UNKNOWN_ERROR
+        message = "Exception: General"
+        status = ES_UNKNOWN_ERROR
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
-        if ser:
-            if ser.isOpen():
-                ser.close()
+        if com:
+            if com.isOpen():
+                com.close()
 
     return status, message, response
 
@@ -1106,9 +1102,9 @@ def arg_check():
         if arg in ['9600', '19200', '38400']:
             BAUD_RATE_SYN = int(arg)
             print('Detected Baud Rate', arg)
-        elif 'COM' in arg or '/dev/' in arg:
+        elif 'COM' in arg.upper() or '/dev/' in arg:
             print('Detected COM PORT', arg)
-            return arg
+            return arg.upper() if 'com' in arg else arg
     return False
     
 
