@@ -849,6 +849,7 @@ def send_enq_syn(com, cmd):
 SYN_STX = b"\x02"
 SYN_ETX = b"\x03"
 SYN_ADDR = b"\x31\x35" #Default Position 15
+SYN_DISABLE_CAPTURE = "IN".decode('ascii') + b'\x30'
     
 SYN_C_MOVE = 'FC'.encode('ascii') + b'\x30'
 SYN_C_DISPENSE = 'DC'.encode('ascii')
@@ -952,6 +953,18 @@ def basic_status_syn(com):
     return stat
 
 
+def set_disable_capture(com):
+    try:
+        cmd = SYN_DISABLE_CAPTURE
+        data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+        data_out = data_out + cdLib.get_bcc(data_out)
+        com.write(data_out)
+        LOG.cdlog("[SYN]: CD SEND DISABLE CAPTURE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+    except:
+        pass
+
+
+
 @func_set_timeout(10)
 def simply_eject_syn_priv(port="COM10"):
     message = "General Error"
@@ -968,16 +981,19 @@ def simply_eject_syn_priv(port="COM10"):
 
         LOG.cdlog("[SYN]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
+        
+        set_disable_capture(com)
 
         stat = basic_status_syn(com)
         
-        # Not Working
-        if stat == SYN_CARD_DISPENSE_ERROR:
-            cmd = SYN_C_RESET
-            data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-            data_out = data_out + cdLib.get_bcc(data_out)
-            com.write(data_out)
-            LOG.cdlog("[SYN]: CD SEND RS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)        
+        # Experimental Below (Detected Capture Error)
+        if stat == SYN_CARD_DISPENSE_ERROR or stat[1] == b'1':
+            set_disable_capture(com)
+            # cmd = SYN_C_RESET
+            # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+            # data_out = data_out + cdLib.get_bcc(data_out)
+            # com.write(data_out)
+            # LOG.cdlog("[SYN]: CD SEND RS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)        
             sleep(.5)
             stat = basic_status_syn(com)
         
@@ -1064,6 +1080,10 @@ def simply_eject_syn_priv(port="COM10"):
                         status = ES_NO_ERROR
                         message = 'Success'
                         break
+                    # Experimental Below (Detected Capture Error)
+                    elif stat[1] == b'1':
+                        set_disable_capture(com)
+                        status = ES_INTERNAL_ERROR
                     else:
                         # Add Reset At Error
                         status = ES_UNKNOWN_ERROR
