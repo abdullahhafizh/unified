@@ -7,6 +7,7 @@ from _mModule import _CardDispenserLib as cdLib
 from time import sleep
 from serial import Serial
 from func_timeout import func_timeout, func_set_timeout, FunctionTimedOut
+import sys
 
 
 DEBUG_MODE = True
@@ -542,7 +543,7 @@ def simply_eject_kyt(param, __output_response__):
 def simply_eject_kyt_priv(port="COM10"):
     message = ""
     status = None
-    com = None
+    ser = None
     response = None
 
     STX = b"\x02"
@@ -785,9 +786,9 @@ def simply_eject_kyt_priv(port="COM10"):
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
-        if com:
-            if com.isOpen():
-                com.close()
+        if ser:
+            if ser.isOpen():
+                ser.close()
 
     return status, message, response
 
@@ -845,12 +846,10 @@ def send_enq_syn(com, cmd):
         pass
     
 
-# Syncotek CD
-
-
 SYN_STX = b"\x02"
 SYN_ETX = b"\x03"
 SYN_ADDR = b"\x31\x35" #Default Position 15
+SYN_DISABLE_CAPTURE = "IN".encode('ascii') + b'\x30'
     
 SYN_C_MOVE = 'FC'.encode('ascii') + b'\x30'
 SYN_C_DISPENSE = 'DC'.encode('ascii')
@@ -865,6 +864,7 @@ SYN_ENQ = b'\x05' + SYN_ADDR
 # STAT CD
 SYN_DISPENSED = b"804" #Card Successfully Dispensed
 SYN_CARD_STILL_STACKED = b"003" #Card Successfully Dispensed
+SYN_CARD_DISPENSE_ERROR = b"120" #Card Successfully Dispensed
  
 SYN_DISPENSING = b"800" #Dispensing card 
 SYN_CAPTURING = b"400" #Capturing card 
@@ -897,7 +897,7 @@ def basic_status_syn(com):
     data_out = data_out + cdLib.get_bcc(data_out)
     com.write(data_out)
             
-    LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+    LOG.cdlog("[SYN]: CD SEND RF ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
 
     data_in = b""
     retry = 5
@@ -953,6 +953,21 @@ def basic_status_syn(com):
     return stat
 
 
+def set_disable_capture(com):
+    try:
+        cmd = SYN_DISABLE_CAPTURE
+        data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+        data_out = data_out + cdLib.get_bcc(data_out)
+        com.write(data_out)
+        LOG.cdlog("[SYN]: CD SEND DISABLE CAPTURE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+        sleep(.5)
+        com.write(SYN_ENQ)
+        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
+    except:
+        pass
+
+
+
 @func_set_timeout(10)
 def simply_eject_syn_priv(port="COM10"):
     message = "General Error"
@@ -969,27 +984,46 @@ def simply_eject_syn_priv(port="COM10"):
 
         LOG.cdlog("[SYN]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
-
+        
         stat = basic_status_syn(com)
+        
+        # Experimental Below (Detected Capture Error)
+        while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
+            set_disable_capture(com)
+            sleep(.5)
+            stat = basic_status_syn(com)
+            
+        if stat == SYN_CARD_DISPENSE_ERROR or stat[1] == b'1':
+            set_disable_capture(com)
+            # cmd = SYN_C_RESET
+            # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+            # data_out = data_out + cdLib.get_bcc(data_out)
+            # com.write(data_out)
+            # LOG.cdlog("[SYN]: CD SEND RS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)        
+            sleep(.5)
+            stat = basic_status_syn(com)
         
         if stat == SYN_CARD_STILL_STACKED:
             cmd = SYN_C_MOVE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
-            LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
             sleep(.5)
             com.write(SYN_ENQ)
             LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
+            sleep(.5)
+            stat = basic_status_syn(com)
     
-        elif stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+        if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
             # Do Dispense/Move
-            cmd = SYN_C_DISPENSE
+            # cmd = SYN_C_DISPENSE
+            cmd = SYN_C_MOVE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
             
-            LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
             data_in = b""
             retry = 5
             while True:
@@ -1014,8 +1048,8 @@ def simply_eject_syn_priv(port="COM10"):
                         continue
                     
             if retry <= 0 :
-                status = "C_DISPENSE"
-                message = "Maksimum Retry Reached [C_DISPENSE]"
+                status = "SYN_C_MOVE"
+                message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
             
             retry = 5
@@ -1036,7 +1070,8 @@ def simply_eject_syn_priv(port="COM10"):
                 elif stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR]:
                     status = ES_INTERNAL_ERROR
                 elif stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
-                    status = ES_INTERNAL_ERROR
+                    set_disable_capture(com)
+                    continue
                 elif stat == SYN_STACK_EMPTY:
                     status = ES_CARDS_EMPTY
                 else:
@@ -1045,38 +1080,35 @@ def simply_eject_syn_priv(port="COM10"):
                         data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
                         data_out = data_out + cdLib.get_bcc(data_out)
                         com.write(data_out)
-                        LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                        LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                         sleep(.5)
                         com.write(SYN_ENQ)
                         LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
                         status = ES_NO_ERROR
                         message = 'Success'
                         break
+                    # Experimental Below (Detected Capture Error)
+                    elif stat[1] == b'1':
+                        set_disable_capture(com)
+                        status = ES_INTERNAL_ERROR
                     else:
                         # Add Reset At Error
-                        # cmd = SYN_C_RESET
-                        # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-                        # data_out = data_out + cdLib.get_bcc(data_out)
-                        # com.write(data_out)
-                            
-                        # LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                         status = ES_UNKNOWN_ERROR
             
             if retry <= 0 :
-                status = "C_BASIC_STATUS"
-                message = "Maksimum Retry Reached [C_BASIC_STATUS]"
+                status = "SYN_C_MOVE"
+                message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
         
     except FunctionTimedOut as ex:
-        status = 'TIMEOUT'
         message = "Exception: FunctionTimedOut"
+        status = ES_UNKNOWN_ERROR
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     except Exception as ex:
-        status = 'EXCP'
         message = "Exception: General"
-
+        status = ES_UNKNOWN_ERROR
     
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
@@ -1086,3 +1118,55 @@ def simply_eject_syn_priv(port="COM10"):
                 com.close()
 
     return status, message, response
+
+
+def arg_check():
+    global BAUD_RATE_SYN
+    print('Check Argument', len(sys.argv), str(sys.argv))
+    if len(sys.argv) < 3:
+        exit('Missing Argument')
+    for arg in sys.argv:
+        if arg in ['9600', '19200', '38400']:
+            BAUD_RATE_SYN = int(arg)
+            print('Detected Baud Rate', arg)
+        elif 'COM' in arg.upper() or '/dev/' in arg:
+            print('Detected CD Port', arg)
+            return arg.upper() if 'com' in arg else arg
+    return False
+    
+
+def welcome():
+    print('--- '+__file__+' ---')
+    print('Card Dispenser Syncotek Simulator')
+    print('Version 1.0')
+    
+    
+def exit(msg, code=1):
+    print('Message :', msg)
+    if code == 0:
+        print('How To Use: python card_dispenser_syn.py 9600 COM2 1')
+    sys.exit(code)
+
+
+if __name__ == '__main__':
+    welcome()
+    port = arg_check()
+    if not port:
+        exit('Wrong Argument')
+    response = {
+        "cmd": 'SIMPLY_EJECT_SYN',
+        "param": port + '|',
+        "message": "N/A",
+        "code": "9999"
+    }
+    multiply = 1
+    if len(sys.argv) > 3:
+        try:
+            multiply = int(sys.argv[-1]) 
+        except Exception as e:
+            exit(e)
+    
+    for i in range(multiply):
+        simply_eject_syn(port, response)
+        print(str(response))
+    exit('Done', 0)
