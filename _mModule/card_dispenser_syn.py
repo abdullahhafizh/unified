@@ -988,6 +988,11 @@ def simply_eject_syn_priv(port="COM10"):
         stat = basic_status_syn(com)
         
         # Experimental Below (Detected Capture Error)
+        while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
+            set_disable_capture(com)
+            sleep(.5)
+            stat = basic_status_syn(com)
+            
         if stat == SYN_CARD_DISPENSE_ERROR or stat[1] == b'1':
             set_disable_capture(com)
             # cmd = SYN_C_RESET
@@ -1065,7 +1070,8 @@ def simply_eject_syn_priv(port="COM10"):
                 elif stat in [SYN_DISPENSE_ERROR, SYN_CAPTURE_ERROR, SYN_CARD_JAMMED, SYN_CARD_OVERLAP, SYN_GENERAL_ERROR]:
                     status = ES_INTERNAL_ERROR
                 elif stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
-                    status = ES_INTERNAL_ERROR
+                    set_disable_capture(com)
+                    continue
                 elif stat == SYN_STACK_EMPTY:
                     status = ES_CARDS_EMPTY
                 else:
