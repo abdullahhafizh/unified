@@ -1143,7 +1143,7 @@ def welcome():
     
 def exit(msg, code=1):
     print('Message :', msg)
-    if code == 0:
+    if code == 1:
         print('How To Use: python card_dispenser_syn.py 9600 COM2 1')
     sys.exit(code)
 
