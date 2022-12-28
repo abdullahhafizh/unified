@@ -1124,7 +1124,7 @@ def arg_check():
             BAUD_RATE_SYN = int(arg)
             print('Detected Baud Rate', arg)
         elif 'COM' in arg.upper() or '/dev/' in arg:
-            print('Detected COM PORT', arg)
+            print('Detected CD Port', arg)
             return arg.upper() if 'com' in arg else arg
     return False
     
@@ -1152,5 +1152,14 @@ if __name__ == '__main__':
         "message": "N/A",
         "code": "9999"
     }
-    simply_eject_syn(port, response)
-    print(str(response))
+    multiply = 1
+    if len(sys.argv) > 3:
+        try:
+            multiply = int(sys.argv[-1]) 
+        except Exception as e:
+            exit(e)
+    
+    for i in range(multiply):
+        simply_eject_syn(port, response)
+        print(str(response))
+    exit('Done', 0)
