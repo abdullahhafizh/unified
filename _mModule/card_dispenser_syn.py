@@ -863,6 +863,7 @@ SYN_ENQ = b'\x05' + SYN_ADDR
 # STAT CD
 SYN_DISPENSED = b"804" #Card Successfully Dispensed
 SYN_CARD_STILL_STACKED = b"003" #Card Successfully Dispensed
+SYN_CARD_DISPENSE_ERROR = b"120" #Card Successfully Dispensed
  
 SYN_DISPENSING = b"800" #Dispensing card 
 SYN_CAPTURING = b"400" #Capturing card 
@@ -965,17 +966,23 @@ def simply_eject_syn_priv(port="COM10"):
 
     try:
 
-        LOG.cdlog("[SYN]: CD STEP ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "INIT/RESET", show_log=DEBUG_MODE)
+        LOG.cdlog("[SYN]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
         com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
 
         stat = basic_status_syn(com)
         
-        if stat == SYN_CARD_STILL_STACKED:
+        if stat == SYN_CARD_DISPENSE_ERROR:
+            cmd = SYN_C_RESET
+            data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+            data_out = data_out + cdLib.get_bcc(data_out)
+            com.write(data_out)
+            LOG.cdlog("[SYN]: CD SEND RS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)        
+        elif stat == SYN_CARD_STILL_STACKED:
             cmd = SYN_C_MOVE
             data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
-            LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
             sleep(.5)
             com.write(SYN_ENQ)
             LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
@@ -987,7 +994,7 @@ def simply_eject_syn_priv(port="COM10"):
             data_out = data_out + cdLib.get_bcc(data_out)
             com.write(data_out)
             
-            LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+            LOG.cdlog("[SYN]: CD SEND DC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
             data_in = b""
             retry = 5
             while True:
@@ -1043,7 +1050,7 @@ def simply_eject_syn_priv(port="COM10"):
                         data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
                         data_out = data_out + cdLib.get_bcc(data_out)
                         com.write(data_out)
-                        LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                        LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                         sleep(.5)
                         com.write(SYN_ENQ)
                         LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
@@ -1052,12 +1059,6 @@ def simply_eject_syn_priv(port="COM10"):
                         break
                     else:
                         # Add Reset At Error
-                        # cmd = SYN_C_RESET
-                        # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-                        # data_out = data_out + cdLib.get_bcc(data_out)
-                        # com.write(data_out)
-                            
-                        # LOG.cdlog("[SYN]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
                         status = ES_UNKNOWN_ERROR
             
             if retry <= 0 :
