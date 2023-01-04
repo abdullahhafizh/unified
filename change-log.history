@@ -1,3 +1,7 @@
+16.2.8-GLOBAL:
+- Bug Fix Topup BCA Status Validation on 8200,
+- ...
+
 16.2.7-GLOBAL:
 - Add CD Syncotek,
 - Disable SAM Balance Direct Sync After Topup TRX,
