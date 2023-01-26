@@ -968,7 +968,7 @@ def set_disable_capture(com):
 
 
 
-@func_set_timeout(10)
+@func_set_timeout(30)
 def simply_eject_syn_priv(port="COM10"):
     message = "General Error"
     status = ES_UNKNOWN_ERROR
@@ -1071,7 +1071,12 @@ def simply_eject_syn_priv(port="COM10"):
                     status = ES_INTERNAL_ERROR
                 elif stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
                 #     set_disable_capture(com)
-                    continue
+                # Force OK Status By Timer If Card Detected on Sensor
+                    if retry == 1:
+                        status = ES_NO_ERROR
+                        message = 'Success'
+                    else:
+                        continue
                 elif stat == SYN_STACK_EMPTY:
                     status = ES_CARDS_EMPTY
                 else:
