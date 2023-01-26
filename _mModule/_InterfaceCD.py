@@ -1075,6 +1075,7 @@ def simply_eject_syn_priv(port="COM10"):
                     if retry == 1:
                         status = ES_NO_ERROR
                         message = 'Success'
+                        break
                     else:
                         continue
                 elif stat == SYN_STACK_EMPTY:

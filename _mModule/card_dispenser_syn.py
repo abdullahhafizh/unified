@@ -543,7 +543,7 @@ def simply_eject_kyt(param, __output_response__):
 def simply_eject_kyt_priv(port="COM10"):
     message = ""
     status = None
-    ser = None
+    com = None
     response = None
 
     STX = b"\x02"
@@ -786,9 +786,9 @@ def simply_eject_kyt_priv(port="COM10"):
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
-        if ser:
-            if ser.isOpen():
-                ser.close()
+        if com:
+            if com.isOpen():
+                com.close()
 
     return status, message, response
 
@@ -1052,9 +1052,9 @@ def simply_eject_syn_priv(port="COM10"):
                 message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
             
-            retry = 10 #Will Be 5 Seconds Waiting
+            retry = 10
             while True:
-                sleep(0.5)
+                sleep(1)
                 stat = basic_status_syn(com)
                 retry = retry - 1
                 response = {
@@ -1075,6 +1075,7 @@ def simply_eject_syn_priv(port="COM10"):
                     if retry == 1:
                         status = ES_NO_ERROR
                         message = 'Success'
+                        break
                     else:
                         continue
                 elif stat == SYN_STACK_EMPTY:
@@ -1092,6 +1093,8 @@ def simply_eject_syn_priv(port="COM10"):
                         status = ES_NO_ERROR
                         message = 'Success'
                         break
+                    else:
+                        continue
                     # Experimental Below (Detected Capture Error)
                     # elif stat[1] == b'1':
                     #     set_disable_capture(com)
@@ -1115,6 +1118,7 @@ def simply_eject_syn_priv(port="COM10"):
         message = "Exception: General"
         status = ES_UNKNOWN_ERROR
     
+        LOG.cdlog(ex, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
