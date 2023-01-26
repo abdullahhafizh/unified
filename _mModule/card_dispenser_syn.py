@@ -1118,7 +1118,7 @@ def simply_eject_syn_priv(port="COM10"):
         message = "Exception: General"
         status = ES_UNKNOWN_ERROR
     
-        LOG.cdlog(ex, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.cdlog(str(ex), LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
