@@ -1054,7 +1054,7 @@ def simply_eject_syn_priv(port="COM10"):
             
             retry = 10
             while True:
-                sleep(0.5)
+                sleep(1)
                 stat = basic_status_syn(com)
                 retry = retry - 1
                 response = {
@@ -1092,6 +1092,8 @@ def simply_eject_syn_priv(port="COM10"):
                         status = ES_NO_ERROR
                         message = 'Success'
                         break
+                    else:
+                        continue
                     # Experimental Below (Detected Capture Error)
                     # elif stat[1] == b'1':
                     #     set_disable_capture(com)
@@ -1115,6 +1117,7 @@ def simply_eject_syn_priv(port="COM10"):
         message = "Exception: General"
         status = ES_UNKNOWN_ERROR
     
+        LOG.cdlog(ex, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
         LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
 
     finally:
