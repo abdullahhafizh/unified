@@ -1,8 +1,8 @@
 __author__ = 'wahyudi@multidaya.id'
 
 import traceback
-import _MainCPrepaidLog as LOG
-import _CardDispenserLib as cdLib
+from _mModule import _CPrepaidLog as LOG
+from _mModule import _CardDispenserLib as cdLib
 
 from time import sleep
 from serial import Serial
@@ -1052,9 +1052,9 @@ def simply_eject_syn_priv(port="COM10"):
                 message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
             
-            retry = 10
+            retry = 5
             while True:
-                sleep(1)
+                sleep(1) 
                 stat = basic_status_syn(com)
                 retry = retry - 1
                 response = {
@@ -1081,15 +1081,16 @@ def simply_eject_syn_priv(port="COM10"):
                 elif stat == SYN_STACK_EMPTY:
                     status = ES_CARDS_EMPTY
                 else:
-                    if retry == 1 and stat == SYN_CARD_STILL_STACKED:
-                        cmd = SYN_C_MOVE
-                        data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-                        data_out = data_out + cdLib.get_bcc(data_out)
-                        com.write(data_out)
-                        LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-                        sleep(.5)
-                        com.write(SYN_ENQ)
-                        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
+                    if retry == 1:
+                    # if retry == 1 and stat in [SYN_CARD_STILL_STACKED, SYN_CARD_STACK_WILL_EMPTY]:
+                        # cmd = SYN_C_MOVE
+                        # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+                        # data_out = data_out + cdLib.get_bcc(data_out)
+                        # com.write(data_out)
+                        # LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                        # sleep(.5)
+                        # com.write(SYN_ENQ)
+                        # LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
                         status = ES_NO_ERROR
                         message = 'Success'
                         break
@@ -1103,10 +1104,10 @@ def simply_eject_syn_priv(port="COM10"):
                     #     # Add Reset At Error
                     #     status = ES_UNKNOWN_ERROR
             
-            if retry <= 0 :
-                status = "SYN_C_MOVE"
-                message = "Maksimum Retry Reached [SYN_C_MOVE]"
-                raise SystemError('MAXR:'+message)
+            # if retry <= 0 :
+            #     status = "SYN_C_MOVE"
+            #     message = "Maksimum Retry Reached [SYN_C_MOVE]"
+            #     raise SystemError('MAXR:'+message)
         
     except FunctionTimedOut as ex:
         message = "Exception: FunctionTimedOut"
@@ -1127,55 +1128,3 @@ def simply_eject_syn_priv(port="COM10"):
                 com.close()
 
     return status, message, response
-
-
-def arg_check():
-    global BAUD_RATE_SYN
-    print('Check Argument', len(sys.argv), str(sys.argv))
-    if len(sys.argv) < 3:
-        exit('Missing Argument')
-    for arg in sys.argv:
-        if arg in ['9600', '19200', '38400']:
-            BAUD_RATE_SYN = int(arg)
-            print('Detected Baud Rate', arg)
-        elif 'COM' in arg.upper() or '/dev/' in arg:
-            print('Detected CD Port', arg)
-            return arg.upper() if 'com' in arg else arg
-    return False
-    
-
-def welcome():
-    print('--- '+__file__+' ---')
-    print('Card Dispenser Syncotek Simulator')
-    print('Version 1.0')
-    
-    
-def exit(msg, code=1):
-    print('Message :', msg)
-    if code == 1:
-        print('How To Use: python card_dispenser_syn.py 9600 COM2 1')
-    sys.exit(code)
-
-
-if __name__ == '__main__':
-    welcome()
-    port = arg_check()
-    if not port:
-        exit('Wrong Argument')
-    response = {
-        "cmd": 'SIMPLY_EJECT_SYN',
-        "param": port + '|',
-        "message": "N/A",
-        "code": "9999"
-    }
-    multiply = 1
-    if len(sys.argv) > 3:
-        try:
-            multiply = int(sys.argv[-1]) 
-        except Exception as e:
-            exit(e)
-    
-    for i in range(multiply):
-        simply_eject_syn(port, response)
-        print(str(response))
-    exit('Done', 0)

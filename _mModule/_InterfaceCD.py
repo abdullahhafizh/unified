@@ -1052,9 +1052,9 @@ def simply_eject_syn_priv(port="COM10"):
                 message = "Maksimum Retry Reached [SYN_C_MOVE]"
                 raise SystemError('MAXR:'+message)
             
-            retry = 10
+            retry = 5
             while True:
-                sleep(1)
+                sleep(1) 
                 stat = basic_status_syn(com)
                 retry = retry - 1
                 response = {
@@ -1081,15 +1081,16 @@ def simply_eject_syn_priv(port="COM10"):
                 elif stat == SYN_STACK_EMPTY:
                     status = ES_CARDS_EMPTY
                 else:
-                    if retry == 1 and stat == SYN_CARD_STILL_STACKED:
-                        cmd = SYN_C_MOVE
-                        data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-                        data_out = data_out + cdLib.get_bcc(data_out)
-                        com.write(data_out)
-                        LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-                        sleep(.5)
-                        com.write(SYN_ENQ)
-                        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
+                    if retry == 1:
+                    # if retry == 1 and stat in [SYN_CARD_STILL_STACKED, SYN_CARD_STACK_WILL_EMPTY]:
+                        # cmd = SYN_C_MOVE
+                        # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+                        # data_out = data_out + cdLib.get_bcc(data_out)
+                        # com.write(data_out)
+                        # LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+                        # sleep(.5)
+                        # com.write(SYN_ENQ)
+                        # LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
                         status = ES_NO_ERROR
                         message = 'Success'
                         break
@@ -1103,10 +1104,10 @@ def simply_eject_syn_priv(port="COM10"):
                     #     # Add Reset At Error
                     #     status = ES_UNKNOWN_ERROR
             
-            if retry <= 0 :
-                status = "SYN_C_MOVE"
-                message = "Maksimum Retry Reached [SYN_C_MOVE]"
-                raise SystemError('MAXR:'+message)
+            # if retry <= 0 :
+            #     status = "SYN_C_MOVE"
+            #     message = "Maksimum Retry Reached [SYN_C_MOVE]"
+            #     raise SystemError('MAXR:'+message)
         
     except FunctionTimedOut as ex:
         message = "Exception: FunctionTimedOut"
