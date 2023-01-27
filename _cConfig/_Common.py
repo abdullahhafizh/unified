@@ -684,7 +684,8 @@ EXT_CS_INFO = None
 
 PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
 ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
-ERECEIPT_ASYNC_MODE = True if _ConfigParser.get_set_value('PRINTER', 'ereceipt^async^mode', '1') == '1' else False
+# ERECEIPT_ASYNC_MODE = True if _ConfigParser.get_set_value('PRINTER', 'ereceipt^async^mode', '1') == '1' else False
+ERECEIPT_ASYNC_MODE = True
 ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:2020/')
 
 
