@@ -1,8 +1,8 @@
 __author__ = 'wahyudi@multidaya.id'
 
 import traceback
-from _mModule import _CPrepaidLog as LOG
-from _mModule import _CardDispenserLib as cdLib
+import _MainCPrepaidLog as LOG
+import _CardDispenserLib as cdLib
 
 from time import sleep
 from serial import Serial
@@ -1128,3 +1128,55 @@ def simply_eject_syn_priv(port="COM10"):
                 com.close()
 
     return status, message, response
+
+
+def arg_check():
+    global BAUD_RATE_SYN
+    print('Check Argument', len(sys.argv), str(sys.argv))
+    if len(sys.argv) < 3:
+        exit('Missing Argument')
+    for arg in sys.argv:
+        if arg in ['9600', '19200', '38400']:
+            BAUD_RATE_SYN = int(arg)
+            print('Detected Baud Rate', arg)
+        elif 'COM' in arg.upper() or '/dev/' in arg:
+            print('Detected CD Port', arg)
+            return arg.upper() if 'com' in arg else arg
+    return False
+    
+
+def welcome():
+    print('--- '+__file__+' ---')
+    print('Card Dispenser Syncotek Simulator')
+    print('Version 1.0')
+    
+    
+def exit(msg, code=1):
+    print('Message :', msg)
+    if code == 1:
+        print('How To Use: python card_dispenser_syn.py 9600 COM2 1')
+    sys.exit(code)
+
+
+if __name__ == '__main__':
+    welcome()
+    port = arg_check()
+    if not port:
+        exit('Wrong Argument')
+    response = {
+        "cmd": 'SIMPLY_EJECT_SYN',
+        "param": port + '|',
+        "message": "N/A",
+        "code": "9999"
+    }
+    multiply = 1
+    if len(sys.argv) > 3:
+        try:
+            multiply = int(sys.argv[-1]) 
+        except Exception as e:
+            exit(e)
+    
+    for i in range(multiply):
+        simply_eject_syn(port, response)
+        print(str(response))
+    exit('Done', 0)

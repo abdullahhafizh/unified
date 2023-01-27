@@ -682,6 +682,12 @@ THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 # Handle External Customer Service Information
 EXT_CS_INFO = None
 
+PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
+ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
+ERECEIPT_ASYNC_MODE = True if _ConfigParser.get_set_value('PRINTER', 'ereceipt^async^mode', '1') == '1' else False
+ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:2020/')
+
+
 # Re-write view config if missing
 if len(VIEW_CONFIG.keys()) == 0:
     if THEME_NAME.lower() == 'transjakarta':
@@ -703,7 +709,7 @@ VIEW_CONFIG['single_denom_type'] =  BILL_SINGLE_DENOM_TYPE
 VIEW_CONFIG['support_multimedia'] = support_multimedia()
 VIEW_CONFIG['payment_cancel'] = True if PAYMENT_CANCEL == '1' else False
 VIEW_CONFIG['theme_name'] = THEME_NAME
-
+VIEW_CONFIG['printer_type'] = PRINTER_TYPE
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
@@ -1005,10 +1011,6 @@ if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
     # PRINTER_STATUS = 'PAPER_ROLL_WARNING'
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
-PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
-ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://erg.elebox.id/ereceipt/create')
-ERECEIPT_ASYNC_MODE = True if _ConfigParser.get_set_value('PRINTER', 'ereceipt^async^mode', '1') == '1' else False
-ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:2020/')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
 EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
