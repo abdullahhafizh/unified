@@ -990,10 +990,10 @@ def simply_eject_syn_priv(port="COM10"):
         stat = basic_status_syn(com)
         
         # Experimental Below (Detected Capture Error)
-        while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
-            # set_disable_capture(com)
-            sleep(.5)
-            stat = basic_status_syn(com)
+        # while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
+        #     # set_disable_capture(com)
+        #     sleep(.5)
+        #     stat = basic_status_syn(com)
             
         # if stat == SYN_CARD_DISPENSE_ERROR or stat[1] == b'1':
         #     # set_disable_capture(com)
