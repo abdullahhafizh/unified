@@ -139,6 +139,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('print_result', now, p);
         var result = p.split('|')[1];
+        popup_loading.close();
         if (result == 'ERECEIPT_DONE'){
             var info = p.split('|')[2];
             var data = JSON.parse(info);
@@ -147,7 +148,6 @@ Base{
             });
             return;
         }
-        popup_loading.close();
         if (result == 'ERECEIPT_ERROR'){
             textMain = '';
             textSlave = '';
