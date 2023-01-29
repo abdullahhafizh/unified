@@ -2459,6 +2459,14 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_ERROR')
         return
+    if _Common.PRINTER_TYPE.lower() == 'default' and _Common.THEME_NAME.lower() not in ['tj', 'transjakarta']:
+        output = {
+                'trxid'     : "-".join([trxid, _Common.TID]),
+                'status'    : 0,
+                'mode'      : 'FORCE_TO_DEFAULT_PRINTER'
+            }
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERECEIPT_DONE|'+json.dumps(output))
+        return
     pdf = None
     trxid = ''
     # failure = 'USER_CANCELLATION'
