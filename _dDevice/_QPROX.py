@@ -989,6 +989,12 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
 def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     global LAST_C2C_APP_TYPE
     
+    # New Topup Procedure Validation
+    validate_rules, error = _Common.check_topup_procedure('mandiri', trxid, amount)
+    if not validate_rules:
+        LOGGER.warning(('mandiri', amount, trxid, error))
+        return
+    
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     validate_card = revalidate_card(last_card_check['card_no'])
     if not validate_card:
@@ -1374,6 +1380,12 @@ def start_topup_offline_bni_with_attempt(amount, trxid, attempt):
 
 
 def topup_offline_bni(amount, trxid, slot=None, attempt=None):
+    
+    # New Topup Procedure Validation
+    validate_rules, error = _Common.check_topup_procedure('bni', trxid, amount)
+    if not validate_rules:
+        LOGGER.warning(('bni', amount, trxid, error))
+        return
     
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
     validate_card = revalidate_card(last_card_check['card_no'])

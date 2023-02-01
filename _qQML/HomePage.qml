@@ -20,6 +20,9 @@ Base{
     property var productCount1: 0
     property var productCount2: 0
     property var productCount3: 0
+    property var productCount4: 0
+    property var productCount5: 0
+    property var productCount6: 0
     property var mandiriTopupWallet: 0
     property bool mandiriTopupActive: false
     property bool bniTopupActive: false
@@ -59,6 +62,9 @@ Base{
             productCount1 = 0;
             productCount2 = 0;
             productCount3 = 0;
+            productCount4 = 0;
+            productCount5 = 0;
+            productCount6 = 0;
             selectedMenu = '';
             if (globalBoxName !== ""){
                 _SLOT.get_kiosk_status();
@@ -228,6 +234,26 @@ Base{
         product_stock_status2.color = get_card_stock_color(productCount2);
         product_stock_status3.color = get_card_stock_color(productCount3);
 //        console.log('product stock count : ', productCount1, productCount2, productCount3, productCountAll);
+    }
+
+    function get_cd_type(no){
+        if (cdReadiness == undefined) return '';
+        switch(no){
+            case '1':
+            return cdReadiness.cd1_type;
+            case '2':
+            return cdReadiness.cd2_type;
+            case '3':
+            return cdReadiness.cd3_type;
+            case '4':
+            return cdReadiness.cd4_type;
+            case '5':
+            return cdReadiness.cd5_type;
+            case '6':
+            return cdReadiness.cd6_type;
+            default:
+            return '';
+        }
     }
 
     function get_kiosk_status(r){
@@ -981,7 +1007,7 @@ Base{
             Text{
                 id: product_count
                 height: parent.height
-                text: (showCardStock) ? productCount1 : ''
+                text: (showCardStock) ? productCount1 : get_cd_type('1')
                 font.bold: true
                 color: 'blue'
                 verticalAlignment: Text.AlignVCenter
@@ -1016,7 +1042,7 @@ Base{
             Text{
                 id: product_count2
                 height: parent.height
-                text: (showCardStock) ? productCount2 : ''
+                text: (showCardStock) ? productCount2 : get_cd_type('2')
                 font.bold: true
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter
@@ -1051,7 +1077,7 @@ Base{
             Text{
                 id: product_count3
                 height: parent.height
-                text: (showCardStock) ? productCount3 : ''
+                text: (showCardStock) ? productCount3 : get_cd_type('3')
                 font.bold: true
                 color: 'white'
                 verticalAlignment: Text.AlignVCenter

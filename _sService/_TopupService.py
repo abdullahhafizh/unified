@@ -1588,6 +1588,12 @@ def topup_online(bank, cardno, amount, trxid=''):
     #     'able_topup': '0000',
     # }
     try:
+        # New Topup Procedure Validation
+        validate_rules, error = _Common.check_topup_procedure(bank, trxid, amount)
+        if not validate_rules:
+            LOGGER.warning((bank, amount, trxid, error))
+            return validate_rules
+        
         _Common.LAST_TOPUP_TRXID = trxid
         if bank is None or bank not in _Common.ALLOWED_BANK_PENDING_ONLINE:
             LOGGER.warning((bank, 'NOT_ALLOWED_PENDING_ONLINE'))

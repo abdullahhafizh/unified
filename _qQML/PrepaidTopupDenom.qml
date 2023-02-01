@@ -368,7 +368,9 @@ Base{
         }
 
         if (allowedBank.indexOf(cardData.bank_name) == -1){
-            switch_frame('source/smiley_down.png', 'Mohon Maaf, Layanan isi ulang kartu prabayar bank '+cardData.bank_name, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.', 'backToMain', false );
+            var extra_message = '\nNO_CONNECTION';
+            if (['MANDIRI', 'BNI'].indexOf(cardData.bank_name) > -1) extra_message = '';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf, Layanan isi ulang kartu prabayar bank '+cardData.bank_name, ' tidak dapat digunakan. Mohon coba lagi dalam beberapa saat.'+extra_message, 'backToMain', false );
             return;
         }
 

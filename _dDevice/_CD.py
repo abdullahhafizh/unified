@@ -259,6 +259,7 @@ def get_cd_readiness():
         _Common.CD_READINESS['cd5'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT5, '105') is True and _Common.CD_PORT5_TYPE in ALLOWED_CD_TYPE else 'N/A'
     if _Common.digit_in(_Common.CD_PORT6) is True:
         _Common.CD_READINESS['cd6'] = 'AVAILABLE' if check_init_cd(_Common.CD_PORT6, '106') is True and _Common.CD_PORT6_TYPE in ALLOWED_CD_TYPE else 'N/A'
+
     CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Common.CD_READINESS))
     LOGGER.info((json.dumps(_Common.CD_READINESS)))
 

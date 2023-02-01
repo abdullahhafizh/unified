@@ -1253,6 +1253,12 @@ CD_READINESS = {
     "cd4": 'N/A',
     "cd5": 'N/A',
     "cd6": 'N/A',
+    "cd1_type": CD_PORT1_TYPE,
+    "cd2_type": CD_PORT2_TYPE,
+    "cd3_type": CD_PORT3_TYPE,
+    "cd4_type": CD_PORT4_TYPE,
+    "cd5_type": CD_PORT5_TYPE,
+    "cd6_type": CD_PORT6_TYPE,
 }
 
 SMT_CONFIG = dict()
@@ -2354,3 +2360,29 @@ CARD_TOPUP_FEATURES = {
 }
 
 LAST_TOPUP_TRXID = ''
+
+BANK_PREPAID_NAME = {
+    'mandiri': 'emoney',
+    'bni': 'tapcash',
+    'bri': 'brizzi',
+    'bca': 'flazz',
+    'dki': 'jakcard',
+}
+
+def check_topup_procedure(bank='mandiri', trxid='', amount=0):
+    if bank.upper() not in CARD_TOPUP_FEATURES.keys():
+        return False, 'Bank Name Not Found in Feature List'
+    if trxid.lower()[:5] != 'topup':
+        return False, 'Suspect Mode Detected'
+    prepaid = BANK_PREPAID_NAME.get(bank.lower(), 'unknown')
+    if prepaid == 'unknown':
+        return False, 'Unknown Bank Mode'
+    # {"brizzi": ["5000", "2500", "1000", "100"], 
+    # "flazz": ["2500", "1000", "5000"], 
+    # "jakcard": ["1000", "5000", "2000"], "tid": "110322", 
+    # "emoney": ["2000", "1000", "5000", "500"], 
+    # "tapcash": ["1000", "5000", "2500", "5000"]}
+    for prepaid_amount in TOPUP_AMOUNT_SETTING[prepaid]:
+        if int(amount) > int(prepaid_amount):
+            return False, 'Suspect Amount Detected'
+    return True, 'OK'
