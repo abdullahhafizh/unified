@@ -2382,7 +2382,7 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
     # "jakcard": ["1000", "5000", "2000"], "tid": "110322", 
     # "emoney": ["2000", "1000", "5000", "500"], 
     # "tapcash": ["1000", "5000", "2500", "5000"]}
-    for prepaid_amount in TOPUP_AMOUNT_SETTING[prepaid]:
-        if int(amount) > int(prepaid_amount):
-            return False, 'Suspect Amount Detected'
+    topup_amount = [eval(i) for i in TOPUP_AMOUNT_SETTING[prepaid]]
+    if int(amount) > max(topup_amount):
+        return False, 'Suspect Amount Detected'
     return True, 'OK'
