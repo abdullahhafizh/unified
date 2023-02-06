@@ -989,6 +989,14 @@ def simply_eject_syn_priv(port="COM10"):
         
         stat = basic_status_syn(com)
         
+        # Add New Handle If Card Is Empty
+        if stat == SYN_STACK_EMPTY:
+            status = ES_CARDS_EMPTY
+            message = "Empty Card"
+            if com:
+                if com.isOpen(): com.close()
+            return status, message, response 
+        
         # Experimental Below (Detected Capture Error)
         # while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
         #     # set_disable_capture(com)
@@ -1081,8 +1089,9 @@ def simply_eject_syn_priv(port="COM10"):
                         break
                     else:
                         continue
-                elif stat == SYN_STACK_EMPTY:
-                    status = ES_CARDS_EMPTY
+                # Disable This Stack Empty
+                # elif stat == SYN_STACK_EMPTY:
+                #     status = ES_CARDS_EMPTY
                 else:
                     if retry == 1:
                     # if retry == 1 and stat in [SYN_CARD_STILL_STACKED, SYN_CARD_STACK_WILL_EMPTY]:

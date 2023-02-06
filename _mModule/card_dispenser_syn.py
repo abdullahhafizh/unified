@@ -979,6 +979,8 @@ def simply_eject_syn_priv(port="COM10"):
         "is_motor_failed": True,
         "is_cd_busy": True
     }
+    
+    stat = None
 
     try:
 
@@ -987,35 +989,44 @@ def simply_eject_syn_priv(port="COM10"):
         
         stat = basic_status_syn(com)
         
-        # Experimental Below (Detected Capture Error)
-        while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
-            set_disable_capture(com)
-            sleep(.5)
-            stat = basic_status_syn(com)
-            
-        if stat == SYN_CARD_DISPENSE_ERROR or stat[1] == b'1':
-            set_disable_capture(com)
-            # cmd = SYN_C_RESET
-            # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-            # data_out = data_out + cdLib.get_bcc(data_out)
-            # com.write(data_out)
-            # LOG.cdlog("[SYN]: CD SEND RS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)        
-            sleep(.5)
-            stat = basic_status_syn(com)
+        # Add New Handle If Card Is Empty
+        if stat == SYN_STACK_EMPTY:
+            status = ES_CARDS_EMPTY
+            message = "Empty Card"
+            if com:
+                if com.isOpen(): com.close()
+            return status, message, response 
         
-        if stat == SYN_CARD_STILL_STACKED:
-            cmd = SYN_C_MOVE
-            data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
-            data_out = data_out + cdLib.get_bcc(data_out)
-            com.write(data_out)
-            LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
-            sleep(.5)
-            com.write(SYN_ENQ)
-            LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
-            sleep(.5)
-            stat = basic_status_syn(com)
+        # Experimental Below (Detected Capture Error)
+        # while stat in [SYN_SENSOR_1, SYN_SENSOR_2, SYN_SENSOR_3]:
+        #     # set_disable_capture(com)
+        #     sleep(.5)
+        #     stat = basic_status_syn(com)
+            
+        # if stat == SYN_CARD_DISPENSE_ERROR or stat[1] == b'1':
+        #     # set_disable_capture(com)
+        #     # cmd = SYN_C_RESET
+        #     # data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+        #     # data_out = data_out + cdLib.get_bcc(data_out)
+        #     # com.write(data_out)
+        #     # LOG.cdlog("[SYN]: CD SEND RS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)        
+        #     sleep(.5)
+        #     stat = basic_status_syn(com)
+        
+        # if stat == SYN_CARD_STILL_STACKED:
+        #     cmd = SYN_C_MOVE
+        #     data_out = SYN_STX + SYN_ADDR + cmd + SYN_ETX
+        #     data_out = data_out + cdLib.get_bcc(data_out)
+        #     com.write(data_out)
+        #     LOG.cdlog("[SYN]: CD SEND FC ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data_out, show_log=DEBUG_MODE)
+        #     sleep(.5)
+        #     com.write(SYN_ENQ)
+        #     LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
+        #     sleep(.5)
+        #     stat = basic_status_syn(com)
     
-        if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+        # if stat in [SYN_CARD_NORMAL, SYN_CARD_STACK_WILL_EMPTY]:
+        if stat is not None:
             # Do Dispense/Move
             # cmd = SYN_C_DISPENSE
             cmd = SYN_C_MOVE
@@ -1078,8 +1089,9 @@ def simply_eject_syn_priv(port="COM10"):
                         break
                     else:
                         continue
-                elif stat == SYN_STACK_EMPTY:
-                    status = ES_CARDS_EMPTY
+                # Disable This Stack Empty
+                # elif stat == SYN_STACK_EMPTY:
+                #     status = ES_CARDS_EMPTY
                 else:
                     if retry == 1:
                     # if retry == 1 and stat in [SYN_CARD_STILL_STACKED, SYN_CARD_STACK_WILL_EMPTY]:
@@ -1180,3 +1192,4 @@ if __name__ == '__main__':
         simply_eject_syn(port, response)
         print(str(response))
     exit('Done', 0)
+    
