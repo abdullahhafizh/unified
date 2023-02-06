@@ -543,7 +543,7 @@ Base{
         id: notice_card_purchase
         width: 1200
         height: 120
-        visible: !select_payment.visible && VIEW_CONFIG.theme_name.lower() == 'transjakarta'
+        visible: !select_payment.visible && VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta'
         radius: 50
         fontSize: 30
         border.width: 0
