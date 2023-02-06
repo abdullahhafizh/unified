@@ -43,7 +43,11 @@ Base{
 //                console.log('Delay Manual Print', showManualPrintButton);
 //            }
             define_trx_notes();
-            _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
+            if (VIEW_CONFIG.theme_name.lower() == 'bca' || VIEW_CONFIG.printer_type.lower() == 'default' ){
+                print_result('SALEPRINT|ERECEIPT_ERROR');
+            } else {
+                _SLOT.start_direct_sale_print_ereceipt(JSON.stringify(details));
+            }
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop();

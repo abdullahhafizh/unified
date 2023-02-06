@@ -1,5 +1,6 @@
 16.3.1-GLOBAL:
 - Adjust CD Handler When Empty After Trigger,
+- Force Handle Print For Non E-Receipt,
 - ...
 
 16.3.0-GLOBAL:
