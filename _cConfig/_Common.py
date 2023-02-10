@@ -2370,6 +2370,7 @@ BANK_PREPAID_NAME = {
 }
 
 def check_topup_procedure(bank='mandiri', trxid='', amount=0):
+    if bank.upper() == 'MANDIRI_C2C_DEPOSIT': return True, 'OK' 
     if bank.upper() not in CARD_TOPUP_FEATURES.keys():
         return False, 'Bank Name Not Found in Feature List'
     if trxid.lower()[:5] != 'topup':

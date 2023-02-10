@@ -1,3 +1,7 @@
+16.3.1A-GLOBAL:
+- Waive MANDIRI_C2C_DEPOSIT From Topup Procedure,
+- ...
+
 16.3.1-GLOBAL:
 - Adjust CD Handler When Empty After Trigger,
 - Force Handle Print For Non E-Receipt,
