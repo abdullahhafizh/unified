@@ -667,6 +667,7 @@ def load_from_temp_data(temp, mode='text', force_path=None):
     return content
 
 
+DEFAULT_TOPUP_AMOUNT = _ConfigParser.get_set_value('GENERAL', 'default^topup^amount', '10000|20000|50000|100000').split('|')
 TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
 FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
 PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
@@ -2369,7 +2370,10 @@ BANK_PREPAID_NAME = {
     'dki': 'jakcard',
 }
 
+
+
 def check_topup_procedure(bank='mandiri', trxid='', amount=0):
+    LOGGER.info((bank, trxid, amount ,'START'))
     if bank.upper() == 'MANDIRI_C2C_DEPOSIT': return True, 'OK' 
     if bank.upper() not in CARD_TOPUP_FEATURES.keys():
         return False, 'Bank Name Not Found in Feature List'
@@ -2383,7 +2387,14 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
     # "jakcard": ["1000", "5000", "2000"], "tid": "110322", 
     # "emoney": ["2000", "1000", "5000", "500"], 
     # "tapcash": ["1000", "5000", "2500", "5000"]}
-    topup_amount = [eval(i) for i in TOPUP_AMOUNT_SETTING[prepaid]]
+    
+    try:
+        topup_amount = [eval(i) for i in TOPUP_AMOUNT_SETTING.get(prepaid)]
+    except Exception as e:
+        LOGGER.warning(e)
+        topup_amount = [eval(i) for i in DEFAULT_TOPUP_AMOUNT]
+        
     if int(amount) > max(topup_amount):
         return False, 'Suspect Amount Detected'
+    LOGGER.info((bank, trxid, amount, 'SUCCESS'))
     return True, 'OK'
