@@ -476,13 +476,15 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0001'
-            # __seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, '1').zfill(2)
+            # Default Sending Sequence is 01
             __seq = '01'
             __timestamp = datetime.now().strftime('%d%m%Y%H%M')
             MANDIRI_LAST_TIMESTAMP = __timestamp
-            __raw = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
-            __ds = _Helper.get_ds(__raw, 4, True)
-            _filename = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + __ds + '.txt'
+            
+            # Change Digital Signature To Settlement Sequence Number
+            __sett_seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, _Helper.time_string(f='%m%d')).zfill(4)
+            _filename = _Common.MDR_C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.MDR_C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + __sett_seq + '.txt'
+
             MANDIRI_LAST_FILENAME = _filename
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
             _filecontent = ''
@@ -540,11 +542,16 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 else:
                     # _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
                     _DAO.flush_table(_table='TopUpRecords', _where='rid = "'+settle['rid']+'"')
-            # Update Sequence Settlement Record
-            __new_seq = int(__seq) + 1
-            if __new_seq == 100:
+            
+            # Update/Reset Sequence Settlement Record
+            __new_seq = int(__sett_seq) + 1
+            if __new_seq == 9999:
+                __new_seq = 1
+            last_mandiri_settlement_data = _Common.load_from_temp_data('last-mandiri-c2c-settlement', 'json')
+            if not last_settlement_in_same_month(last_mandiri_settlement_data):
                 __new_seq = 1
             _ConfigParser.set_value_temp('TEMPORARY', _Common.C2C_MACTROS, str(__new_seq))
+            
             LAST_MANDIRI_C2C_SETTLEMENT_DATA = _result
             _Common.store_to_temp_data('last-mandiri-c2c-settlement', json.dumps(LAST_MANDIRI_C2C_SETTLEMENT_DATA))
             return _result
@@ -591,6 +598,13 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
     else:
         LOGGER.warning(('Unknown bank/mode', bank, mode))
         return False
+
+
+def last_settlement_in_same_month(data={}):
+    if _Helper.empty(data): return True
+    if _Helper.empty(data.get('settlement_created_at')): return True
+    if datetime.now().strftime('%Y-%m') not in data.get('settlement_created_at'): return False
+    return True
 
 # {
 #      'path_file': _file_created,
