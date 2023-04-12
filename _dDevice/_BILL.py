@@ -358,9 +358,9 @@ def start_receive_note(trxid):
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             break
                         if is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH) is True:
-                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             sleep(.5)
                             send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
+                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
                             LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
                                                                                 'COLLECTED': COLLECTED_CASH,
                                                                                 'TARGET': TARGET_CASH_AMOUNT})))

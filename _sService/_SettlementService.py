@@ -489,11 +489,13 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
             _filecontent = ''
             _all_amount = 0
+            
             x = 0
             for settle in settlements:
                 x += 1
                 _all_amount += int(_Helper.reverse_hexdec(settle['reportKA'][46:54])) # Get Amount From Deposit Report
                 _filecontent += settle['reportKA'] + settle['reportSAM'] + chr(3) + '|'
+                
             _header = 'PREPAID' + str(x + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                     _Common.C2C_MID + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
             _body = _filecontent
