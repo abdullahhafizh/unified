@@ -19,6 +19,7 @@ from _sService import _UpdateAppService
 from operator import itemgetter
 import subprocess
 from _tTools import _SalePrintTool
+import traceback
 
 
 LOGGER = logging.getLogger()
@@ -59,27 +60,41 @@ def sync_machine(url, param):
                 # LOGGER.info((__url, str(__param)))
                 # print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _HTTPAccess.post_to_url(url=__url, param=__param, custom_timeout=3)
+            
         except Exception as e:
             LOGGER.debug(e)         
             _Common.IS_ONLINE = False
         finally:
-            if _Common.DAILY_C2C_SETTLEMENT_TIME == _Helper.time_string('%H:%M'):
-                _SettlementService.start_daily_mandiri_c2c_settlement()    
-            if _Common.DAILY_SYNC_SUMMARY_TIME == _Helper.time_string('%H:%M'):
-                while True:
-                    if send_daily_summary() is True:
-                        break
-            # Add Daily Reboot Time Local Setting
-            if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
-                LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
-                sleep(30)
-                if _Common. IS_WINDOWS:
-                    _KioskService.execute_command('shutdown -r -f -t 0')
-                else:
-                    _KioskService.execute_command('reboot now')
-                # _KioskService.kiosk_status()
+            do_scheduler_job()
+            # _KioskService.kiosk_status()
         sleep(59)
-        
+
+
+def do_scheduler_job():
+    try:
+    #Scheduler Job
+    # Daily Settlement
+        if _Common.DAILY_C2C_SETTLEMENT_TIME == _Helper.time_string('%H:%M') or _Helper.time_string('%H:%M') == '23:58':
+            _SettlementService.start_daily_mandiri_c2c_settlement()    
+    # Daily Report
+        if _Common.DAILY_SYNC_SUMMARY_TIME == _Helper.time_string('%H:%M'):
+            daily_report_send_attempt = 3
+            while True:
+                if send_daily_summary() is True or daily_report_send_attempt == 0:
+                    break
+                daily_report_send_attempt -= 1
+    # Add Daily Reboot Time Local Setting
+        if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
+            LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
+            sleep(30)
+            if _Common. IS_WINDOWS:
+                _KioskService.execute_command('shutdown -r -f -t 0')
+            else:
+                _KioskService.execute_command('reboot now')
+    except:
+        pass
+
+
 def start_send_battery_status():
     _Helper.get_thread().apply_async(send_battery_status,)
 
@@ -117,6 +132,8 @@ def send_daily_summary():
         else:
             return False
     except Exception as e:
+        t = traceback.format_exc()
+        LOGGER.warning(t)
         LOGGER.warning(e)
         return False
     
