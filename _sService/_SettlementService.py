@@ -483,7 +483,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             
             # Change Digital Signature To Settlement Sequence Number
             __sett_seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, _Helper.time_string(f='%m%d')).zfill(4)
-            _filename = _Common.MDR_C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.MDR_C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + __sett_seq + '.txt'
+            _filename = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + __sett_seq + '.txt'
 
             MANDIRI_LAST_FILENAME = _filename
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
