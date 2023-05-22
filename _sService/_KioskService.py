@@ -572,7 +572,7 @@ def machine_summary():
         'mandiri_sam_threshold': str(_Common.MANDIRI_THRESHOLD),
         'bni_sam_threshold': str(_Common.BNI_THRESHOLD),
         # 'current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
-        'current_cash': _Common.get_cash_activity()['total']
+        'current_cash': _Common.get_cash_activity()['total'],
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
         'reboot_time': _Common.REBOOT_TIME
