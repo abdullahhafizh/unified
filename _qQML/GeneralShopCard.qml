@@ -552,7 +552,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         // if(VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta')
         title_text: (VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta') ? 
-         'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG' : (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') ? 'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 3 KARTU PER ORANG' : 
+         'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG' : (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') ? 'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 3 KARTU PER ORANG' : ""
         boxColor: VIEW_CONFIG.frame_color
     }
 
