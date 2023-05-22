@@ -575,7 +575,7 @@ def machine_summary():
         'current_cash': _Common.get_cash_activity()['total'],
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
-        'reboot_time': _Common.REBOOT_TIME
+        'last_reboot': _Common.REBOOT_TIME
     }
     try:
         summary['gui_version'] = _Common.VERSION
