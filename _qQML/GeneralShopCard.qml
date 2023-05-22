@@ -543,14 +543,16 @@ Base{
         id: notice_card_purchase
         width: 1200
         height: 120
-        visible: !select_payment.visible && VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta'
+        visible: !select_payment.visible && (['transjakarta','bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) !== false ) 
         radius: 50
         fontSize: 30
         border.width: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG'
+        // if(VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta')
+        title_text: (VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta') ? 
+         'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG' : (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') ? 'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 3 KARTU PER ORANG' : 
         boxColor: VIEW_CONFIG.frame_color
     }
 
