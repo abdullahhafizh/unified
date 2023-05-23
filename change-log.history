@@ -1,6 +1,7 @@
 16.3.1D-GLOBAL:
 - Add Daily Report Push Limit Handler,
 - Fixing Missing Attribute Create FS Mandiri,
+- Add Uptime Param,
 - ...
 
 16.3.1C-GLOBAL:

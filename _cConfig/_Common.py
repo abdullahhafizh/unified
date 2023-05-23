@@ -2398,3 +2398,5 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
         return False, 'Suspect Amount Detected'
     LOGGER.info((bank, trxid, amount, 'SUCCESS'))
     return True, 'OK'
+
+REBOOT_TIME = 0
