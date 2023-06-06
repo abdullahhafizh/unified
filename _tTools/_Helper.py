@@ -238,3 +238,8 @@ def url_to_endpoint(url):
 
 def get_char_from(s):
     return ''.join([i for i in s if not i.isdigit()])
+
+
+def get_int(s):
+    if s is None: return 0
+    return int(s)
