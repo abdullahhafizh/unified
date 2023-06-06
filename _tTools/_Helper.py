@@ -242,4 +242,5 @@ def get_char_from(s):
 
 def get_int(s):
     if s is None: return 0
+    s = s.replace(':', '')
     return int(s)
