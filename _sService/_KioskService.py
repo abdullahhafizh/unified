@@ -358,9 +358,9 @@ def build_view_config(d):
     _Common.VIEW_CONFIG['full_day'] = int(d['full_day']) == 1
     _Common.VIEW_CONFIG['open_hour'] = 0 if int(d['open_hour']) == 0 else _Helper.get_number_from_time(d['open_hour']) 
     _Common.VIEW_CONFIG['close_hour'] = 0 if int(d['close_hour']) == 0 else _Helper.get_number_from_time(d['close_hour'])
-    _Common.VIEW_CONFIG['duration_shop_trx'] = 0 if d.get('duration_shop_trx', 0) else int(d['duration_shop_trx']) * 60 * 1000
-    _Common.VIEW_CONFIG['duration_topup_trx'] = 0 if d.get('duration_topup_trx', 0) else int(d['duration_topup_trx']) * 60 * 1000
-    _Common.VIEW_CONFIG['duration_ppob_trx'] = 0 if d.get('duratoin_ppob_trx', 0) else int(d['duration_ppob_trx']) * 60 * 1000
+    _Common.VIEW_CONFIG['duration_shop_trx'] = 0 if d.get('duration_shop_trx', 0) == 0 or _Helper.empty(d.get('duration_shop_trx')) else int(d['duration_shop_trx']) * 60 * 1000
+    _Common.VIEW_CONFIG['duration_topup_trx'] = 0 if d.get('duration_topup_trx', 0) == 0 or _Helper.empty(d.get('duration_topup_trx')) else int(d['duration_topup_trx']) * 60 * 1000
+    _Common.VIEW_CONFIG['duration_ppob_trx'] = 0 if d.get('duratoin_ppob_trx', 0) == 0 or _Helper.empty(d.get('duratoin_ppob_trx')) else int(d['duration_ppob_trx']) * 60 * 1000
     _Common.VIEW_CONFIG['full_day_trx'] = _Common.FULLDAY_TRX
 
     _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
