@@ -75,6 +75,8 @@ REFUND_FEATURE = True if _ConfigParser.get_set_value('GENERAL', 'refund^feature'
 TID = _ConfigParser.get_set_value('GENERAL', 'tid', '---')
 TERMINAL_TOKEN = _ConfigParser.get_set_value('GENERAL', 'token', '---')
 
+FULLDAY_TRX = _ConfigParser.get_set_value('GENERAL', 'fullday^trx', 'topup|shop|ppob').split('|')
+
 USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme', '1') == '1' else False
 USE_PREV_ADS = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^ads', '0') == '1' else False
 

@@ -103,6 +103,25 @@ Base{
         base.result_cd_readiness.disconnect(get_cd_readiness);
     }
 
+    function validate_operational_hours(t){
+        // Not Full Day TRX
+        if (!VIEW_CONFIG.full_day){
+            // Check Operational Hours
+            var hour_time = parseInt(Qt.formatDateTime(new Date(), "HHmm"));
+            var open_time = (VIEW_CONFIG.open_hour==0) ? hour_time : VIEW_CONFIG.open_hour;
+            var close_time = (VIEW_CONFIG.close_hour==0) ? hour_time : VIEW_CONFIG.close_hour;
+            console.log('validate_operational_hours', t, hour_time, open_time, close_time);
+            // If Not Force Full Day TRX, Do Operational Hour Validation
+            if (VIEW_CONFIG.full_day_trx.indexOf(t) === -1) {
+                if (hour_time < open_time || hour_time > close_time){
+                    show_message_notification('Mohon Maaf|Tipe Transaksi Ini Tidak Dapat Dilakukan Di luar Jam Operational Mesin');
+                    return false;
+                }
+            } 
+        }
+        return true;
+    }
+
     function get_cd_readiness(c){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_cd_readiness', c, now);
@@ -448,9 +467,11 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if (press!="0" || maintenance_mode.visible) return;
-                    press = "1";
                     _SLOT.user_action_log('Press "TopUp Saldo"');
+                    if (press!="0" || maintenance_mode.visible) return;
+                    // Add Validation Operational Hours
+                    if (!validate_operational_hours('topup')) return;
+                    press = "1";
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -484,6 +505,8 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "Beli Kartu"');
                     if (press!="0") return;
+                    // Add Validation Operational Hours
+                    if (!validate_operational_hours('shop')) return;
                     press = "1";
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
@@ -537,9 +560,11 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    if (press!="0" || maintenance_mode.visible) return;
-                    press = "1";
                     _SLOT.user_action_log('Press "Bayar/Beli"');
+                    if (press!="0" || maintenance_mode.visible) return;
+                    // Add Validation Operational Hours
+                    if (!validate_operational_hours('ppob')) return;
+                    press = "1";
                     resetMediaTimer();
     //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();

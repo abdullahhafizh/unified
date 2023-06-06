@@ -106,6 +106,10 @@ def get_random_num(start=0, end=1):
     return random.uniform(start, end)
 
 
+def get_number_from_time(t='08:00'):
+    return int(t.replace(':', ''))
+
+
 def file2crc32(filename):
     try:
         buf = open(filename, 'rb').read()

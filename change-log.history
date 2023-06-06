@@ -1,3 +1,9 @@
+16.4.0-GLOBAL:
+- Add Handler Operational Hour (Theme Based),
+- Add Handler Duration Per TRX Type (Theme Based),
+- Separate Mandiri Settlement Data Grouping (TODO),
+- ...
+
 16.3.1D-GLOBAL:
 - Add Daily Report Push Limit Handler,
 - Fixing Missing Attribute Create FS Mandiri,

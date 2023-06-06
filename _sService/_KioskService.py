@@ -353,6 +353,15 @@ def build_view_config(d):
     # with open(config_js, 'w+') as config_qml:
     #     config_qml.write(content_js)
     #     config_qml.close()
+    
+    # Add New Theme Config Handler : 2023-06-06
+    _Common.VIEW_CONFIG['full_day'] = int(d['full_day']) == 1
+    _Common.VIEW_CONFIG['open_hour'] = 0 if int(d['open_hour']) == 0 else _Helper.get_number_from_time(d['open_hour']) 
+    _Common.VIEW_CONFIG['close_hour'] = 0 if int(d['close_hour']) == 0 else _Helper.get_number_from_time(d['close_hour'])
+    _Common.VIEW_CONFIG['duration_shop_trx'] = d['duration_shop_trx']
+    _Common.VIEW_CONFIG['duration_topup_trx'] = d['duration_topup_trx']
+    _Common.VIEW_CONFIG['duration_ppob_trx'] = d['duration_ppob_trx']
+    _Common.VIEW_CONFIG['full_day_trx'] = _Common.FULLDAY_TRX
 
     _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
     LOGGER.info((config_js, content_js))
