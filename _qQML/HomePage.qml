@@ -109,6 +109,7 @@ Base{
 
     function validate_operational_hours(t){
         // Not Full Day TRX
+        console.log('full_day_trx', VIEW_CONFIG.full_day_trx, VIEW_CONFIG.full_day);
         if (!VIEW_CONFIG.full_day){
             // Check Operational Hours
             var hour_time = parseInt(Qt.formatDateTime(new Date(), "HHmm"));
@@ -116,12 +117,14 @@ Base{
             var close_time = (VIEW_CONFIG.close_hour==0) ? hour_time : VIEW_CONFIG.close_hour;
             console.log('validate_operational_hours', t, hour_time, open_time, close_time);
             // If Not Force Full Day TRX, Do Operational Hour Validation
-            if (VIEW_CONFIG.full_day_trx.indexOf(t) === -1) {
-                if (hour_time < open_time || hour_time > close_time){
-                    show_message_notification('Mohon Maaf|Tipe Transaksi Ini Tidak Dapat Dilakukan Di luar Jam Operational Mesin');
-                    return false;
-                }
-            } 
+            if (VIEW_CONFIG.full_day_trx !== undefined){
+                if (VIEW_CONFIG.full_day_trx.indexOf(t) === -1) {
+                    if (hour_time < open_time || hour_time > close_time){
+                        show_message_notification('Mohon Maaf|Tipe Transaksi Ini Tidak Dapat Dilakukan Di luar Jam Operational Mesin');
+                        return false;
+                    }
+                } 
+            }
         }
         return true;
     }
