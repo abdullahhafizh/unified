@@ -358,9 +358,9 @@ def build_view_config(d):
     _Common.VIEW_CONFIG['full_day'] = int(d['full_day']) == 1
     _Common.VIEW_CONFIG['open_hour'] = 0 if int(d['open_hour']) == 0 else _Helper.get_number_from_time(d['open_hour']) 
     _Common.VIEW_CONFIG['close_hour'] = 0 if int(d['close_hour']) == 0 else _Helper.get_number_from_time(d['close_hour'])
-    _Common.VIEW_CONFIG['duration_shop_trx'] = d['duration_shop_trx']
-    _Common.VIEW_CONFIG['duration_topup_trx'] = d['duration_topup_trx']
-    _Common.VIEW_CONFIG['duration_ppob_trx'] = d['duration_ppob_trx']
+    _Common.VIEW_CONFIG['duration_shop_trx'] = 0 if d.get('duration_shop_trx', 0) else int(d['duration_shop_trx']) * 60 * 1000
+    _Common.VIEW_CONFIG['duration_topup_trx'] = 0 if d.get('duration_topup_trx', 0) else int(d['duration_topup_trx']) * 60 * 1000
+    _Common.VIEW_CONFIG['duration_ppob_trx'] = 0 if d.get('duratoin_ppob_trx', 0) else int(d['duration_ppob_trx']) * 60 * 1000
     _Common.VIEW_CONFIG['full_day_trx'] = _Common.FULLDAY_TRX
 
     _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
@@ -1190,6 +1190,7 @@ def store_transaction_global(param, retry=False):
         target_card_no = g['raw'].get('card_no', '')
         # Update Product Stock
         if g['shop_type'] == 'shop':
+            _Common.LAST_SHOP_TIME = _Helper.now()
             admin_fee = 0
             bank_id = g['raw'].get('bid', 0)
             PID_STOCK_SALE = g['raw']['pid']
@@ -1208,6 +1209,7 @@ def store_transaction_global(param, retry=False):
             # LOGGER.info(('PROCESS_DELAY 1 Seconds', g['shop_type']))
             # sleep(1)
         if g['shop_type'] == 'topup':
+            _Common.LAST_TOPUP_TIME = _Helper.now()
             trx_notes = json.dumps(g['topup_details'])
         
         trace_no = g['payment_details'].get('trx_id', '')

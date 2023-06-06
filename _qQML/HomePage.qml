@@ -43,6 +43,10 @@ Base{
 
     property var cardStockTreshold: 25
 
+    property var lastTopupTime: 0
+    property var lastShopTime: 0
+    property var lastPPOBTime: 0
+
     property var cdReadiness: undefined
 
     width: globalWidth
@@ -118,6 +122,30 @@ Base{
                     return false;
                 }
             } 
+        }
+        return true;
+    }
+
+    function validate_duration_last_transaction(t){
+        var epoch = new Date().getTime() * 1000;
+        var next_transaction_time = 0;
+        switch(t){
+            case 'topup':
+                if (VIEW_CONFIG.duration_topup_trx > 0 && last_topup_time > 0)
+                    next_transaction_time = VIEW_CONFIG.duration_topup_trx + last_topup_time;
+            break;
+            case 'shop':
+                if (VIEW_CONFIG.duration_shop_trx > 0 && last_shop_time > 0)
+                    next_transaction_time = VIEW_CONFIG.duration_shop_trx + last_shop_time;
+            break;
+            case 'ppob':
+                if (VIEW_CONFIG.duration_ppob_trx > 0 && last_ppob_time > 0)
+                    next_transaction_time = VIEW_CONFIG.duration_ppob_trx + last_ppob_time;
+            break;
+        }
+        if (epoch < next_transaction_time){
+            show_message_notification('Mohon Maaf|Silakan Tunggu Beberapa Saat Untuk Melanjutkan Transaksi Ini');
+            return false;
         }
         return true;
     }
@@ -297,6 +325,10 @@ Base{
         wa_voucher_button.visible = (kiosk.feature.whatsapp_voucher == 1)
         printerAvailable = (kiosk.printer_status == 'OK')
 
+        lastTopupTime = kiosk.last_topup_time //time() * 1000
+        lastShopTime = kiosk.last_shop_time
+        lastPPOBTime = kiosk.last_ppob_time
+
         //Telkomsel Paket Murah Feature Handle
         comboSaktiFeature = (kiosk.feature.tsel_combo_sakti == 1)
 
@@ -471,6 +503,8 @@ Base{
                     if (press!="0" || maintenance_mode.visible) return;
                     // Add Validation Operational Hours
                     if (!validate_operational_hours('topup')) return;
+                    // Add Validation Duration Transaction
+                    if (!validate_duration_last_transaction('topup')) return;
                     press = "1";
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
@@ -507,6 +541,8 @@ Base{
                     if (press!="0") return;
                     // Add Validation Operational Hours
                     if (!validate_operational_hours('shop')) return;
+                    // Add Validation Duration Transaction
+                    if (!validate_duration_last_transaction('shop')) return;
                     press = "1";
                     resetMediaTimer();
                     _SLOT.stop_idle_mode();
@@ -564,6 +600,8 @@ Base{
                     if (press!="0" || maintenance_mode.visible) return;
                     // Add Validation Operational Hours
                     if (!validate_operational_hours('ppob')) return;
+                    // Add Validation Duration Transaction
+                    if (!validate_duration_last_transaction('ppob')) return;
                     press = "1";
                     resetMediaTimer();
     //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});

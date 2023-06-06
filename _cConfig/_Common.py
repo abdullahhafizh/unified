@@ -2147,6 +2147,11 @@ def company_theme(theme):
     return PRINT_COMPANY_MAPPING[theme]
 
 
+LAST_TOPUP_TIME = 0
+LAST_SHOP_TIME = 0
+LAST_PPOB_TIME = 0
+
+
 def kiosk_status_data():
     mandiri_active_wallet = MANDIRI_ACTIVE_WALLET
     bni_active_wallet = BNI_ACTIVE_WALLET
@@ -2177,8 +2182,13 @@ def kiosk_status_data():
             # 'printer_setting': '1' if _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default') == 'Default' else '0',
             'admin_fee': KIOSK_ADMIN,
             'printer_status': get_printer_status(),
-            'maintenance_mode': '1' if MAINTENANCE_MODE else '0'
+            'maintenance_mode': '1' if MAINTENANCE_MODE else '0',
+            'last_topup_time': LAST_TOPUP_TIME,
+            'last_shop_time': LAST_SHOP_TIME,
+            'last_ppob_time': LAST_PPOB_TIME,            
             # 'operator_name': '' if LOGGED_OPERATOR is None else LOGGED_OPERATOR['first_name']
+            # lastTopupTime = kiosk.last_topup_time //time() * 1000
+            # lastShopTime = kiosk.last_shop_time
         }
         return data
     except Exception as e:
