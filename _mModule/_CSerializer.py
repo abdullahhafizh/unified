@@ -1257,7 +1257,7 @@ def BCA_CARD_HISTORY(Ser):
 
     response = get_TDefaultRespons(data)
     #print(response)
-    LOG.fw("RAW_RECV:", response)
+    # LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
     #print(result)
