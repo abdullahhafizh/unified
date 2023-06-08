@@ -1259,7 +1259,7 @@ def BCA_CARD_HISTORY(Ser):
     #print(response)
     LOG.fw("RAW_RECV:", response)
 
-    result = get_TDefaultResres(response["data"])
+    result = get_TDefaultReportres(response["data"])
     #print(result)
     LOG.fw("RESPONSE:", result)
 
