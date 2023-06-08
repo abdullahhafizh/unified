@@ -194,6 +194,8 @@ MANDIRI_THRESHOLD = int(_ConfigParser.get_set_value('MANDIRI', 'amount^minimum',
 MID_BNI = _ConfigParser.get_set_value('BNI', 'mid', '---')
 TID_BNI = _ConfigParser.get_set_value('BNI', 'tid', '---')
 MC_BNI = _ConfigParser.get_set_value('BNI', 'merried^code', '---')
+BNI_C2C_MASTER_KEY = _ConfigParser.get_set_value('BNI', 'c2c^master^key', '404142434445464748494A4B4C4D4E4F')
+BNI_C2C_PIN = _ConfigParser.get_set_value('BNI', 'c2c^pin', '1234560000000000')
 SLOT_SAM1_BNI = _ConfigParser.get_set_value('BNI', 'sam1^slot', '---')
 SLOT_SAM2_BNI = _ConfigParser.get_set_value('BNI', 'sam2^slot', '---')
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('BNI', 'amount^topup', '500000')
@@ -353,7 +355,7 @@ ALLOWED_BANK_UBAL_ONLINE = UPDATE_ONLINE_FEATURE.split('|')
 # Hardcoded Config For Bank Feature
 ALLOWED_BANK_PENDING_ONLINE = ['BRI', 'MANDIRI', 'MANDIRI_C2C_DEPOSIT', 'BCA', 'DKI']
 # CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = _ConfigParser.get_set_value('GENERAL', 'allowed^card^history', 'MANDIRI|BNI')
-CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = 'MANDIRI|BNI|BRI|DKI'
+CONFIG_ALLOWED_BANK_CHECK_CARD_LOG = 'MANDIRI|BNI|BRI|DKI|BCA'
 ALLOWED_BANK_CHECK_CARD_LOG = CONFIG_ALLOWED_BANK_CHECK_CARD_LOG.split('|')
 
 MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('GENERAL', 'mandiri^sam^production', '0') == '1' else False
@@ -1324,6 +1326,14 @@ DKI_LOG_LEGEND = {
     '05': 'PURCHASE',
     '01': 'PURCHASE',
     '02': 'TOPUP'
+}
+
+BCA_LOG_LEGEND = {
+    '04': 'PURCHASE',
+    '14': 'TOPUP',
+    '24': 'TOPUP',
+    '34': 'TOPUP',
+    '44': 'PERDANA'
 }
 
 def start_get_devices():

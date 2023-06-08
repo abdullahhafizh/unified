@@ -2,6 +2,8 @@
 - Add Handler Operational Hour (Theme Based),
 - Add Handler Duration Per TRX Type (Theme Based),
 - Separate Mandiri Settlement Data Grouping (TODO),
+- Add BCA Card History,
+- Add BNI Topup Init Key on Startup,
 - ...
 
 16.3.1D-GLOBAL:

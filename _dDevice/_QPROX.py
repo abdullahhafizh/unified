@@ -85,12 +85,17 @@ QPROX = {
     "CARD_HISTORY_MANDIRI": "039", #MANDIRI CARD LOG
     "CARD_HISTORY_BNI": "040", #BNI CARD LOG
     "CARD_HISTORY_BNI_RAW": "077", #BNI CARD LOG IN RAW FORMAT
+    "BNI_TOPUP_INIT_KEY": "080",
     "SAM_HISTORY_BNI": "042", #BNI SAM LOG
     "GET_LAST_C2C_REPORT": "041", #"Send SAM C2C Slot"
     "TOPUP_ONLINE_DKI": "043", #"Send amount|TID|STAN|MID|InoviceNO|ReffNO "
     "UPDATE_BALANCE_ONLINE_BCA": "044", #BCA UBAL ONLINE TID, MID, Token
     "REVERSAL_ONLINE_BCA": "045", #BCA REVERSAL TID, MID, Token
     "CONFIG_ONLINE_BCA": "046", #BCA REVERSAL TID Topup BCA, MID Topup BCA
+    # BCA NEW COMMAND : 2023-06-08
+    "CARD_HISTORY_BCA": "047", 
+    "CARD_HISTORY_BCA_RAW": "079", 
+    # ---
     "BCA_CARD_INFO": "048",
     "REVERSAL_ONLINE_BRI": "049", #parameter sm dengan update balance bri nya
     "REVERSAL_ONLINE_DKI": "050", #parameter sm dengan top up dki nya,
@@ -376,7 +381,7 @@ def init_config():
                     else:
                         LOGGER.warning((BANK['BANK'], result))
                 if BANK['BANK'] == 'BNI':
-                    param = QPROX['UPDATE_TID_BNI'] + '|' + TID_BNI
+                    param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
                     response, result = _Command.send_request(param=param, output=None)
                     if response == 0:
                         LOGGER.info((BANK['BANK'], result))
@@ -1843,6 +1848,19 @@ def get_card_history(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BNI_ERROR')
+    elif bank == 'BCA':   
+        param = QPROX['CARD_HISTORY_BCA'] + '|'
+        try:
+            response, result = _Command.send_request(param=param, output=None)
+            if response == 0 and '|' in result:
+                output = parse_card_history(bank, result)
+                _Common.LAST_CARD_LOG_HISTORY = output
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
+            else:
+                QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BCA_ERROR')
+        except Exception as e:
+            LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BCA_ERROR')
     elif bank == 'BNI_C2C':   
         slot = _Common.BNI_ACTIVE
         _slot = _Common.BNI_ACTIVE - 1
@@ -1899,6 +1917,17 @@ def dki_card_history_direct():
     if 'DKI' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
         return ""
     param = QPROX['CARD_HISTORY_DKI_RAW'] + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0:
+        return result
+    else:
+        return ""
+    
+
+def bca_card_history_direct():
+    if 'BCA' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
+        return ""
+    param = QPROX['CARD_HISTORY_BCA_RAW'] + '|'
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
         return result
@@ -1970,6 +1999,25 @@ def parse_card_history(bank, raw):
                 'date': datetime.strptime(row[3][:8], '%Y%m%d').strftime('%Y-%m-%d'),
                 'time': ':'.join(_Helper.strtolist(row[3][8:])),
                 'type': _Common.BNI_LOG_LEGEND.get(row[1], ''),
+                'amount': row[2],
+                'prev_balance': '',
+                'last_balance': ''
+            })
+        return card_history
+    elif bank == 'BCA':
+        # BCA =  NO | TIPE | AMOUNT | DATE
+        # 0|24|1|20200205230607#1|01|1|20200203012345#2|01|1|20200203012244#3|01|1|20200203012150#4|01|1|20200203011458
+        # 24 0000020016 885096050087 EGEN2010 180830112727
+        histories = raw.split('#')
+        for history in histories:
+            history = history.replace(' ', '')
+            if _Helper.empty(history) is True:
+                continue
+            row = history.split('|')
+            card_history.append({
+                'date': datetime.strptime(row[3][:6], '%y%m%d').strftime('%Y-%m-%d'),
+                'time': ':'.join(_Helper.strtolist(row[3][6:])),
+                'type': _Common.BCA_LOG_LEGEND.get(row[1], ''),
                 'amount': row[2],
                 'prev_balance': '',
                 'last_balance': ''
@@ -2423,11 +2471,12 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             else:
                 pending_data = {}
             # Re-write Last Audit Result
+            card_history = bca_card_history_direct()   
             last_audit_result.update({
                     'tid': _Common.TID_TOPUP_BCA,
                     'mid': _Common.MID_TOPUP_BCA,
                     'pending_result': pending_data,
-                    'card_history': '',
+                    'card_history': card_history,
                     'amount': amount,
                     'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
                     'ack_result': ack_result,

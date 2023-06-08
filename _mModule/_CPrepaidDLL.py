@@ -1301,3 +1301,52 @@ def topup_get_tokenbri():
 
     return res_str, CardData
 
+@func_set_timeout(30)
+def topup_bca_lib_cardhistory():
+    # global DLL_LOAD
+    report = ""
+    res_str = ""
+
+    try:        
+        LOG.fw("--> CMD READER = $98")
+
+        res_str, report = lib.topup_bca_lib_cardhistory()
+
+    except Exception as ex:
+        LOG.fw("CMD $98 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+
+    LOG.fw("<-- report = ", report)
+    LOG.fw("<-- CMD RESULT = ",res_str)
+    return res_str, report
+#---
+
+#080
+@func_set_timeout(30)
+def topup_bni_init_key(MASTER_KEY, PIN, TID):
+    # global DLL_LOAD
+    res_str = ""
+    try:
+        LOG.fw("--> CMD READER = $63")
+        STATIC_IV = '0' * 16
+
+        C_MASTER_KEY = utils.str_to_bytes(MASTER_KEY)
+        C_PIN = utils.str_to_bytes(PIN)
+        C_TID = utils.str_to_bytes(TID)
+        C_IV = utils.str_to_bytes(STATIC_IV)
+
+        LOG.fw("--> C_MASTER_KEY = ",C_MASTER_KEY)
+        LOG.fw("--> C_PIN = ",C_PIN)
+        LOG.fw("--> C_TID = ",C_TID)
+        LOG.fw("--> C_IV = ",C_IV)
+
+        res_str = lib.topup_bni_init_key(C_MASTER_KEY, C_IV, C_PIN, C_TID)
+
+    except Exception as ex:
+        LOG.fw("CMD $30 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+        
+    LOG.fw("<-- CMD RESULT = ",res_str)
+
+    return res_str
+

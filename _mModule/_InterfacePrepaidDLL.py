@@ -112,10 +112,12 @@ def send_command(cmd, param):
             prepaid_bni.bni_card_get_log_custom(param, __global_response__)
         elif cmd == "042":
             prepaid_bni.bni_sam_get_log(param, __global_response__)
+        elif cmd == "080":
+            prepaid_bni.bni_topup_init_key(param, __global_response__)
         elif cmd == "041":
             prepaid_mandiri.mandiri_get_last_report(param, __global_response__)
         elif cmd == "043":
-            # TopUpDKI
+            # TopUpDKI Old Service
             raise SystemError("Deprecated, use 051 and 052")
         elif cmd == "044":
             prepaid_bca.update_balance_bca(param,__global_response__)
@@ -123,6 +125,10 @@ def send_command(cmd, param):
             prepaid_bca.reversal_bca(param, __global_response__)
         elif cmd == "046":
             prepaid_bca.update_bca(param, __global_response__)
+        elif cmd == "047":
+            prepaid_bca.bca_card_get_log(param, __global_response__)
+        elif cmd == "079":
+            prepaid_bca.bca_card_get_log_raw(param, __global_response__)
         elif cmd == "048":
             prepaid_bca.get_card_info_bca(param, __global_response__)
         elif cmd == "049":

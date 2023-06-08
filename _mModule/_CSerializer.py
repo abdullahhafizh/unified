@@ -210,6 +210,37 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
     return result["code"]
 
 
+def BNI_TOPUP_INIT_KEY(Ser, C_MASTER_KEY, C_IV, C_PIN, C_TID):
+    sam = {}
+    sam["cmd"] = b"\x63"
+    sam["mk"] = C_MASTER_KEY
+    sam["iv"] = C_IV
+    sam["pin"] = C_PIN
+    sam["tid"] = C_TID
+
+    bal_value = sam["cmd"] + sam["mk"] + sam["iv"] + sam["pin"] + sam["tid"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    Ser.flush()
+    write = Ser.write(p)
+    Ser.flush()
+    
+    data = retrieve_rs232_data(Ser)
+
+    response = get_TDefaultRespons(data)
+    # print(response)
+    LOG.fw("RAW_RECV:", response)
+
+    result = get_TDefaultResres(response["data"])
+    # print(result)
+    LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
+
+    return result["code"]
+
+
 def PURSE_DATA_MULTI_SAM(Ser, slot):
     sam = {}
     sam["cmd"] = b"\x76"
@@ -1208,6 +1239,38 @@ def BCA_REVERSAL(Ser, ATD):
     del data
     del response
     
+    return result["code"], rep
+
+
+def BCA_CARD_HISTORY(Ser):
+    sam = {}
+    sam["cmd"] = b"\x98"
+
+    bal_value = sam["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    Ser.flush()
+    write = Ser.write(p)
+    Ser.flush()
+    
+    data = retrieve_rs232_data(Ser)
+
+    response = get_TDefaultRespons(data)
+    #print(response)
+    LOG.fw("RAW_RECV:", response)
+
+    result = get_TDefaultResres(response["data"])
+    #print(result)
+    LOG.fw("RESPONSE:", result)
+
+    Len = ((response["len"][0] << 8)+response["len"][1])-5
+    rep = ''
+    for i in range(0, Len):
+        rep = rep + chr(result["rep"][i])
+
+    del data
+    del response
+
     return result["code"], rep
 
 

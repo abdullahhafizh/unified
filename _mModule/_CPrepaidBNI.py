@@ -390,7 +390,6 @@ def bni_update_sam_crypto(param, __global_response__):
     LOG.fw("016:Parameter = ", C_PurseData)
     LOG.fw("016:Parameter = ", C_Cryptogram)
 
-
     dtpurse = C_PurseData[36:52]
     dtcrypto = C_Cryptogram[-32:]
     fixset = b"90361401250314021403"
@@ -545,7 +544,6 @@ def bni_card_get_log(param, __global_response__):
 
     return res_str
 
-
 #077
 def bni_card_get_log_custom(param, __global_response__):
     
@@ -605,6 +603,47 @@ def bni_sam_get_log(param, __global_response__):
 
     return res_str
 
+#080
+def bni_topup_init_key(param, __global_response__):
+    
+    Param = param.split('|')
+    if len(Param) > 0:
+        C_MasterKey = Param[0]
+        C_PIN = Param[1]
+        C_TID = Param[2]
+        LOG.fw("080:Parameter = ", C_MasterKey)
+        LOG.fw("080:Parameter = ", C_PIN)
+        LOG.fw("080:Parameter = ", C_TID)
+    else:
+        LOG.fw("080:Missing Parameter", param)
+        raise SystemError("080:Missing Parameter: "+param)
+    
+    res_str, errmsg = bni_topup_init_key_priv(C_MasterKey, C_PIN, C_TID)
+
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["Response"] = errmsg
+        LOG.fw("080:Response = ", errmsg)
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("080:Result = ", res_str)
+        LOG.fw("080:Sukses", None)
+    else:
+        __global_response__["Response"] = errmsg
+        LOG.fw("080:Response = ", errmsg, True)
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("080:Result = ",res_str, True)
+        LOG.fw("080:Gagal", None, True)
+
+    return res_str
+    
+    
+def bni_topup_init_key_priv(master_key, pin, tid):
+    err_msg = 'FAILED'
+    res_str = prepaid.topup_bni_init_key(master_key, pin, tid)
+    if (res_str == '0000'):
+        err_msg = 'OK'
+    return res_str, err_msg
+
 
 def bni_card_get_log_custom_priv(max_t=29):
     resultStr = ""
@@ -650,7 +689,6 @@ def bni_card_get_log_custom_priv(max_t=29):
         msg = "{0}".format(ex)
     
     return resultStr, purseData, listRAPDU
-
 
 
 def bni_card_get_log_priv(max_t=29):

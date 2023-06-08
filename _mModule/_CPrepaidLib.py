@@ -23,6 +23,7 @@ def open_only(port):
     
     return resultStr, msg
 
+
 def is_serial_valid():
     global COMPORT
     if COMPORT is None:
@@ -38,9 +39,11 @@ def is_serial_valid():
         print('pyt: COM Status Invalid')
         return False
 
+
 def topup_auth(C_PORT, C_Slot, C_PinSAM, C_Institution, C_Terminal, C_PinKA, C_PinKL, p_structNIK):
     #Deprecated
     return "FFFF"
+
 
 def topup_init(PORT, SAMPIN, Institution, Terminal):
     global COMPORT
@@ -54,6 +57,7 @@ def topup_init(PORT, SAMPIN, Institution, Terminal):
     
     return res_str.decode("utf-8")
     
+    
 def topup_balance_with_sn():
     global COMPORT
     if not is_serial_valid():
@@ -62,6 +66,7 @@ def topup_balance_with_sn():
     res_str, balance, card_number, sign = serializer.GET_BALANCE_WITH_SN(COMPORT)
 
     return res_str.decode("utf-8"), balance.decode("utf-8"), card_number.decode("utf-8"), sign
+
 
 def topup_debit(C_Denom, date_now, timeout):
     global COMPORT
@@ -72,6 +77,7 @@ def topup_debit(C_Denom, date_now, timeout):
 
     return res_str.decode("utf-8"), balance, report
 
+
 def topupbni_validation(timeout):
     global COMPORT
     if not is_serial_valid():
@@ -80,6 +86,7 @@ def topupbni_validation(timeout):
     res_str = serializer.BNI_TOPUP_VALIDATION(COMPORT, timeout)
 
     return res_str.decode("utf-8")
+
 
 def topup_balance():
     global COMPORT
@@ -90,6 +97,7 @@ def topup_balance():
 
     return res_str.decode("utf-8"), balance.decode("utf-8")
 
+
 def topup_bni_update(Terminal):
     global COMPORT
     if not is_serial_valid():
@@ -98,6 +106,7 @@ def topup_bni_update(Terminal):
     res_str = serializer.BNI_TERMINAL_UPDATE(COMPORT, Terminal)
 
     return res_str.decode("utf-8")
+
 
 def topup_pursedata_multi_sam(slot):
     global COMPORT
@@ -108,6 +117,7 @@ def topup_pursedata_multi_sam(slot):
 
     return res_str.decode("utf-8"), response
 
+
 def topupbni_km_balance_multi_sam(slot):
     global COMPORT
     if not is_serial_valid():
@@ -116,6 +126,7 @@ def topupbni_km_balance_multi_sam(slot):
     res_str, balance = serializer.BNI_KM_BALANCE_MULTI_SAM(COMPORT, slot)
 
     return res_str.decode("utf-8"), balance.decode("cp437")
+
 
 def topupbni_init_multi(slot, terminal):
     global COMPORT
@@ -126,6 +137,7 @@ def topupbni_init_multi(slot, terminal):
 
     return res_str.decode("utf-8")
 
+
 def topupbni_credit_multi_sam(slot, value, timeOut):
     global COMPORT
     if not is_serial_valid():
@@ -134,6 +146,7 @@ def topupbni_credit_multi_sam(slot, value, timeOut):
     res_str, report = serializer.BNI_TOPUP_CREDIT_MULTI_SAM(COMPORT, slot, value, timeOut)
 
     return res_str.decode("utf-8"), report
+
 
 def topupbni_sam_refill_multi(slot, tid):
     global COMPORT
@@ -144,6 +157,7 @@ def topupbni_sam_refill_multi(slot, tid):
 
     return res_str.decode("utf-8"), report
 
+
 def topup_pursedata():
     global COMPORT
     if not is_serial_valid():
@@ -152,6 +166,7 @@ def topup_pursedata():
     res_str, report = serializer.PURSE_DATA(COMPORT)
 
     return res_str.decode("utf-8"), report
+
 
 def topup_debitnoinit_single(tid, datetime, time_out, value):
     global COMPORT
@@ -162,6 +177,7 @@ def topup_debitnoinit_single(tid, datetime, time_out, value):
 
     return res_str.decode("utf-8"), report
 
+
 def topup_C2C_refill(Value, Timestamp):
     global COMPORT
     if not is_serial_valid():
@@ -170,6 +186,7 @@ def topup_C2C_refill(Value, Timestamp):
     res_str, report = serializer.TOP_UP_C2C(COMPORT, Value, Timestamp)
 
     return res_str.decode("utf-8"), report.decode("utf-8")
+
 
 def topup_C2C_init(tidnew, tidold, C_Slot):
     global COMPORT
@@ -180,6 +197,7 @@ def topup_C2C_init(tidnew, tidold, C_Slot):
 
     return res_str.decode("utf-8")
 
+
 def topup_C2C_Correct():
     global COMPORT
     if not is_serial_valid():
@@ -188,6 +206,7 @@ def topup_C2C_Correct():
     res_str, report = serializer.TOPUP_C2C_CORRECTION(COMPORT)
 
     return res_str.decode("utf-8"), report
+
 
 def topup_C2C_getfee(C_Flag):
     global COMPORT
@@ -198,6 +217,7 @@ def topup_C2C_getfee(C_Flag):
 
     return res_str.decode("utf-8"), report.decode("utf-8")
 
+
 def topup_C2C_setfee(C_Flag, C_Response):
     global COMPORT
     if not is_serial_valid():
@@ -206,6 +226,7 @@ def topup_C2C_setfee(C_Flag, C_Response):
     res_str = serializer.SET_FEE_C2C(COMPORT, C_Flag, C_Response)
 
     return res_str.decode("utf-8")
+
 
 def topup_C2C_force(C_Flag):
     global COMPORT
@@ -216,6 +237,7 @@ def topup_C2C_force(C_Flag):
 
     return res_str.decode("utf-8"), report.decode("utf-8")
 
+
 def topup_C2C_km_balance():
     global COMPORT
     if not is_serial_valid():
@@ -224,6 +246,7 @@ def topup_C2C_km_balance():
     res_str, saldo, uid, carddata, cardattr = serializer.KM_BALANCE_TOPUP_C2C(COMPORT)
 
     return res_str.decode("utf-8"), saldo.decode("utf-8"), uid.decode("utf-8"), carddata.decode("utf-8"), cardattr.decode("utf-8")
+
 
 def topup_apdusend(C_Slot, C_APDU):
     global COMPORT
@@ -234,6 +257,7 @@ def topup_apdusend(C_Slot, C_APDU):
 
     return res_str.decode("utf-8"), report
 
+
 def topup_bca_lib_config(C_TID, C_MID):
     global COMPORT
     if not is_serial_valid():
@@ -242,6 +266,7 @@ def topup_bca_lib_config(C_TID, C_MID):
     res_str = serializer.BCA_TERMINAL_UPDATE(COMPORT, C_TID, C_MID)
 
     return res_str.decode("utf-8")
+
 
 def get_card_sn():
     global COMPORT
@@ -252,6 +277,7 @@ def get_card_sn():
 
     return res_str.decode("utf-8"), uid.decode("utf-8"), sn.decode("utf-8")
 
+
 def topup_bca_lib_cardinfo(C_ATD):
     global COMPORT
     if not is_serial_valid():
@@ -261,6 +287,7 @@ def topup_bca_lib_cardinfo(C_ATD):
 
     return res_str.decode("utf-8"), report
 
+
 def topup_get_carddata():
     global COMPORT
     if not is_serial_valid():
@@ -269,6 +296,7 @@ def topup_get_carddata():
     res_str, uid, carddata, cardattr = serializer.GET_CARDDATA(COMPORT)
 
     return res_str.decode("utf-8"), uid, carddata, cardattr
+
 
 def topup_card_disconnect():
     global COMPORT
@@ -282,6 +310,7 @@ def topup_card_disconnect():
     else:
         return "FFFF"
 
+
 def topup_bca_lib_session1(atd, datetimes):
     global COMPORT
     if not is_serial_valid():
@@ -290,6 +319,7 @@ def topup_bca_lib_session1(atd, datetimes):
     res_str, session = serializer.BCA_SESSION_1(COMPORT, atd, datetimes)
 
     return res_str.decode("utf-8"), session
+
 
 def topup_bca_lib_session2(session):
     global COMPORT
@@ -300,6 +330,7 @@ def topup_bca_lib_session2(session):
 
     return res_str.decode("utf-8")
 
+
 def topup_bca_lib_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex):
     global COMPORT
     if not is_serial_valid():
@@ -308,6 +339,7 @@ def topup_bca_lib_topup1(C_ATD, C_accescard, C_accescode, C_datetimes, C_amounth
     res_str, rep = serializer.BCA_TOPUP_1(COMPORT, C_ATD, C_accescard, C_accescode, C_datetimes, C_amounthex)
 
     return res_str.decode("utf-8"), rep
+
 
 def topup_bca_lib_topup2(C_confirm1, C_confirm2):
     global COMPORT
@@ -318,6 +350,7 @@ def topup_bca_lib_topup2(C_confirm1, C_confirm2):
 
     return res_str.decode("utf-8"), rep    
 
+
 def topup_bca_lib_lastreport():
     global COMPORT
     if not is_serial_valid():
@@ -327,6 +360,7 @@ def topup_bca_lib_lastreport():
 
     return res_str.decode("utf-8"), rep    
 
+
 def topup_bca_lib_reversal(ATD):
     global COMPORT
     if not is_serial_valid():
@@ -335,6 +369,7 @@ def topup_bca_lib_reversal(ATD):
     res_str, rep = serializer.BCA_REVERSAL(COMPORT, ATD)
 
     return res_str.decode("utf-8"), rep
+
 
 def topup_get_tokenbri():
     global COMPORT
@@ -353,3 +388,21 @@ def topup_done():
     COMPORT = None
 
     return "0000"
+
+
+def topup_bca_lib_cardhistory():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = serializer.BCA_CARD_HISTORY(COMPORT)
+
+    return res_str.decode("utf-8"), report
+
+
+def topup_bni_init_key(C_MASTER_KEY, C_IV, C_PIN, C_TID):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE"
+    res_str = serializer.topup_bni_init_key(COMPORT, C_MASTER_KEY, C_IV, C_PIN, C_TID)
+    return res_str.decode("utf-8")

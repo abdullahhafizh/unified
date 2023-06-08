@@ -64,6 +64,75 @@ def update_bca(param, __global_response__):
 
     return res_str
 
+
+#047
+def bca_card_get_log(param, __global_response__):
+    
+    res_str, card_no, card_uid = on_detect()
+    report = card_no
+    
+    if res_str == '0000':
+        res_str, report = get_bca_card_history_priv()
+    
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["ErrorDesc"] = "Sukses"
+        __global_response__["Response"] =  report
+        LOG.fw("047:Result = ", res_str)
+        LOG.fw("047:Response = ", report)
+        LOG.fw("047:Sukses", None)
+    else:
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("047:Result = ", res_str, True)
+        LOG.fw("047:Gagal", None, True)
+
+    return res_str
+
+
+def get_bca_card_history_priv():
+    res_str, card_log = prepaid.topup_bca_lib_cardhistory()
+    res_report = ''
+    if res_str == '0000':
+        # 0000|240000020016885096050087EGEN2010180830112727;240000020013885096050087EGEN2011180830112559|240000020016885096050087EGEN2010180830112727;240000020013885096050087EGEN2011180830112559;140000020011885096050087EGEN2010180830112418;140000020010885096050087EGEN2011180830112350;040000000100885000015999EESIT001180824182433;040000000111885000015999EESIT001180824182408;040000000033885000015999EESIT001180824182009;040000000036885000015999EESIT001180824181224;040000000777885000015999EESIT001180824173158;040000000546885000015999EESIT001180824172111
+        if card_log[:5] == '0000|':
+            card_log = card_log[5:]
+        if len(card_log.split(';')) > 1: 
+            card_log = card_log.replace('|', ';')
+            i = 0
+            for c in card_log.split(';'):
+                i += 1
+                # c = 240000020016885096050087EGEN2010180830112727
+                types = c[:2]
+                amount = int(c[2:12])
+                dates = c[-12:]
+                report = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                res_report = res_report + (report + '#')
+                
+    return res_str, res_report
+
+
+#079
+def bca_card_get_log_raw(param, __global_response__):
+    
+    res_str, report, _ = on_detect()
+    
+    if res_str == '0000':
+        res_str, report = prepaid.topup_bca_lib_cardhistory()
+    
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["ErrorDesc"] = "Sukses"
+        __global_response__["Response"] =  report
+        LOG.fw("047:Result = ", res_str)
+        LOG.fw("047:Response = ", report)
+        LOG.fw("047:Sukses", None)
+    else:
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("047:Result = ", res_str, True)
+        LOG.fw("047:Gagal", None, True)
+
+    return res_str
+
 #048
 def get_card_info_bca(param, __global_response__):
     global BCA_ATD
@@ -97,6 +166,7 @@ def get_card_info_bca(param, __global_response__):
 
     return res_str
 
+
 def on_detect():
     res_str, CardUID, CardNo = prepaid.get_card_sn()
 
@@ -109,6 +179,7 @@ def on_detect():
         CardUID = CardUID[0:14]
 
     return res_str, CardNo, CardUID
+
 
 def topup_card_info(ATD):
     res_str, report = prepaid.topup_bca_lib_cardinfo(ATD)
