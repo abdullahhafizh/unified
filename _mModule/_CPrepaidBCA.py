@@ -98,14 +98,18 @@ def get_bca_card_history_priv():
             card_log = card_log[5:]
         elif card_log[:1] == '|':
             card_log = card_log[1:]
+        history = []
         if len(card_log.split(';')) > 1: 
             card_log = card_log.replace('|', ';')
             i = 0
             for c in card_log.split(';'):
+                if c in history:
+                    continue
                 try:
                     amount = int(c[2:12])
-                except Exception as e:
+                except:
                     continue
+                history.append(c)
                 i += 1
                 # c = 240000020016885096050087EGEN2010180830112727
                 types = c[:2]
