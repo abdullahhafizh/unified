@@ -96,14 +96,19 @@ def get_bca_card_history_priv():
         # 0000|240000020016885096050087EGEN2010180830112727;240000020013885096050087EGEN2011180830112559|240000020016885096050087EGEN2010180830112727;240000020013885096050087EGEN2011180830112559;140000020011885096050087EGEN2010180830112418;140000020010885096050087EGEN2011180830112350;040000000100885000015999EESIT001180824182433;040000000111885000015999EESIT001180824182408;040000000033885000015999EESIT001180824182009;040000000036885000015999EESIT001180824181224;040000000777885000015999EESIT001180824173158;040000000546885000015999EESIT001180824172111
         if card_log[:5] == '0000|':
             card_log = card_log[5:]
+        elif card_log[:1] == '|':
+            card_log = card_log[1:]
         if len(card_log.split(';')) > 1: 
             card_log = card_log.replace('|', ';')
             i = 0
             for c in card_log.split(';'):
+                try:
+                    amount = int(c[2:12])
+                except Exception as e:
+                    continue
                 i += 1
                 # c = 240000020016885096050087EGEN2010180830112727
                 types = c[:2]
-                amount = int(c[2:12])
                 dates = c[-12:]
                 report = str(i) + "|" + types + "|" + str(amount) + "|" + dates
                 res_report = res_report + (report + '#')
