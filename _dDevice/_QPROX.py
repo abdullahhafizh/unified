@@ -1922,7 +1922,7 @@ def dki_card_history_direct():
         return result
     else:
         return ""
-    
+
 
 def bca_card_history_direct():
     if 'BCA' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:

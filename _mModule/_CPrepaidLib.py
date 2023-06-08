@@ -404,5 +404,5 @@ def topup_bni_init_key(C_MASTER_KEY, C_IV, C_PIN, C_TID):
     global COMPORT
     if not is_serial_valid():
         return "FFFE"
-    res_str = serializer.topup_bni_init_key(COMPORT, C_MASTER_KEY, C_IV, C_PIN, C_TID)
+    res_str = serializer.BNI_TOPUP_INIT_KEY(COMPORT, C_MASTER_KEY, C_IV, C_PIN, C_TID)
     return res_str.decode("utf-8")
