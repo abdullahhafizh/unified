@@ -410,7 +410,7 @@ Base{
         var mainMessage = fm.split('|')[0];
         var slaveMessage = fm.split('|')[1];
         if (slaveMessage.length < 1) slaveMessage = '';
-        switch_frame('source/smiley_down.png', mainMessage, sm, 'closeWindow', false )
+        switch_frame('source/smiley_down.png', mainMessage, slaveMessage, 'closeWindow', false )
         return;
     }
 
