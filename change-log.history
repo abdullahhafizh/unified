@@ -4,6 +4,7 @@
 - Separate Mandiri Settlement Data Grouping (TODO),
 - Add BCA Card History,
 - Add BNI Topup Init Key on Startup,
+- Add Handler Operational Hour (Own Config),
 - ...
 
 16.3.1D-GLOBAL:
