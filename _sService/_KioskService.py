@@ -369,6 +369,9 @@ def build_view_config(d):
         
     if not _Helper.empty(_Common.SELF_CLOSE_HOUR):
         _Common.VIEW_CONFIG['close_hour'] = 0 if _Helper.get_int(_Common.SELF_CLOSE_HOUR) == 0 else _Helper.get_number_from_time(_Common.SELF_CLOSE_HOUR) 
+        
+    if _Common.VIEW_CONFIG['open_hour'] > 0 or _Common.VIEW_CONFIG['close_hour'] > 0:
+        _Common.VIEW_CONFIG['full_day'] = False
 
     _Common.store_to_temp_data('view-config', json.dumps(_Common.VIEW_CONFIG))
     LOGGER.info((config_js, content_js))
