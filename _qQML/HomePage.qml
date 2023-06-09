@@ -409,7 +409,7 @@ Base{
         press = '0';
         var mainMessage = fm.split('|')[0];
         var slaveMessage = fm.split('|')[1];
-        if (slaveMessage.length < 1) slaveMessage = '';
+        if (slaveMessage === undefined || slaveMessage.length < 1) slaveMessage = '';
         switch_frame('source/smiley_down.png', mainMessage, slaveMessage, 'closeWindow', false )
         return;
     }
