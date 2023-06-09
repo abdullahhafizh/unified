@@ -370,6 +370,7 @@ def build_view_config(d):
     if not _Helper.empty(_Common.SELF_CLOSE_HOUR):
         _Common.VIEW_CONFIG['close_hour'] = 0 if _Helper.get_int(_Common.SELF_CLOSE_HOUR) == 0 else _Helper.get_number_from_time(_Common.SELF_CLOSE_HOUR) 
         
+    # If Open/Close Hour Exist, So Not Full Day
     if _Common.VIEW_CONFIG['open_hour'] > 0 or _Common.VIEW_CONFIG['close_hour'] > 0:
         _Common.VIEW_CONFIG['full_day'] = False
 

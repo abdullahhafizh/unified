@@ -407,7 +407,10 @@ Base{
 
     function show_message_notification(fm, sm){
         press = '0';
-        switch_frame('source/smiley_down.png', fm, sm, 'closeWindow', false )
+        var mainMessage = fm.split('|')[0];
+        var slaveMessage = fm.split('|')[1];
+        if (slaveMessage.length < 1) slaveMessage = '';
+        switch_frame('source/smiley_down.png', mainMessage, sm, 'closeWindow', false )
         return;
     }
 
