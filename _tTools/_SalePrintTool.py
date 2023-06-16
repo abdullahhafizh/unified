@@ -1141,10 +1141,10 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                             pdf.ln(small_space)
                             pdf.set_font(USED_FONT, 'B', regular_space)
                             pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
-                            if p.get('service_charge', 0) > 0:
-                                pdf.ln(small_space)
-                                pdf.set_font(USED_FONT, 'B', regular_space)
-                                pdf.cell(padding_left, 0, 'BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']), 0, 0, 'L')
+                        if p.get('service_charge', 0) > 0:
+                            pdf.ln(small_space)
+                            pdf.set_font(USED_FONT, 'B', regular_space)
+                            pdf.cell(padding_left, 0, 'BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']), 0, 0, 'L')
                 else:
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1345,8 +1345,8 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                     if 'product_channel' in p.keys():
                         if p['product_channel'] == 'MDD':
                             printer.text((' '*padding_left)+'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])) + "\n")
-                            if p.get('service_charge', 0) > 0:
-                                printer.text((' '*padding_left)+'BIAYA LAYANAN: ' + serialize_number(p['service_charge']) + "\n")
+                        if p.get('service_charge', 0) > 0:
+                            printer.text((' '*padding_left)+'BIAYA LAYANAN: ' + serialize_number(p['service_charge']) + "\n")
                 else:
                     printer.text((' '*padding_left)+'Saldo OVO Cash Anda Akan Dipotong'+ "\n")
                     printer.text((' '*padding_left)+'Biaya Admin Rp. '+clean_number(str(p['admin_fee']))+ "\n")
@@ -2766,8 +2766,8 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 if 'product_channel' in p.keys():
                     if p['product_channel'] == 'MDD':
                         pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
-                        if p.get('service_charge', 0) > 0:
-                            pdf.set_line('BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']))
+                    if p.get('service_charge', 0) > 0:
+                        pdf.set_line('BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']))
                 if 'sn' in p['ppob_details'].keys():
                     label_sn = 'S/N '
                     if p['category'].lower() == 'listrik':
