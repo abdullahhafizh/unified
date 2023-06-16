@@ -11,17 +11,9 @@ Rectangle{
     property bool withBackground: true
     property bool modeReverse: true
     property var calledFrom: 'prepaid_topup_denom'
-    property bool _cashEnable: false
-    property bool _cardEnable: false
     property bool _qrMultiEnable: false
-    property bool _qrOvoEnable: false
-    property bool _qrDanaEnable: false
-    property bool _qrDuwitEnable: false
-    property bool _qrLinkAjaEnable: false
-    property bool _qrShopeeEnable: false
-    property bool _qrJakoneEnable: false
-    property bool _qrBcaEnable: false
-    property bool _qrBniEnable: false
+
+    property var listActivePayment: []
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -92,7 +84,7 @@ Rectangle{
             img_: "source/cash black.png"
             text_: qsTr("Tunai")
             text2_: qsTr("Cash")
-            visible: _cashEnable
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -125,7 +117,7 @@ Rectangle{
             img_: "source/credit card black.png"
             text_: qsTr("Kartu Debit")
             text2_: qsTr("Debit Card")
-            visible: _cardEnable
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -226,10 +218,10 @@ Rectangle{
             img_: "source/qr_logo/bni_white_logo.png"
             text_: qsTr("B N I")
             text2_: qsTr("")
-            isActivated: _qrBniEnable
+            isActivated: listActivePayment.indexOf('bni-qris') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrBniEnable
+                enabled: listActivePayment.indexOf('bni-qris') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BNI" Payment Method');
@@ -261,10 +253,10 @@ Rectangle{
             img_: "source/qr_logo/bca_white_logo.png"
             text_: qsTr("B C A")
             text2_: qsTr("")
-            isActivated: _qrBcaEnable
+            isActivated: listActivePayment.indexOf('bca-qris') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrBcaEnable
+                enabled: listActivePayment.indexOf('bca-qris') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BCA" Payment Method');
@@ -293,13 +285,153 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/mdr_white_logo.png"
+            text_: qsTr("MANDIRI")
+            text2_: qsTr("")
+            isActivated: listActivePayment.indexOf('mdr-qris') > -1
+            modeReverse: false
+            MouseArea{
+                enabled: listActivePayment.indexOf('mdr-qris') > -1
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "MANDIRI" Payment Method');
+                    var payment = 'mdr-qris';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/nobu_white_logo.png"
+            text_: qsTr("NOBU")
+            text2_: qsTr("")
+            isActivated: listActivePayment.indexOf('nobu-qris') > -1
+            modeReverse: false
+            MouseArea{
+                enabled: listActivePayment.indexOf('nobu-qris') > -1
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "NOBU" Payment Method');
+                    var payment = 'nobu-qris';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/bri_white_logo.png"
+            text_: qsTr("B R I")
+            text2_: qsTr("")
+            isActivated: listActivePayment.indexOf('bri-qris') > -1
+            modeReverse: false
+            MouseArea{
+                enabled: listActivePayment.indexOf('bri-qris') > -1
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "BRI" Payment Method');
+                    var payment = 'bri-qris';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/gopay_white_logo.png"
+            text_: qsTr("Gopay")
+            text2_: qsTr("")
+            isActivated: listActivePayment.indexOf('gopay') > -1
+            modeReverse: false
+            MouseArea{
+                enabled: listActivePayment.indexOf('gopay') > -1
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "GOPAY" Payment Method');
+                    var payment = 'gopay';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
             img_: "source/qr_logo/linkaja_white_logo.png"
             text_: qsTr("LinkAja")
             text2_: qsTr("")
-            isActivated: _qrLinkAjaEnable
+            isActivated: listActivePayment.indexOf('linkaja') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrLinkAjaEnable
+                enabled: listActivePayment.indexOf('linkaja') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "LINKAJA" Payment Method');
@@ -331,10 +463,10 @@ Rectangle{
             img_: "source/qr_logo/duwit_white_logo.png"
             text_: qsTr("GOPAY")
             text2_: qsTr("")
-            isActivated: _qrDuwitEnable
+            isActivated: listActivePayment.indexOf('duwit') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrDuwitEnable
+                enabled: listActivePayment.indexOf('duwit') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DUWIT" Payment Method');
@@ -366,10 +498,10 @@ Rectangle{
             img_: "source/qr_logo/dana_white_logo.png"
             text_: qsTr("DANA")
             text2_: qsTr("")
-            isActivated: _qrDanaEnable
+            isActivated: listActivePayment.indexOf('dana') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrDanaEnable
+                enabled: listActivePayment.indexOf('dana') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DANA" Payment Method');
@@ -401,10 +533,10 @@ Rectangle{
             img_: "source/qr_logo/shopeepay_white_logo.png"
             text_: qsTr("SHOPEEPAY")
             text2_: qsTr("")
-            isActivated: _qrShopeeEnable
+            isActivated: listActivePayment.indexOf('shopeepay') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrShopeeEnable
+                enabled: listActivePayment.indexOf('shopeepay') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');

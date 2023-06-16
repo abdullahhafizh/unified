@@ -11,17 +11,8 @@ Rectangle{
     property bool withBackground: true
     property bool modeReverse: true
     property var calledFrom: 'prepaid_topup_denom'
-    property bool _cashEnable: false
-    property bool _cardEnable: false
     property bool _qrMultiEnable: false
-    property bool _qrOvoEnable: false
-    property bool _qrDanaEnable: false
-    property bool _qrDuwitEnable: false
-    property bool _qrLinkAjaEnable: false
-    property bool _qrShopeeEnable: false
-    property bool _qrJakoneEnable: false
-    property bool _qrBcaEnable: false
-    property bool _qrBniEnable: false
+    property var listActivePayment: []
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -89,15 +80,15 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/credit card black.png"
-            text_: qsTr("Kartu Debit")
-            text2_: qsTr("Debit Card")
-            visible: _cardEnable
+            img_: "source/cash black.png"
+            text_: qsTr("Tunai")
+            text2_: qsTr("Cash")
+            visible: listActivePayment.indexOf('cash') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
-                    var payment = 'debit';
+                    _SLOT.user_action_log('choose "CASH" Payment Method');
+                    var payment = 'cash';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
@@ -122,15 +113,15 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/cash black.png"
-            text_: qsTr("Tunai")
-            text2_: qsTr("Cash")
-            visible: _cashEnable
+            img_: "source/credit card black.png"
+            text_: qsTr("Kartu Debit")
+            text2_: qsTr("Debit Card")
+            visible: listActivePayment.indexOf('debit') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "CASH" Payment Method');
-                    var payment = 'cash';
+                    _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
+                    var payment = 'debit';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
@@ -188,10 +179,10 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
+            img_: "source/qr_logo/bni_white_logo.png"
             text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BNI")
             text2_: qsTr("QR BNI")
-            visible: _qrBniEnable
+            visible: listActivePayment.indexOf('bni-qris') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -221,10 +212,10 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
+            img_: "source/qr_logo/bca_white_logo.png"
             text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BCA")
             text2_: qsTr("QR BCA")
-            visible: _qrBcaEnable
+            visible: listActivePayment.indexOf('bca-qris') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -254,10 +245,175 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
+            img_: "source/qr_logo/mdr_white_logo.png"
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR MANDIRI")
+            text2_: qsTr("QR MANDIRI")
+            visible: listActivePayment.indexOf('mdr-qris') > -1
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "MANDIRI" Payment Method');
+                    var payment = 'mdr-qris';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/nobu_white_logo.png"
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR NOBU")
+            text2_: qsTr("QR NOBU")
+            visible: listActivePayment.indexOf('nobu-qris') > -1
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "NOBU" Payment Method');
+                    var payment = 'nobu-qris';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/bri_white_logo.png"
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR BRI")
+            text2_: qsTr("QR BRI")
+            visible: listActivePayment.indexOf('bri-qris') > -1
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "BRI" Payment Method');
+                    var payment = 'bri-qris';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/jakone_white_logo.png"
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
+            text2_: qsTr("QR JakOne")
+            visible: listActivePayment.indexOf('jakone') > -1
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "JAKONE" Payment Method');
+                    var payment = 'jakone';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/gopay_white_logo.png"
+            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Gopay")
+            text2_: qsTr("QR Gopay")
+            visible: listActivePayment.indexOf('gopay') > -1
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "GOPAY" Payment Method');
+                    var payment = 'gopay';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='general_shop_card'){
+                        if (general_shop_card.press != '0') return;
+                        general_shop_card.press = '1';
+                        general_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 200
+            height: 270
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/qr_logo/linkaja_white_logo.png"
             text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR LinkAja")
             text2_: qsTr("QR LinkAja")
-            visible: _qrLinkAjaEnable
+            visible: listActivePayment.indexOf('linkaja') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -287,10 +443,10 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
+            img_: "source/qr_logo/duwit_white_logo.png"
             text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Duwit")
             text2_: qsTr("QR Duwit")
-            visible: _qrDuwitEnable
+            visible: listActivePayment.indexOf('duwit') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -320,10 +476,10 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
+            img_: "source/qr_logo/dana_white_logo.png"
             text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR Dana")
             text2_: qsTr("QR Dana")
-            visible: _qrDanaEnable
+            visible: listActivePayment.indexOf('dana') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -353,10 +509,10 @@ Rectangle{
             width: 200
             height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
+            img_: "source/qr_logo/shopeepay_white_logo.png"
             text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR ShopeePay")
             text2_: qsTr("QR Shopee")
-            visible: _qrShopeeEnable
+            visible: listActivePayment.indexOf('shopeepay') > -1
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -381,40 +537,6 @@ Rectangle{
                 }
             }
         }
-
-        MasterButtonNew {
-            width: 200
-            height: 270
-            anchors.verticalCenter: parent.verticalCenter
-            img_: "source/phone_qr.png"
-            text_: (VIEW_CONFIG.general_qr=='1') ? 'QRIS Payment' : qsTr("QR JakOne")
-            text2_: qsTr("QR JakOne")
-            visible: _qrJakoneEnable
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    _SLOT.user_action_log('choose "JAKONE" Payment Method');
-                    var payment = 'jakone';
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
-
-                }
-            }
-        }
-
 
     }
 

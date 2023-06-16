@@ -1253,7 +1253,8 @@ def store_transaction_global(param, retry=False):
             "baseAmount" : total_amount if admin_fee == 0 else (total_amount - admin_fee),
             "targetCard" : target_card_no,
             "bankId" : bank_id,
-            "trxNotes" : trx_notes
+            "trxNotes" : trx_notes,
+            "serviceCharge": g.get('service_charge', 0)
         }
         # _______________________________________________________________________________________________________
         

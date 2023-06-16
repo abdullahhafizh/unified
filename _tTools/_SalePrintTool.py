@@ -445,9 +445,13 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(p['admin_fee']), 0, 0, 'L')
+                if p.get('service_charge', 0) > 0:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'TOTAL BAYAR: Rp. ' + clean_number(p['value']), 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'TOTAL BAYAR: Rp. ' + clean_number(int(p['value']) + p.get('service_charge', 0)), 0, 0, 'L')
                 # pdf.ln(small_space)
                 # pdf.set_font(USED_FONT, 'B', regular_space)
                 # pdf.cell(padding_left, 0, 'BANK PENERBIT: ' + p['topup_details']['bank_name'], 0, 0, 'L')
@@ -690,7 +694,9 @@ def eprinter_topup_trx(p, t):
             if 'topup_details' in p.keys():
                 printer.text((' '*padding_left)+'ISI ULANG  : ' + serialize_number(p['denom']) + "\n")
                 printer.text((' '*padding_left)+'BIAYA ADMIN: ' + serialize_number(p['admin_fee']) + "\n")
-                printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(p['value']) + "\n")
+                if p.get('service_charge', 0) > 0:
+                    printer.text((' '*padding_left)+'BIAYA LAYANAN: ' + serialize_number(p['service_charge']) + "\n")
+                printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(int(p['value']) + p.get('service_charge', 0)) + "\n")
                 # printer.text((' '*padding_left)+'BANK PENERBIT: ' + p['topup_details']['bank_name'] + "\n")
                 if 'other_channel_topup' in p['topup_details'].keys():
                     if int(p['topup_details']['other_channel_topup']) > 0:
@@ -875,7 +881,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, 'B', regular_space+2)
             total_pay = str(int(int(p['value']) * int(p['qty'])))
-            pdf.cell(padding_left, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            pdf.cell(padding_left, 0, 'TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)), 0, 0, 'L')
             # pdf.ln(small_space*2)
             # pdf.set_font(USED_FONT, 'B', regular_space-1)
             # pdf.cell(padding_left, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
@@ -1003,7 +1009,7 @@ def eprinter_shop_trx(p, t):
                 if int(p['receive_discount']) > 0:
                     printer.text((' '*padding_left)+'PROMO AKTIF: ' + p['promo']['code'] + "\n")
             total_pay = str(int(int(p['value']) * int(p['qty'])))
-            printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(total_pay) + "\n")
+            printer.text((' '*padding_left)+'TOTAL BAYAR: ' + serialize_number(int(total_pay) + p.get('service_charge', 0)) + "\n")
         else:
             if 'refund_status' in p.keys():
                 printer.text((' '*padding_left)+'PENGEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
@@ -1113,6 +1119,10 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+                if p.get('service_charge', 0) > 0:
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, 'B', regular_space)
+                    pdf.cell(padding_left, 0, 'BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']), 0, 0, 'L')
             else:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1131,6 +1141,10 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                             pdf.ln(small_space)
                             pdf.set_font(USED_FONT, 'B', regular_space)
                             pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+                            if p.get('service_charge', 0) > 0:
+                                pdf.ln(small_space)
+                                pdf.set_font(USED_FONT, 'B', regular_space)
+                                pdf.cell(padding_left, 0, 'BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']), 0, 0, 'L')
                 else:
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1201,7 +1215,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             if 'OMNITSEL' in provider:
                 total_pay = str(int(total_pay) + int(p['admin_fee']))
-            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)), 0, 0, 'L')
             # pdf.ln(small_space*2)
             # pdf.set_font(USED_FONT, 'B', regular_space-1)
             # pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
@@ -1317,6 +1331,8 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 printer.text((' '*padding_left)+label_detail+': ' + str(p['customer']) + "\n")
                 printer.text((' '*padding_left)+'TAGIHAN   : Rp. ' + clean_number(str(p['value'])) + "\n")
                 printer.text((' '*padding_left)+'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])) + "\n")
+                if p.get('service_charge', 0) > 0:
+                    printer.text((' '*padding_left)+'BIAYA LAYANAN: ' + serialize_number(p['service_charge']) + "\n")
             else:
                 printer.text((' '*padding_left)+'JUMLAH     : ' + str(p['qty']) + "\n")
                 ovo_cashin = False
@@ -1329,6 +1345,8 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                     if 'product_channel' in p.keys():
                         if p['product_channel'] == 'MDD':
                             printer.text((' '*padding_left)+'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])) + "\n")
+                            if p.get('service_charge', 0) > 0:
+                                printer.text((' '*padding_left)+'BIAYA LAYANAN: ' + serialize_number(p['service_charge']) + "\n")
                 else:
                     printer.text((' '*padding_left)+'Saldo OVO Cash Anda Akan Dipotong'+ "\n")
                     printer.text((' '*padding_left)+'Biaya Admin Rp. '+clean_number(str(p['admin_fee']))+ "\n")
@@ -1369,7 +1387,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             if 'OMNITSEL' in provider:
                 total_pay = str(int(total_pay) + int(p['admin_fee']))
-            printer.text((' '*padding_left)+'TOTAL BAYAR : Rp. ' + clean_number(total_pay) + "\n")
+            printer.text((' '*padding_left)+'TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)) + "\n")
         else:
             printer.text((' '*padding_left)+'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])) + "\n")
             if 'refund_status' in p.keys():
@@ -2498,7 +2516,9 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
             if 'topup_details' in p.keys():
                 pdf.set_line('ISI ULANG  : Rp. ' + clean_number(p['denom']))
                 pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(p['admin_fee']))
-                pdf.set_line('TOTAL BAYAR: Rp. ' + clean_number(p['value']))
+                if p.get('service_charge', 0) > 0:
+                    pdf.set_line('BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']))
+                pdf.set_line('TOTAL BAYAR: Rp. ' + clean_number(int(p['value']) + p.get('service_charge', 0)))
                 if 'other_channel_topup' in p['topup_details'].keys():
                     if int(p['topup_details']['other_channel_topup']) > 0:
                         pdf.set_line('PENDING SALDO: Rp. ' + clean_number(str(p['topup_details']['other_channel_topup'])))
@@ -2646,7 +2666,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
     
             pdf.set_line('')
             total_pay = str(int(int(p['value']) * int(p['qty'])))
-            pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(total_pay))
+            pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)))
         else:
             pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))
             if 'refund_status' in p.keys():
@@ -2738,12 +2758,16 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('PELANGGAN  : Rp. ' + str(p['customer']))
                 pdf.set_line('TAGIHAN    : Rp. ' + clean_number(str(p['value'])))
                 pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
+                if p.get('service_charge', 0) > 0:
+                    pdf.set_line('BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']))
             else:
                 pdf.set_line('JUMLAH     : ' + str(p['qty']))
                 pdf.set_line('HARGA/UNIT : Rp. ' + clean_number(str(p['value'])))
                 if 'product_channel' in p.keys():
                     if p['product_channel'] == 'MDD':
                         pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
+                        if p.get('service_charge', 0) > 0:
+                            pdf.set_line('BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']))
                 if 'sn' in p['ppob_details'].keys():
                     label_sn = 'S/N '
                     if p['category'].lower() == 'listrik':
@@ -2778,7 +2802,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
             if 'product_channel' in p.keys():
                 if p['product_channel'] == 'MDD':
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
-            pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(total_pay))
+            pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)))
         else:
             pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))
             if 'refund_status' in p.keys():

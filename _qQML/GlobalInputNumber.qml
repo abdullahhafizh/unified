@@ -23,18 +23,7 @@ Base{
     property bool checkMode: false
     property bool frameWithButton: false
 
-    property bool cashEnable: false
-    property bool cardEnable: false
-    property bool qrOvoEnable: false
-    property bool qrDanaEnable: false
-    property bool qrDuwitEnable: false
-    property bool qrLinkajaEnable: false
-    property bool qrShopeeEnable: false
-    property bool qrJakoneEnable: false
-    property bool qrBcaEnable: false
-    property bool qrBniEnable: false
-    property var totalPaymentEnable: 0
-
+    property var paymentFeeSetting
     property bool retryAbleTransaction: false
 
     property var cardData: undefined
@@ -60,6 +49,7 @@ Base{
     property var adminFee: 1500
 
     property variant activeQRISProvider: []
+    property var activePayment: []
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -914,7 +904,14 @@ Base{
         }
 //        _SLOT.python_dump(JSON.stringify(details));
         my_timer.stop();
+        // Add Service Charge Based On Payment
+        details.service_charge = get_payment_fee(channel);
         my_layer.push(general_payment_process, {details: details});
+    }
+
+    function get_payment_fee(p){
+        if (p === undefined || paymentFeeSetting[p] == undefined): return 0;
+        return paymentFeeSetting[p];
     }
 
     function get_payments(s){
@@ -927,59 +924,65 @@ Base{
         //     my_timer.stop();
         //     return;
         // }
+        paymentFeeSetting = device.PAYMENT_FEE;
+        
         if (device.BILL == 'CASHBOX_FULL'){
             cashboxFull = true;
-            cashEnable = true;
-            totalPaymentEnable += 1;
         }
         if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
-            cashEnable = true;
-            totalPaymentEnable += 1;
             cashboxFull = false;
+            activePayment.push('cash');
         }
         if (device.EDC == 'AVAILABLE') {
-            cardEnable = true;
-            totalPaymentEnable += 1;
+            activePayment.push('debit');
         }
         if (device.QR_LINKAJA == 'AVAILABLE') {
-            qrLinkajaEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('linkaja')
+            activePayment.push('linkaja');
         }
         if (device.QR_DANA == 'AVAILABLE') {
-            qrDanaEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('dana')
+            activePayment.push('dana');
         }
         if (device.QR_DUWIT == 'AVAILABLE') {
-            qrDuwitEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('duwit')
+            activePayment.push('duwit');
         }
         if (device.QR_OVO == 'AVAILABLE') {
-            qrOvoEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('ovo')
+            activePayment.push('ovo');
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
-            qrShopeeEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('shopeepay')
+            activePayment.push('shopeepay');
         }
         if (device.QR_JAKONE == 'AVAILABLE') {
-            qrJakoneEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('jakone')
+            activePayment.push('jakone');
+        }
+        if (device.QR_GOPAY == 'AVAILABLE') {
+            activeQRISProvider.push('gopay');
+            activePayment.push('gopay');
         }
         if (device.QR_BCA == 'AVAILABLE') {
-            qrBcaEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('bca-qris')
+            activePayment.push('bca-qris');
         }
         if (device.QR_BNI == 'AVAILABLE') {
-            qrBniEnable = true;
-            totalPaymentEnable += 1;
             activeQRISProvider.push('bni-qris')
+            activePayment.push('bni-qris');
+        }
+        if (device.QR_MDR == 'AVAILABLE') {
+            activeQRISProvider.push('mdr-qris');
+            activePayment.push('mdr-qris');
+        }
+        if (device.QR_NOBU == 'AVAILABLE') {
+            activeQRISProvider.push('nobu-qris');
+            activePayment.push('nobu-qris');
+        }
+        if (device.QR_BRI == 'AVAILABLE') {
+            activeQRISProvider.push('bri-qris');
+            activePayment.push('bri-qris');
         }
         //================================
 //        isConfirm = true;
@@ -1278,17 +1281,9 @@ Base{
         id: select_payment
         visible: isConfirm
         calledFrom: 'global_input_number'
-        _cashEnable: cashEnable
-        _cardEnable: cardEnable
+        listActivePayment: activePayment
         _qrMultiEnable: true
-        _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
-        _qrDuwitEnable: qrDuwitEnable
-        _qrLinkAjaEnable: qrLinkajaEnable
-        _qrShopeeEnable: qrShopeeEnable
-        _qrJakoneEnable: qrJakoneEnable
-//        _qrBcaEnable: qrBcaEnable
-        totalEnable: totalPaymentEnable
+        totalEnable: activePayment.length
         z: 99
     }
 
@@ -1296,18 +1291,9 @@ Base{
         id: select_qr_provider
         visible: false
         calledFrom: 'global_input_number'
-        _cashEnable: false
-        _cardEnable: false
+        listActivePayment: activePayment
         _qrMultiEnable: false
-        _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
-        _qrDuwitEnable: qrDuwitEnable
-        _qrLinkAjaEnable: qrLinkajaEnable
-        _qrShopeeEnable: qrShopeeEnable
-        _qrJakoneEnable: qrJakoneEnable
-        _qrBcaEnable: qrBcaEnable
-        _qrBniEnable: qrBniEnable
-        totalEnable: totalPaymentEnable
+        totalEnable: activePayment.length
         z: 99
     }
 

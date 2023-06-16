@@ -31,19 +31,11 @@ Base{
     property var selectedPayment: undefined
     property var globalDetails
     property var shopType: 'topup'
-    property bool cashEnable: false
-    property bool cardEnable: false
-    property bool qrOvoEnable: false
-    property bool qrDanaEnable: false
-    property bool qrDuwitEnable: false
-    property bool qrLinkajaEnable: false
-    property bool qrShopeeEnable: false
-    property bool qrJakoneEnable: false
-    property bool qrBcaEnable: false
-    property bool qrBniEnable: false
 
     property bool mainVisible: false
     property var activePayment: []
+
+    property var paymentFeeSetting
 
     property var bniWallet1: 0
     property var bniWallet2: 0
@@ -147,6 +139,11 @@ Base{
         _SLOT.start_check_card_balance();
     }
 
+    function get_payment_fee(p){
+        if (p === undefined || paymentFeeSetting[p] == undefined): return 0;
+        return paymentFeeSetting[p];
+    }
+
     function get_payments(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_payments', s, now);
@@ -157,103 +154,73 @@ Base{
         //     my_timer.stop();
         //     return;
         // }
+        paymentFeeSetting = device.PAYMENT_FEE;
+
         if (device.BILL == 'CASHBOX_FULL'){
             cashboxFull = true;
-            cashEnable = true;
         }
         if (device.MEI == 'AVAILABLE' || device.BILL == 'AVAILABLE'){
-            cashEnable = true;
             cashboxFull = false;
             activePayment.push('cash');
         }
         if (device.EDC == 'AVAILABLE') {
-            cardEnable = true;
             activePayment.push('debit');
         }
+        if (device.QR_GOPAY == 'AVAILABLE') {
+            activeQRISProvider.push('gopay');
+            activePayment.push('gopay');
+        }
         if (device.QR_LINKAJA == 'AVAILABLE') {
-            qrLinkajaEnable = true;
             activePayment.push('linkaja');
             activeQRISProvider.push('linkaja')
         }
         if (device.QR_DANA == 'AVAILABLE') {
-            qrDanaEnable = true;
             activePayment.push('dana');
             activeQRISProvider.push('dana')
         }
         if (device.QR_DUWIT == 'AVAILABLE') {
-            qrDuwitEnable = true;
             activePayment.push('duwit');
             activeQRISProvider.push('duwit')
         }
         if (device.QR_OVO == 'AVAILABLE') {
-            qrOvoEnable = true;
             activePayment.push('ovo');
             activeQRISProvider.push('ovo')
         }
         if (device.QR_SHOPEEPAY == 'AVAILABLE') {
-            qrShopeeEnable = true;
             activePayment.push('shopeepay');
             activeQRISProvider.push('shopeepay')
         }
         if (device.QR_JAKONE == 'AVAILABLE') {
-            qrJakoneEnable = true;
             activePayment.push('jakone');
             activeQRISProvider.push('jakone')
         }
         if (device.QR_BCA == 'AVAILABLE') {
-            qrBcaEnable = true;
             activePayment.push('bca-qris');
             activeQRISProvider.push('bca-qris')
         }
         if (device.QR_BNI == 'AVAILABLE') {
-            qrBniEnable = true;
             activePayment.push('bni-qris');
             activeQRISProvider.push('bni-qris')
+        }
+        if (device.QR_MDR == 'AVAILABLE') {
+            activeQRISProvider.push('mdr-qris');
+            activePayment.push('mdr-qris');
+        }
+        if (device.QR_NOBU == 'AVAILABLE') {
+            activeQRISProvider.push('nobu-qris');
+            activePayment.push('nobu-qris');
+        }
+        if (device.QR_BRI == 'AVAILABLE') {
+            activeQRISProvider.push('bri-qris');
+            activePayment.push('bri-qris');
         }
     }
 
     function open_only_cash_payment(){
-        if (cardEnable) {
-            cardEnable = false;
-            activePayment.pop('debit');
-        }
-        if (qrLinkajaEnable) {
-            qrLinkajaEnable = false;
-            activePayment.pop('linkaja');
-        }
-        if (qrDanaEnable) {
-            qrDanaEnable = false;
-            activePayment.pop('dana');
-        }
-        if (qrDuwitEnable) {
-            qrDuwitEnable = false;
-            activePayment.pop('duwit');
-        }
-        if (qrOvoEnable) {
-            qrOvoEnable = false;
-            activePayment.pop('ovo');
-        }
-        if (qrShopeeEnable) {
-            qrShopeeEnable = false;
-            activePayment.pop('shopeepay');
-        }
-        if (qrJakoneEnable) {
-            qrJakoneEnable = false;
-            activePayment.pop('jakone');
-        }
-        if (qrBcaEnable) {
-            qrBcaEnable = false;
-            activePayment.pop('bca-qris');
-        }
-        if (qrBniEnable) {
-            qrBcaEnable = false;
-            activePayment.pop('bni-qris');
-        }
+        // Set Active Payment Only Cash
+        activePayment = ['cash'];
+        // Disable All QRIS Provider
         activeQRISProvider = [];
-//        if (qrBcaEnable) {
-//            qrBcaEnable = false;
-//            totalPaymentEnable -= 1;
-//        }
     }
 
     function do_set_confirm(triggered){
@@ -291,6 +258,8 @@ Base{
         details.status = '1';
         details.final_balance = final_balance.toString();
         details.denom = topup_amount.toString();
+        // Add Service Charge Based On Payment
+        details.service_charge = get_payment_fee(selectedPayment);
         globalDetails = details;
         my_layer.push(general_payment_process, {details: globalDetails, cardNo: cardData.card_no});
 
@@ -874,19 +843,9 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
         anchors.horizontalCenter: parent.horizontalCenter
-//        visible: (selectedDenom > 0)
-//        visible: true
         calledFrom: 'prepaid_topup_denom'
-        _cashEnable: cashEnable
-        _cardEnable: cardEnable
+        listActivePayment: activePayment
         _qrMultiEnable: true
-        _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
-        _qrDuwitEnable: qrDuwitEnable
-        _qrLinkAjaEnable: qrLinkajaEnable
-        _qrShopeeEnable: qrShopeeEnable
-        _qrJakoneEnable: qrJakoneEnable
-
         totalEnable: activePayment.length
     }
 
@@ -896,20 +855,9 @@ Base{
         anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
-//        visible: true
         calledFrom: 'prepaid_topup_denom'
-        _cashEnable: false
-        _cardEnable: false
+        listActivePayment: activePayment
         _qrMultiEnable: false
-        _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
-        _qrDuwitEnable: qrDuwitEnable
-        _qrLinkAjaEnable: qrLinkajaEnable
-        _qrShopeeEnable: qrShopeeEnable
-        _qrJakoneEnable: qrJakoneEnable
-        _qrBcaEnable: qrBcaEnable
-        _qrBniEnable: qrBniEnable
-
         totalEnable: activePayment.length
     }
 

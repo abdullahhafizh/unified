@@ -31,6 +31,8 @@ Base{
     property bool proceedAble: false
     property int attemptCD: 0
 
+    property var serviceCharge: 0
+
     property int refundAmount: 0
     property var refundMode: 'payment_cash_exceed'
     property var refundChannel: 'DIVA'
@@ -271,6 +273,7 @@ Base{
         closeTrxSession = false;
         promoCodeActive = false;
         promoData = undefined;
+        serviceCharge = 0;
     }
 
     function do_refund_or_print(error){
@@ -1174,7 +1177,13 @@ Base{
             info_trx_price.labelName = 'Nilai Denom';
             if (details.product_channel == 'MDD' && details.operator == 'CASHIN OVO') info_trx_price.visible = false;
         }
-        totalPrice = parseInt(getDenom) + parseInt(adminFee);
+        
+        // Define Service Charge
+        if (detail.service_charge !== undefined && detail.service_charge > 0) serviceCharge = detail.service_charge;
+
+        // Total Payment
+        totalPrice = parseInt(getDenom) + parseInt(adminFee) + parseInt(serviceCharge);
+
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-9);
         // Unnecessary
@@ -1719,6 +1728,12 @@ Base{
             labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value);
         }
 
+        TextDetailRow{
+            id: info_service_charge
+            visible: (serviceCharge > 0)
+            labelName: 'Biaya Layanan'
+            labelContent: 'Rp ' + FUNC.insert_dot(serviceCharge.toString());
+        }
 
         TextDetailRow{
             id: info_promo

@@ -763,12 +763,13 @@ if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)
 
 
-QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY', 'JAKONE', 'BCA-QRIS', 'BNI-QRIS', 'DUWIT']
 QR_DIRECT_PAY = ['OVO']
-ALL_QR_PROVIDER = QR_DIRECT_PAY + QR_NON_DIRECT_PAY
 # Hardcoded Env Status
 QR_PROD_STATE = {
     'BNI-QRIS': True,
+    'NOBU-QRIS': True,
+    'MDR-QRIS': True,
+    'BRI-QRIS': False,
     'DUWIT': False,
     'BCA-QRIS': False,
     'JAKONE': True,
@@ -776,8 +777,12 @@ QR_PROD_STATE = {
     'DANA': True,
     'LINKAJA': True,
     'SHOPEEPAY': True,
-    'OVO': True,
+    'OVO': False,
 }
+
+ALL_QR_PROVIDER = QR_PROD_STATE.keys()
+QR_NON_DIRECT_PAY = [x for x in ALL_QR_PROVIDER if x not in QR_DIRECT_PAY]
+
 
 ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'settlement/submit', 
@@ -1342,7 +1347,6 @@ def start_get_devices():
 
 
 def get_devices():
-    # LOGGER.info(('[INFO] get_devices', DEVICES))
     return {"QPROX": QPROX, "EDC": EDC, "MEI": MEI, "CD": CD, "BILL": BILL}
 
 
@@ -1351,8 +1355,15 @@ def start_get_printer_status():
 
 
 def get_printer_status():
-    # LOGGER.info(('[INFO] get_devices', DEVICES))
     return 'WARNING' if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT else 'OK'
+
+
+def get_payment_fee():
+    payment_fee = dict()
+    if _Helper.empty(PAYMENT_SETTING): return payment_fee
+    for p in PAYMENT_SETTING:
+        payment_fee[p['name']] = p.get('fee', 0)
+    return payment_fee
 
 
 def get_payments():
@@ -1363,16 +1374,24 @@ def get_payments():
         "CD": "AVAILABLE" if CD["status"] is True else "NOT_AVAILABLE",
         "MEI": "AVAILABLE" if (MEI["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
         "BILL": check_bill_status(),
+        
         "QR_OVO": "AVAILABLE" if check_payment('ovo') is True else "NOT_AVAILABLE",
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
         "QR_DUWIT": "AVAILABLE" if check_payment('duwit') is True else "NOT_AVAILABLE",
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
-        "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
+        
         "QR_BCA": "AVAILABLE" if check_payment('bca-qris') is True else "NOT_AVAILABLE",
         "QR_BNI": "AVAILABLE" if check_payment('bni-qris') is True else "NOT_AVAILABLE",
-        "PRINTER_STATUS": get_printer_status()
+        "QR_MDR": "AVAILABLE" if check_payment('mdr-qris') is True else "NOT_AVAILABLE",
+        "QR_BRI": "AVAILABLE" if check_payment('bri-qris') is True else "NOT_AVAILABLE",
+        "QR_NOBU": "AVAILABLE" if check_payment('nobu-qris') is True else "NOT_AVAILABLE",
+        "QR_JAKONE": "AVAILABLE" if check_payment('jakone') is True else "NOT_AVAILABLE",
+        # Add Other Channel Mapping Here
+        # "QR_BNI": "AVAILABLE" if check_payment('bni-qris') is True else "NOT_AVAILABLE",
+        "PRINTER_STATUS": get_printer_status(),
+        "PAYMENT_FEE": get_payment_fee()
     }
     
 
