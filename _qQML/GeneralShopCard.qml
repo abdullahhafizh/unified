@@ -202,7 +202,7 @@ Base{
     }
 
     function get_payment_fee(p){
-        if (p === undefined || paymentFeeSetting[p] == undefined): return 0;
+        if (p === undefined || paymentFeeSetting[p] === undefined) return 0;
         return paymentFeeSetting[p];
     }
 
