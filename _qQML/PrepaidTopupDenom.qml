@@ -139,9 +139,12 @@ Base{
         _SLOT.start_check_card_balance();
     }
 
-    function get_payment_fee(p){
-        if (p === undefined || paymentFeeSetting[p] == undefined): return 0;
-        return paymentFeeSetting[p];
+    function get_payment_fee(p, d){
+        if (p === undefined || paymentFeeSetting[p] === undefined) return 0;
+        var fee = paymentFeeSetting[p];
+        var init_price = d;
+        if (parseInt(fee) < 1) fee = (fee * 100 * parseInt(init_price));
+        return fee;
     }
 
     function get_payments(s){
@@ -258,8 +261,9 @@ Base{
         details.status = '1';
         details.final_balance = final_balance.toString();
         details.denom = topup_amount.toString();
+        details.init_total = details.qty * parseInt(selectedDenom);
         // Add Service Charge Based On Payment
-        details.service_charge = get_payment_fee(selectedPayment);
+        details.service_charge = get_payment_fee(selectedPayment, details.init_total);
         globalDetails = details;
         my_layer.push(general_payment_process, {details: globalDetails, cardNo: cardData.card_no});
 

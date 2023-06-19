@@ -902,16 +902,21 @@ Base{
                 details.admin_fee = '1500';
             }
         }
+
+        details.init_total = details.qty * parseInt(details.value);
 //        _SLOT.python_dump(JSON.stringify(details));
         my_timer.stop();
         // Add Service Charge Based On Payment
-        details.service_charge = get_payment_fee(channel);
+        details.service_charge = get_payment_fee(channel, details.init_total);
         my_layer.push(general_payment_process, {details: details});
     }
 
-    function get_payment_fee(p){
-        if (p === undefined || paymentFeeSetting[p] == undefined): return 0;
-        return paymentFeeSetting[p];
+    function get_payment_fee(p, d){
+        if (p === undefined || paymentFeeSetting[p] === undefined) return 0;
+        var fee = paymentFeeSetting[p];
+        var init_price = d;
+        if (parseInt(fee) < 1) fee = (fee * 100 * parseInt(init_price));
+        return fee;
     }
 
     function get_payments(s){

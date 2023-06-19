@@ -201,9 +201,12 @@ Base{
         }
     }
 
-    function get_payment_fee(p){
+    function get_payment_fee(p, d){
         if (p === undefined || paymentFeeSetting[p] === undefined) return 0;
-        return paymentFeeSetting[p];
+        var fee = paymentFeeSetting[p];
+        var init_price = d;
+        if (parseInt(fee) < 1) fee = (fee * 100 * parseInt(init_price));
+        return fee;
     }
 
     function process_selected_payment(p){
@@ -235,7 +238,7 @@ Base{
         if (VIEW_CONFIG.ui_simplify) {
             var get_details = get_cart_details(p);
             // Add Service Charge
-            get_details.service_charge = get_payment_fee(selectedPayment);
+            get_details.service_charge = get_payment_fee(selectedPayment, get_details.init_total);
             my_layer.push(general_payment_process, {details: get_details});
         }
         //Must Press Flagging Here To Avoid Multi Trigger
@@ -413,7 +416,7 @@ Base{
                 press = '1';
                 _SLOT.user_action_log('Press "LANJUT"');
                 var get_details = get_cart_details(selectedPayment);
-                get_details.service_charge = get_payment_fee(selectedPayment);
+                get_details.service_charge = get_payment_fee(selectedPayment, get_details.init_total);
                 my_layer.push(general_payment_process, {details: get_details});
 //                popup_loading.close();
 //                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -618,6 +621,7 @@ Base{
         var total_price = itemCount * unit_price;
         details.qty = itemCount;
         details.value = total_price.toString();
+        details.init_total = total_price;
         details.provider = productData[productIdx].name;
         details.admin_fee = '0';
         details.status = productData[productIdx].status;
