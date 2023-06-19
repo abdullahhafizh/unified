@@ -625,6 +625,7 @@ Base{
             msg = msg + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
             if (details.ppob_mode=='tagihan') msg = '*' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
         }
+        if (details.service_charge > 0 ) msg = msg +'\nBiaya Layanan Rp. ' + FUNC.insert_dot(details.service_charge.toString());
         if (promoCodeActive) msg = msg +'\nPromo Aktif '+promoData.promo.code+' '+promoData.promo.name;
         press = '0'
         if (info.payment_time != undefined) qr_payment_frame.timerDuration = parseInt(info.payment_time);
