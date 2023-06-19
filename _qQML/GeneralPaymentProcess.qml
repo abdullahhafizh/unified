@@ -1179,7 +1179,7 @@ Base{
         }
         
         // Define Service Charge
-        if (detail.service_charge !== undefined && detail.service_charge > 0) serviceCharge = detail.service_charge;
+        if (details.service_charge !== undefined && details.service_charge > 0) serviceCharge = details.service_charge;
 
         // Total Payment
         totalPrice = parseInt(getDenom) + parseInt(adminFee) + parseInt(serviceCharge);
