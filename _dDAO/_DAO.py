@@ -557,6 +557,13 @@ def get_query_from(table, condition=None):
     return _Database.get_query(sql=sql, parameter={}, log=False)
 
 
+def get_custom_select_query_from(table, select='*', condition=None):
+    sql = ' SELECT ' + select + ' FROM ' + table
+    if condition is not None:
+        sql += ' WHERE ' + condition
+    return _Database.get_query(sql=sql, parameter={}, log=False)
+
+
 def custom_query(sql):
     return _Database.get_query(sql=sql, parameter={}, log=False)
 

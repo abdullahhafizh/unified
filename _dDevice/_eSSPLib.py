@@ -13,7 +13,7 @@ class eSSPTimeoutError(eSSPError):  # noqa
 
 class eSSP(object):  # noqa
     """General class for talking to an eSSP device."""
-
+    
     def __init__(self, serialport='/dev/ttyUSB0', eSSPId=0, timeout=None):  # noqa
         """
         Initialize a new eSSP object.
@@ -33,6 +33,7 @@ class eSSP(object):  # noqa
         self.__ser = serial.Serial(serialport, 9600, timeout=serial_timeout)
         self.__eSSPId = eSSPId
         self.__sequence = '0x80'
+        self.__timeout_excp = ['0xETIMEDOUT']
 
         # self._logger = logging.getLogger(__name__)
         # self._logger.debug("Startup at " + str(datetime.datetime.now()))
@@ -431,8 +432,12 @@ class eSSP(object):  # noqa
             else:
                 # when the socket doesn't give us any data, evaluate the timeout
                 if datetime.datetime.now() > timeout_expired:
-                    raise eSSPTimeoutError('Unable to read the expected response of {} bytes within {} seconds'.format(
-                                           expected_bytes, self.timeout))
+                    # How to handle this, retrigger the same command ???
+                    if not process:
+                        return self.__timeout_excp
+                    else:
+                        raise eSSPTimeoutError('Unable to read the expected response of {} bytes within {} seconds'.format(
+                                                expected_bytes, self.timeout))
 
             if expected_bytes == 3 and len(bytes_read) >= 3:
                 # extract the actual message length
@@ -492,6 +497,7 @@ class eSSP(object):  # noqa
                     # self._logger.debug("Error " + response[3])
         return processed_response
 
+
     def easy_inhibit(self, acceptmask):
         channelmask = []
         bitmask = int('00000000', 2)
@@ -512,16 +518,19 @@ class eSSP(object):  # noqa
         bitmask = hex(bitmask)
         return bitmask
     
+    
     def accept_note(self):
-        self.send_and_flush([self.getseq(), '0x1', '0x7'])
+        accept_res = self.send_and_flush([self.getseq(), '0x1', '0x7'])
+        if accept_res == self.__timeout_excp:
+            self.send_and_flush([self.getseq(), '0x1', '0x7'])
         # print("SYNC")
         # self.sync()
+    
     
     def send_and_flush(self, command):
         crc = self.crc(command)
 
         prepedstring = '7F'
-
         command = command + crc
 
         for i in range(0, len(command)):
@@ -532,7 +541,6 @@ class eSSP(object):  # noqa
 
         # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
         #                    for x in range(0, len(prepedstring), 2)]))
-
         prepedstring = bytes.fromhex(prepedstring)
         #prepedstring = prepedstring.decode('hex')
 

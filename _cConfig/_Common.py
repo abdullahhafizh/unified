@@ -109,6 +109,8 @@ BILL_LIBRARY_DEBUG = True if _ConfigParser.get_set_value('BILL', 'library^debug'
 BILL_RESTRICTED_NOTES = _ConfigParser.get_set_value('BILL', 'not^allowed^denom', '1000|2000|5000')
 BILL_STORE_DELAY= int(_ConfigParser.get_set_value('BILL', 'store^money^delay', '2'))
 BILL_DIRECT_READ_NOTE =  True if _ConfigParser.get_set_value('BILL', 'direct^read^note', '1') == '1' else False
+
+BILL_SOCKET_TIMEOUT =  int(_ConfigParser.get_set_value('BILL', 'socket^timeout', '5'))
 # Hardcoded Active Bill Notes
 BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
 # Handle Single Denom For Spesific Transaction Type

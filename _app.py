@@ -1185,6 +1185,10 @@ def startup_task():
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Data Mandiri Card Blacklist...')
             # _SettlementService.start_check_mandiri_deposit()    
             _TopupService.get_mandiri_card_blocked_list()
+            sleep(1)
+            print("pyt: Check Last Mandiri Settlement...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check Last Mandiri Settlement...')
+            _SettlementService.start_check_last_mandiri_settlement()
             # Below Handler Move into Sync
             # if '02:3' in _Helper.time_string('%H:%M'):
             #     sleep(1)

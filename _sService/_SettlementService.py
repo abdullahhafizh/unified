@@ -323,67 +323,84 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             # LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
                 output_path = FILE_PATH
-            settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportSAM <> "N/A" AND cardNo LIKE "6%" ')
+            settlements = _DAO.get_custom_select_query_from('TopUpRecords', "*, DATE(createdAt/1000, 'unixepoch') as trx_date",' syncFlag=1 AND reportSAM <> "N/A" AND cardNo LIKE "6%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0 and force is False:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
-            __shift = '0002'
-            __seq = '02'
-            __timestamp = datetime.now().strftime('%d%m%Y%H%M')
-            MANDIRI_LAST_TIMESTAMP = __timestamp
-            __raw = _Common.MID_MAN + __shift + _Common.TID_MAN + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
-            __ds = _Helper.get_ds(__raw, 4, True)
-            _filename = _Common.MID_MAN + __shift + _Common.TID_MAN + __seq + (__timestamp * 2) + __ds + '.txt'
-            MANDIRI_LAST_FILENAME = _filename
-            LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
-            _filecontent = ''
-            _all_amount = 0
-            x = 0
-            for settle in settlements:
-                x += 1
-                remarks = json.loads(settle['remarks'])
-                _all_amount += (int(remarks['value'])-int(remarks['admin_fee']))
-                _filecontent += _Helper.full_row_reverse_hexdec(settle['reportSAM']) + __shift + str(x).zfill(6) + chr(3) + '|'
-            _header = 'PREPAID' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
-                    _Common.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
-            _body = _filecontent
-            _filecontent = _header + _filecontent
-            _trailer = _Common.MID_MAN + str(len(settlements)).zfill(8)
-            _filecontent += _trailer
-            _file_created = os.path.join(output_path, _filename)
-            with open(_file_created, 'w+') as f:
-                __all_lines = _filecontent.split('|')
-                for line in __all_lines:
-                    if line != __all_lines[-1]:
-                        f.write(line+'\n')
-                    else:
-                        f.write(line)
-                f.close()
-            _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
-            with open(_file_created_ok, 'w+') as f_ok:
-                f_ok.write('')
-                f_ok.close()
-            _result = {
-                'path_file': _file_created,
-                'filename': _filename,
-                'row': len(settlements),
-                'amount': str(_all_amount),
-                'bank': bank,
-                'bid': BID[bank],
-                'remarks': _filecontent.replace('|', '\n'),
-                'header': _header.replace('|', '\n'),
-                'body': _body.replace('|', '\n'),
-                'footer': _trailer.replace('|', '\n'),
-                'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            }
-            _DAO.insert_sam_record({
-                'smid': _Helper.get_uuid(),
-                'fileName': _filename,
-                'fileContent': _filecontent,
-                'status': 1,
-                'remarks': json.dumps(_result)
-            })
+            _result = []
+            group_date = []
+            # Create Group Date
+            for s in settlements:
+                if s['trx_date'] not in group_date:
+                    group_date.append(s['trx_date'])
+                continue
+            for _date in group_date:
+                group_settlements = []
+                for s in settlements:
+                    if s['trx_date'] == _date:
+                        group_settlements.append(s)
+                    continue
+                # _date = '2021-06-30' => '30062021'
+                _business_date = ''.join(_date.split('-')[::-1])
+                __shift = '0002'
+                __seq = '02'
+                __business_time = _business_date + datetime.now().strftime('%H%M')
+                __settle_time = datetime.now().strftime('%d%m%Y%H%M')
+                MANDIRI_LAST_TIMESTAMP = __settle_time
+                __raw = _Common.MID_MAN + __shift + _Common.TID_MAN + __seq + __business_time + __settle_time + 'XXXX' + '.txt'
+                __ds = _Helper.get_ds(__raw, 4, True)
+                _filename = _Common.MID_MAN + __shift + _Common.TID_MAN + __seq + __business_time + __settle_time + __ds + '.txt'
+                MANDIRI_LAST_FILENAME = _filename
+                LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
+                _filecontent = ''
+                _all_amount = 0
+                x = 0
+                for settle in group_settlements:
+                    x += 1
+                    remarks = json.loads(settle['remarks'])
+                    _all_amount += (int(remarks['value'])-int(remarks['admin_fee']))
+                    _filecontent += _Helper.full_row_reverse_hexdec(settle['reportSAM']) + __shift + str(x).zfill(6) + chr(3) + '|'
+                _header = 'PREPAID' + str(len(group_settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
+                        _Common.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
+                _body = _filecontent
+                _filecontent = _header + _filecontent
+                _trailer = _Common.MID_MAN + str(len(group_settlements)).zfill(8)
+                _filecontent += _trailer
+                _file_created = os.path.join(output_path, _filename)
+                with open(_file_created, 'w+') as f:
+                    __all_lines = _filecontent.split('|')
+                    for line in __all_lines:
+                        if line != __all_lines[-1]:
+                            f.write(line+'\n')
+                        else:
+                            f.write(line)
+                    f.close()
+                _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
+                with open(_file_created_ok, 'w+') as f_ok:
+                    f_ok.write('')
+                    f_ok.close()
+                group_result = {
+                    'path_file': _file_created,
+                    'filename': _filename,
+                    'row': len(group_settlements),
+                    'amount': str(_all_amount),
+                    'bank': bank,
+                    'bid': BID[bank],
+                    'remarks': _filecontent.replace('|', '\n'),
+                    'header': _header.replace('|', '\n'),
+                    'body': _body.replace('|', '\n'),
+                    'footer': _trailer.replace('|', '\n'),
+                    'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                _result.append(group_result)
+                _DAO.insert_sam_record({
+                    'smid': _Helper.get_uuid(),
+                    'fileName': _filename,
+                    'fileContent': _filecontent,
+                    'status': 1,
+                    'remarks': json.dumps(group_result)
+                })
             for settle in GLOBAL_SETTLEMENT:
                 settle['key'] = settle['rid']
                 _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=3)
@@ -467,7 +484,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             # LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
                 output_path = C2C_FILE_PATH
-            settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA <> "N/A" AND cardNo LIKE "6%" ')
+            settlements = _DAO.get_custom_select_query_from('TopUpRecords', "*, DATE(createdAt/1000, 'unixepoch') as trx_date",' syncFlag=1 AND reportSAM <> "N/A" AND cardNo LIKE "6%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0 and force is False:
                 if not _Helper.empty(LAST_MANDIRI_C2C_SETTLEMENT_DATA):
@@ -475,66 +492,92 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                     return LAST_MANDIRI_C2C_SETTLEMENT_DATA
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
-            __shift = '0001'
-            # Default Sending Sequence is 01
-            __seq = '01'
-            __timestamp = datetime.now().strftime('%d%m%Y%H%M')
-            MANDIRI_LAST_TIMESTAMP = __timestamp
-            
-            # Change Digital Signature To Settlement Sequence Number
-            __sett_seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, _Helper.time_string(f='%m%d')).zfill(4)
-            _filename = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + (__timestamp * 2) + __sett_seq + '.txt'
-
-            MANDIRI_LAST_FILENAME = _filename
-            LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
-            _filecontent = ''
-            _all_amount = 0
-            
-            x = 0
-            for settle in settlements:
-                x += 1
-                _all_amount += int(_Helper.reverse_hexdec(settle['reportKA'][46:54])) # Get Amount From Deposit Report
-                _filecontent += settle['reportKA'] + settle['reportSAM'] + chr(3) + '|'
+            _result = []
+            group_date = []
+            # Create Group Date
+            for s in settlements:
+                if s['trx_date'] not in group_date:
+                    group_date.append(s['trx_date'])
+                continue
+            for _date in group_date:
+                group_settlements = []
+                for s in settlements:
+                    if s['trx_date'] == _date:
+                        group_settlements.append(s)
+                    continue
+                # _date = '2021-06-30' => '30062021'
+                _business_date = ''.join(_date.split('-')[::-1])
+                __shift = '0001'
+                # Default Sending Sequence is 01
+                __seq = '01'
+                __business_time = _business_date + datetime.now().strftime('%H%M')
+                __settle_time = datetime.now().strftime('%d%m%Y%H%M')
+                MANDIRI_LAST_TIMESTAMP = __settle_time
                 
-            _header = 'PREPAID' + str(x + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
-                    _Common.C2C_MID + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
-            _body = _filecontent
-            _filecontent = _header + _filecontent
-            _trailer = _Common.C2C_MID + str(x).zfill(8) + chr(3)
-            _filecontent += _trailer
-            _file_created = os.path.join(output_path, _filename)
-            with open(file=_file_created, mode='w+') as f:
-                __all_lines = _filecontent.split('|')
-                for line in __all_lines:
-                    if line != __all_lines[-1]:
-                        f.write(line+'\n')
-                    else:
-                        f.write(line)
-                f.close()
-            _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
-            with open(_file_created_ok, 'w+') as f_ok:
-                f_ok.write('')
-                f_ok.close()
-            _result = {
-                'path_file': _file_created,
-                'filename': _filename,
-                'row': x,
-                'amount': str(_all_amount),
-                'bank': bank,
-                'bid': BID[bank],
-                'remarks': _filecontent.replace('|', '\n'),
-                'header': _header.replace('|', '\n'),
-                'body': _body.replace('|', '\n'),
-                'footer': _trailer.replace('|', '\n'),
-                'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            }
-            _DAO.insert_sam_record({
-                'smid': _Helper.get_uuid(),
-                'fileName': _filename,
-                'fileContent': _filecontent,
-                'status': 1,
-                'remarks': json.dumps(_result)
-            })
+                # Change Digital Signature To Settlement Sequence Number
+                __sett_seq = _ConfigParser.get_set_value_temp('TEMPORARY', _Common.C2C_MACTROS, _Helper.time_string(f='%m%d')).zfill(4)
+                _filename = _Common.C2C_MID + __shift + _Common.C2C_MACTROS[:6] + _Common.C2C_TID[:4] + '00' + __seq + __business_time + __settle_time + __sett_seq + '.txt'
+
+                MANDIRI_LAST_FILENAME = _filename
+                LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
+                _filecontent = ''
+                _all_amount = 0
+                
+                x = 0
+                for settle in group_settlements:
+                    x += 1
+                    _all_amount += int(_Helper.reverse_hexdec(settle['reportKA'][46:54])) # Get Amount From Deposit Report
+                    _filecontent += settle['reportKA'] + settle['reportSAM'] + chr(3) + '|'
+                    
+                _header = 'PREPAID' + str(x + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
+                        _Common.C2C_MID + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
+                _body = _filecontent
+                _filecontent = _header + _filecontent
+                _trailer = _Common.C2C_MID + str(x).zfill(8) + chr(3)
+                _filecontent += _trailer
+                _file_created = os.path.join(output_path, _filename)
+                with open(file=_file_created, mode='w+') as f:
+                    __all_lines = _filecontent.split('|')
+                    for line in __all_lines:
+                        if line != __all_lines[-1]:
+                            f.write(line+'\n')
+                        else:
+                            f.write(line)
+                    f.close()
+                _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
+                with open(_file_created_ok, 'w+') as f_ok:
+                    f_ok.write('')
+                    f_ok.close()
+                group_result = {
+                    'path_file': _file_created,
+                    'filename': _filename,
+                    'row': x,
+                    'amount': str(_all_amount),
+                    'bank': bank,
+                    'bid': BID[bank],
+                    'remarks': _filecontent.replace('|', '\n'),
+                    'header': _header.replace('|', '\n'),
+                    'body': _body.replace('|', '\n'),
+                    'footer': _trailer.replace('|', '\n'),
+                    'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                _result.append(group_result)
+                _DAO.insert_sam_record({
+                    'smid': _Helper.get_uuid(),
+                    'fileName': _filename,
+                    'fileContent': _filecontent,
+                    'status': 1,
+                    'remarks': json.dumps(group_result)
+                })
+                
+                # Update/Reset Sequence Settlement Record
+                __new_seq = int(__sett_seq) + 1
+                if __new_seq == 9999:
+                    __new_seq = 1
+                last_mandiri_settlement_data = _Common.load_from_temp_data('last-mandiri-c2c-settlement', 'json')
+                if not last_settlement_in_same_month(last_mandiri_settlement_data):
+                    __new_seq = 1
+                _ConfigParser.set_value_temp('TEMPORARY', _Common.C2C_MACTROS, str(__new_seq))
             # Panel For Removing Data Records Once Settlement Data is Created
             removeData = False
             for settle in GLOBAL_SETTLEMENT:
@@ -545,17 +588,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                     # _DAO.flush_table('Terminal', 'tid <> "'+_Common.KIOSK_SETTING['tid']+'"')
                     _DAO.flush_table(_table='TopUpRecords', _where='rid = "'+settle['rid']+'"')
             
-            # Update/Reset Sequence Settlement Record
-            __new_seq = int(__sett_seq) + 1
-            if __new_seq == 9999:
-                __new_seq = 1
-            last_mandiri_settlement_data = _Common.load_from_temp_data('last-mandiri-c2c-settlement', 'json')
-            if not last_settlement_in_same_month(last_mandiri_settlement_data):
-                __new_seq = 1
-            _ConfigParser.set_value_temp('TEMPORARY', _Common.C2C_MACTROS, str(__new_seq))
-            
             LAST_MANDIRI_C2C_SETTLEMENT_DATA = _result
             _Common.store_to_temp_data('last-mandiri-c2c-settlement', json.dumps(LAST_MANDIRI_C2C_SETTLEMENT_DATA))
+            _Common.log_to_temp_config('last^mandiri^c2c^settlement', _Helper.time_string('%Y%m%d'))
             return _result
         except Exception as e:
             LOGGER.warning((bank, mode, str(e)))
@@ -703,26 +738,29 @@ def do_prepaid_settlement(bank='BNI', force=False):
         #     LOGGER.warning(('do_prepaid_settlement', bank, 'failed cannot init SFTP'))
         #     return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
-        _param_sett = create_settlement_file(bank=bank, mode='TOPUP', force=force)
-        if _param_sett is False:
+        group_param_sett = create_settlement_file(bank=bank, mode='TOPUP', force=force)
+        if group_param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
-        _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
-        _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
-                                                    local_path=_param_sett['path_file'],
-                                                    remote_path=_Common.SFTP_MANDIRI['path']+'/Sett_Macin_DEV')
-        if _push_file_sett['success'] is False:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
-            return
-        _param_sett['host'] = _push_file_sett['host']
-        _param_sett['remote_path'] = _push_file_sett['remote_path']
-        _param_sett['local_path'] = _push_file_sett['local_path']
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
-        # async_push_settlement_data(_param_sett)
-        send_settlement_data = push_settlement_data(_param_sett)
-        if not send_settlement_data:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
+        if type(group_param_sett) == dict:
+            group_param_sett = [group_param_sett]
+        for _param_sett in group_param_sett:
+            _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
+            _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
+                                                        local_path=_param_sett['path_file'],
+                                                        remote_path=_Common.SFTP_MANDIRI['path']+'/Sett_Macin_DEV')
+            if _push_file_sett['success'] is False:
+                ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
+                return
+            _param_sett['host'] = _push_file_sett['host']
+            _param_sett['remote_path'] = _push_file_sett['remote_path']
+            _param_sett['local_path'] = _push_file_sett['local_path']
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
+            # async_push_settlement_data(_param_sett)
+            send_settlement_data = push_settlement_data(_param_sett)
+            # if not send_settlement_data:
+                # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_KA_SETTLEMENT')
         _param_ka = create_settlement_file(bank=bank, mode='KA', force=force)
         if _param_ka is False:
@@ -768,33 +806,37 @@ def do_prepaid_settlement(bank='BNI', force=False):
     elif bank == 'MANDIRI_C2C':
         _SFTPAccess.HOST_BID = 0
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
-        _param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C', force=force)
-        if _param_sett is False:
+        group_param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C', force=force)
+        if group_param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
-        _file_ok = _param_sett['filename'].replace('.txt', '.ok')
-        _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
-                                                        local_path=_param_sett['path_file'],
-                                                        remote_path=_Common.SFTP_C2C['path_settlement'])
-        if _push_file_sett['success'] is False:
-            reupload = {
-                'bank': bank, 
-                'filename': [_param_sett['filename'], _file_ok],
-                'local_path':  _param_sett['path_file'],
-                'remote_path':  _Common.SFTP_C2C['path_settlement'],
-            }
-            _param_sett['reupload'] = reupload
-            _Common.store_upload_to_job(name=_Helper.whoami(), host=bank, data=reupload)
-        _param_sett['settlement_uploaded_at'] = _Helper.time_string()
-        _param_sett['host'] = _push_file_sett['host']
-        _param_sett['remote_path'] = _push_file_sett['remote_path']
-        _param_sett['local_path'] = _push_file_sett['local_path']
-        # async_push_settlement_data(_param_sett)
-        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
-        send_settlement_data = push_settlement_data(_param_sett)
-        if not send_settlement_data:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')
+        # group_param_sett['filename'] can handle array_filename
+        if type(group_param_sett) == dict:
+            group_param_sett = [group_param_sett]
+        for _param_sett in group_param_sett:
+            _file_ok = _param_sett['filename'].replace('.txt', '.ok')
+            _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
+                                                            local_path=_param_sett['path_file'],
+                                                            remote_path=_Common.SFTP_C2C['path_settlement'])
+            if _push_file_sett['success'] is False:
+                reupload = {
+                    'bank': bank, 
+                    'filename': [_param_sett['filename'], _file_ok],
+                    'local_path':  _param_sett['path_file'],
+                    'remote_path':  _Common.SFTP_C2C['path_settlement'],
+                }
+                _param_sett['reupload'] = reupload
+                _Common.store_upload_to_job(name=_Helper.whoami(), host=bank, data=reupload)
+            _param_sett['settlement_uploaded_at'] = _Helper.time_string()
+            _param_sett['host'] = _push_file_sett['host']
+            _param_sett['remote_path'] = _push_file_sett['remote_path']
+            _param_sett['local_path'] = _push_file_sett['local_path']
+            # async_push_settlement_data(_param_sett)
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA')
+            send_settlement_data = push_settlement_data(_param_sett)
+            # if not send_settlement_data:
+                # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_FAILED')            
         # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
         # Handle Single Attempt For Auto Reload
         # Deposit Mandiri Must Seen From Postpone Update Balance And Reload Process
@@ -931,29 +973,32 @@ def daily_mandiri_c2c_settlement():
     _SFTPAccess.HOST_BID = 0
     print('pyt: MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
     LOGGER.info(('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT'))
-    _param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C')
-    if _param_sett is False:
+    group_param_sett = create_settlement_file(bank='MANDIRI', mode='TOPUP_C2C')
+    if group_param_sett is False:
         print('pyt: MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
         LOGGER.error(('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT'))
         return
     print('pyt: MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
     LOGGER.info(('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT'))
-    _file_ok = _param_sett['filename'].replace('.txt', '.ok')
-    _push_file_sett = upload_settlement_file(
-        filename=[_param_sett['filename'], _file_ok],
-        local_path=_param_sett['path_file'],
-        remote_path=_Common.SFTP_C2C['path_settlement']
-        )
-    _param_sett['settlement_uploaded_at'] = _Helper.time_string()
-    _param_sett['host'] = _push_file_sett['host']
-    _param_sett['remote_path'] = _push_file_sett['remote_path']
-    _param_sett['local_path'] = _push_file_sett['local_path']
-    # async_push_settlement_data(_param_sett)
-    send_settlement_data = push_settlement_data(_param_sett)
-    if not send_settlement_data:
-        print('pyt: MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_PENDING')
-        LOGGER.error(('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_PENDING'))
-        return
+    if type(group_param_sett) == dict:
+        group_param_sett = [group_param_sett]
+    for _param_sett in group_param_sett:
+        _file_ok = _param_sett['filename'].replace('.txt', '.ok')
+        _push_file_sett = upload_settlement_file(
+            filename=[_param_sett['filename'], _file_ok],
+            local_path=_param_sett['path_file'],
+            remote_path=_Common.SFTP_C2C['path_settlement']
+            )
+        _param_sett['settlement_uploaded_at'] = _Helper.time_string()
+        _param_sett['host'] = _push_file_sett['host']
+        _param_sett['remote_path'] = _push_file_sett['remote_path']
+        _param_sett['local_path'] = _push_file_sett['local_path']
+        # async_push_settlement_data(_param_sett)
+        send_settlement_data = push_settlement_data(_param_sett)
+        # if not send_settlement_data:
+            # print('pyt: MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_PENDING')
+            # LOGGER.error(('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_PENDING'))
+        continue
     print('pyt: MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS')
     LOGGER.info(('MANDIRI_SETTLEMENT|SYNC_SETTLEMENT_DATA_SUCCESS'))
 
@@ -1039,5 +1084,18 @@ def trigger_edc_settlement():
     _EDC.define_edc_settlement()
     sleep(60)
     _Common.EDC_SETTLEMENT_RUNNING = False
+
+
+def start_check_last_mandiri_settlement():
+    _Helper.get_thread().apply_async(check_last_mandiri_setttlement)
+
+
+def check_last_mandiri_setttlement():
+    # _Helper.time_string('%Y%m%d')
+    last_mandiri_c2c_settlement = _Common.load_from_temp_config('last^mandiri^c2c^settlement')
+    current_date = _Helper.time_string('%Y%m%d')
+    if (int(last_mandiri_c2c_settlement)+1) < int(current_date):
+        LOGGER.info(('YESTERDAY_C2C_MANDIRI_NOT_DETECTED', 'TRIGGER_C2C_SETTLEMENT', last_mandiri_c2c_settlement, current_date))
+        daily_mandiri_c2c_settlement()
 
 

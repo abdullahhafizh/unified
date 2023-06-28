@@ -12,7 +12,7 @@ LOGGER = logging.getLogger()
 
 ERROR_COUNT = 0
 ERROR_FILE = "error_print_nv200_event_"
-SOCKET_TIMEOUT = 10
+SOCKET_TIMEOUT = _Common.BILL_SOCKET_TIMEOUT
 
 COMMAND_MODE = ''
 

@@ -291,9 +291,9 @@ def decrypt(
             output['result'] = output['result'].replace(padding, '')
         output['status'] = True
     else:
-        output['status'] = False;
-        output['result'] = False;
-        output['error'] = 'Failed To Decrypt Cipher';
+        output['status'] = False
+        output['result'] = False
+        output['error'] = 'Failed To Decrypt Cipher'
     output.pop('process')
     output['mode'] = mode
     if direct is True:
