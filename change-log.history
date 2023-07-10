@@ -3,6 +3,7 @@
 - Bill Socket Timeout Panel Setting,
 - Add Mandiri C22 Last Settlement Check on Startup,
 - Adjust Handle Bill SOcket Timeout For NV,
+- Handle Sync Disable When Server Die,
 - ...
 
 16.4.0-GLOBAL:

@@ -140,6 +140,7 @@ def send_daily_summary():
 
 def send_all_not_synced_daily_report():
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             reports = _DAO.get_all_unsynced_report(_Common.TID)
             if len(reports) > 0:
@@ -196,6 +197,7 @@ def sync_machine_status():
     __url = _Common.BACKEND_URL + 'kiosk/status'
     __param = dict()
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_machine_status') is True and _Common.IDLE_MODE is True:
                 __param = _KioskService.machine_summary()
@@ -220,6 +222,7 @@ def start_do_pending_request_job():
 
 def do_pending_request_job():
     while True:
+        if not _Common.IS_ONLINE: continue
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         # LOGGER.info(('count', len(pending_jobs)))
@@ -283,6 +286,7 @@ def start_do_pending_upload_job():
 
 def do_pending_upload_job():
     while True:
+        if not _Common.IS_ONLINE: continue
         pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.upload')]
         # print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         # LOGGER.info(('count', len(pending_jobs)))
@@ -397,6 +401,7 @@ def sync_topup_records():
     url = _Common.BACKEND_URL + 'sync/topup-records'
     _table_ = 'TopUpRecords'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_topup_records') is True and _Common.IDLE_MODE is True:
                 topup_records = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
@@ -428,6 +433,7 @@ def sync_data_transaction():
     url = _Common.BACKEND_URL + 'sync/transaction-new'
     _table_ = 'TransactionsNew'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_data_transaction') is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
@@ -456,6 +462,7 @@ def sync_data_transaction_old():
     url = _Common.BACKEND_URL + 'sync/transaction-topup'
     _table_ = 'Transactions'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_data_transaction') is True and _Common.IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
@@ -487,6 +494,7 @@ def sync_data_transaction_failure():
     url = _Common.BACKEND_URL + 'sync/transaction-failure'
     _table_ = 'TransactionFailure'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_data_transaction_failure') is True and _Common.IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
@@ -517,6 +525,7 @@ def sync_product_data():
     url = _Common.BACKEND_URL + 'sync/product'
     _table_ = 'Product'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_product_data') is True and _Common.IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
@@ -547,6 +556,7 @@ def sync_sam_audit():
     url = _Common.BACKEND_URL + 'sync/sam-audit'
     _table_ = 'SAMAudit'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_sam_audit') is True and _Common.IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
@@ -580,6 +590,7 @@ def sync_settlement_bni(bank):
     # _SettlementService.start_do_bni_topup_settlement()
     # _table_ = 'Settlement'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_settlement_bni') is True and _Common.IDLE_MODE is True:
                 _SettlementService.start_do_bni_topup_settlement()
@@ -624,6 +635,7 @@ def start_sync_task():
 def sync_task():
     _url = _Common.BACKEND_URL + 'task/check'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             if _Common.is_online(source='sync_task') is True and _Common.IDLE_MODE is True:
                 status, response = _HTTPAccess.get_from_url(url=_url, log=False)
@@ -651,6 +663,7 @@ def start_sync_pending_refund():
 def sync_pending_refund():
     _url = _Common.BACKEND_URL + 'refund/global'
     while True:
+        if not _Common.IS_ONLINE: continue
         try:
             pendings = _DAO.get_pending_refund()
             if len(pendings) > 0:
@@ -1075,6 +1088,7 @@ def start_sync_topup_amount():
 def sync_topup_amount():
     _url = _Common.BACKEND_URL + 'get/topup-amount'
     while True:
+        if not _Common.IS_ONLINE: continue
         if _Common.is_online(source='sync_topup_amount') is True and _Common.IDLE_MODE is True:
             s, r = _HTTPAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
