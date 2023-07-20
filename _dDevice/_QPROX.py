@@ -59,7 +59,7 @@ QPROX = {
     "GENERAL_BALANCE": "009",
     "STOP": "010",
     "UPDATE_TID_BNI": "011",
-    "INIT_BNI": "012",
+    "INIT_SAM_BNI": "012", #Init SAM BNI (Purse SAM Data)
     "TOPUP_BNI": "013", #Transfer Balance Offline BNI
     "KA_INFO_BNI": "014",
     "PURSE_DATA_BNI": "015", #Get Card Info For Topup Modal
@@ -298,6 +298,15 @@ def get_card_info(slot=1, bank='BNI'):
     elif bank == 'MANDIRI_C2C':
         # TODO Add Logic Handler Here
         pass
+    elif bank == 'BNI_SAM_RAW_PURSE':
+        _slot = slot - 1
+        param = QPROX['PURSE_DATA_BNI'] + '|' + str(_slot) + '|' + 'BNI_SAM_RAW_PURSE' + '|'
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        LOGGER.debug((result))
+        if response == 0:
+            return result
+        else:
+            return ''
     else:
         return False
 
@@ -934,7 +943,8 @@ def topup_bni_correction(amount, trxid=''):
             'mid': _Common.MID_BNI,
             'tid': _Common.TID_BNI,
             'can': check_card_no,
-            'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
+            # 'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
+            'csn': '',
             'card_history': card_history,
             'amount': amount,
             'sam_history': sam_history,
@@ -962,8 +972,6 @@ def topup_bni_correction(amount, trxid=''):
     QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
 
 
-
-
 def start_mandiri_c2c_force_settlement(amount, trxid):
     if not _Common.C2C_MODE:
             return
@@ -988,6 +996,46 @@ def get_force_settlement(amount, trxid, set_status='FAILED'):
     except Exception as e:
         LOGGER.warning((trxid, _result, e))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MDR_TOPUP_CORRECTION#EXCP')
+        
+        
+def get_force_settlement_bni(card_purse=None):
+    old_card_purse = LAST_BNI_CARD_PURSE
+    if old_card_purse is False:
+        LOGGER.warning(('LAST_BNI_CARD_PURSE is Empty', LAST_BNI_CARD_PURSE))
+        return ''
+    if card_purse is None or card_purse == '' or len(card_purse) != len(old_card_purse):
+        LOGGER.warning(('NEW BNI_CARD_PURSE is Not Valid/Empty', card_purse))
+        return ''
+    old_sam_purse = LAST_BNI_SAM_PURSE
+    if old_sam_purse is False:
+        LOGGER.warning(('LAST_BNI_SAM_PURSE is Empty', LAST_BNI_SAM_PURSE))
+        return ''
+    return build_bni_force_settlement(old_card_purse, card_purse, old_sam_purse)
+
+
+def build_bni_force_settlement(old_card_purse, new_card_purse, old_sam_purse):
+    new_sam_purse = get_card_info(_Common.BNI_ACTIVE, 'BNI_SAM_RAW_PURSE')
+    if new_sam_purse is False or len(new_sam_purse) < 1:
+        LOGGER.warning(('NEW BNI_SAM_PURSE is Empty', new_sam_purse))
+        return ''
+    last_topup_rc = LAST_BNI_TOPUP_RC
+    # TODO: Finalise This With Actual BNI Format
+    return ''.join([
+        'D',
+        old_card_purse,
+        new_card_purse,
+        old_sam_purse,
+        new_sam_purse,
+        last_topup_rc
+    ])
+
+
+def get_last_error_report_bni():
+    global LAST_BNI_ERROR_REPORT
+
+    last_error_report_bni = LAST_BNI_ERROR_REPORT
+    LAST_BNI_ERROR_REPORT = ''
+    return last_error_report_bni
 
 
 # Check Deposit Balance If Failed, When Deducted Hit Correction, If Correction Failed, Hit FOrce Settlement And Store
@@ -1082,7 +1130,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                     },
                 'last_result': topup_result,
                 'err_code': topup_result.get('Result'),
-                # 'sam_purse': init_result,
+                # 'sam_purse': bni_sam_raw_purse,
                 # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
@@ -1111,7 +1159,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                     },
                 'last_result': topup_result,
                 'err_code': topup_result.get('Result'),
-                # 'sam_purse': init_result,
+                # 'sam_purse': bni_sam_raw_purse,
                 # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
@@ -1231,7 +1279,7 @@ def get_bni_wallet_status(upload=True):
             get_card_info(slot=2)
             sleep(1)
             bni_c2c_balance_info(slot=2)
-            if _attempt == 3 or _Common.BNI_SAM_1_WALLET != 0:
+            if _attempt == 3 or _Common.BNI_SAM_2_WALLET != 0:
                 break
             sleep(1)
         if _Common.BNI_ACTIVE == 1:
@@ -1384,7 +1432,13 @@ def start_topup_offline_bni_with_attempt(amount, trxid, attempt):
     _Helper.get_thread().apply_async(topup_offline_bni, (amount, trxid, slot, attempt,))
 
 
+LAST_BNI_CARD_PURSE = False
+LAST_BNI_SAM_PURSE = False
+LAST_BNI_TOPUP_RC = ''
+LAST_BNI_ERROR_REPORT = ''
+
 def topup_offline_bni(amount, trxid, slot=None, attempt=None):
+    global LAST_BNI_CARD_PURSE, LAST_BNI_SAM_PURSE, LAST_BNI_TOPUP_RC, LAST_BNI_ERROR_REPORT
     
     # New Topup Procedure Validation
     validate_rules, error = _Common.check_topup_procedure('bni', trxid, amount)
@@ -1405,13 +1459,26 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         LOGGER.debug(('TOPUP_ATTEMPT_REACHED', str(int(attempt) - 1)))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ATTEMPT_REACHED')
         return
-    param = QPROX['INIT_BNI'] + '|' + str(_slot) + '|' + TID_BNI
-    response, init_result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-    LOGGER.debug((attempt, amount, trxid, slot, init_result))
+    
+    # Disabled : Cmd Migrated From Reader FW
+    # Add BNI Card Purse
+    # LAST_BNI_CARD_PURSE = get_card_info_tapcash('MODE_F9')
+    # if not LAST_BNI_CARD_PURSE:
+    #     QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_PURSE_FAILED')
+    #     return
+    
+    param = QPROX['INIT_SAM_BNI'] + '|' + str(_slot) + '|' + TID_BNI
+    response, bni_sam_raw_purse = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    LOGGER.debug((attempt, amount, trxid, slot, bni_sam_raw_purse))
     deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
     LOGGER.info(('PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
+    
+    # Reset Previous Topup RC
+    LAST_BNI_TOPUP_RC = ''
+    LAST_BNI_ERROR_REPORT = ''
 
     if response == 0:
+        LAST_BNI_SAM_PURSE = bni_sam_raw_purse
         _param = QPROX['TOPUP_BNI'] + '|' + str(amount) + '|' + str(_slot)
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT, wait_for=2)
         LOGGER.debug((attempt, amount, trxid, slot, _result))
@@ -1420,7 +1487,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             _result = _result.replace('#', '')
             data = _result.split('|')
             status = data[0]
+            LAST_BNI_TOPUP_RC = status
             report_sam = data[5]
+            LAST_BNI_ERROR_REPORT = report_sam
             card_prev_balance = data[7].lstrip('0')
             card_last_balance = data[8].lstrip('0')
             deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
@@ -1497,7 +1566,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                     },
                 'last_result': topup_result,
                 'err_code': topup_result.get('Result'),
-                # 'sam_purse': init_result,
+                # 'sam_purse': bni_sam_raw_purse,
                 # 'sam_history': bni_sam_history_direct()
         })
         _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
@@ -1508,8 +1577,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         else:
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_TOPUP_CORRECTION#RC_'+rc)
     else:
-        LOGGER.warning(('INIT_BNI', init_result))
-        init_topup_result = json.loads(init_result)
+        LAST_BNI_SAM_PURSE = False
+        LOGGER.warning(('INIT_SAM_BNI', bni_sam_raw_purse))
+        init_topup_result = json.loads(bni_sam_raw_purse)
         rc = init_topup_result.get('Result', 'FFFF')
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
             new_topup_failure_handler('BNI', trxid, amount)
@@ -1708,10 +1778,12 @@ def do_update_limit_mandiri(rsp):
         sleep(15)
 
 
-def get_card_info_tapcash():
+def get_card_info_tapcash(mode='NORMAL'):
     # PURSE_DATA_BNI_CONTACTLESS
     # {"Result":"0","Command":"020","Parameter":"0","Response":"000175461700003074850000000001232195AEEADE4A080F4B00285DDCD9B4BA924B00000000010013B288889999040000962F210F4088889999040000962F210F4000000000000000000000ACD44750B49BC46B63D15DC8579D3280","ErrorDesc":"Sukses"}
     param = QPROX['PURSE_DATA_BNI_CONTACTLESS'] + '|'
+    if mode == 'MODE_F9':
+        param = QPROX['PURSE_DATA_BNI_CONTACTLESS'] + '|' + mode + '|'
     try:
         response, result = _Command.send_request(param=param, output=None)
         if response == 0 and result is not None:
@@ -1897,14 +1969,14 @@ def bni_card_history_direct(row=30):
     param = QPROX['CARD_HISTORY_BNI_RAW'] + '|' + str(row) + '|'
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
-        return result.split('#')[0], result.split('#')[1]
+        card_purse = result.split('#')[0]
+        card_history = result.split('#')[1]
+        return card_purse, card_history
     else:
         return "", ""
 
 
 def bri_card_history_direct():
-    if 'BRI' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
-        return ""
     param = QPROX['CARD_HISTORY_BRI_RAW'] + '|' + _Common.SLOT_BRI + '|' + 'MODE_RAW' + '|'
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
@@ -1914,8 +1986,6 @@ def bri_card_history_direct():
     
 
 def dki_card_history_direct():
-    if 'DKI' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
-        return ""
     param = QPROX['CARD_HISTORY_DKI_RAW'] + '|'
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
@@ -1925,8 +1995,6 @@ def dki_card_history_direct():
 
 
 def bca_card_history_direct():
-    if 'BCA' not in _Common.ALLOWED_BANK_CHECK_CARD_LOG:
-        return ""
     param = QPROX['CARD_HISTORY_BCA_RAW'] + '|'
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
@@ -2279,7 +2347,7 @@ def send_force_confirmation(bank, data):
             LOGGER.warning((e))
 
 
-def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
+def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):    
     last_audit_result = _Common.load_from_temp_data(trxid+'-last-audit-result', 'json')
     topup_url = _Common.UPDATE_BALANCE_URL if _Common.LIVE_MODE else _Common.UPDATE_BALANCE_URL_DEV
     if bank == 'MANDIRI':
@@ -2358,16 +2426,20 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
         
             sam_history = last_audit_result.get('sam_history', '') 
             card_purse, card_history = bni_card_history_direct(10)
+            # Build BNI Force Settlement Using Old FW
+            # force_report = get_force_settlement_bni(card_purse)
+            # New FW, Report Force Will Be Generated From Reader
+            force_report = get_last_error_report_bni()
             
             extra_data = {
                     'mid': _Common.MID_BNI,
                     'tid': _Common.TID_BNI,
                     'can': card_data.get('card_no'),
-                    'csn': card_purse[20:36] if card_purse is not None and len(card_purse) > 36 else '',
+                    'csn': '',
                     'card_history': card_history,
                     'amount': amount,
                     'sam_history': sam_history,
-                    'force_report': '',
+                    'force_report': force_report,
                     # 'sam_purse': sam_purse,
                     'card_purse': card_purse,
                     'err_code': last_audit_result.get('err_code', _Common.LAST_READER_ERR_CODE),
@@ -2377,6 +2449,16 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             
             if failure_rc == '02':
                 # Send To SAM Audit If Only Deduct Deposit Balance
+                if len(force_report) >= 266:
+                    force_settlement = {
+                        'last_balance': card_data.get('balance'),
+                        'report_sam': force_report,
+                        'card_no': card_data.get('card_no'),
+                        'report_ka': 'NOK',
+                        'bank_id': '2',
+                        'bank_name': 'BNI',
+                    }
+                    _Common.local_store_topup_record(force_settlement)
                 _Common.store_upload_sam_audit(param)
             
             last_audit_result.update(extra_data)

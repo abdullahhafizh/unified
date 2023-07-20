@@ -206,7 +206,9 @@ def bni_init_topup(param, __global_response__):
     # sleep(1)
     # BNI_CARD_NUMBER = report_card_purse[4:20] if res_card_purse == '0000' else ''
 
-    res_purse_sam, report_sam_purse = prepaid.topup_pursedata_multi_sam(C_Slot)
+    # res_purse_sam, report_sam_purse = prepaid.topup_pursedata_multi_sam(C_Slot)
+    # Change To RAW Purse SAM
+    res_purse_sam, report_sam_purse = raw_purse_sam_priv(C_Slot)
     if len(report_sam_purse) >= 20:
         BNI_SAM_CARD_NUMBER = report_sam_purse[4:20]
 
@@ -345,16 +347,24 @@ def bni_get_purse_data_sam_multi(param, __global_response__):
     # LOG.tracing("BNI: ", "bni_get_purse_data_sam_multi")
 
     Param = param.split('|')
+    PurseMode = 'NORMAL'
     
     if len(Param) == 1:
         C_Slot = Param[0]
+    elif len(Param) > 1:
+        C_Slot = Param[0]
+        PurseMode = Param[1]
+        LOG.fw("015:SAM Purse Mode", PurseMode)
     else:
         LOG.fw("015:Missing Parameter", param)
         raise SystemError("015:Missing Parameter: "+param)
 
     LOG.fw("015:Parameter = ", C_Slot)
 
-    res_str, report = prepaid.topup_pursedata_multi_sam(C_Slot)
+    if PurseMode == 'NORMAL':
+        res_str, report = prepaid.topup_pursedata_multi_sam(C_Slot)
+    else:
+        res_str, report = raw_purse_sam_priv(C_Slot)
 
     __global_response__["Result"] = res_str
 
@@ -397,7 +407,7 @@ def bni_update_sam_crypto(param, __global_response__):
 
     C_APDU = fixset + dtpurse + dtcrypto + fixlastset
 
-    res_str, RAPDU = prepaid.topup_apdusend(C_Slot, C_APDU)
+    res_str, RAPDU = prepaid.send_apdu_cmd(C_Slot, C_APDU)
 
     __global_response__["Result"] = res_str
 
@@ -503,7 +513,7 @@ def bni_update_card_crypto(param, __global_response__):
 
     C_APDU = fixset + dtpurse + dtcrypto + fixlastset
 
-    res_str, RAPDU = prepaid.topup_apdusend("255", C_APDU)
+    res_str, RAPDU = prepaid.send_apdu_cmd("255", C_APDU)
 
     __global_response__["Result"] = res_str
 
@@ -553,24 +563,24 @@ def bni_card_get_log_custom(param, __global_response__):
         row = Param[0].encode('utf-8') 
         row = int(row) - 1
     
-    res_str, errmsg, desc = bni_card_get_log_custom_priv(row)
+    res_str, purseData, listRAPDU = bni_card_get_log_custom_priv(row)
+    # resultStr, purseData, listRAPDU
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
-        __global_response__["Response"] = errmsg
-        if type(desc) == list and len(desc) > 0:
-            __global_response__["Response"] = errmsg + "#" + (",".join(desc))
-        LOG.fw("077:Response = ", errmsg)
+        __global_response__["Response"] = purseData
+        if type(listRAPDU) == list and len(listRAPDU) > 0:
+            __global_response__["Response"] = purseData + "#" + (",".join(listRAPDU))
+        LOG.fw("077:Response = ", purseData)
         __global_response__["ErrorDesc"] = "Sukses"
         LOG.fw("077:Result = ", res_str)
         LOG.fw("077:Sukses", None)
     else:
-        __global_response__["Response"] = errmsg
-        LOG.fw("077:Response = ", errmsg, True)
+        __global_response__["Response"] = purseData
+        LOG.fw("077:Response = ", purseData, True)
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("077:Result = ",res_str, True)
         LOG.fw("077:Gagal", None, True)
-
     return res_str
 
 #042
@@ -658,7 +668,9 @@ def bni_card_get_log_custom_priv(max_t=29):
 
     try:
         prepaid.topup_card_disconnect()
-        resultStr, purseData, ErrMsg = prepaid.topup_pursedata()
+        # TODO: CHECK RESULT
+        # resultStr, reportPurse, ErrMsg = prepaid.topup_pursedata()
+        resultStr, cardUID, reportPurse, cardAttr = prepaid.topup_get_carddata()
         if resultStr == "0000":
             i = 0
             while resultStr == "0000" and i <= max_t:
@@ -667,7 +679,7 @@ def bni_card_get_log_custom_priv(max_t=29):
                 else:
                     idx = hex_padding(i)
                     apdu = "9032030001" + str(idx) + "10"
-                    resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                     # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
                     if resultStr == "0000":
                         i = i + 1                        
@@ -688,7 +700,7 @@ def bni_card_get_log_custom_priv(max_t=29):
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, purseData, listRAPDU
+    return resultStr, reportPurse, listRAPDU
 
 
 def bni_card_get_log_priv(max_t=29):
@@ -713,7 +725,7 @@ def bni_card_get_log_priv(max_t=29):
                 else:
                     idx = hex_padding(i)
                     apdu = "9032030001" + str(idx) + "10"
-                    resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                     # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
                     if resultStr == "0000":
                         i = i + 1                        
@@ -763,7 +775,7 @@ def bni_sam_get_log_priv(slot, max_t=29):
                 else:
                     idx = hex_padding(i)
                     apdu = "9032030001" + str(idx) + "10"
-                    resultStr, rapdu = prepaid.topup_apdusend(slot, apdu)
+                    resultStr, rapdu = prepaid.send_apdu_cmd(slot, apdu)
                     # E/listApdu: 01FFF25433A26E4600000880234181029000
                     # E/listApdu: 01FFFFFF33620F180000162C788002449000
                     # E/listApdu: 01FFFFFF33620D6F0000162D788002449000
@@ -824,3 +836,16 @@ def get_date(data):
 
 def hex_padding(i, pad=2):
     return format(int(i), 'x').zfill(pad).upper()
+
+
+def raw_purse_sam_priv(slot):
+    # apdu BNI buat secure raw purse
+    # 1. 0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x42, 0x4E, 0x49, 0x10, 0x00, 0x01
+    # 2. 0x00, 0x84, 0x00, 0x00, 0x08
+    # 3. 0x90, 0x32, 0x03, 0x00, 0x0A, 0x12, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    resultStr, responseStr = prepaid.send_apdu_cmd(slot, '00A4040008A000424E49100001')
+    if resultStr == '0000':
+        resultStr, responseStr = prepaid.send_apdu_cmd(slot, '0084000008')
+        if resultStr == '0000':
+            resultStr, responseStr = prepaid.send_apdu_cmd(slot, '903203000A1201000000000000000000')
+    return resultStr, responseStr

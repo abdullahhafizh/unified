@@ -248,7 +248,7 @@ def topup_C2C_km_balance():
     return res_str.decode("utf-8"), saldo.decode("utf-8"), uid.decode("utf-8"), carddata.decode("utf-8"), cardattr.decode("utf-8")
 
 
-def topup_apdusend(C_Slot, C_APDU):
+def send_apdu_cmd(C_Slot, C_APDU):
     global COMPORT
     if not is_serial_valid():
         return "FFFE", ""

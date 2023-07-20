@@ -151,7 +151,7 @@ def topup_request_dki_priv(Denom):
     sleep(1)
     ResultStr, reportPurse, debErrorStr = prepaid.topup_pursedata()
     sleep(1)
-    ResultStr, reportAPDU = prepaid.topup_apdusend("255", "00A4040008A0000005714E4A43")
+    ResultStr, reportAPDU = prepaid.send_apdu_cmd("255", "00A4040008A0000005714E4A43")
 
     if ResultStr == "0000":
         CardNo = reportAPDU[16:32]
@@ -168,7 +168,7 @@ def topup_request_dki_priv(Denom):
         DATACARD = "9040000118" + amounthex + dtm_now + padding
         
         LOG.fw("051:DATACARD Send = ", DATACARD)
-        ResultStr, report = prepaid.topup_apdusend("255", DATACARD)            
+        ResultStr, report = prepaid.send_apdu_cmd("255", DATACARD)            
         LOG.fw("051:DATACARD Receive = ", report)
 
     return ResultStr, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report
@@ -206,7 +206,7 @@ def topup_confirm_dki(param, __global_response__):
 def topup_confirm_dki_priv(DataToCard):
     LOG.fw("052:DATACARD SEND 2 = ", DataToCard)
     DataToCard = "9042000010" + DataToCard
-    ResultStr, reportRAPDU = prepaid.topup_apdusend("255", DataToCard)
+    ResultStr, reportRAPDU = prepaid.send_apdu_cmd("255", DataToCard)
     LOG.fw("052:DATACARD RECEIVE 2 = ", reportRAPDU)
 
     return ResultStr, reportRAPDU
@@ -284,7 +284,7 @@ def dki_card_get_log_priv():
 
                     idx = int_padding(i)
                     apdu = "00B2" + str(idx) + "242E"
-                    resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                     if resultStr in ["9000", "0000"]:
                         # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
                         # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
@@ -331,7 +331,7 @@ def dki_card_get_log_raw_priv():
                     i = i + 1                        
                     idx = int_padding(i)
                     apdu = "00B2" + str(idx) + "242E"
-                    resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                     if resultStr in ["9000", "0000"]:
                         # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
                         # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000

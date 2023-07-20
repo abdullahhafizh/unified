@@ -82,6 +82,12 @@ SELF_CLOSE_HOUR = _ConfigParser.get_set_value('GENERAL', 'self^close^hour', '16:
 USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme', '1') == '1' else False
 USE_PREV_ADS = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^ads', '0') == '1' else False
 
+PAYMENT_RULES = _ConfigParser.get_set_value('GENERAL', 'payment^rules', '')
+THEME_WITH_PAYMENT_RULES = _ConfigParser.get_set_value('GENERAL', 'payment^rules^thems', 'MRT').split('|')
+# Sample Payment Rules
+# If Cash Will Shown Only If Amount Greater Than 10000 and QR Will not active if amount greater than 100000
+# cash:>:10000,qr:<:100000
+
 INTERRACTIVE_HOST = _ConfigParser.get_set_value('GENERAL', 'interractive^host', 'wss://socket-chat.multidaya.id')
 if LIVE_MODE or PTR_MODE:
     INTERRACTIVE_HOST = 'wss://socket-chat.multidaya.id'
@@ -688,6 +694,9 @@ TJ_VIEW_CONFIG = load_from_temp_data('tj-view-config', 'json', sys.path[0] + '/_
 KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '/_cConfig/')
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
+
+if THEME_NAME.lower() in [x.lower() for x in THEME_WITH_PAYMENT_RULES]:
+    PAYMENT_RULES = 'cash:>:10000,qr:<:100000'
 # Handle External Customer Service Information
 EXT_CS_INFO = None
 
@@ -720,6 +729,7 @@ VIEW_CONFIG['support_multimedia'] = support_multimedia()
 VIEW_CONFIG['payment_cancel'] = True if PAYMENT_CANCEL == '1' else False
 VIEW_CONFIG['theme_name'] = THEME_NAME
 VIEW_CONFIG['printer_type'] = PRINTER_TYPE
+VIEW_CONFIG['payment_rules'] = PAYMENT_RULES
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')

@@ -165,13 +165,13 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     lendata = format(int(lendata), 'x').upper()
                     LOG.fw("019:lendata:", lendata)
                     dataToCard = "00E50000" + lendata + combinedata
-                    res_str, resreport = prepaid.topup_apdusend(b"255", dataToCard)
+                    res_str, resreport = prepaid.send_apdu_cmd(b"255", dataToCard)
                     ErrorCode = res_str
 
                     LOG.fw("019:SendDataToCard update = ", ErrorCode)
 
                     if res_str == "0000":
-                        res_str, resreport = prepaid.topup_apdusend(b"255", "00E0000000")
+                        res_str, resreport = prepaid.send_apdu_cmd(b"255", "00E0000000")
 
                         if res_str == "0000":
                             dataToCardConfirm = resreport
@@ -216,7 +216,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                         res = True
                                         break
                                     else:
-                                        res_str, resreport = prepaid.topup_apdusend(b"255", dataToCardConfirm)
+                                        res_str, resreport = prepaid.send_apdu_cmd(b"255", dataToCardConfirm)
                                         # res_str = prepaid_utils.to_4digit(res_w)
                                         ErrorCode = res_str
 
@@ -264,7 +264,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                     ResReversal = False
                                     errmsg = "REVERSAL_DONE"
                                 else:
-                                    res_str, resreport = prepaid.topup_apdusend(b"255", StatusReversal)
+                                    res_str, resreport = prepaid.send_apdu_cmd(b"255", StatusReversal)
                                     # res_str = prepaid_utils.to_4digit(res_w)
 
                                     if res_str == "0000":
@@ -318,7 +318,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     updateStatusConfirm = "PENDING"
                     dataToCardConfirm = ""
 
-                    res_str, resreport = prepaid.topup_apdusend(b"255", dataToCard)
+                    res_str, resreport = prepaid.send_apdu_cmd(b"255", dataToCard)
                     ErrorCode = res_str
 
                     LOG.fw("019:SendDataToCard update = ", ErrorCode)
@@ -349,7 +349,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                     res = True
                                     break
                                 else:
-                                    res_str, resreport = prepaid.topup_apdusend("255", dataToCardConfirm)
+                                    res_str, resreport = prepaid.send_apdu_cmd("255", dataToCardConfirm)
                                     # res_str = prepaid_utils.to_4digit(res_w)
                                     LOG.fw("019:SendDataToCard confirm = ", ErrorCode)
 
@@ -405,7 +405,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                     ResReversal = False
                                     errmsg = "REVERSAL_DONE"
                                 else:
-                                    res_str, resreport = prepaid.topup_apdusend(b"255", StatusReversal)
+                                    res_str, resreport = prepaid.send_apdu_cmd(b"255", StatusReversal)
                                     # res_str = prepaid_utils.to_4digit(res_w)
 
                                     if res_str == "0000":
@@ -511,9 +511,9 @@ def mandiri_get_log_priv():
         if resultStr == "0000":
             if attr == "":
                 attr = "6A86"
-            resultStr, rapdu = prepaid.topup_apdusend("255", "00A40400080000000000000001")
+            resultStr, rapdu = prepaid.send_apdu_cmd("255", "00A40400080000000000000001")
             if resultStr == "0000":
-                resultStr, rapdu = prepaid.topup_apdusend("255", "00B300003F")
+                resultStr, rapdu = prepaid.send_apdu_cmd("255", "00B300003F")
                 if resultStr == "0000":
                     # New Applet
                     if attr.upper() == "6A86":
@@ -521,7 +521,7 @@ def mandiri_get_log_priv():
                         i = 0
                         while resultStr == "0000" and i <= max_t:
                             if i == 4:
-                                resultStr, rapdu = prepaid.topup_apdusend("255", "00D1050000")
+                                resultStr, rapdu = prepaid.send_apdu_cmd("255", "00D1050000")
                                 if rapdu == ('0'*240) or ('0'*100) in rapdu: 
                                     i = i + 1
                                     continue
@@ -544,7 +544,7 @@ def mandiri_get_log_priv():
                                     GetLogMandiri = rapdu
                             else:
                                 apdu = "00D10"+str(i)+"0000"
-                                resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                                resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                                 if rapdu == ('0'*240) or ('0'*100) in rapdu: 
                                     i = i + 1
                                     continue
@@ -566,7 +566,7 @@ def mandiri_get_log_priv():
                         i = 0
                         while resultStr == "0000" and i <= max_t:
                             if i == 10:
-                                resultStr, rapdu = prepaid.topup_apdusend("255", "00B20A001E")
+                                resultStr, rapdu = prepaid.send_apdu_cmd("255", "00B20A001E")
                                 if resultStr == "0000":
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
@@ -582,7 +582,7 @@ def mandiri_get_log_priv():
                                     GetLogMandiri = rapdu
                             else:
                                 apdu = "00B20"+str(i)+"001E"
-                                resultStr, rapdu = prepaid.topup_apdusend("255", apdu)
+                                resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                                 if resultStr == "0000":
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
@@ -690,7 +690,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
     dataToCard = ""
 
     
-    res_str, uid = prepaid.topup_apdusend(C_Slot, b"00B4000007")
+    res_str, uid = prepaid.send_apdu_cmd(C_Slot, b"00B4000007")
 
     # res_str = prepaid_utils.to_4digit(res)
 
@@ -739,7 +739,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             
             if code == "200" or code == 200:
                 updateStatusConfirm = "PENDING"
-                res_str, resreport = prepaid.topup_apdusend(C_Slot, dataToCard)
+                res_str, resreport = prepaid.send_apdu_cmd(C_Slot, dataToCard)
                 # res_str = prepaid_utils.to_4digit(res)
                 #if 200
                 if res_str == "0000":
@@ -770,7 +770,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
                                 res = True
                                 break
                             else:
-                                res_str, resreport = prepaid.topup_apdusend(C_Slot, dataToCardConfirm)
+                                res_str, resreport = prepaid.send_apdu_cmd(C_Slot, dataToCardConfirm)
                                 # res_str = prepaid_utils.to_4digit(res_w)
 
                                 if res_str == "0000":
@@ -820,7 +820,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
                                 ResReversal = False
                                 errmsg = "REVERSAL_DONE"
                             else:
-                                res_str, resreport = prepaid.topup_apdusend(C_Slot, StatusReversal)
+                                res_str, resreport = prepaid.send_apdu_cmd(C_Slot, StatusReversal)
                                 # res_str = prepaid_utils.to_4digit(res_w)
 
                                 if res_str == "0000":
@@ -1152,10 +1152,10 @@ def mandiri_get_last_report_priv(C_Slot):
     report_2 = ""
 
     try:
-        resultStr, report_1 = prepaid.topup_apdusend(C_Slot, "00C2180000")
+        resultStr, report_1 = prepaid.send_apdu_cmd(C_Slot, "00C2180000")
 
         if resultStr == "0000":
-            resultStr, report_2 = prepaid.topup_apdusend(C_Slot, "00C2040000")
+            resultStr, report_2 = prepaid.send_apdu_cmd(C_Slot, "00C2040000")
             msg = report_1 + report_2        
                 
     except Exception as ex:

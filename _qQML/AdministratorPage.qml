@@ -594,24 +594,24 @@ Base{
             }
         }
 
-        AdminPanelButton{
-            id: test_update_app
-            z: 10
-            button_text: 'update\napp'
-            visible: false
-            modeReverse: true
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    if (press != '0') return;
-                    press = '1';
-                    _SLOT.user_action_log(operatorName + '- Admin Page "Force Update App"');
-                    console.log('update_app is pressed..!');
-                    popup_loading.open();
-                    _SLOT.start_do_update();
-                }
-            }
-        }
+        // AdminPanelButton{
+        //     id: test_update_app
+        //     z: 10
+        //     button_text: 'update\napp'
+        //     visible: false
+        //     modeReverse: true
+        //     MouseArea{
+        //         anchors.fill: parent
+        //         onClicked: {
+        //             if (press != '0') return;
+        //             press = '1';
+        //             _SLOT.user_action_log(operatorName + '- Admin Page "Force Update App"');
+        //             console.log('update_app is pressed..!');
+        //             popup_loading.open();
+        //             _SLOT.start_do_update();
+        //         }
+        //     }
+        // }
 
         AdminPanelButton{
             id: open_explorer

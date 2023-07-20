@@ -27,7 +27,7 @@ from _sService import _ProductService
 from _dDevice import _BILL
 from _sService import _TopupService
 from _sService import _SettlementService
-from _sService import _UpdateAppService
+# from _sService import _UpdateAppService
 from _sService import _PPOBService
 from _sService import _QRPaymentService
 from _sService import _GeneralPaymentService
@@ -380,9 +380,9 @@ class SlotHandler(QObject):
         _Sync.start_check_bni_deposit()
     start_check_bni_deposit = pyqtSlot()(start_check_bni_deposit)
 
-    def start_do_update(self):
-        _UpdateAppService.start_do_update()
-    start_do_update = pyqtSlot()(start_do_update)
+    # def start_do_update(self):
+    #     _UpdateAppService.start_do_update()
+    # start_do_update = pyqtSlot()(start_do_update)
 
     def start_get_ppob_product(self):
         _PPOBService.start_get_ppob_product()
@@ -734,7 +734,7 @@ def set_signal_handler():
     _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.connect(view.rootObject().result_activation_bni)
     _CD.CD_SIGNDLER.SIGNAL_CD_READINESS.connect(view.rootObject().result_cd_readiness)
     _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
-    _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
+    # _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
     _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_SETTING.connect(view.rootObject().result_get_payment_setting)
     _KioskService.K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.connect(view.rootObject().result_sync_ads)

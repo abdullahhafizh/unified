@@ -40,7 +40,7 @@ class BniActivate(object):
                 
                 # Init BNI
                 # print("Init data BNI")
-                param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+ _Common.SLOT_SAM1_BNI + '|' + _Common.TID_BNI
+                param = _bniSCard2._QPROX.QPROX['INIT_SAM_BNI']+'|'+ _Common.SLOT_SAM1_BNI + '|' + _Common.TID_BNI
                 response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
                 # print("Sending data INIT")
                 if response != 0 or "12292" in result : raise _bniSCard2.bniSCardError("Error response = "+ str(response) + " result = "+ result)
@@ -111,7 +111,7 @@ class BniActivate(object):
     #             _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
             
             
-    #         param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
+    #         param = _bniSCard2._QPROX.QPROX['INIT_SAM_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
     #         response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
 
     #         if response != 0 or "12292" in result : raise bniSCardError("Error response = "+ str(response) + " result = "+ result)
@@ -190,7 +190,7 @@ class BniActivate(object):
     #         if res == 0:
     #             _bniSCard2.LOGGER.info("Purse Sebelum Aktivasi = "+ hasil)
             
-    #         # param = _bniSCard2._QPROX.QPROX['INIT_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
+    #         # param = _bniSCard2._QPROX.QPROX['INIT_SAM_BNI']+'|'+str(4) + '|' + _Common.TID_BNI
     #         # response, result = _bniSCard2._Command.send_request(param=param, output=_bniSCard2._Command.MO_REPORT, wait_for = 1.5)
             
     #         # if response != 0 or "12292" in result : raise bniSCardError("Error response = "+ str(response) + " result = "+ result)

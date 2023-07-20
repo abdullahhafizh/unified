@@ -267,7 +267,14 @@ def done(param, __global_response__):
 
 #020
 def get_purse_data(param, __global_response__):
-    res_str, reportPurse, purseError = prepaid.topup_pursedata()
+    Param = param.split('|')
+    if len(Param) < 1:
+        res_str, reportPurse, purseError = prepaid.topup_pursedata()
+    else:
+        prepaid.topup_card_disconnect()
+        purseMode = Param[0]
+        LOG.fw("020:Mode = ", purseMode)
+        res_str, cardUID, reportPurse, cardAttr = prepaid.topup_get_carddata()
 
     __global_response__["Result"] = res_str
 
@@ -339,7 +346,7 @@ def send_apdu(param, __global_response__):
     LOG.fw("034:Parameter = ", C_Slot)
     LOG.fw("034:Parameter = ", C_APDU)
 
-    res_str, RAPDU = prepaid.topup_apdusend(C_Slot, C_APDU)
+    res_str, RAPDU = prepaid.send_apdu_cmd(C_Slot, C_APDU)
 
     # res_str = format(res, 'x')
     # if len(res_str) < 4 :

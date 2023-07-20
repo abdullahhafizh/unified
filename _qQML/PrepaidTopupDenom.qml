@@ -294,6 +294,7 @@ Base{
         //===
 
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
+
         //Auto Payment Process Base on UI Simplification
         if (VIEW_CONFIG.ui_simplify) {
             var textMain = 'Memeriksa kembali kartu prabayar Anda';
@@ -302,6 +303,53 @@ Base{
         }
         //Must Press Flagging Here To Avoid Multi Trigger
         press = '0';
+    }
+
+
+    function do_validate_payment_rules(amount){
+        // VIEW_CONFIG.payment_rules = 'cash:>:10000,qr:<:100000';
+        if (amount == undefined) amount = 0;
+        var existing_payment = activePayment;
+        if (VIEW_CONFIG.payment_rules !== undefined){
+            if (VIEW_CONFIG.payment_rules.indexOf(':') > -1){
+                var rules = VIEW_CONFIG.payment_rules.split(',');
+                for (var r in rules){
+                    var removeChannel = false;
+                    var channel = r.split(':')[0];
+                    var opr = r.split(':')[1];
+                    var limit = r.split(':')[2];
+                    switch (opr){
+                        case '>':
+                            if (parseInt(amount) < parseInt(limit)) removeChannel = true;
+                        break;
+                        case '<':
+                            if (parseInt(amount) > parseInt(limit)) removeChannel = true;
+                        break;
+                        case '=':
+                            if (parseInt(amount) != parseInt(limit)) removeChannel = true;
+                        break;
+                        case '<>':
+                            if (parseInt(amount) = parseInt(limit)) removeChannel = true;
+                        break;
+                    }
+                    if (removeChannel){
+                        if (channel == 'qr'){
+                            activePayment = [];
+                            if (existing_payment.indexOf('cash')) activePayment.push('cash');
+                            if (existing_payment.indexOf('debit')) activePayment.push('debit');
+                        } else if (activePayment.indexOf(channel) > -1){
+                            activePayment = activePayment.filter(function(value, index, arr){ return value != channel });
+                        }
+                        console.log('Removing Channel', channel, activePayment);
+                    }
+                }
+            }
+        }
+        if (activePayment.length == 0){
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Semua channel pembayaran untuk transaksi ini tidak aktif.', 'backToMain', false );
+            return;
+        }
     }
 
     function define_price(p){
@@ -409,6 +457,12 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('set_selected_denom', d, now);
         selectedDenom = d;
+
+        totalPay = parseInt(selectedDenom) + parseInt(adminFee);
+
+        // Add Payment Rules Validation
+        do_validate_payment_rules(totalPay);
+
         press = '0';
         //No Payment Selection Needed If Only 1 Available
         if (activePayment.length==1){

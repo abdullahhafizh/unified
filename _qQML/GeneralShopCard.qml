@@ -463,6 +463,9 @@ Base{
             card_show_3.set_select();
             break;
         }
+        // RECHECK: Validate Payment Rules
+        do_validate_payment_rules(defaultItemPrice);
+
         //No Payment Selection Needed If Only 1 Available
         if (activePayment.length==1){
             console.log('direct process_selected_payment', activePayment[0]);
@@ -474,6 +477,54 @@ Base{
             _SLOT.start_play_audio('choose_payment_press_proceed');
         }
     }
+
+
+    function do_validate_payment_rules(amount){
+        // VIEW_CONFIG.payment_rules = 'cash:>:10000,qr:<:100000';
+        if (amount == undefined) amount = 0;
+        var existing_payment = activePayment;
+        if (VIEW_CONFIG.payment_rules !== undefined){
+            if (VIEW_CONFIG.payment_rules.indexOf(':') > -1){
+                var rules = VIEW_CONFIG.payment_rules.split(',');
+                for (var r in rules){
+                    var removeChannel = false;
+                    var channel = r.split(':')[0];
+                    var opr = r.split(':')[1];
+                    var limit = r.split(':')[2];
+                    switch (opr){
+                        case '>':
+                            if (parseInt(amount) < parseInt(limit)) removeChannel = true;
+                        break;
+                        case '<':
+                            if (parseInt(amount) > parseInt(limit)) removeChannel = true;
+                        break;
+                        case '=':
+                            if (parseInt(amount) != parseInt(limit)) removeChannel = true;
+                        break;
+                        case '<>':
+                            if (parseInt(amount) = parseInt(limit)) removeChannel = true;
+                        break;
+                    }
+                    if (removeChannel){
+                        if (channel == 'qr'){
+                            activePayment = [];
+                            if (existing_payment.indexOf('cash')) activePayment.push('cash');
+                            if (existing_payment.indexOf('debit')) activePayment.push('debit');
+                        } else if (activePayment.indexOf(channel) > -1){
+                            activePayment = activePayment.filter(function(value, index, arr){ return value != channel });
+                        }
+                        console.log('Removing Channel', channel, activePayment);
+                    }
+                }
+            }
+        }
+        if (activePayment.length == 0){
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Semua channel pembayaran untuk transaksi ini tidak aktif.', 'backToMain', false );
+            return;
+        }
+    }
+        
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
