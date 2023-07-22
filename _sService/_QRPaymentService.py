@@ -96,14 +96,15 @@ def do_get_qr(payload, mode, serialize=True):
     param = payload
     if serialize is True:
         param = serialize_payload(payload)
+        param['provider'] = mode.lower()
     # print('pyt: ' + str(_Helper.whoami()))
     # print('pyt: ' + str(payload))
     # print('pyt: ' + mode)
     CANCELLING_QR_FLAG = False
     try:
-        url = _Common.QR_HOST+mode.lower()+'/get-qr'
-        if not _Common.QR_PROD_STATE[mode]:
-            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
+        endpoint = 'general-payment/order'
+        host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
+        url = host + endpoint
         s, r = _HTTPAccess.post_to_url(url=url, param=param, custom_timeout=60)
         HISTORY_GET_QR.append(mode+'_'+param['trx_id'])
         if s == 200 and r['response']['code'] == 200:
@@ -201,18 +202,19 @@ def do_check_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         payload = serialize_payload(payload)
+        payload['provider'] = mode.lower()
     # _Helper.dump(payload)
     attempt = 0
     success = False
     while not success:
         try:
-            url = _Common.QR_HOST+mode.lower()+'/status-payment'
-            if not _Common.QR_PROD_STATE[mode]:
-                url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
+            endpoint = 'general-payment/status'
+            host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
+            url = host + endpoint
             # Handle QR Payment Cancellation Realtime Abort
             if CANCELLING_QR_FLAG is True:
                 cancel_param = {
-                    'url'       : url.replace('status-payment', 'cancel-payment'),
+                    'url'       : url.replace('/status', '/cancel'),
                     'payload'   : payload,
                     'mode'      : mode
                 }
@@ -278,14 +280,15 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
         'trx_id': trx_id,
         'mid': _Common.QR_MID,
         'tid': _Common.TID,
+        'provider': mode.lower()
     }
     # _Helper.dump(payload)
     result = False, None
     r = dict()
     try:
-        url = _Common.QR_HOST+mode.lower()+'/status-payment'
-        if not _Common.QR_PROD_STATE[mode.upper()]:
-            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
+        endpoint = 'general-payment/status'
+        host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
+        url = host + endpoint
         # Handle QR Payment Cancellation Realtime Abort
             # _Helper.dump([success, attempt])
         s, r = _HTTPAccess.post_to_url(url=url, param=payload)
@@ -352,10 +355,11 @@ def do_pay_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         payload = serialize_payload(payload)
+        payload['provider'] = mode.lower()
     try:
-        url = _Common.QR_HOST+mode.lower()+'/pay-qr'
-        if not _Common.QR_PROD_STATE[mode]:
-            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/pay-qr'
+        endpoint = 'general-payment/order'
+        host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
+        url = host + endpoint
         s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
@@ -394,10 +398,11 @@ def do_confirm_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         payload = serialize_payload(payload)
+        payload['provider'] = mode.lower()
     try:
-        url = _Common.QR_HOST+mode.lower()+'/trx-confirm'
-        if not _Common.QR_PROD_STATE[mode]:
-            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/trx-confirm'
+        endpoint = 'general-payment/confirm'
+        host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
+        url = host + endpoint
         s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
@@ -432,8 +437,8 @@ def cancel_qr_global(data):
         return
     try:
         s, r = _HTTPAccess.post_to_url(url=url, param=payload)
-        if s != 200 or r['response'].get('code') != 200:
-            _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+        # if s != 200 or r['response'].get('code') != 200:
+        #     _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
         LOGGER.debug((mode, str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((mode, str(e)))
