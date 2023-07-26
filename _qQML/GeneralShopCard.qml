@@ -502,7 +502,7 @@ Base{
                             if (parseInt(amount) != parseInt(limit)) removeChannel = true;
                         break;
                         case '<>':
-                            if (parseInt(amount) = parseInt(limit)) removeChannel = true;
+                            if (parseInt(amount) == parseInt(limit)) removeChannel = true;
                         break;
                     }
                     if (removeChannel){
