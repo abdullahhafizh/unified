@@ -83,7 +83,7 @@ USE_PREV_THEME = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^theme'
 USE_PREV_ADS = True if _ConfigParser.get_set_value('GENERAL', 'use^prev^ads', '0') == '1' else False
 
 PAYMENT_RULES = _ConfigParser.get_set_value('GENERAL', 'payment^rules', '')
-THEME_WITH_PAYMENT_RULES = _ConfigParser.get_set_value('GENERAL', 'payment^rules^thems', 'MRT').split('|')
+THEME_WITH_PAYMENT_RULES = _ConfigParser.get_set_value('GENERAL', 'payment^rules^themes', 'MRT').split('|')
 # Sample Payment Rules
 # If Cash Will Shown Only If Amount Greater Than 10000 and QR Will not active if amount greater than 100000
 # cash:>:10000,qr:<:100000

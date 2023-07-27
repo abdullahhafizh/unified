@@ -693,6 +693,8 @@ def direct_card_balance():
                 output['able_topup'] = '1004'
             else:
                 output['able_topup'] = '0000'
+        elif bank_name == 'BCA':
+            output['history'] = bca_card_history_direct()
                 
         # Add Check Balance Timestamp
         output['timestamp'] = _Helper.time_string()
@@ -2168,6 +2170,12 @@ def new_topup_failure_handler(bank, trxid, amount, pending_data=None):
     
     if bank == 'MANDIRI':
         amount = int(amount) - _Common.KIOSK_ADMIN
+        
+    elif bank == 'BCA':
+        if len(card_check.get('history', '')) < 4:
+            LOGGER.warning(('TOPUP_FAILURE_03', 'CARD_NOT_DETECTED_3_ATTEMPTS'))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#TOPUP_FAILURE_03')
+            return
     
     card_check['prev_balance'] = last_card_check['balance']
     
@@ -2553,7 +2561,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             else:
                 pending_data = {}
             # Re-write Last Audit Result
-            card_history = bca_card_history_direct()   
+            # card_history = bca_card_history_direct()   
+            card_history = card_data.get('history')
             last_audit_result.update({
                     'tid': _Common.TID_TOPUP_BCA,
                     'mid': _Common.MID_TOPUP_BCA,
