@@ -1327,7 +1327,7 @@ def reset_db_record():
 
 def user_action_log(log):
     if '[Homepage]' in log:
-        LOGGER.info(('[STANDBY IN HOMEPAGE]'))
+        LOGGER.info(('[STANDBY IN HOMEPAGE]', _Common.VERSION))
     else:
         LOGGER.info(('[USER_ACTION]', str(log)))
 
