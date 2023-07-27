@@ -307,8 +307,9 @@ Base{
 
 
     function do_validate_payment_rules(amount){
+        console.log('do_validate_payment_rules', amount, VIEW_CONFIG.payment_rules);
         // VIEW_CONFIG.payment_rules = 'cash:>:10000,qr:<:100000';
-        if (amount == undefined) amount = 0;
+        if (amount === undefined) amount = 0;
         var existing_payment = activePayment;
         if (VIEW_CONFIG.payment_rules !== undefined){
             if (VIEW_CONFIG.payment_rules.indexOf(':') > -1){
