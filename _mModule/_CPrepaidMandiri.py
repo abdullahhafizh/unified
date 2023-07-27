@@ -473,8 +473,10 @@ def get_card_data():
 
 
 def mandiri_get_log(param, __global_response__):
+    Param = param.split('|')
+    raw = True if len(Param) > 1 else False
 
-    res_str, errmsg = mandiri_get_log_priv()
+    res_str, errmsg = mandiri_get_log_priv(raw)
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -497,13 +499,14 @@ def mandiri_get_log(param, __global_response__):
     return res_str
 
 
-def mandiri_get_log_priv():
+def mandiri_get_log_priv(raw = False):
     resultStr = ""
     ErrorCode = ""
     resreport = ""
     ErrMsg = ""
     msg = ""
     GetLogMandiri = ""
+    RawReport = []
 
     try:
         prepaid.topup_card_disconnect()
@@ -526,6 +529,7 @@ def mandiri_get_log_priv():
                                     i = i + 1
                                     continue
                                 if resultStr == "0000":
+                                    RawReport.append(rapdu)
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
@@ -549,6 +553,7 @@ def mandiri_get_log_priv():
                                     i = i + 1
                                     continue
                                 if resultStr == "0000":
+                                    RawReport.append(rapdu)
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
@@ -568,6 +573,7 @@ def mandiri_get_log_priv():
                             if i == 10:
                                 resultStr, rapdu = prepaid.send_apdu_cmd("255", "00B20A001E")
                                 if resultStr == "0000":
+                                    RawReport.append(rapdu)
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
@@ -584,6 +590,7 @@ def mandiri_get_log_priv():
                                 apdu = "00B20"+str(i)+"001E"
                                 resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
                                 if resultStr == "0000":
+                                    RawReport.append(rapdu)
                                     dates = rapdu[:12]
                                     tid = rapdu[12:20]
                                     count = prepaid_utils.getint(rapdu[20:28])
@@ -609,7 +616,10 @@ def mandiri_get_log_priv():
         resultStr = "1"
         msg = "{0}".format(ex)
     
-    return resultStr, msg
+    if raw:
+        return resultStr, "#".join(RawReport)
+    else:
+        return resultStr, msg
 
 
 def mandiri_update_sam_balance(param, __global_response__):

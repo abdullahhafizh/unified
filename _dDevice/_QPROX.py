@@ -658,7 +658,7 @@ def bca_card_info():
         return False, result
 
 
-def direct_card_balance():
+def direct_card_balance(history_on=[]):
     param = QPROX['BALANCE'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
@@ -693,8 +693,14 @@ def direct_card_balance():
                 output['able_topup'] = '1004'
             else:
                 output['able_topup'] = '0000'
-        elif bank_name == 'BCA':
-            output['history'] = bca_card_history_direct()
+        
+        # Add Direct Check History On Certain Condition
+        if bank_name in history_on:
+            if bank_name == 'BCA': output['history'] = bca_card_history_direct()
+            if bank_name == 'MANDIRI': output['history'] = mdr_card_history_direct()
+            if bank_name == 'BNI': output['history'] = bni_card_history_direct()
+            if bank_name == 'BRI': output['history'] = bri_card_history_direct()
+            if bank_name == 'DKI': output['history'] = dki_card_history_direct()
                 
         # Add Check Balance Timestamp
         output['timestamp'] = _Helper.time_string()
@@ -1978,6 +1984,15 @@ def bni_card_history_direct(row=30):
         return "", ""
 
 
+def mdr_card_history_direct():
+    param = QPROX['CARD_HISTORY_MANDIRI'] + '|' + 'RAW' + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0 and len(result) > 10:
+        return result
+    else:
+        return ''
+
+
 def bri_card_history_direct():
     param = QPROX['CARD_HISTORY_BRI_RAW'] + '|' + _Common.SLOT_BRI + '|' + 'MODE_RAW' + '|'
     response, result = _Command.send_request(param=param, output=None)
@@ -2153,7 +2168,7 @@ def new_topup_failure_handler(bank, trxid, amount, pending_data=None):
             break
         reset_card_contactless()
         sleep(.5)
-        card_check = direct_card_balance()
+        card_check = direct_card_balance(history_on=['BCA'])
         if card_check is not False:
             if card_check['card_no'] != last_card_check['card_no']:
                 LOGGER.warning(('TOPUP_FAILURE_03', 'CARD_NO_NOT_MATCH'))
