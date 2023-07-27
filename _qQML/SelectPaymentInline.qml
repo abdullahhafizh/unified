@@ -362,6 +362,8 @@ Rectangle{
     }
 
     function open(){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('listActivePayment', now, listActivePayment);
         select_payment_popup.visible = true;
     }
 

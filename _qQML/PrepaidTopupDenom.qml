@@ -311,7 +311,7 @@ Base{
         // VIEW_CONFIG.payment_rules = 'cash:>:10000,qr:<:100000';
         if (amount === undefined) amount = 0;
         var existing_payment = activePayment;
-        if (VIEW_CONFIG.payment_rules !== undefined){
+        if (VIEW_CONFIG.payment_rules !== undefined || VIEW_CONFIG.payment_rules.length > 3){
             if (VIEW_CONFIG.payment_rules.indexOf(':') > -1){
                 var rules = VIEW_CONFIG.payment_rules.split(',');
                 for (var r in rules){
@@ -560,7 +560,7 @@ Base{
             provider = 'Flazz BCA';
             maxBalance = 2000000;
             //Flazz BCA Only Allowed Topup With Cash
-//            open_only_cash_payment();
+            open_only_cash_payment();
         }
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
