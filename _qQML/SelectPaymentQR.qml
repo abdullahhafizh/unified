@@ -600,9 +600,25 @@ Rectangle{
         id.set_active();
     }
 
+
+    function init_payment_channel(){
+        button_bni.visible = (listActivePayment.indexOf('bni-qris') > -1);
+        button_bca.visible = (listActivePayment.indexOf('bca-qris') > -1);
+        button_linkaja.visible = (listActivePayment.indexOf('linkaja') > -1);
+        button_duwit.visible = (listActivePayment.indexOf('duwit') > -1);
+        button_dana.visible = (listActivePayment.indexOf('dana') > -1);
+        button_shopeepay.visible = (listActivePayment.indexOf('shopeepay') > -1);
+        button_jakone.visible = (listActivePayment.indexOf('jakone') > -1);
+        button_gopay.visible = (listActivePayment.indexOf('gopay') > -1);
+        button_mdr.visible = (listActivePayment.indexOf('mdr-qris') > -1);
+        button_bri.visible = (listActivePayment.indexOf('bri-qris') > -1);
+        button_nobu.visible = (listActivePayment.indexOf('nobu-qris') > -1);
+    }
+
     function open(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('listActivePayment', now, listActivePayment);
+        init_payment_channel();
         select_payment_qr.visible = true;
     }
 

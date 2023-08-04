@@ -361,10 +361,21 @@ Rectangle{
         id.set_active();
     }
 
+    function init_payment_channel(){
+        button_cash.visible = (listActivePayment.indexOf('cash') > -1);
+        button_debit.visible = (listActivePayment.indexOf('debit') > -1);
+        button_ovo.visible = (listActivePayment.indexOf('ovo') > -1) && !_qrMultiEnable;
+        button_linkaja.visible = (listActivePayment.indexOf('linkaja') > -1) && !_qrMultiEnable;
+        button_duwit.visible = (listActivePayment.indexOf('duwit') > -1) && !_qrMultiEnable;
+        button_dana.visible = (listActivePayment.indexOf('dana') > -1) && !_qrMultiEnable;
+        button_shopeepay.visible = (listActivePayment.indexOf('shopeepay') > -1) && !_qrMultiEnable;
+        button_jakone.visible = (listActivePayment.indexOf('jakone') > -1) && !_qrMultiEnable;
+    }
+
     function open(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('listActivePayment', now, listActivePayment);
-        button_cash.visible = (listActivePayment.indexOf('cash') > -1);
+        init_payment_channel();
         select_payment_popup.visible = true;
     }
 
