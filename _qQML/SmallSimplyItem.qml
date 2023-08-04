@@ -78,7 +78,7 @@ Rectangle {
     Text {
         visible: closed_rectangle.visible
         anchors.fill: closed_rectangle
-        text: qsTr("CLOSED")
+        text: qsTr("")
         font.pixelSize: 35
         color: "black"
         font.bold: true
