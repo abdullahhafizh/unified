@@ -192,7 +192,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('bni-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('bni-qris') > -1)
+                // enabled: (listActivePayment.indexOf('bni-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BNI" Payment Method');
@@ -228,7 +228,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('bca-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('bca-qris') > -1)
+                // enabled: (listActivePayment.indexOf('bca-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BCA" Payment Method');
@@ -264,7 +264,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('mdr-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('mdr-qris') > -1)
+                // enabled: (listActivePayment.indexOf('mdr-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "MANDIRI" Payment Method');
@@ -300,7 +300,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('nobu-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('nobu-qris') > -1)
+                // enabled: (listActivePayment.indexOf('nobu-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "NOBU" Payment Method');
@@ -336,7 +336,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('bri-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('bri-qris') > -1)
+                // enabled: (listActivePayment.indexOf('bri-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BRI" Payment Method');
@@ -372,7 +372,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('gopay') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('gopay') > -1)
+                // enabled: (listActivePayment.indexOf('gopay') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "GOPAY" Payment Method');
@@ -408,7 +408,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('linkaja') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('linkaja') > -1)
+                // enabled: (listActivePayment.indexOf('linkaja') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "LINKAJA" Payment Method');
@@ -444,7 +444,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('duwit') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('duwit') > -1)
+                // enabled: (listActivePayment.indexOf('duwit') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DUWIT" Payment Method');
@@ -480,7 +480,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('dana') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('dana') > -1)
+                // enabled: (listActivePayment.indexOf('dana') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DANA" Payment Method');
@@ -516,7 +516,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('shopeepay') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('shopeepay') > -1)
+                // enabled: (listActivePayment.indexOf('shopeepay') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
@@ -552,7 +552,7 @@ Rectangle{
             // isActivated: (listActivePayment.indexOf('jakone') > -1)
             modeReverse: false
             MouseArea{
-                enabled: (listActivePayment.indexOf('jakone') > -1)
+                // enabled: (listActivePayment.indexOf('jakone') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "JAKONE" Payment Method');
@@ -639,36 +639,5 @@ Rectangle{
     function close(){
         select_payment_qr.visible = false;
     }
-
-
-//    Flickable{
-//        id: flick_button
-//        width: parent.width
-//        height: 200
-//        anchors.bottom: parent.bottom
-//        anchors.bottomMargin: 25
-//        anchors.horizontalCenter: notif_rec.horizontalCenter
-//        contentHeight: row_button.height
-//        contentWidth: row_button.width
-//    }
-
-
-//    CircleButton{
-//        id:back_button
-//        anchors.left: parent.left
-//        anchors.leftMargin: 30
-//        anchors.bottom: parent.bottom
-//        anchors.bottomMargin: 30
-//        button_text: 'BATAL'
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('press "BATAL" In Select Payment Frame');
-//                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
-//            }
-//        }
-//    }
-
 
 }
