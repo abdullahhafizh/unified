@@ -474,6 +474,7 @@ Base{
         }
         if (!select_payment.visible){
             select_payment.open();
+            notice_card_purchase.visible = false;
             _SLOT.start_play_audio('choose_payment_press_proceed');
         }
     }
@@ -596,7 +597,7 @@ Base{
             }
         }
 
-   }
+    }
 
 
     BoxTitle{
@@ -610,9 +611,9 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        // if(VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta')
         title_text: (VIEW_CONFIG.theme_name.toLowerCase() == 'transjakarta') ? 
-         'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG' : (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') ? 'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 3 KARTU PER ORANG' : ""
+        'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 1 KARTU PER ORANG' : (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') ? 
+        'MOHON PERHATIAN\nPEMBELIAN KARTU MAKSIMAL 3 KARTU PER ORANG' : ""
         boxColor: VIEW_CONFIG.frame_color
     }
 

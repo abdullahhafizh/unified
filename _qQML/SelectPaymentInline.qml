@@ -48,7 +48,7 @@ Rectangle{
             sourceImage: "source/credit card black.png"
             itemName: "Kartu Debit"
             modeReverse: true
-            visible: listActivePayment.indexOf('debit') > -1
+            visible: (listActivePayment.indexOf('debit') > -1)
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -116,7 +116,7 @@ Rectangle{
             sourceImage: "source/cash black.png"
             itemName: "Tunai"
             modeReverse: true
-            visible: listActivePayment.indexOf('cash') > -1
+            visible: (listActivePayment.indexOf('cash') > -1)
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -150,7 +150,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' :"QR OVO"
             modeReverse: true
-            visible: listActivePayment.indexOf('ovo') > -1 && !_qrMultiEnable
+            visible: (listActivePayment.indexOf('ovo') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -184,7 +184,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS LinkAja"
             modeReverse: true
-            visible: listActivePayment.indexOf('linkaja') > -1 && !_qrMultiEnable
+            visible: (listActivePayment.indexOf('linkaja') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -218,7 +218,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS Duwit"
             modeReverse: true
-            visible: listActivePayment.indexOf('duwit') > -1 && !_qrMultiEnable
+            visible: (listActivePayment.indexOf('duwit') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -252,7 +252,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS Dana"
             modeReverse: true
-            visible: listActivePayment.indexOf('dana') > -1 && !_qrMultiEnable
+            visible: (listActivePayment.indexOf('dana') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -286,7 +286,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS ShopeePay"
             modeReverse: true
-            visible: listActivePayment.indexOf('shopeepay') > -1 && !_qrMultiEnable
+            visible: (listActivePayment.indexOf('shopeepay') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -320,7 +320,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS JakOne"
             modeReverse: true
-            visible: listActivePayment.indexOf('jakone') > -1 && !_qrMultiEnable
+            visible: (listActivePayment.indexOf('jakone') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -364,6 +364,7 @@ Rectangle{
     function open(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('listActivePayment', now, listActivePayment);
+        console.log('cash', (listActivePayment.indexOf('cash') > -1));
         select_payment_popup.visible = true;
     }
 

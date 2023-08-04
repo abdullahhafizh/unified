@@ -189,10 +189,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/bni_white_logo.png"
             itemName: "B N I"
-            isActivated: listActivePayment.indexOf('bni-qris') > -1
+            isActivated: (listActivePayment.indexOf('bni-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('bni-qris') > -1
+                enabled: (listActivePayment.indexOf('bni-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BNI" Payment Method');
@@ -225,10 +225,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/bca_white_logo.png"
             itemName: "B C A"
-            isActivated: listActivePayment.indexOf('bca-qris') > -1
+            isActivated: (listActivePayment.indexOf('bca-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('bca-qris') > -1
+                enabled: (listActivePayment.indexOf('bca-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BCA" Payment Method');
@@ -261,10 +261,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/mdr_white_logo.png"
             itemName: "MANDIRI"
-            isActivated: listActivePayment.indexOf('mdr-qris') > -1
+            isActivated: (listActivePayment.indexOf('mdr-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('mdr-qris') > -1
+                enabled: (listActivePayment.indexOf('mdr-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "MANDIRI" Payment Method');
@@ -297,10 +297,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/nobu_white_logo.png"
             itemName: "NOBU"
-            isActivated: listActivePayment.indexOf('nobu-qris') > -1
+            isActivated: (listActivePayment.indexOf('nobu-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('nobu-qris') > -1
+                enabled: (listActivePayment.indexOf('nobu-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "NOBU" Payment Method');
@@ -333,10 +333,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/bri_white_logo.png"
             itemName: "B R I"
-            isActivated: listActivePayment.indexOf('bri-qris') > -1
+            isActivated: (listActivePayment.indexOf('bri-qris') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('bri-qris') > -1
+                enabled: (listActivePayment.indexOf('bri-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "BRI" Payment Method');
@@ -369,10 +369,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/gopay_white_logo.png"
             itemName: "GOPAY"
-            isActivated: listActivePayment.indexOf('gopay') > -1
+            isActivated: (listActivePayment.indexOf('gopay') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('gopay') > -1
+                enabled: (listActivePayment.indexOf('gopay') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "GOPAY" Payment Method');
@@ -405,10 +405,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/linkaja_white_logo.png"
             itemName: "Linkaja"
-            isActivated: listActivePayment.indexOf('linkaja') > -1
+            isActivated: (listActivePayment.indexOf('linkaja') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('linkaja') > -1
+                enabled: (listActivePayment.indexOf('linkaja') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "LINKAJA" Payment Method');
@@ -441,10 +441,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/duwit_white_logo.png"
             itemName: "DUWIT"
-            isActivated: listActivePayment.indexOf('duwit') > -1
+            isActivated: (listActivePayment.indexOf('duwit') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('duwit') > -1
+                enabled: (listActivePayment.indexOf('duwit') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DUWIT" Payment Method');
@@ -477,10 +477,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/dana_white_logo.png"
             itemName: "DANA"
-            isActivated: listActivePayment.indexOf('dana') > -1
+            isActivated: (listActivePayment.indexOf('dana') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('dana') > -1
+                enabled: (listActivePayment.indexOf('dana') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DANA" Payment Method');
@@ -513,10 +513,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/shopeepay_white_logo.png"
             itemName: "SHOPEEPAY"
-            isActivated: listActivePayment.indexOf('shopeepay') > -1
+            isActivated: (listActivePayment.indexOf('shopeepay') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('shopeepay') > -1
+                enabled: (listActivePayment.indexOf('shopeepay') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
@@ -549,10 +549,10 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_logo/jakone_white_logo.png"
             itemName: "JAKONE"
-            isActivated: listActivePayment.indexOf('jakone') > -1
+            isActivated: (listActivePayment.indexOf('jakone') > -1)
             modeReverse: false
             MouseArea{
-                enabled: listActivePayment.indexOf('jakone') > -1
+                enabled: (listActivePayment.indexOf('jakone') > -1)
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "JAKONE" Payment Method');
@@ -601,6 +601,8 @@ Rectangle{
     }
 
     function open(){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('listActivePayment', now, listActivePayment);
         select_payment_qr.visible = true;
     }
 
