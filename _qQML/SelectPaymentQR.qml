@@ -476,10 +476,7 @@ Rectangle{
 
 
     function do_release_all_set_active(id){
-        button_cash.do_release();
-        button_debit.do_release();
         button_multi_qr.do_release();
-        // button_ovo.do_release();
         button_bni.do_release();
         button_bca.do_release();
         button_linkaja.do_release();
