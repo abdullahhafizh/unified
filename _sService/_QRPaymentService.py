@@ -96,7 +96,8 @@ def do_get_qr(payload, mode, serialize=True):
     param = payload
     if serialize is True:
         param = serialize_payload(payload)
-        param['provider'] = mode.lower()
+        param['provider'] = mode.lower().replace('-qris', '')
+        param['method'] = 'get-qr'
     # print('pyt: ' + str(_Helper.whoami()))
     # print('pyt: ' + str(payload))
     # print('pyt: ' + mode)
@@ -202,7 +203,8 @@ def do_check_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         payload = serialize_payload(payload)
-        payload['provider'] = mode.lower()
+        payload['provider'] = mode.lower().replace('-qris', '')
+        payload['method'] = 'status-payment'
     # _Helper.dump(payload)
     attempt = 0
     success = False
@@ -280,7 +282,8 @@ def one_time_check_qr(trx_id='', mode='shopeepay'):
         'trx_id': trx_id,
         'mid': _Common.QR_MID,
         'tid': _Common.TID,
-        'provider': mode.lower()
+        'provider': mode.lower().replace('-qris', ''),
+        'method': 'status-payment'
     }
     # _Helper.dump(payload)
     result = False, None
@@ -355,7 +358,8 @@ def do_pay_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         payload = serialize_payload(payload)
-        payload['provider'] = mode.lower()
+        payload['provider'] = mode.lower().replace('-qris', '')
+        payload['method'] = 'pay-qr'
     try:
         endpoint = 'general-payment/order'
         host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
@@ -398,7 +402,8 @@ def do_confirm_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         payload = serialize_payload(payload)
-        payload['provider'] = mode.lower()
+        payload['provider'] = mode.lower().replace('-qris', '')
+        payload['method'] = 'confirm-payment'
     try:
         endpoint = 'general-payment/confirm'
         host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
@@ -430,6 +435,7 @@ def cancel_qr_global(data):
         return
     url = data['url']
     payload = data['payload']
+    payload['method'] = 'cancel-payment'
     payload['endpoint'] = 'cancel-payment'
     mode = data['mode']
     if mode not in ['GOPAY', 'DANA', 'SHOPEEPAY']:
