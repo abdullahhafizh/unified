@@ -225,6 +225,7 @@ Base{
                 select_payment.close();
                 select_qr_provider.open();
                 notice_card_purchase.visible = false;
+                onProgressTask = false;
                 return;
             }
         }

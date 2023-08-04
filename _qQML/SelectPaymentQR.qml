@@ -42,77 +42,6 @@ Rectangle{
         spacing: (parent.width==1920) ? 40 : 20
 
         SmallSimplyItem {
-            id: button_cash
-            width: 200
-            height: 183
-            anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/cash black.png"
-            itemName: "Tunai"
-            modeReverse: true
-            visible: false
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    _SLOT.user_action_log('choose "CASH" Payment Method');
-                    var payment = 'cash';
-                    do_release_all_set_active(button_cash);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
-
-                }
-            }
-        }
-
-        SmallSimplyItem {
-            id: button_debit
-            width: 200
-            height: 183
-            anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/credit card black.png"
-            itemName: "Kartu Debit"
-            modeReverse: true
-            visible: false
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
-                    var payment = 'debit';
-                    do_release_all_set_active(button_debit);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
-
-
-                }
-            }
-        }
-
-        SmallSimplyItem {
             id: button_multi_qr
             width: 200
             height: 183
@@ -142,45 +71,10 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
-
-        // SmallSimplyItem {
-        //     id: button_ovo
-        //     width: 200
-        //     height: 183
-        //     anchors.verticalCenter: parent.verticalCenter
-        //     sourceImage: "source/qr_logo/ovo_white_logo.png"
-        //     itemName: "O V O"
-        //     isActivated: _qrOvoEnable
-        //     modeReverse: false
-        //     MouseArea{
-        //         enabled: _qrOvoEnable
-        //         anchors.fill: parent
-        //         onClicked: {
-        //             _SLOT.user_action_log('choose "OVO" Payment Method');
-        //             var payment = 'ovo';
-        //             do_release_all_set_active(button_ovo);
-        //             if (calledFrom=='prepaid_topup_denom'){
-        //                 if (prepaid_topup_denom.press != '0') return;
-        //                 prepaid_topup_denom.press = '1';
-        //                 prepaid_topup_denom.get_payment_method_signal(payment);
-        //             }
-        //             if (calledFrom=='general_shop_card'){
-        //                 if (general_shop_card.press != '0') return;
-        //                 general_shop_card.press = '1';
-        //                 general_shop_card.get_payment_method_signal(payment);
-        //             }
-        //             if (calledFrom=='global_input_number'){
-        //                 if (global_input_number.press != '0') return;
-        //                 global_input_number.press = '1';
-        //                 global_input_number.get_payment_method_signal(payment);
-        //             }
-        //         }
-        //     }
-        // }
 
         SmallSimplyItem {
             id: button_bni
@@ -213,7 +107,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -249,7 +143,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -285,7 +179,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -321,7 +215,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -357,7 +251,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -393,7 +287,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -429,7 +323,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -465,7 +359,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -501,7 +395,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -537,7 +431,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
@@ -573,7 +467,7 @@ Rectangle{
                         global_input_number.press = '1';
                         global_input_number.get_payment_method_signal(payment);
                     }
-
+                    close();
                 }
             }
         }
