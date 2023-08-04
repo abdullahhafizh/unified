@@ -98,6 +98,7 @@ def do_get_qr(payload, mode, serialize=True):
         param = serialize_payload(payload)
         param['provider'] = mode.lower().replace('-qris', '')
         param['method'] = 'get-qr'
+        param['partner_callback_url'] = _Common.BACKEND_URL + 'ping'
     # print('pyt: ' + str(_Helper.whoami()))
     # print('pyt: ' + str(payload))
     # print('pyt: ' + mode)
