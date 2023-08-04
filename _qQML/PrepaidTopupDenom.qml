@@ -280,6 +280,7 @@ Base{
             } else {
                 select_payment.close();
                 select_qr_provider.open();
+                notice_topup_single_denom.visible = false;
                 return;
             }            
         }
@@ -473,6 +474,7 @@ Base{
         }
         if (!select_payment.visible){
             select_payment.open();
+            notice_topup_single_denom.visible = false;
             _SLOT.start_play_audio('choose_payment_press_proceed');
         }
     }
