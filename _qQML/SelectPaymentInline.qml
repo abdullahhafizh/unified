@@ -364,7 +364,7 @@ Rectangle{
     function open(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('listActivePayment', now, listActivePayment);
-        console.log('cash', (listActivePayment.indexOf('cash') > -1));
+        button_cash.visible = (listActivePayment.indexOf('cash') > -1);
         select_payment_popup.visible = true;
     }
 
