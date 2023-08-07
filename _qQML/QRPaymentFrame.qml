@@ -196,7 +196,7 @@ Base{
         visible: successPayment
 
         Text{
-            text: 'Pembayaran QRIS sudah kami terima'
+            text: 'Pembayaran QRIS telah terkonfirmasi'
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
@@ -207,7 +207,7 @@ Base{
             font.family:"Ubuntu"
         }
         Text{
-            text: 'Sedang memproses transaksi Anda...'
+            text: 'Sedang melanjutkan transaksi Anda...'
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
