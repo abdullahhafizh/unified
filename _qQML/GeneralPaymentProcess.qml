@@ -558,7 +558,7 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), true )
             return;
         }
-        if (['TIMEOUT'].indexOf(result) > -1){
+        if (['TIMEOUT'].indexOf(result) > -1 && !isPaid){
             if (!refundFeature){
                 details.process_error = 1;
                 details_error_history_push(r)

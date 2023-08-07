@@ -70,10 +70,11 @@ def start_get_qr_global(payload):
 HISTORY_GET_QR = []
 QR_CHECK_PAYLOAD = None
 QR_DATA_RESPONSE = None
+OBSOLETE_QR_TRXID = []
 
 
 def do_get_qr(payload, mode, serialize=True):
-    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD
+    global CANCELLING_QR_FLAG, HISTORY_GET_QR, QR_CHECK_PAYLOAD, OBSOLETE_QR_TRXID
     payload = json.loads(payload)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY', 'JAKONE]:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -121,6 +122,9 @@ def do_get_qr(payload, mode, serialize=True):
             if mode in _Common.QR_NON_DIRECT_PAY:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
+                if _Common.LAST_QR_PAYMENT_HOST_TRX_ID is not None:
+                    LOGGER.debug(('SET OBSOLETE_QR_TRXID', _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
+                    OBSOLETE_QR_TRXID.append(_Common.LAST_QR_PAYMENT_HOST_TRX_ID)
                 _Common.LAST_QR_PAYMENT_HOST_TRX_ID = r['data']['trx_id']
             LOGGER.debug((str(param), str(r), _Common.LAST_QR_PAYMENT_HOST_TRX_ID))
             QR_CHECK_PAYLOAD = json.dumps(param)
@@ -210,7 +214,12 @@ def do_check_qr(payload, mode, serialize=True):
     attempt = 0
     success = False
     while not success:
-        try:
+        try: 
+            if len(OBSOLETE_QR_TRXID) > 0:
+                if payload.get('trx_id') in OBSOLETE_QR_TRXID:
+                    LOGGER.warning((payload.get('trx_id'), 'OBSOLETE_QR_TRXID'))
+                    return
+                    break
             endpoint = 'general-payment/status'
             host = _Common.QR_HOST if _Common.QR_PROD_STATE.get(mode.upper(), False) else 'http://apidev.mdd.co.id:28194/v1/' 
             url = host + endpoint
@@ -248,7 +257,8 @@ def do_check_qr(payload, mode, serialize=True):
             break
         if attempt >= (_Common.QR_PAYMENT_TIME/5):
             LOGGER.warning((str(payload), 'DEFAULT_QR_TIMEOUT', str(_Common.QR_PAYMENT_TIME)))
-            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
+            if payload.get('trx_id') not in OBSOLETE_QR_TRXID:
+                QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
 
