@@ -769,7 +769,9 @@ if PTR_MODE:
 # Force Stop QR Local Store Due To Mismatch Sys Path - 2022-08-07
 STORE_QR_TO_LOCAL = False
 
-QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
+# QR_PAYMENT_TIME = int(_ConfigParser.get_set_value('QR', 'payment^time', '300'))
+# Force to 5 minutes 2023-08-07
+QR_PAYMENT_TIME = 300
 QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
 if not os.path.exists(QR_STORE_PATH):
     os.makedirs(QR_STORE_PATH)

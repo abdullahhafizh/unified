@@ -7,6 +7,8 @@
 - Implement Conditional Payment Rules,
 - Handle Topup BNI Force Settlement - NOK File,
 - Bug Fix Obsolete QR Payment,
+- Force QRIS Payment Time to 300 seconds,
+- Adjust Wording On QRIS Payment Detection,
 - ...
 
 16.4.0-GLOBAL:
