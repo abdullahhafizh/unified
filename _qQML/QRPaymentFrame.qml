@@ -196,7 +196,7 @@ Base{
         visible: successPayment
 
         Text{
-            text: 'Pembayaran QRIS telah terkonfirmasi'
+            text: 'Pembayaran QRIS sedang diproses'
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
