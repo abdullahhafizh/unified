@@ -14,7 +14,7 @@
 16.4.0-GLOBAL:
 - Add Handler Operational Hour (Theme Based),
 - Add Handler Duration Per TRX Type (Theme Based),
-- Add BCA Card History,
+- Add BCA Card History (Need Upgrade Reader FW),
 - Add BNI Topup Init Key on Startup,
 - Add Handler Operational Hour (Own Config),
 - Add Payment Service Charge,

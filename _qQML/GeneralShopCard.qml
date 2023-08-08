@@ -466,7 +466,7 @@ Base{
             break;
         }
         // RECHECK: Validate Payment Rules
-        // do_validate_payment_rules(defaultItemPrice);
+        do_validate_payment_rules(defaultItemPrice);
 
         //No Payment Selection Needed If Only 1 Available
         if (activePayment.length==1){

@@ -463,7 +463,7 @@ Base{
         totalPay = parseInt(selectedDenom) + parseInt(adminFee);
 
         // Add Payment Rules Validation
-        // do_validate_payment_rules(totalPay);
+        do_validate_payment_rules(totalPay);
 
         press = '0';
         //No Payment Selection Needed If Only 1 Available
