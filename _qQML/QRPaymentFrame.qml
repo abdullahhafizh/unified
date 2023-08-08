@@ -207,7 +207,7 @@ Base{
             font.family:"Ubuntu"
         }
         Text{
-            text: 'Sedang melanjutkan transaksi Anda...'
+            text: 'Untuk transaksi topup, Pastikan Kartu Anda tetap berada di reader.'
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
