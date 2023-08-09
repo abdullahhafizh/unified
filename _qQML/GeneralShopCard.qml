@@ -203,8 +203,8 @@ Base{
 
     function is_multi_qr_provider(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('is_multi_qr_provider', (activeQRISProvider.length > 0), now);
-        return  activeQRISProvider.length > 0;
+        console.log('is_multi_qr_provider', (activeQRISProvider.length > 1), now);
+        return  activeQRISProvider.length > 1;
     }
 
     function get_payment_fee(p, d){
