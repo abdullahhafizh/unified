@@ -275,7 +275,7 @@ Base{
 
         if (method=='MULTI_QR'){
             press = '0';
-            if (!is_multi_qr_provider()){
+            if (activeQRISProvider.length == 1){
                 method = activeQRISProvider[0];
             } else {
                 select_payment.close();
@@ -482,8 +482,9 @@ Base{
 
     function is_multi_qr_provider(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('is_multi_qr_provider', (activeQRISProvider.length > 1), now);
-        return  activeQRISProvider.length > 1;
+        var singleQRISProvider = (activeQRISProvider.length > 0 && activeQRISProvider.length == 1);
+        console.log('QRIS Provider', activeQRISProvider, !singleQRISProvider, now);
+        return !singleQRISProvider;
     }
 
     function get_balance(text){

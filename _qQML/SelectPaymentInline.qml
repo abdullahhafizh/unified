@@ -83,7 +83,7 @@ Rectangle{
         SmallSimplyItem {
             id: button_bni
             aliasName: 'bni-qris'
-            width: 200
+            width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
@@ -104,7 +104,7 @@ Rectangle{
         SmallSimplyItem {
             id: button_bca
             aliasName: 'bca-qris'
-            width: 200
+            width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
@@ -125,7 +125,7 @@ Rectangle{
         SmallSimplyItem {
             id: button_mdr
             aliasName: 'mdr-qris'
-            width: 200
+            width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
@@ -146,7 +146,7 @@ Rectangle{
         SmallSimplyItem {
             id: button_nobu
             aliasName: 'nobu-qris'
-            width: 200
+            width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
@@ -167,7 +167,7 @@ Rectangle{
         SmallSimplyItem {
             id: button_bri
             aliasName: 'bri-qris'
-            width: 200
+            width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
@@ -208,7 +208,7 @@ Rectangle{
         SmallSimplyItem {
             id: button_gopay
             aliasName: 'gopay'
-            width: 200
+            width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
