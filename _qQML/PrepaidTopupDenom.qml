@@ -275,7 +275,7 @@ Base{
 
         if (method=='MULTI_QR'){
             press = '0';
-            if (activeQRISProvider.length == 1){
+            if (!is_multi_qr_provider()){
                 method = activeQRISProvider[0];
             } else {
                 select_payment.close();
@@ -474,9 +474,16 @@ Base{
         }
         if (!select_payment.visible){
             select_payment.open();
+            select_payment._qrMultiEnable = is_multi_qr_provider();
             notice_topup_single_denom.visible = false;
             _SLOT.start_play_audio('choose_payment_press_proceed');
         }
+    }
+
+    function is_multi_qr_provider(){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('is_multi_qr_provider', (activeQRISProvider.length > 0), now);
+        return  activeQRISProvider.length > 0;
     }
 
     function get_balance(text){
