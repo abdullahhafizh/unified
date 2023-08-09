@@ -473,8 +473,8 @@ Base{
             return;
         }
         if (!select_payment.visible){
-            select_payment.open();
             select_payment._qrMultiEnable = is_multi_qr_provider();
+            select_payment.open();
             notice_topup_single_denom.visible = false;
             _SLOT.start_play_audio('choose_payment_press_proceed');
         }
@@ -913,7 +913,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         calledFrom: 'prepaid_topup_denom'
         listActivePayment: activePayment
-        _qrMultiEnable: true
+        _qrMultiEnable: false
         totalEnable: activePayment.length
     }
 

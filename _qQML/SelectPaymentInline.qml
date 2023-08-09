@@ -88,7 +88,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "B N I"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 // enabled: (listActivePayment.indexOf('bni-qris') > -1)
@@ -109,7 +109,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "B C A"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 // enabled: (listActivePayment.indexOf('bca-qris') > -1)
@@ -130,7 +130,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "MANDIRI"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 // enabled: (listActivePayment.indexOf('mdr-qris') > -1)
@@ -151,7 +151,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "NOBU"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 // enabled: (listActivePayment.indexOf('nobu-qris') > -1)
@@ -172,7 +172,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "B R I"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 // enabled: (listActivePayment.indexOf('bri-qris') > -1)
@@ -193,7 +193,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "JAKONE"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 anchors.fill: parent
@@ -213,7 +213,7 @@ Rectangle{
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "GOPAY"
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             modeReverse: true
             MouseArea{
                 // enabled: (listActivePayment.indexOf('gopay') > -1)
@@ -235,7 +235,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "LINKAJA"
             modeReverse: true
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -255,7 +255,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "DUWIT"
             modeReverse: true
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -275,7 +275,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "DANA"
             modeReverse: true
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -295,7 +295,7 @@ Rectangle{
             sourceImage: "source/phone_qr.png"
             itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "SHOPEEPAY"
             modeReverse: true
-            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -391,7 +391,8 @@ Rectangle{
 
     function open(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('listActivePayment', now, listActivePayment);
+        console.log('listActivePayment', now, listActivePayment, _qrMultiEnable);
+        console.log('_qrMultiEnable', now, _qrMultiEnable);
         init_payment_channel();
         select_payment_popup.visible = true;
     }

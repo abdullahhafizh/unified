@@ -481,8 +481,8 @@ Base{
             return;
         }
         if (!select_payment.visible){
-            select_payment.open();
             select_payment._qrMultiEnable = is_multi_qr_provider();
+            select_payment.open();
             notice_card_purchase.visible = false;
             _SLOT.start_play_audio('choose_payment_press_proceed');
         }
@@ -718,7 +718,7 @@ Base{
 //        visible: (productIdx > -1)
 //        visible: true
         calledFrom: 'general_shop_card'
-        _qrMultiEnable: true
+        _qrMultiEnable: false
         listActivePayment: activePayment
         totalEnable: activePayment.length
     }
