@@ -9,6 +9,7 @@ Rectangle {
     property var itemName: 'QRIS Payment'
     property bool isSelected: false
     property bool isActivated: true
+    property var aliasName: ''
 
     width: 359
     height: 183

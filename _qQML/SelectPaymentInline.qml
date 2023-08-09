@@ -42,40 +42,27 @@ Rectangle{
 
         SmallSimplyItem {
             id: button_debit
+            aliasName: 'debit'
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/credit card black.png"
             itemName: "Kartu Debit"
             modeReverse: true
-            visible: (listActivePayment.indexOf('debit') > -1)
+            visible: (listActivePayment.indexOf(aliasName) > -1)
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
-                    var payment = 'debit';
                     do_release_all_set_active(button_debit);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
             id: button_multi_qr
+            aliasName: 'MULTI_QR'
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
@@ -87,264 +74,282 @@ Rectangle{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "MULTI_QR" Payment Method');
-                    var payment = 'MULTI_QR';
                     do_release_all_set_active(button_multi_qr);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
-            id: button_cash
-            width: 359
-            height: 183
-            anchors.verticalCenter: parent.verticalCenter
-            sourceImage: "source/cash black.png"
-            itemName: "Tunai"
-            modeReverse: true
-            visible: (listActivePayment.indexOf('cash') > -1)
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    _SLOT.user_action_log('choose "CASH" Payment Method');
-                    var payment = 'cash';
-                    do_release_all_set_active(button_cash);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
-                }
-            }
-        }
-
-        SmallSimplyItem {
-            id: button_ovo
-            width: 359
+            id: button_bni
+            aliasName: 'bni-qris'
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' :"QR OVO"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "B N I"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
             modeReverse: true
-            visible: (listActivePayment.indexOf('ovo') > -1) && !_qrMultiEnable
             MouseArea{
+                // enabled: (listActivePayment.indexOf('bni-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "OVO" Payment Method');
-                    var payment = 'ovo';
-                    do_release_all_set_active(button_ovo);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    _SLOT.user_action_log('choose "BNI" Payment Method');
+                    do_release_all_set_active(button_bni);
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
-            id: button_linkaja
-            width: 359
+            id: button_bca
+            aliasName: 'bca-qris'
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS LinkAja"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "B C A"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
             modeReverse: true
-            visible: (listActivePayment.indexOf('linkaja') > -1) && !_qrMultiEnable
             MouseArea{
+                // enabled: (listActivePayment.indexOf('bca-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "LINKAJA" Payment Method');
-                    var payment = 'linkaja';
-                    do_release_all_set_active(button_linkaja);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    _SLOT.user_action_log('choose "BCA" Payment Method');
+                    do_release_all_set_active(button_bca);
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
-            id: button_duwit
-            width: 359
+            id: button_mdr
+            aliasName: 'mdr-qris'
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS Duwit"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "MANDIRI"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
             modeReverse: true
-            visible: (listActivePayment.indexOf('duwit') > -1) && !_qrMultiEnable
             MouseArea{
+                // enabled: (listActivePayment.indexOf('mdr-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "DUWIT" Payment Method');
-                    var payment = 'duwit';
-                    do_release_all_set_active(button_duwit);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    _SLOT.user_action_log('choose "MANDIRI" Payment Method');
+                    do_release_all_set_active(button_mdr);
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
-            id: button_dana
-            width: 359
+            id: button_nobu
+            aliasName: 'nobu-qris'
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS Dana"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "NOBU"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
             modeReverse: true
-            visible: (listActivePayment.indexOf('dana') > -1) && !_qrMultiEnable
             MouseArea{
+                // enabled: (listActivePayment.indexOf('nobu-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "DANA" Payment Method');
-                    var payment = 'dana';
-                    do_release_all_set_active(button_dana);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    _SLOT.user_action_log('choose "NOBU" Payment Method');
+                    do_release_all_set_active(button_nobu);
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
-            id: button_shopeepay
-            width: 359
+            id: button_bri
+            aliasName: 'bri-qris'
+            width: 200
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS ShopeePay"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "B R I"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
             modeReverse: true
-            visible: (listActivePayment.indexOf('shopeepay') > -1) && !_qrMultiEnable
             MouseArea{
+                // enabled: (listActivePayment.indexOf('bri-qris') > -1)
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
-                    var payment = 'shopeepay';
-                    do_release_all_set_active(button_shopeepay);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    _SLOT.user_action_log('choose "BRI" Payment Method');
+                    do_release_all_set_active(button_bri);
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
 
         SmallSimplyItem {
             id: button_jakone
+            aliasName: 'jakone'
             width: 359
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/phone_qr.png"
-            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "QRIS JakOne"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "JAKONE"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
             modeReverse: true
-            visible: (listActivePayment.indexOf('jakone') > -1) && !_qrMultiEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "JAKONE" Payment Method');
-                    var payment = 'jakone';
                     do_release_all_set_active(button_jakone);
-                    if (calledFrom=='prepaid_topup_denom'){
-                        if (prepaid_topup_denom.press != '0') return;
-                        prepaid_topup_denom.press = '1';
-                        prepaid_topup_denom.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='general_shop_card'){
-                        if (general_shop_card.press != '0') return;
-                        general_shop_card.press = '1';
-                        general_shop_card.get_payment_method_signal(payment);
-                    }
-                    if (calledFrom=='global_input_number'){
-                        if (global_input_number.press != '0') return;
-                        global_input_number.press = '1';
-                        global_input_number.get_payment_method_signal(payment);
-                    }
+                    do_set_selected_payment(parent.aliasName);
                 }
             }
         }
+
+        SmallSimplyItem {
+            id: button_gopay
+            aliasName: 'gopay'
+            width: 200
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/phone_qr.png"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "GOPAY"
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            modeReverse: true
+            MouseArea{
+                // enabled: (listActivePayment.indexOf('gopay') > -1)
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "GOPAY" Payment Method');
+                    do_release_all_set_active(button_gopay);
+                    do_set_selected_payment(parent.aliasName);
+                }
+            }
+        }
+
+        SmallSimplyItem {
+            id: button_linkaja
+            aliasName: 'linkaja'
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/phone_qr.png"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "LINKAJA"
+            modeReverse: true
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "LINKAJA" Payment Method');
+                    do_release_all_set_active(button_linkaja);
+                    do_set_selected_payment(parent.aliasName);
+                }
+            }
+        }
+
+        SmallSimplyItem {
+            id: button_duwit
+            aliasName: 'duwit'
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/phone_qr.png"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "DUWIT"
+            modeReverse: true
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "DUWIT" Payment Method');
+                    do_release_all_set_active(button_duwit);
+                    do_set_selected_payment(parent.aliasName);
+                }
+            }
+        }
+
+        SmallSimplyItem {
+            id: button_dana
+            aliasName: 'dana'
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/phone_qr.png"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "DANA"
+            modeReverse: true
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "DANA" Payment Method');
+                    do_release_all_set_active(button_dana);
+                    do_set_selected_payment(parent.aliasName);
+                }
+            }
+        }
+
+        SmallSimplyItem {
+            id: button_shopeepay
+            aliasName: 'shopeepay'
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/phone_qr.png"
+            itemName: (VIEW_CONFIG.general_qr=='1') ? 'Q R I S' : "SHOPEEPAY"
+            modeReverse: true
+            visible: (listActivePayment.indexOf(aliasName) > -1) && !_qrMultiEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
+                    do_release_all_set_active(button_shopeepay);
+                    do_set_selected_payment(parent.aliasName);
+                }
+            }
+        }
+
+        SmallSimplyItem {
+            id: button_cash
+            aliasName: 'cash'
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/cash black.png"
+            itemName: "Tunai"
+            modeReverse: true
+            visible: (listActivePayment.indexOf(aliasName) > -1)
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "CASH" Payment Method');
+                    do_release_all_set_active(button_cash);
+                    do_set_selected_payment(parent.aliasName);
+                }
+            }
+        }
+
+    }
+
+
+    function do_set_selected_payment(payment){
+        switch(calledFrom){
+            case 'prepaid_topup_denom':
+                if (prepaid_topup_denom.press != '0') return;
+                prepaid_topup_denom.press = '1';
+                prepaid_topup_denom.get_payment_method_signal(payment);
+                break;
+            case 'general_shop_card':
+                if (general_shop_card.press != '0') return;
+                general_shop_card.press = '1';
+                general_shop_card.get_payment_method_signal(payment);
+                break;
+            case 'global_input_number':
+                if (global_input_number.press != '0') return;
+                global_input_number.press = '1';
+                global_input_number.get_payment_method_signal(payment);
+                break;
+            default:
+                break;
+        }
+        close();
     }
 
 
@@ -352,24 +357,36 @@ Rectangle{
         button_cash.do_release();
         button_debit.do_release();
         button_multi_qr.do_release();
-        button_ovo.do_release();
+        button_bni.do_release();
+        button_bca.do_release();
+        button_mdr.do_release();
+        button_bri.do_release();
+        button_nobu.do_release();
+        button_jakone.do_release();
         button_linkaja.do_release();
         button_duwit.do_release();
         button_dana.do_release();
         button_shopeepay.do_release();
-        button_jakone.do_release();
+        button_gopay.do_release();
         id.set_active();
     }
 
     function init_payment_channel(){
         button_cash.visible = (listActivePayment.indexOf('cash') > -1);
         button_debit.visible = (listActivePayment.indexOf('debit') > -1);
-        button_ovo.visible = (listActivePayment.indexOf('ovo') > -1) && !_qrMultiEnable;
+        // Bank QR
+        button_bni.visible = (listActivePayment.indexOf('bni-qris') > -1) && !_qrMultiEnable;
+        button_bca.visible = (listActivePayment.indexOf('bca-qris') > -1) && !_qrMultiEnable;
+        button_mdr.visible = (listActivePayment.indexOf('mdr-qris') > -1) && !_qrMultiEnable;
+        button_bri.visible = (listActivePayment.indexOf('bri-qris') > -1) && !_qrMultiEnable;
+        button_nobu.visible = (listActivePayment.indexOf('nobu-qris') > -1) && !_qrMultiEnable;
+        button_jakone.visible = (listActivePayment.indexOf('jakone') > -1) && !_qrMultiEnable;
+        // Ewallet QR
+        button_gopay.visible = (listActivePayment.indexOf('gopay') > -1) && !_qrMultiEnable;
         button_linkaja.visible = (listActivePayment.indexOf('linkaja') > -1) && !_qrMultiEnable;
         button_duwit.visible = (listActivePayment.indexOf('duwit') > -1) && !_qrMultiEnable;
         button_dana.visible = (listActivePayment.indexOf('dana') > -1) && !_qrMultiEnable;
         button_shopeepay.visible = (listActivePayment.indexOf('shopeepay') > -1) && !_qrMultiEnable;
-        button_jakone.visible = (listActivePayment.indexOf('jakone') > -1) && !_qrMultiEnable;
     }
 
     function open(){
