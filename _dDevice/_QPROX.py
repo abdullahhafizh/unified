@@ -2390,6 +2390,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                         break
                     if rc == '100C':
                         # Slot SAM or Deposit
+                        # TODO: Disable This Caused LOG_NOT_MATCH Issue
                         _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
                         last_audit_result['status'] = 'CORRECTION'
                     else:
