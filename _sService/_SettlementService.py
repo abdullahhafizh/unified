@@ -727,6 +727,8 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
 
 def last_settlement_in_same_month(data={}):
     if _Helper.empty(data): return True
+    if type(data) == list and len(data) > 0:
+        data = data[0]
     if _Helper.empty(data.get('settlement_created_at')): return True
     if datetime.now().strftime('%Y-%m') not in data.get('settlement_created_at'): return False
     return True
