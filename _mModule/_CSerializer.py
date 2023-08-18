@@ -692,6 +692,58 @@ def TOPUP_FORCE_C2C(Ser, Flag):
     return result["code"], result["rep"]
 
 
+def MDR_C2C_LAST_REPORT(Ser):
+    sam = {}
+    sam["cmd"] = b"\x7E"
+    bal_value = sam["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    Ser.flush()
+    write = Ser.write(p)
+    Ser.flush()
+    
+    data = retrieve_rs232_data(Ser)
+
+    response = get_TDefaultRespons(data)
+    
+    result = get_TDefaultReportres(response["data"])
+    #print(result)
+    LOG.fw("RESPONSE:", result)
+
+    del data
+    del response
+
+    return result["code"], result["rep"]
+
+
+def NEW_TOP_UP_C2C(Ser, amount, timestamp):
+    sam = {}
+    sam["cmd"] = b"\x7F"
+    # st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
+    sam["date"] = timestamp
+    sam["amt"] = str(amount).zfill(10)
+    sam["tout"] = "005".zfill(3)
+
+    c2c_refill = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"].encode("utf-8") + sam["tout"].encode("utf-8")
+    p_len, p = proto.Compose_Request(len(c2c_refill), c2c_refill)
+
+    Ser.flush()
+    write = Ser.write(p)
+    Ser.flush()
+    
+    data = retrieve_rs232_data(Ser)
+
+    response = get_TDefaultRespons(data)
+
+    result = get_TDefaultReportres(response["data"])
+    LOG.fw("RESPONSE:", result)
+
+    del data
+    del response
+
+    return result["code"], result["rep"]
+
+
 def KM_BALANCE_TOPUP_C2C(Ser):
     sam = {}
     sam["cmd"] = b"\x83"

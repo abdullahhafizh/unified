@@ -469,7 +469,7 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
 
     return res_str, debErrorStr, balance, report, typebank
 
-#026
+#026 - OLD
 @func_set_timeout(30)
 def topup_C2C_refill(Value, Timestamp):
 
@@ -485,6 +485,32 @@ def topup_C2C_refill(Value, Timestamp):
         debErrorStr = res_str
     except Exception as ex:
         LOG.fw("CMD $81 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+        
+    LOG.fw("<-- reportSAM = ", reportSAM)
+    LOG.fw("<-- debErrorStr = ", debErrorStr)
+
+    LOG.fw("<-- CMD RESULT = ",res_str)
+
+    return res_str, reportSAM, debErrorStr
+
+
+#026 - NEW
+@func_set_timeout(30)
+def new_topup_C2C_refill(Value, Timestamp):
+
+    res_str = ""
+    reportSAM = ""
+    debErrorStr = ""
+    try:
+        LOG.fw("--> CMD READER = $7F")
+        C_Value = utils.str_to_bytes(Value)
+        LOG.fw("--> Value = " , C_Value)
+        LOG.fw("--> Timestamp = " , Timestamp)
+        res_str, reportSAM = lib.new_topup_C2C_refill(Value, Timestamp)
+        debErrorStr = res_str
+    except Exception as ex:
+        LOG.fw("CMD $7F ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)
@@ -592,6 +618,30 @@ def topup_C2C_force(Flag):
         debErrorStr = res_str
     except Exception as ex:
         LOG.fw("CMD $84 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+        
+    LOG.fw("<-- reportSAM = ", reportSAM)
+    LOG.fw("<-- debErrorStr = ", debErrorStr)
+
+    LOG.fw("<-- CMD RESULT = ",res_str)
+
+    return res_str, reportSAM, debErrorStr
+
+
+#041
+# Force Settlement Timeout For 5 Seconds
+@func_set_timeout(5)
+def topup_C2C_last_report(Flag):
+
+    res_str = ""
+    reportSAM = ""
+    debErrorStr = ""
+    try:
+        LOG.fw("--> CMD READER = $7E")
+        res_str, reportSAM = lib.topup_C2C_last_report()
+        debErrorStr = res_str
+    except Exception as ex:
+        LOG.fw("CMD $7E ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
         
     LOG.fw("<-- reportSAM = ", reportSAM)

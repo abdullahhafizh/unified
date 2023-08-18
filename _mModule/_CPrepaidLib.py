@@ -188,6 +188,17 @@ def topup_C2C_refill(Value, Timestamp):
     return res_str.decode("utf-8"), report.decode("utf-8")
 
 
+def new_topup_C2C_refill(Value, Timestamp):
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    # Bind to New Topup Function, Auto Force When 100C (Partial)
+    res_str, report = serializer.NEW_TOP_UP_C2C(COMPORT, Value, Timestamp)
+
+    return res_str.decode("utf-8"), report.decode("utf-8")
+
+
 def topup_C2C_init(tidnew, tidold, C_Slot):
     global COMPORT
     if not is_serial_valid():
@@ -234,6 +245,16 @@ def topup_C2C_force(C_Flag):
         return "FFFE", ""
     
     res_str, report = serializer.TOPUP_FORCE_C2C(COMPORT, C_Flag)
+
+    return res_str.decode("utf-8"), report.decode("utf-8")
+
+
+def topup_C2C_last_report():
+    global COMPORT
+    if not is_serial_valid():
+        return "FFFE", ""
+    
+    res_str, report = serializer.MDR_C2C_LAST_REPORT(COMPORT)
 
     return res_str.decode("utf-8"), report.decode("utf-8")
 

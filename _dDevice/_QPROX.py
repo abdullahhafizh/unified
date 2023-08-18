@@ -774,6 +774,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             __card_prev_balance = last_card_check['balance']
         else:
             __card_prev_balance = (int(__card_last_balance) - int(amount)) - int(_Common.KIOSK_ADMIN)
+            
         output = {
             'last_balance': __card_last_balance,
             'report_sam': __report_emoney,
@@ -794,7 +795,7 @@ def parse_c2c_report(report='', reff_no='', amount=0, status='0000'):
             output['topup_report'] = __data
             LOGGER.info((str(output)))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
-        elif status == 'FAILED':
+        elif status in ['101C', 'FAILED']:
             # Renew C2C Deposit Balance Info
             mdr_c2c_balance_info()        
         # Ensure The C2C_DEPOSIT_NO same with Report
@@ -1121,6 +1122,16 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             LOGGER.info(('PREV_BALANCE_DEPOSIT - 100C', prev_deposit_balance ))
             LOGGER.info(('LAST_BALANCE_DEPOSIT - 100C', last_deposit_balance ))     
             topup_audit_status = 'PARTIAL_FAILURE'
+            
+        elif rc == '101C':
+            # 101C will be replied here as failed
+            # In new Reader FW will have force_settlement report
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
+            reset_card_contactless()
+            last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
+            LOGGER.info(('PREV_BALANCE_DEPOSIT - 101C', prev_deposit_balance ))
+            LOGGER.info(('LAST_BALANCE_DEPOSIT - 101C', last_deposit_balance ))     
+            topup_audit_status = 'PARTIAL_FAILURE'
         
         last_audit_report = json.dumps({
                 'trxid': trxid + '_FAILED',
@@ -1137,6 +1148,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                     'tid': _Common.C2C_TID
                     },
                 'last_result': topup_result,
+                'err_report': topup_result.get('Response'),
                 'err_code': topup_result.get('Result'),
                 # 'sam_purse': bni_sam_raw_purse,
                 # 'sam_history': bni_sam_history_direct()
@@ -2226,11 +2238,21 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
         if rc == '100C':
             # Slot SAM or Deposit
             _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
+            _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+        elif rc == '101C':
+            _param = '101C_NOPARAM'
+            _response = rc
+            _result = ''
+            # New Partial
+            if not _Helper.empty(last_audit_result.get('err_report')):
+                _result = last_audit_result.get('err_report')
+                parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='101C')
         else:
             _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-        _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+            _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
+            
         LOGGER.debug((_param, _response, _result))
-        if _response == 0 and len(_result) >= 196:
+        if _response == 0 and len(_result) >= 196 and rc != '101C':
             parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='0000')
         else:
             # Force Success If Not Get Force Settlement Report

@@ -931,7 +931,9 @@ def mandiri_C2C_refill(param, __global_response__):
     LOG.fw("026:Parameter Timestamp = ", Timestamp)
     LAST_TIMESTAMP_MANDIRI = Timestamp
     
-    res_str, reportSAM, debErrorStr = prepaid.topup_C2C_refill(C_Value, Timestamp)
+    # res_str, reportSAM, debErrorStr = prepaid.topup_C2C_refill(C_Value, Timestamp)
+    # Bind To New Topup Function
+    res_str, reportSAM, debErrorStr = prepaid.new_topup_C2C_refill(C_Value, Timestamp)
     reportSAM = prepaid_utils.fix_report(reportSAM)
 
     __global_response__["Result"] = res_str
@@ -1154,7 +1156,7 @@ def mandiri_get_last_report(param, __global_response__):
     return res_str
 
 
-def mandiri_get_last_report_priv(C_Slot):
+def old_mandiri_get_last_report_priv(C_Slot):
 
     resultStr = ""
     msg = ""
@@ -1167,6 +1169,25 @@ def mandiri_get_last_report_priv(C_Slot):
         if resultStr == "0000":
             resultStr, report_2 = prepaid.send_apdu_cmd(C_Slot, "00C2040000")
             msg = report_1 + report_2        
+                
+    except Exception as ex:
+        resultStr = "1"
+        msg = "{0}".format(ex)
+    
+    return resultStr, msg
+
+
+# 100C = partial biasa
+# 101C = partial dan sudah dilakukan force
+
+
+def mandiri_get_last_report_priv(C_Slot):
+    resultStr = ""
+    msg = ""
+
+    try:
+        resultStr, report = prepaid.topup_C2C_last_report(C_Slot)
+        if resultStr == "0000": msg = report        
                 
     except Exception as ex:
         resultStr = "1"
