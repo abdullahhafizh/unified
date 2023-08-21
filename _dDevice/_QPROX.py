@@ -1109,28 +1109,20 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 return
         
         topup_audit_status = 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED'
+        trx_partial_status = ['101C', '100C']
         
-        if rc == '100C':
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
-            reset_card_contactless()
-            param = QPROX['CORRECTION_C2C'] + '|' + LAST_C2C_APP_TYPE + '|'
-            _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-            LOGGER.info((_response, _result))    
-            sleep(1)
-            mdr_c2c_balance_info()
-            last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
-            LOGGER.info(('PREV_BALANCE_DEPOSIT - 100C', prev_deposit_balance ))
-            LOGGER.info(('LAST_BALANCE_DEPOSIT - 100C', last_deposit_balance ))     
-            topup_audit_status = 'PARTIAL_FAILURE'
-            
-        elif rc == '101C':
+        if rc in trx_partial_status:
+            if rc == '100C': 
+                # New Applet (100C Without Report)
+                LAST_C2C_APP_TYPE = '1'
+            # Old Applet Will Captured Here (101C)
             # 101C will be replied here as failed
             # In new Reader FW will have force_settlement report
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
             reset_card_contactless()
             last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
-            LOGGER.info(('PREV_BALANCE_DEPOSIT - 101C', prev_deposit_balance ))
-            LOGGER.info(('LAST_BALANCE_DEPOSIT - 101C', last_deposit_balance ))     
+            LOGGER.info(('RECHECK PREV_BALANCE_DEPOSIT '+rc, prev_deposit_balance ))
+            LOGGER.info(('RECHECK LAST_BALANCE_DEPOSIT '+rc, last_deposit_balance ))     
             topup_audit_status = 'PARTIAL_FAILURE'
         
         last_audit_report = json.dumps({
@@ -2235,11 +2227,8 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
     if bank == 'MANDIRI':
         # redefine amount, previouly already deducted with admin fee
         amount = int(amount) + _Common.KIOSK_ADMIN
-        if rc == '100C':
-            # Slot SAM or Deposit
-            _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
-            _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
-        elif rc == '101C':
+        if rc == '101C':
+            # Old Applet
             _param = '101C_NOPARAM'
             _response = rc
             _result = ''
@@ -2248,6 +2237,8 @@ def handle_topup_success_event(bank, amount, trxid, card_data, pending_data):
                 _result = last_audit_result.get('err_report')
                 parse_c2c_report(report=_result, reff_no=trxid, amount=amount, status='101C')
         else:
+            # 100C Will Also Get Force Settlement Command
+            # LAST_C2C_APP_TYPE Must Be '1'
             _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
             _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT)
             
@@ -2411,11 +2402,13 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     if attempt == 0:
                         break
                     if rc == '100C':
-                        # Slot SAM or Deposit
-                        # TODO: Disable This Caused LOG_NOT_MATCH Issue
-                        _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
-                        last_audit_result['status'] = 'CORRECTION'
-                    else:
+                    #     # Slot SAM or Deposit
+                    #     # TODO: Disable This Caused LOG_NOT_MATCH Issue
+                    #     _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
+                    #     last_audit_result['status'] = 'CORRECTION'
+                    # else:
+                        # 100C = Must Be New Applet
+                        # LAST_C2C_APP_TYPE = Must Be '1'
                         _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
                         last_audit_result['status'] = 'FORCE_SETTLEMENT'
                         status = 'FAILED'
@@ -2423,7 +2416,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                     _response, force_report = _Command.send_request(param=_param, output=_Command.MO_REPORT)
                     LOGGER.debug((_param, _response, force_report))
                     if _response == 0 and len(force_report) >= 196:
-                        if rc == '100C': status = '0000'
+                        if rc == '100C': status = 'FAILED'
                         parse_c2c_report(report=force_report, reff_no=trxid, amount=amount, status=status)
                         if status == '0000':
                             LOGGER.info(('MANDIRI_TOPUP_PARTIAL_SUCCESS', rc, status, force_report))
