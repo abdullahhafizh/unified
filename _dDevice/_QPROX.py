@@ -1090,8 +1090,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         sleep(1)
         mdr_c2c_balance_info()
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
-        LOGGER.info(('PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
-        LOGGER.info(('LAST_BALANCE_DEPOSIT', last_deposit_balance ))
+        LOGGER.info(('MDR PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
+        LOGGER.info(('MDR LAST_BALANCE_DEPOSIT', last_deposit_balance ))
         
         rc = topup_result.get("Result", 'FFFF').upper()
         
@@ -1120,8 +1120,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
             reset_card_contactless()
             last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
-            LOGGER.info(('RECHECK PREV_BALANCE_DEPOSIT '+rc, prev_deposit_balance ))
-            LOGGER.info(('RECHECK LAST_BALANCE_DEPOSIT '+rc, last_deposit_balance ))     
+            LOGGER.info(('MDR RECHECK PREV_BALANCE_DEPOSIT '+rc, prev_deposit_balance ))
+            LOGGER.info(('MDR RECHECK LAST_BALANCE_DEPOSIT '+rc, last_deposit_balance ))     
             topup_audit_status = 'PARTIAL_FAILURE'
         
         last_audit_report = json.dumps({
@@ -1482,7 +1482,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     response, bni_sam_raw_purse = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((attempt, amount, trxid, slot, bni_sam_raw_purse))
     deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
-    LOGGER.info(('PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
+    LOGGER.info(('BNI PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
     
     # Reset Previous Topup RC
     LAST_BNI_TOPUP_RC = ''
@@ -1497,16 +1497,22 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         if _response == 0 and '|' in _result:
             _result = _result.replace('#', '')
             data = _result.split('|')
+            
+            # 0000 : Success, Others Failed
             status = data[0]
             LAST_BNI_TOPUP_RC = status
+            
             report_sam = data[5]
-            LAST_BNI_ERROR_REPORT = report_sam
             card_prev_balance = data[7].lstrip('0')
             card_last_balance = data[8].lstrip('0')
             deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
             _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
             
-            LOGGER.info(('LAST_BALANCE_DEPOSIT', int(deposit_last_balance) ))
+            LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', int(deposit_last_balance) ))
+            
+            # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
+            LAST_BNI_ERROR_REPORT = report_sam
+            LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
             
             output = {
                 'last_balance': card_last_balance,
@@ -1551,7 +1557,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
         
-        LOGGER.info(('LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
+        LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
 
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
@@ -2448,12 +2454,12 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
     elif bank == 'BNI':
         # Get Card Log And Push SAM Audit
         try:
+            param = last_audit_result
             # BNI Deposit Not Deducted
             if int(last_audit_result.get('samPrevBalance', 0)) == int(last_audit_result.get('samLastBalance', 0)):
                 failure_rc = '0521'
             else:
                 failure_rc = '02'
-                param = last_audit_result
                 if 'topup_result' in param.keys():
                     param.pop('topup_result')
                 if 'last_result' in param.keys():
