@@ -1116,7 +1116,6 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 # New Applet (100C Without Report)
                 LAST_C2C_APP_TYPE = '1'
             # Old Applet Will Captured Here (101C)
-            # 101C will be replied here as failed
             # In new Reader FW will have force_settlement report
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETAP_CARD')
             reset_card_contactless()
@@ -2401,26 +2400,25 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
                 while True:
                     if attempt == 0:
                         break
-                    if rc == '100C':
-                    #     # Slot SAM or Deposit
-                    #     # TODO: Disable This Caused LOG_NOT_MATCH Issue
-                    #     _param = QPROX['GET_LAST_C2C_REPORT'] + '|' + _Common.C2C_SAM_SLOT + '|'
-                    #     last_audit_result['status'] = 'CORRECTION'
-                    # else:
+                    last_audit_result['status'] = 'FORCE_SETTLEMENT'
+
+                    if rc == '101C':
+                        status = rc
+                        _response = 0
+                        _param = '101C_NOPARAM'
+                        if not _Helper.empty(last_audit_result.get('err_report')):
+                            force_report = last_audit_result.get('err_report')
+                    else:
+                        # 100C And Other Error
                         # 100C = Must Be New Applet
                         # LAST_C2C_APP_TYPE = Must Be '1'
-                        _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
-                        last_audit_result['status'] = 'FORCE_SETTLEMENT'
                         status = 'FAILED'
+                        _param = QPROX['FORCE_SETTLEMENT'] + '|' + LAST_C2C_APP_TYPE + '|'
+                        _response, force_report = _Command.send_request(param=_param, output=_Command.MO_REPORT)
                         
-                    _response, force_report = _Command.send_request(param=_param, output=_Command.MO_REPORT)
                     LOGGER.debug((_param, _response, force_report))
                     if _response == 0 and len(force_report) >= 196:
-                        if rc == '100C': status = 'FAILED'
                         parse_c2c_report(report=force_report, reff_no=trxid, amount=amount, status=status)
-                        if status == '0000':
-                            LOGGER.info(('MANDIRI_TOPUP_PARTIAL_SUCCESS', rc, status, force_report))
-                            return
                         break
                     attempt -= 1
                     sleep(1)
