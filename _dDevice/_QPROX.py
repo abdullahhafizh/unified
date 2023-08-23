@@ -1085,7 +1085,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         if topup_result["Response"] == '83' or topup_result["Result"] in ["6208"]:
             LAST_C2C_APP_TYPE = '1'
         
-        LOGGER.warning(('FAILED_TOPUP_C2C', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
+        # LOGGER.warning(('MDR C2C FAILED', 'trxid:', trxid, 'result:', topup_result, 'applet_type:', LAST_C2C_APP_TYPE ))
         # validate if deposit balance is deducted
         sleep(1)
         mdr_c2c_balance_info()
@@ -1096,7 +1096,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         rc = topup_result.get("Result", 'FFFF').upper()
         
         if prev_deposit_balance == last_deposit_balance:
-            LOGGER.debug(('FAILED MDR C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
+            LOGGER.debug(('MDR DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
             # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
             if topup_result["Result"] in ["6208"]:
                 LAST_C2C_APP_TYPE == '1'
@@ -1108,6 +1108,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
                 return
         
+        LOGGER.debug(('MDR DEPOSIT_DEDUCTED', trxid, amount))
         topup_audit_status = 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED'
         trx_partial_status = ['101C', '100C']
         
@@ -1510,10 +1511,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             
             LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', int(deposit_last_balance) ))
             
-            # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
-            LAST_BNI_ERROR_REPORT = report_sam
-            LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
-            
             output = {
                 'last_balance': card_last_balance,
                 'report_sam': report_sam,
@@ -1556,16 +1553,21 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         rc = topup_result.get('Result', 'FFFF')
         
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
-        
         LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
-
+        
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
-            LOGGER.debug(('FAILED BNI C2C TOPUP NOT DEDUCT DEPOSIT', trxid, amount, last_card_check['card_no']))
+            LOGGER.debug(('BNI DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
             
             # Set To Old Handler Conditionally
             if not _Common.NEW_TOPUP_FAILURE_HANDLER:
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
                 return
+        
+        LOGGER.debug(('BNI DEPOSIT_DEDUCTED', trxid, amount))
+        # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
+        LAST_BNI_ERROR_REPORT = report_sam
+        LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
+        
         # Real False Condition
         last_audit_report = json.dumps({
                 'trxid': trxid + '_FAILED',
