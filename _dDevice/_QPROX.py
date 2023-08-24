@@ -1479,6 +1479,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     #     QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_PURSE_FAILED')
     #     return
     
+    bni_c2c_balance_info(_Common.BNI_ACTIVE)
+    
     param = QPROX['INIT_SAM_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, bni_sam_raw_purse = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((attempt, amount, trxid, slot, bni_sam_raw_purse))
@@ -1495,6 +1497,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT, wait_for=2)
         LOGGER.debug((attempt, amount, trxid, slot, _result))
         remarks = ''
+        report_sam = ''
         if _response == 0 and '|' in _result:
             _result = _result.replace('#', '')
             data = _result.split('|')
@@ -1557,7 +1560,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('BNI DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
-            
             # Set To Old Handler Conditionally
             if not _Common.NEW_TOPUP_FAILURE_HANDLER:
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
@@ -1565,30 +1567,35 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         
         LOGGER.debug(('BNI DEPOSIT_DEDUCTED', trxid, amount))
         # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
-        LAST_BNI_ERROR_REPORT = report_sam
-        LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
-        
-        # Real False Condition
-        last_audit_report = json.dumps({
-                'trxid': trxid + '_FAILED',
-                'samCardNo': _Common.BNI_SAM_1_NO,
-                'samCardSlot': _Common.BNI_ACTIVE,
-                'samPrevBalance': deposit_prev_balance,
-                'samLastBalance': _Common.BNI_ACTIVE_WALLET,
-                'topupCardNo': last_card_check['card_no'],
-                'topupPrevBalance': last_card_check['balance'],
-                'topupLastBalance': last_card_check['balance'],
-                'status': 'FORCE_SETTLEMENT' if str(deposit_prev_balance) != str(_Common.BNI_ACTIVE_WALLET) else 'FAILED',
-                'remarks': {
-                    'tid': _Common.TID_BNI,
-                    'mid': _Common.MID_BNI
-                    },
-                'last_result': topup_result,
-                'err_code': topup_result.get('Result'),
-                # 'sam_purse': bni_sam_raw_purse,
-                # 'sam_history': bni_sam_history_direct()
-        })
-        _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
+        try:
+            LAST_BNI_ERROR_REPORT = report_sam
+            LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
+            
+            # Real False Condition
+            last_audit_report = json.dumps({
+                    'trxid': trxid + '_FAILED',
+                    'samCardNo': _Common.BNI_SAM_1_NO,
+                    'samCardSlot': _Common.BNI_ACTIVE,
+                    'samPrevBalance': deposit_prev_balance,
+                    'samLastBalance': _Common.BNI_ACTIVE_WALLET,
+                    'topupCardNo': last_card_check['card_no'],
+                    'topupPrevBalance': last_card_check['balance'],
+                    'topupLastBalance': last_card_check['balance'],
+                    'status': 'FORCE_SETTLEMENT' if str(deposit_prev_balance) != str(_Common.BNI_ACTIVE_WALLET) else 'FAILED',
+                    'remarks': {
+                        'tid': _Common.TID_BNI,
+                        'mid': _Common.MID_BNI
+                        },
+                    'last_result': topup_result,
+                    'err_code': topup_result.get('Result'),
+                    # 'sam_purse': bni_sam_raw_purse,
+                    # 'sam_history': bni_sam_history_direct()
+            })
+            _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
+        except Exception as e:
+            pass
+            LOGGER.warning((e))
+
         # New Handler
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
             new_topup_failure_handler('BNI', trxid, amount)
