@@ -1561,9 +1561,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             elif status == 'FFEE':
                 if len(report_sam) >= 266:
                     force_settlement = {
-                        'last_balance': card_last_balance,
+                        'last_balance': last_card_check['balance'],
                         'report_sam': report_sam,
-                        'card_no': card_no,
+                        'card_no': last_card_check['card_no'],
                         'report_ka': 'NOK',
                         'bank_id': '2',
                         'bank_name': 'BNI',
