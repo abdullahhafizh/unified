@@ -1490,6 +1490,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     # Reset Previous Topup RC
     LAST_BNI_TOPUP_RC = ''
     LAST_BNI_ERROR_REPORT = ''
+    _rc = ''
 
     if response == 0:
         LAST_BNI_SAM_PURSE = bni_sam_raw_purse
@@ -1500,6 +1501,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # Override status FFEE (Failure Topup BNI, But Have NOK Report)
         if _response == -1 and 'FFEE' in _result:
             _response = 0
+            _rc = 'FFEE'
             _result = json.loads(_result).get('Response')
             
         remarks = ''
@@ -1560,8 +1562,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
         LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
 
-        topup_result = json.loads(_result)
-        rc = topup_result.get('Result', 'FFFF')
+        if type(_result) == str:
+            topup_result = json.loads(_result)
+            rc = topup_result.get('Result', 'FFFF')
+        else:
+            rc = _rc
         
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('BNI DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
