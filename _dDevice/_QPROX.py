@@ -1483,7 +1483,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     
     param = QPROX['INIT_SAM_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, bni_sam_raw_purse = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-    LOGGER.debug((attempt, amount, trxid, slot, bni_sam_raw_purse))
+    LOGGER.debug((amount, trxid, slot, bni_sam_raw_purse))
     deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
     LOGGER.info(('BNI PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
     
@@ -1515,10 +1515,6 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             report_sam = data[5]
             card_prev_balance = data[7].lstrip('0')
             card_last_balance = data[8].lstrip('0')
-            deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
-            _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
-            
-            LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', int(deposit_last_balance) ))
                         
             output = {
                 'last_balance': card_last_balance,
@@ -1532,6 +1528,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             # update_bni_wallet(slot, amount, deposit_last_balance)
             # Logic IF Only Success
             if status == '0000':
+                deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
+                _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
                 remarks = data[5]
                 # Store Topup Success Record Into Local DB
                 _Common.local_store_topup_record(output)
@@ -1558,11 +1556,12 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 # Return Success Condition Here
                 return
         # False Condition
-        topup_result = json.loads(_result)
-        rc = topup_result.get('Result', 'FFFF')
         
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
         LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
+
+        topup_result = json.loads(_result)
+        rc = topup_result.get('Result', 'FFFF')
         
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('BNI DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
@@ -1570,8 +1569,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             if not _Common.NEW_TOPUP_FAILURE_HANDLER:
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
                 return
-        
-        LOGGER.debug(('BNI DEPOSIT_DEDUCTED', trxid, amount))
+        else:
+            LOGGER.debug(('BNI DEPOSIT_DEDUCTED', trxid, amount))
         # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
         
         LAST_BNI_ERROR_REPORT = report_sam
