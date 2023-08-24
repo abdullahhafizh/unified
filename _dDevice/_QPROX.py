@@ -1517,11 +1517,12 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             report_sam = data[5]
             card_prev_balance = data[7].lstrip('0')
             card_last_balance = data[8].lstrip('0')
+            card_no = data[6]
                         
             output = {
                 'last_balance': card_last_balance,
                 'report_sam': report_sam,
-                'card_no': data[6],
+                'card_no': card_no,
                 'report_ka': 'N/A',
                 'bank_id': '2',
                 'bank_name': 'BNI',
@@ -1557,6 +1558,17 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 _Common.store_upload_sam_audit(param)
                 # Return Success Condition Here
                 return
+            elif status == 'FFEE':
+                if len(report_sam) >= 266:
+                    force_settlement = {
+                        'last_balance': card_last_balance,
+                        'report_sam': report_sam,
+                        'card_no': card_no,
+                        'report_ka': 'NOK',
+                        'bank_id': '2',
+                        'bank_name': 'BNI',
+                    }
+                    _Common.local_store_topup_record(force_settlement)
         # False Condition
         
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
@@ -1573,8 +1585,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 return
         else:
             LOGGER.debug(('BNI DEPOSIT_DEDUCTED', trxid, amount))
-        # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
         
+        # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
         LAST_BNI_ERROR_REPORT = report_sam
         LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
             
@@ -2485,6 +2497,8 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             card_purse, card_history = bni_card_history_direct(10)
             # Build BNI Force Settlement Using Old FW
             # force_report = get_force_settlement_bni(card_purse)
+            # grab NOK File in New FW
+            # force_report = get_last_error_report_bni()
             # New FW, Report Force Will Be Generated From Reader
             force_report = last_audit_result.get('err_report', '') 
             
@@ -2506,16 +2520,6 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             
             if failure_rc == '02':
                 # Send To SAM Audit If Only Deduct Deposit Balance
-                if len(force_report) >= 266:
-                    force_settlement = {
-                        'last_balance': card_data.get('balance'),
-                        'report_sam': force_report,
-                        'card_no': card_data.get('card_no'),
-                        'report_ka': 'NOK',
-                        'bank_id': '2',
-                        'bank_name': 'BNI',
-                    }
-                    _Common.local_store_topup_record(force_settlement)
                 _Common.store_upload_sam_audit(param)
             
             last_audit_result.update(extra_data)
