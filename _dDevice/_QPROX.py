@@ -1495,7 +1495,13 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         LAST_BNI_SAM_PURSE = bni_sam_raw_purse
         _param = QPROX['TOPUP_BNI'] + '|' + str(amount) + '|' + str(_slot)
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT, wait_for=2)
-        LOGGER.debug((attempt, amount, trxid, slot, _result))
+        LOGGER.debug((amount, trxid, slot, _result))
+        
+        # Override status FFEE (Failure Topup BNI, But Have NOK Report)
+        if _response == -1 and 'FFEE' in _result:
+            _response = 0
+            _result = json.loads(_result).get('Response')
+            
         remarks = ''
         report_sam = ''
         if _response == 0 and '|' in _result:
@@ -1513,7 +1519,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
             
             LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', int(deposit_last_balance) ))
-            
+                        
             output = {
                 'last_balance': card_last_balance,
                 'report_sam': report_sam,
@@ -1567,12 +1573,12 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         
         LOGGER.debug(('BNI DEPOSIT_DEDUCTED', trxid, amount))
         # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
-        try:
-            LAST_BNI_ERROR_REPORT = report_sam
-            LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
+        
+        LAST_BNI_ERROR_REPORT = report_sam
+        LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
             
-            # Real False Condition
-            last_audit_report = json.dumps({
+        # Real False Condition
+        last_audit_report = json.dumps({
                     'trxid': trxid + '_FAILED',
                     'samCardNo': _Common.BNI_SAM_1_NO,
                     'samCardSlot': _Common.BNI_ACTIVE,
@@ -1588,13 +1594,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                         },
                     'last_result': topup_result,
                     'err_code': topup_result.get('Result'),
+                    'err_report': report_sam,
                     # 'sam_purse': bni_sam_raw_purse,
                     # 'sam_history': bni_sam_history_direct()
             })
-            _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
-        except Exception as e:
-            pass
-            LOGGER.warning((e))
+        _Common.store_to_temp_data(trxid+'-last-audit-result', last_audit_report)
 
         # New Handler
         if _Common.NEW_TOPUP_FAILURE_HANDLER:
@@ -2481,7 +2485,7 @@ def handle_topup_failure_event(bank, amount, trxid, card_data, pending_data):
             # Build BNI Force Settlement Using Old FW
             # force_report = get_force_settlement_bni(card_purse)
             # New FW, Report Force Will Be Generated From Reader
-            force_report = get_last_error_report_bni()
+            force_report = last_audit_result.get('err_report', '') 
             
             extra_data = {
                     'mid': _Common.MID_BNI,
