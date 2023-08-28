@@ -1040,9 +1040,11 @@ RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_l
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
-EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
-LAST_EDC_TRX_RECEIPT = None
 
+EDC_ANDROID_MODE = True if EDC_TYPE == 'MOBILE-ANDROID' else False
+EDC_ECR_MODE = True if EDC_TYPE in ['ECR', 'BCA', 'ECR-BCA'] else False
+
+LAST_EDC_TRX_RECEIPT = None
 LAST_READER_ERR_CODE = '0000'
 
 LAST_BCA_ERR_CODE = ''
@@ -1224,7 +1226,9 @@ QPROX = {
 }
 
 def get_edc_availability():
-    if EDC_ANDROID_MODE is True:
+    if EDC_ECR_MODE is True:
+        return True
+    elif EDC_ANDROID_MODE is True:
         if EDC_SERIAL_NO == ('0'*16):
             return False
         return True
@@ -1239,6 +1243,7 @@ EDC = {
     "type": EDC_TYPE,
     "sn": EDC_SERIAL_NO,
     "mobile": EDC_ANDROID_MODE,
+    "ecr": EDC_ECR_MODE,
     "status": get_edc_availability()
 }
 MEI = {

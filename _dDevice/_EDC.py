@@ -66,7 +66,9 @@ def create_sale_edc(amount):
 
 
 def create_sale_edc_with_struct_id(amount, trxid):
-    if _Common.EDC['mobile'] is True:
+    if _Common.EDC['ecr'] is True:
+        _Helper.get_thread().apply_async(sale_edc_ecr, (amount, trxid,))
+    elif _Common.EDC['mobile'] is True:
         _Helper.get_thread().apply_async(sale_edc_mobile, (amount, trxid,))
     else:
         _Helper.get_thread().apply_async(sale_edc, (amount, trxid,))
@@ -74,6 +76,44 @@ def create_sale_edc_with_struct_id(amount, trxid):
 
 PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 INIT_AMOUNT = '0'
+
+
+def sale_edc_ecr(amount, trxid=None):
+    global OPEN_STATUS, INIT_AMOUNT, EDC_PAYMENT_RESULT
+    try:
+        # TODO: Finalise This
+        amount = amount.replace('.00', '')
+        INIT_AMOUNT = amount
+        result, sale_data = edc_mobile_do_payment(trxid, amount)
+        if result is True:
+            if sale_data['status'] == "SUCCESS":
+                # EDC_PAYMENT_RESULT = sale_data
+                _KioskService.CARD_NO = sale_data['card_pan']
+                EDC_PAYMENT_RESULT = sale_data
+                E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
+                sleep(.5)
+                GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('EDC_PAYMENT')
+                # _KioskService.python_dump(EDC_PAYMENT_RESULT)
+                try:
+                    _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
+                except Exception as e:
+                    LOGGER.warning(str(e))
+                store_settlement()
+            else:
+                # print('pyt: [ERROR] SALE_EDC_MOBILE - ' + str(sale_data))
+                _Common.EDC_ERROR = 'SALE_ERROR'
+                E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+                _Common.online_logger(['EDC ECR Sale', result, sale_data], 'device')
+        else:
+            _Common.online_logger(['EDC ECR Sale', result, sale_data], 'device')
+            _Common.EDC_ERROR = 'SALE_ERROR'
+            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+    except Exception as e:
+        if 'Invalid argument' not in e:
+            _Common.EDC_ERROR = 'SALE_ERROR'
+            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+            _Common.online_logger(['EDC ECR Sale'], 'device')
+            LOGGER.warning(str(e))
 
 
 def sale_edc_mobile(amount, trxid=None):

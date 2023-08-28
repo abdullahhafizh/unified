@@ -1533,6 +1533,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
             if status == '0000':
                 deposit_last_balance = str(int(report_sam[58:64], 16)) if len(report_sam) > 64 else ''
                 _Common.BNI_ACTIVE_WALLET = int(report_sam[58:64], 16) if len(report_sam) > 64 else _Common.BNI_ACTIVE_WALLET
+                
+                # Set Deposit Based on Slot
+                if _slot == 0: _Common.BNI_SAM_1_WALLET = _Common.BNI_ACTIVE_WALLET
+                if _slot == 1: _Common.BNI_SAM_2_WALLET = _Common.BNI_ACTIVE_WALLET
+                
                 remarks = data[5]
                 # Store Topup Success Record Into Local DB
                 _Common.local_store_topup_record(output)
