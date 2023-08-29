@@ -29,7 +29,7 @@ def bvlog(message, info_type, flow_type, fw_object=None, file_name_prefix="GRGLO
 def cdlog(message, info_type, flow_type, fw_object=None, file_name_prefix="CardDispenser_", prettyprint=False, show_log=True):
     if show_log is True:
         do_logging(message, info_type, flow_type, fw_object, file_name_prefix, prettyprint)
-        
+
 
 def ecrlog(message, info_type, flow_type, fw_object=None, file_name_prefix="ECR_", prettyprint=False, show_log=True):
     if show_log is True:

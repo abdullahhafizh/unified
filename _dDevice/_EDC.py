@@ -98,7 +98,6 @@ def sale_edc_ecr(amount, trxid=None):
                     _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
                 except Exception as e:
                     LOGGER.warning(str(e))
-                store_settlement()
             else:
                 # print('pyt: [ERROR] SALE_EDC_MOBILE - ' + str(sale_data))
                 _Common.EDC_ERROR = 'SALE_ERROR'
