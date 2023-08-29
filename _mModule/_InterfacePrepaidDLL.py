@@ -108,12 +108,8 @@ def send_command(cmd, param):
             prepaid_mandiri.mandiri_get_log(param, __global_response__)
         elif cmd == "040":
             prepaid_bni.bni_card_get_log(param, __global_response__)
-        elif cmd == "077":
-            prepaid_bni.bni_card_get_log_custom(param, __global_response__)
         elif cmd == "042":
             prepaid_bni.bni_sam_get_log(param, __global_response__)
-        elif cmd == "080":
-            prepaid_bni.bni_topup_init_key(param, __global_response__)
         elif cmd == "041":
             prepaid_mandiri.mandiri_get_last_report(param, __global_response__)
         elif cmd == "043":
@@ -127,8 +123,6 @@ def send_command(cmd, param):
             prepaid_bca.update_bca(param, __global_response__)
         elif cmd == "047":
             prepaid_bca.bca_card_get_log(param, __global_response__)
-        elif cmd == "079":
-            prepaid_bca.bca_card_get_log_raw(param, __global_response__)
         elif cmd == "048":
             prepaid_bca.get_card_info_bca(param, __global_response__)
         elif cmd == "049":
@@ -143,6 +137,12 @@ def send_command(cmd, param):
             prepaid_dki.dki_card_get_log_raw(param, __global_response__)
         elif cmd == "064":
             prepaid_bri.reversal_bri(param, __global_response__)
+        elif cmd == "077":
+            prepaid_bni.bni_card_get_log_custom(param, __global_response__)
+        elif cmd == "079":
+            prepaid_bca.bca_card_get_log_raw(param, __global_response__)
+        elif cmd == "080":
+            prepaid_bni.bni_topup_init_key(param, __global_response__)
         else:
             raise SystemError("Command ["+cmd+"] not included in Service VM Command Sub [QPROX] ")
     except:
