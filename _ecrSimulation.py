@@ -21,13 +21,18 @@ def simulate(amount=100, trxid=''):
     sale_data = None
     edc_ecr = _BCAEDC.BCAEDC()
     trxid = ''.join(['SIM', str(time())])
-    if edc_ecr.connect(_Common.EDC_PORT):
-        amount = amount.replace('.00', '')
-        result, sale_data = edc_ecr.do_payment(trxid, amount)
-        print('Result:', result)
-        print('Data:', json.dumps(sale_data))
-    else:
-        print('ECR Not Connect', _Common.EDC_PORT)
+    try:
+        if edc_ecr.connect(_Common.EDC_PORT):
+            amount = amount.replace('.00', '')
+            result, sale_data = edc_ecr.do_payment(trxid, amount)
+            print('Result -> ', result)
+            print('Data -> ', json.dumps(sale_data))
+        else:
+            print('ECR Not Connect', _Common.EDC_PORT)
+            exit(1, 'Failed')
+    except Exception as e:
+        print('ECR Exception', str(e))
+        exit(1, 'Exception')
 
 
 def exit(code=0, message='Exit Simulator'):
@@ -43,5 +48,5 @@ if __name__ == '__main__':
             amount = str(amount)
             break
     simulate(amount)
-    exit(0)
+    exit(code=0)
     
