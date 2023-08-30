@@ -136,8 +136,12 @@ LENGTH = {
 def calculateCRC(data=b""):
     crc = 0
     for x in data :
-        crc ^= x
-    return crc.to_bytes(1, byteorder='big')
+        crc = crc ^ x
+    output = crc.to_bytes(1, byteorder='big')
+    if not _Common.LIVE_MODE:
+        print('LRC Input', data)
+        print('LRC Output', output)
+    return output
 
 
 def calculateLRC(data=b""):
@@ -207,7 +211,7 @@ def writeAndRead(ser=Serial(), wByte=b""):
 
 # TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
-ECR_TIMEOUT = 300
+ECR_TIMEOUT = 3
 ECR_STOPBITS = 1
 ECR_DATABITS = 8
 
