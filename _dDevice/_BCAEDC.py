@@ -10,15 +10,15 @@ import json
 
 
 class PROTO_FUNC(Enum):
-    STX = b"\x10\x02" # Start of a data packet
-    EXT = b"\x10\x03" # End of a data packet
-    EOT = b"\x10\x04" # Cancellation of a command
-    ENQ = b"\x10\x05" # Confirmation response
-    ACK = b"\x10\x06" # Receiving response
-    DLE = b"\x10\x10" # Start of a control word
-    NAK = b"\x10\x15" # Error response
-    BOT = b"\x10\x13" # Busy response
-    FOT = b"\x10\x11" # Idle response, actively idle response only when feeding notes.
+    STX = b"\x02" # Start of a data packet
+    EXT = b"\x03" # End of a data packet
+    EOT = b"\x04" # Cancellation of a command
+    ENQ = b"\x05" # Confirmation response
+    ACK = b"\x06" # Receiving response
+    DLE = b"\x10" # Start of a control word
+    NAK = b"\x15" # Error response
+    BOT = b"\x13" # Busy response
+    FOT = b"\x11" # Idle response, actively idle response only when feeding notes.
 
 
 ZERO = '0'
@@ -149,21 +149,26 @@ def writeAndRead(ser=Serial(), wByte=b""):
     cmd =  byte_len(wByte) + wByte + PROTO_FUNC.EXT.value
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
-    LOG.ecrlog("[ECR] write: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
+    LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
     #GET ACK
     counter = 0
     proto = None
     while True:
-        rByte = ser.read_until(size=2)
-        LOG.ecrlog("[ECR] read ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+        rByte = ser.read_until(size=1)
+        LOG.ecrlog("[ECR] WAITING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
 
         try:
-            proto = PROTO_FUNC(rByte[0:2])  
+            proto = PROTO_FUNC(rByte)  
         except ValueError:
             continue 
         if proto == PROTO_FUNC.ACK:
+            LOG.ecrlog("[ECR] FOUND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             break
+        if proto == PROTO_FUNC.NAK:
+            LOG.ecrlog("[ECR] FOUND NAK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+            return False
         if counter > (_Common.EDC_PAYMENT_DURATION*5):
+            LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (counter/5))
             rByte = False
             break
         counter = counter + 1
@@ -173,7 +178,7 @@ def writeAndRead(ser=Serial(), wByte=b""):
         # Do Need Reset Counter ?
         # counter = 0
         rByte = ser.read_until(PROTO_FUNC.EXT.value)
-        LOG.ecrlog("[ECR] read RESULT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, rByte)
+        LOG.ecrlog("[ECR] RESULT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, rByte)
         # Read and Looking For The End TRX
         if PROTO_FUNC.EXT.value in rByte:
             # Flag ACK
@@ -189,6 +194,8 @@ def writeAndRead(ser=Serial(), wByte=b""):
 # TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
 ECR_TIMEOUT = 300
+ECR_STOPBITS = 1
+ECR_DATABITS = 8
 
 
 class BCAEDC():
@@ -197,7 +204,13 @@ class BCAEDC():
     
     def connect(self, port="COM7"):
         if self.ser is None:
-            self.ser = Serial(port=port, baudrate=ECR_BAUDRATE, timeout=ECR_TIMEOUT)
+            self.ser = Serial(
+                port=port, 
+                bytesize=ECR_DATABITS,
+                stopbits=ECR_STOPBITS,
+                baudrate=ECR_BAUDRATE, 
+                timeout=ECR_TIMEOUT
+                )
             result = self.ser.isOpen()
             LOG.ecrlog("[ECR] connect: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, result)
         else:
@@ -298,21 +311,21 @@ class ECRMessage():
             'Version' : message[0:1],
             'TransType' : message[1:(1+LENGTH.get('TransType'))],
             'TransAmount' : message[3:(3+LENGTH.get('TransAmount'))],
-            'OtherAmount,' : message[15:(15+LENGTH.get('OtherAmount'))],
-            'PAN,' : message[27:(27+LENGTH.get('PAN'))],
-            'ExpiryDate,' : message[46:(46+LENGTH.get('ExpiryDate'))],
-            'CancelReason,' : message[50:(50+LENGTH.get('CancelReason'))],
-            'InvoiceNumber,' : message[52:(52+LENGTH.get('InvoiceNumber'))],
-            'AuthorizationIDResponse,' : message[58:(58+LENGTH.get('AuthorizationIDResponse'))],
-            'InstallmentFlag,' : message[64:(64+LENGTH.get('InstallmentFlag'))],
-            'RedeemFlag,' : message[65:(65+LENGTH.get('RedeemFlag'))],
-            'DCCFlag,' : message[66:(66+LENGTH.get('DCCFlag'))],
-            'InstallmentPlan,' : message[69:(69+LENGTH.get('InstallmentPlan'))],
-            'InstallmentTenor,' : message[71:(71+LENGTH.get('InstallmentTenor'))],
-            'GenericData,' : message[73:(73+LENGTH.get('GenericData'))],
-            'ReffNumber,' : message[85:(85+LENGTH.get('ReffNumber'))],
-            'OriginalDate,' : message[97:(97+LENGTH.get('OriginalDate'))],
-            'Filler,' : message[101:(101+LENGTH.get('Filler'))],
+            'OtherAmount' : message[15:(15+LENGTH.get('OtherAmount'))],
+            'PAN' : message[27:(27+LENGTH.get('PAN'))],
+            'ExpiryDate' : message[46:(46+LENGTH.get('ExpiryDate'))],
+            'CancelReason' : message[50:(50+LENGTH.get('CancelReason'))],
+            'InvoiceNumber' : message[52:(52+LENGTH.get('InvoiceNumber'))],
+            'AuthorizationIDResponse' : message[58:(58+LENGTH.get('AuthorizationIDResponse'))],
+            'InstallmentFlag' : message[64:(64+LENGTH.get('InstallmentFlag'))],
+            'RedeemFlag' : message[65:(65+LENGTH.get('RedeemFlag'))],
+            'DCCFlag' : message[66:(66+LENGTH.get('DCCFlag'))],
+            'InstallmentPlan' : message[69:(69+LENGTH.get('InstallmentPlan'))],
+            'InstallmentTenor' : message[71:(71+LENGTH.get('InstallmentTenor'))],
+            'GenericData' : message[73:(73+LENGTH.get('GenericData'))],
+            'ReffNumber' : message[85:(85+LENGTH.get('ReffNumber'))],
+            'OriginalDate' : message[97:(97+LENGTH.get('OriginalDate'))],
+            'Filler' : message[101:(101+LENGTH.get('Filler'))],
         }
         
 
