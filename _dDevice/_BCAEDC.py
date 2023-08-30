@@ -268,7 +268,7 @@ class ECRMessage():
         
     def build(self, output='plain'):
         message = ''.join([
-            self.Version,
+            self.Version.decode(),
             self.TransType,
             self.TransAmount,
             self.OtherAmount, 
