@@ -154,13 +154,14 @@ def writeAndRead(ser=Serial(), wByte=b""):
     counter = 0
     proto = None
     while True:
-        rByte = ser.read_until(size=1)
-        LOG.ecrlog("[ECR] WAITING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+        rByte = ser.read()
+        LOG.ecrlog("[ECR] READING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
 
         try:
-            proto = PROTO_FUNC(rByte)  
+            proto = PROTO_FUNC(rByte[1])  
         except ValueError:
             continue 
+        
         if proto == PROTO_FUNC.ACK:
             LOG.ecrlog("[ECR] FOUND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             break
@@ -203,6 +204,8 @@ class BCAEDC():
         self.ser = None
     
     def connect(self, port="COM7"):
+        LOG.ecrlog("[ECR] configuration: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, json.dumps(_Common.EDC))
+
         if self.ser is None:
             self.ser = Serial(
                 port=port, 
