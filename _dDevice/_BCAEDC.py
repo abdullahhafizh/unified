@@ -328,8 +328,9 @@ class ECRMessage():
         message = ''.join(data)
         if output.lower() != 'plain': 
             if not _Common.LIVE_MODE:
-                for l in LENGTH: print(l)
-                for d in data: print(d)
+                for l in LENGTH: print(l, LENGTH(l))
+                print('---')
+                for d in data: print(d, len(d))
             print('EDC Build Message', message)
         return message if output.lower() == 'plain' else message.encode('utf-8')
     
