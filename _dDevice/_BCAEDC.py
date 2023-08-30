@@ -150,7 +150,7 @@ def calculateLRC(data=b""):
     lrc = 0
     for i in range(1, len(data)):
         lrc = (lrc + data[i]) & 0xFF
-    return ((lrc ^ 0xFF) + 1) & 0xFF
+    return (((lrc ^ 0xFF) + 1) & 0xFF).to_bytes(1, byteorder='big')
 
 
 def byte_len(obj):
