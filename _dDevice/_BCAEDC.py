@@ -136,7 +136,7 @@ LENGTH = {
 def calculateCRC(data=b""):
     crc = 0
     for x in data :
-        crc = x ^ crc
+        crc ^= x
     return crc.to_bytes(1, byteorder='big')
 
 
@@ -160,7 +160,7 @@ def byte_len(obj):
 
 def writeAndRead(ser=Serial(), wByte=b""):   
     cmd =  byte_len(wByte) + wByte + PROTO_FUNC.EXT.value
-    wByte = PROTO_FUNC.STX.value + cmd + calculateLRC(cmd)
+    wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
     #GET ACK
