@@ -331,7 +331,7 @@ class ECRMessage():
                 for l in LENGTH: print(l, LENGTH.get(l))
                 print('---')
                 for d in data: print(d, len(d))
-            print('EDC Build Message', message)
+            print('EDC Build Message', message, len(message))
         return message if output.lower() == 'plain' else message.encode('utf-8')
     
     def parse(self, message=None):
