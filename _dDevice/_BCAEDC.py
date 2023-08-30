@@ -305,7 +305,7 @@ class ECRMessage():
         self.Filler = SPACE * LENGTH.get('Filler') #default to spaces
         
     def build(self, output='plain'):
-        message = ''.join([
+        data = [
             self.Version.decode(),
             self.TransType,
             self.TransAmount,
@@ -324,8 +324,13 @@ class ECRMessage():
             self.ReffNumber, 
             self.OriginalDate, 
             self.Filler, 
-        ])
-        if output.lower() != 'plain': print('EDC Build Message', message)
+        ]
+        message = ''.join(data)
+        if output.lower() != 'plain': 
+            if not _Common.LIVE_MODE:
+                for l in LENGTH: print(l)
+                for d in data: print(d)
+            print('EDC Build Message', message)
         return message if output.lower() == 'plain' else message.encode('utf-8')
     
     def parse(self, message=None):
