@@ -167,7 +167,7 @@ def writeAndRead(ser=Serial(), wByte=b""):
     counter = 0
     proto = None
     while True:
-        rByte = ser.read()
+        rByte = ser.read_until(size=1)
         LOG.ecrlog("[ECR] READING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
 
         try:
