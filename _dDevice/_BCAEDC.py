@@ -142,7 +142,6 @@ def calculateCRC(data=b""):
         crc.to_bytes(1, byteorder='little'),
         hex(crc)
         ]
-              
     if not _Common.LIVE_MODE:
         print('LRC Input', data)
         print('LRC Output', output)
