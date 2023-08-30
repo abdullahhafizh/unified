@@ -141,10 +141,16 @@ def calculateCRC(data=b""):
 
 
 def calculateLRC(data=b""):
-    lrc = ord(data[0])
-    for i in range(1,len(data)):
-        lrc ^= ord(data[i])     
-    return chr(lrc).encode()
+    # byte LRC = 0x00;
+    # for (int i = 0; i < bytes.Length; i++)
+    # {
+    #     LRC = (LRC + bytes[i]) & 0xFF; 
+    # }
+    # return ((LRC ^ 0xFF) + 1) & 0xFF;
+    lrc = 0
+    for i in range(1, len(data)):
+        lrc = (lrc + data[i]) & 0xFF
+    return ((lrc ^ 0xFF) + 1) & 0xFF
 
 
 def byte_len(obj):
