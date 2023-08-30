@@ -187,8 +187,8 @@ def writeAndRead(ser=Serial(), wByte=b""):
     return rByte
 
 # TODO: Check This Setting Value
-ECR_BAUDRATE = 19200
-ECR_TIMEOUT = 500
+ECR_BAUDRATE = 115200
+ECR_TIMEOUT = 300
 
 
 class BCAEDC():
@@ -218,9 +218,10 @@ class BCAEDC():
         self.trxid = trxid
         self.amount = amount
         ecr_message = ECRMessage('purchase', self.amount)
+        lte = ecr_message.build('encoded')
         LOG.ecrlog("[ECR] do_payment[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
-        LOG.ecrlog("[ECR] do_payment[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.build('encoded'))
-        result = writeAndRead(self.ser, ecr_message.build('encoded'))
+        LOG.ecrlog("[ECR] do_payment[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, lte)
+        result = writeAndRead(self.ser, lte)
         if not result:
             del ecr_message
             return False, []
@@ -287,7 +288,7 @@ class ECRMessage():
             self.OriginalDate, 
             self.Filler, 
         ])
-        print('EDC Message', message)
+        if output.lower() != 'plain': print('EDC Build Message', message)
         return message if output.lower() == 'plain' else message.encode('utf-8')
     
     def parse(self, message=None):
