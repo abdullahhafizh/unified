@@ -2,7 +2,7 @@ __author__ = 'wahyudi@multidaya.id'
 
 from serial import Serial
 from enum import Enum
-import time import sleep
+from time import sleep
 from binascii import hexlify, unhexlify
 from _mModule import _CPrepaidLog as LOG
 from _cConfig import _Common
