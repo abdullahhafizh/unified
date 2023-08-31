@@ -180,17 +180,19 @@ def to_bcd(value, length=2):
     #     print('To BCD Input', value, len(value_str))
     #     print('To BCD Output', result)
     # return result.encode('utf-8')
-    value = len(value)
-    result = chr(((int((value / 10)) << 4) & 0xF0) + ((value % 10) & 0x0F))
-    # result = int(str(value), 16).to_bytes(length, 'big')
-    results = [
-        result,
-        int(str(value), 16).to_bytes(length, 'big')
-    ]
+    bcd_value = 0
+    multiplier = 1
+    decimal_value = len(value)
+    while decimal_value > 0:
+        digit = decimal_value % 10
+        bcd_value += digit * multiplier
+        multiplier *= 16  # Shifting to the next 4-bit position
+        decimal_value //= 10
+    result = f"{bcd_value:04X}"
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
-        print('To BCD Output', str(results))
-    return result[:-length]
+        print('To BCD Output', result)
+    return result.encode()
 
 
 def build_command(wByte=b''):
