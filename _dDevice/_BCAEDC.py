@@ -188,7 +188,10 @@ def to_bcd(value, length=2):
         bcd_value += digit * multiplier
         multiplier *= 16  # Shifting to the next 4-bit position
         decimal_value //= 10
-    result = f"{bcd_value:04X}"
+    bcd_value &= 0xFFFF
+    byte1 = bcd_value >> 8
+    byte2 = bcd_value & 0xFF
+    result = byte1 + byte2
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
         print('To BCD Output', result)
