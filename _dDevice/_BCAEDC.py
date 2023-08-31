@@ -166,8 +166,7 @@ def byte_len(obj):
     return l.to_bytes(2, 'big')
 
 
-def to_bcd(value, length=0, pad='\x00'):
-    if type(value) != int: value = len(value)
+def to_bcd(value, length=2, pad='\x00'):
     value_str = str(value)
     value_str = ("0" if len(value_str) % 2 else "") + value_str
     ret = ""
@@ -183,7 +182,7 @@ def to_bcd(value, length=0, pad='\x00'):
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
-    cmd =  to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
+    cmd =  to_bcd(len(wByte)) + wByte + PROTO_FUNC.EXT.value
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
