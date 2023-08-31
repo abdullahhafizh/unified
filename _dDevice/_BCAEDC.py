@@ -163,10 +163,10 @@ def calculateLRC(data=b""):
 
 def byte_len(obj):
     l = obj if type(obj) == int else len(obj)
-    return str(l).zfill(4).encode('utf-8')
+    return l.to_bytes(2, 'big')
 
 
-def writeAndRead(ser=Serial(), wByte=b""):   
+def send_wait_response(ser=Serial(), wByte=b""):   
     cmd =  byte_len(wByte) + wByte + PROTO_FUNC.EXT.value
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
@@ -190,11 +190,11 @@ def writeAndRead(ser=Serial(), wByte=b""):
             LOG.ecrlog("[ECR] FOUND NAK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             return False
         if counter > (_Common.EDC_PAYMENT_DURATION*5):
-            LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (counter/5))
+            LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (counter))
             rByte = False
             break
         counter = counter + 1
-        sleep(.20)
+        sleep(1)
         
     while proto == PROTO_FUNC.ACK:
         # Do Need Reset Counter ?
@@ -215,7 +215,7 @@ def writeAndRead(ser=Serial(), wByte=b""):
 
 # TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
-ECR_TIMEOUT = 3
+ECR_TIMEOUT = 300
 ECR_STOPBITS = 1
 ECR_DATABITS = 8
 
@@ -255,10 +255,10 @@ class BCAEDC():
         self.trxid = trxid
         self.amount = amount
         ecr_message = ECRMessage('purchase', self.amount)
-        lte = ecr_message.build('encoded')
+        tle_message = ecr_message.build('encoded')
         LOG.ecrlog("[ECR] do_payment[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
-        LOG.ecrlog("[ECR] do_payment[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, lte)
-        result = writeAndRead(self.ser, lte)
+        LOG.ecrlog("[ECR] do_payment[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, tle_message)
+        result = send_wait_response(self.ser, tle_message)
         if not result:
             del ecr_message
             return False, []
