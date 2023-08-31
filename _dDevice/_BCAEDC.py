@@ -178,7 +178,7 @@ def to_bcd(value, length=2, pad='\x00'):
     if not _Common.LIVE_MODE:
         print('To BCD Input', value, len(value_str))
         print('To BCD Output', result)
-    return result
+    return result.decode()
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
