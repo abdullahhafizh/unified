@@ -10,15 +10,16 @@ import json
 
 
 class PROTO_FUNC(Enum):
-    STX = b"\x02" # Start of a data packet
-    EXT = b"\x03" # End of a data packet
-    EOT = b"\x04" # Cancellation of a command
-    ENQ = b"\x05" # Confirmation response
-    ACK = b"\x06" # Receiving response
-    DLE = b"\x10" # Start of a control word
-    NAK = b"\x15" # Error response
-    BOT = b"\x13" # Busy response
-    FOT = b"\x11" # Idle response, actively idle response only when feeding notes.
+    STX     = b"\x02" # Start of a data packet
+    EXT     = b"\x03" # End of a data packet
+    EOT     = b"\x04" # Cancellation of a command
+    ENQ     = b"\x05" # Confirmation response
+    ACK     = b"\x06" # Receiving response
+    DLE     = b"\x10" # Start of a control word
+    NAK     = b"\x15" # Error response
+    BOT     = b"\x13" # Busy response
+    FOT     = b"\x11" # Idle response, actively idle response only when feeding notes.
+    REQ_LEN = b'\x01\x50'
 
 
 ZERO = '0'
@@ -182,7 +183,7 @@ def to_bcd(value, length=2, pad='\x00'):
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
-    cmd =  to_bcd(len(wByte)) + wByte + PROTO_FUNC.EXT.value
+    cmd =  PROTO_FUNC.REQ_LEN.value + wByte + PROTO_FUNC.EXT.value
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
