@@ -168,43 +168,23 @@ def byte_len(obj):
     return l.to_bytes(2, 'big')
 
 
-# def to_bcd(value, length=2):
-#     # value_str = str(value)
-#     # value_str = ("0" if len(value_str) % 2 else "") + value_str
-#     # ret = ""
-#     # for i in range(0, len(value_str), 2):
-#     #     ms4b = ord(value_str[i]) - 0x30
-#     #     ls4b = ord(value_str[i + 1]) - 0x30
-#     #     ret += chr((ms4b << 4) + ls4b)
-#     # result = pad * (length - len(ret)) + ret
-#     # if not _Common.LIVE_MODE:
-#     #     print('To BCD Input', value, len(value_str))
-#     #     print('To BCD Output', result)
-#     # return result.encode('utf-8')
-#     bcd_value = 0
-#     multiplier = 1
-#     decimal_value = len(value)
-#     format_type = 3
-#     while decimal_value > 0:
-#         digit = decimal_value % 10
-#         bcd_value += digit * multiplier
-#         multiplier *= 16  # Shifting to the next 4-bit position
-#         decimal_value //= 10
-#     bcd_value &= 0xFFFF
-#     combined_value = (format_type << 16) | bcd_value
-#     byte1 = (combined_value >> 8) & 0xFF
-#     byte2 = combined_value & 0xFF
-#     recombined_value = (byte1 << 8) | byte2
-#     result = f"{recombined_value:04X}"
-#     if not _Common.LIVE_MODE:
-#         print('To BCD Input', value)
-#         print('To BCD Output', result)
-#     return result
+def decimal_to_bcd(value):
+    decimal_value = len(value)
+    bcd_value = 0
+    multiplier = 1
+    while decimal_value > 0:
+        digit = decimal_value % 10
+        bcd_value += digit * multiplier
+        multiplier *= 16  # Shifting to the next 4-bit position
+        decimal_value //= 10
+    
+    return bcd_value.to_bytes(2, byteorder='big')
+
 
 
 def build_command(wByte=b''):
     # All Request Length BCD Is b'\x150'
-    return b'\x150' + wByte + PROTO_FUNC.EXT.value
+    return decimal_to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
@@ -256,7 +236,7 @@ def send_wait_response(ser=Serial(), wByte=b""):
 
 # TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
-ECR_TIMEOUT = 30
+ECR_TIMEOUT = 10
 ECR_STOPBITS = 1
 ECR_DATABITS = 8
 
