@@ -168,22 +168,36 @@ def byte_len(obj):
 
 
 def to_bcd(value, length=2, pad='\x00'):
-    value_str = str(value)
-    value_str = ("0" if len(value_str) % 2 else "") + value_str
-    ret = ""
-    for i in range(0, len(value_str), 2):
-        ms4b = ord(value_str[i]) - 0x30
-        ls4b = ord(value_str[i + 1]) - 0x30
-        ret += chr((ms4b << 4) + ls4b)
-    result = pad * (length - len(ret)) + ret
+    # value_str = str(value)
+    # value_str = ("0" if len(value_str) % 2 else "") + value_str
+    # ret = ""
+    # for i in range(0, len(value_str), 2):
+    #     ms4b = ord(value_str[i]) - 0x30
+    #     ls4b = ord(value_str[i + 1]) - 0x30
+    #     ret += chr((ms4b << 4) + ls4b)
+    # result = pad * (length - len(ret)) + ret
+    # if not _Common.LIVE_MODE:
+    #     print('To BCD Input', value, len(value_str))
+    #     print('To BCD Output', result)
+    # return result.encode('utf-8')
+    decimal_number = len(value)
+    bcd = ""
+    while decimal_number > 0:
+        digit = decimal_number % 10
+        bcd_digit = format(digit, '04b')  # Convert decimal digit to 4-bit binary
+        bcd = bcd_digit + bcd
+        decimal_number //= 10
+    # Make sure the BCD representation is exactly 'length' bits long
+    while len(bcd) < length * 8: bcd = '0000' + bcd
+    result = bcd[:length * 8].encode('utf-8')
     if not _Common.LIVE_MODE:
-        print('To BCD Input', value, len(value_str))
+        print('To BCD Input', value)
         print('To BCD Output', result)
-    return result.encode('utf-8')
+    return result
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
-    cmd =  PROTO_FUNC.REQ_LEN.value + wByte + PROTO_FUNC.EXT.value
+    cmd =  to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
