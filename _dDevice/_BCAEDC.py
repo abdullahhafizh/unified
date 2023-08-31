@@ -20,6 +20,7 @@ class PROTO_FUNC(Enum):
     BOT     = b"\x13" # Busy response
     FOT     = b"\x11" # Idle response, actively idle response only when feeding notes.
     REQ_LEN = b'\x01\x50'
+    ECR_TYPE= b'\x01' #b'\x02'
 
 
 ZERO = '0'
@@ -321,7 +322,7 @@ class BCAEDC():
 
 class ECRMessage():
     def __init__(self, type, amount) -> None:
-        self.Version = b"\x02" #Version of ECR Message (in Hex), always “02h” Transaction type
+        self.Version = b'\x01' #Version of ECR Message (in Hex), always “02h” Transaction type
         self.TransType = '' #Transaction type
         if type.lower() in [x for x in TRANS_TYPE_CMD.keys()]:
             self.TransType = TRANS_TYPE_CMD[type.lower()]
