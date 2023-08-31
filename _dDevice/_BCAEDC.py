@@ -189,7 +189,7 @@ def to_bcd(value, length=2):
     ]
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
-        print('To BCD Output', json.dumps(results))
+        print('To BCD Output', str(results))
     return result[:-length]
 
 
