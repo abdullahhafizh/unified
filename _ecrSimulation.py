@@ -2,7 +2,7 @@ __author__ = "wahyudi@multidaya.id"
 
 from time import time
 import json
-import sys
+import sys, traceback
 from _dDevice import _BCAEDC
 from _cConfig import _Common
 
@@ -32,7 +32,8 @@ def simulate(amount=100, trxid=''):
             exit(1, 'Failed')
     except Exception as e:
         print('ECR Exception', str(e))
-        exit(1, 'Exception')
+        trace = traceback.format_exc()
+        exit(1, trace)
 
 
 def exit(code=0, message='Exit Simulator'):
