@@ -195,7 +195,7 @@ def to_bcd(value, length=2):
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
         print('To BCD Output', result)
-    return result.encode()
+    return result
 
 
 def build_command(wByte=b''):
