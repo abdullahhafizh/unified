@@ -178,11 +178,12 @@ def decimal_to_bcd(value):
         multiplier *= 16  # Shifting to the next 4-bit position
         decimal_value //= 10
     
-    result = bcd_value.to_bytes(2, byteorder='big')
+    # result = bcd_value.to_bytes(2, byteorder='big')
+    result = bytes(bcd_value.hex(),'utf-8')
     if not _Common.LIVE_MODE:
         print('BCD Input', value)
         print('BCD Output', result)
-    return result.hex()
+    return result
 
 
 def build_command(wByte=b''):
