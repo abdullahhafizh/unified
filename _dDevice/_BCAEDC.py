@@ -188,8 +188,12 @@ def to_bcd(value, length=2):
     return result[:-length]
 
 
+def build_command(wByte=b''):
+    return to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
+
+
 def send_wait_response(ser=Serial(), wByte=b""):   
-    cmd =  to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
+    cmd =  build_command(wByte)
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
