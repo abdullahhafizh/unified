@@ -178,8 +178,11 @@ def decimal_to_bcd(value):
         multiplier *= 16  # Shifting to the next 4-bit position
         decimal_value //= 10
     
-    return bcd_value.to_bytes(2, byteorder='big')
-
+    result = bcd_value.to_bytes(2, byteorder='big').hex().encode('utf-8')
+    if not _Common.LIVE_MODE:
+        print('BCD Input', value)
+        print('BCD Output', result)
+    return result
 
 
 def build_command(wByte=b''):
@@ -236,7 +239,7 @@ def send_wait_response(ser=Serial(), wByte=b""):
 
 # TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
-ECR_TIMEOUT = 10
+ECR_TIMEOUT = 60
 ECR_STOPBITS = 1
 ECR_DATABITS = 8
 
@@ -288,7 +291,7 @@ class BCAEDC():
         LOG.ecrlog("[ECR] do_payment[R]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, json.dumps(response))
         del ecr_message
         # Refill TRXID in struck_id
-        if response.get('struck_id') == '': response['struck_id'] == self.trxid
+        if response.get('struck_id') == '': response['struck_id'] = self.trxid
         return True, response
     
     def get_trxid(self):
