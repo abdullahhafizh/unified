@@ -181,10 +181,15 @@ def to_bcd(value, length=2):
     #     print('To BCD Output', result)
     # return result.encode('utf-8')
     value = len(value)
-    result = chr((((value / 10) << 4) & 0xF0) + ((value % 10) & 0x0F))
+    result = chr(((int((value / 10)) << 4) & 0xF0) + ((value % 10) & 0x0F))
+    # result = int(str(value), 16).to_bytes(length, 'big')
+    results = [
+        result,
+        int(str(value), 16).to_bytes(length, 'big')
+    ]
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
-        print('To BCD Output', result)
+        print('To BCD Output', json.dumps(results))
     return result[:-length]
 
 
