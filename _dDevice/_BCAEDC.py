@@ -176,13 +176,13 @@ def to_bcd(value, length=2, pad='\x00'):
         ret += chr((ms4b << 4) + ls4b)
     result = pad * (length - len(ret)) + ret
     if not _Common.LIVE_MODE:
-        print('To BCD Input', value, len(value))
+        print('To BCD Input', value, len(value_str))
         print('To BCD Output', result)
     return result
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
-    cmd =  to_bcd(REQUEST_LENGTH) + wByte + PROTO_FUNC.EXT.value
+    cmd =  to_bcd(len(wByte)) + wByte + PROTO_FUNC.EXT.value
     wByte = PROTO_FUNC.STX.value + cmd + calculateCRC(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
