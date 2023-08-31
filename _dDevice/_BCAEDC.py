@@ -167,7 +167,7 @@ def byte_len(obj):
     return l.to_bytes(2, 'big')
 
 
-def to_bcd(value, length=2, pad='\x00'):
+def to_bcd(value, length=2):
     # value_str = str(value)
     # value_str = ("0" if len(value_str) % 2 else "") + value_str
     # ret = ""
@@ -180,20 +180,12 @@ def to_bcd(value, length=2, pad='\x00'):
     #     print('To BCD Input', value, len(value_str))
     #     print('To BCD Output', result)
     # return result.encode('utf-8')
-    decimal_number = len(value)
-    bcd = ""
-    while decimal_number > 0:
-        digit = decimal_number % 10
-        bcd_digit = format(digit, '04b')  # Convert decimal digit to 4-bit binary
-        bcd = bcd_digit + bcd
-        decimal_number //= 10
-    # Make sure the BCD representation is exactly 'length' bits long
-    while len(bcd) < length * 8: bcd = '0000' + bcd
-    result = bcd[:length * 8].encode('utf-8')
+    value = len(value)
+    result = chr((((value / 10) << 4) & 0xF0) + ((value % 10) & 0x0F))
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
         print('To BCD Output', result)
-    return result
+    return result[:-length]
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
