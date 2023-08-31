@@ -183,12 +183,18 @@ def to_bcd(value, length=2):
     bcd_value = 0
     multiplier = 1
     decimal_value = len(value)
+    format_type = 3
     while decimal_value > 0:
         digit = decimal_value % 10
         bcd_value += digit * multiplier
         multiplier *= 16  # Shifting to the next 4-bit position
         decimal_value //= 10
-    result = bcd_value.to_bytes(2, 'big')
+    bcd_value &= 0xFFFF
+    combined_value = (format_type << 16) | bcd_value
+    byte1 = (combined_value >> 8) & 0xFF
+    byte2 = combined_value & 0xFF
+    recombined_value = (byte1 << 8) | byte2
+    result = f"{recombined_value:04X}"
     if not _Common.LIVE_MODE:
         print('To BCD Input', value)
         print('To BCD Output', result)
@@ -196,7 +202,8 @@ def to_bcd(value, length=2):
 
 
 def build_command(wByte=b''):
-    return to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
+    # All Request Length BCD Is b'\x150'
+    return b'\x150' + wByte + PROTO_FUNC.EXT.value
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
