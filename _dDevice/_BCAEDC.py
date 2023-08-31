@@ -256,7 +256,7 @@ def send_wait_response(ser=Serial(), wByte=b""):
 
 # TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
-ECR_TIMEOUT = 300
+ECR_TIMEOUT = 30
 ECR_STOPBITS = 1
 ECR_DATABITS = 8
 
