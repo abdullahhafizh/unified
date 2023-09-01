@@ -81,7 +81,7 @@ if __name__ == '__main__':
     welcome()
     mode = ''
     while True:
-        mode = input('Pilih Mode ECR Berikut (Pilih Nomor)?\n1 - Simulate Transaction\n2 - Echo Test\n3 - Card Information\nX - Exit')
+        mode = input('Pilih Mode ECR Berikut (Pilih Nomor)?\n1 - Simulate Transaction\n2 - Echo Test\n3 - Card Information\nX - Exit\n\nInput :')
         if mode in ['1', '2', '3']:
             break
         elif mode in ['x', 'X']:
