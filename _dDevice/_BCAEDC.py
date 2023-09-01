@@ -440,6 +440,7 @@ class ECRMessage():
             'trace_no'      : original_data.get('RRN').strip(),
             'inv_no'        : original_data.get('InvoiceNumber'),
             'card_no'       : original_data.get('PAN')[:16],
+            'card_pan'      : original_data.get('PAN')[:16],
             'exp_date'      : original_data.get('ExpiryDate'),
             'trans_date'    : ''.join([original_data.get('TransDate'), original_data.get('TransTime')]),
             'app_code'      : original_data.get('ApprovalCode'),

@@ -90,10 +90,11 @@ def sale_edc_ecr(amount, trxid=None):
             amount = amount.replace('.00', '')
             INIT_AMOUNT = amount
             result, sale_data = edc_ecr.do_payment(trxid, amount)
+            LOGGER.info((result, str(sale_data)))
             if result is True: #Get Normal Response
                 if sale_data['status'] == "SUCCESS":
                     # EDC_PAYMENT_RESULT = sale_data
-                    _KioskService.CARD_NO = sale_data['card_pan']
+                    _KioskService.CARD_NO = sale_data.get('card_pan')
                     EDC_PAYMENT_RESULT = sale_data
                     E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
                     sleep(.5)
@@ -105,11 +106,11 @@ def sale_edc_ecr(amount, trxid=None):
         # _Common.EDC_ERROR = 'SALE_ERROR'
         E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
     except Exception as e:
-        if 'Invalid argument' not in e:
-            # _Common.EDC_ERROR = 'SALE_ERROR'
-            E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
-            _Common.online_logger(['EDC ECR Sale'], 'device')
-            LOGGER.warning(str(e))
+        # if 'Invalid argument' not in e:
+        # _Common.EDC_ERROR = 'SALE_ERROR'
+        E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
+        _Common.online_logger(['EDC ECR Sale'], 'device')
+        LOGGER.warning(str(e))
     finally:
         # del edc_ecr
         pass
