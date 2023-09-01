@@ -207,7 +207,7 @@ def send_wait_response(ser=Serial(), wByte=b""):
 
         try:
             proto = PROTO_FUNC(rByte[1])  
-        except ValueError:
+        except (ValueError, IndexError):
             continue 
         
         if proto == PROTO_FUNC.ACK:
