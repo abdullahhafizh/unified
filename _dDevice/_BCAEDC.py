@@ -400,9 +400,10 @@ class ECRMessage():
         # 01000000000000000000000000                       P3                                                                                                                                                    
         # \x03 -> ETX
         res_code = message[49:51]
+        trx_amount = str(int(message[2:14])/100)
         original_data = {
             'TransType'         : message[0:2],
-            'TransAmount'       : message[2:14],
+            'TransAmount'       : trx_amount,
             'OtherAmount'       : message[14:26],
             'PAN'               : message[26:45],
             'ExpiryDate'        : message[45:49],
