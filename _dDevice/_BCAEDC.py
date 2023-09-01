@@ -259,7 +259,7 @@ class BCAEDC():
     def do_payment(self, trxid, amount):
         self.trxid = trxid
         self.amount = amount
-        ecr_message = ECRMessage('purchase', self.amount)
+        ecr_message = ECRMessage('Purchase', self.amount)
         tle_message = ecr_message.build('encoded')
         LOG.ecrlog("[ECR] do_payment[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
         LOG.ecrlog("[ECR] do_payment[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, tle_message)
@@ -273,6 +273,36 @@ class BCAEDC():
         del ecr_message
         # Refill TRXID in struck_id
         if response.get('struck_id') == '': response['struck_id'] = self.trxid
+        return True, response
+    
+    def card_info(self):
+        ecr_message = ECRMessage('Get Card Information')
+        tle_message = ecr_message.build('encoded')
+        LOG.ecrlog("[ECR] card_info[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
+        LOG.ecrlog("[ECR] card_info[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, tle_message)
+        result = send_wait_response(self.ser, tle_message)
+        if not result:
+            del ecr_message
+            return False, []
+        # Slice 4 (STX (2 bytes), Message Length (2 bytes))
+        response = ecr_message.parse_response(result[4:].decode('utf-8'))
+        LOG.ecrlog("[ECR] card_info[R]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, json.dumps(response))
+        del ecr_message
+        return True, response
+    
+    def echo_test(self):
+        ecr_message = ECRMessage('Echo-test')
+        tle_message = ecr_message.build('encoded')
+        LOG.ecrlog("[ECR] echo_test[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
+        LOG.ecrlog("[ECR] echo_test[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, tle_message)
+        result = send_wait_response(self.ser, tle_message)
+        if not result:
+            del ecr_message
+            return False, []
+        # Slice 4 (STX (2 bytes), Message Length (2 bytes))
+        response = ecr_message.parse_response(result[4:].decode('utf-8'))
+        LOG.ecrlog("[ECR] echo_test[R]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, json.dumps(response))
+        del ecr_message
         return True, response
     
     def get_trxid(self):
@@ -363,7 +393,6 @@ class ECRMessage():
             'Filler' : message[101:(101+LENGTH.get('Filler'))],
         }
         
-
     def parse_response(self, message, original=False):
         if not _Common.LIVE_MODE: print('parse_response [INPUT]', message, len(message))
         message = str(message)
