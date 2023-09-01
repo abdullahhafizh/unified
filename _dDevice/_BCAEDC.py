@@ -141,7 +141,6 @@ def calculate_crc(data=b""):
         crc = crc ^ x
     output = [
         crc.to_bytes(1, byteorder='big'),
-        crc.to_bytes(1, byteorder='little'),
         hex(crc)
         ]
     if not _Common.LIVE_MODE:
@@ -150,45 +149,7 @@ def calculate_crc(data=b""):
     return output[0]
 
 
-def calculateLRC(data=b""):
-    # byte LRC = 0x00;
-    # for (int i = 0; i < bytes.Length; i++)
-    # {
-    #     LRC = (LRC + bytes[i]) & 0xFF; 
-    # }
-    # return ((LRC ^ 0xFF) + 1) & 0xFF;
-    lrc = 0
-    for i in range(1, len(data)):
-        lrc = (lrc + data[i]) & 0xFF
-    return (((lrc ^ 0xFF) + 1) & 0xFF).to_bytes(1, byteorder='big')
-
-
-def byte_len(obj):
-    l = obj if type(obj) == int else len(obj)
-    return l.to_bytes(2, 'big')
-
-
-def decimal_to_bcd(value):
-    decimal_value = len(value)
-    bcd_value = 0
-    multiplier = 1
-    while decimal_value > 0:
-        digit = decimal_value % 10
-        bcd_value += digit * multiplier
-        multiplier *= 16  # Shifting to the next 4-bit position
-        decimal_value //= 10
-    
-    # result = bcd_value.to_bytes(2, byteorder='big')
-    result = hex(bcd_value)
-    result = bytes.fromhex(result)
-    if not _Common.LIVE_MODE:
-        print('BCD Input', value, len(value))
-        print('BCD Output', result, len(result))
-    return result
-
-
 def build_command(wByte=b''):
-    # All Request Length BCD Is b'\x150'
     # return decimal_to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
     return PROTO_FUNC.REQ_LEN.value + wByte + PROTO_FUNC.EXT.value
 
@@ -228,9 +189,9 @@ def send_wait_response(ser=Serial(), wByte=b""):
             counter = 0
             continue
         # No Response at-all After re-trigger
-        if counter > _Common.EDC_PAYMENT_DURATION:
-            LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, counter)
-            if debug: print("[ECR] TIMEOUT: ", counter)
+        if counter > (_Common.EDC_PAYMENT_DURATION-3):
+            LOG.ecrlog("[ECR] TIMEOUT CMD: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, counter)
+            if debug: print("[ECR] TIMEOUT CMD: ", counter)
             rByte = False
             break
         counter = counter + 1
@@ -250,15 +211,16 @@ def send_wait_response(ser=Serial(), wByte=b""):
             LOG.ecrlog("[ECR] RESEND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (PROTO_FUNC.ACK.value))
             if debug: print("[ECR] RESEND ACK: ", PROTO_FUNC.ACK.value)
             break
-        if counter > (_Common.EDC_PAYMENT_DURATION*5):
+        if counter > _Common.EDC_PAYMENT_DURATION:
+            LOG.ecrlog("[ECR] TIMEOUT RESULT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, counter)
+            if debug: print("[ECR] TIMEOUT RESULT: ", counter)
             rByte = False
             break
         counter = counter + 1
-        sleep(.20)
+        sleep(1)
         
     return rByte
 
-# TODO: Check This Setting Value
 ECR_BAUDRATE = 115200
 ECR_TIMEOUT = 60
 ECR_STOPBITS = 1
@@ -271,7 +233,6 @@ class BCAEDC():
     
     def connect(self, port="COM7"):
         LOG.ecrlog("[ECR] configuration: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, json.dumps(_Common.EDC))
-
         if self.ser is None:
             self.ser = Serial(
                 port=port, 
