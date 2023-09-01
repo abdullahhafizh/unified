@@ -276,7 +276,7 @@ class BCAEDC():
         return True, response
     
     def card_info(self):
-        ecr_message = ECRMessage('Get Card Information')
+        ecr_message = ECRMessage('Get Card Information', '0')
         tle_message = ecr_message.build('encoded')
         LOG.ecrlog("[ECR] card_info[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
         LOG.ecrlog("[ECR] card_info[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, tle_message)
@@ -291,7 +291,7 @@ class BCAEDC():
         return True, response
     
     def echo_test(self):
-        ecr_message = ECRMessage('Echo-test')
+        ecr_message = ECRMessage('Echo-test', '0')
         tle_message = ecr_message.build('encoded')
         LOG.ecrlog("[ECR] echo_test[D]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, ecr_message.parse())
         LOG.ecrlog("[ECR] echo_test[S]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, tle_message)
