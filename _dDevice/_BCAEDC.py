@@ -357,10 +357,10 @@ class ECRMessage():
         ]
         message = ''.join(data)
         if output.lower() != 'plain': 
-            if not _Common.LIVE_MODE:
-                for l in LENGTH: print(l, LENGTH.get(l))
-                print('---')
-                for d in data: print(d, len(d))
+            # if not _Common.LIVE_MODE:
+            #     for l in LENGTH: print(l, LENGTH.get(l))
+            #     print('---')
+            #     for d in data: print(d, len(d))
             print('EDC Build Message', message, len(message))
         return message if output.lower() == 'plain' else message.encode('utf-8')
     
@@ -391,6 +391,8 @@ class ECRMessage():
 
     def parse_response(self, message, original=False):
         message = str(message)
+        # Trim 0 as it is in 2 chars hex
+        if message[:2] == '01': message = message[1:]
         res_code = message[50:52]
         original_data = {
             'Version'           : message[0:1],
