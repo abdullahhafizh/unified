@@ -424,7 +424,7 @@ class ECRMessage():
         }
         map_data = {
             'raw'           : message,
-            'card_type'     : get_card_type(original.get('IssuerID')),
+            'card_type'     : get_card_type(original_data.get('IssuerID')),
             'struck_id'     : '',
             'status'        : 'SUCCESS' if res_code == '00' else RESPONSE_CODE.get(res_code, 'UNKNOWN').upper(),
             'amount'        : original_data.get('TransAmount'),
@@ -441,7 +441,9 @@ class ECRMessage():
             'bank_reff_no'  : original_data.get('RRN').strip(),
             'batch_no'      : original_data.get('BatchNumber'),
         }
-        return map_data if not original else original_data
+        result = map_data if not original else original_data
+        if not _Common.LIVE_MODE: print('[ECR] parse_response', json.dumps(result))
+        return result
 
 # SIMULATOR LOG
 
