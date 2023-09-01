@@ -160,7 +160,7 @@ def send_wait_response(ser=Serial(), wByte=b""):
     wByte = PROTO_FUNC.STX.value + cmd + calculate_crc(cmd)
     ser.write(wByte)
     LOG.ecrlog("[ECR] WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
-    #GET ACK
+
     counter = 0
     proto = None
     retrigger = False

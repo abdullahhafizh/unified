@@ -922,7 +922,6 @@ def set_tvc_player(command):
         LOGGER.warning((e))
 
 
-
 def set_ext_keyboard(command):
     if command == "":
         return
