@@ -285,7 +285,7 @@ class BCAEDC():
             del ecr_message
             return False, []
         # Slice 4 (STX (2 bytes), Message Length (2 bytes))
-        response = ecr_message.parse_response(result[4:].decode('utf-8'))
+        response = ecr_message.parse_response(result[4:].decode('utf-8'), True)
         LOG.ecrlog("[ECR] card_info[R]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, json.dumps(response))
         del ecr_message
         return True, response
@@ -300,7 +300,7 @@ class BCAEDC():
             del ecr_message
             return False, []
         # Slice 4 (STX (2 bytes), Message Length (2 bytes))
-        response = ecr_message.parse_response(result[4:].decode('utf-8'))
+        response = ecr_message.parse_response(result[4:].decode('utf-8'), True)
         LOG.ecrlog("[ECR] echo_test[R]: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, json.dumps(response))
         del ecr_message
         return True, response
