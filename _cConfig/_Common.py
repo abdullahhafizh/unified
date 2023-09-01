@@ -2444,11 +2444,13 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
     prepaid = BANK_PREPAID_NAME.get(bank.lower(), 'unknown')
     if prepaid == 'unknown':
         return False, 'Unknown Bank Mode'
-    # {"brizzi": ["5000", "2500", "1000", "100"], 
-    # "flazz": ["2500", "1000", "5000"], 
-    # "jakcard": ["1000", "5000", "2000"], "tid": "110322", 
-    # "emoney": ["2000", "1000", "5000", "500"], 
-    # "tapcash": ["1000", "5000", "2500", "5000"]}
+    # {
+        # "brizzi": ["5000", "2500", "1000", "100"], 
+        # "flazz": ["2500", "1000", "5000"], 
+        # "jakcard": ["1000", "5000", "2000"], "tid": "110322", 
+        # "emoney": ["2000", "1000", "5000", "500"], 
+        # "tapcash": ["1000", "5000", "2500", "5000"]
+    # }
     
     try:
         topup_amount = [eval(i) for i in TOPUP_AMOUNT_SETTING.get(prepaid)]
