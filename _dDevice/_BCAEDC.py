@@ -189,7 +189,8 @@ def decimal_to_bcd(value):
 
 def build_command(wByte=b''):
     # All Request Length BCD Is b'\x150'
-    return decimal_to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
+    # return decimal_to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
+    return b'0x0150' + wByte + PROTO_FUNC.EXT.value
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
