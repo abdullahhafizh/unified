@@ -207,12 +207,12 @@ def send_wait_response(ser=Serial(), wByte=b""):
         LOG.ecrlog("[ECR] READING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
         if debug: print("[ECR] READING: ", rByte)
         
-        if rByte == PROTO_FUNC.ACK:
+        if rByte == PROTO_FUNC.ACK.value:
             proto = PROTO_FUNC.ACK
             LOG.ecrlog("[ECR] FOUND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             if debug: print("[ECR] FOUND ACK: ", rByte)
             break
-        if rByte == PROTO_FUNC.NAK:
+        if rByte == PROTO_FUNC.NAK.value:
             proto = PROTO_FUNC.NAK
             LOG.ecrlog("[ECR] FOUND NAK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             if debug: print("[ECR] FOUND NAK: ", rByte)
