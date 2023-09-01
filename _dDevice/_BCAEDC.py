@@ -194,6 +194,7 @@ def build_command(wByte=b''):
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
+    debug = not _Common.LIVE_MODE
     cmd =  build_command(wByte)
     wByte = PROTO_FUNC.STX.value + cmd + calculate_crc(cmd)
     ser.write(wByte)
@@ -204,20 +205,25 @@ def send_wait_response(ser=Serial(), wByte=b""):
     while True:
         rByte = ser.read_until(size=1)
         LOG.ecrlog("[ECR] READING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+        if debug: print("[ECR] READING: ", rByte)
 
         try:
             proto = PROTO_FUNC(rByte[1])  
+            if debug: print("[ECR] CHECK ACK AS PROTO: ", proto, type(proto), PROTO_FUNC.ACK.value, type(PROTO_FUNC.ACK.value))
         except (ValueError, IndexError):
             continue 
         
-        if proto == PROTO_FUNC.ACK:
+        if proto == PROTO_FUNC.ACK.value:
             LOG.ecrlog("[ECR] FOUND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+            if debug: print("[ECR] FOUND ACK: ", rByte)
             break
-        if proto == PROTO_FUNC.NAK:
+        if proto == PROTO_FUNC.NAK.value:
             LOG.ecrlog("[ECR] FOUND NAK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
+            if debug: print("[ECR] FOUND NAK: ", rByte)
             return False
         if counter > (_Common.EDC_PAYMENT_DURATION*5):
             LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (counter))
+            if debug: print("[ECR] TIMEOUT: ", counter)
             rByte = False
             break
         counter = counter + 1
@@ -228,6 +234,7 @@ def send_wait_response(ser=Serial(), wByte=b""):
         # counter = 0
         rByte = ser.read_until(PROTO_FUNC.EXT.value)
         LOG.ecrlog("[ECR] RESULT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, rByte)
+        if debug: print("[ECR] RESULT: ", rByte)
         # Read and Looking For The End TRX
         if PROTO_FUNC.EXT.value in rByte:
             # Flag ACK
