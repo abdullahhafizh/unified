@@ -422,6 +422,7 @@ class ECRMessage():
             'CouponFlag'        : message[191:192],
             'Filler'            : message[192:200],       
         }
+        if not _Common.LIVE_MODE: print('[ECR] parse_response -> original', json.dumps(original_data))
         map_data = {
             'raw'           : message,
             'card_type'     : get_card_type(original_data.get('IssuerID')),
@@ -441,8 +442,8 @@ class ECRMessage():
             'bank_reff_no'  : original_data.get('RRN').strip(),
             'batch_no'      : original_data.get('BatchNumber'),
         }
+        if not _Common.LIVE_MODE: print('[ECR] parse_response -> mapped', json.dumps(map_data))
         result = map_data if not original else original_data
-        if not _Common.LIVE_MODE: print('[ECR] parse_response', json.dumps(result))
         return result
 
 # SIMULATOR LOG
