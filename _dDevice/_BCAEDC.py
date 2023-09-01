@@ -390,39 +390,40 @@ class ECRMessage():
         
 
     def parse_response(self, message, original=False):
+        if not _Common.LIVE_MODE: print('parse_response [INPUT]', message, len(message))
         message = str(message)
-        # Add Version In Message
-        if message[:2] == '01': message = message + '1'
-        res_code = message[50:52]
+        # \x02\x02\x00\x01 -> Sliced STX & Version
+        # 01000000000000000000000000                       P3                                                                                                                                                    
+        # \x03 -> ETX
+        res_code = message[49:51]
         original_data = {
-            'Version'           : message[0:1],
-            'TransType'         : message[1:3],
-            'TransAmount'       : message[3:15],
-            'OtherAmount'       : message[15:27],
-            'PAN'               : message[27:46],
-            'ExpiryDate'        : message[46:50],
+            'TransType'         : message[0:2],
+            'TransAmount'       : message[2:14],
+            'OtherAmount'       : message[14:26],
+            'PAN'               : message[26:45],
+            'ExpiryDate'        : message[45:49],
             'ResponseCode'      : res_code,
-            'RRN'               : message[52:64],
-            'ApprovalCode'      : message[64:70],
-            'TransDate'         : message[70:78],
-            'TransTime'         : message[78:84],
-            'MerchantID'        : message[84:99],
-            'TerminalID'        : message[99:107],
-            'OfflineFlag'       : message[107:108],
-            'CardholderName'    : message[108:134],
-            'PANCashierCard'    : message[134:150],
-            'InvoiceNumber'     : message[150:156],
-            'BatchNumber'       : message[156:162],
-            'IssuerID'          : message[162:164],
-            'InstallmentFlag'   : message[164:165],
-            'DCCFlag'           : message[165:166],
-            'RewardsLoyaltyFlag': message[166:167], #RedeemFlag
-            'InfoAmount'        : message[167:179],
-            'DCCDecimalPlace'   : message[179:180],
-            'DCCCurrencyName'   : message[180:183],
-            'DCCExchangeRate'   : message[183:191],
-            'CouponFlag'        : message[191:192],
-            'Filler'            : message[192:200],       
+            'RRN'               : message[51:63],
+            'ApprovalCode'      : message[63:69],
+            'TransDate'         : message[69:77],
+            'TransTime'         : message[77:83],
+            'MerchantID'        : message[83:98],
+            'TerminalID'        : message[98:106],
+            'OfflineFlag'       : message[106:107],
+            'CardholderName'    : message[107:133],
+            'PANCashierCard'    : message[133:149],
+            'InvoiceNumber'     : message[149:155],
+            'BatchNumber'       : message[155:161],
+            'IssuerID'          : message[161:163],
+            'InstallmentFlag'   : message[163:164],
+            'DCCFlag'           : message[164:165],
+            'RewardsLoyaltyFlag': message[165:166], #RedeemFlag
+            'InfoAmount'        : message[166:178],
+            'DCCDecimalPlace'   : message[178:179],
+            'DCCCurrencyName'   : message[179:182],
+            'DCCExchangeRate'   : message[182:190],
+            'CouponFlag'        : message[190:191],
+            'Filler'            : message[191:200],       
         }
         if not _Common.LIVE_MODE: print('[ECR] parse_response -> original', json.dumps(original_data))
         map_data = {
