@@ -202,23 +202,34 @@ def send_wait_response(ser=Serial(), wByte=b""):
     #GET ACK
     counter = 0
     proto = None
+    retrigger = False
     while True:
         rByte = ser.read_until(size=1)
         LOG.ecrlog("[ECR] READING: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
         if debug: print("[ECR] READING: ", rByte)
-        
+        # Grab ACK
         if rByte == PROTO_FUNC.ACK.value:
             proto = PROTO_FUNC.ACK
             LOG.ecrlog("[ECR] FOUND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             if debug: print("[ECR] FOUND ACK: ", rByte)
             break
+        # Grab NAK
         if rByte == PROTO_FUNC.NAK.value:
             proto = PROTO_FUNC.NAK
             LOG.ecrlog("[ECR] FOUND NAK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, rByte)
             if debug: print("[ECR] FOUND NAK: ", rByte)
             return False
-        if counter > (_Common.EDC_PAYMENT_DURATION*5):
-            LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (counter))
+        # Resend Command If No ACK Found After 2s
+        if counter == 2 and not retrigger:
+            ser.write(wByte)
+            LOG.ecrlog("[ECR] RE-WRITE: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, wByte)
+            if debug: print("[ECR] RE-WRITE: ", wByte)
+            retrigger = True
+            counter = 0
+            continue
+        # No Response at-all After re-trigger
+        if counter > _Common.EDC_PAYMENT_DURATION:
+            LOG.ecrlog("[ECR] TIMEOUT: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, counter)
             if debug: print("[ECR] TIMEOUT: ", counter)
             rByte = False
             break
@@ -236,8 +247,8 @@ def send_wait_response(ser=Serial(), wByte=b""):
             # Flag ACK
             # Resend ACK to EDC
             ser.write(PROTO_FUNC.ACK.value)
-            LOG.ecrlog("[ECR] resend ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (PROTO_FUNC.ACK.value))
-            if debug: print("[ECR] resend ACK: ", PROTO_FUNC.ACK.value)
+            LOG.ecrlog("[ECR] RESEND ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (PROTO_FUNC.ACK.value))
+            if debug: print("[ECR] RESEND ACK: ", PROTO_FUNC.ACK.value)
             break
         if counter > (_Common.EDC_PAYMENT_DURATION*5):
             rByte = False
