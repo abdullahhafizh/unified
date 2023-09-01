@@ -234,6 +234,10 @@ def send_wait_response(ser=Serial(), wByte=b""):
         # Read and Looking For The End TRX
         if PROTO_FUNC.EXT.value in rByte:
             # Flag ACK
+            # Resend ACK to EDC
+            ser.write(PROTO_FUNC.ACK.value)
+            LOG.ecrlog("[ECR] resend ACK: ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, (PROTO_FUNC.ACK.value))
+            if debug: print("[ECR] resend ACK: ", PROTO_FUNC.ACK.value)
             break
         if counter > (_Common.EDC_PAYMENT_DURATION*5):
             rByte = False
