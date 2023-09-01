@@ -179,7 +179,7 @@ def decimal_to_bcd(value):
         decimal_value //= 10
     
     # result = bcd_value.to_bytes(2, byteorder='big')
-    result = bcd_value.hex()
+    result = hex(bcd_value)
     result = bytes.fromhex(result)
     if not _Common.LIVE_MODE:
         print('BCD Input', value, len(value))
