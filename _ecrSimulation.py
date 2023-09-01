@@ -14,19 +14,27 @@ def welcome():
     Powered By: PT. MultiDaya Dinamika
                 -2023-
     """)
-    
-    
+
+
+def print_data(data={}):
+    if type(data) != dict:
+        print('ERROR INPUT DATA')
+    for d in data.keys():
+        print('-- ', d, ' : ', data[d])
+
+
 def simulate_trx(amount=100, trxid=''):
     result = None
-    sale_data = None
+    output = None
     edc_ecr = _BCAEDC.BCAEDC()
     trxid = ''.join(['SIM', str(time())])
     try:
         if edc_ecr.connect(_Common.EDC_PORT):
             amount = amount.replace('.00', '')
-            result, sale_data = edc_ecr.do_payment(trxid, amount)
-            print('Result -> ', result)
-            print('Data -> ', json.dumps(sale_data))
+            result, output = edc_ecr.do_payment(trxid, amount)
+            print('Result : ', result)
+            print('Data :')
+            print_data(output)
         else:
             print('ECR Not Connect', _Common.EDC_PORT)
             exit(1, 'Failed')
@@ -43,8 +51,9 @@ def simulate_echo():
     try:
         if edc_ecr.connect(_Common.EDC_PORT):
             result, output = edc_ecr.echo_test()
-            print('Result -> ', result)
-            print('Data -> ', json.dumps(output))
+            print('Result : ', result)
+            print('Data :')
+            print_data(output)
         else:
             print('ECR Not Connect', _Common.EDC_PORT)
             exit(1, 'Failed')
@@ -61,8 +70,9 @@ def simulate_info():
     try:
         if edc_ecr.connect(_Common.EDC_PORT):
             result, output = edc_ecr.card_info()
-            print('Result -> ', result)
-            print('Data -> ', json.dumps(output))
+            print('Result : ', result)
+            print('Data :')
+            print_data(output)
         else:
             print('ECR Not Connect', _Common.EDC_PORT)
             exit(1, 'Failed')
