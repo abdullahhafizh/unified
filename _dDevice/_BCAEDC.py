@@ -391,8 +391,8 @@ class ECRMessage():
 
     def parse_response(self, message, original=False):
         message = str(message)
-        # Trim 0 as it is in 2 chars hex
-        if message[:2] == '01': message = message[1:]
+        # Add Version In Message
+        if message[:2] == '01': message = message + '1'
         res_code = message[50:52]
         original_data = {
             'Version'           : message[0:1],
