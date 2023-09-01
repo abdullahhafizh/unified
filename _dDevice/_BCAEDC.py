@@ -190,7 +190,7 @@ def decimal_to_bcd(value):
 def build_command(wByte=b''):
     # All Request Length BCD Is b'\x150'
     # return decimal_to_bcd(wByte) + wByte + PROTO_FUNC.EXT.value
-    return b'\x01\x50' + wByte + PROTO_FUNC.EXT.value
+    return PROTO_FUNC.REQ_LEN.value + wByte + PROTO_FUNC.EXT.value
 
 
 def send_wait_response(ser=Serial(), wByte=b""):   
@@ -296,7 +296,6 @@ class BCAEDC():
         self.ser.close()
     
     def do_payment(self, trxid, amount):
-        # TODO: Recheck This
         self.trxid = trxid
         self.amount = amount
         ecr_message = ECRMessage('purchase', self.amount)
