@@ -1066,7 +1066,7 @@ def startup_task():
         _Common.REBOOT_TIME = _Helper.now()
         print("pyt: Table Adjustment/Migration...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Table Adjustment/Migration...')
-        _KioskService.direct_alter_table([
+        _KioskService.migrate_table([
             "ALTER TABLE ProductStock ADD COLUMN bid INT DEFAULT 1;",
             "ALTER TABLE Product ADD COLUMN bid INT DEFAULT 1;",
             "ALTER TABLE Settlement ADD COLUMN remarks TEXT;",

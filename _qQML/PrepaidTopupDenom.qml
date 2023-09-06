@@ -219,9 +219,11 @@ Base{
         }
     }
 
-    function open_only_cash_payment(){
+    function disable_qr_payment(){
         // Set Active Payment Only Cash
+        var debit_active = activePayment.indexOf('debit');
         activePayment = ['cash'];
+        if (debit_active) activePayment.push('debit');
         // Disable All QRIS Provider
         activeQRISProvider = [];
     }
@@ -570,7 +572,7 @@ Base{
             provider = 'Flazz BCA';
             maxBalance = 2000000;
             //Flazz BCA Only Allowed Topup With Cash in VM BCA Only
-            if (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') open_only_cash_payment();
+            if (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') disable_qr_payment();
         }
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';

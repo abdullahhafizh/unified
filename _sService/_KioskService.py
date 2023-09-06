@@ -989,20 +989,19 @@ def alter_table(a):
         # _Common.online_logger(['Data Alter', a], 'general')
 
 
-def start_direct_alter_table(s):
-    _Helper.get_thread().apply_async(direct_alter_table, (s,))
+def start_migrate_table(s):
+    _Helper.get_thread().apply_async(migrate_table, (s,))
 
 
-def direct_alter_table(scripts):
+def migrate_table(scripts):
     result = []
     if _Common.empty(scripts):
         LOGGER.warning(('EMPTY ADJUSTMENT SCRIPT'))
         return
-    if type(scripts) == list and len(scripts) > 0:
+    if type(scripts) != list: scripts = [scripts]
+    if len(scripts) > 0:
         for script in scripts:
             result.append({'script': script, 'result': _DAO.direct_adjust_table(script=script)})
-    else:
-        result.append({'script': scripts, 'result': _DAO.direct_adjust_table(script=scripts)})
     LOGGER.info(('RESULT', str(result)))
     return result
 
