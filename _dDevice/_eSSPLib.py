@@ -37,6 +37,16 @@ class eSSP(object):  # noqa
 
         # self._logger = logging.getLogger(__name__)
         # self._logger.debug("Startup at " + str(datetime.datetime.now()))
+        
+    def release(self):
+        try:
+            self.__ser.close()
+            del self.__ser
+            self.__ser = None
+        except Exception as e:
+            self.__ser = None
+        finally:
+            return self.__ser is None
 
     def reset(self):
         """Reset the device completely."""
@@ -497,7 +507,6 @@ class eSSP(object):  # noqa
                     # self._logger.debug("Error " + response[3])
         return processed_response
 
-
     def easy_inhibit(self, acceptmask):
         channelmask = []
         bitmask = int('00000000', 2)
@@ -518,14 +527,12 @@ class eSSP(object):  # noqa
         bitmask = hex(bitmask)
         return bitmask
     
-    
     def accept_note(self):
         accept_res = self.send_and_flush([self.getseq(), '0x1', '0x7'])
         if accept_res == self.__timeout_excp:
             self.send_and_flush([self.getseq(), '0x1', '0x7'])
         # print("SYNC")
         # self.sync()
-    
     
     def send_and_flush(self, command):
         crc = self.crc(command)

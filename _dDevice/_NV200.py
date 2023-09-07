@@ -19,6 +19,7 @@ COMMAND_MODE = ''
 
 class NV200_BILL_ACCEPTOR(object):
     global COMMAND_MODE
+    
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000"]):
         self.nv200 = _eSSPLib.eSSP(serial_port, 0, SOCKET_TIMEOUT)
         self.serial_port = serial_port
@@ -29,7 +30,6 @@ class NV200_BILL_ACCEPTOR(object):
             self.default_channel = [0,0,0,0,1,1,1,1]
         self.open_status = False
         self.known_notes = [0, 1000, 2000, 5000, 10000, 20000, 50000, 100000]
-
 
     def open(self):
         self.open_status = False
@@ -47,7 +47,6 @@ class NV200_BILL_ACCEPTOR(object):
         finally:
             return self.open_status
 
-
     def enable(self):
         try:
             if not self.check_active():
@@ -62,7 +61,6 @@ class NV200_BILL_ACCEPTOR(object):
             LOGGER.warning(('[NV200]', e))
             return False
 
-
     def disable(self):
         try:
             result = self.nv200.bulb_off()
@@ -75,7 +73,6 @@ class NV200_BILL_ACCEPTOR(object):
             LOGGER.warning(('[NV200]', e))
             return False
         
-    
     def disable_only(self):
         try:
             # result = self.nv200.bulb_off()
@@ -88,7 +85,6 @@ class NV200_BILL_ACCEPTOR(object):
             LOGGER.warning(('[NV200]', e))
             return False
 
-
     def reject(self):
         try:
             result = self.nv200.bulb_off()
@@ -100,6 +96,12 @@ class NV200_BILL_ACCEPTOR(object):
         except Exception as e:
             LOGGER.warning(('[NV200', e))
             return False
+    
+    def disconnect(self):
+        result = self.nv200.release()
+        del self.nv200
+        self.nv200 = None
+        return result
     
     # def store(self):
     #     try:
@@ -119,7 +121,6 @@ class NV200_BILL_ACCEPTOR(object):
     #     result = self.nv200.enable()
     #     return True
 
-
     def check_active(self):
         result = '0x00'
         try:
@@ -133,7 +134,6 @@ class NV200_BILL_ACCEPTOR(object):
             # print("Serial for Sync Cmd Timeout")
         finally:
             return result == '0xf0'
-    
     
     def reset_bill(self):
         # print ("Device Reset")
@@ -155,7 +155,6 @@ class NV200_BILL_ACCEPTOR(object):
                 return False
             time.sleep(1)
         
-
     def parse_reject_code(self, rejectCode):
         if rejectCode == '0x0':
             return "NOTE ACCEPTED"
@@ -220,17 +219,14 @@ class NV200_BILL_ACCEPTOR(object):
         else:
             return "INVALID NOTE: " + rejectCode
 
-
     def parse_value(self, channel):
         try: 
             return self.known_notes[channel] 
         except:
             return 0
         
-    
     def async_hold(self):
         _Helper.get_thread().apply_async(self.hold)
-
 
     def parse_event(self, poll_data):
 
@@ -402,7 +398,6 @@ class NV200_BILL_ACCEPTOR(object):
         event.append("")
         return event
 
-
 NV200 = None
 
 # NV = {
@@ -445,7 +440,6 @@ NV200 = None
 LOOP_ATTEMPT = 0
 # Set Max Waiting Event Listen From NV into 120 seconds
 MAX_LOOP_ATTEMPT = 90
-
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
     global NV200, LOOP_ATTEMPT, COMMAND_MODE
@@ -537,6 +531,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
+                
                 # Add Open to Re-enable Bill
                 NV200.open()
                 return 0, "Bill Reset"
@@ -545,6 +540,10 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
+                # Release & Flush the NV200 Object
+                NV200.disconnect()
+                del NV200
+                NV200 = None
                 # while True:
                 #     # pool = NV200.get_event()
                 #     LOOP_ATTEMPT += 1
