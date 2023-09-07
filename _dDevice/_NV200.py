@@ -101,6 +101,9 @@ class NV200_BILL_ACCEPTOR(object):
         result = self.nv200.release()
         del self.nv200
         self.nv200 = None
+        if _Common.BILL_LIBRARY_DEBUG is True:
+            print('pyt: [NV200] Releasing', str(result))   
+            LOGGER.debug(('[NV200] Releasing', str(result)))
         return result
     
     # def store(self):

@@ -44,6 +44,7 @@ class eSSP(object):  # noqa
             del self.__ser
             self.__ser = None
         except Exception as e:
+            print(e)
             self.__ser = None
         finally:
             return self.__ser is None
