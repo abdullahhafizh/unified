@@ -100,9 +100,9 @@ def get_bca_card_history_priv():
             card_log = card_log[5:]
         elif card_log[:1] == '|':
             card_log = card_log[1:]
+        card_log = card_log.replace('|', ';')
         history = []
         if len(card_log.split(';')) > 1: 
-            card_log = card_log.replace('|', ';')
             i = 0
             for c in card_log.split(';'):
                 if c in history:
