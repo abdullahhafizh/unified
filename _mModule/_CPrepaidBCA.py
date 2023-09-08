@@ -107,7 +107,9 @@ def get_bca_card_history_priv():
                     continue
                 try:
                     amount = int(c[2:12])
-                except:
+                except Exception as e:
+                    if not _Common.LIVE_MODE:
+                        print(e)
                     continue
                 history.append(c)
                 i += 1
