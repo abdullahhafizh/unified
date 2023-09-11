@@ -1161,7 +1161,7 @@ Base{
             console.log('initial_process session', closeTrxSession, now, whoami);
             return;
         }
-        console.log('initial_process', details.payment, now, whoami);
+        console.log('initial_process', details.payment, allQRProvider, now, whoami);
         proceedAble = true;
         // Add New Bucket to store history error in detail trx data
         details.error_history = '';
