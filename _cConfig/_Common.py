@@ -707,13 +707,12 @@ ERECEIPT_URL = _ConfigParser.get_set_value('PRINTER', 'ereceipt^url', 'http://er
 ERECEIPT_ASYNC_MODE = True
 ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'http://apiv2.mdd.co.id:2020/')
 
-
 # Re-write view config if missing
-if len(VIEW_CONFIG.keys()) == 0:
-    if THEME_NAME.lower() == 'transjakarta':
-        VIEW_CONFIG = TJ_VIEW_CONFIG
-    if THEME_NAME.lower() in ['kai', 'kci']:
-        VIEW_CONFIG = KAI_VIEW_CONFIG
+# if len(VIEW_CONFIG.keys()) == 0:
+#     if THEME_NAME.lower() == 'transjakarta':
+#         VIEW_CONFIG = TJ_VIEW_CONFIG
+#     if THEME_NAME.lower() in ['kai', 'kci']:
+#         VIEW_CONFIG = KAI_VIEW_CONFIG
         
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
@@ -798,6 +797,7 @@ QR_PROD_STATE = {
 ALL_QR_PROVIDER = QR_PROD_STATE.keys()
 QR_NON_DIRECT_PAY = [x for x in ALL_QR_PROVIDER if x not in QR_DIRECT_PAY]
 
+VIEW_CONFIG['all_qr_provider'] = [x.lower() for x in ALL_QR_PROVIDER]
 
 ENDPOINT_SUCCESS_BY_200_HTTP_HEADER = [
     'settlement/submit', 
