@@ -34,7 +34,7 @@ LAST_CAPTURED_TIME = _Helper.epoch()
 
 
 def do_recheck_time():
-    global LAST_SYNC_TIME
+    global LAST_CAPTURED_TIME
     try:
         if abs(_Helper.epoch() - LAST_CAPTURED_TIME) > _Common.TIME_TOLERANCE:
             import ntplib
@@ -48,6 +48,7 @@ def do_recheck_time():
             else:
                 os.system('date ' +  t.strftime("%x"))
                 os.system('time ' +  t.strftime("%X"))
+            LAST_CAPTURED_TIME = _Helper.epoch()
             print('pyt: Resync Done', _Helper.time_string())
         else:
             print('pyt: Resync Skip', _Helper.time_string())
