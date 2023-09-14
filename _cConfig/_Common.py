@@ -67,6 +67,9 @@ if TEST_MODE is True:
     _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
     os.system('git checkout ' +APP_MODE)
 
+TIME_TOLERANCE = int(_ConfigParser.get_set_value('GENERAL', 'time^tolerance', '60'))
+TIME_SYNC_SERVER = _ConfigParser.get_set_value('GENERAL', 'time^sync^server', 'asia.pool.ntp.org')
+
 PTR_MODE = True if _ConfigParser.get_set_value('GENERAL', 'pir^usage', '0') == '1' else False
 
 OVER_NIGHT = int(_ConfigParser.get_set_value('GENERAL', 'over^night', '22'))

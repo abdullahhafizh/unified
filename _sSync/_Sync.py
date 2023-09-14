@@ -20,7 +20,7 @@ from operator import itemgetter
 import subprocess
 from _tTools import _SalePrintTool
 import traceback
-
+import datetime
 
 LOGGER = logging.getLogger()
 SETTING_PARAM = []
@@ -30,6 +30,31 @@ def start_sync_machine(url, param):
     _Helper.get_thread().apply_async(sync_machine, (url, param,))
 
 
+LAST_CAPTURED_TIME = _Helper.epoch()
+
+
+def do_recheck_time():
+    global LAST_SYNC_TIME
+    try:
+        if abs(_Helper.epoch() - LAST_CAPTURED_TIME) > _Common.TIME_TOLERANCE:
+            import ntplib
+            client = ntplib.NTPClient()
+            response = client.request(_Common.TIME_SYNC_SERVER)
+            t = datetime.fromtimestamp(response.tx_time)
+            time_ntp = t.strftime("%m %d %H:%M:%S %Y")#Mon Jul 05 13:58:39 2021
+            print('PYT: NTP Time', _Common.TIME_SYNC_SERVER, str(time_ntp))
+            if _Common.IS_WINDOWS:
+                os.system('w32tm /resync')
+            else:
+                os.system('date ' +  t.strftime("%x"))
+                os.system('time ' +  t.strftime("%X"))
+            print('PYT: Resync Done', _Helper.time_string())
+        else:
+            print('PYT: Resync Skip', _Helper.time_string())
+    except Exception as e:
+        print('PYT: ERROR Recheck Time', e)
+    
+
 def sync_machine(url, param):
     global SETTING_PARAM
     SETTING_PARAM = param
@@ -37,6 +62,7 @@ def sync_machine(url, param):
     while True:
         attempt += 1
         try:
+            do_recheck_time()
             status, response = _HTTPAccess.get_from_url(url=url, force=True)
             if status == 200:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Connected To Backend')
