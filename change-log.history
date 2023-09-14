@@ -1,5 +1,6 @@
 16.4.2-GLOBAL:
 - Add Time Sync In Background Service,
+- Improve Handle Reader Response (Missing STX),
 - ...
 
 16.4.1-GLOBAL:
