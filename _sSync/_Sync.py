@@ -30,13 +30,13 @@ def start_sync_machine(url, param):
     _Helper.get_thread().apply_async(sync_machine, (url, param,))
 
 
-LAST_CAPTURED_TIME = _Helper.epoch()
+LAST_CAPTURED_TIME = 0
 
 
 def do_recheck_time():
     global LAST_CAPTURED_TIME
     try:
-        if abs(_Helper.epoch() - LAST_CAPTURED_TIME) > _Common.TIME_TOLERANCE:
+        if LAST_CAPTURED_TIME == 0 or abs(_Helper.epoch() - LAST_CAPTURED_TIME) > _Common.TIME_TOLERANCE:
             import ntplib
             client = ntplib.NTPClient()
             response = client.request(_Common.TIME_SYNC_SERVER)
