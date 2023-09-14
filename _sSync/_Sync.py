@@ -40,7 +40,7 @@ def do_recheck_time():
             import ntplib
             client = ntplib.NTPClient()
             response = client.request(_Common.TIME_SYNC_SERVER)
-            t = datetime.fromtimestamp(response.tx_time)
+            t = datetime.date.fromtimestamp(response.tx_time)
             time_ntp = t.strftime("%m %d %H:%M:%S %Y")#Mon Jul 05 13:58:39 2021
             print('pyt: NTP Time', _Common.TIME_SYNC_SERVER, str(time_ntp))
             if _Common.IS_WINDOWS:
