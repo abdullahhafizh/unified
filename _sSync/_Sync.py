@@ -42,17 +42,17 @@ def do_recheck_time():
             response = client.request(_Common.TIME_SYNC_SERVER)
             t = datetime.fromtimestamp(response.tx_time)
             time_ntp = t.strftime("%m %d %H:%M:%S %Y")#Mon Jul 05 13:58:39 2021
-            print('PYT: NTP Time', _Common.TIME_SYNC_SERVER, str(time_ntp))
+            print('pyt: NTP Time', _Common.TIME_SYNC_SERVER, str(time_ntp))
             if _Common.IS_WINDOWS:
                 os.system('w32tm /resync')
             else:
                 os.system('date ' +  t.strftime("%x"))
                 os.system('time ' +  t.strftime("%X"))
-            print('PYT: Resync Done', _Helper.time_string())
+            print('pyt: Resync Done', _Helper.time_string())
         else:
-            print('PYT: Resync Skip', _Helper.time_string())
+            print('pyt: Resync Skip', _Helper.time_string())
     except Exception as e:
-        print('PYT: ERROR Recheck Time', e)
+        print('pyt: ERROR Recheck Time', e)
     
 
 def sync_machine(url, param):
