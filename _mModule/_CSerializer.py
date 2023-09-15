@@ -1369,9 +1369,9 @@ def retrieve_rs232_data(Ser=Serial()):
         if response.__contains__(b'\x10\x03'):
             i_end = response.index(b'\x10\x03')
             response = response[:i_end+2]
-            LOG.fw("RAW_REPLY:", response)
             if response[0] == b'\x02': 
                 response = b'\x10' + response
+            LOG.fw("RAW_REPLY:", response)
             return response
             break
     # start =  Ser.read_until(b'\x10\x02')
