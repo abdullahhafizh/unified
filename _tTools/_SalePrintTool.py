@@ -17,9 +17,6 @@ from _dDAO import _DAO
 from time import sleep
 import re
 
-if _Common.IS_LINUX:
-    from escpos.printer import Dummy as EPrinter
-
 
 LOGGER = logging.getLogger()
 
@@ -42,10 +39,16 @@ class AbstractEprinter:
         
     def cut(self):
         pass
-    
 
-if _Common.IS_WINDOWS:
-    Eprinter = AbstractEprinter()
+
+if _Common.IS_LINUX:
+    from escpos.printer import Dummy as EPrinter
+else:
+    if _Common.PRINTER_IP_ACTIVE:
+        from escpos.printer import Network
+        Eprinter = Network(_Common.PRINTER_IP)
+    else:
+        Eprinter = AbstractEprinter()
     
 
 class SPrintToolSignalHandler(QObject):
@@ -391,7 +394,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_topup_trx(p, t)
     pdf = None
     # Init Variables
@@ -754,14 +757,15 @@ def eprinter_topup_trx(p, t):
             printer.text("\n")
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
         # End Layouting
         _Common.store_to_temp_data('last-trx-print-data', json.dumps(p))
         # Print-out to printer
-        print_result = _Printer.escpos_direct_print(printer.output)
-        # print_ = _Printer.native_print(pdf_file)
-        print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+        if _Common.IS_LINUX:
+            print_result = _Printer.escpos_direct_print(printer.output)
+            # print_ = _Printer.native_print(pdf_file)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -778,7 +782,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_shop_trx(p, t)
     pdf = None
     # Init Variables
@@ -1030,14 +1034,15 @@ def eprinter_shop_trx(p, t):
             printer.text("\n")
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
         # End Layouting
         _Common.store_to_temp_data('last-trx-print-data', json.dumps(p))
-        # Print-out to printer
-        print_result = _Printer.escpos_direct_print(printer.output)
-        # print_ = _Printer.native_print(pdf_file)
-        print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+        if _Common.IS_LINUX:
+            # Print-out to printer
+            print_result = _Printer.escpos_direct_print(printer.output)
+            # print_ = _Printer.native_print(pdf_file)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -1054,7 +1059,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_ppob_trx(p, t)
     pdf = None
     # Init Variables
@@ -1415,14 +1420,15 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
             printer.text("\n")
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
         # End Layouting
         _Common.store_to_temp_data('last-trx-print-data', json.dumps(p))
-        # Print-out to printer
-        print_result = _Printer.escpos_direct_print(printer.output)
-        # print_ = _Printer.native_print(pdf_file)
-        print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+        if _Common.IS_LINUX:
+            # Print-out to printer
+            print_result = _Printer.escpos_direct_print(printer.output)
+            # print_ = _Printer.native_print(pdf_file)
+            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -1667,7 +1673,7 @@ def admin_print_global(struct_id, ext='.pdf'):
     print_copy = 2
     user = 'mdd_operator'
     s = False
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_admin_global(struct_id)
     if _UserService.USER is not None:
         user = _UserService.USER['username']
@@ -1827,15 +1833,16 @@ def eprinter_admin_global(struct_id, ext='.pdf'):
             printer.text("\n")
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
         # Mark Sync Collected Data
         mark_sync_collected_data(s)
-        # Print-out to printer
-        for i in range(2):
-            print_result = _Printer.escpos_direct_print(printer.output)
-            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
-            sleep(1)
+        if _Common.IS_LINUX:
+            # Print-out to printer
+            for i in range(2):
+                print_result = _Printer.escpos_direct_print(printer.output)
+                print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+                sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -1862,7 +1869,7 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
     print_copy = 2
     user = 'mdd_operator'
     s = False
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_admin_preload(struct_id)
     if _UserService.USER is not None:
         user = _UserService.USER['username']
@@ -2033,13 +2040,14 @@ def eprinter_admin_preload(struct_id, ext='.pdf'):
             printer.text("\n")
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
-        # Print-out to printer
-        for i in range(2):
-            print_result = _Printer.escpos_direct_print(printer.output)
-            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
-            sleep(1)
+        if _Common.IS_LINUX:
+            # Print-out to printer
+            for i in range(2):
+                print_result = _Printer.escpos_direct_print(printer.output)
+                print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+                sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))
@@ -2058,7 +2066,7 @@ def admin_change_stock_print(struct_id, ext='.pdf'):
     padding_left = 0
     print_copy = 2
     user = 'mdd_operator'
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_admin_change_stock(struct_id)
     s = False
     if _UserService.USER is not None:
@@ -2176,12 +2184,13 @@ def eprinter_admin_change_stock(struct_id, ext='.pdf'):
             printer.text("\n")
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
-        # Print-out to printer
-        for i in range(2):
-            print_result = _Printer.escpos_direct_print(printer.output)
-            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+        if _Common.IS_LINUX:
+            # Print-out to printer
+            for i in range(2):
+                print_result = _Printer.escpos_direct_print(printer.output)
+                print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
             sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
     except Exception as e:
@@ -2235,7 +2244,7 @@ def print_card_history(payload):
     global GENERAL_TITLE, USE_FOOTER
     if _Helper.empty(_Common.LAST_CARD_LOG_HISTORY):
         return
-    if _Common.IS_LINUX:
+    if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_print_card_history(payload)
     # Payload Must Contain Card Number, Bank Name, Balance
     payload = json.loads(payload)
@@ -2382,13 +2391,14 @@ def eprinter_print_card_history(payload):
         printer.set(align="LEFT",text_type="normal", width=1, height=1)        
         printer.text((' '*padding_left)+'App Ver. - ' +_Common.VERSION + "\n")
         printer.close()
-        if _Common.PRINTER_PAPER_TYPE == '80mm':
+        if _Common.PRINTER_PAPER_TYPE == '80mm' or _Common.PRINTER_IP_ACTIVE:
             printer.cut()
-        # Print-out to printer
-        for i in range(1):
-            print_result = _Printer.escpos_direct_print(printer.output)
-            print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
-            sleep(1)
+        if _Common.IS_LINUX:
+            # Print-out to printer
+            for i in range(1):
+                print_result = _Printer.escpos_direct_print(printer.output)
+                print("pyt : sending escpos_direct_print : {}".format(str(print_result)))
+                sleep(1)
     except Exception as e:
         LOGGER.warning(str(e))
     finally:

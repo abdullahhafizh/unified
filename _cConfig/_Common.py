@@ -166,6 +166,9 @@ PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
 PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 PRINTER_NEW_LAYOUT = True if _ConfigParser.get_set_value('PRINTER', 'new^layout', '0') == '1' else False
 PRINTER_PAPER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^paper^type', '80mm')
+PRINTER_IP = _ConfigParser.get_set_value('PRINTER', 'ip^address', '0.0.0.0')
+PRINTER_IP_ACTIVE = (PRINTER_IP != '0.0.0.0' and _Helper.valid_ip(PRINTER_IP))
+
 
 ALLOW_REPRINT_RECEIPT = True if _ConfigParser.get_set_value('PRINTER', 'allow^reprint^receipt', '0') == '1' else False
 

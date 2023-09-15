@@ -244,3 +244,9 @@ def get_int(s):
     if s is None: return 0
     if type(s) == str: s = s.replace(':', '')
     return int(s)
+
+
+def valid_ip(ip=None, version=4):
+    if empty(ip): return False
+    if version != 4: return False
+    return [0<=int(x)<256 for x in re.split('\.',re.match(r'^\d+\.\d+\.\d+\.\d+$',ip).group(0))].count(True)==version

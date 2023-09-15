@@ -1394,8 +1394,8 @@ def get_TDefaultRespons(data):
     '''
     result = {}
     # Handle Anomaly Response From Reader Missing STX
-    if data[0] != b'\x10': 
-        data = b'\x10' + data
+    # if data[0] != b'\x10': 
+    #     data = b'\x10' + data
     result["start"] = data[0:2]
     # print(result)
     result["header"] = data[2:9]
