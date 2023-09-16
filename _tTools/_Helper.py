@@ -247,6 +247,6 @@ def get_int(s):
 
 
 def valid_ip(ip=None, version=4):
-    if empty(ip): return False
+    if empty(ip) or ip == '0.0.0.0' : return False
     if version != 4: return False
     return [0<=int(x)<256 for x in re.split('\.',re.match(r'^\d+\.\d+\.\d+\.\d+$',ip).group(0))].count(True)==version

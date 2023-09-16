@@ -24,6 +24,15 @@ MINIMUM_SYSTEM_VERSION = (3, 8)
 LOGGER = logging.getLogger()
 
 
+def validate_escpos_lib():
+    try:
+        import escpos.printer as ESCPOS
+        del ESCPOS 
+        return True
+    except:
+        return False
+
+
 def validate_system_version():
     LOGGER.debug(('SYSTEM_VERSION', MINIMUM_SYSTEM_VERSION, SYSTEM_VERSION))
     return SYSTEM_VERSION >= MINIMUM_SYSTEM_VERSION
@@ -167,8 +176,7 @@ PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 PRINTER_NEW_LAYOUT = True if _ConfigParser.get_set_value('PRINTER', 'new^layout', '0') == '1' else False
 PRINTER_PAPER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^paper^type', '80mm')
 PRINTER_IP = _ConfigParser.get_set_value('PRINTER', 'ip^address', '0.0.0.0')
-PRINTER_IP_ACTIVE = (PRINTER_IP != '0.0.0.0' and _Helper.valid_ip(PRINTER_IP))
-
+PRINTER_IP_ACTIVE = (_Helper.valid_ip(PRINTER_IP) and validate_escpos_lib())
 
 ALLOW_REPRINT_RECEIPT = True if _ConfigParser.get_set_value('PRINTER', 'allow^reprint^receipt', '0') == '1' else False
 

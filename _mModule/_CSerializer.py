@@ -6,6 +6,11 @@ from _mModule import _CPrepaidProtocol as proto
 from serial import Serial
 from time import sleep
 
+
+STX = b'\x10\x02'
+ETX = b'\x10\x03'
+
+
 def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
 # , PIN_Len, INSTITUTION_Len, TERMINAL_Len
 ):
@@ -88,7 +93,12 @@ def GET_BALANCE(Ser):
     response = get_TDefaultRespons(data)
     # print(response)
     #LOG.fw("RAW_RECV:", response)
-
+    
+    # If STX Missing 1 byte, trim data to be converted into integer
+    if response['start'] != STX or response['start'][0] == b'\x02':
+        response['data'] = b'0' + response['data']
+        # response['data'] = response['data'][:-1]
+        
     result = get_TBalanceres(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
@@ -1366,8 +1376,8 @@ def retrieve_rs232_data(Ser=Serial()):
     while True:
         response = response + Ser.read()
         # LOG.fw("DEBUG_READ:", response)
-        if response.__contains__(b'\x10\x03'):
-            i_end = response.index(b'\x10\x03')
+        if response.__contains__(ETX):
+            i_end = response.index(ETX)
             response = response[:i_end+2]
             if response[0] == b'\x02': 
                 response = b'\x10' + response
@@ -1376,7 +1386,7 @@ def retrieve_rs232_data(Ser=Serial()):
             break
     # start =  Ser.read_until(b'\x10\x02')
     # LOG.fw("READ_START:", start)
-    # end = Ser.read_until(b'\x10\x03')
+    # end = Ser.read_until(ETX)
     # LOG.fw("READ_END:", end)
     # result = start + end
     # return result

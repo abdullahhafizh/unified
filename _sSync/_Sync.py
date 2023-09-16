@@ -43,6 +43,7 @@ def do_recheck_time():
             t = datetime.date.fromtimestamp(response.tx_time)
             time_ntp = t.strftime("%m %d %H:%M:%S %Y")#Mon Jul 05 13:58:39 2021
             print('pyt: NTP Time', _Common.TIME_SYNC_SERVER, str(time_ntp))
+            LOGGER.debug(('NTP Time', _Common.TIME_SYNC_SERVER, str(time_ntp)))
             if _Common.IS_WINDOWS:
                 os.system('w32tm /resync')
             else:
@@ -50,10 +51,13 @@ def do_recheck_time():
                 os.system('time ' +  t.strftime("%X"))
             LAST_CAPTURED_TIME = _Helper.epoch()
             print('pyt: Resync Done', _Helper.time_string())
+            LOGGER.debug(('Resync Skip', _Helper.time_string()))
         else:
             print('pyt: Resync Skip', _Helper.time_string())
+            LOGGER.debug(('Resync Skip', _Helper.time_string()))
     except Exception as e:
         print('pyt: ERROR Recheck Time', e)
+        LOGGER.error((e))
     
 
 def sync_machine(url, param):
@@ -63,7 +67,9 @@ def sync_machine(url, param):
     while True:
         attempt += 1
         try:
+            # Check Time Before Sync Data
             do_recheck_time()
+            # Send Diagnostic Data
             status, response = _HTTPAccess.get_from_url(url=url, force=True)
             if status == 200:
                 print('pyt: sync_machine ' + _Helper.time_string() + ' Connected To Backend')
