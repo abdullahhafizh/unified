@@ -95,7 +95,7 @@ def GET_BALANCE(Ser):
     #LOG.fw("RAW_RECV:", response)
     
     # If STX Missing 1 byte, trim data to be converted into integer
-    if response['start'] != STX or response['start'][0] == b'\x02':
+    if response['start'] != STX or response['start'][0] == STX[1]:
         response['data'] = b'0' + response['data']
         # response['data'] = response['data'][:-1]
         
@@ -1378,9 +1378,9 @@ def retrieve_rs232_data(Ser=Serial()):
         # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
             i_end = response.index(ETX)
-            response = response[:i_end+2]
-            if response[0] == b'\x02': 
-                response = b'\x10' + response
+            response = response[:i_end+len(ETX)]
+            if response[0] == STX[1]: 
+                response = STX[0] + response
             LOG.fw("RAW_REPLY:", response)
             return response
             break
