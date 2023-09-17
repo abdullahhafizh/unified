@@ -1378,7 +1378,7 @@ def retrieve_rs232_data(Ser=Serial()):
         # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
             i_end = response.index(ETX)
-            response = response[:i_end+len(ETX)]
+            response = response[:(i_end+len(ETX))]
             if response[0] == STX[1]: 
                 response = STX[0] + response
             LOG.fw("RAW_REPLY:", response)
