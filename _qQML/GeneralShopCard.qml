@@ -202,7 +202,8 @@ Base{
     }
 
     function is_multi_qr_provider(){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        if (activeQRISProvider.length == 0) return false;
         var singleQRISProvider = (activeQRISProvider.length > 0 && activeQRISProvider.length == 1);
         console.log('QRIS Provider', activeQRISProvider, !singleQRISProvider, now);
         return !singleQRISProvider;

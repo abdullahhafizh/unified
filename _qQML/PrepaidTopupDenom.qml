@@ -223,7 +223,7 @@ Base{
         // Set Active Payment Only Cash
         var debit_active = activePayment.indexOf('debit');
         activePayment = ['cash'];
-        if (debit_active) activePayment.push('debit');
+        if (debit_active > -1) activePayment.push('debit');
         // Disable All QRIS Provider
         activeQRISProvider = [];
     }
@@ -483,7 +483,8 @@ Base{
     }
 
     function is_multi_qr_provider(){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        if (activeQRISProvider.length == 0) return false;
         var singleQRISProvider = (activeQRISProvider.length > 0 && activeQRISProvider.length == 1);
         console.log('QRIS Provider', activeQRISProvider, !singleQRISProvider, now);
         return !singleQRISProvider;
