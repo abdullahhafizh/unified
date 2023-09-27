@@ -1111,12 +1111,18 @@ def validate_topup_host_config(bank, conn=False):
         return False
     elif bank == 'BRI':
         # Must Have SAM And Host Config
+        if _Common.BRI_TOPUP_ONLINE is False:
+            _QPROX.validate_topup_online_config('BRI')
         return _Common.BRI_SAM_ACTIVE is True and _Common.BRI_TOPUP_ONLINE is True
     elif bank == 'BCA':
         # Must Have Host Config
+        if _Common.BCA_TOPUP_ONLINE is False:
+            _QPROX.validate_topup_online_config('BCA')
         return _Common.BCA_TOPUP_ONLINE is True
     elif bank == 'DKI':
         # Must Have Host Config
+        if _Common.DKI_TOPUP_ONLINE is False:
+            _QPROX.validate_topup_online_config('DKI')
         return _Common.DKI_TOPUP_ONLINE is True
     else:
         return False
