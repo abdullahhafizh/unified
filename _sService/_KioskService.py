@@ -1006,9 +1006,6 @@ def migrate_table(scripts):
     return result
 
 
-TID = _Common.TID
-
-
 def start_get_admin_key():
     _Helper.get_thread().apply_async(get_admin_key)
 

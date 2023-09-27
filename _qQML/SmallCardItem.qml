@@ -20,7 +20,7 @@ Rectangle {
         source: sourceImage
         scale: 1
         fillMode: Image.PreserveAspectFit
-        opacity: (itemName=='AVAILABLE') ? 1 : 0.5
+        opacity: (itemName=='AVAILABLE') ? 1 : 0.3
     }
 
 

@@ -1106,6 +1106,22 @@ def ping_online_topup(mode, payload=None, trigger=True):
         return False
 
 
+def validate_topup_host_config(bank, conn=False):
+    if not conn or not _Common.CARD_TOPUP_FEATURES.get(bank, False):
+        return False
+    elif bank == 'BRI':
+        # Must Have SAM And Host Config
+        return _Common.BRI_SAM_ACTIVE is True and _Common.BRI_TOPUP_ONLINE is True
+    elif bank == 'BCA':
+        # Must Have Host Config
+        return _Common.BCA_TOPUP_ONLINE is True
+    elif bank == 'DKI':
+        # Must Have Host Config
+        return _Common.DKI_TOPUP_ONLINE is True
+    else:
+        return False
+
+
 def start_get_topup_readiness():
     _Helper.get_thread().apply_async(get_topup_readiness)
 
@@ -1144,11 +1160,11 @@ def get_topup_readiness():
             if last_card_check['bank_name'] == 'BNI':
                 ready['bni'] = 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS and _Common.CARD_TOPUP_FEATURES['BNI']) is True else 'N/A',
             if last_card_check['bank_name'] == 'BRI':
-                ready['bri'] = 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and connection_online is True and _Common.CARD_TOPUP_FEATURES['BRI']) else 'N/A'
+                ready['bri'] = 'AVAILABLE' if validate_topup_host_config('BRI', conn=connection_online) else 'N/A'
             if last_card_check['bank_name'] == 'BCA':
-                ready['bca'] = 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and connection_online is True and _Common.CARD_TOPUP_FEATURES['BCA']) else 'N/A'
+                ready['bca'] = 'AVAILABLE' if validate_topup_host_config('BCA', conn=connection_online) else 'N/A'
             if last_card_check['bank_name'] == 'DKI':
-                ready['dki'] = 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE is True and connection_online is True and _Common.CARD_TOPUP_FEATURES['DKI']) else 'N/A'
+                ready['dki'] = 'AVAILABLE' if validate_topup_host_config('DKI', conn=connection_online) else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
         #     ready['balance_bni'] = '999002'
@@ -2321,9 +2337,9 @@ def check_topup_readiness():
             'balance_bni': str(_Common.BNI_ACTIVE_WALLET),
             'mandiri': 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0 and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
             'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
-            'bri': 'AVAILABLE' if (_Common.BRI_SAM_ACTIVE is True and ping_status) else 'N/A',
-            'bca': 'AVAILABLE' if (_Common.BCA_TOPUP_ONLINE is True and ping_status) else 'N/A',
-            'dki': 'AVAILABLE' if (_Common.DKI_TOPUP_ONLINE_BY_SERVICE is True or _Common.DKI_TOPUP_ONLINE is True) and  ping_status else 'N/A',
+            'bri': 'AVAILABLE' if validate_topup_host_config('BRI', ping_status) else 'N/A',
+            'bca': 'AVAILABLE' if validate_topup_host_config('BCA', ping_status) else 'N/A',
+            'dki': 'AVAILABLE' if validate_topup_host_config('DKI', ping_status) else 'N/A',
         }
         TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
     except Exception as e:

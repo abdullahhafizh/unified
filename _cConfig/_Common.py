@@ -246,6 +246,7 @@ PROCODE_BRI = _ConfigParser.get_set_value('BRI', 'procode', '---')
 SLOT_BRI = _ConfigParser.get_set_value('BRI', 'sam^slot', '---')
 BRI_AUTO_REFUND = True if _ConfigParser.get_set_value('BRI', 'auto^refund', '1') == '1' else False
 BRI_SAM_ACTIVE = digit_in(SLOT_BRI) and len(SLOT_BRI) == 1
+BRI_TOPUP_ONLINE = False
 
 MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
@@ -294,7 +295,8 @@ LAST_DKI_INVOICE_NO = _ConfigParser.get_set_value('TEMPORARY', 'dki^last^topup^i
 # Disable DKI Topup Using Old Service Library
 DKI_TOPUP_ONLINE_BY_SERVICE = False
 _ConfigParser.set_value('DKI', 'service^library', '0')
-DKI_TOPUP_ONLINE = True if MID_TOPUP_ONLINE_DKI != '---' else False
+
+DKI_TOPUP_ONLINE = False
 
 
 C2C_MODE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'mode', '0') == '1' else False
@@ -709,6 +711,7 @@ TJ_VIEW_CONFIG = load_from_temp_data('tj-view-config', 'json', sys.path[0] + '/_
 KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '/_cConfig/')
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
+SPESIFIC_PREPAID_PROVIDER = _ConfigParser.get_set_value('GENERAL', 'spesific^provider', 'bca:4')
 
 if THEME_NAME.lower() in [x.lower() for x in THEME_WITH_PAYMENT_RULES]:
     PAYMENT_RULES = 'cash:>:10000,qr:<:100000'
@@ -736,6 +739,7 @@ VIEW_CONFIG['failure_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
 VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 VIEW_CONFIG['disable_print_on_cancel'] = True if _ConfigParser.get_set_value('EDC', 'disable^print^on^cancel', '1') == '1' else False
+VIEW_CONFIG['confirm_before_topup'] = True if _ConfigParser.get_set_value('GENERAL', 'confirm^before^topup', '0') == '1' else False
 VIEW_CONFIG['ping_interval'] =  int(_ConfigParser.get_set_value('GENERAL', 'ping^interval', '3'))
 VIEW_CONFIG['single_denom_trx'] =  BILL_SINGLE_DENOM_TRX
 VIEW_CONFIG['single_denom_type'] =  BILL_SINGLE_DENOM_TYPE

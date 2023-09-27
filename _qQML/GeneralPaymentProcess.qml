@@ -882,7 +882,6 @@ Base{
 
     function execute_transaction(channel){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-    //        popup_loading.close();
         if (receivedPayment == 0){
             console.log('EMPTY_PAYMENT', now);
             return;
@@ -895,6 +894,14 @@ Base{
         // Force Disable All Cancel Button
         hide_all_cancel_button();
         var trx_type = details.shop_type;
+        if (VIEW_CONFIG.confirm_before_topup === true && trx_type == 'topup' && modeButtonPopup !== 'confirm_before_topup'){
+            console.log('CONFIRM_BEFORE_TOPUP', VIEW_CONFIG.confirm_before_topup, now);
+            modeButtonPopup = 'confirm_before_topup';
+            cancel_button_global.visible = false;
+            _SLOT.start_play_audio('please_pull_retap_card');
+            switch_frame_with_button('source/insert_card_new.png', 'Pembayaran Telah Diterima', 'Pastikan Kartu Anda Tetap Berada Pada Reader Sampai Proses Selesai', 'closeWindow|60', true );
+            return;
+        }
         switch(trx_type){
             case 'ppob':
                 var payload = {
@@ -1943,6 +1950,9 @@ Base{
                         delay(2*1000, function (){
                             press = 0;
                         });
+                        break;
+                    case 'confirm_before_topup':
+                        execute_transaction(modeButtonPopup);
                         break;
                     case 'do_topup':
                         perform_do_topup();

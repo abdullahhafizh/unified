@@ -209,14 +209,24 @@ Base{
         preload_check_card.close();
         standard_notif_view.buttonEnabled = true;
         var result = text.split('|')[1];
-        if (result == 'ERROR'){
-            cardNo = '';
-            balance = 0;
-            bankType = undefined;
-            switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Angkat dan tempelkan kembali kartu Anda pada reader', 'backToMain', false );
-            _SLOT.start_play_audio('card_not_detected');
-            return;
+        
+        switch(result){
+            case 'ERROR':
+                cardNo = '';
+                balance = 0;
+                bankType = undefined;
+                switch_frame('source/insert_card_new.png', 'Kartu Tidak Terdeteksi', 'Angkat dan tempelkan kembali kartu Anda pada reader', 'backToMain', false );
+                _SLOT.start_play_audio('card_not_detected');
+                return;
+            case 'INVALID_PROVIDER':
+                cardNo = '';
+                balance = 0;
+                bankType = undefined;
+                switch_frame('source/insert_card_new.png', 'Provider Kartu Tidak Sesuai', 'Silakan tempelkan kartu yang sesuai pada reader', 'backToMain', false );
+                _SLOT.start_play_audio('card_not_detected');
+                return;
         }
+
 //            if (bankName == 'MANDIRI'){
 //                image_prepaid_card.source = "source/mandiri_emoney_card.png";
 //                imageSource = "source/mandiri_emoney_card.png";
@@ -234,6 +244,7 @@ Base{
 //                imageSource = "source/card_tj_original.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            }
+
         var info = JSON.parse(result);
         balance = info.balance.toString();
         cardNo = info.card_no;

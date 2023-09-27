@@ -1046,7 +1046,7 @@ def init_local_setting_from_host():
         LOGGER.warning((status, response))
         print("pyt: Failed Initiating Config From Host...")
 
-            
+
 def start_webserver():
     pass
     # _MainService.start()

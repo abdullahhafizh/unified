@@ -343,6 +343,32 @@ INIT_LIST = []
 INIT_DELAY_TIME = int(_Common.INIT_DELAY_TIME)
 
 
+def validate_topup_online_config(bank=None):
+    if bank is None: return
+    param = _Common.serialize_payload({})
+    try:
+        if bank == 'BRI':
+            param['card_no'] = '6013' + ('0'*12)
+            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check', param)
+            LOGGER.info((response, str(param)))
+            if status == 200 and response['response']['code'] == 200:
+                _Common.BRI_TOPUP_ONLINE = True
+        elif bank == 'BCA':
+            param['card_no'] = '0145' + ('0'*12)
+            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bca/card-check', param)
+            LOGGER.info((response, str(param)))
+            if status == 200 and response['response']['code'] == 200:
+                _Common.BCA_TOPUP_ONLINE = True
+        elif bank == 'DKI':
+            param['card_no'] = '9360' + ('0'*12)
+            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-dki/card-check', param)
+            LOGGER.info((response, str(param)))
+            if status == 200 and response['response']['code'] == 200:
+                _Common.DKI_TOPUP_ONLINE = True
+    except Exception as e:
+        LOGGER.warning((e))
+
+
 def start_init_config():
     _Helper.get_thread().apply_async(init_config)
 
@@ -355,54 +381,58 @@ def init_config():
         return
     try:
         for BANK in BANKS:
-            if BANK['STATUS'] is True:
-                if BANK['BANK'] == 'MANDIRI':
-                    param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
-                                '|' + BANK['MID'] + '|' + BANK['TID']
-                    response, result = _Command.send_request(param=param, output=None)
-                    if response == 0:
-                        LOGGER.info((BANK['BANK'], result))
-                        INIT_LIST.append(BANK)
-                        INIT_STATUS = True
-                        if _Common.C2C_MODE is True:
-                            _param = QPROX['INIT_C2C'] + '|' + _Common.C2C_TID + \
-                                '|' + _Common.C2C_MACTROS + '|' + _Common.C2C_SAM_SLOT
-                            _response, _result = _Command.send_request(param=_param, output=None)
-                            # {"Result":"0000","Command":"027","Parameter":"51040188|5104010000750000|1","Response":"","ErrorDesc":"Sukses"}
-                            if _response == 0:
-                                INIT_MANDIRI = True
-                                mdr_c2c_balance_info()
+            if BANK['TOPUP_CHANNEL'] == 'ONLINE':
+                if BANK['STATUS'] is True:
+                    validate_topup_online_config(BANK['BANK'])
+            else:
+                if BANK['STATUS'] is True:
+                    if BANK['BANK'] == 'MANDIRI':
+                        param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
+                                    '|' + BANK['MID'] + '|' + BANK['TID']
+                        response, result = _Command.send_request(param=param, output=None)
+                        if response == 0:
+                            LOGGER.info((BANK['BANK'], result))
+                            INIT_LIST.append(BANK)
+                            INIT_STATUS = True
+                            if _Common.C2C_MODE is True:
+                                _param = QPROX['INIT_C2C'] + '|' + _Common.C2C_TID + \
+                                    '|' + _Common.C2C_MACTROS + '|' + _Common.C2C_SAM_SLOT
+                                _response, _result = _Command.send_request(param=_param, output=None)
+                                # {"Result":"0000","Command":"027","Parameter":"51040188|5104010000750000|1","Response":"","ErrorDesc":"Sukses"}
+                                if _response == 0:
+                                    INIT_MANDIRI = True
+                                    mdr_c2c_balance_info()
+                                else:
+                                    LOGGER.warning(('FAILED_INIT_C2C_CONFIG', _response, _result))
                             else:
-                                LOGGER.warning(('FAILED_INIT_C2C_CONFIG', _response, _result))
+                                if _Common.active_auth_session():
+                                    INIT_MANDIRI = True
+                                # Positive Assumption Last Update Bringing KA LOGIN Session
+                                if _Common.last_update_attempt():
+                                    INIT_MANDIRI = True
+                                    _Common.log_to_temp_config('last^auth')
+                                if _Common.MANDIRI_SINGLE_SAM is True:
+                                    # _Common.MANDIRI_ACTIVE = 1
+                                    # _Common.save_sam_config(bank='MANDIRI')
+                                    ka_info_mandiri(str(_Common.MANDIRI_ACTIVE), caller='FIRST_INIT_SINGLE_SAM')
+                                else:
+                                    ka_info_mandiri(str(_Common.get_active_sam(bank='MANDIRI', reverse=True)), caller='FIRST_INIT')
                         else:
-                            if _Common.active_auth_session():
-                                INIT_MANDIRI = True
-                            # Positive Assumption Last Update Bringing KA LOGIN Session
-                            if _Common.last_update_attempt():
-                                INIT_MANDIRI = True
-                                _Common.log_to_temp_config('last^auth')
-                            if _Common.MANDIRI_SINGLE_SAM is True:
-                                # _Common.MANDIRI_ACTIVE = 1
-                                # _Common.save_sam_config(bank='MANDIRI')
-                                ka_info_mandiri(str(_Common.MANDIRI_ACTIVE), caller='FIRST_INIT_SINGLE_SAM')
-                            else:
-                                ka_info_mandiri(str(_Common.get_active_sam(bank='MANDIRI', reverse=True)), caller='FIRST_INIT')
-                    else:
-                        LOGGER.warning((BANK['BANK'], result))
-                if BANK['BANK'] == 'BNI':
-                    param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
-                    response, result = _Command.send_request(param=param, output=None)
-                    if response == 0:
-                        LOGGER.info((BANK['BANK'], result))
-                        INIT_LIST.append(BANK)
-                        INIT_STATUS = True
-                        INIT_BNI = True
-                        sleep(INIT_DELAY_TIME)
-                        bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
-                        # get_bni_wallet_status()
-                    else:
-                        LOGGER.warning((BANK['BANK'], result))
-            sleep(INIT_DELAY_TIME)
+                            LOGGER.warning((BANK['BANK'], result))
+                    if BANK['BANK'] == 'BNI':
+                        param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
+                        response, result = _Command.send_request(param=param, output=None)
+                        if response == 0:
+                            LOGGER.info((BANK['BANK'], result))
+                            INIT_LIST.append(BANK)
+                            INIT_STATUS = True
+                            INIT_BNI = True
+                            sleep(INIT_DELAY_TIME)
+                            bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
+                            # get_bni_wallet_status()
+                        else:
+                            LOGGER.warning((BANK['BANK'], result))
+                    sleep(INIT_DELAY_TIME)
             continue
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
@@ -562,6 +592,15 @@ def check_card_balance():
     LOGGER.debug((param, result))
     if response == 0 and '|' in result:
         bank_type = result.split('|')[2].replace('#', '')
+        
+        # Validation of Certain Bank Prepaid VS Theme
+        if _Common.VIEW_CONFIG['theme_name'].lower() in _Common.SPESIFIC_PREPAID_PROVIDER.lower():
+            selected_provider = _Common.SPESIFIC_PREPAID_PROVIDER.lower().split(':')
+            if bank_type not in selected_provider:
+                QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|INVALID_PROVIDER')
+                LOGGER.debug(('Spesific Provider Not Match', bank_type, _Common.VIEW_CONFIG['theme_name'], _Common.SPESIFIC_PREPAID_PROVIDER))
+                return
+        
         bank_name = FW_BANK.get(bank_type, 'N/A')
         card_no = result.split('|')[1].replace('#', '')
         if bank_type == '8':
@@ -590,6 +629,7 @@ def check_card_balance():
             if output['able_topup'] not in ERROR_TOPUP.keys():
                 output['able_topup'] = '0000'
         elif bank_name in _Common.TOPUP_ONLINE_BANK: # BRI, BCA, DKI
+            # Topup Online Connection Validation
             _Common.IS_ONLINE = _Helper.is_online(bank_name.lower()+'_balance_check')
             _Common.KIOSK_STATUS = 'ONLINE' if _Common.IS_ONLINE else 'OFFLINE'
             output['able_topup'] = '0000' if _Common.IS_ONLINE else '9999'

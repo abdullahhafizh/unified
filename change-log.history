@@ -1,5 +1,12 @@
+16.4.3-GLOBAL:
+- Handle Missing Config Topup Online,
+- Handle Retry Topup Offline if not deducted yet (TODO),
+- Handle Certain Card Balance Check in BCA Theme,
+- Separate Process Payment, Add Topup Confirmation Layer,
+- ...
+
 16.4.2-GLOBAL:
-- Add Time Sync In Background Service,
+- Add Time Sync In Background Service (Must Run as Administator),
 - Improve Handle Reader Response (Missing STX),
 - Add Compability IP Printer For Windows,
 - ...
