@@ -897,8 +897,8 @@ Base{
         if (VIEW_CONFIG.confirm_before_topup === true && trx_type == 'topup' && modeButtonPopup !== 'confirm_before_topup'){
             console.log('CONFIRM_BEFORE_TOPUP', VIEW_CONFIG.confirm_before_topup, now);
             modeButtonPopup = 'confirm_before_topup';
-            cancel_button_global.visible = false;
             _SLOT.start_play_audio('please_pull_retap_card');
+            press = '0'
             switch_frame_with_button('source/insert_card_new.png', 'Pembayaran Telah Diterima', 'Pastikan Kartu Anda Tetap Berada Pada Reader Sampai Proses Selesai', 'closeWindow|60', true );
             return;
         }
@@ -1901,7 +1901,7 @@ Base{
             modeReverse: true
             z:99
 //            visible: frameWithButton && (details.payment != 'debit')
-            visible: !transactionInProcess && receivedPayment < totalPrice
+            visible: !transactionInProcess && receivedPayment < totalPrice && modeButtonPopup !== 'confirm_before_topup'
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
