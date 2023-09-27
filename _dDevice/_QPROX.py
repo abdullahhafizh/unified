@@ -593,18 +593,19 @@ def check_card_balance():
     if response == 0 and '|' in result:
         bank_type = result.split('|')[2].replace('#', '')
         
-        # Validation of Certain Bank Prepaid VS Theme
-        if _Common.VIEW_CONFIG['theme_name'].lower() in _Common.SPESIFIC_PREPAID_PROVIDER.lower():
-            selected_provider = _Common.SPESIFIC_PREPAID_PROVIDER.lower().split(':')
-            if bank_type not in selected_provider:
-                QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|INVALID_PROVIDER')
-                LOGGER.debug(('Spesific Provider Not Match', bank_type, _Common.VIEW_CONFIG['theme_name'], _Common.SPESIFIC_PREPAID_PROVIDER))
-                return
-        
         bank_name = FW_BANK.get(bank_type, 'N/A')
         card_no = result.split('|')[1].replace('#', '')
         if bank_type == '8':
             bank_type = '0'
+            
+        # Validation of Certain Bank Prepaid VS Theme
+        if _Common.VIEW_CONFIG['theme_name'].lower() in _Common.SPESIFIC_PREPAID_PROVIDER.lower():
+            selected_provider = _Common.SPESIFIC_PREPAID_PROVIDER.lower().split(':')
+            if card_no[:4] not in selected_provider:
+                QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|INVALID_PROVIDER')
+                LOGGER.debug(('Spesific Provider Not Match', card_no[:4], _Common.VIEW_CONFIG['theme_name'], _Common.SPESIFIC_PREPAID_PROVIDER))
+                return
+            
         balance = result.split('|')[0]  
         able_check_log = '1' if bank_name in _Common.ALLOWED_BANK_CHECK_CARD_LOG else '0'
         output = {

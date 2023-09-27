@@ -711,7 +711,7 @@ TJ_VIEW_CONFIG = load_from_temp_data('tj-view-config', 'json', sys.path[0] + '/_
 KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '/_cConfig/')
 
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
-SPESIFIC_PREPAID_PROVIDER = _ConfigParser.get_set_value('GENERAL', 'spesific^provider', 'bca:4')
+SPESIFIC_PREPAID_PROVIDER = _ConfigParser.get_set_value('GENERAL', 'spesific^provider', 'bca:0145')
 
 if THEME_NAME.lower() in [x.lower() for x in THEME_WITH_PAYMENT_RULES]:
     PAYMENT_RULES = 'cash:>:10000,qr:<:100000'
