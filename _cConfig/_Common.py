@@ -942,15 +942,15 @@ BANKS = [{
 }, {
     "BANK": "BCA",
     "TOPUP_CHANNEL": "ONLINE",
-    "STATUS": True if ('---' not in MID_BCA and len(MID_BCA) > 3) else False,
-    "MID": MID_BCA,
-    "TID": TID_BCA,
+    "STATUS": True if ('---' not in TID_TOPUP_BCA and len(MID_TOPUP_BCA) > 3) else False,
+    "MID": MID_TOPUP_BCA,
+    "TID": TID_TOPUP_BCA,
 }, {
     "BANK": "DKI",
     "TOPUP_CHANNEL": "ONLINE",
-    "STATUS": True if ('---' not in TID_DKI and len(MID_DKI) > 3) else False,
-    "MID": MID_DKI,
-    "TID": TID_DKI,
+    "STATUS": True if ('---' not in TID_TOPUP_ONLINE_DKI and len(MID_TOPUP_ONLINE_DKI) > 3) else False,
+    "MID": MID_TOPUP_ONLINE_DKI,
+    "TID": TID_TOPUP_ONLINE_DKI,
 }]
 
 
