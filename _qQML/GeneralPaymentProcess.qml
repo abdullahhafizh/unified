@@ -900,7 +900,7 @@ Base{
             _SLOT.start_play_audio('please_pull_retap_card');
             press = '0';
             // Re-flag Transaction as Free / Not Processed
-            transactionInProcess = true;
+            transactionInProcess = false;
             switch_frame_with_button('source/insert_card_new.png', 'Pembayaran Telah Diterima', 'Pastikan Kartu Anda Tetap Berada Pada Reader Sampai Proses Selesai', 'closeWindow|60', true );
             return;
         }
