@@ -802,7 +802,10 @@ def config_log():
                             level=logging.DEBUG,
                             format='%(asctime)s %(levelname)s %(funcName)s:%(lineno)d: %(message)s',
                             datefmt='%d/%m %H:%M:%S')
+        
+        logging.getLogger("requests").setLevel(logging.WARNING)
         LOGGER = logging.getLogger()
+
         _Common.init_temp_data()
     except Exception as e:
         print("pyt: Logging Configuration ERROR : ", e)
