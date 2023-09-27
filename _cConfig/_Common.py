@@ -935,7 +935,7 @@ BANKS = [{
 }, {
     "BANK": "BRI",
     "TOPUP_CHANNEL": "ONLINE",
-    "STATUS": True if ('---' not in MID_BRI and len(MID_BRI) > 3) else False,
+    "STATUS": BRI_SAM_ACTIVE,
     "MID": MID_BRI,
     "TID": TID_BRI,
     "PROCODE": PROCODE_BRI
