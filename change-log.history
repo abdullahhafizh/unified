@@ -1,8 +1,9 @@
 16.4.3-GLOBAL:
 - Handle Missing Config Topup Online,
-- Handle Retry Topup Offline if not deducted yet (TODO),
+- Handle Retry Topup Offline if not deducted yet,
 - Handle Certain Card Balance Check in BCA Theme,
 - Separate Process Payment, Add Topup Confirmation Layer,
+- New Handler Media Playlist,
 - ...
 
 16.4.2-GLOBAL:

@@ -102,7 +102,7 @@ Rectangle{
 
 
     function get_result(result){
-        console.log('get_result : ', result);
+        console.log('Media Files: ', result);
         if (result == "ERROR" || result == ""){
             console.log("No Media Files!");
             moving_text.text = "Playlist Media File(s) Not Found";
@@ -111,6 +111,7 @@ Rectangle{
             return;
         } else {
             var files = JSON.parse(result);
+            // result = Actual Exist Files
             media_files = files.result;
             if (parseInt(files.count) == 0){
                 console.log("Missing Contents, Cannot Play Media!")
