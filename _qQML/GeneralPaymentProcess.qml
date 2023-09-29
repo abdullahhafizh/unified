@@ -648,6 +648,16 @@ Base{
             global_frame.textMain = 'Silakan Posisikan kartu Anda sampai terbaca pada alat pembaca kartu yang bertanda';
             return;
         }
+        if (t=='RETRY_TOPUP_PREPAID'){
+            console.log('RETRY_TOPUP_PREPAID', now);
+            modeButtonPopup = 'retry_topup_prepaid';
+            _SLOT.start_play_audio('please_pull_retap_card');
+            press = '0';
+            // Re-flag Transaction as Free / Not Processed
+            transactionInProcess = false;
+            switch_frame_with_button('source/insert_card_new.png', 'Terjadi Kendala Isi Ulang Kartu', 'Pastikan Kartu Anda Tetap Berada Di Reader Sampai Proses Selesai', 'closeWindow|60', true );
+            return;
+        }
 
         if (t.indexOf('TOPUP_ERROR') > -1 || t=='MANDIRI_SAM_BALANCE_EXPIRED'||
                 t=='BRI_UPDATE_BALANCE_ERROR'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
@@ -880,6 +890,14 @@ Base{
     }
 
 
+    function validate_topup_handle_notif(trx_type){
+        return VIEW_CONFIG.confirm_before_topup === true && 
+            trx_type == 'topup' && 
+            modeButtonPopup !== 'confirm_before_topup' &&
+            modeButtonPopup !== 'retry_topup_prepaid'
+    }
+
+
     function execute_transaction(channel){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         if (receivedPayment == 0){
@@ -894,14 +912,15 @@ Base{
         // Force Disable All Cancel Button
         hide_all_cancel_button();
         var trx_type = details.shop_type;
-        if (VIEW_CONFIG.confirm_before_topup === true && trx_type == 'topup' && modeButtonPopup !== 'confirm_before_topup'){
-            console.log('CONFIRM_BEFORE_TOPUP', VIEW_CONFIG.confirm_before_topup, now);
+        var showing_confirm_before_topup = validate_topup_handle_notif(trx_type);
+        if (showing_confirm_before_topup){
+            console.log('CONFIRM_BEFORE_TOPUP', showing_confirm_before_topup, now);
             modeButtonPopup = 'confirm_before_topup';
             _SLOT.start_play_audio('please_pull_retap_card');
             press = '0';
             // Re-flag Transaction as Free / Not Processed
             transactionInProcess = false;
-            switch_frame_with_button('source/insert_card_new.png', 'Pembayaran Telah Diterima', 'Pastikan Kartu Anda Tetap Berada Pada Reader Sampai Proses Selesai', 'closeWindow|60', true );
+            switch_frame_with_button('source/insert_card_new.png', 'Isi Ulang Kartu Anda Siap Dilanjutkan', 'Pastikan Kartu Anda Tetap Berada Di Reader Sampai Proses Selesai', 'closeWindow|60', true );
             return;
         }
         switch(trx_type){
@@ -1953,7 +1972,7 @@ Base{
                             press = 0;
                         });
                         break;
-                    case 'confirm_before_topup':
+                    case 'confirm_before_topup': case 'retry_topup_prepaid':
                         execute_transaction(modeButtonPopup);
                         break;
                     case 'do_topup':

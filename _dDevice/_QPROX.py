@@ -1116,6 +1116,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     # {"Command": "028", "ErrorDesc": "Gagal", "Result": "0290", "Response": "", "Parameter": "0"}
     if _response == 0 and len(_result) >= 196:
         c2c_report = _result
+        _Common.LAST_TOPUP_TRXID = trxid
         parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
         return
     # Failure Transaction
@@ -1138,6 +1139,14 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         
         if prev_deposit_balance == last_deposit_balance:
             LOGGER.debug(('MDR DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
+            # New Handling TO Retry Topup Process
+            if trxid != _Common.LAST_TOPUP_TRXID:
+                _Common.LAST_TOPUP_TRXID = trxid
+                LOGGER.debug(('MDR TRIGGER RETRY TOPUP', trxid, amount, _Common.LAST_TOPUP_TRXID))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETRY_TOPUP_PREPAID')
+                return
+            
+            # Still Needed ?
             # Keep Trigger Force Settlement For New Applet When Deposit Balance Not Deducted
             if topup_result["Result"] in ["6208"]:
                 LAST_C2C_APP_TYPE == '1'
@@ -1146,9 +1155,11 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
             
             # Set To Old Handler Conditionally
             if not _Common.NEW_TOPUP_FAILURE_HANDLER:
+                _Common.LAST_TOPUP_TRXID = trxid
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
                 return
         
+        _Common.LAST_TOPUP_TRXID = trxid
         LOGGER.debug(('MDR DEPOSIT_DEDUCTED', trxid, amount))
         topup_audit_status = 'FORCE_SETTLEMENT' if str(prev_deposit_balance) != str(_Common.MANDIRI_ACTIVE_WALLET) else 'FAILED'
         trx_partial_status = ['101C', '100C']
@@ -1602,6 +1613,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                     'remarks': remarks,
                 }
                 _Common.store_upload_sam_audit(param)
+                _Common.LAST_TOPUP_TRXID = trxid
                 # Return Success Condition Here
                 return
             elif status == 'FFEE':
@@ -1625,8 +1637,15 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         
         if int(deposit_prev_balance) == int(_Common.BNI_ACTIVE_WALLET):
             LOGGER.debug(('BNI DEPOSIT_NOT_DEDUCTED', trxid, amount, last_card_check['card_no']))
+            # New Handling TO Retry Topup Process
+            if trxid != _Common.LAST_TOPUP_TRXID:
+                _Common.LAST_TOPUP_TRXID = trxid
+                LOGGER.debug(('BNI TRIGGER RETRY TOPUP', trxid, amount, _Common.LAST_TOPUP_TRXID))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('RETRY_TOPUP_PREPAID')
+                return
             # Set To Old Handler Conditionally
             if not _Common.NEW_TOPUP_FAILURE_HANDLER:
+                _Common.LAST_TOPUP_TRXID = trxid
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#RC_'+rc)
                 return
         else:
@@ -1635,7 +1654,9 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # Wether Error or Success, If Deposit Already Deduct Must Have Report NOK Here
         LAST_BNI_ERROR_REPORT = report_sam
         LOGGER.info(('BNI LAST_ERROR_REPORT', LAST_BNI_ERROR_REPORT))
-            
+        
+        _Common.LAST_TOPUP_TRXID = trxid
+        
         # Real False Condition
         last_audit_report = json.dumps({
                     'trxid': trxid + '_FAILED',
