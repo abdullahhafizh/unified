@@ -704,7 +704,8 @@ FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
 PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
-ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+# ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+ADS_SETTING = None
 
 VIEW_CONFIG = load_from_temp_data('view-config', 'json')
 TJ_VIEW_CONFIG = load_from_temp_data('tj-view-config', 'json', sys.path[0] + '/_cConfig/')

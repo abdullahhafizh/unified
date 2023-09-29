@@ -740,12 +740,16 @@ def file_list(dir_):
         }
         if "Video" in str(dir_):
             # files["old_result"] = files["result"]
-            files["playlist"] = _Common.ADS_SETTING['playlist']
-            # Must Filter result vs playlist
-            if len(files['result']) > 0:
-                for fr in files['result']:
-                    if fr not in files["playlist"]:
-                        files['result'].remove(fr)
+            files["playlist"] = []
+            if _Common.ADS_SETTING is not None:
+                files["playlist"] = _Common.ADS_SETTING['playlist']
+                # Must Filter result vs playlist
+                if len(files['result']) > 0:
+                    for fr in files['result']:
+                        if fr not in files["playlist"]:
+                            files['result'].remove(fr)
+            else:
+                files["result"] = []
             files["count"] = len(files["result"])
         LOGGER.info((_dir_, str(files)))
         K_SIGNDLER.SIGNAL_GET_FILE_LIST.emit(json.dumps(files))
