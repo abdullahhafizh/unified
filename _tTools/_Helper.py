@@ -242,6 +242,7 @@ def get_char_from(s):
 
 def get_int(s):
     if s is None: return 0
+    if empty(s): return 0
     if type(s) == str: s = s.replace(':', '')
     return int(s)
 
