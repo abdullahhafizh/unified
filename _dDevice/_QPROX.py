@@ -1110,6 +1110,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     
     mdr_c2c_balance_info()
     prev_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
+    LOGGER.info(('MDR PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
     
     # Deposit Balance Validation
     if int(prev_deposit_balance) < int(_Common.C2C_THRESHOLD) or int(prev_deposit_balance) > int(amount):
@@ -1140,7 +1141,6 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         sleep(1)
         mdr_c2c_balance_info()
         last_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
-        LOGGER.info(('MDR PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
         LOGGER.info(('MDR LAST_BALANCE_DEPOSIT', last_deposit_balance ))
         
         rc = topup_result.get("Result", 'FFFF').upper()

@@ -1,5 +1,6 @@
 16.4.4-GLOBAL:
 - New Handle Balance Deposit Check Before Topup,
+- Extra Handle MDR C2C Info Missing STX,
 - ...
 
 16.4.3-GLOBAL:

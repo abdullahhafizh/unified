@@ -780,7 +780,8 @@ def KM_BALANCE_TOPUP_C2C(Ser):
 
     if result["code"] == b"0000" or result["code"] == b"9000":
         idx_last_saldo = 10
-        # TODO: Finalise This TO Change IDX Last Saldo
+        # EXTRAS: Handling Missing STX Report in Deposit Check
+        if result["len"] < 173: idx_last_saldo = 9
         saldo = result["rep"][0:idx_last_saldo]
         uid = result["rep"][10:24]
         carddata = result["rep"][24:150]        

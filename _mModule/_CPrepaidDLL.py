@@ -496,7 +496,7 @@ def topup_C2C_refill(Value, Timestamp):
 
 
 #026 - NEW
-@func_set_timeout(30)
+@func_set_timeout(15)
 def new_topup_C2C_refill(Value, Timestamp):
 
     res_str = ""
