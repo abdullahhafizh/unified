@@ -1108,7 +1108,15 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#CARD_BLOCKED')
         return
     
+    mdr_c2c_balance_info()
     prev_deposit_balance = _Common.MANDIRI_ACTIVE_WALLET
+    
+    # Deposit Balance Validation
+    if int(prev_deposit_balance) < int(_Common.C2C_THRESHOLD) or int(prev_deposit_balance) > int(amount):
+        LOGGER.warning(('Deposit Balance: ', prev_deposit_balance, amount ))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#INSUFFICIENT_DEPOSIT')
+        return
+    
     param = QPROX['TOPUP_C2C'] + '|' + str(amount) #Amount Must Be Full Denom
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((_response, _result))
@@ -1532,11 +1540,17 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     #     return
     
     bni_c2c_balance_info(_Common.BNI_ACTIVE)
+    deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
+
+    # Deposit Balance Validation
+    if int(deposit_prev_balance) < int(_Common.BNI_THRESHOLD) or int(deposit_prev_balance) > int(amount):
+        LOGGER.warning(('Deposit Balance: ', deposit_prev_balance, amount ))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#INSUFFICIENT_DEPOSIT')
+        return
     
     param = QPROX['INIT_SAM_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, bni_sam_raw_purse = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((amount, trxid, slot, bni_sam_raw_purse))
-    deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
     LOGGER.info(('BNI PREV_BALANCE_DEPOSIT', deposit_prev_balance ))
     
     # Reset Previous Topup RC

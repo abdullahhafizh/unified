@@ -1,3 +1,7 @@
+16.4.4-GLOBAL:
+- New Handle Balance Deposit Check Before Topup,
+- ...
+
 16.4.3-GLOBAL:
 - Handle Missing Config Topup Online,
 - Handle Retry Topup Offline if not deducted yet,
