@@ -920,7 +920,7 @@ Base{
             press = '0';
             // Re-flag Transaction as Free / Not Processed
             transactionInProcess = false;
-            switch_frame_with_button('source/insert_card_new.png', 'Isi Ulang Kartu Anda Siap Dilanjutkan', 'Pastikan Kartu Anda Tetap Berada Di Reader Sampai Proses Selesai', 'closeWindow|60', true );
+            switch_frame_with_button('source/insert_card_new.png', 'Isi Ulang Kartu Anda Siap Dilanjutkan', 'Tekan "LANJUT" Untuk Melakukan Proses Isi Ulang Kartu Anda', 'closeWindow|60', true );
             return;
         }
         switch(trx_type){
