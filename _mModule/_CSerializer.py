@@ -779,7 +779,9 @@ def KM_BALANCE_TOPUP_C2C(Ser):
     del response
 
     if result["code"] == b"0000" or result["code"] == b"9000":
-        saldo = result["rep"][0:10]
+        idx_last_saldo = 10
+        # TODO: Finalise This TO Change IDX Last Saldo
+        saldo = result["rep"][0:idx_last_saldo]
         uid = result["rep"][10:24]
         carddata = result["rep"][24:150]        
         cardatr = result["rep"][150:len(result["rep"])]
@@ -1502,6 +1504,7 @@ def get_TDefaultReportres(data):
     result["cmd"] = data[0]
     result["code"] = data[1:5]
     result["rep"] = data[5:len(data)]
+    result["len"] = len(data)
 
     return result
 
