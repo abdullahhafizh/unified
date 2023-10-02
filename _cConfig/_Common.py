@@ -254,15 +254,15 @@ MID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'mid^topup', '000942678')
 TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
 
 
-if not LIVE_MODE:
-    # Force Set MID/TID BCA On Development Stage
-    MID_BCA = '000942678'
-    _ConfigParser.set_value('BCA', 'mid^topup', '000942678')
-    TID_BCA = 'ELZSYB01'
-    _ConfigParser.set_value('BCA', 'tid^topup', 'ELZSYB01')
+# if not LIVE_MODE:
+#     # Force Set MID/TID BCA On Development Stage
+#     MID_BCA = '000942678'
+#     _ConfigParser.set_value('BCA', 'mid^topup', '000942678')
+#     TID_BCA = 'ETES0067'
+#     _ConfigParser.set_value('BCA', 'tid^topup', 'ETES0067')
 
 
-DEV_MODE_TOPUP_BCA = True if TID_TOPUP_BCA == 'ELZSYB01' else False
+DEV_MODE_TOPUP_BCA = True if 'TES' in TID_TOPUP_BCA or TID_TOPUP_BCA in ['ELZSYB01', 'ETES0067', 'ETES0089'] else False
 SLOT_BCA = _ConfigParser.get_set_value('BCA', 'sam^slot', '---')
 
 
