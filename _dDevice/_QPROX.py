@@ -1113,8 +1113,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     LOGGER.info(('MDR PREV_BALANCE_DEPOSIT', prev_deposit_balance ))
     
     # Deposit Balance Validation
-    if int(prev_deposit_balance) < int(_Common.C2C_THRESHOLD) or int(prev_deposit_balance) > int(amount):
-        LOGGER.warning(('Deposit Balance: ', prev_deposit_balance, amount ))
+    if int(prev_deposit_balance) < int(_Common.C2C_THRESHOLD) or int(prev_deposit_balance) < int(amount):
+        LOGGER.warning(('Deposit Balance: ', prev_deposit_balance, amount, _Common.C2C_THRESHOLD ))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#INSUFFICIENT_DEPOSIT')
         return
     
@@ -1543,8 +1543,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
     deposit_prev_balance = _Common.BNI_ACTIVE_WALLET
 
     # Deposit Balance Validation
-    if int(deposit_prev_balance) < int(_Common.BNI_THRESHOLD) or int(deposit_prev_balance) > int(amount):
-        LOGGER.warning(('Deposit Balance: ', deposit_prev_balance, amount ))
+    if int(deposit_prev_balance) < int(_Common.BNI_THRESHOLD) or int(deposit_prev_balance) < int(amount):
+        LOGGER.warning(('Deposit Balance: ', deposit_prev_balance, amount, _Common.BNI_THRESHOLD ))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR#INSUFFICIENT_DEPOSIT')
         return
     
