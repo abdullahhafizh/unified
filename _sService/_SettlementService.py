@@ -237,7 +237,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 if not _Helper.empty(LAST_BNI_SETTLEMENT_DATA):
                     LOGGER.info(('Use Previous BNI Settlement', bank, mode, str(LAST_BNI_SETTLEMENT_DATA)))
                     return LAST_BNI_SETTLEMENT_DATA
-                LOGGER.warning(('No Data For Settlement', str(settlements)))
+                LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             _filename = 'TOPMDD_'+_Common.MID_BNI + _Common.TID_BNI + datetime.now().strftime('%Y%m%d%H%M%S')+'.TXT'
             LOGGER.info(('Settlement Filename', bank, mode, _filename))
@@ -326,7 +326,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA="NOK" AND cardNo LIKE "7546%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0:
-                LOGGER.warning(('No Data For Settlement', str(settlements)))
+                LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             _filename = 'TOPMDD_'+_Common.MID_BNI + _Common.TID_BNI + datetime.now().strftime('%Y%m%d%H%M%S')+'.NOK'
             LOGGER.info(('Settlement Filename', bank, mode, _filename))
