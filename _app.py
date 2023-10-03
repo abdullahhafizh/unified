@@ -1249,7 +1249,7 @@ if __name__ == '__main__':
     # sleep(1)
     # print("pyt: Initiating Setting From Host...")
     # init_local_setting_from_host()
-    update_module(['ntplib', 'python-printer-escpos', 'python-escpos'])
+    update_module(['ntplib'])
     # install_font()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()
