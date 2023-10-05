@@ -555,7 +555,7 @@ def get_query_from(table, condition=None, limit=None):
     if condition is not None:
         sql += ' WHERE ' + condition
     if not _Helper.empty(limit) and int(limit) > 0:
-        sql += ' LIMIT ' + int(limit)
+        sql += ' LIMIT ' + str(limit)
     return _Database.get_query(sql=sql, parameter={}, log=False)
 
 
