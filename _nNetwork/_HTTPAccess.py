@@ -216,9 +216,10 @@ def stream_large_download(url, item, temp_path, final_path):
     file = os.path.join(temp_path, item)
     new_file = os.path.join(final_path, item)
     if os.path.exists(file):
-        shutil.copy(new_file, file)
-        LOGGER.debug(('copy backup', file, new_file))
-        return True, item
+        os.remove(file)
+        # shutil.copy(new_file, file)
+        # LOGGER.debug(('copy backup', file, new_file))
+        # return True, item
     if os.path.exists(new_file):
         return True, item
     r = requests.get(url, stream=True, allow_redirects=True, verify=False)
