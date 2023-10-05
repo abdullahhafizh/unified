@@ -250,9 +250,13 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 # remarks = json.loads(settle['remarks'])
                 # Need to Parse Topup Amount Here From 
                 # 754605000081474000000000062937950200C626010E6A004844005FB4001770302C8EB2C9664EAD9AD0BD9D0F424002070100015A0000D40000070100C62600000088889999AAFF92D04416FEDF7A941CF5F3C9B6720FBA417DCBA9A5EB010E6AC9664EAD9AC9664EAD9AD0BD9D00015A0000D400007546990000042075754699000004207552A3A9E4496A98B1
-                _row_amount = int(settle['reportSAM'][46:52], 16)
-                _all_amount += _row_amount
-                _filecontent += ('D' + settle['reportSAM']) + '|'
+                try:
+                    _row_amount = int(settle['reportSAM'][46:52], 16)
+                    _all_amount += _row_amount
+                    _filecontent += ('D' + settle['reportSAM']) + '|'
+                except Exception as e:
+                    LOGGER.warning(('ROW_ERROR', bank, mode, _filename, str(settle), e))
+                    continue
                 # settle['key'] = settle['rid']
                 # _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
             # Copy File Content Here to Update with the new CRC32

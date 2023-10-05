@@ -1,3 +1,7 @@
+16.4.5-GLOBAL:
+- New Handle BNI C2C Anomali Report,
+- ...
+
 16.4.4-GLOBAL:
 - New Handle Balance Deposit Check Before Topup,
 - Extra Handle MDR C2C Info Missing STX,

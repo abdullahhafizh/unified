@@ -536,7 +536,7 @@ def insert_sam_record(param):
     param['createdAt'] = _Helper.now()
     sql = " INSERT INTO SAMRecords(smid, fileName, fileContent, status, remarks, createdAt) VALUES (:smid, :fileName, " \
           " :fileContent, :status, :remarks, :createdAt) "
-    return _Database.insert_update(sql=sql, parameter=param)
+    return _Database.insert_update(sql=sql, parameter=param, log=False)
 
 
 def get_total_count(table, condition=None):
