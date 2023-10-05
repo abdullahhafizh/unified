@@ -12,7 +12,7 @@
 - Handle Missing Config Topup Online,
 - Handle Retry Topup Offline if not deducted yet,
 - Handle Certain Card Balance Check in BCA Theme,
-- Separate Process Payment, Add Topup Confirmation Layer,
+- Separate Process Payment, Add Topup Confirmation Layer,       
 - New Handler Media Playlist,
 - Fix Setting Syncronize,
 - ...
