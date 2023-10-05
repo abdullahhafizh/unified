@@ -400,7 +400,7 @@ def define_ads(a):
     for file in __all_file:
         extentions = ('.mp4', '.mov', '.avi', '.mpg', '.mpeg')
         if file.endswith(extentions):
-            # Minimum TVC Media File Size 1Mbyte = 1024
+            # Minimum TVC Media File Size 1Mbyte = 1024 * 1024
             exist_file = os.path.join(__tvc_path, file)
             if os.stat(exist_file).st_size >= (1024 * 1024):
                 __current_list.append(file)
