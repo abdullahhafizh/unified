@@ -213,10 +213,10 @@ def item_download(url, path, name=None):
 def stream_large_download(url, item, temp_path, final_path):
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
-    file = os.path.join(temp_path, item)
+    old_file = os.path.join(temp_path, item)
     new_file = os.path.join(final_path, item)
-    if os.path.exists(file):
-        os.remove(file)
+    if os.path.exists(old_file):
+        os.remove(old_file)
         # shutil.copy(new_file, file)
         # LOGGER.debug(('copy backup', file, new_file))
         # return True, item
@@ -225,14 +225,14 @@ def stream_large_download(url, item, temp_path, final_path):
     r = requests.get(url, stream=True, allow_redirects=True, verify=False)
     if r.status_code != 200:
         return False, item
-    with open(file, 'wb') as media:
+    with open(old_file, 'wb') as media:
         # for chunk in r.iter_content(chunk_size=1024*1024):
         for chunk in r.iter_content(chunk_size=256*256):
             if chunk:
                 media.write(chunk)
-    shutil.copy(file, new_file)
+    shutil.copy(old_file, new_file)
     # os.remove(file)
-    LOGGER.debug(('stream down', file, url))
+    LOGGER.debug(('stream down', old_file, url))
     del r
     return True, item
 
