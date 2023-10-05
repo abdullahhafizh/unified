@@ -13,6 +13,7 @@ from _nNetwork import _HTTPAccess, _SFTPAccess, _FTPAccess
 from _dDevice import _QPROX, _EDC
 from _sService import _TopupService, _MDSService
 from time import sleep
+import traceback
 
 
 class SettlementSignalHandler(QObject):
@@ -323,7 +324,8 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             _Common.store_to_temp_data('last-bni-settlement', json.dumps(LAST_BNI_SETTLEMENT_DATA))
             return _result
         except Exception as e:
-            LOGGER.warning((bank, mode, str(e)))
+            trace = traceback.format_exc()
+            LOGGER.warning((bank, mode, str(trace)))
             return False
     elif bank == 'BNI' and mode == 'NOK':
         try:
