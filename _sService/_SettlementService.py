@@ -231,7 +231,10 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
                 output_path = FILE_PATH
-            settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA="N/A" AND cardNo LIKE "7546%" ')
+            settlements = _DAO.get_query_from(
+                table='TopUpRecords', 
+                condition=' syncFlag=1 AND reportKA="N/A" AND cardNo LIKE "7546%" ',
+                limit= 499)
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0:
                 if not _Helper.empty(LAST_BNI_SETTLEMENT_DATA):
@@ -327,7 +330,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
                 output_path = FILE_PATH
-            settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA="NOK" AND cardNo LIKE "7546%" ')
+            settlements = _DAO.get_query_from(
+                table='TopUpRecords', 
+                condition=' syncFlag=1 AND reportKA="NOK" AND cardNo LIKE "7546%" ')
             GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
@@ -505,7 +510,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
             # LOGGER.info(('Create Settlement File', bank, mode))
             if output_path is None:
                 output_path = FILE_PATH
-            settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=3 AND reportKA <> "N/A" ')
+            settlements = _DAO.get_query_from(
+                table='TopUpRecords', 
+                condition=' syncFlag=3 AND reportKA <> "N/A" ')
             # GLOBAL_SETTLEMENT = settlements
             if len(settlements) == 0 and force is False:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))

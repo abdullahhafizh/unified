@@ -550,10 +550,12 @@ def get_total_count(table, condition=None):
         return 0
 
 
-def get_query_from(table, condition=None):
+def get_query_from(table, condition=None, limit=None):
     sql = ' SELECT * FROM ' + table
     if condition is not None:
         sql += ' WHERE ' + condition
+    if not _Helper.empty(limit) and int(limit) > 0:
+        sql += ' LIMIT ' + int(limit)
     return _Database.get_query(sql=sql, parameter={}, log=False)
 
 
