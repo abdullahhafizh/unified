@@ -14,6 +14,7 @@ from _dDevice import _QPROX, _EDC
 from _sService import _TopupService, _MDSService
 from time import sleep
 import traceback
+import re
 
 
 class SettlementSignalHandler(QObject):
@@ -255,6 +256,10 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
                 # Need to Parse Topup Amount Here From 
                 # 754605000081474000000000062937950200C626010E6A004844005FB4001770302C8EB2C9664EAD9AD0BD9D0F424002070100015A0000D40000070100C62600000088889999AAFF92D04416FEDF7A941CF5F3C9B6720FBA417DCBA9A5EB010E6AC9664EAD9AC9664EAD9AD0BD9D00015A0000D400007546990000042075754699000004207552A3A9E4496A98B1
                 try:
+                    pattern = re.compile(r"[A-F0-9]+")
+                    if not re.fullmatch(pattern, settle['reportSAM']):
+                        LOGGER.warning(('ROW_ERROR', bank, mode, _filename, settle['reportSAM']))
+                        continue
                     _row_amount = int(settle['reportSAM'][46:52], 16)
                     _all_amount += _row_amount
                     _filecontent += ('D' + settle['reportSAM']) + '|'
