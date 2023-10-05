@@ -405,6 +405,8 @@ def define_ads(a):
             if os.stat(exist_file).st_size >= (1024 * 1024):
                 __current_list.append(file)
             else:
+                corrupt_file = os.path.join(__tvc_backup, file)
+                os.remove(corrupt_file)
                 os.remove(exist_file)
     __must_backup = list(set(__current_list) - set(__playlist))
     LOGGER.debug(("current list : ", str(__current_list)))
