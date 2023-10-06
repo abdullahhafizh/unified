@@ -1,6 +1,7 @@
 16.4.5-GLOBAL:
 - New Handle BNI C2C Anomali Report,
 - Enhance File Media Download Validation,
+- Adjust Check Config Sync,
 - ...
 
 16.4.4-GLOBAL:

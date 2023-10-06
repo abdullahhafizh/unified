@@ -248,6 +248,9 @@ BRI_AUTO_REFUND = True if _ConfigParser.get_set_value('BRI', 'auto^refund', '1')
 BRI_SAM_ACTIVE = digit_in(SLOT_BRI) and len(SLOT_BRI) == 1
 BRI_TOPUP_ONLINE = False
 
+# Handle Data Sync Peak
+TOPUP_ONLINE_FORCE_RECHECK = True if _ConfigParser.get_set_value('GENERAL', 'topup^config^force^check', '0') == '1' else False
+
 MID_BCA = _ConfigParser.get_set_value('BCA', 'mid', '---')
 TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
 MID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'mid^topup', '000942678')
