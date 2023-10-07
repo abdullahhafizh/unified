@@ -346,22 +346,23 @@ INIT_DELAY_TIME = int(_Common.INIT_DELAY_TIME)
 def validate_topup_online_config(bank=None):
     if bank is None: return
     param = _Common.serialize_payload({})
+    check_query = '&tid=' + _Common.TID
     try:
         if bank == 'BRI':
             param['card_no'] = '6013' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check', param)
+            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check' + check_query, param)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.BRI_TOPUP_ONLINE = True
         elif bank == 'BCA':
             param['card_no'] = '0145' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bca/card-check', param)
+            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bca/card-check' + check_query, param)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.BCA_TOPUP_ONLINE = True
         elif bank == 'DKI':
             param['card_no'] = '9360' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-dki/card-check', param)
+            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-dki/card-check' + check_query, param)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.DKI_TOPUP_ONLINE = True

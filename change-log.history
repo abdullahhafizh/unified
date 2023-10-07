@@ -2,6 +2,7 @@
 - New Handle BNI C2C Anomali Report,
 - Enhance File Media Download Validation,
 - Adjust Check Config Sync,
+- Add Query String in Card Config Check,
 - ...
 
 16.4.4-GLOBAL:
