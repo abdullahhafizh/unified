@@ -346,7 +346,7 @@ INIT_DELAY_TIME = int(_Common.INIT_DELAY_TIME)
 def validate_topup_online_config(bank=None):
     if bank is None: return
     param = _Common.serialize_payload({})
-    check_query = '&tid=' + _Common.TID
+    check_query = '?tid=' + _Common.TID
     try:
         if bank == 'BRI':
             param['card_no'] = '6013' + ('0'*12)
