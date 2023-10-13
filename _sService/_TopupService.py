@@ -413,13 +413,13 @@ def bni_reset_update_balance(slot=1, activation=True):
 
 
 def execute_topup_pending(_param={}, _bank='', _mode=''):
-    LOGGER.debug(_param, _bank, _mode)
+    LOGGER.debug((_param, _bank, _mode))
     if _Helper.empty(_param) or _Helper.empty(_bank): 
         return False, {}
     _bank = _bank.lower()
     _url = TOPUP_URL + 'topup-'+_bank+'/pending'
     # Non-Secure channel
-    if _Common.SECURE_CHANNEL_TOPUP is False:
+    if not _Common.SECURE_CHANNEL_TOPUP:
         return _HTTPAccess.post_to_url(url=_url, param=_param)
     
     # UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
@@ -430,7 +430,7 @@ def execute_topup_pending(_param={}, _bank='', _mode=''):
                 TOPUP_MID
             )
     if not _Common.LIVE_MODE:
-        LOGGER.debug('Encypt Result', str(encrypt))
+        LOGGER.debug(('Encypt Result', str(encrypt)))
     if not encrypt['status']:
         return False, encrypt
     _param = {
