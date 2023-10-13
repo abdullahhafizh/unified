@@ -13,6 +13,7 @@ import re
 from sentry_sdk import capture_exception
 import platform
 import subprocess
+import Enum
 # from sentry_sdk import capture_exception
 
 IS_LINUX = platform.system() == 'Linux'
@@ -23,6 +24,20 @@ MINIMUM_SYSTEM_VERSION = (3, 8)
 
 LOGGER = logging.getLogger()
 
+
+class TopupFailureStatus(Enum):
+    C_0430 = 'BRI_ONLINE_TOPUP_PENDING_FAILURE' 
+    C_0431 = 'BRI_ONLINE_UPDATE_BALANCE_FAILURE' 
+    C_0432 = 'BRI_ONLINE_REVERSAL_BALANCE_FAILURE' 
+    C_0433 = 'BRI_ONLINE_REFUND_BALANCE_FAILURE' 
+    C_0440 = 'BCA_ONLINE_TOPUP_PENDING_FAILURE' 
+    C_0441 = 'BCA_ONLINE_UPDATE_BALANCE_TOPUP1_FAILURE' 
+    C_0442 = 'BCA_ONLINE_UPDATE_BALANCE_TOPUP2_FAILURE' 
+    C_0443 = 'BCA_ONLINE_REVERSAL_BALANCE_FAILURE' 
+    C_0450 = 'DKI_ONLINE_TOPUP_PENDING_FAILURE' 
+    C_0451 = 'DKI_ONLINE_UPDATE_BALANCE_FAILURE' 
+    C_0452 = 'DKI_ONLINE_REVERSAL_BALANCE_FAILURE' 
+    
 
 def validate_escpos_lib():
     try:
@@ -369,6 +384,7 @@ EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
 ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
+SECURE_CHANNEL_TOPUP = True if _ConfigParser.get_set_value('GENERAL', 'secure^channel^topup', '1') == '1' else False
 
 DISABLE_SENTRY_LOGGING = True if _ConfigParser.get_set_value('GENERAL', 'disable^sentry^logging', '1') == '1' else False
 # NEW_TOPUP_FAILURE_HANDLER = True if _ConfigParser.get_set_value('GENERAL', 'new^topup^failure^handler', '1') == '1' else False

@@ -6,7 +6,7 @@ from _nNetwork import _HTTPAccess
 from _dDevice import _QPROX
 from _dDAO import _DAO
 from _cConfig import _Common, _ConfigParser
-from _tTools import _Helper
+from _tTools import _Helper, _Cryptograpy
 from time import sleep
 from _cCommand import _Command
 import json
@@ -412,6 +412,35 @@ def bni_reset_update_balance(slot=1, activation=True):
         return False, 'SOMETHING_WENT_WRONG'
 
 
+def execute_topup_pending(_param={}, _bank='', _mode=''):
+    LOGGER.debug(_param, _bank, _mode)
+    if _Helper.empty(_param) or _Helper.empty(_bank): 
+        return False, {}
+    _bank = _bank.lower()
+    _url = TOPUP_URL + 'topup-'+_bank+'/pending'
+    # Non-Secure channel
+    if _Common.SECURE_CHANNEL_TOPUP is False:
+        return _HTTPAccess.post_to_url(url=_url, param=_param)
+    
+    # UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
+    _url = _url.replace('/v1/', '/enc-kiosk/')
+    # AES-128-CBC Output in HEX
+    encrypt = _Cryptograpy.encrypt(
+                json.dumps(_param),
+                TOPUP_MID
+            )
+    if not _Common.LIVE_MODE:
+        LOGGER.debug('Encypt Result', str(encrypt))
+    if not encrypt['status']:
+        return False, encrypt
+    _param = {
+            'data': encrypt['result']
+        }
+    _header = _HTTPAccess.HEADER 
+    _header['X-Partner-ID'] = TOPUP_MID
+    return _HTTPAccess.post_to_url(url=_url, param=_param, header=_header)
+
+
 def pending_balance(_param, bank='BNI', mode='TOPUP'):
     if bank == 'BNI' and mode == 'TOPUP':
         try:
@@ -426,7 +455,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             # _param['priv'] = 'NO_LIMIT'
-            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/pending', param=_param)
+            status, response = execute_topup_pending(_param, bank, mode)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
             #    {
@@ -476,7 +505,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             # _param['priv'] = 'NO_LIMIT'
-            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
+            status, response = execute_topup_pending(_param, bank, mode)
+            # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -522,7 +552,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _url = TOPUP_URL
             if _Common.DEV_MODE_TOPUP_BCA:
                 _url = _Common.UPDATE_BALANCE_URL_DEV
-            status, response = _HTTPAccess.post_to_url(url=_url + 'topup-bca/pending', param=_param)
+            status, response = execute_topup_pending(_param, bank, mode)
+            # status, response = _HTTPAccess.post_to_url(url=_url + 'topup-bca/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -567,7 +598,45 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['email'] = _Common.THEME_NAME.lower() + '@mdd.co.id'
             # This Below Key Is Mandatory For Topup Deposit C2C TO Reroute Mandiri Cred
             _param['purpose'] = 'TOPUP_DEPOSIT_C2C'
-            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
+            status, response = execute_topup_pending(_param, bank, mode)
+            # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
+            LOGGER.debug((str(_param), str(status), str(response)))
+            if status == 200 and response['response']['code'] == 200:
+                # {
+                #    "response":{
+                #       "code":200,
+                #       "message":"Pending Payment Success",
+                #       "latency":1.80788397789,
+                #       "host":"192.168.2.194"
+                #    },
+                #    "data":{
+                #       "amount":"1510500",
+                #       "paymentId1":"6032981000001750",
+                #       "paymentId2":"",
+                #       "reff_no":"1588745903",
+                #       "trx_time":"2020-05-06 13:18:24"
+                #    }
+                # }
+                return response['data']
+            else:
+                _Common.online_logger([response, bank, _param], 'general')
+                return False
+        except Exception as e:
+            LOGGER.warning((bank, mode, e))
+            return False
+    elif bank == 'MANDIRI' and mode == 'TOPUP':
+        try:
+            # "token":"<<YOUR API-TOKEN>>",
+            # "mid":"<<YOUR MERCHANT_ID>>",
+            # "tid":"<<YOUR TERMINAL/DEVICE_ID>>",
+            # "amount":"30000",
+            # "card_no":"7546990000025583"
+            _param['token'] = TOPUP_TOKEN
+            _param['mid'] = TOPUP_MID
+            _param['tid'] = TOPUP_TID
+            # This Below Key Is Mandatory For Topup Deposit C2C TO Reroute Mandiri Cred
+            status, response = execute_topup_pending(_param, bank, mode)
+            # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
@@ -605,7 +674,8 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             # _param['priv'] = 'NO_LIMIT'
-            status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
+            status, response = execute_topup_pending(_param, bank, mode)
+            # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
             LOGGER.debug((str(_param), str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 reff_no = _param.get('invoice_no')
