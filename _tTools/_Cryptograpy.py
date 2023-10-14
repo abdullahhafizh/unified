@@ -442,14 +442,14 @@ if __name__ == '__main__':
             'trx_type'  : 'SALE'
             })
     print('Raw', raw_message)
-    encrypted = encrypt_aes(
+    encrypted_status, encrypt_result = encrypt_aes(
             raw_message, 
             key
         )
-    print('Encrypted', encrypted)
-    if encrypted is not None:
-        decrypted = decrypt_aes(
-                encrypted, 
+    print('Encrypted', encrypt_result)
+    if encrypted_status is not None:
+        decrypted_status, decrypted_result = decrypt_aes(
+                encrypt_result, 
                 key
             )
-        print('Decrypted', decrypted)
+        print('Decrypted', decrypted_result)
