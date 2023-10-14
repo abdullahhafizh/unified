@@ -198,12 +198,13 @@ def encrypt(
             iv = chr(0) * (len(key)/3)
         else:
             iv = chr(0) * len(key)
+    iv = bytes(iv, 'utf-8')
     output['iv'] = iv
     if output['class_method'] == 'AES':
         try:
             if 'HEX' in mode:
                 key = unhexlify(key)
-            cipher = AES.new(key, AES.MODE_CBC, iv.encode('utf8'))
+            cipher = AES.new(key, AES.MODE_CBC, iv)
             output['process'] = cipher.encrypt(string)
         except Exception as e:
             output['process'] = False
@@ -265,6 +266,7 @@ def decrypt(
             iv = chr(0) * (len(key)/3)
         else:
             iv = chr(0) * len(key)
+    iv = bytes(iv, 'utf-8')
     output['iv'] = iv
     if output['class_method'] == 'AES':
         try:
@@ -273,7 +275,7 @@ def decrypt(
                 string = unhexlify(reverse(string))
             elif 'mode' == 'BASE64':
                 string = base64.decode(string)
-            cipher = AES.new(key, AES.MODE_CBC, iv.encode('utf8'))
+            cipher = AES.new(key, AES.MODE_CBC, iv)
             output['process'] = cipher.decrypt(string)
         except Exception as e:
             output['error'] = e
