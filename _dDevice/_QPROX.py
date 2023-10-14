@@ -358,7 +358,7 @@ def execute_topup_config_check(_param={}, _bank=''):
     _url = _url.replace('/v1/', '/enc-kiosk/')
     # AES-128-CBC Output in HEX
     encrypt_status, encrypt_result = _Cryptograpy.encrypt_aes(
-                string=json.dumps(_param),
+                plaintext=json.dumps(_param),
                 key=_Common.CORE_MID
             )
     if not _Common.LIVE_MODE:
