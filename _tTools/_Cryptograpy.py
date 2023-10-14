@@ -203,7 +203,7 @@ def encrypt(
         try:
             if 'HEX' in mode:
                 key = unhexlify(key)
-            cipher = AES.new(key,AES.MODE_CBC,iv)
+            cipher = AES.new(key, AES.MODE_CBC, iv.encode('utf8'))
             output['process'] = cipher.encrypt(string)
         except Exception as e:
             output['process'] = False
@@ -273,7 +273,7 @@ def decrypt(
                 string = unhexlify(reverse(string))
             elif 'mode' == 'BASE64':
                 string = base64.decode(string)
-            cipher = AES.new(key,AES.MODE_CBC,iv)
+            cipher = AES.new(key, AES.MODE_CBC, iv.encode('utf8'))
             output['process'] = cipher.decrypt(string)
         except Exception as e:
             output['error'] = e
