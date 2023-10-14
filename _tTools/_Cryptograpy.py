@@ -193,7 +193,7 @@ def encrypt(
         if method == 'AES-128-ECB':
             iv = ""
         elif method == 'AES-128-CBC':
-            iv = chr(0) * (len(key)/2)
+            iv = chr(0) * 16
         elif method == '3DES-CBC':
             iv = chr(0) * (len(key)/3)
         else:
@@ -260,7 +260,7 @@ def decrypt(
         if method == 'AES-128-ECB':
             iv = ""
         elif method == 'AES-128-CBC':
-            iv = chr(0) * (len(key)/2)
+            iv = chr(0) * 16
         elif method == '3DES-CBC':
             iv = chr(0) * (len(key)/3)
         else:
