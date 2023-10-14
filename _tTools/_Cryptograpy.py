@@ -67,6 +67,7 @@ def convert_to_iv(clue='0', length=16):
 BLOCK_SIZE = 32
 BLOCK_SZ = 14
 PADDING = '^'
+DELIMITER = "."
 
 
     # private static function padString($string){
@@ -304,7 +305,6 @@ def decrypt(
         return output['result']
     return output
 
-
 #     public static function decrypt($string, $key='1DD08E3FC32981B96EDAA6E1768A454D', $direct=FALSE, $method='AES-128-CBC', $mode='HEX', $iv=null, $padding=null){
 #         $class_method = explode('-', $method)[0];
 #         $output = new \stdClass();
@@ -394,14 +394,46 @@ def decrypt(
 #     }
 
 
+def encrypt_aes(plaintext, key):
+    try:
+        key = hashlib.sha256(key.encode()).digest()
+        encobj = AES.new(key, AES.MODE_GCM)
+        ciphertext, authTag = encobj.encrypt_and_digest(plaintext.encode())
+        data = [
+            hexlify(ciphertext).decode(), 
+            hexlify(authTag).decode(), 
+            hexlify(encobj.nonce).decode()
+            ]
+        result = DELIMITER.join(data)
+        return True, result.upper()
+    except Exception as e:
+        return False, str(e).upper()
+
+
+def decrypt_aes(plain, key):
+    try:
+        key = hashlib.sha256(key.encode()).digest()
+        plain = plain.lower()
+        data = plain.split(DELIMITER)
+        # a2b_hex VS unhexlify
+        ciphertext = unhexlify(data[0].encode())
+        authTag = unhexlify(data[1].encode())
+        nonce = unhexlify(data[2].encode())
+        encobj = AES.new(key, AES.MODE_GCM, nonce)
+        result = (encobj.decrypt_and_verify(ciphertext, authTag)).decode()
+        return True, result
+    except Exception as e:
+        return False, str(e).upper()
+
+
 if __name__ == '__main__':
     time_format = '%Y-%m-%d %H:%M:%S'
     sn = '0811223344'.zfill(16)
     print('SN', sn)
     key = convert_to_key(sn)
     print('Key', key)
-    iv = convert_to_iv(sn)
-    print('IV', iv)
+    # iv = convert_to_iv(sn)
+    # print('IV', iv)
     raw_message = json.dumps({
             'reff_no'   : 'TEST123',
             'caller_id' : 'TERMINAL0001',
@@ -410,23 +442,14 @@ if __name__ == '__main__':
             'trx_type'  : 'SALE'
             })
     print('Raw', raw_message)
-    encrypted = encrypt(
+    encrypted = encrypt_aes(
             raw_message, 
-            key,
-            True,
-            'AES-128-CBC',
-            'HEX',
-            iv
+            key
         )
     print('Encrypted', encrypted)
     if encrypted is not None:
-        decrypted = decrypt(
+        decrypted = decrypt_aes(
                 encrypted, 
-                key,
-                True,
-                'AES-128-CBC',
-                'HEX',
-                iv,
-                PADDING
+                key
             )
         print('Decrypted', decrypted)
