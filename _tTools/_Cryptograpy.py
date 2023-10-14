@@ -220,9 +220,10 @@ def encrypt(
             output['result'] = hexlify(output['process']).upper()
         elif mode == 'BASE64':
             output['result'] = base64.encode(hexlify(output['process']))
-    output['status'] = True
-    output['length'] = len(output['result'])
-    output.pop('process')
+    if output['result']:
+        output['status'] = True
+        output['length'] = len(output['result'])
+        output.pop('process')
     if direct is True:
         return output['result']
     return output
@@ -271,7 +272,6 @@ def decrypt(
             cipher = AES.new(key,AES.MODE_CBC,iv)
             output['process'] = cipher.decrypt(string)
         except Exception as e:
-            output['result'] = False
             output['error'] = e
     # elif output['class_method'] == '3DES':
         # try:
@@ -290,11 +290,9 @@ def decrypt(
         if padding is not None:
             output['result'] = output['result'].replace(padding, '')
         output['status'] = True
+        output.pop('process')
     else:
-        output['status'] = False
-        output['result'] = False
         output['error'] = 'Failed To Decrypt Cipher'
-    output.pop('process')
     output['mode'] = mode
     if direct is True:
         return output['result']

@@ -411,11 +411,11 @@ def bni_reset_update_balance(slot=1, activation=True):
         LOGGER.warning((str(slot), str(e)))
         return False, 'SOMETHING_WENT_WRONG'
 
-
+# Route Pending Method to Non / Secure Channel
 def execute_topup_pending(_param={}, _bank='', _mode=''):
     LOGGER.debug((_param, _bank, _mode))
     if _Helper.empty(_param) or _Helper.empty(_bank): 
-        return False, {}
+        return False, {'response': {'code': 999}}
     _bank = _bank.lower()
     _url = TOPUP_URL + 'topup-'+_bank+'/pending'
     # Non-Secure channel
@@ -426,19 +426,21 @@ def execute_topup_pending(_param={}, _bank='', _mode=''):
     _url = _url.replace('/v1/', '/enc-kiosk/')
     # AES-128-CBC Output in HEX
     encrypt = _Cryptograpy.encrypt(
-                json.dumps(_param),
-                TOPUP_MID
+                string=json.dumps(_param),
+                key=TOPUP_MID
             )
     if not _Common.LIVE_MODE:
         LOGGER.debug(('Encypt Result', str(encrypt)))
     if not encrypt['status']:
-        return False, encrypt
-    _param = {
+        return False, {'response': {'code': 999}}
+    _payload = {
             'data': encrypt['result']
         }
     _header = _HTTPAccess.HEADER 
     _header['X-Partner-ID'] = TOPUP_MID
-    return _HTTPAccess.post_to_url(url=_url, param=_param, header=_header)
+    _header['X-Terminal-ID'] = _Common.TID
+    _header['X-Timestamp'] = str(_Helper.now())
+    return _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
 
 
 def pending_balance(_param, bank='BNI', mode='TOPUP'):

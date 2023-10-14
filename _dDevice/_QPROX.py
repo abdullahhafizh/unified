@@ -4,7 +4,7 @@ from _cConfig import _ConfigParser, _Common
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
-from _tTools import _Helper
+from _tTools import _Helper, _Cryptograpy
 from _dDAO import _DAO
 from time import sleep
 import json
@@ -343,27 +343,58 @@ INIT_LIST = []
 INIT_DELAY_TIME = int(_Common.INIT_DELAY_TIME)
 
 
+# Route Check Method to Non / Secure Channel
+def execute_topup_config_check(_param={}, _bank=''):
+    LOGGER.debug((_param, _bank))
+    if _Helper.empty(_param) or _Helper.empty(_bank): 
+        return False, {'response': {'code': 999}}
+    _bank = _bank.lower()
+    _url = TOPUP_URL + 'topup-'+_bank+'/card-check?tid=' + _Common.TID
+    # Non-Secure channel
+    if not _Common.SECURE_CHANNEL_TOPUP:
+        return _HTTPAccess.post_to_url(url=_url, param=_param)
+    
+    # UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
+    _url = _url.replace('/v1/', '/enc-kiosk/')
+    # AES-128-CBC Output in HEX
+    encrypt = _Cryptograpy.encrypt(
+                string=json.dumps(_param),
+                key=_Common.CORE_MID
+            )
+    if not _Common.LIVE_MODE:
+        LOGGER.debug(('Encypt Result', str(encrypt)))
+    if not encrypt['status']:
+        return False, {'response': {'code': 999}}
+    _payload = {
+            'data': encrypt['result']
+        }
+    _header = _HTTPAccess.HEADER 
+    _header['X-Partner-ID'] = _Common.CORE_MID
+    _header['X-Terminal-ID'] = _Common.TID
+    _header['X-Timestamp'] = str(_Helper.now())
+    return _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
+
+
 def validate_topup_online_config(bank=None):
     if bank is None: return
     param = _Common.serialize_payload({})
     # Fixed By Using ? to define it as Query String
-    check_query = '?tid=' + _Common.TID
     try:
         if bank == 'BRI':
-            param['card_no'] = '6013' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check' + check_query, param)
+            param['card_no'] = '6013' + ('0'*12)            
+            status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.BRI_TOPUP_ONLINE = True
         elif bank == 'BCA':
             param['card_no'] = '0145' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bca/card-check' + check_query, param)
+            status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.BCA_TOPUP_ONLINE = True
         elif bank == 'DKI':
             param['card_no'] = '9360' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-dki/card-check' + check_query, param)
+            status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.DKI_TOPUP_ONLINE = True
