@@ -419,13 +419,14 @@ if __name__ == '__main__':
             iv
         )
     print('Encrypted', encrypted)
-    decrypted = decrypt(
-            encrypted, 
-            key,
-            True,
-            'AES-128-CBC',
-            'HEX',
-            iv,
-            PADDING
-        )
-    print('Decrypted', decrypted)
+    if encrypted is not None:
+        decrypted = decrypt(
+                encrypted, 
+                key,
+                True,
+                'AES-128-CBC',
+                'HEX',
+                iv,
+                PADDING
+            )
+        print('Decrypted', decrypted)
