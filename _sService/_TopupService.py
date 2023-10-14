@@ -425,21 +425,21 @@ def execute_topup_pending(_param={}, _bank='', _mode=''):
     # UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
     _url = _url.replace('/v1/', '/enc-kiosk/')
     # AES-128-CBC Output in HEX
-    encrypt = _Cryptograpy.encrypt(
+    encrypt_status,  encrypt_result= _Cryptograpy.encrypt_aes(
                 string=json.dumps(_param),
                 key=TOPUP_MID
             )
     if not _Common.LIVE_MODE:
-        LOGGER.debug(('Encypt Result', str(encrypt)))
-    if not encrypt['status']:
+        LOGGER.debug(('Encypt Result', str(encrypt_result)))
+    if not encrypt_status:
         return False, {'response': {'code': 999}}
     _payload = {
-            'data': encrypt['result']
+            'data': encrypt_result
         }
     _header = _HTTPAccess.HEADER 
-    _header['X-Partner-ID'] = TOPUP_MID
-    _header['X-Terminal-ID'] = _Common.TID
-    _header['X-Timestamp'] = str(_Helper.now())
+    _header['Kiosk-Partner-ID'] = _Common.CORE_MID
+    _header['Kiosk-Terminal-ID'] = _Common.TID
+    _header['Kiosk-Timestamp'] = str(_Helper.now())
     return _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
 
 
