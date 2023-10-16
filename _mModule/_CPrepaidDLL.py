@@ -40,12 +40,13 @@ def direct_load_dll():
 
 #000
 @func_set_timeout(30)
-def open_only(PORT):
+def open_only(PORT, BAUDRATE=None):
     res_str = ""
     error_msg = ""
     try:
         LOG.fw("--> C_PORT = ",PORT)
-        res_str, error_msg = lib.open_only(PORT.decode('utf-8'))
+        LOG.fw("--> BAUDRATE = ",BAUDRATE)
+        res_str, error_msg = lib.open_only(PORT.decode('utf-8'), BAUDRATE)
 
     except Exception as ex:
         LOG.fw("CMD $open_only ERROR: ", "{0}".format(ex))

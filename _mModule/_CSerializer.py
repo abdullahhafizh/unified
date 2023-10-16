@@ -245,7 +245,7 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     
-    if response['len'] >= 189:
+    if result['len'] >= 189:
         rep = ''
         for i in range(0, Len):
             rep = rep + chr(result["rep"][i])

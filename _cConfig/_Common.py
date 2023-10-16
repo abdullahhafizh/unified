@@ -123,6 +123,7 @@ if LIVE_MODE or PTR_MODE:
 _HTTPAccess.HEADER = _HTTPAccess.get_header(TID, TERMINAL_TOKEN)
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
+QPROX_BAUDRATE = _ConfigParser.get_set_value('QPROX_NFC', 'baudrate', '38400')
 INIT_DELAY_TIME = 2
 # _ConfigParser.get_set_value('QPROX_NFC', 'init^delay^time', '5')
 

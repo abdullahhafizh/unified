@@ -12,6 +12,9 @@ SLOT_KA = ""
 COM_PORT = None
 LOAD_DLL = False
 
+COM_PORT = None
+COM_BAUDRATE = None
+
 DUMP_FOLDER = sys.path[0] + '/_dDump/'
 if not os.path.exists(DUMP_FOLDER):
     os.makedirs(DUMP_FOLDER)
@@ -70,15 +73,16 @@ def reader_dump(param, __global_response__=None):
 
 #000
 def open_only(param=None, __global_response__=None):
-    global COM_PORT
+    global COM_PORT, COM_BAUDRATE
     
     if LOAD_DLL is True:
         prepaid.load_dll()
-    
-    if param != None:
-        C_PORT = param.encode('utf-8')
-        LOG.fw("000:Parameter = ", C_PORT)
-
+        
+    Param = param.split('|')
+    if len(Param) > 1:
+        C_PORT = Param[0].encode('utf-8')
+        LOG.fw("000:Parameter Port = ", C_PORT)
+        COM_BAUDRATE = int(Param[1])
         COM_PORT = C_PORT
     else:
         C_PORT = ""
@@ -89,7 +93,7 @@ def open_only(param=None, __global_response__=None):
         else:
             C_PORT = COM_PORT
 
-    res_str = prepaid.open_only(C_PORT)
+    res_str = prepaid.open_only(C_PORT, COM_BAUDRATE)
 
     if __global_response__ != None and type(__global_response__) == dict:
         __global_response__["Result"] = res_str

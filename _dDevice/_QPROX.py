@@ -22,6 +22,7 @@ if _Common.IS_WINDOWS:
 
 LOGGER = logging.getLogger()
 QPROX_PORT = _Common.QPROX_PORT
+QPROX_BAUDRATE = _Common.QPROX_BAUDRATE
 MID_MAN = _Common.MID_MAN
 TID_MAN = _Common.TID_MAN
 SAM_MAN = _Common.SAM_MAN
@@ -319,7 +320,7 @@ def open():
         LOGGER.debug(("port : ", QPROX_PORT))
         _Common.NFC_ERROR = 'PORT_NOT_DEFINED'
         return False
-    param = QPROX["OPEN"] + "|" + QPROX_PORT
+    param = QPROX["OPEN"] + "|" + QPROX_PORT + "|" + QPROX_BAUDRATE
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug((param, result))
     OPEN_STATUS = True if response == 0 else False

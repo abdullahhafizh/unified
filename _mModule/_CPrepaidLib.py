@@ -8,18 +8,21 @@ COMPORT = None
 READER_BAUDRATE = 38400 #Default: 38400,  115200
 
 
-def open_only(port):
+def open_only(port, _baudrate=None):
     global COMPORT
     resultStr = "0000"
     msg = ""
+    
+    if _baudrate is None or not _baudrate not in [38400, 115200]:
+        _baudrate = READER_BAUDRATE
 
     if COMPORT is None:
-        COMPORT = serial.Serial(port, baudrate=READER_BAUDRATE, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        COMPORT = serial.Serial(port, baudrate=_baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     elif COMPORT.isOpen() and COMPORT.name != port:
         COMPORT.close()
-        COMPORT = serial.Serial(port, baudrate=READER_BAUDRATE, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        COMPORT = serial.Serial(port, baudrate=_baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     elif not COMPORT.isOpen():
-        COMPORT = serial.Serial(port, baudrate=READER_BAUDRATE, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        COMPORT = serial.Serial(port, baudrate=_baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     else:
         print('pyt: COM Status', COMPORT.isOpen())
     
