@@ -242,11 +242,13 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
     
     result = get_TDefaultReportres(response["data"])
     LOG.fw("RESPONSE:", result)
-
+    
     Len = ((response["len"][0] << 8)+response["len"][1])-5
-    rep = ''
-    for i in range(0, Len):
-        rep = rep + chr(result["rep"][i])
+    
+    if response['len'] >= 189:
+        rep = ''
+        for i in range(0, Len):
+            rep = rep + chr(result["rep"][i])
 
     del data
     del response
