@@ -77,7 +77,7 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
     if ___cmd in special_timeout_command.values():
         base_timeout = 180
     service_url = LOCAL_URL
-    if ___cmd[0] == '0' or ___cmd == 'ST0':
+    if ___cmd[0] == '0' or ___cmd in ['ST0', 'RD0']:
         ___stat, ___resp = 200, module_command(cmd=___cmd, param=___param)
     # elif ___cmd[0] == '5':
     #     # Call GRG Interface Command

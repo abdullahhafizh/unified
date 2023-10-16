@@ -27,13 +27,9 @@ def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -58,10 +54,7 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TBalanceresws(response["data"])
     # print(result)
@@ -89,10 +82,7 @@ def GET_BALANCE(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
-    #LOG.fw("RAW_RECV:", response)
     
     # If STX Missing 1 byte, trim data to be converted into integer
     if response['start'] != STX or response['start'][0] == STX[1]:
@@ -100,7 +90,6 @@ def GET_BALANCE(Ser):
         # response['data'] = response['data'][:-1]
         
     result = get_TBalanceres(response["data"])
-    # print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -125,13 +114,9 @@ def DEBIT(Ser, datetime, time_out, value):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    # print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -176,13 +161,9 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    # print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -205,13 +186,9 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    # print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -236,13 +213,10 @@ def BNI_TOPUP_INIT_KEY(Ser, C_MASTER_KEY, C_IV, C_PIN, C_TID):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
     LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    # print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -264,13 +238,9 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
-
+    
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -297,13 +267,9 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    # print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TBNIKMMULTIBalanceres(response["data"])
-    # print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -326,13 +292,9 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -358,13 +320,9 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -392,13 +350,9 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -424,13 +378,9 @@ def PURSE_DATA(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -461,13 +411,9 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -497,13 +443,9 @@ def TOP_UP_C2C(Ser, amount, timestamp):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -532,13 +474,9 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -565,13 +503,9 @@ def TOPUP_C2C_CORRECTION(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
-
+    
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -603,13 +537,9 @@ def GET_FEE_C2C(Ser, Flag):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -644,13 +574,9 @@ def SET_FEE_C2C(Ser, Flag, respon):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -682,13 +608,9 @@ def TOPUP_FORCE_C2C(Ser, Flag):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -713,11 +635,9 @@ def MDR_C2C_LAST_REPORT(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
     
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -742,7 +662,6 @@ def NEW_TOP_UP_C2C(Ser, amount, timestamp):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
 
     result = get_TDefaultReportres(response["data"])
@@ -766,13 +685,9 @@ def KM_BALANCE_TOPUP_C2C(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -806,14 +721,10 @@ def APDU_SEND(Ser, slot, info):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
-
+    
     result = get_TDefaultReportres(response["data"])
-    #print(result)
-    # LOG.fw("RESPONSE:", result)
+    LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
     rep = ''
@@ -859,13 +770,9 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -886,11 +793,9 @@ def GET_SN(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -935,13 +840,9 @@ def BCA_CARD_INFO(Ser, ATD):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -967,13 +868,9 @@ def GET_CARDDATA(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1011,7 +908,6 @@ def CARD_DISCONNECT(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
     
     del data
@@ -1046,13 +942,9 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1090,13 +982,9 @@ def BCA_SESSION_2(Ser, session):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultResres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -1167,13 +1055,9 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1211,13 +1095,9 @@ def BCA_TOPUP_2(Ser, strConfirm):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1243,13 +1123,9 @@ def BCA_LAST_REPORT(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1287,13 +1163,9 @@ def BCA_REVERSAL(Ser, ATD):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1319,13 +1191,9 @@ def BCA_CARD_HISTORY(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    # LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1351,13 +1219,9 @@ def GET_TOKEN_BRI(Ser):
     Ser.flush()
     
     data = retrieve_rs232_data(Ser)
-
     response = get_TDefaultRespons(data)
-    #print(response)
-    #LOG.fw("RAW_RECV:", response)
 
     result = get_TDefaultReportres(response["data"])
-    #print(result)
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1369,6 +1233,22 @@ def GET_TOKEN_BRI(Ser):
     del response
 
     return result["code"], CARDDATA
+
+
+def READER_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB4"
+
+    bal_value = sam["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    Ser.flush()
+    write = Ser.write(p)
+    Ser.flush()
+    
+    dump_data = retrieve_rs232_dump_data(Ser)
+
+    return '0000', dump_data
 
 '''
 ------------------------------------------------------------------------------------------------
@@ -1386,13 +1266,27 @@ def retrieve_rs232_data(Ser=Serial()):
                 response = STX[0] + response
             LOG.fw("RAW_REPLY:", response)
             return response
-            break
     # start =  Ser.read_until(b'\x10\x02')
     # LOG.fw("READ_START:", start)
     # end = Ser.read_until(ETX)
     # LOG.fw("READ_END:", end)
     # result = start + end
     # return result
+    
+
+def retrieve_rs232_dump_data(Ser=Serial()):
+    response = b''
+    default_res_len = 32
+    while True:
+        read = Ser.read()
+        if len(read) > 0:
+            response = response + Ser.read()
+        elif len(response) < default_res_len:
+            continue
+        else:
+            break
+    LOG.fw("RAW_REPLY:", response)
+    return response
 
 
 def get_TDefaultRespons(data):
@@ -1410,14 +1304,10 @@ def get_TDefaultRespons(data):
     # if data[0] != b'\x10': 
     #     data = b'\x10' + data
     result["start"] = data[0:2]
-    # print(result)
     result["header"] = data[2:9]
-    # print(result)
     result["len"] = data[9:11]
-    # print(result)
     len_data = 11+int.from_bytes(result['len'],byteorder='big', signed=False)
     result["data"] = data[11:len_data]
-    # print(result)
     result["res"] = data[len_data:len_data+3]
 
     return result

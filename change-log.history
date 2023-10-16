@@ -1,5 +1,7 @@
 16.5.0-GLOBAL:
 - Switch Topup Online to Secure Message,
+- Change Reader Baudrate to 115.200,
+- Add Reader Dump Data in C2C Mandiri Error,
 - ...
 
 16.4.6-GLOBAL:

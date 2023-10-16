@@ -5,6 +5,8 @@ import traceback
 from _mModule import _CSerializer as serializer
 
 COMPORT = None
+READER_BAUDRATE = 115200 #Default: 38400 
+
 
 def open_only(port):
     global COMPORT
@@ -12,12 +14,12 @@ def open_only(port):
     msg = ""
 
     if COMPORT is None:
-        COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        COMPORT = serial.Serial(port, baudrate=READER_BAUDRATE, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     elif COMPORT.isOpen() and COMPORT.name != port:
-        COMPORT.close
-        COMPORT = serial.Serial(port, baudrate=38400, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        COMPORT.close()
+        COMPORT = serial.Serial(port, baudrate=READER_BAUDRATE, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     elif not COMPORT.isOpen():
-        COMPORT = serial.Serial(port, baudrget_TDefaultResressize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        COMPORT = serial.Serial(port, baudrate=READER_BAUDRATE, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
     else:
         print('pyt: COM Status', COMPORT.isOpen())
     
@@ -73,7 +75,7 @@ def topup_debit(C_Denom, date_now, timeout):
     if not is_serial_valid():
         return "FFFE", "", ""
     
-    res_str, balance, report = serializer.DEBIT(COMPORT,date_now,timeout,C_Denom)
+    res_str, balance, report = serializer.DEBIT(COMPORT, date_now, timeout, C_Denom)
 
     return res_str.decode("utf-8"), balance, report
 
@@ -427,3 +429,9 @@ def topup_bni_init_key(C_MASTER_KEY, C_IV, C_PIN, C_TID):
         return "FFFE"
     res_str = serializer.BNI_TOPUP_INIT_KEY(COMPORT, C_MASTER_KEY, C_IV, C_PIN, C_TID)
     return res_str.decode("utf-8")
+
+
+def reader_dump():
+    if not is_serial_valid():
+        return "FFFE", "" 
+    return serializer.READER_DUMP(COMPORT)

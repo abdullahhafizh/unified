@@ -41,7 +41,6 @@ def direct_load_dll():
 #000
 @func_set_timeout(30)
 def open_only(PORT):
-
     res_str = ""
     error_msg = ""
     try:
@@ -60,7 +59,6 @@ def open_only(PORT):
 #001
 @func_set_timeout(30)
 def topup_init(PORT, SAMPIN, Institution, Terminal, _serial, _passd):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $30")
@@ -79,9 +77,7 @@ def topup_init(PORT, SAMPIN, Institution, Terminal, _serial, _passd):
     except Exception as ex:
         LOG.fw("CMD $30 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-        
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str
 
 #002
@@ -119,20 +115,17 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
         res = func(C_PORT, C_Slot, C_PinSAM, C_Institution, C_Terminal, C_PinKA, C_PinKL, p_structNIK)
         res_str = utils.to_4digit(res)
         NIKKL = structNIK.repDATA.decode("cp437")
-
     except Exception as ex:
         LOG.fw("CMD $$34 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
 
     LOG.fw("<-- NIKKL = " , NIKKL)
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, NIKKL
 
 #003-1 / 012-3
 @func_set_timeout(30)
 def topup_balance_with_sn():
-
     res_str = ""
     balance = ""
     card_number = ""
@@ -152,13 +145,11 @@ def topup_balance_with_sn():
     LOG.fw("<-- card_number = " , card_number)
     LOG.fw("<-- sign = " , sign)
     LOG.fw("<-- CMD RESULT = ",res_str)
-    
     return res_str, balance, card_number, str(sign)
 
 #003-2
 @func_set_timeout(30)
 def topupbni_validation(_timeout):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $67")
@@ -168,15 +159,12 @@ def topupbni_validation(_timeout):
     except Exception as ex:
         LOG.fw("CMD $67 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str
 
 #008
 @func_set_timeout(30)
 def topup_debit(Denom, _date_now, _timeout):
-
     res_str = ""
     debErrorStr  = ""
     balance = ""
@@ -185,7 +173,6 @@ def topup_debit(Denom, _date_now, _timeout):
 
     try:
         LOG.fw("--> CMD READER = $32")
-
         C_Denom = utils.str_to_bytes(Denom)
         date_now = utils.str_to_bytes(_date_now)
         timeout = utils.str_to_bytes(_timeout)
@@ -205,7 +192,6 @@ def topup_debit(Denom, _date_now, _timeout):
                 typebank = "1"
             else:
                 typebank = "2"
-
     except Exception as ex:
         LOG.fw("CMD $32 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
@@ -215,15 +201,12 @@ def topup_debit(Denom, _date_now, _timeout):
     LOG.fw("<-- debErrorStr = ", debErrorStr)
     LOG.fw("<--  = ", )
     LOG.fw("typebank = ", typebank)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-    
     return res_str, debErrorStr, balance, report, typebank
 
 #009
 @func_set_timeout(30)
 def topup_balance():
-
     res_str = ""
     balance = "0"
     try:
@@ -232,15 +215,12 @@ def topup_balance():
     except Exception as ex:
         LOG.fw("CMD $31 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-    
     return res_str, str(balance)
 
 #010
 @func_set_timeout(30)
 def topup_done():
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $topup_done")
@@ -248,14 +228,12 @@ def topup_done():
     except Exception as ex:
         LOG.fw("CMD $topup_done ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-    
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
 #011
 @func_set_timeout(30)
 def topup_bni_update(Terminal):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $17")
@@ -265,14 +243,12 @@ def topup_bni_update(Terminal):
     except Exception as ex:
         LOG.fw("CMD $17 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-    
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
 #012-1
 @func_set_timeout(30)
 def topup_pursedata_multi_sam(_slot):
-
     res_str = ""
     response = ""
     try:
@@ -284,16 +260,13 @@ def topup_pursedata_multi_sam(_slot):
     except Exception as ex:
         LOG.fw("CMD $76 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-    
     LOG.fw("<-- response = " , response)
     LOG.fw("<-- CMD RESULT = ",res_str)
-    
     return res_str, response
 
 #012-2
 @func_set_timeout(30)
 def topupbni_km_balance_multi_sam(_slot):
-
     res_str = ""
     rep_saldo = ""
     saldo = 0
@@ -308,7 +281,6 @@ def topupbni_km_balance_multi_sam(_slot):
     except Exception as ex:
         LOG.fw("CMD $74 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-
     LOG.fw("<-- rep_saldo = " , rep_saldo)
     LOG.fw("saldo = " , saldo)
     LOG.fw("maxSaldo = " , maxSaldo)
@@ -318,7 +290,6 @@ def topupbni_km_balance_multi_sam(_slot):
 #012-4
 @func_set_timeout(30)
 def topupbni_init_multi(_slot, _terminal):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $70")
@@ -330,21 +301,18 @@ def topupbni_init_multi(_slot, _terminal):
     except Exception as ex:
         LOG.fw("CMD $70 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
 #013-1
 @func_set_timeout(30)
 def topupbni_credit_multi_sam(_slot, _value, _timeOut):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
     card_number = ""
     try:
         LOG.fw("--> CMD READER = $71")
-
         slot = utils.str_to_bytes(_slot)
         value = utils.str_to_bytes(_value)
         timeOut = utils.str_to_bytes(_timeOut)
@@ -364,15 +332,12 @@ def topupbni_credit_multi_sam(_slot, _value, _timeOut):
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
     LOG.fw("<-- card_number = ", card_number)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, card_number, reportSAM    
 
 #018
 @func_set_timeout(30)
 def topupbni_sam_refill_multi(_slot, _terminal):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -390,15 +355,12 @@ def topupbni_sam_refill_multi(_slot, _terminal):
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, reportSAM, debErrorStr
 
 #020
 @func_set_timeout(30)
 def topup_pursedata():
-
     res_str = ""
     reportPurse=""
     debErrorStr= ""
@@ -418,7 +380,6 @@ def topup_pursedata():
 #022
 @func_set_timeout(30)
 def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
-
     typebank = ""
     balance = 0
     report = ""
@@ -456,7 +417,6 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
                 balance  = int(report[456:464], 16)
             elif typebank == "c" | typebank == 'C':
                 balance  = int(report[456:464], 16)
-
     except Exception as ex:
         LOG.fw("CMD $topup_debitnoinit_single ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
@@ -466,13 +426,11 @@ def topup_debitnoinit_single(TID, Denom, _date_now, _timeout):
     LOG.fw("<-- report = " , report)
     LOG.fw("<-- debErrorStr = " , debErrorStr)
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, debErrorStr, balance, report, typebank
 
 #026 - OLD
 @func_set_timeout(30)
 def topup_C2C_refill(Value, Timestamp):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -489,16 +447,13 @@ def topup_C2C_refill(Value, Timestamp):
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, reportSAM, debErrorStr
 
 
 #026 - NEW
 @func_set_timeout(15)
 def new_topup_C2C_refill(Value, Timestamp):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -515,15 +470,12 @@ def new_topup_C2C_refill(Value, Timestamp):
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, reportSAM, debErrorStr
 
 #027
 @func_set_timeout(30)
 def topup_C2C_init(Terminal, MAC, Slot):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $80")
@@ -537,14 +489,12 @@ def topup_C2C_init(Terminal, MAC, Slot):
     except Exception as ex:
         LOG.fw("CMD $80 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-        
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
 #028
 @func_set_timeout(30)
 def topup_C2C_Correct():
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -564,7 +514,6 @@ def topup_C2C_Correct():
 #029
 @func_set_timeout(30)
 def topup_C2C_getfee(Flag):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -598,7 +547,6 @@ def topup_C2C_setfee(Flag, Response):
     except Exception as ex:
         LOG.fw("CMD $86 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-    
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
@@ -606,7 +554,6 @@ def topup_C2C_setfee(Flag, Response):
 # Force Settlement Timeout For 5 Seconds
 @func_set_timeout(5)
 def topup_C2C_force(Flag):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -622,9 +569,7 @@ def topup_C2C_force(Flag):
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, reportSAM, debErrorStr
 
 
@@ -632,7 +577,6 @@ def topup_C2C_force(Flag):
 # Force Settlement Timeout For 5 Seconds
 @func_set_timeout(5)
 def topup_C2C_last_report(Flag):
-
     res_str = ""
     reportSAM = ""
     debErrorStr = ""
@@ -646,15 +590,12 @@ def topup_C2C_last_report(Flag):
         
     LOG.fw("<-- reportSAM = ", reportSAM)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
-
     LOG.fw("<-- CMD RESULT = ",res_str)
-
     return res_str, reportSAM, debErrorStr
 
 #033
 @func_set_timeout(30)
 def topup_C2C_km_balance():
-    
     res_str = ""
     repsaldo = ""
     repUID = ""
@@ -677,7 +618,6 @@ def topup_C2C_km_balance():
 #034, #016
 @func_set_timeout(30)
 def send_apdu_cmd(Slot, APDU):
-
     RAPDU = ""
     res_str = ""
     try:
@@ -692,14 +632,12 @@ def send_apdu_cmd(Slot, APDU):
     except Exception as ex:
         LOG.fw("CMD $B0 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str, RAPDU
 
 #046
 @func_set_timeout(30)
 def topup_bca_lib_config(TID, MID):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $19")
@@ -711,14 +649,12 @@ def topup_bca_lib_config(TID, MID):
     except Exception as ex:
         LOG.fw("CMD $19 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
-
     LOG.fw("<-- CMD RESULT = ",res_str)        
     return res_str
 
 #---
 @func_set_timeout(30)
 def get_card_sn():
-
     UID = ""
     SN = ""
     res_str = ""
@@ -739,7 +675,6 @@ def get_card_sn():
 #---
 @func_set_timeout(30)
 def topup_bca_lib_cardinfo(ATD):
-
     report = ""
     res_str = ""
 
@@ -759,7 +694,6 @@ def topup_bca_lib_cardinfo(ATD):
 #---
 @func_set_timeout(30)
 def topup_get_carddata():
-
     repUID = ""
     repData = ""
     repAttr = ""
@@ -780,7 +714,6 @@ def topup_get_carddata():
 
 @func_set_timeout(30)
 def topup_card_disconnect():
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $FA")
@@ -794,7 +727,6 @@ def topup_card_disconnect():
 
 @func_set_timeout(30)
 def topup_bca_lib_session1(ATD, datetimes):
-
     session = ""
     res_str = ""
     try:
@@ -814,7 +746,6 @@ def topup_bca_lib_session1(ATD, datetimes):
 
 @func_set_timeout(30)
 def topup_bca_lib_session2(session):
-
     res_str = ""
     try:        
         LOG.fw("--> CMD READER = $92")
@@ -830,7 +761,6 @@ def topup_bca_lib_session2(session):
 
 @func_set_timeout(30)
 def topup_bca_lib_topup1(ATD, accescard, accescode, datetimes, amounthex):
-
     res_str = ""
     session = ""
     try:
@@ -856,7 +786,6 @@ def topup_bca_lib_topup1(ATD, accescard, accescode, datetimes, amounthex):
 
 @func_set_timeout(30)
 def topup_bca_lib_topup2(confirm1, confirm2):
-
     res_str = ""
     balance = "0"
     respon = ""
@@ -880,7 +809,6 @@ def topup_bca_lib_topup2(confirm1, confirm2):
 
 @func_set_timeout(30)
 def topup_bca_lib_lastreport():
-
     res_str = ""
     session = ""
     try:
@@ -896,7 +824,6 @@ def topup_bca_lib_lastreport():
 
 @func_set_timeout(30)
 def topup_bca_lib_reversal(ATD):
-
     session = ""
     res_str = ""
     try:           
@@ -913,7 +840,6 @@ def topup_bca_lib_reversal(ATD):
     return res_str, session
 
 def topup_get_tokenbri():
-
     CardData = ""
     res_str = ""
     try:           
@@ -930,7 +856,6 @@ def topup_get_tokenbri():
 
 @func_set_timeout(30)
 def topup_bca_lib_cardhistory():
-
     report = ""
     res_str = ""
 
@@ -949,7 +874,6 @@ def topup_bca_lib_cardhistory():
 #080
 @func_set_timeout(30)
 def topup_bni_init_key(MASTER_KEY, PIN, TID):
-
     res_str = ""
     try:
         LOG.fw("--> CMD READER = $63")
@@ -971,3 +895,20 @@ def topup_bni_init_key(MASTER_KEY, PIN, TID):
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
 
+
+@func_set_timeout(15)
+def reader_dump(card_no='', trxid=''):
+    res_str = ""
+    dump_data = ""
+    try:
+        LOG.fw("--> CMD READER = $B4")
+        LOG.fw("--> CARD_NO = ", card_no)
+        LOG.fw("--> TRXID = ", trxid)
+        res_str, dump_data = lib.reader_dump()
+    except Exception as ex:
+        LOG.fw("CMD $B4 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+
+    LOG.fw("<-- dump_data = ", dump_data)
+    LOG.fw("<-- CMD RESULT = ",res_str)
+    return res_str, dump_data

@@ -4,10 +4,31 @@ from _mModule import _CPrepaidDLL as prepaid
 from _mModule import _CPrepaidLog as LOG
 
 import datetime
+import json
+import os
+import sys
 
 SLOT_KA = ""
 COM_PORT = None
 LOAD_DLL = False
+
+DUMP_FOLDER = sys.path[0] + '/_dDump/'
+if not os.path.exists(DUMP_FOLDER):
+    os.makedirs(DUMP_FOLDER)
+
+
+def log_to_file(content='', filename='', default_ext='.dump'):
+    path = DUMP_FOLDER
+    if '.' not in filename:
+        filename = filename + default_ext
+    path_file = os.path.join(path, filename)
+    if type(content) != str:
+        content = json.dumps(content)
+    with open(path_file, 'w+') as file_logging:
+        print('pyt: Create Dump File..! ' + ' : ' + path_file)
+        file_logging.write(content)
+        file_logging.close()
+    return path_file
 
 # ST0
 def reset_contactless(__global_response__=None):
@@ -21,8 +42,31 @@ def reset_contactless(__global_response__=None):
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("ST0:Result = ", res_str, True)
         LOG.fw("ST0:Gagal", None, True)
-        
     return res_str
+
+# RD0
+def reader_dump(param, __global_response__=None):
+    Param = param.split('|')
+    if len(Param) == 4:
+        card_no = Param[0].encode('utf-8')
+        trxid = Param[1].encode('utf-8')
+    res_str, dump_data = prepaid.reader_dump(card_no, trxid)
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["ErrorDesc"] = "Sukses"
+        if len(dump_data) > 0:
+            # Write To File Here
+            reff = '_'.join([card_no, trxid])
+            dump_file = log_to_file(dump_data, reff)
+            __global_response__["Response"]= dump_file
+        LOG.fw("RD0:Result = ", res_str)
+        LOG.fw("RD0:Sukses")
+    else:
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("RD0:Result = ", res_str, True)
+        LOG.fw("RD0:Gagal", None, True)
+    return res_str
+
 
 #000
 def open_only(param=None, __global_response__=None):
@@ -246,7 +290,6 @@ def balance(param, __global_response__):
 
         LOG.fw("009:Result = ", res_str, True)
         LOG.fw("009:Gagal", None, True)
-
     return res_str
 
 #000
@@ -262,7 +305,6 @@ def done(param, __global_response__):
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("done:Result = ", res_str, True)
         LOG.fw("done:Gagal", None, True)
-
     return res_str
 
 #020
@@ -290,7 +332,6 @@ def get_purse_data(param, __global_response__):
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("020:Result = ", res_str, True)
         LOG.fw("020:Gagal", None, True)
-
     return res_str
 
 #022
@@ -329,7 +370,6 @@ def debit_no_init_single_report(param, __global_response__):
         LOG.fw("022:Response = ", error_str, True)
         LOG.fw("022:Result = ", res_str, True)
         LOG.fw("022:Gagal", None, True)
-
     return res_str
 
 #034
@@ -364,7 +404,6 @@ def send_apdu(param, __global_response__):
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("034:Result = ", res_str, True)
         LOG.fw("034:Gagal", None, True)
-
     return res_str
 
 #033
@@ -397,5 +436,4 @@ def check_balance_C2C(param, __global_response__):
         __global_response__["ErrorDesc"] = "Gagal"
         LOG.fw("033:Result = ", res_str, True)
         LOG.fw("033:Gagal", None, True)
-
     return res_str

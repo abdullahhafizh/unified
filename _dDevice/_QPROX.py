@@ -47,6 +47,8 @@ BNI_SAM_SLOT = {
 
 QPROX = {
     "RESET_CONTACTLESS": "ST0",
+    "READER_DUMP": "RD0",
+    # -------
     "OPEN": "000",
     "INIT": "001",
     "AUTH": "002",
@@ -103,7 +105,7 @@ QPROX = {
     "CONFIRM_TOPUP_DKI": "052", #parameter data_to_card (From API)
     "CARD_HISTORY_DKI": "053", 
     "CARD_HISTORY_DKI_RAW": "054", 
-    "CARD_HISTORY_BRI_RAW": "078"
+    "CARD_HISTORY_BRI_RAW": "078",
 }
 
 
@@ -1155,14 +1157,22 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((_response, _result))
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
+    
     # {"Command": "028", "ErrorDesc": "Gagal", "Result": "0290", "Response": "", "Parameter": "0"}
     if _response == 0 and len(_result) >= 196:
         c2c_report = _result
         _Common.LAST_TOPUP_TRXID = trxid
         parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
         return
-    # Failure Transaction
+    
+    # Error Condition/ Failure Transaction Below
     try:
+        # Call Reader Dump
+        param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
+        dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        LOGGER.info((dump_response, dump_result))
+        
+        # Parse Previous Error Result
         topup_result = json.loads(_result)
         
         LAST_C2C_APP_TYPE = '0'
