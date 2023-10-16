@@ -78,12 +78,13 @@ def open_only(param=None, __global_response__=None):
     if LOAD_DLL is True:
         prepaid.load_dll()
         
-    Param = param.split('|')
-    if len(Param) > 1:
-        C_PORT = Param[0].encode('utf-8')
-        LOG.fw("000:Parameter Port = ", C_PORT)
-        COM_BAUDRATE = int(Param[1])
-        COM_PORT = C_PORT
+    if param is not None:
+        Param = param.split('|')
+        if len(Param) > 1:
+            C_PORT = Param[0].encode('utf-8')
+            LOG.fw("000:Parameter Port = ", C_PORT)
+            COM_BAUDRATE = int(Param[1])
+            COM_PORT = C_PORT
     else:
         C_PORT = ""
 
