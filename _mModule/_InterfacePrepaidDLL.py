@@ -30,8 +30,10 @@ def send_command(cmd, param):
     
     try:
         LOG.fw("{0}:Mulai".format(cmd))
-        if cmd == "ST0":
+        if cmd == "ST0": #Reset Contactless Tag/Session
             prepaid_common.reset_contactless(__global_response__)
+        elif cmd == "RD0": # Reader Dump CMD -- RD0
+            prepaid_common.reader_dump(param, __global_response__)
         elif cmd == "000":
             prepaid_common.open_only(param, __global_response__)
         elif cmd == "001":
