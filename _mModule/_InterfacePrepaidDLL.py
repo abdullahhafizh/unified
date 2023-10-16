@@ -29,7 +29,7 @@ def send_command(cmd, param):
     }
     
     try:
-        LOG.fw("{0}:Mulai".format(cmd))
+        LOG.fw("{0}:TRIGGER".format(cmd))
         if cmd == "ST0": #Reset Contactless Tag/Session
             prepaid_common.reset_contactless(__global_response__)
         elif cmd == "RD0": # Reader Dump CMD -- RD0
