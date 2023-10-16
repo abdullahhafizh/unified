@@ -5,7 +5,7 @@ import traceback
 from _mModule import _CSerializer as serializer
 
 COMPORT = None
-READER_BAUDRATE = 115200 #Default: 38400 
+READER_BAUDRATE = 38400 #Default: 38400,  115200
 
 
 def open_only(port):
