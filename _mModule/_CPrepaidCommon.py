@@ -47,7 +47,7 @@ def reset_contactless(__global_response__=None):
 # RD0
 def reader_dump(param, __global_response__=None):
     Param = param.split('|')
-    if len(Param) == 1:
+    if len(Param) > 1:
         card_no = Param[0]
         trxid = Param[1]
     res_str, dump_data = prepaid.reader_dump(card_no, trxid)
