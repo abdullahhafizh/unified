@@ -1,7 +1,7 @@
 __author__ = 'wahyudi@multidaya.id'
 
 import datetime
-from . import _CPrepaidProtocol as proto
+import _CPrepaidProtocol as proto
 from serial import Serial, PARITY_NONE, STOPBITS_ONE
 from time import sleep
 import os
