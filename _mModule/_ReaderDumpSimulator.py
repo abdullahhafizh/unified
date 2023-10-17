@@ -4,6 +4,9 @@ import datetime
 from serial import Serial, PARITY_NONE, STOPBITS_ONE
 from time import sleep
 import os, sys, json
+from func_timeout import func_set_timeout
+import traceback
+
 
 
 STX = b'\x10\x02'
@@ -41,10 +44,16 @@ def READER_DUMP(Ser, console=False, min_row=10):
     Ser.flush()
     
     sleep(1)
+    result['raw'] = b''
     
-    dump_data = retrieve_rs232_dump_data(Ser, console)
-
-    return SUCCESS_CODE, dump_data
+    try:
+        res = retrieve_rs232_dump_data(Ser, console, result)
+        print(res)
+    except:
+        err_message = traceback._cause_message
+        print(err_message)
+    finally:
+        return SUCCESS_CODE, result['raw']
 
 '''
 ------------------------------------------------------------------------------------------------
@@ -84,19 +93,18 @@ def log_to_file(content='', filename='', default_ext='.dump'):
 
 
 # Not Used
-def retrieve_rs232_dump_data(Ser=Serial(), console=False):
-    response = b''
+@func_set_timeout(25)
+def retrieve_rs232_dump_data(Ser=Serial(), console=False, output=[]):
     while True:
-        line = Ser.read(1)
+        line = Ser.readline()
         if line:
-            print(response)
-            response += line
+            output['raw'] += line
             if line.__contains__(ETX):
                 if console: print('Stop')
                 break
             continue
         break
-    return response.decode('cp1252')
+    return True
 
 if __name__ == '__main__':
     _port = 'COM5'
