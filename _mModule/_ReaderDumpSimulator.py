@@ -47,7 +47,7 @@ def READER_DUMP(Ser, console=False, min_row=10):
     result['raw'] = b''
     
     try:
-        res = retrieve_rs232_dump_data(Ser, console, result)
+        res = retrieve_rs232_dump_data(Ser, result)
         print(res)
     except:
         err_message = traceback._cause_message
@@ -94,17 +94,18 @@ def log_to_file(content='', filename='', default_ext='.dump'):
 
 # Not Used
 @func_set_timeout(25)
-def retrieve_rs232_dump_data(Ser=Serial(), console=False, output=[]):
+def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
         if line:
-            output['raw'] += line
+            result['raw'] += line
             if line.__contains__(ETX):
-                if console: print('Stop')
+                print('Stop')
                 break
             continue
         break
     return True
+
 
 if __name__ == '__main__':
     _port = 'COM5'
