@@ -87,7 +87,7 @@ def log_to_file(content='', filename='', default_ext='.dump'):
 def retrieve_rs232_dump_data(Ser=Serial(), console=False):
     response = b''
     while True:
-        line = Ser.readline()
+        line = Ser.read(1)
         if line:
             print(response)
             response += line
