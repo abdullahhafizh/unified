@@ -30,20 +30,21 @@ def compose_request(len_data, data):
     return len(out_data), out_data
 
 
-def READER_DUMP(Ser, console=False, min_row=10):
+def READER_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB4"
 
     bal_value = sam["cmd"]
     p_len, p = compose_request(len(bal_value), bal_value)
     
-    if console: print(p, p_len)
+    print(p, p_len)
 
     Ser.flush()
     write = Ser.write(p)
     Ser.flush()
     
     sleep(1)
+    result = dict()
     result['raw'] = b''
     
     try:
@@ -116,7 +117,7 @@ if __name__ == '__main__':
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         COMPORT = Serial(_port, baudrate=_baudrate, bytesize=8, parity=PARITY_NONE, stopbits=STOPBITS_ONE)
         print(COMPORT.isOpen())
-        result, data = READER_DUMP(COMPORT, True)
+        result, data = READER_DUMP(COMPORT)
         print('Data Length', result, len(data))
         if result == SUCCESS_CODE:
             out_file = log_to_file(content=data, filename=('test'+_reff))
