@@ -84,6 +84,8 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     if '.' not in filename:
         filename = filename + default_ext
     path_file = os.path.join(path, filename)
+    if type(content) == bytes:
+        content = content.decode('cp1252')
     with open(path_file, 'w') as file_logging:
         print('Create Dump File : ' + path_file)
         for line in content.split('\n'):
@@ -94,7 +96,7 @@ def log_to_file(content='', filename='', default_ext='.dump'):
 
 
 # Not Used
-@func_set_timeout(25)
+@func_set_timeout(5)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
