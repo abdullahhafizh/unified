@@ -110,7 +110,7 @@ if __name__ == '__main__':
         result, data = READER_DUMP(COMPORT, True)
         print('Data Length', result, len(data))
         if result == SUCCESS_CODE:
-            out_file = log_to_file(content=data.decode('utf-8'), filename=()'test'+_reff))
+            out_file = log_to_file(content=data.decode('utf-8'), filename=('test'+_reff))
             print(out_file)
     except KeyboardInterrupt:
         if COMPORT.isOpen():
