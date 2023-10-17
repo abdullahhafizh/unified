@@ -73,12 +73,12 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False, min_row=3):
     while True:
         line = Ser.readline()
         if console: print(line)
-        if len(line):
+        if len(line) > 0:
             response.append(line)
             continue
-        if len(response) < min_row:
-            continue
         else:
+            if len(response) < min_row:
+                continue
             break
     response = os.linesep.join(response)
     return 
