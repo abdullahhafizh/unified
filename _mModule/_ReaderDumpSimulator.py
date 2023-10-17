@@ -97,7 +97,7 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
                 break
             else:
                 continue
-    return response.decode('ascii')
+    return response.decode('cp1252')
 
 if __name__ == '__main__':
     _port = 'COM5'
