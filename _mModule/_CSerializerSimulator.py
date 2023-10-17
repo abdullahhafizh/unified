@@ -76,10 +76,11 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
         if len(line) > 0:
             response = response + line
             print('Add Line')
-            continue
-        if response.__contains__(b'Stop:B4'):
-            if console: print('Stop')
-            break
+            if response.__contains__(b'Stop:B4'):
+                if console: print('Stop')
+                break
+            else:
+                continue
     return response
 
 if __name__ == '__main__':
