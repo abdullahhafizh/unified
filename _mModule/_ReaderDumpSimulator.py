@@ -9,6 +9,7 @@ import os, sys, json
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
 SUCCESS_CODE = '0000'
+LINE_SEPARATOR = b'==EOL=='
 
 
 def compose_request(len_data, data):
@@ -75,7 +76,10 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     path_file = os.path.join(path, filename)
     with open(path_file, 'wb') as file_logging:
         print('Create Dump File : ' + path_file)
-        file_logging.write(content)
+        lines = content.split(LINE_SEPARATOR)
+        for line in lines:
+            line = line.replace(b'\n', b'')
+            file_logging.write(line)
         file_logging.close()
     return path_file
 
@@ -88,7 +92,7 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
         if console: print(line)
         if line:
             print('Add Line')
-            response = response + (line + b'\n')
+            response = response + (line + LINE_SEPARATOR)
             if response.__contains__(b'Stop:B4'):
                 if console: print('Stop')
                 break
