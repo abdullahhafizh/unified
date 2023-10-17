@@ -1238,22 +1238,20 @@ def GET_TOKEN_BRI(Ser):
     return result["code"], CARDDATA
 
 
-def READER_DUMP(Ser, console=False, min_row=10):
+def READER_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB4"
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
     
-    if console: print(p)
-
     Ser.flush()
     write = Ser.write(p)
     Ser.flush()
     
-    sleep(2)
+    sleep(1)
     
-    dump_data = retrieve_rs232_dump_data(Ser, console, min_row)
+    dump_data = retrieve_rs232_dump_data(Ser)
 
     return '0000', dump_data
 
@@ -1273,33 +1271,20 @@ def retrieve_rs232_data(Ser=Serial()):
                 response = STX[0].to_bytes(1, 'big') + response
             LOG.fw("RAW_REPLY:", response)
             return response
-    # start =  Ser.read_until(b'\x10\x02')
-    # LOG.fw("READ_START:", start)
-    # end = Ser.read_until(ETX)
-    # LOG.fw("READ_END:", end)
-    # result = start + end
-    # return result
     
 
 # Not Used
-def retrieve_rs232_dump_data(Ser=Serial(), console=False, min_row=3):
-    response = []
+def retrieve_rs232_dump_data(Ser=Serial()):
+    response = b''
     while True:
         line = Ser.readline()
-        if console: print(line)
-        if len(line):
-            response.append(line)
-            continue
-        
-        if len(response) < min_row:
-            continue
-        else:
-            break
-    response = os.linesep.join(response)
-    if not console:
-        LOG.fw("RAW_DUMP_REPLY:", response)
-        
-    return 
+        if line:
+            response += line
+            if line.__contains__(b'Stop:B4'):
+                break
+            else:
+                continue
+    return response.decode('cp1252')
 
 
 def get_TDefaultRespons(data):

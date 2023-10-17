@@ -19,17 +19,19 @@ DUMP_FOLDER = sys.path[0] + '/_dDump/'
 if not os.path.exists(DUMP_FOLDER):
     os.makedirs(DUMP_FOLDER)
 
-
+# Log File Dump
 def log_to_file(content='', filename='', default_ext='.dump'):
     path = DUMP_FOLDER
     if '.' not in filename:
         filename = filename + default_ext
     path_file = os.path.join(path, filename)
-    if type(content) != str:
-        content = json.dumps(content)
-    with open(path_file, 'w+') as file_logging:
-        print('pyt: Create Dump File..! ' + ' : ' + path_file)
-        file_logging.write(content)
+    if type(content) == bytes:
+        content = content.decode('cp1252')
+    with open(path_file, 'w') as file_logging:
+        print('pyt: Create Dump File : ' + path_file)
+        for line in content.split('\n'):
+            file_logging.write(line)
+            file_logging.write('\n')
         file_logging.close()
     return path_file
 
