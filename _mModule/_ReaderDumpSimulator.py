@@ -75,8 +75,8 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     path_file = os.path.join(path, filename)
     if type(content) != str:
         content = json.dumps(content)
-    with open(path_file, 'w+') as file_logging:
-        print('pyt: Create Dump File..! ' + ' : ' + path_file)
+    with open(path_file, 'wb') as file_logging:
+        print('Create Dump File : ' + path_file)
         file_logging.write(content)
         file_logging.close()
     return path_file
@@ -110,7 +110,7 @@ if __name__ == '__main__':
         result, data = READER_DUMP(COMPORT, True)
         print('Data Length', result, len(data))
         if result == SUCCESS_CODE:
-            out_file = log_to_file(content=data.decode('utf-8'), filename=('test'+_reff))
+            out_file = log_to_file(content=data, filename=('test'+_reff))
             print(out_file)
     except KeyboardInterrupt:
         if COMPORT.isOpen():
