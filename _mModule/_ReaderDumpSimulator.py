@@ -87,15 +87,17 @@ def log_to_file(content='', filename='', default_ext='.dump'):
 def retrieve_rs232_dump_data(Ser=Serial(), console=False):
     response = b''
     while True:
-        if console: print('Read')
-        line = Ser.readall()
-        if console: print(line, len(line))
+        line = Ser.readline()
+        if console: print(line)
         if line:
+            print('Add Line')
             response += line
-            break
-        continue
+            if line.__contains__(ETX):
+                if console: print('Stop')
+                break
+            continue
+        break
     return response.decode('cp1252')
-
 
 if __name__ == '__main__':
     _port = 'COM5'
