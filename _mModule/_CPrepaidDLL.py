@@ -897,7 +897,7 @@ def topup_bni_init_key(MASTER_KEY, PIN, TID):
     return res_str
 
 
-@func_set_timeout(15)
+@func_set_timeout(25)
 def reader_dump(card_no='', trxid=''):
     res_str = ""
     dump_data = ""

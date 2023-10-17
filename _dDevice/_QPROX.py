@@ -1172,7 +1172,7 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
         param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
         dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
         LOGGER.info((dump_response, dump_result))
-        
+                
         # Parse Previous Error Result
         topup_result = json.loads(_result)
         
