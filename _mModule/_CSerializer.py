@@ -5,7 +5,9 @@ from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidProtocol as proto
 from serial import Serial
 from time import sleep
-import os
+from func_timeout import func_set_timeout
+import traceback
+
 
 
 STX = b'\x10\x02'
@@ -1250,10 +1252,18 @@ def READER_DUMP(Ser):
     Ser.flush()
     
     sleep(1)
+    result = dict()
+    result['raw'] = b''
     
-    dump_data = retrieve_rs232_dump_data(Ser)
-
-    return '0000', dump_data
+        
+    try:
+        res = retrieve_rs232_dump_data(Ser, result)
+        print(res)
+    except:
+        err_message = traceback._cause_message
+        print(err_message)
+    finally:
+        return '0000', result['raw'].decode('cp1252')
 
 '''
 ------------------------------------------------------------------------------------------------
@@ -1273,17 +1283,18 @@ def retrieve_rs232_data(Ser=Serial()):
             return response
     
 
-# Not Used
-def retrieve_rs232_dump_data(Ser=Serial()):
-    response = b''
+@func_set_timeout(30)
+def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
         if line:
-            response += line
+            result['raw'] += line
+            if line.__contains__(ETX):
+                print('Stop')
+                break
             continue
-        else:
-            break
-    return response.decode('cp1252')
+        break
+    return True
 
 
 def get_TDefaultRespons(data):
