@@ -9,6 +9,7 @@ import os, sys, json
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
 SUCCESS_CODE = '0000'
+LINE_SEPARATOR = b'==EOL=='
 
 
 def compose_request(len_data, data):
@@ -68,34 +69,35 @@ def retrieve_rs232_data(Ser=Serial()):
     # return result
     
 
-def log_to_file(content=[], filename='', default_ext='.dump'):
+def log_to_file(content='', filename='', default_ext='.dump'):
     path = sys.path[0]
     if '.' not in filename:
         filename = filename + default_ext
     path_file = os.path.join(path, filename)
-    with open(path_file, 'wb') as file_logging:
+    with open(path_file, 'w') as file_logging:
         print('Create Dump File : ' + path_file)
-        for line in content:
+        for line in content.split('\n'):
             file_logging.write(line)
-            file_logging.write('\n'.encode('utf-8'))
+            file_logging.write('\n')
         file_logging.close()
     return path_file
 
 
 # Not Used
 def retrieve_rs232_dump_data(Ser=Serial(), console=False):
-    response = []
+    response = b''
     while True:
         line = Ser.readline()
         if console: print(line)
         if line:
-            response.append(line)
+            print('Add Line')
+            response += line
             if line.__contains__(b'Stop:B4'):
-                if console: print('Break')
+                if console: print('Stop')
                 break
             else:
                 continue
-    return response
+    return response.decode('ascii')
 
 if __name__ == '__main__':
     _port = 'COM5'
