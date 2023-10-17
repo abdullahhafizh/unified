@@ -73,7 +73,7 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
     while True:
         line = Ser.readline()
         if console: print(line)
-        if len(line) > 0:
+        if line:
             response = response + line
             print('Add Line')
             if response.__contains__(b'Stop:B4'):
@@ -91,8 +91,8 @@ if __name__ == '__main__':
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         COMPORT = Serial(_port, baudrate=_baudrate, bytesize=8, parity=PARITY_NONE, stopbits=STOPBITS_ONE)
         print(COMPORT.isOpen())
-        result = READER_DUMP(COMPORT, True)
-        print('Data Length', len(result))
+        result, data = READER_DUMP(COMPORT, True)
+        print('Data Length', result, len(data))
     except KeyboardInterrupt:
         if COMPORT.isOpen():
             COMPORT.close()
