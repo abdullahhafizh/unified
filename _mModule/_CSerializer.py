@@ -3,7 +3,7 @@ __author__ = 'wahyudi@multidaya.id'
 import datetime
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidProtocol as proto
-from serial import Serial, PARITY_NONE, STOPBITS_ONE
+from serial import Serial
 from time import sleep
 import os
 
@@ -1429,20 +1429,3 @@ def get_TSerialNumberres(data):
     result["sn"] = data[13:29]
     
     return result
-
-
-if __name__ == '__main__':
-    _port = 'COM5'
-    _baudrate = 38400
-    _min_row = 10
-    
-    try:
-        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        COMPORT = Serial(_port, baudrate=_baudrate, bytesize=8, parity=PARITY_NONE, stopbits=STOPBITS_ONE)
-        print(COMPORT.isOpen())
-        READER_DUMP(COMPORT, True, _min_row)
-    except KeyboardInterrupt:
-        if COMPORT.isOpen():
-            COMPORT.close()
-    except Exception as e:
-        print(e)
