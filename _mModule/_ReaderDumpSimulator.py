@@ -39,7 +39,7 @@ def READER_DUMP(Ser, console=False, min_row=10):
     write = Ser.write(p)
     Ser.flush()
     
-    sleep(2)
+    sleep(1)
     
     dump_data = retrieve_rs232_dump_data(Ser, console)
 
