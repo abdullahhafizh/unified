@@ -80,6 +80,7 @@ def log_to_file(content='', filename='', default_ext='.dump'):
         for line in lines:
             line = line.replace(b'\n', b'')
             file_logging.write(line)
+            file_logging.write(os.linesep)
         file_logging.close()
     return path_file
 
