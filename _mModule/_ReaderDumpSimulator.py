@@ -88,9 +88,8 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
     response = b''
     while True:
         line = Ser.readline()
-        if console: print(line)
         if line:
-            print('Add Line')
+            print(response)
             response += line
             if line.__contains__(ETX):
                 if console: print('Stop')
