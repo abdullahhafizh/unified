@@ -1,7 +1,6 @@
 __author__ = 'wahyudi@multidaya.id'
 
 import datetime
-import _CPrepaidProtocol as proto
 from serial import Serial, PARITY_NONE, STOPBITS_ONE
 from time import sleep
 import os
@@ -11,12 +10,27 @@ STX = b'\x10\x02'
 ETX = b'\x10\x03'
 
 
+def compose_request(len_data, data):
+    out_data = b"\x10\x02\x08\x00\x00\x00\x00\x00\x00"
+    len_str = format(len_data, 'x').upper().zfill(4)
+    out_data = out_data + bytearray.fromhex(len_str)
+    out_data = out_data + data
+    c = 0
+    for x in range(2,len(out_data)):
+        c = c ^ out_data[x]
+    # c = bytearray.fromhex(format(len_data, 'x').upper().zfill(2))
+    out_data = out_data + c.to_bytes(1, byteorder='big') + b"\x10\x03"
+    # print(out_data)
+    
+    return len(out_data), out_data
+
+
 def READER_DUMP(Ser, console=False, min_row=10):
     sam = {}
     sam["cmd"] = b"\xB4"
 
     bal_value = sam["cmd"]
-    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+    p_len, p = compose_request(len(bal_value), bal_value)
     
     if console: print(p, p_len)
 
