@@ -1280,10 +1280,9 @@ def retrieve_rs232_dump_data(Ser=Serial()):
         line = Ser.readline()
         if line:
             response += line
-            if line.__contains__(b'Stop:B4'):
-                break
-            else:
-                continue
+            continue
+        else:
+            break
     return response.decode('cp1252')
 
 
