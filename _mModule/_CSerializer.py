@@ -3,8 +3,9 @@ __author__ = 'wahyudi@multidaya.id'
 import datetime
 from _mModule import _CPrepaidLog as LOG
 from _mModule import _CPrepaidProtocol as proto
-from serial import Serial
+from serial import Serial, PARITY_NONE, STOPBITS_ONE
 from time import sleep
+import os
 
 
 STX = b'\x10\x02'
@@ -1237,18 +1238,22 @@ def GET_TOKEN_BRI(Ser):
     return result["code"], CARDDATA
 
 
-def READER_DUMP(Ser):
+def READER_DUMP(Ser, console=False, min_row=10):
     sam = {}
     sam["cmd"] = b"\xB4"
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+    
+    if console: print(p)
 
     Ser.flush()
     write = Ser.write(p)
     Ser.flush()
     
-    dump_data = retrieve_rs232_dump_data(Ser)
+    sleep(2)
+    
+    dump_data = retrieve_rs232_dump_data(Ser, console, min_row)
 
     return '0000', dump_data
 
@@ -1276,19 +1281,25 @@ def retrieve_rs232_data(Ser=Serial()):
     # return result
     
 
-def retrieve_rs232_dump_data(Ser=Serial()):
-    response = b''
-    default_res_len = 32
+# Not Used
+def retrieve_rs232_dump_data(Ser=Serial(), console=False, min_row=3):
+    response = []
     while True:
-        read = Ser.read()
-        if len(read) > 0:
-            response = response + Ser.read()
-        elif len(response) < default_res_len:
+        line = Ser.readline()
+        if console: print(line)
+        if len(line):
+            response.append(line)
+            continue
+        
+        if len(response) < min_row:
             continue
         else:
             break
-    LOG.fw("RAW_REPLY:", response)
-    return response
+    response = os.linesep.join(response)
+    if not console:
+        LOG.fw("RAW_DUMP_REPLY:", response)
+        
+    return 
 
 
 def get_TDefaultRespons(data):
@@ -1418,3 +1429,20 @@ def get_TSerialNumberres(data):
     result["sn"] = data[13:29]
     
     return result
+
+
+if __name__ == '__main__':
+    _port = 'COM5'
+    _baudrate = 38400
+    _min_row = 10
+    
+    try:
+        print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        COMPORT = Serial(_port, baudrate=_baudrate, bytesize=8, parity=PARITY_NONE, stopbits=STOPBITS_ONE)
+        print(COMPORT.isOpen())
+        READER_DUMP(COMPORT, True, _min_row)
+    except KeyboardInterrupt:
+        if COMPORT.isOpen():
+            COMPORT.close()
+    except Exception as e:
+        print(e)
