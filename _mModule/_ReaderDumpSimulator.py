@@ -73,8 +73,6 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     if '.' not in filename:
         filename = filename + default_ext
     path_file = os.path.join(path, filename)
-    if type(content) != str:
-        content = json.dumps(content)
     with open(path_file, 'wb') as file_logging:
         print('Create Dump File : ' + path_file)
         file_logging.write(content)
