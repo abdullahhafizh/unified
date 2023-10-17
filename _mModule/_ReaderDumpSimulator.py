@@ -3,11 +3,12 @@ __author__ = 'wahyudi@multidaya.id'
 import datetime
 from serial import Serial, PARITY_NONE, STOPBITS_ONE
 from time import sleep
-import os, sys
+import os, sys, json
 
 
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
+SUCCESS_CODE = '0000'
 
 
 def compose_request(len_data, data):
@@ -42,7 +43,7 @@ def READER_DUMP(Ser, console=False, min_row=10):
     
     dump_data = retrieve_rs232_dump_data(Ser, console)
 
-    return '0000', dump_data
+    return SUCCESS_CODE, dump_data
 
 '''
 ------------------------------------------------------------------------------------------------
@@ -67,6 +68,20 @@ def retrieve_rs232_data(Ser=Serial()):
     # return result
     
 
+def log_to_file(content='', filename='', default_ext='.dump'):
+    path = sys.path[0]
+    if '.' not in filename:
+        filename = filename + default_ext
+    path_file = os.path.join(path, filename)
+    if type(content) != str:
+        content = json.dumps(content)
+    with open(path_file, 'w+') as file_logging:
+        print('pyt: Create Dump File..! ' + ' : ' + path_file)
+        file_logging.write(content)
+        file_logging.close()
+    return path_file
+
+
 # Not Used
 def retrieve_rs232_dump_data(Ser=Serial(), console=False):
     response = b''
@@ -74,8 +89,8 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
         line = Ser.readline()
         if console: print(line)
         if line:
-            response = response + line
             print('Add Line')
+            response = response + (line + b'\n')
             if response.__contains__(b'Stop:B4'):
                 if console: print('Stop')
                 break
@@ -86,6 +101,7 @@ def retrieve_rs232_dump_data(Ser=Serial(), console=False):
 if __name__ == '__main__':
     _port = 'COM5'
     _baudrate = 38400
+    _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -93,6 +109,9 @@ if __name__ == '__main__':
         print(COMPORT.isOpen())
         result, data = READER_DUMP(COMPORT, True)
         print('Data Length', result, len(data))
+        if result == SUCCESS_CODE:
+            out_file = log_to_file(content=data.decode('utf-8'), filename=()'test'+_reff))
+            print(out_file)
     except KeyboardInterrupt:
         if COMPORT.isOpen():
             COMPORT.close()
