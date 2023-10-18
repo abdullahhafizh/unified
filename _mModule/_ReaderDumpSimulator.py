@@ -244,9 +244,9 @@ if __name__ == '__main__':
             mode = input('Pilih Mode Berikut :\n1 - Card Balance\n2 - Reader Dump\n3 - Card Disconnect\nX - Exit\n\nPilih Nomor : ')
             if mode in ['1', '2', '3']:
                 print('Selected Mode : ', str(mode))
-                break
             elif mode in ['x', 'X']:
                 do_exit('Select Quit')
+                break
         
             if mode in ['1', '2', '3']:
                 if mode == '1':
