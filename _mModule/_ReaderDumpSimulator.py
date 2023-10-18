@@ -13,6 +13,7 @@ STX = b'\x10\x02'
 ETX = b'\x10\x03'
 SUCCESS_CODE = '0000'
 LINE_SEPARATOR = b'==EOL=='
+STOP_DUMP = b'Stop:B4'
 
 
 def compose_request(len_data, data):
@@ -30,20 +31,31 @@ def compose_request(len_data, data):
     return len(out_data), out_data
 
 
+def CLEAR_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB5"
+
+    bal_value = sam["cmd"]
+    p_len, p = compose_request(len(bal_value), bal_value)
+    print(p, p_len)
+
+    Ser.flush()
+    write = Ser.write(p)
+    Ser.flush()
+
+
 def READER_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB4"
 
     bal_value = sam["cmd"]
     p_len, p = compose_request(len(bal_value), bal_value)
-    
     print(p, p_len)
 
     Ser.flush()
     write = Ser.write(p)
     Ser.flush()
     
-    sleep(1)
     result = dict()
     result['raw'] = b''
     
@@ -52,8 +64,9 @@ def READER_DUMP(Ser):
         print(res)
     except:
         err_message = traceback._cause_message
-        print(err_message)
+        print('EXCP', err_message)
     finally:
+        CLEAR_DUMP(Ser)
         return SUCCESS_CODE, result['raw']
 
 '''
@@ -95,14 +108,17 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     return path_file
 
 
-@func_set_timeout(30)
+@func_set_timeout(10)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
         if line:
             result['raw'] += line
             if line.__contains__(ETX):
-                print('Stop')
+                print('ETX Detected: Break')
+                break
+            elif line.__contains__(STOP_DUMP):
+                print(STOP_DUMP.decode() + ' Detected: Break')
                 break
             continue
         break
@@ -111,7 +127,7 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
 
 if __name__ == '__main__':
     _port = 'COM5'
-    _baudrate = 38400
+    _baudrate = 115200
     _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     
     try:
