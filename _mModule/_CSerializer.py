@@ -9,7 +9,6 @@ from func_timeout import func_set_timeout
 import traceback
 
 
-
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
 
@@ -24,15 +23,12 @@ def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
     tsam["term"] = TERMINAL
     tsam_value = tsam["cmd"] + tsam["ser"] + tsam["inst"] + tsam["term"]
     p_len, p = proto.Compose_Request(len(tsam_value), tsam_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -51,15 +47,12 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
 
     bal_value = bal["cmd"] + bal["date"].encode("utf-8") + bal["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TBalanceresws(response["data"])
+    result = parse_balance_response(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
     
@@ -79,20 +72,17 @@ def GET_BALANCE(Ser):
 
     bal_value = bal["cmd"] + bal["date"].encode("utf-8") + bal["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     
     # If STX Missing 1 byte, trim data to be converted into integer
     if response['start'] != STX or response['start'][0] == STX[1]:
         response['data'] = b'0' + response['data']
         # response['data'] = response['data'][:-1]
         
-    result = get_TBalanceres(response["data"])
+    result = parse_balance_template(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -111,15 +101,12 @@ def DEBIT(Ser, datetime, time_out, value):
 
     deb_value = deb["cmd"] + deb["date"] + deb["amt"] + deb["tout"]
     p_len, p = proto.Compose_Request(len(deb_value), deb_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -128,9 +115,9 @@ def DEBIT(Ser, datetime, time_out, value):
         rep = rep + chr(result["rep"][i])
 
     if len(rep) > 95:
-        balance = EXTRACT_BALANCE_FROM_REPORT_BNI(result["rep"])
+        balance = parse_balance_from_report_bni(result["rep"])
     else:
-        balance = EXTRACT_BALANCE_FROM_REPORT(result["rep"])
+        balance = parse_balance_from_report(result["rep"])
 
     del data
     del response
@@ -138,12 +125,12 @@ def DEBIT(Ser, datetime, time_out, value):
     return result["code"], balance, rep
 
 
-def EXTRACT_BALANCE_FROM_REPORT_BNI(report):
+def parse_balance_from_report_bni(report):
     balance = report[53:59]
     return int.from_bytes(balance, byteorder='big', signed=False)
 
 
-def EXTRACT_BALANCE_FROM_REPORT(report):
+def parse_balance_from_report(report):
     balance = report[56:64]
     return int.from_bytes(balance, byteorder='big', signed=False)
 
@@ -158,15 +145,12 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["tout"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -183,15 +167,12 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
 
     bal_value = sam["cmd"] + sam["tid"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -210,16 +191,13 @@ def BNI_TOPUP_INIT_KEY(Ser, C_MASTER_KEY, C_IV, C_PIN, C_TID):
 
     bal_value = sam["cmd"] + sam["mk"] + sam["iv"] + sam["pin"] + sam["tid"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     LOG.fw("RAW_RECV:", response)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -235,15 +213,12 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
 
     bal_value = sam["cmd"] + sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -266,15 +241,12 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
 
     bal_value = sam["cmd"] + sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TBNIKMMULTIBalanceres(response["data"])
+    result = parse_default_km_balance_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -291,15 +263,12 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
 
     bal_value = sam["cmd"] + sam["tids"] +  sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -319,15 +288,12 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["AMOUNT"].encode("utf-8") + sam["slot"] + sam["TIMEOUT"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -349,15 +315,12 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
 
     bal_value = sam["cmd"] + sam["TID"] + sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -377,15 +340,12 @@ def PURSE_DATA(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -410,15 +370,12 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"] + sam["term"] + sam["tout"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -442,15 +399,12 @@ def TOP_UP_C2C(Ser, amount, timestamp):
 
     c2c_refill = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"].encode("utf-8") + sam["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(c2c_refill), c2c_refill)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -473,15 +427,12 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
 
     bal_value = sam["cmd"] + sam["tid_new"] + sam["tid_old"] + b"\x00"
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -502,15 +453,12 @@ def TOPUP_C2C_CORRECTION(Ser):
 
     bal_value = sam["cmd"] + sam["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -536,15 +484,12 @@ def GET_FEE_C2C(Ser, Flag):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["isNew"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -573,15 +518,12 @@ def SET_FEE_C2C(Ser, Flag, respon):
 
     bal_value = sam["cmd"] + sam["isNew"] + sam["len"] + sam["data"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -607,15 +549,12 @@ def TOPUP_FORCE_C2C(Ser, Flag):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["isNew"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -634,15 +573,12 @@ def MDR_C2C_LAST_REPORT(Ser):
     sam["cmd"] = b"\x7E"
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -661,15 +597,12 @@ def NEW_TOP_UP_C2C(Ser, amount, timestamp):
 
     c2c_refill = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"].encode("utf-8") + sam["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(c2c_refill), c2c_refill)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -684,15 +617,12 @@ def KM_BALANCE_TOPUP_C2C(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -720,15 +650,12 @@ def APDU_SEND(Ser, slot, info):
 
     bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["len"].encode("utf-8") + sam["apdu"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -769,15 +696,12 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
 
     bal_value = sam["cmd"] + sam["TID"] + sam["MID"] + sam["MINBAL"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
     
     del data
@@ -792,15 +716,12 @@ def GET_SN(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -839,15 +760,12 @@ def BCA_CARD_INFO(Ser, ATD):
 
     bal_value = sam["cmd"] + sam["ATD"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -867,15 +785,12 @@ def GET_CARDDATA(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     # Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -907,13 +822,10 @@ def CARD_DISCONNECT(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
     
     del data
     del response
@@ -941,15 +853,12 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
 
     bal_value = sam["cmd"] + sam["ATD"] + sam["date"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -981,15 +890,12 @@ def BCA_SESSION_2(Ser, session):
 
     bal_value = sam["cmd"] + sam["session"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultResres(response["data"])
+    result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
 
     del data
@@ -1054,15 +960,12 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     bal_value = sam["cmd"] + sam["ATD"] + sam["AccessCard"] + sam["AccessCode"] + sam["datetimes"] + sam["AmountHex"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1094,15 +997,12 @@ def BCA_TOPUP_2(Ser, strConfirm):
     
     bal_value = sam["cmd"] + sam["strConfirm"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1122,15 +1022,12 @@ def BCA_LAST_REPORT(Ser):
     
     bal_value = sam["cmd"] 
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1162,15 +1059,12 @@ def BCA_REVERSAL(Ser, ATD):
 
     bal_value = sam["cmd"] + sam["ATD"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1190,15 +1084,12 @@ def BCA_CARD_HISTORY(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1218,15 +1109,12 @@ def GET_TOKEN_BRI(Ser):
 
     bal_value = sam["cmd"] 
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
-    response = get_TDefaultRespons(data)
+    response = parse_default_template(data)
 
-    result = get_TDefaultReportres(response["data"])
+    result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1246,12 +1134,8 @@ def READER_DUMP(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+    send_command(Ser, p)
     
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
-    
-    sleep(1)
     result = dict()
     result['raw'] = b''
     
@@ -1269,10 +1153,17 @@ def READER_DUMP(Ser):
 ------------------------------------------------------------------------------------------------
 '''
 
+def send_command(Ser, p):
+    # print('Send', p)
+    Ser.write(p)
+    sleep(1)
+    Ser.flush()
+
+
 def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
-        response = response + Ser.read()
+        response = Ser.read_until(ETX)
         # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
             i_end = response.index(ETX)
@@ -1283,21 +1174,18 @@ def retrieve_rs232_data(Ser=Serial()):
             return response
     
 
-@func_set_timeout(30)
+@func_set_timeout(10)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
         if line:
             result['raw'] += line
-            if line.__contains__(ETX):
-                print('Stop')
-                break
             continue
         break
     return True
 
 
-def get_TDefaultRespons(data):
+def parse_default_template(data):
     '''
     TBalResponsws  = packed record
     start   : array[0..1] of byte;
@@ -1321,7 +1209,7 @@ def get_TDefaultRespons(data):
     return result
 
 
-def get_TBalanceresws(data):
+def parse_balance_response(data):
     '''
     TBalanceresws = packed record
     cmd   : byte;
@@ -1344,7 +1232,7 @@ def get_TBalanceresws(data):
     return result
 
 
-def get_TBalanceres(data):
+def parse_balance_template(data):
     '''
     TBalanceres = packed record
     cmd   : byte;
@@ -1360,7 +1248,7 @@ def get_TBalanceres(data):
     return result
 
 
-def get_TBNIKMMULTIBalanceres(data):
+def parse_default_km_balance_report(data):
     '''
     TBNIKMMULTIBalanceres = packed record
     cmd   : byte;
@@ -1376,7 +1264,7 @@ def get_TBNIKMMULTIBalanceres(data):
     return result
 
 
-def get_TDefaultResres(data):
+def parse_default_response(data):
     '''
     TSamInitres = packed record
     cmd   : byte;
@@ -1390,7 +1278,7 @@ def get_TDefaultResres(data):
     return result
 
 
-def get_TDefaultReportres(data):
+def parse_default_report(data):
     '''
     Tdebitres = packed record
     cmd   : byte;
@@ -1408,7 +1296,7 @@ def get_TDefaultReportres(data):
     return result
 
 
-def get_TSerialNumberres(data):
+def parse_default_sn_report(data):
     '''
     TSerialNumberres = packed record
     cmd   : byte;

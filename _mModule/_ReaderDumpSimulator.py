@@ -198,7 +198,7 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     return path_file
 
 
-@func_set_timeout(7)
+@func_set_timeout(10)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
