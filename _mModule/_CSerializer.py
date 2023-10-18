@@ -11,6 +11,7 @@ import traceback
 
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
+ETX_DUMP = b'EVENT:CMD:B4'
 
 
 def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
@@ -1192,6 +1193,9 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
         line = Ser.readline()
         if line:
             result['raw'] += line
+            if line.__contains__(ETX_DUMP):
+                print(ETX_DUMP.decode() + ' Detected: Break')
+                break
             continue
         break
     return True

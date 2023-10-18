@@ -12,7 +12,7 @@ STX = b'\x10\x02'
 ETX = b'\x10\x03'
 SUCCESS_CODE = '0000'
 LINE_SEPARATOR = b'==EOL=='
-STOP_DUMP = b'Stop:B4'
+ETX_DUMP = b'EVENT:CMD:B4'
 
 
 def compose_request(len_data, data):
@@ -208,9 +208,9 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
             #     print('ETX Detected: Break')
             #     break
             # el
-            # if line.__contains__(STOP_DUMP):
-            #     print(STOP_DUMP.decode() + ' Detected: Break')
-            #     break
+            if line.__contains__(ETX_DUMP):
+                print(ETX_DUMP.decode() + ' Detected: Break')
+                break
             continue
         break
     return True
