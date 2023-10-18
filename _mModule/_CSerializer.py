@@ -1128,6 +1128,16 @@ def GET_TOKEN_BRI(Ser):
     return result["code"], CARDDATA
 
 
+def CLEAR_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB5"
+
+    bal_value = sam["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+    Ser.write(p)
+    Ser.flush()
+
+
 def READER_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB4"
@@ -1146,6 +1156,7 @@ def READER_DUMP(Ser):
         err_message = traceback._cause_message
         print(err_message)
     finally:
+        CLEAR_DUMP(Ser)
         return '0000', result['raw'].decode('cp1252')
 
 '''
