@@ -156,11 +156,11 @@ def CARD_DISCONNECT(Ser):
 '''
 
 def send_command(Ser, p):
-    Ser.flush()
     print('Send', p)
     write = Ser.write(p)
+    sleep(1)
     Ser.flush()
-
+    
 
 def retrieve_rs232_data(Ser=Serial()):
     response = b''
