@@ -2038,6 +2038,17 @@ def set_c2c_settlement_fee(file):
         sleep(15)
 
 
+
+# Panel Var 
+DO_READER_DUMP_ON_CARD_HISTORY = True
+
+def do_get_reader_dump(c):
+    if DO_READER_DUMP_ON_CARD_HISTORY:
+        param = QPROX['READER_DUMP'] + '|' + c + '|'  + _Helper.time_string('%Y%m%d%H%M%S')
+        dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        LOGGER.info((dump_response, dump_result))
+
+
 def start_get_card_history(bank):
     _Helper.get_thread().apply_async(get_card_history, (bank,))
 
@@ -2063,6 +2074,9 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                
+                do_get_reader_dump('get_card_history_bri')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2076,6 +2090,8 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                do_get_reader_dump('get_card_history_mdr')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|MANDIRI_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2089,6 +2105,8 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                do_get_reader_dump('get_card_history_bni')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BNI_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2102,6 +2120,8 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                do_get_reader_dump('get_card_history_bca')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BCA_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2129,6 +2149,9 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                
+                do_get_reader_dump('get_card_history_dki')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
         except Exception as e:
             LOGGER.warning((e))
@@ -2136,6 +2159,7 @@ def get_card_history(bank):
     else:
         QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('SAM_HISTORY|ERROR')
         return
+
 
 
 def bni_card_history_direct(row=30):
@@ -2146,6 +2170,8 @@ def bni_card_history_direct(row=30):
         card_history = result.split('#')[1]
         return card_purse, card_history
     else:
+        do_get_reader_dump(_Helper.whoami())
+        
         return "", ""
 
 
@@ -2155,6 +2181,8 @@ def mdr_card_history_direct():
     if response == 0 and len(result) > 10:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
+        
         return ''
 
 
@@ -2164,6 +2192,8 @@ def bri_card_history_direct():
     if response == 0:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
+        
         return ""
     
 
@@ -2173,6 +2203,8 @@ def dki_card_history_direct():
     if response == 0:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
+                
         return ""
 
 
@@ -2182,6 +2214,8 @@ def bca_card_history_direct():
     if response == 0:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
+                
         return ""
 
 
