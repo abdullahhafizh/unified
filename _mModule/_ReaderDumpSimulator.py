@@ -260,10 +260,9 @@ if __name__ == '__main__':
                     result, data = CARD_DISCONNECT(COMPORT)
                     
             print('Data Length', result, len(data))
-    except KeyboardInterrupt:
-        if COMPORT.isOpen():
-            COMPORT.close()
     except Exception as e:
         print(e)
     finally:
+        if COMPORT.isOpen():
+            COMPORT.close()
         do_exit('Finished')
