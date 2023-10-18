@@ -241,13 +241,11 @@ if __name__ == '__main__':
         
         while True:
             mode = input('Pilih Mode Berikut :\n1 - Card Balance\n2 - Reader Dump\n3 - Card Disconnect\nX - Exit\n\nPilih Nomor : ')
-            if mode in ['1', '2', '3']:
-                print('Selected Mode : ', str(mode))
-            elif mode in ['x', 'X']:
+            if mode in ['x', 'X']:
                 do_exit('Select X To Quit')
                 break
-        
-            if mode in ['1', '2', '3']:
+            elif mode in ['1', '2', '3']:
+                print('Selected Mode : ', str(mode))
                 if mode == '1':
                     result, data = GET_BALANCE_WITH_SN(COMPORT)
                 elif mode == '2':
