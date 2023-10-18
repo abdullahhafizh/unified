@@ -188,7 +188,7 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     path = sys.path[0]
     if '.' not in filename:
         filename = filename + default_ext
-    path_file = os.path.join(path, filename)
+    path_file = os.path.join(path, 'Logs', filename)
     if type(content) == bytes:
         content = content.decode('cp1252')
     with open(path_file, 'w') as file_logging:
@@ -232,8 +232,8 @@ if __name__ == '__main__':
         _port = sys.argv[1]
         _baudrate = int(sys.argv[2])
     
-    print('Selected Port :', str(_port))
-    print('Selected Baudrate :', str(_baudrate))
+    print('Selected Port : ', str(_port))
+    print('Selected Baudrate : ', str(_baudrate))
     
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -243,22 +243,23 @@ if __name__ == '__main__':
         while True:
             mode = input('Pilih Mode Berikut :\n1 - Card Balance\n2 - Reader Dump\n3 - Card Disconnect\nX - Exit\n\nPilih Nomor : ')
             if mode in ['1', '2', '3']:
+                print('Selected Mode : ', str(mode))
                 break
             elif mode in ['x', 'X']:
                 do_exit('Select Quit')
         
-        if mode in ['1', '2', '3']:
-            if mode == '1':
-                result, data = GET_BALANCE_WITH_SN(COMPORT)
-            elif mode == '2':
-                result, data = READER_DUMP(COMPORT)
-                if result == SUCCESS_CODE:
-                    out_file = log_to_file(content=data, filename=('test'+_reff))
-                    print(out_file)
-            elif mode == '3':
-                result, data = CARD_DISCONNECT(COMPORT)
-                
-        print('Data Length', result, len(data))
+            if mode in ['1', '2', '3']:
+                if mode == '1':
+                    result, data = GET_BALANCE_WITH_SN(COMPORT)
+                elif mode == '2':
+                    result, data = READER_DUMP(COMPORT)
+                    if result == SUCCESS_CODE:
+                        out_file = log_to_file(content=data, filename=('simulator'+_reff))
+                        print(out_file)
+                elif mode == '3':
+                    result, data = CARD_DISCONNECT(COMPORT)
+                    
+            print('Data Length', result, len(data))
     except KeyboardInterrupt:
         if COMPORT.isOpen():
             COMPORT.close()
