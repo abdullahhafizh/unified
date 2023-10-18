@@ -259,7 +259,7 @@ if __name__ == '__main__':
                 elif mode == '3':
                     result, data = CARD_DISCONNECT(COMPORT)
                     
-            print('Data Length', result, len(data))
+                print('Data Length', result, len(data))
     except Exception as e:
         print('EXCP: ',e)
     finally:
