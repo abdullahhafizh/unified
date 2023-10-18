@@ -244,7 +244,7 @@ if __name__ == '__main__':
             if mode in ['1', '2', '3']:
                 print('Selected Mode : ', str(mode))
             elif mode in ['x', 'X']:
-                do_exit('Select Quit')
+                do_exit('Select X To Quit')
                 break
         
             if mode in ['1', '2', '3']:
