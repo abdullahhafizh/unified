@@ -8,7 +8,6 @@ from func_timeout import func_set_timeout
 import traceback
 
 
-
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
 SUCCESS_CODE = '0000'
@@ -28,6 +27,7 @@ def compose_request(len_data, data):
     out_data = out_data + c.to_bytes(1, byteorder='big') + b"\x10\x03"
     # print(out_data)
     
+    print(len(out_data), out_data)
     return len(out_data), out_data
 
 
@@ -84,11 +84,8 @@ def CLEAR_DUMP(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = compose_request(len(bal_value), bal_value)
-    print(p, p_len)
 
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
 
 
 def READER_DUMP(Ser):
@@ -99,9 +96,7 @@ def READER_DUMP(Ser):
     p_len, p = compose_request(len(bal_value), bal_value)
     print(p, p_len)
 
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     result = dict()
     result['raw'] = b''
@@ -128,9 +123,7 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     bal_value = bal["cmd"] + bal["date"].encode("utf-8") + bal["tout"].encode("utf-8")
     p_len, p = compose_request(len(bal_value), bal_value)
 
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
@@ -150,9 +143,7 @@ def CARD_DISCONNECT(Ser):
     bal_value = sam["cmd"]
     p_len, p = compose_request(len(bal_value), bal_value)
 
-    Ser.flush()
-    write = Ser.write(p)
-    Ser.flush()
+    send_command(Ser, p)
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
@@ -165,10 +156,17 @@ def CARD_DISCONNECT(Ser):
 ------------------------------------------------------------------------------------------------
 '''
 
+def send_command(Ser, p):
+    Ser.flush()
+    print('Send', p)
+    write = Ser.write(p)
+    Ser.flush()
+
+
 def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
-        response = response + Ser.read()
+        response = Ser.read_until(ETX)
         # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
             i_end = response.index(ETX)
