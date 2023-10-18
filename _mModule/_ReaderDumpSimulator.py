@@ -237,27 +237,28 @@ if __name__ == '__main__':
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         COMPORT = Serial(_port, baudrate=_baudrate, bytesize=8, parity=PARITY_NONE, stopbits=STOPBITS_ONE)
-        print('Reader OPEN', COMPORT.isOpen())
-        
-        while True:
-            mode = input('Pilih Mode Berikut :\n1 - Card Balance\n2 - Reader Dump\n3 - Card Disconnect\nX - Exit\n\nPilih Nomor : ')
-            if mode in ['x', 'X']:
-                do_exit('Select X To Quit')
-                break
-            elif mode in ['1', '2', '3']:
-                print('Selected Mode : ', str(mode))
-                if mode == '1':
-                    result, data = GET_BALANCE_WITH_SN(COMPORT)
-                elif mode == '2':
-                    _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                    result, data = READER_DUMP(COMPORT)
-                    if result == SUCCESS_CODE:
-                        out_file = log_to_file(content=data, filename=('simulator'+_reff))
-                        print(out_file)
-                elif mode == '3':
-                    result, data = CARD_DISCONNECT(COMPORT)
-                    
-                print('Data Length', result, data, len(data))
+        if COMPORT.isOpen():
+            print('Reader OPEN', COMPORT.isOpen())
+            while True:
+                mode = input('Pilih Mode Berikut :\n1 - Card Balance\n2 - Reader Dump\n3 - Card Disconnect\nX - Exit\n\nPilih Nomor : ')
+                if mode in ['x', 'X']:
+                    do_exit('Select X To Quit')
+                    break
+                elif mode in ['1', '2', '3']:
+                    print('Selected Mode : ', str(mode))
+                    if mode == '1':
+                        result, data = GET_BALANCE_WITH_SN(COMPORT)
+                    elif mode == '2':
+                        _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+                        result, data = READER_DUMP(COMPORT)
+                        if result == SUCCESS_CODE:
+                            out_file = log_to_file(content=data, filename=('simulator'+_reff))
+                            print(out_file)
+                    elif mode == '3':
+                        result, data = CARD_DISCONNECT(COMPORT)
+                    print('Data Length', result, data, len(data))
+        else:
+            print('Reader Cannot Be OPEN')
     except Exception as e:
         print('EXCP: ',e)
     finally:
