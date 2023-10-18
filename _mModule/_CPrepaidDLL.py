@@ -909,6 +909,6 @@ def reader_dump(card_no='', trxid=''):
         LOG.fw("CMD $B4 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
 
-    LOG.fw("<-- dump_data = ", dump_data)
+    LOG.fw("<-- Length dump_data = ", len(dump_data))
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str, dump_data
