@@ -822,7 +822,9 @@ def CARD_DISCONNECT(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
+    # send_command(Ser, p)
+    Ser.write(p)
+    Ser.flush()
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
