@@ -225,7 +225,6 @@ def do_exit(m):
 if __name__ == '__main__':
     _port = 'COM5'
     _baudrate = 115200
-    _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     
     if len(sys.argv) > 1:
         print('Argument :', str(sys.argv))
@@ -252,6 +251,7 @@ if __name__ == '__main__':
                 if mode == '1':
                     result, data = GET_BALANCE_WITH_SN(COMPORT)
                 elif mode == '2':
+                    _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                     result, data = READER_DUMP(COMPORT)
                     if result == SUCCESS_CODE:
                         out_file = log_to_file(content=data, filename=('simulator'+_reff))
