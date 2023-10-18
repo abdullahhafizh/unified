@@ -111,7 +111,7 @@ def READER_DUMP(Ser):
         print(res)
     except:
         err_message = traceback._cause_message
-        print('EXCP', err_message)
+        print('EXCP: ', err_message)
     finally:
         CLEAR_DUMP(Ser)
         return SUCCESS_CODE, result['raw']
@@ -261,7 +261,7 @@ if __name__ == '__main__':
                     
             print('Data Length', result, len(data))
     except Exception as e:
-        print(e)
+        print('EXCP: ',e)
     finally:
         if COMPORT.isOpen():
             COMPORT.close()
