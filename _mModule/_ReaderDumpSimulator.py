@@ -130,6 +130,14 @@ if __name__ == '__main__':
     _baudrate = 115200
     _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     
+    if len(sys.argv) > 1:
+        print('Argument :', str(sys.argv))
+        _port = sys.argv[1]
+        _baudrate = int(sys.argv[2])
+    
+    print('Selected Port :', str(_port))
+    print('Selected Baudrate :', str(_baudrate))
+    
     try:
         print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         COMPORT = Serial(_port, baudrate=_baudrate, bytesize=8, parity=PARITY_NONE, stopbits=STOPBITS_ONE)
