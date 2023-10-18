@@ -208,9 +208,9 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
             #     print('ETX Detected: Break')
             #     break
             # el
-            if line.__contains__(STOP_DUMP):
-                print(STOP_DUMP.decode() + ' Detected: Break')
-                break
+            # if line.__contains__(STOP_DUMP):
+            #     print(STOP_DUMP.decode() + ' Detected: Break')
+            #     break
             continue
         break
     return True
@@ -222,6 +222,7 @@ def do_exit(m):
 
 
 if __name__ == '__main__':
+    COMPORT = None
     _port = 'COM5'
     _baudrate = 115200
     
@@ -260,6 +261,6 @@ if __name__ == '__main__':
     except Exception as e:
         print('EXCP: ',e)
     finally:
-        if COMPORT.isOpen():
+        if COMPORT is not None and COMPORT.isOpen():
             COMPORT.close()
         do_exit('Finished')
