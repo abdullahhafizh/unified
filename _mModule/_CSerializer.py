@@ -1139,7 +1139,6 @@ def READER_DUMP(Ser):
     result = dict()
     result['raw'] = b''
     
-        
     try:
         res = retrieve_rs232_dump_data(Ser, result)
         print(res)
@@ -1154,7 +1153,7 @@ def READER_DUMP(Ser):
 '''
 
 def send_command(Ser, p):
-    # print('Send', p)
+    # Ser.flush()
     Ser.write(p)
     sleep(1)
     Ser.flush()
@@ -1164,7 +1163,6 @@ def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
         response = Ser.read_until(ETX)
-        # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
             i_end = response.index(ETX)
             response = response[:(i_end+len(ETX))]
@@ -1176,6 +1174,7 @@ def retrieve_rs232_data(Ser=Serial()):
 
 @func_set_timeout(10)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
+    # Waiting Response until Function Timeout Reach
     while True:
         line = Ser.readline()
         if line:

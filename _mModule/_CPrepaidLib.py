@@ -5,16 +5,18 @@ import traceback
 from _mModule import _CSerializer as serializer
 
 COMPORT = None
-READER_BAUDRATE = 38400 #Default: 38400,  115200
+READER_BAUDRATE = None #Default: 38400,  115200
 
 
 def open_only(port, _baudrate=None):
-    global COMPORT
+    global COMPORT, READER_BAUDRATE
     resultStr = "0000"
     msg = ""
     
-    if _baudrate is None or not _baudrate not in [38400, 115200]:
-        _baudrate = READER_BAUDRATE
+    if _baudrate is None:
+        if READER_BAUDRATE is not None: _baudrate = READER_BAUDRATE
+    else:
+        READER_BAUDRATE = _baudrate
 
     if COMPORT is None:
         COMPORT = serial.Serial(port, baudrate=_baudrate, bytesize=8, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
