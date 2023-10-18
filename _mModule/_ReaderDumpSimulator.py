@@ -25,9 +25,8 @@ def compose_request(len_data, data):
         c = c ^ out_data[x]
     # c = bytearray.fromhex(format(len_data, 'x').upper().zfill(2))
     out_data = out_data + c.to_bytes(1, byteorder='big') + b"\x10\x03"
-    # print(out_data)
     
-    print(len(out_data), out_data)
+    # print(len(out_data), out_data)
     return len(out_data), out_data
 
 
@@ -173,6 +172,7 @@ def retrieve_rs232_data(Ser=Serial()):
             response = response[:(i_end+len(ETX))]
             if response[0] == STX[1]: 
                 response = STX[0].to_bytes(1, 'big') + response
+            print('Receive', response)
             return response
     # start =  Ser.read_until(b'\x10\x02')
     # LOG.fw("READ_START:", start)
@@ -255,7 +255,7 @@ if __name__ == '__main__':
                 elif mode == '3':
                     result, data = CARD_DISCONNECT(COMPORT)
                     
-                print('Data Length', result, len(data))
+                print('Data Length', result, data, len(data))
     except Exception as e:
         print('EXCP: ',e)
     finally:
