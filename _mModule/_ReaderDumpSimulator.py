@@ -71,8 +71,11 @@ def parse_card_data_template(data):
     result["code"] = data[1:5]
     try:
         result["sign"] = chr(int(data[5]))
+        result["bal"] = data[6:16]
+        amount = int(result["bal"])
     except:
         result["sign"] = ''
+        result["code"] = b'FFFE'
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
 
