@@ -75,7 +75,7 @@ def parse_card_data_template(data):
         amount = int(result["bal"])
     except:
         result["sign"] = ''
-        result["code"] = b'FFFE'
+        result["code"] = b'ERR0'
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
 

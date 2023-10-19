@@ -11,7 +11,7 @@ import traceback
 
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
-ETX_DUMP = b'EVENT:CMD:B4'
+ETX_DUMP = b'EVENT:CMD:B4 Stop'
 WAIT_AFTER_CMD = .2
 
 
@@ -1181,30 +1181,48 @@ def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
         response = Ser.read_until(ETX)
+        
         if len(response) < MIN_REPLY_LENGTH:
             response = b''
             sleep(WAIT_AFTER_CMD)
             continue
+        
+        # OLD HANDLING
+        # if response.__contains__(ETX):
+        #     i_end = response.index(ETX)
+        #     response = response[:(i_end+len(ETX))]
+        #     if response[0] == STX[1]: 
+        #         response = STX[0].to_bytes(1, 'big') + response
+        #     LOG.fw("RAW_REPLY:", response)
+        #     return response
+        
+        # NEW HANDLING
         if response.__contains__(ETX):
-            i_end = response.index(ETX)
-            response = response[:(i_end+len(ETX))]
-            if response[0] == STX[1]: 
-                response = STX[0].to_bytes(1, 'big') + response
             LOG.fw("RAW_REPLY:", response)
+            if response[:2] != STX: 
+                response = STX[0].to_bytes(1, 'big') + response
+                LOG.fw("FIX_STX:", response)
+            i_start = response.index(STX)
+            i_end = response.index(ETX)
+            if i_start:
+                LOG.fw("TRIM_REPLY:", len(response[:i_start]))
+                response = response[i_start:(i_end+len(ETX))]
+            else:
+                response = response[:(i_end+len(ETX))]
+            LOG.fw("FINAL_REPLY:", response)
             return response
 
-
-# Must Wait Within 10 Seconds
-@func_set_timeout(10)
+# Must Wait Within 15 Seconds
+@func_set_timeout(15)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     # Waiting Response until Function Timeout Reach
     while True:
         line = Ser.readline()
         if line:
             result['raw'] += line
-            # if line.__contains__(ETX_DUMP):
-            #     print(ETX_DUMP.decode() + ' Detected: Break')
-            #     break
+            if line.__contains__(ETX_DUMP):
+                print(ETX_DUMP.decode() + ' Detected: Break')
+                break
             continue
         break
     return True
@@ -1249,8 +1267,11 @@ def parse_balance_response(data):
     result["code"] = data[1:5]
     try:
         result["sign"] = chr(int(data[5]))
+        result["bal"] = data[6:16]
+        amount = int(result["bal"])
     except:
         result["sign"] = ''
+        result["code"] = b'ERR0'
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
 
