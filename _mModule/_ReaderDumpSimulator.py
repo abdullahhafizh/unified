@@ -202,19 +202,18 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     return path_file
 
 
-# Must Wait Within 15 Seconds
-@func_set_timeout(15)
+# Must Wait Within 60 Seconds
+@func_set_timeout(60)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
-        line = Ser.read_until(ETX_DUMP)
-        result['raw'] += line
+        line = Ser.read_all()
         if line:
-            break
+            result['raw'] += line
             # If Do This Below, The Data Might be trimmed/not actual
             # if line.__contains__(ETX_DUMP):
             #     print(ETX_DUMP.decode() + ' Detected: Break')
             #     break
-            # continue
+            break
         continue
     return True
 
