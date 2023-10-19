@@ -168,6 +168,7 @@ def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
         response = Ser.read_until(ETX)
+        print(response)
         if len(response) < MIN_REPLY_LENGTH:
             response = b''
             sleep(WAIT_AFTER_CMD)
