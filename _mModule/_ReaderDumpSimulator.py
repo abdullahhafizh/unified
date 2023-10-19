@@ -210,9 +210,9 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
         if line:
             result['raw'] += line
             # If Do This Below, The Data Might be trimmed/not actual
-            # if line.__contains__(ETX_DUMP):
-            #     print(ETX_DUMP.decode() + ' Detected: Break')
-            #     break
+            if line.__contains__(ETX_DUMP):
+                print(ETX_DUMP.decode() + ' Detected: Break')
+                break
         continue
     return True
 
