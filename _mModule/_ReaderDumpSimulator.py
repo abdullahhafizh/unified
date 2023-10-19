@@ -215,6 +215,21 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
 def do_exit(m):
     print(m)
     sys.exit()
+    
+
+AVAILABLE_COMMAND = {
+    '1': 'Card Balance',
+    '2': 'Card Disconnect',
+    '9': 'Reader Dump',
+    'X': 'Exit'
+}
+
+avail_command_text = 'Pilih Mode Berikut : \n'
+
+for c in AVAILABLE_COMMAND.keys():
+    avail_command_text += (c + ' - ', AVAILABLE_COMMAND.get(c) + '\n')
+
+avail_command_text += 'Pilih Nomor : '
 
 
 if __name__ == '__main__':
@@ -236,21 +251,21 @@ if __name__ == '__main__':
         if COMPORT.isOpen():
             print('Reader OPEN', COMPORT.isOpen())
             while True:
-                mode = input('Pilih Mode Berikut :\n1 - Card Balance\n2 - Reader Dump\n3 - Card Disconnect\nX - Exit\n\nPilih Nomor : ')
+                mode = input(avail_command_text)
                 if mode in ['x', 'X']:
                     do_exit('Select X To Quit')
                     break
-                elif mode in ['1', '2', '3']:
-                    print('Selected Mode : ', str(mode))
+                elif mode in AVAILABLE_COMMAND.keys():
+                    # print('Selected Mode : ', str(mode))
                     if mode == '1':
                         result, data = GET_BALANCE_WITH_SN(COMPORT)
-                    elif mode == '2':
+                    elif mode == '9':
                         _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                         result, data = READER_DUMP(COMPORT)
                         if result == SUCCESS_CODE:
                             out_file = log_to_file(content=data, filename=('simulator'+_reff))
                             print(out_file)
-                    elif mode == '3':
+                    elif mode == '2':
                         result, data = CARD_DISCONNECT(COMPORT)
                     print('Data Length', result, data, len(data))
         else:
