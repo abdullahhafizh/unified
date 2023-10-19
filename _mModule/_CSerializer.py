@@ -1194,6 +1194,7 @@ def retrieve_rs232_data(Ser=Serial()):
             return response
 
 
+# Must Wait Within 10 Seconds
 @func_set_timeout(10)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     # Waiting Response until Function Timeout Reach
@@ -1201,9 +1202,9 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
         line = Ser.readline()
         if line:
             result['raw'] += line
-            if line.__contains__(ETX_DUMP):
-                print(ETX_DUMP.decode() + ' Detected: Break')
-                break
+            # if line.__contains__(ETX_DUMP):
+            #     print(ETX_DUMP.decode() + ' Detected: Break')
+            #     break
             continue
         break
     return True
