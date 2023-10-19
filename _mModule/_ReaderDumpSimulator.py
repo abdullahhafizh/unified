@@ -226,7 +226,7 @@ AVAILABLE_COMMAND = {
 
 avail_command_text = 'Pilih Mode Berikut : \n'
 
-for c in list(AVAILABLE_COMMAND.keys()).sort():
+for c in AVAILABLE_COMMAND.keys().sort():
     avail_command_text += (c + ' - ' + AVAILABLE_COMMAND.get(c) + '\n')
 
 avail_command_text += 'Pilih Nomor : '
