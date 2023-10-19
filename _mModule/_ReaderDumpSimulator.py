@@ -168,18 +168,18 @@ def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
         response = Ser.read_until(ETX)
-        
-        print('Read', response)
-        if response[0] == STX[1]: 
-            print('Wring STX Detected', response[:2])
-            response = STX[0].to_bytes(1, 'big') + response
-            print('Start Response', response[:2])
+        # print('Read', response)
 
         if len(response) < MIN_REPLY_LENGTH:
             response = b''
             sleep(WAIT_AFTER_CMD)
             continue
+        
         if response.__contains__(ETX):
+            if response[:2] != STX: 
+                print('Wrong STX', response[:2])
+                response = STX[0].to_bytes(1, 'big') + response
+                print('Fix STX', response[:2])
             i_start = response.index(STX)
             i_end = response.index(ETX)
             if i_start:
