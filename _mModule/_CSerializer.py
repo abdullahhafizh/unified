@@ -1168,16 +1168,23 @@ def READER_DUMP(Ser):
 '''
 
 def send_command(Ser, p):
-    # Ser.flush()
+    Ser.flush()
     Ser.write(p)
     sleep(WAIT_AFTER_CMD)
     Ser.flush()
+
+
+MIN_REPLY_LENGTH = 5
 
 
 def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
         response = Ser.read_until(ETX)
+        if len(response) < MIN_REPLY_LENGTH:
+            response = b''
+            sleep(WAIT_AFTER_CMD)
+            continue
         if response.__contains__(ETX):
             i_end = response.index(ETX)
             response = response[:(i_end+len(ETX))]
@@ -1185,7 +1192,7 @@ def retrieve_rs232_data(Ser=Serial()):
                 response = STX[0].to_bytes(1, 'big') + response
             LOG.fw("RAW_REPLY:", response)
             return response
-    
+
 
 @func_set_timeout(10)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):

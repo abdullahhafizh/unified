@@ -14,6 +14,7 @@ SUCCESS_CODE = '0000'
 LINE_SEPARATOR = b'==EOL=='
 ETX_DUMP = b'EVENT:CMD:B4'
 WAIT_AFTER_CMD = .2
+MIN_REPLY_LENGTH = 5
 
 
 def compose_request(len_data, data):
@@ -157,15 +158,21 @@ def CARD_DISCONNECT(Ser):
 
 def send_command(Ser, p):
     print('Send', p)
+    Ser.flush()
     Ser.write(p)
     sleep(WAIT_AFTER_CMD)
     Ser.flush()
     
 
+
 def retrieve_rs232_data(Ser=Serial()):
     response = b''
     while True:
         response = Ser.read_until(ETX)
+        if len(response) < MIN_REPLY_LENGTH:
+            response = b''
+            sleep(WAIT_AFTER_CMD)
+            continue
         # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
             i_end = response.index(ETX)
@@ -174,13 +181,7 @@ def retrieve_rs232_data(Ser=Serial()):
                 response = STX[0].to_bytes(1, 'big') + response
             print('Receive', response)
             return response
-    # start =  Ser.read_until(b'\x10\x02')
-    # LOG.fw("READ_START:", start)
-    # end = Ser.read_until(ETX)
-    # LOG.fw("READ_END:", end)
-    # result = start + end
-    # return result
-    
+
 
 def log_to_file(content='', filename='', default_ext='.dump'):
     path = sys.path[0]
