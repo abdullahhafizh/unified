@@ -203,8 +203,8 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     return path_file
 
 
-# Must Wait Within 10 Seconds
-@func_set_timeout(10)
+# Must Wait Within 60 Seconds
+@func_set_timeout(60)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     while True:
         line = Ser.readline()
