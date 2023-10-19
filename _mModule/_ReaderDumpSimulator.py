@@ -173,10 +173,11 @@ def retrieve_rs232_data(Ser=Serial()):
             response = b''
             sleep(WAIT_AFTER_CMD)
             continue
-        # LOG.fw("DEBUG_READ:", response)
         if response.__contains__(ETX):
+            i_start = response.index(STX)
             i_end = response.index(ETX)
-            response = response[:(i_end+len(ETX))]
+            print('Remove', len(response[:i_start]))
+            response = response[i_start:(i_end+len(ETX))]
             if response[0] == STX[1]: 
                 response = STX[0].to_bytes(1, 'big') + response
             print('Receive', response)
