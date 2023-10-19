@@ -13,6 +13,7 @@ ETX = b'\x10\x03'
 SUCCESS_CODE = '0000'
 LINE_SEPARATOR = b'==EOL=='
 ETX_DUMP = b'EVENT:CMD:B4'
+WAIT_AFTER_CMD = .2
 
 
 def compose_request(len_data, data):
@@ -93,7 +94,6 @@ def READER_DUMP(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = compose_request(len(bal_value), bal_value)
-    print(p, p_len)
 
     send_command(Ser, p)
     
@@ -157,8 +157,8 @@ def CARD_DISCONNECT(Ser):
 
 def send_command(Ser, p):
     print('Send', p)
-    write = Ser.write(p)
-    sleep(1)
+    Ser.write(p)
+    sleep(WAIT_AFTER_CMD)
     Ser.flush()
     
 
@@ -204,10 +204,6 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
         line = Ser.readline()
         if line:
             result['raw'] += line
-            # if line.__contains__(ETX):
-            #     print('ETX Detected: Break')
-            #     break
-            # el
             if line.__contains__(ETX_DUMP):
                 print(ETX_DUMP.decode() + ' Detected: Break')
                 break

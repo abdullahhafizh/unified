@@ -12,6 +12,7 @@ import traceback
 STX = b'\x10\x02'
 ETX = b'\x10\x03'
 ETX_DUMP = b'EVENT:CMD:B4'
+WAIT_AFTER_CMD = .2
 
 
 def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
@@ -1169,7 +1170,7 @@ def READER_DUMP(Ser):
 def send_command(Ser, p):
     # Ser.flush()
     Ser.write(p)
-    sleep(1)
+    sleep(WAIT_AFTER_CMD)
     Ser.flush()
 
 
