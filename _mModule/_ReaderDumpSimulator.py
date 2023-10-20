@@ -139,6 +139,26 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     return result["code"].decode('utf-8'), result
 
 
+def GET_CARD_HISTORY(Ser=Serial()):
+    send = {}
+    send["cmd"] = b"\xA5"
+    
+    bal_value = send["cmd"]
+    p_len, p = compose_request(len(bal_value), bal_value)
+
+    send_command(Ser, p)
+    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+
+    result = parse_card_data_template(response["data"])
+    
+    del data
+    del response
+
+    return result["code"].decode('utf-8'), result
+
+
 def CARD_DISCONNECT(Ser):
     sam = {}
     sam["cmd"] = b"\xFA"
@@ -210,9 +230,12 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     return path_file
 
 
-# Must Wait Within 15 Seconds
-@func_set_timeout(15)
+DUMP_DURATION = 60
+
+# Must Wait Within 60 Seconds
+@func_set_timeout(DUMP_DURATION)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
+    print('Dump Duration', DUMP_DURATION)
     while True:
         line = Ser.readline()
         if line:
@@ -233,6 +256,7 @@ def do_exit(m):
 AVAILABLE_COMMAND = {
     '1': 'Card Balance',
     '2': 'Card Disconnect',
+    '3': 'Card Log',
     '9': 'Reader Dump',
     'X': 'Exit'
 }
@@ -274,6 +298,8 @@ if __name__ == '__main__':
                     # print('Selected Mode : ', str(mode))
                     if mode == '1':
                         result, data = GET_BALANCE_WITH_SN(COMPORT)
+                    elif mode == '3':
+                        result, data = GET_CARD_HISTORY(COMPORT)
                     elif mode == '9':
                         _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                         result, data = READER_DUMP(COMPORT)

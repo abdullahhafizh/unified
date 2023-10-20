@@ -456,15 +456,30 @@ def init_config():
                         else:
                             LOGGER.warning((BANK['BANK'], result))
                     if BANK['BANK'] == 'BNI':
-                        param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
-                        response, result = _Command.send_request(param=param, output=None)
+                        inject_param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
+                        response, result = _Command.send_request(param=inject_param, output=None)
                         if response == 0:
-                            LOGGER.info((BANK['BANK'], result))
-                            INIT_LIST.append(BANK)
-                            INIT_STATUS = True
-                            INIT_BNI = True
-                            sleep(INIT_DELAY_TIME)
-                            bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
+                            LOGGER.info((BANK['BANK'], 'INJECT_KEY', result))
+                            init_param = QPROX['UPDATE_TID_BNI'] + '|' + _Common.BNI_C2C_TID
+                            response, result = _Command.send_request(param=init_param, output=None)
+                            LOGGER.info((BANK['BANK'], 'UPDATE_TID', result))
+                            if response == 0:
+                                INIT_LIST.append(BANK)
+                                INIT_STATUS = True
+                                INIT_BNI = True
+                                sleep(1)
+                                bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
+                                sleep(1)
+                                get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')
+                        # param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' +  TID_BNI
+                        # response, result = _Command.send_request(param=param, output=None)
+                        # if response == 0:
+                        #     LOGGER.info((BANK['BANK'], result))
+                        #     INIT_LIST.append(BANK)
+                        #     INIT_STATUS = True
+                        #     INIT_BNI = True
+                        #     sleep(INIT_DELAY_TIME)
+                        #     bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
                             # get_bni_wallet_status()
                         else:
                             LOGGER.warning((BANK['BANK'], result))
