@@ -103,6 +103,7 @@ def READER_DUMP(Ser):
     
     result = dict()
     result['raw'] = b''
+    result['etx'] = False
     
     try:
         res = retrieve_rs232_dump_data(Ser, result)
@@ -243,7 +244,8 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
             # If Do This Below, The Data Might be trimmed/not actual
             if line.__contains__(ETX_DUMP):
                 print(ETX_DUMP.decode() + ' Detected: Break')
-                break
+                if result.get('etx') is True:
+                    break
         continue
     return True
 
