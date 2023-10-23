@@ -84,6 +84,25 @@ def parse_card_data_template(data):
     return result
 
 
+def parse_card_history_template(data):
+    '''
+    TBalanceresws = packed record
+    cmd   : byte;
+    code  : array[0..3] of byte;
+    sign  : byte;
+    bal   : array[0..9] of char;
+    sn    : array[0..15] of char;
+    end; 
+    '''
+    result = {}
+    result["cmd"] = data[0]
+    result["code"] = data[1:5]
+    result["response"] = data[5:]
+    result["len_response"] = len(result["response"])
+
+    return result
+
+
 def CLEAR_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB5"
@@ -153,10 +172,12 @@ def GET_CARD_HISTORY(Ser=Serial()):
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
+    result = parse_card_history_template(response['data'])
     
     del data
+    del response
 
-    return response["code"].decode('utf-8'), response
+    return result["code"].decode('utf-8'), result
 
 
 def CARD_DISCONNECT(Ser):

@@ -1294,7 +1294,8 @@ def parse_balance_response(data):
     try:
         result["sign"] = chr(int(data[5]))
         result["bal"] = data[6:16]
-        amount = int(result["bal"])
+        if result['code'].decode('utf-8') == '0000':
+            amount = int(result["bal"])
     except:
         result["sign"] = ''
         result["code"] = b'ERR0'
