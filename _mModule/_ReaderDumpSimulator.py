@@ -152,7 +152,7 @@ def GET_CARD_HISTORY(Ser=Serial()):
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
-    result = parse_card_data_template(response["data"])
+    result = parse_default_template(response["data"])
     
     del data
     del response
@@ -243,8 +243,9 @@ def retrieve_rs232_dump_data(Ser=Serial(), result={}):
             result['raw'] += line
             # If Do This Below, The Data Might be trimmed/not actual
             if line.__contains__(ETX_DUMP):
-                print(ETX_DUMP.decode() + ' Detected: Break')
+                print(ETX_DUMP.decode() + ' Detected')
                 if result.get('etx') is True:
+                    print('Break')
                     break
         continue
     return True

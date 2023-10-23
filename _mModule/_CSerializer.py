@@ -1132,6 +1132,32 @@ def GET_TOKEN_BRI(Ser):
     return result["code"], CARDDATA
 
 
+def GET_CARD_HISTORY(Ser):
+    send = {}
+    send["cmd"] = b"\xA5"
+    
+    bal_value = send["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    send_command(Ser, p)
+    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+
+    result = parse_default_report(response["data"])
+    LOG.fw("RESPONSE:", result)
+    
+    data_len = ((response["len"][0] << 8)+response["len"][1])-5
+    history_data = ''
+    for i in range(0, data_len):
+        history_data = history_data + chr(result["rep"][i])
+
+    del data
+    del response
+
+    return result["code"], history_data
+
+
 def CLEAR_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB5"
@@ -1162,7 +1188,7 @@ def READER_DUMP(Ser):
     finally:
         CLEAR_DUMP(Ser)
         return '0000', result['raw'].decode('cp1252')
-
+    
 '''
 ------------------------------------------------------------------------------------------------
 '''
