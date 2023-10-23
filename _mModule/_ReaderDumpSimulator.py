@@ -331,7 +331,7 @@ if __name__ == '__main__':
                             print(out_file)
                     elif mode == '2':
                         result, data = CARD_DISCONNECT(COMPORT)
-                    # print('Data Length', result, data, len(data))
+                    print('Result', data)
         else:
             print('Reader Cannot Be OPEN')
     except Exception as e:
