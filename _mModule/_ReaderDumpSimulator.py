@@ -51,6 +51,7 @@ def parse_default_template(data):
     result["len"] = data[9:11]
     len_data = 11+int.from_bytes(result['len'],byteorder='big', signed=False)
     result["data"] = data[11:len_data]
+    result["code"] = result["data"][1:5]
     result["res"] = data[len_data:len_data+3]
 
     return result
@@ -72,7 +73,8 @@ def parse_card_data_template(data):
     try:
         result["sign"] = chr(int(data[5]))
         result["bal"] = data[6:16]
-        amount = int(result["bal"])
+        if result['code'].decode('utf-8') == SUCCESS_CODE:
+            amount = int(result["bal"])
     except:
         result["sign"] = ''
         result["code"] = b'ERR0'
@@ -151,13 +153,10 @@ def GET_CARD_HISTORY(Ser=Serial()):
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
-
-    result = parse_default_template(response["data"])
     
     del data
-    del response
 
-    return result["code"].decode('utf-8'), result
+    return response["code"].decode('utf-8'), response
 
 
 def CARD_DISCONNECT(Ser):
