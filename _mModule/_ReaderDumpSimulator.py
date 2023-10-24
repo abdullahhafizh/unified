@@ -316,7 +316,7 @@ AVAILABLE_COMMAND = dict(sorted(AVAILABLE_COMMAND.items()))
 avail_command_text = 'Pilih Mode Berikut : \n'
 
 for c in range(len(AVAILABLE_COMMAND.keys())):
-    avail_command_text += (AVAILABLE_COMMAND.keys()[c] + ' - ' + AVAILABLE_COMMAND.get(c) + '\n')
+    avail_command_text += (list(AVAILABLE_COMMAND.keys())[c] + ' - ' + AVAILABLE_COMMAND.get(c) + '\n')
 
 avail_command_text += 'Pilih Nomor : '
 
