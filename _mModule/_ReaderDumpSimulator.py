@@ -311,8 +311,6 @@ AVAILABLE_COMMAND = {
     'X': 'Exit'
 }
 
-AVAILABLE_COMMAND = dict(sorted(AVAILABLE_COMMAND.items()))
-
 avail_command_text = 'Pilih Mode Berikut : \n'
 
 for c in range(len(AVAILABLE_COMMAND.keys())):
