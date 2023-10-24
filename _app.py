@@ -572,13 +572,13 @@ class SlotHandler(QObject):
         _QPROX.start_get_card_history(bank)
     start_get_card_history = pyqtSlot(str)(start_get_card_history)
     
-    def enable_reader_dump(self, bank):
-        _QPROX.enable_reader_dump(bank)
-    enable_reader_dump = pyqtSlot(str)(enable_reader_dump)
+    def enable_reader_dump(self):
+        _QPROX.enable_reader_dump()
+    enable_reader_dump = pyqtSlot()(enable_reader_dump)
     
-    def disable_reader_dump(self, bank):
-        _QPROX.disable_reader_dump(bank)
-    disable_reader_dump = pyqtSlot(str)(disable_reader_dump)
+    def disable_reader_dump(self):
+        _QPROX.disable_reader_dump()
+    disable_reader_dump = pyqtSlot()(disable_reader_dump)
 
     def start_print_card_history(self, payload):
         _SalePrintTool.start_print_card_history(payload)
