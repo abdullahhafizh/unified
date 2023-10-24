@@ -107,6 +107,7 @@ def CLEAR_DUMP(Ser):
     p_len, p = compose_request(len(bal_value), bal_value)
 
     send_command(Ser, p)
+    data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
     del data
@@ -121,6 +122,7 @@ def ENABLE_DUMP(Ser):
     p_len, p = compose_request(len(bal_value), bal_value)
 
     send_command(Ser, p)    
+    data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
     del data
@@ -135,6 +137,7 @@ def DISABLE_DUMP(Ser):
     p_len, p = compose_request(len(bal_value), bal_value)
 
     send_command(Ser, p)
+    data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
     del data
@@ -180,7 +183,6 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
-
     result = parse_card_data_template(response["data"])
     
     del data
@@ -214,7 +216,6 @@ def CARD_DISCONNECT(Ser):
     p_len, p = compose_request(len(bal_value), bal_value)
 
     send_command(Ser, p)
-    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
