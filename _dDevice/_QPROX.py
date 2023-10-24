@@ -49,6 +49,8 @@ BNI_SAM_SLOT = {
 QPROX = {
     "RESET_CONTACTLESS": "ST0",
     "READER_DUMP": "RD0",
+    "ENABLE_READER_DUMP": "RD1",
+    "DISABLE_READER_DUMP": "RD2",
     # -------
     "OPEN": "000",
     "INIT": "001",
@@ -194,6 +196,37 @@ ERROR_TOPUP = {
 # Waive BNI Card Validation
 if not _Common.LIVE_MODE:
     ERROR_TOPUP.pop('5106')
+    
+    
+DO_READER_DUMP_ON_CARD_HISTORY = False
+
+
+def do_get_reader_dump(c, m='get_card_history'):
+    if not DO_READER_DUMP_ON_CARD_HISTORY and m == 'get_card_history': return 
+    param = QPROX['READER_DUMP'] + '|' + c + '|'  + _Helper.time_string('%Y%m%d%H%M%S')
+    dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    LOGGER.info((dump_response, dump_result))
+    
+
+def start_disable_reader_dump():
+    _Helper.get_thread().apply_async(disable_reader_dump)
+    
+
+def start_enable_reader_dump():
+    _Helper.get_thread().apply_async(enable_reader_dump)
+    
+
+def disable_reader_dump():
+    param = QPROX['DISABLE_READER_DUMP'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    LOGGER.info((response, result))
+    
+    
+def enable_reader_dump():
+    param = QPROX['ENABLE_READER_DUMP'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    LOGGER.info((response, result))
+
 
 def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
     if bank == 'BNI':
@@ -488,6 +521,8 @@ def init_config():
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
+    finally:
+        disable_reader_dump()
     # finally:
     #     # Retry Read BNI SAM Balance
     #     if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
@@ -2051,17 +2086,6 @@ def set_c2c_settlement_fee(file):
                 return True
                 break
         sleep(15)
-
-
-
-# Panel Var 
-DO_READER_DUMP_ON_CARD_HISTORY = True
-
-def do_get_reader_dump(c):
-    if DO_READER_DUMP_ON_CARD_HISTORY:
-        param = QPROX['READER_DUMP'] + '|' + c + '|'  + _Helper.time_string('%Y%m%d%H%M%S')
-        dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        LOGGER.info((dump_response, dump_result))
 
 
 def start_get_card_history(bank):

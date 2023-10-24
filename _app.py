@@ -140,9 +140,9 @@ class SlotHandler(QObject):
         _Printer.start_default_print(path)
     start_default_print = pyqtSlot(str)(start_default_print)
 
-    def get_kiosk_status(self):
-        _KioskService.get_kiosk_status()
-    get_kiosk_status = pyqtSlot()(get_kiosk_status)
+    def start_get_kiosk_status(self):
+        _KioskService.start_get_kiosk_status()
+    start_get_kiosk_status = pyqtSlot()(start_get_kiosk_status)
 
     def start_get_price_setting(self):
         _KioskService.start_get_price_setting()
@@ -571,6 +571,14 @@ class SlotHandler(QObject):
     def start_get_card_history(self, bank):
         _QPROX.start_get_card_history(bank)
     start_get_card_history = pyqtSlot(str)(start_get_card_history)
+    
+    def enable_reader_dump(self, bank):
+        _QPROX.enable_reader_dump(bank)
+    enable_reader_dump = pyqtSlot(str)(enable_reader_dump)
+    
+    def disable_reader_dump(self, bank):
+        _QPROX.disable_reader_dump(bank)
+    disable_reader_dump = pyqtSlot(str)(disable_reader_dump)
 
     def start_print_card_history(self, payload):
         _SalePrintTool.start_print_card_history(payload)
@@ -1239,7 +1247,7 @@ def startup_task():
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Startup Completed...')
         print("pyt: Get Kiosk Terminal Status...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Get Kiosk Terminal Status...')
-        _KioskService.get_kiosk_status()
+        _KioskService.start_get_kiosk_status()
     
 
 if __name__ == '__main__':

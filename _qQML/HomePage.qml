@@ -71,7 +71,8 @@ Base{
             productCount6 = 0;
             selectedMenu = '';
             if (globalBoxName !== ""){
-                _SLOT.get_kiosk_status();
+                _SLOT.start_get_kiosk_status();
+                _SLOT.start_disable_reader_dump();
                 _SLOT.start_play_audio('homepage_greeting');
             }
         }
@@ -516,6 +517,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
+                    _SLOT.enable_reader_dump();
                     if (uiSimplification){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
@@ -696,7 +698,6 @@ Base{
                 if (globalBoxName == ""){
                     _SLOT.start_startup_task();
                     _SLOT.start_play_audio('welcome');
-//                    _SLOT.get_kiosk_status();
                 }
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
@@ -825,7 +826,7 @@ Base{
                 resetMediaTimer();
                 spvButton = false;
                 _SLOT.start_reset_receipt_count('0');
-                _SLOT.get_kiosk_status();
+                _SLOT.start_get_kiosk_status();
             }
         }
     }
@@ -1216,7 +1217,7 @@ Base{
                 onClicked: {
                     preload_combo_sakti.close();
                     _SLOT.start_idle_mode();
-                    _SLOT.get_kiosk_status();
+                    _SLOT.start_get_kiosk_status();
                     press = "0";
                     resetMediaTimer();
                 }
@@ -1270,7 +1271,7 @@ Base{
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
 //                    _SLOT.kiosk_get_product_stock();
-                    _SLOT.get_kiosk_status();
+                    _SLOT.start_get_kiosk_status();
                     press = "0";
                     resetMediaTimer();
                 }
@@ -1316,7 +1317,7 @@ Base{
 //                    selectedMenu = '';
 //                    _SLOT.start_idle_mode();
 ////                    _SLOT.kiosk_get_product_stock();
-//                    _SLOT.get_kiosk_status();
+//                    _SLOT.start_get_kiosk_status();
 //                    press = "0";
 //                    resetMediaTimer();
 //                }

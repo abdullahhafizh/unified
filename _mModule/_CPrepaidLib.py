@@ -374,3 +374,15 @@ def get_card_history():
         return "FFFE", ""
     res_str, rep = serializer.GET_CARD_HISTORY(COMPORT)
     return res_str.decode("utf-8"), rep
+
+
+def enable_reader_dump():
+    if not is_serial_valid():
+        return "FFFE", "" 
+    return serializer.ENABLE_DUMP(COMPORT)
+
+
+def disable_reader_dump():
+    if not is_serial_valid():
+        return "FFFE", "" 
+    return serializer.DISABLE_DUMP(COMPORT)

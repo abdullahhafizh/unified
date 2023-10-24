@@ -80,7 +80,7 @@ def use_pending_code(pending_code, reff_no):
     _Common.update_usage_retry_code(reff_no)
 
 
-def get_kiosk_status():
+def start_get_kiosk_status():
     _Helper.get_thread().apply_async(kiosk_status)
 
 

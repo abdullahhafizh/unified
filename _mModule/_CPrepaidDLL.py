@@ -912,3 +912,29 @@ def reader_dump(card_no='', trxid=''):
     LOG.fw("<-- Length dump_data = ", len(dump_data))
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str, dump_data
+
+
+def enable_reader_dump():
+    res_str = ""
+    try:
+        LOG.fw("--> CMD READER = $B6")
+        res_str, _ = lib.enable_reader_dump()
+    except Exception as ex:
+        LOG.fw("CMD $B6 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+
+    LOG.fw("<-- CMD RESULT = ",res_str)
+    return res_str
+
+
+def disable_reader_dump():
+    res_str = ""
+    try:
+        LOG.fw("--> CMD READER = $B7")
+        res_str, _ = lib.disable_reader_dump()
+    except Exception as ex:
+        LOG.fw("CMD $B7 ERROR: ", "{0}".format(ex))
+        LOG.fw("Trace: ", traceback.format_exc())
+
+    LOG.fw("<-- CMD RESULT = ",res_str)
+    return res_str

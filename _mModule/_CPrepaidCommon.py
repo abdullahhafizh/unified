@@ -73,6 +73,38 @@ def reader_dump(param, __global_response__=None):
     return res_str
 
 
+
+# RD1
+def enable_reader_dump(__global_response__=None):
+    res_str, _ = prepaid.enable_reader_dump()
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("RD1:Result = ", res_str)
+        LOG.fw("RD1:Sukses")
+    else:
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("RD1:Result = ", res_str, True)
+        LOG.fw("RD1:Gagal", None, True)
+    return res_str
+
+
+# RD2
+def disable_reader_dump(__global_response__=None):
+    res_str, _ = prepaid.disable_reader_dump()
+    __global_response__["Result"] = res_str
+    if res_str == "0000":
+        __global_response__["ErrorDesc"] = "Sukses"
+        LOG.fw("RD2:Result = ", res_str)
+        LOG.fw("RD2:Sukses")
+    else:
+        __global_response__["ErrorDesc"] = "Gagal"
+        LOG.fw("RD2:Result = ", res_str, True)
+        LOG.fw("RD2:Gagal", None, True)
+    return res_str
+
+
+
 #000
 def open_only(param=None, __global_response__=None):
     global COM_PORT, COM_BAUDRATE

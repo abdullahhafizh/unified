@@ -35,7 +35,6 @@ def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
     
     del data
     del response
-
     return result["code"]
 
     
@@ -60,7 +59,6 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     
     del data
     del response
-
     return result["code"], result["bal"], result["sn"], result["sign"]
 
 
@@ -89,7 +87,6 @@ def GET_BALANCE(Ser):
     
     del data
     del response
-
     return result["code"], result["bal"]
 
 
@@ -123,7 +120,6 @@ def DEBIT(Ser, datetime, time_out, value):
 
     del data
     del response
-    
     return result["code"], balance, rep
 
 
@@ -157,7 +153,6 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
     
     del data
     del response
-
     return result["code"]
 
 
@@ -179,7 +174,6 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
     
     del data
     del response
-
     return result["code"]
 
 
@@ -204,7 +198,6 @@ def BNI_TOPUP_INIT_KEY(Ser, C_MASTER_KEY, C_IV, C_PIN, C_TID):
     
     del data
     del response
-
     return result["code"]
 
 
@@ -232,7 +225,6 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -253,7 +245,6 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
     
     del data
     del response
-
     return result["code"], result["bal"]
 
 
@@ -275,7 +266,6 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
 
     del data
     del response
-    
     return result["code"]
 
 
@@ -305,7 +295,6 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -332,7 +321,6 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
 
     del data
     del response
-    
     return result["code"], rep
 
 
@@ -357,7 +345,6 @@ def PURSE_DATA(Ser):
 
     del data
     del response
-    
     return result["code"], rep
 
 
@@ -387,7 +374,6 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -416,7 +402,6 @@ def TOP_UP_C2C(Ser, amount, timestamp):
 
     del data
     del response
-
     return result["code"], result["rep"]
 
 
@@ -444,7 +429,6 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
 
     del data
     del response
-
     return result["code"]
 
 
@@ -470,7 +454,6 @@ def TOPUP_C2C_CORRECTION(Ser):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -501,7 +484,6 @@ def GET_FEE_C2C(Ser, Flag):
     
     del data
     del response
-
     return result["code"], result["rep"]
 
 
@@ -535,7 +517,6 @@ def SET_FEE_C2C(Ser, Flag, respon):
     
     del data
     del response
-
     return result["code"]
 
 
@@ -566,7 +547,6 @@ def TOPUP_FORCE_C2C(Ser, Flag):
 
     del data
     del response
-
     return result["code"], result["rep"]
 
 
@@ -585,7 +565,6 @@ def MDR_C2C_LAST_REPORT(Ser):
 
     del data
     del response
-
     return result["code"], result["rep"]
 
 
@@ -609,7 +588,6 @@ def NEW_TOP_UP_C2C(Ser, amount, timestamp):
 
     del data
     del response
-
     return result["code"], result["rep"]
 
 
@@ -667,7 +645,6 @@ def APDU_SEND(Ser, slot, apdu):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -708,7 +685,6 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
     
     del data
     del response
-
     return result["code"]
 
 
@@ -740,7 +716,6 @@ def GET_SN(Ser):
             
     del data
     del response
-    
     return result["code"], uid.encode('utf-8'), sn.encode('utf-8')
 
 
@@ -777,7 +752,6 @@ def BCA_CARD_INFO(Ser, ATD):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -833,7 +807,6 @@ def CARD_DISCONNECT(Ser):
     
     del data
     del response
-    
     return True
 
 
@@ -872,7 +845,6 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -904,7 +876,6 @@ def BCA_SESSION_2(Ser, session):
 
     del data
     del response
-
     return result["code"]
 
 
@@ -979,7 +950,6 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -1016,7 +986,6 @@ def BCA_TOPUP_2(Ser, strConfirm):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -1041,7 +1010,6 @@ def BCA_LAST_REPORT(Ser):
 
     del data
     del response
-    
     return result["code"], rep
 
 
@@ -1078,7 +1046,6 @@ def BCA_REVERSAL(Ser, ATD):
 
     del data
     del response
-    
     return result["code"], rep
 
 
@@ -1103,7 +1070,6 @@ def BCA_CARD_HISTORY(Ser):
 
     del data
     del response
-
     return result["code"], rep
 
 
@@ -1128,7 +1094,6 @@ def GET_TOKEN_BRI(Ser):
 
     del data
     del response
-
     return result["code"], CARDDATA
 
 
@@ -1154,7 +1119,6 @@ def GET_CARD_HISTORY(Ser):
 
     del data
     del response
-
     return result["code"], history_data
 
 
@@ -1164,8 +1128,44 @@ def CLEAR_DUMP(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    Ser.write(p)
-    Ser.flush()
+
+    send_command(Ser, p)
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+    
+    del data
+    return '0000', response
+    
+    
+def ENABLE_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB6"
+
+    bal_value = sam["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    send_command(Ser, p)    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+    
+    del data
+    return response['code'].decode(), response
+
+
+def DISABLE_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB7"
+
+    bal_value = sam["cmd"]
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+
+    send_command(Ser, p)
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+    
+    del data
+    return response['code'].decode(), response
+
 
 
 def READER_DUMP(Ser):
@@ -1186,7 +1186,7 @@ def READER_DUMP(Ser):
         err_message = traceback._cause_message
         print(err_message)
     finally:
-        CLEAR_DUMP(Ser)
+        _, data = CLEAR_DUMP(Ser)
         return '0000', result['raw'].decode('cp1252')
     
 '''
@@ -1243,14 +1243,12 @@ def retrieve_rs232_data(Ser=Serial()):
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     # Waiting Response until Function Timeout Reach
     while True:
-        line = Ser.readline()
+        line = Ser.read_until(ETX)
         if line:
             result['raw'] += line
-            if line.__contains__(ETX_DUMP):
-                print(ETX_DUMP.decode() + ' Detected: Break')
+            if line.__contains__(ETX) or line.__contains__(ETX_DUMP):
                 break
-            continue
-        break
+        continue
     return True
 
 
@@ -1273,8 +1271,8 @@ def parse_default_template(data):
     result["len"] = data[9:11]
     len_data = 11+int.from_bytes(result['len'],byteorder='big', signed=False)
     result["data"] = data[11:len_data]
+    result["code"] = result["data"][1:5]
     result["res"] = data[len_data:len_data+3]
-
     return result
 
 
@@ -1301,7 +1299,6 @@ def parse_balance_response(data):
         result["code"] = b'ERR0'
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
-
     return result
 
 
@@ -1317,7 +1314,6 @@ def parse_balance_template(data):
     result["cmd"] = data[0]
     result["code"] = data[1:5]
     result["bal"] = data[5:15]
-
     return result
 
 
@@ -1333,7 +1329,6 @@ def parse_default_km_balance_report(data):
     result["cmd"] = data[0]
     result["code"] = data[1:5]
     result["bal"] = data[5:25]
-
     return result
 
 
@@ -1347,7 +1342,6 @@ def parse_default_response(data):
     result = {}
     result["cmd"] = data[0]
     result["code"] = data[1:5]
-
     return result
 
 
@@ -1365,7 +1359,6 @@ def parse_default_report(data):
     result["code"] = data[1:5]
     result["rep"] = data[5:len(data)]
     result["len"] = len(data)
-
     return result
 
 
@@ -1383,5 +1376,4 @@ def parse_default_sn_report(data):
     result["code"] = data[1:5]
     result["uid"] = data[5:13]
     result["sn"] = data[13:29]
-    
     return result

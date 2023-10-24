@@ -20,7 +20,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            _SLOT.get_kiosk_status();
+            _SLOT.start_get_kiosk_status();
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
             press = "0";

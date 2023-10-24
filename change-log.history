@@ -1,3 +1,9 @@
+16.5.1-GLOBAL:
+- Add Enable/Disable Reader Dump,
+- Set Reader Baudrate in setting file,
+- Implement Reader Dump Panel in Application,
+- ...
+
 16.5.0-GLOBAL:
 - Switch Topup Online to Secure Message,
 - Change Reader Baudrate to 115.200,
