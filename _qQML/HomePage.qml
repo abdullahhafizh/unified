@@ -60,7 +60,6 @@ Base{
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
             _SLOT.user_action_log('[Homepage] Standby Mode');
-            _SLOT.start_disable_reader_dump();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -72,6 +71,7 @@ Base{
             productCount6 = 0;
             selectedMenu = '';
             if (globalBoxName !== ""){
+                _SLOT.start_disable_reader_dump();
                 _SLOT.start_get_kiosk_status();
                 _SLOT.start_play_audio('homepage_greeting');
             }
