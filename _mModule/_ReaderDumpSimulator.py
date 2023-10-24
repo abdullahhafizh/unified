@@ -27,7 +27,6 @@ def compose_request(len_data, data):
         c = c ^ out_data[x]
     # c = bytearray.fromhex(format(len_data, 'x').upper().zfill(2))
     out_data = out_data + c.to_bytes(1, byteorder='big') + b"\x10\x03"
-    
     # print(len(out_data), out_data)
     return len(out_data), out_data
 
@@ -53,7 +52,6 @@ def parse_default_template(data):
     result["data"] = data[11:len_data]
     result["code"] = result["data"][1:5]
     result["res"] = data[len_data:len_data+3]
-
     return result
 
 
@@ -80,7 +78,6 @@ def parse_card_data_template(data):
         result["code"] = b'ERR0'
     result["bal"] = data[6:16]
     result["sn"] = data[16:32]
-
     return result
 
 
@@ -99,7 +96,6 @@ def parse_card_history_template(data):
     result["code"] = data[1:5]
     result["response"] = data[5:]
     result["len_response"] = len(result["response"])
-
     return result
 
 
@@ -111,6 +107,38 @@ def CLEAR_DUMP(Ser):
     p_len, p = compose_request(len(bal_value), bal_value)
 
     send_command(Ser, p)
+    response = parse_default_template(data)
+    
+    del data
+    return response['code'].decode(), response
+    
+    
+def ENABLE_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB6"
+
+    bal_value = sam["cmd"]
+    p_len, p = compose_request(len(bal_value), bal_value)
+
+    send_command(Ser, p)    
+    response = parse_default_template(data)
+    
+    del data
+    return response['code'].decode(), response
+
+
+def DISABLE_DUMP(Ser):
+    sam = {}
+    sam["cmd"] = b"\xB7"
+
+    bal_value = sam["cmd"]
+    p_len, p = compose_request(len(bal_value), bal_value)
+
+    send_command(Ser, p)
+    response = parse_default_template(data)
+    
+    del data
+    return response['code'].decode(), response
 
 
 def READER_DUMP(Ser):
@@ -157,7 +185,6 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     
     del data
     del response
-
     return result["code"].decode('utf-8'), result
 
 
@@ -176,7 +203,6 @@ def GET_CARD_HISTORY(Ser=Serial()):
     
     del data
     del response
-
     return result["code"].decode('utf-8'), result
 
 
@@ -193,7 +219,6 @@ def CARD_DISCONNECT(Ser):
     response = parse_default_template(data)
     
     del data
-    
     return SUCCESS_CODE, response
 
 '''
@@ -280,7 +305,9 @@ AVAILABLE_COMMAND = {
     '1': 'Card Balance',
     '2': 'Card Disconnect',
     '3': 'Card Log',
-    '9': 'Reader Dump',
+    '4': 'Enable Dump',
+    '5': 'Disable Dump',
+    '9': 'Get Reader Dump',
     'X': 'Exit'
 }
 
@@ -288,8 +315,8 @@ AVAILABLE_COMMAND = dict(sorted(AVAILABLE_COMMAND.items()))
 
 avail_command_text = 'Pilih Mode Berikut : \n'
 
-for c in AVAILABLE_COMMAND.keys():
-    avail_command_text += (c + ' - ' + AVAILABLE_COMMAND.get(c) + '\n')
+for c in range(len(AVAILABLE_COMMAND.keys())):
+    avail_command_text += (AVAILABLE_COMMAND.keys()[c] + ' - ' + AVAILABLE_COMMAND.get(c) + '\n')
 
 avail_command_text += 'Pilih Nomor : '
 
@@ -323,6 +350,10 @@ if __name__ == '__main__':
                         result, data = GET_BALANCE_WITH_SN(COMPORT)
                     elif mode == '3':
                         result, data = GET_CARD_HISTORY(COMPORT)
+                    elif mode == '4':
+                        result, data = ENABLE_DUMP(COMPORT)
+                    elif mode == '5':
+                        result, data = DISABLE_DUMP(COMPORT)
                     elif mode == '9':
                         _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
                         result, data = READER_DUMP(COMPORT)
