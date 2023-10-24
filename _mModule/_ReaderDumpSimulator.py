@@ -155,7 +155,7 @@ def READER_DUMP(Ser):
     
     result = dict()
     result['raw'] = b''
-    result['etx'] = False
+    result['etx'] = True
     
     try:
         res = retrieve_rs232_dump_data(Ser, result)
@@ -277,19 +277,18 @@ def log_to_file(content='', filename='', default_ext='.dump'):
     return path_file
 
 
-DUMP_DURATION = 60
+DUMP_DURATION = 15
 
 # Must Wait Within 60 Seconds
 @func_set_timeout(DUMP_DURATION)
 def retrieve_rs232_dump_data(Ser=Serial(), result={}):
     print('Dump Duration', DUMP_DURATION)
     while True:
-        line = Ser.readline()
+        line = Ser.read_until(ETX)
         if line:
             result['raw'] += line
             # If Do This Below, The Data Might be trimmed/not actual
-            if line.__contains__(ETX_DUMP):
-                print(ETX_DUMP.decode() + ' Detected')
+            if line.__contains__(ETX) or line.__contains__(ETX_DUMP):
                 if result.get('etx') is True:
                     print('Break')
                     break
