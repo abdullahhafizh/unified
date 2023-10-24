@@ -312,10 +312,13 @@ AVAILABLE_COMMAND = {
 }
 
 avail_command_text = 'Pilih Mode Berikut : \n'
-
-for c in range(len(AVAILABLE_COMMAND.keys())):
-    avail_command_text += (list(AVAILABLE_COMMAND.keys())[c] + ' - ' + AVAILABLE_COMMAND.get(c) + '\n')
-
+avail_command_text += ( '1 : Card Balance\n')
+avail_command_text += ( '2 : Card Disconnect\n')
+avail_command_text += ( '3 : Card Log\n')
+avail_command_text += ( '4 : Enable Dump\n')
+avail_command_text += ( '5 : Disable Dump\n')
+avail_command_text += ( '9 : Get Reader Dump\n')
+avail_command_text += ( 'X : Exit\n')
 avail_command_text += 'Pilih Nomor : '
 
 
