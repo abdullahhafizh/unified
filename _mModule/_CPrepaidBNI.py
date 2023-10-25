@@ -668,7 +668,7 @@ def bni_card_get_log_custom_priv(max_t=29):
         prepaid.topup_card_disconnect()
         # resultStr, reportPurse, ErrMsg = prepaid.topup_pursedata()
         resultStr, cardUID, reportPurse, cardAttr = prepaid.topup_get_carddata()
-        if resultStr == "0000":
+        if len(reportPurse) >= len('0001754627000777669800000000A816814CA0C7CEA554CDB3918FAFA1F3C134FCB4000000000100D96988889999040027103629F5507020021701FFFFFF3632E99850555243000000000000255468A71F43D528061E4EC5F712B029'):
             resultStr, card_log = prepaid.get_card_history('BNI')
             if resultStr == '0000':
                 i = 0
@@ -705,23 +705,21 @@ def bni_card_get_log_priv(max_t=29):
 
     try:
         prepaid.topup_card_disconnect()
-        resultStr, data, ErrMsg = prepaid.topup_pursedata()
-        if resultStr == "0000":
-            resultStr, card_log = prepaid.get_card_history('BNI')
-            if resultStr == '0000':
-                i = 0
-                for rapdu in card_log:
-                    if i > max_t:
-                        break
-                    if rapdu in listRAPDU:
-                        continue
-                    listRAPDU.append(rapdu)
-                    i = i + 1                        
-                    types = rapdu[:2]
-                    amount = get_amount_for_log(rapdu[2:8])
-                    dates = get_date(rapdu[8:16])
-                    resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
-                    msg = msg + resreport + "#"
+        resultStr, card_log = prepaid.get_card_history('BNI')
+        if resultStr == '0000':
+            i = 0
+            for rapdu in card_log:
+                if i > max_t:
+                    break
+                if rapdu in listRAPDU:
+                    continue
+                listRAPDU.append(rapdu)
+                i = i + 1                        
+                types = rapdu[:2]
+                amount = get_amount_for_log(rapdu[2:8])
+                dates = get_date(rapdu[8:16])
+                resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                msg = msg + resreport + "#"
 
         msg = msg + GetLogBNI
         

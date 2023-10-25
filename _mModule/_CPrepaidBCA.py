@@ -68,11 +68,7 @@ def update_bca(param, __global_response__):
 #047
 def bca_card_get_log(param, __global_response__):
     
-    res_str, card_no, card_uid = on_detect()
-    report = card_no
-    
-    if res_str == '0000':
-        res_str, report = get_bca_card_history_priv()
+    res_str, report = get_bca_card_history_priv()
     
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -130,13 +126,8 @@ def get_bca_card_history_priv():
 #079
 def bca_card_get_log_raw(param, __global_response__):
     
-    res_str, report, _ = on_detect()
-    
-    if res_str == '0000':
-        # Old Cmd
-        # res_str, report = prepaid.topup_bca_lib_cardhistory()
-        res_str, report = prepaid.get_card_history('BCA')
-        if type(report) == list: report = ';'.join(report)
+    res_str, report = prepaid.get_card_history('BCA')
+    if type(report) == list: report = ';'.join(report)
     
     __global_response__["Result"] = res_str
     if res_str == "0000":

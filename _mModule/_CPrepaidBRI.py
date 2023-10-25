@@ -476,6 +476,7 @@ def bri_card_get_log(param, __global_response__):
 
 def get_log_bri_priv(slot, msg):
     resultStr = ""
+    resreport = ""
     # slot => Not used in this new function
     try:
         prepaid.topup_card_disconnect()
@@ -504,6 +505,7 @@ def get_log_bri_priv(slot, msg):
 
 def get_raw_log_bri_priv(slot, msg=''):
     resultStr = ""
+    resreport = ""
     # slot => Not used in this new function
     try:
         prepaid.topup_card_disconnect()

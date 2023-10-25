@@ -509,6 +509,11 @@ def mandiri_get_log_priv(raw = False):
     try:
         prepaid.topup_card_disconnect()
         resultStr, history = prepaid.get_card_history('MANDIRI')
+        # 25102309042870201700D9100000012001000000AFD80000
+        # 2510230645167520140000000000012001000000B8D80000
+        # 25102308331870201600410E0000012001000000B3D80000
+        # 1610231546377470300016000000012001000000B43B0000
+        # 1810231146315109778800000000011048260000E2650000
         if resultStr == "0000":
             i = 0
             for rapdu in history:
