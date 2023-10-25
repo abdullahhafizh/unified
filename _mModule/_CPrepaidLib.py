@@ -387,12 +387,12 @@ def get_card_history(bank=None):
     res_str, res_history = serializer.GET_CARD_HISTORY(COMPORT)
     result = []
     split_len = len(CARD_HISTORY_SAMPLE.get(bank))
-    if type(result) != str: res_history = res_history.decode()
+    # if type(res_history) != str: res_history = res_history.decode()
     remove_chars = ['|', ':', ';', '.', ',']
     for r in remove_chars:
         res_history = res_history.replace(r, '')
     result = _Helper.split_string(s=res_history, x=split_len)
-    return res_str, result
+    return res_str.decode('utf-8'), result
 
 
 def enable_reader_dump():
