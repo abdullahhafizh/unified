@@ -381,7 +381,7 @@ CARD_HISTORY_SAMPLE = {
 def get_card_history(bank=None):
     global COMPORT
     if not is_serial_valid():
-        return "FFFE", []
+        return "FFFE", ["No Serial Conn"]
     if bank is None or bank.upper() not in CARD_HISTORY_SAMPLE.keys():
         return "ERR1", ["Undefined Bank"]
     res_str, res_history = serializer.GET_CARD_HISTORY(COMPORT)
