@@ -384,17 +384,15 @@ def get_card_history(bank=None):
         return "FFFE", []
     if bank is None or bank.upper() not in CARD_HISTORY_SAMPLE.keys():
         return "ERR1", ["Undefined Bank"]
-    res_str, rep = serializer.GET_CARD_HISTORY(COMPORT)
-    code = res_str.decode("utf-8")
+    res_str, res_history = serializer.GET_CARD_HISTORY(COMPORT)
     result = []
-    if code == '0000':
-        split_len = len(CARD_HISTORY_SAMPLE.get(bank))
-        string = rep.decode('utf-8')
-        remove_chars = ['|', ':', ';', '.', ',']
-        for r in remove_chars:
-            string = string.replace(r, '')
-        result = _Helper.split_string(s=string, x=split_len)
-    return res_str.decode("utf-8"), result
+    split_len = len(CARD_HISTORY_SAMPLE.get(bank))
+    if type(result) != str: res_history = res_history.decode()
+    remove_chars = ['|', ':', ';', '.', ',']
+    for r in remove_chars:
+        res_history = res_history.replace(r, '')
+    result = _Helper.split_string(s=res_history, x=split_len)
+    return res_str, result
 
 
 def enable_reader_dump():
