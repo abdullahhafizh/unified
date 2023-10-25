@@ -1462,7 +1462,7 @@ def remove_failed_trx(trx_id):
 
 def start_trigger_explorer():
     _Helper.get_thread().apply_async(trigger_explorer,)
-    
+
 
 def trigger_explorer():
     try:

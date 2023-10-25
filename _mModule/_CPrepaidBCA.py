@@ -90,12 +90,15 @@ def bca_card_get_log(param, __global_response__):
 
 
 def get_bca_card_history_priv():
-    res_str, card_log = prepaid.topup_bca_lib_cardhistory()
+    # Old Function
+    # res_str, card_log = prepaid.topup_bca_lib_cardhistory()
+    res_str, card_log = prepaid.get_card_history('BCA')
     res_report = ''
     if res_str == '0000':
         if not _Common.LIVE_MODE:
             print('Raw BCA Card Log', card_log)
         # 0000|240000020016885096050087EGEN2010180830112727;240000020013885096050087EGEN2011180830112559|240000020016885096050087EGEN2010180830112727;240000020013885096050087EGEN2011180830112559;140000020011885096050087EGEN2010180830112418;140000020010885096050087EGEN2011180830112350;040000000100885000015999EESIT001180824182433;040000000111885000015999EESIT001180824182408;040000000033885000015999EESIT001180824182009;040000000036885000015999EESIT001180824181224;040000000777885000015999EESIT001180824173158;040000000546885000015999EESIT001180824172111
+        if type(card_log) == list: ';'.join(card_log)
         if card_log[:5] == '0000|':
             card_log = card_log[5:]
         elif card_log[:1] == '|':
@@ -130,7 +133,10 @@ def bca_card_get_log_raw(param, __global_response__):
     res_str, report, _ = on_detect()
     
     if res_str == '0000':
-        res_str, report = prepaid.topup_bca_lib_cardhistory()
+        # Old Cmd
+        # res_str, report = prepaid.topup_bca_lib_cardhistory()
+        res_str, report = prepaid.get_card_history('BCA')
+        if type(report) == list: report = ';'.join(report)
     
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -161,7 +167,6 @@ def get_card_info_bca(param, __global_response__):
             res_str = "8888"
         __global_response__["Response"] = "BCATopupCardInfo_Failed"
         LOG.fw("048:Response = ", "BCATopupCardInfo_Failed", True)
-
     
     __global_response__["Result"] = res_str
 

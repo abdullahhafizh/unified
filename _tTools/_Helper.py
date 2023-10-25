@@ -251,3 +251,14 @@ def valid_ip(ip=None, version=4):
     if empty(ip) or ip == '0.0.0.0' : return False
     if version != 4: return False
     return [0<=int(x)<256 for x in re.split('\.',re.match(r'^\d+\.\d+\.\d+\.\d+$',ip).group(0))].count(True)==version
+
+
+def split_string(s='', x = 3):
+    '''
+    s = string
+    x = length of split
+    '''
+    if empty(s): return []
+    splitted = [s[y-x:y] for y in range(x, len(s)+x, x)]
+    result = [d for d in splitted if len(d) == x]
+    return result

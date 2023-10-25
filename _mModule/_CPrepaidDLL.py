@@ -938,3 +938,8 @@ def disable_reader_dump():
 
     LOG.fw("<-- CMD RESULT = ",res_str)
     return res_str
+
+
+@func_set_timeout(30)
+def get_card_history(bank=None):
+    return lib.get_card_history(bank)

@@ -201,9 +201,10 @@ if not _Common.LIVE_MODE:
 DO_READER_DUMP_ON_CARD_HISTORY = False
 
 
-def do_get_reader_dump(c, m='get_card_history'):
-    if not DO_READER_DUMP_ON_CARD_HISTORY and m == 'get_card_history': return 
-    param = QPROX['READER_DUMP'] + '|' + c + '|'  + _Helper.time_string('%Y%m%d%H%M%S')
+def do_get_reader_dump(c, r=None):
+    if not DO_READER_DUMP_ON_CARD_HISTORY and 'get_card_history' in c: return 
+    reff = _Helper.time_string('%Y%m%d%H%M%S') if r is None else r
+    param = QPROX['READER_DUMP'] + '|' + c + '|'  + reff
     dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((dump_response, dump_result))
     
@@ -1219,9 +1220,10 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     # Error Condition/ Failure Transaction Below
     try:
         # Call Reader Dump
-        param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
-        dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        LOGGER.info((dump_response, dump_result))
+        do_get_reader_dump(str(last_card_check['card_no']), trxid)
+        # param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
+        # dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        # LOGGER.info((dump_response, dump_result))
                 
         # Parse Previous Error Result
         topup_result = json.loads(_result)
@@ -1738,9 +1740,10 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # False Condition
         
         # Call Reader Dump
-        param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
-        dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-        LOGGER.info((dump_response, dump_result))
+        do_get_reader_dump(str(last_card_check['card_no']), trxid)
+        # param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
+        # dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        # LOGGER.info((dump_response, dump_result))
         
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
         LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
@@ -2210,9 +2213,8 @@ def bni_card_history_direct(row=30):
         return card_purse, card_history
     else:
         do_get_reader_dump(_Helper.whoami())
-        
         return "", ""
-
+    
 
 def mdr_card_history_direct():
     param = QPROX['CARD_HISTORY_MANDIRI'] + '|' + 'RAW' + '|'
@@ -2221,7 +2223,6 @@ def mdr_card_history_direct():
         return result
     else:
         do_get_reader_dump(_Helper.whoami())
-        
         return ''
 
 
@@ -2232,7 +2233,6 @@ def bri_card_history_direct():
         return result
     else:
         do_get_reader_dump(_Helper.whoami())
-        
         return ""
     
 
@@ -2243,7 +2243,6 @@ def dki_card_history_direct():
         return result
     else:
         do_get_reader_dump(_Helper.whoami())
-                
         return ""
 
 
@@ -2254,7 +2253,6 @@ def bca_card_history_direct():
         return result
     else:
         do_get_reader_dump(_Helper.whoami())
-                
         return ""
 
 

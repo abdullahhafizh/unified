@@ -501,114 +501,29 @@ def mandiri_get_log(param, __global_response__):
 
 def mandiri_get_log_priv(raw = False):
     resultStr = ""
-    ErrorCode = ""
     resreport = ""
-    ErrMsg = ""
     msg = ""
     GetLogMandiri = ""
     RawReport = []
 
     try:
         prepaid.topup_card_disconnect()
-        resultStr, cardno, uid, data, attr = get_card_data()
+        resultStr, history = prepaid.get_card_history('MANDIRI')
         if resultStr == "0000":
-            if attr == "":
-                attr = "6A86"
-            resultStr, rapdu = prepaid.send_apdu_cmd("255", "00A40400080000000000000001")
-            if resultStr == "0000":
-                resultStr, rapdu = prepaid.send_apdu_cmd("255", "00B300003F")
-                if resultStr == "0000":
-                    # New Applet
-                    if attr.upper() == "6A86":
-                        max_t = 4
-                        i = 0
-                        while resultStr == "0000" and i <= max_t:
-                            if i == 4:
-                                resultStr, rapdu = prepaid.send_apdu_cmd("255", "00D1050000")
-                                if rapdu == ('0'*240) or ('0'*100) in rapdu: 
-                                    i = i + 1
-                                    continue
-                                if resultStr == "0000":
-                                    RawReport.append(rapdu)
-                                    dates = rapdu[:12]
-                                    tid = rapdu[12:20]
-                                    count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[27:31])
-                                    amount = prepaid_utils.getint(rapdu[32:40])
-                                    balance = prepaid_utils.getint(rapdu[40:48])
-
-                                    resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
-                                    msg = msg + resreport
-                                    i = i + 1
-                                elif resultStr == '6986':
-                                    # New Applet Handle Error on 6986
-                                    resultStr = '0000'
-                                    break
-                                else:
-                                    GetLogMandiri = rapdu
-                            else:
-                                apdu = "00D10"+str(i)+"0000"
-                                resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
-                                if rapdu == ('0'*240) or ('0'*100) in rapdu: 
-                                    i = i + 1
-                                    continue
-                                if resultStr == "0000":
-                                    RawReport.append(rapdu)
-                                    dates = rapdu[:12]
-                                    tid = rapdu[12:20]
-                                    count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[27:31])
-                                    amount = prepaid_utils.getint(rapdu[32:40])
-                                    balance = prepaid_utils.getint(rapdu[40:48])
-
-                                    resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
-                                    msg = msg + resreport + "#"
-                                    i = i + 1
-                                else:
-                                    GetLogMandiri = rapdu
-                    else:
-                        max_t = 10
-                        i = 0
-                        while resultStr == "0000" and i <= max_t:
-                            if i == 10:
-                                resultStr, rapdu = prepaid.send_apdu_cmd("255", "00B20A001E")
-                                if resultStr == "0000":
-                                    RawReport.append(rapdu)
-                                    dates = rapdu[:12]
-                                    tid = rapdu[12:20]
-                                    count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[27:31])
-                                    amount = prepaid_utils.getint(rapdu[32:40])
-                                    balance = prepaid_utils.getint(rapdu[40:48])
-
-                                    resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
-                                    msg = msg + resreport
-                                    i = i + 1
-                                else:
-                                    GetLogMandiri = rapdu
-                            else:
-                                apdu = "00B20"+str(i)+"001E"
-                                resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
-                                if resultStr == "0000":
-                                    RawReport.append(rapdu)
-                                    dates = rapdu[:12]
-                                    tid = rapdu[12:20]
-                                    count = prepaid_utils.getint(rapdu[20:28])
-                                    types = prepaid_utils.getint2(rapdu[27:31])
-                                    amount = prepaid_utils.getint(rapdu[32:40])
-                                    balance = prepaid_utils.getint(rapdu[40:48])
-
-                                    resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
-                                    msg = msg + resreport + "#"
-                                    i = i + 1
-                                else:
-                                    GetLogMandiri = rapdu
-                else:
-                    GetLogMandiri = rapdu
-            else:
-                GetLogMandiri = rapdu
-        else:
-            GetLogMandiri = ""
+            i = 0
+            for rapdu in history:
+                if rapdu == ('0'*240) or ('0'*100) in rapdu: 
+                    continue
+                RawReport.append(rapdu)
+                i = i + 1
+                dates = rapdu[:12]
+                tid = rapdu[12:20]
+                count = prepaid_utils.getint(rapdu[20:28])
+                types = prepaid_utils.getint2(rapdu[27:31])
+                amount = prepaid_utils.getint(rapdu[32:40])
+                balance = prepaid_utils.getint(rapdu[40:48])
+                resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
+                msg = msg + resreport
         
         msg = msg + GetLogMandiri
         

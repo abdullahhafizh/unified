@@ -657,9 +657,7 @@ def bni_topup_init_key_priv(master_key, pin, tid):
 
 def bni_card_get_log_custom_priv(max_t=29):
     resultStr = ""
-    ErrorCode = ""
     resreport = ""
-    ErrMsg = ""
     msg = ""
     GetLogBNI = ""
     listRAPDU = []
@@ -668,31 +666,24 @@ def bni_card_get_log_custom_priv(max_t=29):
 
     try:
         prepaid.topup_card_disconnect()
-        # TODO: CHECK RESULT
         # resultStr, reportPurse, ErrMsg = prepaid.topup_pursedata()
         resultStr, cardUID, reportPurse, cardAttr = prepaid.topup_get_carddata()
         if resultStr == "0000":
-            i = 0
-            while resultStr == "0000" and i <= max_t:
-                if i > max_t:
-                    break
-                else:
-                    idx = hex_padding(i)
-                    apdu = "9032030001" + str(idx) + "10"
-                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
-                    # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
-                    if resultStr == "0000":
-                        i = i + 1                        
-                        if rapdu in listRAPDU:
-                            continue
-                        listRAPDU.append(rapdu)
-                        types = rapdu[:2]
-                        amount = get_amount_for_log(rapdu[2:8])
-                        dates = get_date(rapdu[8:16])
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
-                        msg = msg + resreport + "#"
-                    else:
-                        GetLogBNI= rapdu
+            resultStr, card_log = prepaid.get_card_history('BNI')
+            if resultStr == '0000':
+                i = 0
+                for rapdu in card_log:
+                    if i > max_t:
+                        break
+                    if rapdu in listRAPDU:
+                        continue
+                    listRAPDU.append(rapdu)
+                    i = i + 1                        
+                    types = rapdu[:2]
+                    amount = get_amount_for_log(rapdu[2:8])
+                    dates = get_date(rapdu[8:16])
+                    resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                    msg = msg + resreport + "#"
 
         msg = msg + GetLogBNI
         
@@ -705,9 +696,7 @@ def bni_card_get_log_custom_priv(max_t=29):
 
 def bni_card_get_log_priv(max_t=29):
     resultStr = ""
-    ErrorCode = ""
     resreport = ""
-    ErrMsg = ""
     msg = ""
     GetLogBNI = ""
     listRAPDU = []
@@ -718,31 +707,21 @@ def bni_card_get_log_priv(max_t=29):
         prepaid.topup_card_disconnect()
         resultStr, data, ErrMsg = prepaid.topup_pursedata()
         if resultStr == "0000":
-            i = 0
-            while resultStr == "0000" and i <= max_t:
-                if i > max_t:
-                    break
-                else:
-                    idx = hex_padding(i)
-                    apdu = "9032030001" + str(idx) + "10"
-                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
-                    # uint8_t apdu_cl_history[] = {0x90, 0x32, 0x03, 0x00, 0x01, 0x00, 0x10};
-                    if resultStr == "0000":
-                        i = i + 1                        
-                        if rapdu in listRAPDU:
-                            continue
-                        listRAPDU.append(rapdu)
-                        types = rapdu[:2]
-                        # 01 
-                        # FFF254 
-                        # 3455A739
-                        # 0000138841420235
-                        amount = get_amount_for_log(rapdu[2:8])
-                        dates = get_date(rapdu[8:16])
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
-                        msg = msg + resreport + "#"
-                    else:
-                        GetLogBNI= rapdu
+            resultStr, card_log = prepaid.get_card_history('BNI')
+            if resultStr == '0000':
+                i = 0
+                for rapdu in card_log:
+                    if i > max_t:
+                        break
+                    if rapdu in listRAPDU:
+                        continue
+                    listRAPDU.append(rapdu)
+                    i = i + 1                        
+                    types = rapdu[:2]
+                    amount = get_amount_for_log(rapdu[2:8])
+                    dates = get_date(rapdu[8:16])
+                    resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates
+                    msg = msg + resreport + "#"
 
         msg = msg + GetLogBNI
         

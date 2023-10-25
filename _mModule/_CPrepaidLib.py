@@ -3,6 +3,7 @@ __author__ = 'wahyudi@multidaya.id'
 import serial
 import traceback
 from _mModule import _CSerializer as serializer
+from _tTools import _Helper
 
 COMPORT = None
 READER_BAUDRATE = None #Default: 38400,  115200
@@ -368,12 +369,32 @@ def reader_dump():
     return serializer.READER_DUMP(COMPORT)
 
 
-def get_card_history():
+CARD_HISTORY_SAMPLE = {
+    'MANDIRI': '2109231234374805030009000000012064000000FA050000',
+    'BNI': '01FFEC78359314BF00000F1020714194',
+    'BRI': '504F535245414452706F737265616472141023212409EF342100581B008C3C00',
+    'BCA': '240000018500885000200570ETU00476231012143355',
+    'DKI': '012C000011940000000400000DAC3019061300002EBF0000062A2023102409121411111111111111111111111111',
+}
+
+
+def get_card_history(bank=None):
     global COMPORT
     if not is_serial_valid():
-        return "FFFE", ""
+        return "FFFE", []
+    if bank is None or bank.upper() not in CARD_HISTORY_SAMPLE.keys():
+        return "ERR1", ["Undefined Bank"]
     res_str, rep = serializer.GET_CARD_HISTORY(COMPORT)
-    return res_str.decode("utf-8"), rep
+    code = res_str.decode("utf-8")
+    result = []
+    if code == '0000':
+        split_len = len(CARD_HISTORY_SAMPLE.get(bank))
+        string = rep.decode('utf-8')
+        remove_chars = ['|', ':', ';', '.', ',']
+        for r in remove_chars:
+            string = string.replace(r, '')
+        result = _Helper.split_string(s=string, x=split_len)
+    return res_str.decode("utf-8"), result
 
 
 def enable_reader_dump():
