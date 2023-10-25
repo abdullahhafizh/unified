@@ -520,7 +520,6 @@ def mandiri_get_log_priv(raw = False):
                 if rapdu == ('0'*240) or ('0'*100) in rapdu: 
                     continue
                 RawReport.append(rapdu)
-                i = i + 1
                 dates = rapdu[:12]
                 tid = rapdu[12:20]
                 count = prepaid_utils.getint(rapdu[20:28])
@@ -528,7 +527,8 @@ def mandiri_get_log_priv(raw = False):
                 amount = prepaid_utils.getint(rapdu[32:40])
                 balance = prepaid_utils.getint(rapdu[40:48])
                 resreport = str(i) + "|" + dates + "|" + tid + "|" + str(count) + "|" + str(types) + "|" + str(amount) + "|" + str(balance)
-                msg = msg + resreport
+                msg = msg + resreport + "#"
+                i = i + 1
         
         msg = msg + GetLogMandiri
         
