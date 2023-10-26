@@ -201,10 +201,10 @@ if not _Common.LIVE_MODE:
 DO_READER_DUMP_ON_CARD_HISTORY = False
 
 
-def do_get_reader_dump(c, r=None):
-    if not DO_READER_DUMP_ON_CARD_HISTORY and 'get_card_history' in c: return 
-    reff = _Helper.time_string('%Y%m%d%H%M%S') if r is None else r
-    param = QPROX['READER_DUMP'] + '|' + c + '|'  + reff
+def do_get_reader_dump(event, reff=None):
+    if not DO_READER_DUMP_ON_CARD_HISTORY and 'get_card_history' in event: return 
+    reff = _Helper.time_string('%Y%m%d%H%M%S') if reff is None else reff
+    param = QPROX['READER_DUMP'] + '|' + event + '|'  + reff
     dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((dump_response, dump_result))
     
@@ -2214,7 +2214,7 @@ def bni_card_history_direct(row=30):
     else:
         do_get_reader_dump(_Helper.whoami())
         return "", ""
-    
+
 
 def mdr_card_history_direct():
     param = QPROX['CARD_HISTORY_MANDIRI'] + '|' + 'RAW' + '|'

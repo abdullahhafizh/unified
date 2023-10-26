@@ -1147,9 +1147,12 @@ def startup_task():
         # print("pyt: Start Topup Service...")
         # _Helper.get_thread().apply_async(start_webserver)
         # sleep(1)
-        print("pyt: Start Init Cash Activity...")
-        _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Start Init Cash Activity...')
-        _Common.init_cash_activity()
+        
+        # Disable Below To Prevent Double Claim Bill Receive : 20231025
+        # print("pyt: Start Init Cash Activity...")
+        # _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Start Init Cash Activity...')
+        # _Common.init_cash_activity()
+        
         sleep(1)
         if _Common.BILL['status'] is True:
             sleep(1)

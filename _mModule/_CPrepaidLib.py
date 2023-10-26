@@ -391,6 +391,9 @@ def get_card_history(bank=None):
     remove_chars = ['|', ':', ';', '.', ',']
     for r in remove_chars:
         res_history = res_history.replace(r, '')
+    if bank == 'BRI':
+        # Remove Extra Padding For BRI - 10 Chars
+        res_history = res_history[10:]
     result = _Helper.split_string(s=res_history, x=split_len)
     return res_str.decode('utf-8'), result
 
