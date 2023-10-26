@@ -1163,6 +1163,9 @@ def DISABLE_DUMP(Ser):
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
+    # Add Clear Dump in Disable Dump
+    _, data = CLEAR_DUMP(Ser)
+    
     del data
     return response['code'].decode(), response
 

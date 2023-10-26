@@ -273,6 +273,15 @@ def dki_card_get_log_priv():
     try:
         prepaid.topup_card_disconnect()
         resultStr, history = prepaid.get_card_history('DKI')
+        
+        # 01 (type) - 2
+        # 2C - 2
+        # 00001194 (balance) - 8
+        # 00000004 - 8
+        # 00000DAC - 8
+        # 3019061300002EBF0000062A - 24
+        # 20231024091214 - 14 
+        # 11111111111111111111111111 
         if resultStr in ['0000', "9000"]:
             resultStr = "0000"
             i = 0

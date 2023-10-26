@@ -568,6 +568,9 @@ Base{
         if (bank_name=='MANDIRI'){
             provider = 'e-Money Mandiri';
             maxBalance = 2000000;
+
+            // Enable Reader Dump in Mandiri Only
+            _SLOT.start_enable_reader_dump();
         }
         if (bank_name=='BCA'){
             provider = 'Flazz BCA';

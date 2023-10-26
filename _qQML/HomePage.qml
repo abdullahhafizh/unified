@@ -517,7 +517,6 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
-                    _SLOT.start_enable_reader_dump();
                     if (uiSimplification){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
