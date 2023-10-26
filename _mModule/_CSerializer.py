@@ -1170,7 +1170,6 @@ def DISABLE_DUMP(Ser):
     return response['code'].decode(), response
 
 
-
 def READER_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB4"

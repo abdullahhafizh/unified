@@ -494,7 +494,7 @@ def init_config():
                         response, result = _Command.send_request(param=inject_param, output=None)
                         if response == 0:
                             LOGGER.info((BANK['BANK'], 'INJECT_KEY', result))
-                            init_param = QPROX['UPDATE_TID_BNI'] + '|' + _Common.BNI_C2C_TID
+                            init_param = QPROX['UPDATE_TID_BNI'] + '|' + _Common.TID_BNI
                             response, result = _Command.send_request(param=init_param, output=None)
                             LOGGER.info((BANK['BANK'], 'UPDATE_TID', result))
                             if response == 0:
