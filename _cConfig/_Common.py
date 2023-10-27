@@ -751,6 +751,9 @@ ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'h
 #         VIEW_CONFIG = TJ_VIEW_CONFIG
 #     if THEME_NAME.lower() in ['kai', 'kci']:
 #         VIEW_CONFIG = KAI_VIEW_CONFIG
+
+# Set Force Default Page Timer to 120 Second
+_ConfigParser.set_value('GENERAL', 'page^timer', '120')
         
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
