@@ -218,6 +218,9 @@ def start_enable_reader_dump():
     
 
 def disable_reader_dump():
+    if _Common.QPROX_READER_FORCE_DUMP:
+        LOGGER.info(('QPROX_READER_FORCE_DUMP', _Common.QPROX_READER_FORCE_DUMP))
+        return
     param = QPROX['DISABLE_READER_DUMP'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((response, result))

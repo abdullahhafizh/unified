@@ -124,6 +124,7 @@ _HTTPAccess.HEADER = _HTTPAccess.get_header(TID, TERMINAL_TOKEN)
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
 QPROX_BAUDRATE = _ConfigParser.get_set_value('QPROX_NFC', 'baudrate', '38400')
+QPROX_READER_FORCE_DUMP = True if _ConfigParser.get_set_value('QPROX_NFC', 'force^enable^dump', '1') == '1' else False
 INIT_DELAY_TIME = 2
 # _ConfigParser.get_set_value('QPROX_NFC', 'init^delay^time', '5')
 
