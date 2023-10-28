@@ -1,3 +1,8 @@
+16.4.7-GLOBAL:
+- Quick Win Solving For BNI Topup Failure Below Threshold,
+- Quick Win Solving BCA Topup Payment Timeout,
+- ...
+
 16.4.6-GLOBAL:
 - Fix Query String in Card Config Check,
 - ...
