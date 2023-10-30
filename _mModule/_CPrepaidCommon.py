@@ -349,7 +349,10 @@ def done(param, __global_response__):
 #020
 def get_purse_data(param, __global_response__):
     Param = param.split('|')
+    # Empty String Will Have Less Than 2 Param
     if len(Param) < 2:
+        # Set Back to Old Command $65
+        LOG.fw("020:Mode = ", '$65')
         res_str, reportPurse, purseError = prepaid.topup_pursedata()
     else:
         prepaid.topup_card_disconnect()

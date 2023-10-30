@@ -158,26 +158,40 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     pendingtopup = pendingtopup.zfill(8).upper()
                     LOG.fw("019:pendingtopup:", pendingtopup)
                     combinedata = strdate + "0000000000000000000000000000" + session + '0123456789ABCDEF00112233445566778899' + pendingtopup + "0000000000000000000011111111111111111111"
-                    # 00E50000 46 020922150625 0000000000000000000000000000 4A515F8316A11ECF 0123456789ABCDEF00112233445566778899 0000000A 0000000000000000000011111111111111111111
-                    # CMD   LENGTH      STR_DATE    PAD_LEFT    SESSION     PAD_MIDDLE  PENDING_TOPUP_HEX   PAD_RIGHT   
-                    LOG.fw("019:combinedata:", combinedata)
+                    # CMD 00E50000
+                    # LEN 46 
+                    # DATE (6) 020922150625 
+                    # PADDING_LEFT (14) 0000000000000000000000000000 
+                    # SESSION FROM API (8) 4A515F8316A11ECF 
+                    # INSTITUTION_REFF (8) 0123456789ABCDEF 
+                    # SOURCE OF ACCOUNT (10) 00112233445566778899 
+                    # AMOUNT HEX (4) 0000000A 
+                    # MERCHANT DATA (20) 0000000000000000000011111111111111111111
                     lendata = len(combinedata) / 2
                     lendata = format(int(lendata), 'x').upper()
-                    LOG.fw("019:lendata:", lendata)
                     dataToCard = "00E50000" + lendata + combinedata
-                    res_str, resreport = prepaid.send_apdu_cmd(b"255", dataToCard)
+                    LOG.fw("019:inputData:", dataToCard)
+                    res_str, dataUpdate = prepaid.send_apdu_cmd(b"255", dataToCard)
+                    LOG.fw("019:dataUpdate:", dataUpdate)
+                    LOG.fw("019:dataUpdate(len):", len(dataUpdate))
                     ErrorCode = res_str
+                    
+                    # 424DBAFFEE50A55E06F77F54DCAFCC4E81DCE99B58394BB279EA97865A29CEFFEEFC54B088D6941C606B69FD54883545BE86DE3BC7AD46F50094FB2922E4D127708B0D96BAD1D4EC79017005F049980C644F7F5DBBE5132028369A9F9A84839692097D2D4B49DA67D94E0F1F0BE8B9F09C285CC0EA518D2C631064F5416383BED61B7CC3248C55D22DD629D52AD52AEA58FCDAA6582584573879059C312B5E34253542CA02B22FBDC9D854DB763DE03DA5232C21A2F2D5617A0100FFE4641042808C6AF57F8754674D46B2638E0BE78A6EF773AC643372F2E28F003D8388A8EC7FAED362FAEC3791526114C122B95563B253E8A89DF78CE7A6DBCFB8DA6586ACC5856A89A3D12895B3B82935875B8DC5A88384B5C911AFBEF21B3EFD5C53CC440BD593AF7801AE2ECBAF01766C4E393CD652EEE7E2BB4ABC9E5DA98138028B001B34199DD2BA7C0136A824DC9E888C61C9C0C8361E364909BE22CDEDD54EB0D50AD7DC3688CA7EE5B03BF66B97F9160C89881B732F11D63525AC4413796F17EB62A8897D5FE439A61C8F5A4749
+                    # 772CAE6CA499A34227F81249F61250199846F2C972803C4014771150A7E444923E87620EF2C621404F93447907498F290A1EAFD7B85C2112946B60390585D7F2E555B43FB795DCB9CE7EEAEE6E841B8F997235AA3B0CCB2DB86F85AC39CD6C578A1A163E2BC07C9CA1D7479C78EE7A9C2187ADF7F3F2187C82AE0C627E4CF7BC86F51D596643BDD67BE31D0A97F38EDA0F91642E336FE0F3244022E18ADFE166198CC7B873EE13664ED7C9201F333166E33B2275FFB20640D0AE141F828162E24BEDA67CB05849455DB9CDC3A740C9C764E491B87D4AC2A7808A61375EB76162C97A9D55763366FF10B1EABDCA4302E38239BD137DF2C3709000 
 
                     LOG.fw("019:SendDataToCard update = ", ErrorCode)
 
                     if res_str == "0000":
-                        res_str, resreport = prepaid.send_apdu_cmd(b"255", "00E0000000")
+                        res_str, dataCertificate = prepaid.send_apdu_cmd(b"255", "00E0000000")
+                        LOG.fw("019:dataCertificate:", dataCertificate)
+                        LOG.fw("019:dataCertificate(len):", len(dataCertificate))
 
                         if res_str == "0000":
-                            dataToCardConfirm = resreport
+                            dataToCardConfirm = dataUpdate + dataCertificate
+                            LOG.fw("019:dataToCardConfirm:", dataToCardConfirm)
                             while res and updateStatusConfirm == "PENDING":
-                                dataToCardConfirm = dataToCardConfirm + "9000"
-                                valuetext,errmsg = send_confirm_update(url,C_TOKEN, C_TID, C_MID, cardno, dataToCardConfirm, "", approvalcode)
+                                dataToCardConfirm = dataToCardConfirm
+                                valuetext, errmsg = send_confirm_update(url,C_TOKEN, C_TID, C_MID, cardno, dataToCardConfirm, "", approvalcode)
                                 data_to_confirm = json.loads(valuetext)
                                 codeConfirm = None
 
