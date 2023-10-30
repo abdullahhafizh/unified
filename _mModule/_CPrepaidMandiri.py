@@ -208,7 +208,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                         updateStatusConfirm = temp_json["updateStatus"]
                                 
                                 codeConfirm = str(codeConfirm)
-
+                                
                                 if codeConfirm == "200" and updateStatusConfirm == "SUCCESS":
                                     res_str, cardUpdate = prepaid.send_apdu_cmd(b"255", dataToCardConfirm)
                                     LOG.fw("019:cardUpdate:", cardUpdate)
@@ -229,8 +229,6 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                     res_str = codeConfirm
                                     res = False
                                     break
-
-
                     else:
                         ResReversal = True
                         codereversal = ""
