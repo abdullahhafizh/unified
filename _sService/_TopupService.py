@@ -1907,7 +1907,8 @@ def topup_online(bank, cardno, amount, trxid=''):
             _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
             return True
         elif bank == 'MANDIRI_C2C_DEPOSIT':
-            if _Common.MANDIRI_ACTIVE_WALLET > _Common.C2C_THRESHOLD:
+            if _Common.MANDIRI_ACTIVE_WALLET > _Common.C2C_THRESHOLD and int(amount) > 1:
+                # Topup Trigger 1 Still Enable For Anytime Refill
                 LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', _Common.MANDIRI_ACTIVE_WALLET, _Common.C2C_THRESHOLD))
                 return False
             LOGGER.info(('TRIGGER MANDIRI DEPOSIT RELOAD', _Common.MANDIRI_ACTIVE_WALLET, 'MANDIRI THRESHOLD', _Common.C2C_THRESHOLD))
