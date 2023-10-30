@@ -8,6 +8,7 @@
 - Enable Topup 1 Override on Topup Deposit Mandiri,
 - Disable Online Logger,
 - Disable Param Logger in Topup & QR Request,
+- Handle BRI Log History Sort Data,
 - ...
 
 16.5.0-GLOBAL:

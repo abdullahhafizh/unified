@@ -473,6 +473,20 @@ def bri_card_get_log(param, __global_response__):
         LOG.fw("025:Gagal", None, True)
 
 
+def sort_data_by_datetime(h=[]):
+    if len(h) == 0: return h
+    sorted_key = []
+    for row in h:
+        datetime = row[32:44]
+        sorted_key.append(datetime)
+    sorted_key.sort(reverse=True)
+    sorted_result = []
+    for key in sorted_key:
+        for row in h:
+            if str(key) in row:
+                sorted_result.append(row)
+    return sorted_result
+    
 
 def get_log_bri_priv(slot, msg):
     resultStr = ""
@@ -483,6 +497,7 @@ def get_log_bri_priv(slot, msg):
         resultStr, history = prepaid.get_card_history('BRI')
         if resultStr == '0000' or resultStr.upper() == "911C":
             resultStr = "0000"
+            history = sort_data_by_datetime(history)
             for item in history:
                 mid = item[:16]
                 tid = item[16:32]
@@ -512,6 +527,7 @@ def get_raw_log_bri_priv(slot, msg=''):
         resultStr, history = prepaid.get_card_history('BRI')
         if resultStr == '0000' or resultStr.upper() == "911C":
             resultStr = "0000"
+            history = sort_data_by_datetime(history)
         msg = ",".join(history)            
 
     except Exception as ex:
