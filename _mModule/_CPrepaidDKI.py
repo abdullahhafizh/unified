@@ -149,8 +149,6 @@ def topup_request_dki_priv(Denom):
 
     ResultStr, BalValue, CardNo, SIGN = prepaid.topup_balance_with_sn()
     sleep(1)
-    ResultStr, reportPurse, debErrorStr = prepaid.topup_pursedata()
-    sleep(1)
     ResultStr, reportAPDU = prepaid.send_apdu_cmd("255", "00A4040008A0000005714E4A43")
 
     if ResultStr == "0000":
@@ -171,7 +169,7 @@ def topup_request_dki_priv(Denom):
         ResultStr, report = prepaid.send_apdu_cmd("255", DATACARD)            
         LOG.fw("051:DATACARD Receive = ", report)
 
-    return ResultStr, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report
+    return ResultStr, BalValue, CardNo, 'N/A', DepositCard, ExpireCardDate, report
 
 
 def topup_confirm_dki(param, __global_response__):
@@ -301,7 +299,6 @@ def dki_card_get_log_priv(method='NEW'):
                     msg = msg + resreport + "#"
         else:
             resultStr, uid, cardno = prepaid.get_card_sn()
-            # resultStr, purseData, errMessage = prepaid.topup_pursedata()
             if resultStr == "0000":
                 i = 0
                 while resultStr == "0000" and i <= max_t:
