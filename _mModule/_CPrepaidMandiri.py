@@ -547,7 +547,7 @@ def mandiri_get_log_priv(raw = False):
             history = sort_data_by_datetime(history)
             i = 0
             for rapdu in history:
-                if rapdu == ('0'*240) or ('0'*100) in rapdu or rapdu not in RawReport: 
+                if rapdu == ('0'*240) or ('0'*100) in rapdu or rapdu in RawReport: 
                     continue
                 dates = rapdu[:12]
                 tid = rapdu[12:20]
