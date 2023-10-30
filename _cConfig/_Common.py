@@ -638,7 +638,10 @@ def init_temp_data():
 
 def store_to_temp_data(temp, content, log=True):
     if log is True:
-        LOGGER.info((temp, content))
+        if len(content) > 1024:
+            LOGGER.info((temp, content[:1024]+'...'))
+        else:
+            LOGGER.info((temp, content))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
