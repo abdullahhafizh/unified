@@ -450,7 +450,7 @@ def start_receive_note(trxid):
         _Common.store_notes_activity('ERROR', trxid)
         _Common.BILL_ERROR = 'FAILED_RECEIVE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
-        _Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, TARGET_CASH_AMOUNT, CASH_TIME_HISTORY], 'device')
+        #_Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, TARGET_CASH_AMOUNT, CASH_TIME_HISTORY], 'device')
 
 
 def store_cash_into_cashbox(trxid):
@@ -508,7 +508,7 @@ def set_cashbox_full():
     _Common.BILL_ERROR = 'CASHBOX_FULL'
     # total_cash = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
     total_cash = _Common.get_cash_activity()['total']
-    _Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
+    #_Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
     _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
 
 

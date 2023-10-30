@@ -208,7 +208,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
             _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
             # _Common.upload_topup_error('FAILED_GET_CARD_INFO_BNI', slot, 'ADD')
-            _Common.online_logger(['BNI Card Data', _get_card_data], 'general')
+            #_Common.online_logger(['BNI Card Data', _get_card_data], 'general')
             return 'FAILED_GET_CARD_INFO_BNI'
         # prev_balance = _Common.BNI_ACTIVE_WALLET
         if not _Common.BNI_C2C_TRESHOLD_USAGE:
@@ -231,7 +231,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_PENDING_BALANCE_BNI')
             _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
             # _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Result Pending', _result_pending], 'general')
+            #_Common.online_logger(['BNI Result Pending', _result_pending], 'general')
             return 'FAILED_PENDING_BALANCE_BNI'
         BNI_DEPOSIT_UPDATE_BALANCE_PROCESS = True
         LOGGER.info(('BNI_DEPOSIT_UPDATE_BALANCE_PROCESS', BNI_DEPOSIT_UPDATE_BALANCE_PROCESS))
@@ -255,7 +255,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_UPDATE_BALANCE_BNI')
             # _Common.upload_topup_error(slot, 'ADD')
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
-            _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
+            #_Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = False
@@ -276,7 +276,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
             # _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
+            #_Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
@@ -346,7 +346,7 @@ def bni_reset_update_balance(slot=1, activation=True):
         })
         if _result_pending is False:
             # _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Pending Result', _result_pending], 'general')
+            #_Common.online_logger(['BNI Pending Result', _result_pending], 'general')
             return False, 'ACTIVATION_PENDING_FAILED'
         # Waiting Another Deposit Update Balance Process
         # wait = 0
@@ -371,7 +371,7 @@ def bni_reset_update_balance(slot=1, activation=True):
         if _result_ubal is False:
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             # _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
+            #_Common.online_logger(['BNI Result Ubal', _result_ubal], 'general')
             return False, 'UPDATE_BALANCE_FAILED'
         _send_crypto = False
         attempt = 0
@@ -390,7 +390,7 @@ def bni_reset_update_balance(slot=1, activation=True):
             LOGGER.info(('BNI_DEPOSIT_UPDATE_BALANCE_PROCESS', BNI_DEPOSIT_UPDATE_BALANCE_PROCESS))
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
             # _Common.upload_topup_error(slot, 'ADD')
-            _Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
+            #_Common.online_logger(['BNI Send Crypto', _send_crypto], 'general')
             return False, 'INJECT_CRYPTO_FAILED'
         else:
             # _Common.DEPOSIT_UPDATE_BALANCE_IN_PROCESS = []
@@ -458,7 +458,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['tid'] = TOPUP_TID
             # _param['priv'] = 'NO_LIMIT'
             status, response = execute_topup_pending(_param, bank, mode)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
             #    {
             #    "response":{
@@ -489,7 +489,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -509,7 +509,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             # _param['priv'] = 'NO_LIMIT'
             status, response = execute_topup_pending(_param, bank, mode)
             # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bri/pending', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
                 #    "response":{
@@ -533,7 +533,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -556,7 +556,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 _url = _Common.UPDATE_BALANCE_URL_DEV
             status, response = execute_topup_pending(_param, bank, mode)
             # status, response = _HTTPAccess.post_to_url(url=_url + 'topup-bca/pending', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
                 #    "response":{
@@ -580,7 +580,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -602,7 +602,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             _param['purpose'] = 'TOPUP_DEPOSIT_C2C'
             status, response = execute_topup_pending(_param, bank, mode)
             # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
                 #    "response":{
@@ -621,7 +621,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 # }
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -639,7 +639,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             # This Below Key Is Mandatory For Topup Deposit C2C TO Reroute Mandiri Cred
             status, response = execute_topup_pending(_param, bank, mode)
             # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-mandiri/pending', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
                 #    "response":{
@@ -658,7 +658,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 # }
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -678,7 +678,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
             # _param['priv'] = 'NO_LIMIT'
             status, response = execute_topup_pending(_param, bank, mode)
             # status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/pending', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 reff_no = _param.get('invoice_no')
                 data = response['data']
@@ -686,7 +686,7 @@ def pending_balance(_param, bank='BNI', mode='TOPUP'):
                 _Common.store_to_temp_data(reff_no+'-last-pending-result', json.dumps(data))
                 return response['data']
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -755,7 +755,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             _param['prev_balance'] = '0'
             LAST_BNI_TOPUP_PARAM = _param
             status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/update', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 response['data']['card_info'] = _param['card_info']
                 # {
@@ -792,7 +792,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                         })
                         if _activation_pending is False:
                             # _Common.upload_topup_error(_param['slot'], 'ADD')
-                            _Common.online_logger(['BNI Activation Pending Result', _activation_pending], 'general')
+                            #_Common.online_logger(['BNI Activation Pending Result', _activation_pending], 'general')
                             return False
                         return update_balance({
                             'card_no': _renew_card_data['card_no'],
@@ -804,11 +804,11 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                         response['data']['bni_activation_response'] = bni_act_resp
                         response['data']['bni_activation_result'] = bni_act_result
                         _Common.ALLOW_DO_TOPUP = False
-                        _Common.online_logger([response, bank, _param], 'general')
+                        #_Common.online_logger([response, bank, _param], 'general')
                         return False
                 else:
                     _Common.ALLOW_DO_TOPUP = False
-                    _Common.online_logger([response, bank, _param], 'general')
+                    #_Common.online_logger([response, bank, _param], 'general')
                     return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -836,7 +836,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     LOGGER.debug(('LAST_BRI_ACCESS_TOKEN', LAST_BRI_ACCESS_TOKEN))
                     LAST_BRI_REFF_NO_HOST = error_result[2]
                     LOGGER.debug(('LAST_BRI_REFF_NO_HOST', LAST_BRI_REFF_NO_HOST))
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning(str(e))
@@ -874,7 +874,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     reset_bca_session()
                     # Must Return Here To Stop Emit into Front
                     return 'BCA_TOPUP_CORRECTION'
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning(str(e))
@@ -977,7 +977,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/update', param=_param)
-            LOGGER.debug((str(_param), str(status), str(response)))
+            LOGGER.debug((str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 return {
                     'bank': bank,
@@ -987,7 +987,7 @@ def update_balance(_param, bank='BNI', mode='TOPUP', trigger=None):
                     'data_to_card': response['data']['data_to_card']
                 }
             else:
-                _Common.online_logger([response, bank, _param], 'general')
+                #_Common.online_logger([response, bank, _param], 'general')
                 return False
         except Exception as e:
             LOGGER.warning(str(e))
@@ -1013,7 +1013,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-bni/reversal', param=_param)
-            LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
+            LOGGER.debug(('reversal_balance', str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
                 # "response":{
@@ -1047,7 +1047,7 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
             _param['mid'] = TOPUP_MID
             _param['tid'] = TOPUP_TID
             status, response = _HTTPAccess.post_to_url(url=TOPUP_URL + 'topup-dki/reversal', param=_param)
-            LOGGER.debug(('reversal_balance', str(_param), str(status), str(response)))
+            LOGGER.debug(('reversal_balance', str(status), str(response)))
             if status == 200 and response['response']['code'] == 200:
                 # {
                 # "response":{
@@ -1140,7 +1140,7 @@ def remote_deposit_activation_bni(slot=1):
             activation_result = update_balance(_param, 'BNI', 'TOPUP', False)
         else:
             _Common.ALLOW_DO_TOPUP = False
-            _Common.online_logger([bni_act_result, 'BNI', _param], 'general')
+            #_Common.online_logger([bni_act_result, 'BNI', _param], 'general')
             activation_result = False
         LOGGER.debug((str(activation_result)))        
         sleep(1)
@@ -1927,7 +1927,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not pending_result:
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|PENDING_ERROR')
                 _Common.remove_temp_data('MANDIRI_DEPOSIT_RELOAD_IN_PROGRES')
-                _Common.online_logger([pending_result, bank, cardno, amount], 'general')
+                #_Common.online_logger([pending_result, bank, cardno, amount], 'general')
                 return False
             # Do Reset Memory Mandiri C2C Wallet To Prevent Usage (Miss Match Card Info)
             prev_balance = _Common.MANDIRI_ACTIVE_WALLET
@@ -1952,7 +1952,7 @@ def topup_online(bank, cardno, amount, trxid=''):
                 TP_SIGNDLER.SIGNAL_DO_ONLINE_TOPUP.emit('TOPUP_ONLINE_DEPOSIT|UPDATE_ERROR')
                 _Helper.get_thread().apply_async(job_retry_reload_mandiri_deposit, (True,))
                 _Common.remove_temp_data('MANDIRI_DEPOSIT_RELOAD_IN_PROGRES')
-                _Common.online_logger([update_result, bank, cardno, amount], 'general')
+                #_Common.online_logger([update_result, bank, cardno, amount], 'general')
                 return False
             if update_result['last_balance'] == update_result['topup_amount']:
                 update_result['last_balance'] = str(int(update_result['topup_amount']) + int(prev_balance))

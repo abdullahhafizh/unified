@@ -1004,7 +1004,7 @@ def alter_table(a):
         _DAO.adjust_table(a)
     except Exception as e:
         LOGGER.warning((e))
-        # _Common.online_logger(['Data Alter', a], 'general')
+        # #_Common.online_logger(['Data Alter', a], 'general')
 
 
 def start_migrate_table(s):
