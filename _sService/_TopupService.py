@@ -2045,7 +2045,8 @@ def topup_online(bank, cardno, amount, trxid=''):
 
             if response == 0 and '|' in result:
                 # Composed With (Card Data Info) + DepositCard + ExpirityCard
-                card_info = result.split('|')[5] + result.split('|')[3] + result.split('|')[4]
+                # card_info = result.split('|')[5] + result.split('|')[3] + result.split('|')[4]
+                card_info = result
                 _param['card_info'] = card_info
                 _param['prev_balance'] = last_card_check['balance']
                 update_result = update_balance(_param, bank='DKI', mode='TOPUP')

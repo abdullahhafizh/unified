@@ -282,7 +282,7 @@ def reversal_bri_priv(TID,MID,TOKEN,SAMSLOT,cardno, amount, lastbalance, bri_tok
         url = UPDATE_BALANCE_URL
 
         resultStr, balance, cardno, SIGN = prepaid.topup_balance_with_sn()        
-        sleep(1)
+        sleep(.5)
 
         #Start Reversal
         resultStr, ErrMsg = do_send_reversal_bri(url, TOKEN, TID, MID, cardno, bri_token, reffnohost)
