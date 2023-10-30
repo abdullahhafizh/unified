@@ -371,6 +371,10 @@ def reader_dump():
 
 CARD_HISTORY_SAMPLE = {
     'MANDIRI': '25102309042870201700D9100000012001000000AFD80000',
+    'MANDIRI_EXTENDED': '3010231708445116118886030000011034210000936D0200340000000077',
+    # 30102320053329020100C40200000100E8030000D1650000
+    # 25102309042870201700D9100000012001000000AFD80000
+    # 3010231708445116118886030000011034210000936D0200340000000077 (old applet with extended data)
     'BNI': '01FFEC78359314BF00000F1020714194',
     'BRI': '504F535245414452706F737265616472141023212409EF342100581B008C3C00',
     'BCA': '240000018500885000200570ETU00476231012143355',
@@ -394,6 +398,10 @@ def get_card_history(bank=None):
     if bank == 'BRI':
         # Remove Extra Padding For BRI - 10 Chars
         res_history = res_history[10:]
+    if bank == 'MANDIRI':
+        new_applet = (len(res_history) % split_len) == 0
+        if not new_applet:
+            split_len = len(CARD_HISTORY_SAMPLE.get('MANDIRI_EXTENDED'))
     result = _Helper.split_string(s=res_history, x=split_len)
     return res_str.decode('utf-8'), result
 

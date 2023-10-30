@@ -173,7 +173,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     LOG.fw("019:inputData:", dataToCard)
                     res_str, dataUpdate = prepaid.send_apdu_cmd(b"255", dataToCard)
                     LOG.fw("019:dataUpdate:", dataUpdate)
-                    LOG.fw("019:dataUpdate(len):", len(dataUpdate))
+                    LOG.fw("019:dataUpdate(len):", len(dataUpdate)/2)
                     ErrorCode = res_str
                     
                     # 424DBAFFEE50A55E06F77F54DCAFCC4E81DCE99B58394BB279EA97865A29CEFFEEFC54B088D6941C606B69FD54883545BE86DE3BC7AD46F50094FB2922E4D127708B0D96BAD1D4EC79017005F049980C644F7F5DBBE5132028369A9F9A84839692097D2D4B49DA67D94E0F1F0BE8B9F09C285CC0EA518D2C631064F5416383BED61B7CC3248C55D22DD629D52AD52AEA58FCDAA6582584573879059C312B5E34253542CA02B22FBDC9D854DB763DE03DA5232C21A2F2D5617A0100FFE4641042808C6AF57F8754674D46B2638E0BE78A6EF773AC643372F2E28F003D8388A8EC7FAED362FAEC3791526114C122B95563B253E8A89DF78CE7A6DBCFB8DA6586ACC5856A89A3D12895B3B82935875B8DC5A88384B5C911AFBEF21B3EFD5C53CC440BD593AF7801AE2ECBAF01766C4E393CD652EEE7E2BB4ABC9E5DA98138028B001B34199DD2BA7C0136A824DC9E888C61C9C0C8361E364909BE22CDEDD54EB0D50AD7DC3688CA7EE5B03BF66B97F9160C89881B732F11D63525AC4413796F17EB62A8897D5FE439A61C8F5A4749
@@ -184,7 +184,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     if res_str == "0000":
                         res_str, dataCertificate = prepaid.send_apdu_cmd(b"255", "00E0000000")
                         LOG.fw("019:dataCertificate:", dataCertificate)
-                        LOG.fw("019:dataCertificate(len):", len(dataCertificate))
+                        LOG.fw("019:dataCertificate(len):", len(dataCertificate)/2)
 
                         if res_str == "0000":
                             dataToCardConfirm = dataUpdate + dataCertificate
