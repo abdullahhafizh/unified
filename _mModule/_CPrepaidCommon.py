@@ -91,7 +91,7 @@ def enable_reader_dump(__global_response__=None):
 
 # RD2
 def disable_reader_dump(__global_response__=None):
-    res_str, _ = prepaid.disable_reader_dump()
+    res_str = prepaid.disable_reader_dump()
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["ErrorDesc"] = "Sukses"
