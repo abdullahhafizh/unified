@@ -202,46 +202,29 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 if "data" in data_to_confirm.keys():
                                     temp_json = data_to_confirm["data"]
                                     if "dataToCard" in temp_json.keys():
+                                        # Reply From Server To Be Injected Into Card
                                         dataToCardConfirm = temp_json["dataToCard"]
                                     if "updateStatus" in temp_json.keys():
                                         updateStatusConfirm = temp_json["updateStatus"]
                                 
                                 codeConfirm = str(codeConfirm)
 
-                                if codeConfirm == "200":
-                                    if updateStatusConfirm == "SUCCESS":
+                                if codeConfirm == "200" and updateStatusConfirm == "SUCCESS":
+                                    res_str, cardUpdate = prepaid.send_apdu_cmd(b"255", dataToCardConfirm)
+                                    LOG.fw("019:cardUpdate:", cardUpdate)
+                                    LOG.fw("019:cardUpdate(len):", len(cardUpdate)/2)
+                                    if res_str == '0000':
                                         valuetext,errmsg = send_confirm_update(url,C_TOKEN, C_TID, C_MID, cardno, dataToCardConfirm, "COMPLETED", approvalcode)
                                         data_to_confirm2 = json.loads(valuetext)
                                         codeConfirm = ""
-
                                         if "response" in data_to_confirm2.keys():
                                             temp_json = data_to_confirm2["response"]
                                             if "code" in temp_json.keys():
                                                 codeConfirm = temp_json["code"]
-                                        if "data" in data_to_confirm2.keys():
-                                            temp_json = data_to_confirm2["data"]
-                                            if "dataToCard" in temp_json.keys():
-                                                dataToCardConfirm = temp_json["dataToCard"]
-                                            if "updateStatus" in temp_json.keys():
-                                                updateStatusConfirm = temp_json["updateStatus"]
-
                                         codeConfirm = str(codeConfirm)
                                         ErrorCode = "0000"
                                         res = True
                                         break
-                                    else:
-                                        res_str, resreport = prepaid.send_apdu_cmd(b"255", dataToCardConfirm)
-                                        # res_str = prepaid_utils.to_4digit(res_w)
-                                        ErrorCode = res_str
-
-                                        LOG.fw("019:SendDataToCard confirm = ", ErrorCode)
-
-                                        if res_str == "0000":
-                                            dataToCardConfirm = resreport
-                                            res = True
-                                        else:
-                                            res = False
-                                            break 
                                 else:
                                     res_str = codeConfirm
                                     res = False
