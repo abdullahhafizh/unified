@@ -2043,7 +2043,7 @@ def topup_online(bank, cardno, amount, trxid=''):
             LOGGER.debug((_param_command, bank, response, result))
             last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
 
-            if response == 0 and '|' in result:
+            if response == 0 and len(result) >= 76:
                 # Composed With (Card Data Info) + DepositCard + ExpirityCard
                 # card_info = result.split('|')[5] + result.split('|')[3] + result.split('|')[4]
                 card_info = result
