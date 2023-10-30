@@ -523,6 +523,8 @@ def sort_data_by_datetime(h=[]):
     sorted_result = []
     for key in sorted_key:
         for row in h:
+            if row in sorted_result:
+                continue
             if str(key)[1:] in row:
                 sorted_result.append(row)
     return sorted_result
