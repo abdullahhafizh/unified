@@ -5,6 +5,7 @@
 - Switch Card Log From APDU into CMD (Except DKI to Match Existing Reader FW),
 - Set Payment Time to 360 seconds,
 - Enhance BNI Deposit Balance Validation,
+- Enable Topup 1 Override on Topup Deposit Mandiri,
 - Disable Online Logger,
 - Disable Param Logger in Topup & QR Request,
 - ...

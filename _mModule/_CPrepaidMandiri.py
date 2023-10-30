@@ -514,7 +514,7 @@ def mandiri_get_log_priv(raw = False):
         # 25102308331870201600410E0000012001000000B3D80000
         # 1610231546377470300016000000012001000000B43B0000
         # 1810231146315109778800000000011048260000E2650000
-        if resultStr == "0000":
+        if resultStr == "0000" or len(history) > 0:
             i = 0
             for rapdu in history:
                 if rapdu == ('0'*240) or ('0'*100) in rapdu: 
@@ -531,6 +531,8 @@ def mandiri_get_log_priv(raw = False):
                 i = i + 1
         
         msg = msg + GetLogMandiri
+        if len(RawReport) > 0:
+            resultStr = '0000'
         
     except Exception as ex:
         resultStr = "1"
