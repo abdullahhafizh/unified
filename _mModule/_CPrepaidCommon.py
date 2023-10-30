@@ -349,7 +349,7 @@ def done(param, __global_response__):
 #020
 def get_purse_data(param, __global_response__):
     Param = param.split('|')
-    if len(Param) < 1:
+    if len(Param) < 2:
         res_str, reportPurse, purseError = prepaid.topup_pursedata()
     else:
         prepaid.topup_card_disconnect()
