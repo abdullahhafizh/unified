@@ -513,6 +513,21 @@ def mandiri_get_log(param, __global_response__):
     return res_str
 
 
+def sort_data_by_datetime(h=[]):
+    if len(h) == 0: return h
+    sorted_key = []
+    for row in h:
+        datetime = '1' + row[:21]
+        sorted_key.append(datetime)
+    sorted_key.sort(reverse=True)
+    sorted_result = []
+    for key in sorted_key:
+        for row in h:
+            if str(key)[1:] in row:
+                sorted_result.append(row)
+    return sorted_result
+
+
 def mandiri_get_log_priv(raw = False):
     resultStr = ""
     resreport = ""
@@ -529,6 +544,7 @@ def mandiri_get_log_priv(raw = False):
         # 1610231546377470300016000000012001000000B43B0000
         # 1810231146315109778800000000011048260000E2650000
         if resultStr == "0000" or len(history) > 0:
+            history = sort_data_by_datetime(history)
             i = 0
             for rapdu in history:
                 if rapdu == ('0'*240) or ('0'*100) in rapdu: 
