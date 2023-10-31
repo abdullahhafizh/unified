@@ -621,19 +621,16 @@ def KM_BALANCE_TOPUP_C2C(Ser):
         return result["code"], b"", b"", b"", b""
 
 
-def APDU_SEND(Ser, slot, apdu, include_length=True):
+def APDU_SEND(Ser, slot, apdu):
     sam = {}
     sam["cmd"] = b"\xB0"
     sam["slot"] = format(slot, "X")[0:2].zfill(2)
     sam["len"] = format(len(apdu), "X")[0:2].zfill(2)
+    # Define Max APDU Len on 255 / FF
+    if len(apdu) > 255: sam["len"] = "FF"
     sam["apdu"] = apdu
 
-
-    LOG.fw("INCLUDE_LENGTH:", str(include_length))
-
     bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["len"].encode("utf-8") + sam["apdu"]
-    if not include_length:
-        bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["apdu"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
     send_command(Ser, p)
     
