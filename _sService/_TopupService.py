@@ -1258,6 +1258,10 @@ def get_topup_readiness():
         TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit('ERROR')
 
 
+# Switch Panel For Reader Dump
+DUMP_READER_ON_UPDATE_BALANCE = True
+
+
 def start_update_balance_online(bank):
     _Helper.get_thread().apply_async(update_balance_online, (bank,))
 
@@ -1305,12 +1309,21 @@ BCA_KEY_PARTIAL = 'UpdateAPI_Failed_Card_Reversal_Failed' #'BCATopup1_Failed'
 BCA_TOPUP_ONLINE_ERROR = ['8041', '1407', '2B45', 'A8AE', '8386', 'EE31']
 
 
+def do_dump_reader(e):
+    if DUMP_READER_ON_UPDATE_BALANCE:
+        _QPROX.do_get_reader_dump(event=e)
+
+
 def update_balance_online(bank):
     if bank is None or bank not in _Common.ALLOWED_BANK_UBAL_ONLINE:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
         return
     # last_card_check = _QPROX.LAST_CARD_CHECK
     last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
+    output = {}
+    
+    # Remove On Production
+    if DUMP_READER_ON_UPDATE_BALANCE: _QPROX.enable_reader_dump()
 
     if bank == 'MANDIRI':
         try:            
@@ -1337,6 +1350,9 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+        finally:
+            if _Helper.empty(output):
+                do_dump_reader(_Helper.whoami()+'_'+bank)
     elif bank == 'BNI':
         try:
             last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
@@ -1382,6 +1398,9 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+        finally:
+            if _Helper.empty(output):
+                do_dump_reader(_Helper.whoami()+'_'+bank)
     elif bank == 'BRI':
         try:
             param = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BRI'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|' + _Common.SLOT_BRI + '|' 
@@ -1405,6 +1424,9 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+        finally:
+            if _Helper.empty(output):
+                do_dump_reader(_Helper.whoami()+'_'+bank)
     elif bank == 'BCA':
         try:
             param = QPROX_COMMAND['UPDATE_BALANCE_ONLINE_BCA'] + '|' + TOPUP_TID + '|' + TOPUP_MID + '|' + TOPUP_TOKEN +  '|'
@@ -1441,6 +1463,9 @@ def update_balance_online(bank):
         except Exception as e:
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+        finally:
+            if _Helper.empty(output):
+                do_dump_reader(_Helper.whoami()+'_'+bank)
     else:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
 

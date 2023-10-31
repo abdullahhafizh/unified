@@ -628,6 +628,9 @@ def APDU_SEND(Ser, slot, apdu, include_length=True):
     sam["len"] = format(len(apdu), "X")[0:2].zfill(2)
     sam["apdu"] = apdu
 
+
+    LOG.fw("INCLUDE_LENGTH:", str(include_length))
+
     bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["len"].encode("utf-8") + sam["apdu"]
     if not include_length:
         bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["apdu"]

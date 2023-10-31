@@ -190,8 +190,7 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 codeConfirm = str(codeConfirm)
                                 if codeConfirm == "200" and updateStatusConfirm == "SUCCESS":
                                     # No Need To Send Len On APDU Command
-                                    send_len_on_apdu = False
-                                    res_str, cardUpdate = prepaid.send_apdu_cmd(b"255", dataToCardConfirm, send_len_on_apdu)
+                                    res_str, cardUpdate = prepaid.send_apdu_cmd(b"255", dataToCardConfirm)
                                     LOG.fw("019:cardUpdate:", cardUpdate)
                                     LOG.fw("019:cardUpdate(len):", len(cardUpdate)/2)
                                     if res_str == '0000':
