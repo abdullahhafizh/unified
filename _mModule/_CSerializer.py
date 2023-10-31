@@ -621,7 +621,7 @@ def KM_BALANCE_TOPUP_C2C(Ser):
         return result["code"], b"", b"", b"", b""
 
 
-def APDU_SEND(Ser, slot, apdu):
+def APDU_SEND(Ser, slot, apdu, include_length=True):
     sam = {}
     sam["cmd"] = b"\xB0"
     sam["slot"] = format(slot, "X")[0:2].zfill(2)
@@ -629,6 +629,8 @@ def APDU_SEND(Ser, slot, apdu):
     sam["apdu"] = apdu
 
     bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["len"].encode("utf-8") + sam["apdu"]
+    if not include_length:
+        bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["apdu"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
     send_command(Ser, p)
     

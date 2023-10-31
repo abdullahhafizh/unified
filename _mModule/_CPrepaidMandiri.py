@@ -94,15 +94,16 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
             LOG.fw("019:data:", data)
             LOG.fw("019:attr:", attr)
 
-            if attr == "6A86": #New Applet
+            ######################
+            ####NEW APPLET SECTION
+            ######################
+            if attr == "6A86":
                 LOG.fw("019:New Applet Found:")
                 valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
-                if valuetext == "1":
-                    valuetext = ErrMsg
+                if valuetext == "1": valuetext = ErrMsg
 
                 code = ""
-                updateStatus = ""
                 dataToCard = ""
                 session = ""
                 pendingtopup = ""
@@ -120,34 +121,18 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                         # API Will Not Send dataToCard For New Applet
                         # dataToCard = temp_json["dataToCard"]
                         amount = temp_json["amount"]
-                        lastbalance = int(card_prev_balance) + int(amount)
+                        lastbalance = int(card_prev_balance)
                         session = temp_json["session"]
                         pendingtopup = temp_json["pendingTopup"]
                     else:
                         if "code" in temp_json.keys():
                             code = temp_json["code"]
                             resp_json_temp = temp_json
-                        # TODO: Recheck This
-                        # elif "data" in temp_json.keys():
-                        #     code, resp_json_temp = get_sub_code(temp_json)
                 
                 code = str(code)
                 res_str = code
-                
-                # override fun generateNewApp(updateBalanceResponse: UpdateBalanceResponse): String {
-                #     val date = Date()
-                #     val StrDate = SimpleDateFormat("ddMMyyHHmmss", Locale.getDefault()).format(date)
-                #     val strdata = (StrDate
-                #             + "0000000000000000000000000000"
-                #             + updateBalanceResponse.data.session
-                #             + "0123456789ABCDEF00112233445566778899"
-                #             + String.format("%08X", updateBalanceResponse.data.pendingTopup.toInt())
-                #             + "0000000000000000000011111111111111111111")
-                #     return String.format("%s%02X%s", "00E50000", strdata.length / 2, strdata)
-                # }
 
-                if code == "200" or code == 200:
-                    res = True
+                if code == "200":
                     codeConfirm = ""
                     updateStatusConfirm = "PENDING"
                     dataToCardConfirm = ""
@@ -176,12 +161,8 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                     LOG.fw("019:dataUpdate(len):", len(dataUpdate)/2)
                     ErrorCode = res_str
                     
-                    # 424DBAFFEE50A55E06F77F54DCAFCC4E81DCE99B58394BB279EA97865A29CEFFEEFC54B088D6941C606B69FD54883545BE86DE3BC7AD46F50094FB2922E4D127708B0D96BAD1D4EC79017005F049980C644F7F5DBBE5132028369A9F9A84839692097D2D4B49DA67D94E0F1F0BE8B9F09C285CC0EA518D2C631064F5416383BED61B7CC3248C55D22DD629D52AD52AEA58FCDAA6582584573879059C312B5E34253542CA02B22FBDC9D854DB763DE03DA5232C21A2F2D5617A0100FFE4641042808C6AF57F8754674D46B2638E0BE78A6EF773AC643372F2E28F003D8388A8EC7FAED362FAEC3791526114C122B95563B253E8A89DF78CE7A6DBCFB8DA6586ACC5856A89A3D12895B3B82935875B8DC5A88384B5C911AFBEF21B3EFD5C53CC440BD593AF7801AE2ECBAF01766C4E393CD652EEE7E2BB4ABC9E5DA98138028B001B34199DD2BA7C0136A824DC9E888C61C9C0C8361E364909BE22CDEDD54EB0D50AD7DC3688CA7EE5B03BF66B97F9160C89881B732F11D63525AC4413796F17EB62A8897D5FE439A61C8F5A4749
-                    # 772CAE6CA499A34227F81249F61250199846F2C972803C4014771150A7E444923E87620EF2C621404F93447907498F290A1EAFD7B85C2112946B60390585D7F2E555B43FB795DCB9CE7EEAEE6E841B8F997235AA3B0CCB2DB86F85AC39CD6C578A1A163E2BC07C9CA1D7479C78EE7A9C2187ADF7F3F2187C82AE0C627E4CF7BC86F51D596643BDD67BE31D0A97F38EDA0F91642E336FE0F3244022E18ADFE166198CC7B873EE13664ED7C9201F333166E33B2275FFB20640D0AE141F828162E24BEDA67CB05849455DB9CDC3A740C9C764E491B87D4AC2A7808A61375EB76162C97A9D55763366FF10B1EABDCA4302E38239BD137DF2C3709000 
-
-                    # LOG.fw("019:SendDataToCard update = ", ErrorCode)
-
                     if res_str == "0000":
+                        # Get Certificate
                         res_str, dataCertificate = prepaid.send_apdu_cmd(b"255", "00E0000000")
                         LOG.fw("019:dataCertificate:", dataCertificate)
                         LOG.fw("019:dataCertificate(len):", len(dataCertificate)/2)
@@ -189,12 +170,11 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                         if res_str == "0000":
                             dataToCardConfirm = dataUpdate + dataCertificate
                             LOG.fw("019:dataToCardConfirm:", dataToCardConfirm)
-                            while res and updateStatusConfirm == "PENDING":
-                                dataToCardConfirm = dataToCardConfirm
+                            if updateStatusConfirm == "PENDING":
+                                # Send dataToCardConfirm to Host
                                 valuetext, errmsg = send_confirm_update(url,C_TOKEN, C_TID, C_MID, cardno, dataToCardConfirm, "", approvalcode)
                                 data_to_confirm = json.loads(valuetext)
                                 codeConfirm = None
-
                                 if "response" in data_to_confirm.keys():
                                     temp_json = data_to_confirm["response"]
                                     if "code" in temp_json.keys():
@@ -208,40 +188,47 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                         updateStatusConfirm = temp_json["updateStatus"]
                                 
                                 codeConfirm = str(codeConfirm)
-                                
                                 if codeConfirm == "200" and updateStatusConfirm == "SUCCESS":
-                                    res_str, cardUpdate = prepaid.send_apdu_cmd(b"255", dataToCardConfirm)
+                                    # No Need To Send Len On APDU Command
+                                    send_len_on_apdu = False
+                                    res_str, cardUpdate = prepaid.send_apdu_cmd(b"255", dataToCardConfirm, send_len_on_apdu)
                                     LOG.fw("019:cardUpdate:", cardUpdate)
                                     LOG.fw("019:cardUpdate(len):", len(cardUpdate)/2)
                                     if res_str == '0000':
-                                        valuetext,errmsg = send_confirm_update(url,C_TOKEN, C_TID, C_MID, cardno, dataToCardConfirm, "COMPLETED", approvalcode)
+                                        valuetext, ErrMsg = send_confirm_update(url,C_TOKEN, C_TID, C_MID, cardno, dataToCardConfirm, "COMPLETED", approvalcode)
                                         data_to_confirm2 = json.loads(valuetext)
                                         codeConfirm = ""
                                         if "response" in data_to_confirm2.keys():
                                             temp_json = data_to_confirm2["response"]
                                             if "code" in temp_json.keys():
                                                 codeConfirm = temp_json["code"]
-                                        codeConfirm = str(codeConfirm)
-                                        ErrorCode = "0000"
-                                        res = True
-                                        break
-                                else:
-                                    res_str = codeConfirm
-                                    res = False
-                                    break
-                    else:
-                        ResReversal = True
-                        codereversal = ""
-                        StatusReversal = ""
+                                        
+                                        if codeConfirm == '200': ErrMsg = ''
+                                        
+                                        lastbalance = int(card_prev_balance) + int(amount)
+                    # ################################
+                    # Returning Success Here
+                    # ################################
+                                        lastbalance = str(lastbalance)
+                                        return res_str, cardno, amount, lastbalance, ErrMsg
+                    # ################################
+                    # Do Reversal Of Any Failure Above
+                    # ################################
 
-                        while ResReversal:
-                            if StatusReversal == "":
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
-                            else:
-                                valuetext,errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
-
+                    # Get Reversal Data >> 00E70000 → expected response = dataReversal (149 byte) + 9000
+                    # Get Certificate >> 00E00000 → expected response = dataCertificate (248 byte) + 9000
+                    res_str, reversalData = prepaid.send_apdu_cmd(b"255", "00E70000")
+                    LOG.fw("019:reversalData:", reversalData)
+                    LOG.fw("019:reversalData(len):", len(reversalData)/2)
+                    if res_str == "0000":
+                        # Get Certificate
+                        res_str, dataCertificate = prepaid.send_apdu_cmd(b"255", "00E0000000")
+                        LOG.fw("019:dataCertificate:", dataCertificate)
+                        LOG.fw("019:dataCertificate(len):", len(dataCertificate)/2)
+                        if res_str == "0000":
+                            reversalData = reversalData + dataCertificate
+                            valuetext, ErrMsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", reversalData, attr)
                             jsonReversal = json.loads(valuetext)
-
                             if "response" in jsonReversal.keys():
                                 temp_json = jsonReversal["response"]
                                 if "code" in temp_json.keys():
@@ -250,42 +237,36 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 temp_json = jsonReversal["data"]
                                 if "reversalMessage" in temp_json.keys():
                                     StatusReversal = temp_json["reversalMessage"]
-                            
+
                             codereversal = str(codereversal)
-
-                            if codereversal == "200":
-                                if StatusReversal == "REVERSAL_DONE" or StatusReversal == "":
-                                    res_str = codereversal
-                                    ResReversal = False
-                                    errmsg = "REVERSAL_DONE"
-                                else:
-                                    res_str, resreport = prepaid.send_apdu_cmd(b"255", StatusReversal)
-                                    # res_str = prepaid_utils.to_4digit(res_w)
-
-                                    if res_str == "0000":
-                                        resreport= resreport+"9000"                                    
-                                        dataToCard = resreport
-                                        ResReversal = True
-                                    else:
-                                        ResReversal = False
-                                        errmsg = "REVERSAL_FAILED"
-                            else:
+                            if codereversal == "200" and StatusReversal == "REVERSAL_DONE":
                                 res_str = codereversal
-                                ResReversal = False
-                                errmsg = "REVERSAL_FAILED"
-
+                                ErrMsg = "REVERSAL_DONE"
+                            else:
+                                res_str = "FAIL"
+                                ErrMsg = "REVERSAL_FAILED"
+                        else:
+                            res_str = "FFEE"
+                            ErrMsg = "REVERSAL_FAILED"
+                    else:
+                        res_str = "FFEE"
+                        ErrMsg = "REVERSAL_FAILED"
+                    
                 elif code == "51003":
                     ErrorCode = code
                     ErrMsg = "NO PENDING BALANCE"
                 else:
                     ErrorCode = code
+            
+            
+            ######################
+            ####OLD APPLET SECTION
+            ######################
             else:
-                #Old Applet
                 LOG.fw("019:OLD Applet Found")
                 valuetext, ErrMsg = send_update_balance(url, C_TOKEN, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
-                if valuetext == "1":
-                    valuetext = ErrMsg
+                if valuetext == "1": valuetext = ErrMsg
 
                 resp_json = json.loads(valuetext)
             
@@ -377,9 +358,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
 
                         while ResReversal:
                             if StatusReversal == "":
-                                valuetext, errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
+                                valuetext, ErrMsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "", dataToCard, attr)
                             else:
-                                valuetext, errmsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
+                                valuetext, ErrMsg = send_reversal_topup(url, C_TOKEN, C_TID, C_MID, cardno, card_prev_balance, approvalcode, amount, data, uid, "REVERSAL_LOOP", dataToCard, attr)
 
                             jsonReversal = json.loads(valuetext)
 
@@ -398,10 +379,9 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                 if StatusReversal == "REVERSAL_DONE" or StatusReversal == "":
                                     res_str = codereversal
                                     ResReversal = False
-                                    errmsg = "REVERSAL_DONE"
+                                    ErrMsg = "REVERSAL_DONE"
                                 else:
                                     res_str, resreport = prepaid.send_apdu_cmd(b"255", StatusReversal)
-                                    # res_str = prepaid_utils.to_4digit(res_w)
 
                                     if res_str == "0000":
                                         resreport= resreport+"9000"                                    
@@ -409,11 +389,11 @@ def update_balance_mandiri_priv(C_TID, C_MID, C_TOKEN):
                                         ResReversal = True
                                     else:
                                         ResReversal = False
-                                        errmsg = "REVERSAL_FAILED"
+                                        ErrMsg = "REVERSAL_FAILED"
                             else:
                                 res_str = codereversal
                                 ResReversal = False
-                                errmsg = "REVERSAL_FAILED"
+                                ErrMsg = "REVERSAL_FAILED"
                 else:
                     ErrorCode = code
     

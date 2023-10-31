@@ -618,7 +618,7 @@ def topup_C2C_km_balance():
 
 #034, #016
 @func_set_timeout(30)
-def send_apdu_cmd(Slot, APDU):
+def send_apdu_cmd(Slot, APDU, LENGTH=True):
     RAPDU = ""
     res_str = ""
     try:
@@ -627,7 +627,7 @@ def send_apdu_cmd(Slot, APDU):
         C_APDU = utils.str_to_bytes(APDU)
         LOG.fw("--> C_Slot = ", C_Slot)
         LOG.fw("--> C_APDU = ", C_APDU)
-        res_str, RAPDU = lib.send_apdu_cmd(C_Slot, C_APDU)
+        res_str, RAPDU = lib.send_apdu_cmd(C_Slot, C_APDU, LENGTH)
         LOG.fw("<-- RAPDU = ", RAPDU)
         RAPDU = utils.only_alpanum(RAPDU)
     except Exception as ex:
