@@ -524,7 +524,7 @@ def store_notes_activity(notes, trxid):
         LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
         return True
     except Exception as e:
-        LOGGER.warning((e))
+        LOGGER.warning((e, trxid, notes))
         return False
 
 

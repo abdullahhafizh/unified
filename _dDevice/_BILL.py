@@ -367,14 +367,14 @@ def start_receive_note(trxid):
                             break
                     if HOLD_NOTES:
                         # Somehow, Trigger OSError accidentally
-                        store_result = store_cash_into_cashbox(trxid)
+                        store_result = store_cash_into_cashbox(trxid, str(cash_in))
                         if store_result is True:
                             update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                             LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                             # _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
                     # Process Store and Update Data Cash
-                    elif _Common.store_notes_activity(cash_in, trxid) is True:
-                        store_result = store_cash_into_cashbox(trxid)
+                    else:
+                        store_result = store_cash_into_cashbox(trxid, str(cash_in))
                         if store_result is True:
                             update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                             LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
@@ -453,35 +453,46 @@ def start_receive_note(trxid):
         #_Common.online_logger([trxid, CASH_HISTORY, COLLECTED_CASH, TARGET_CASH_AMOUNT, CASH_TIME_HISTORY], 'device')
 
 
-def store_cash_into_cashbox(trxid):
+def store_cash_into_cashbox(trxid, cash_in):
     try:
-        # print("pyt: ", _Helper.whoami())
+        result = True
+        # ######################################
+        # Direct Return Without Any Bill Process
+        # Handle Single Denom TRX
         if HOLD_NOTES:
-            # Handle Single Denom TRX
-            return True
+            return result
+        # Dummy Store Per Notes, MEI Actually Doing Bulk Storing in Stop Event
         if BILL_TYPE == 'MEI':
-            # Dummy Store Per Notes, MEI Actually Doing Bulk Storing in Stop Event
-            return True
+            return result
+        # ######################################
         max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
         sleep(1)
+        # Trigger Bill To Store
         _resp, _res = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((BILL['TYPE'], _resp, _res))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
         if BILL['KEY_STORED'] is None or max_attempt == 1:
-            return True
+            pass
         if BILL['KEY_STORED'].lower() in _res.lower():
-            return True
+            pass
         if BILL['KEY_BOX_FULL'].lower() in _res.lower():
             set_cashbox_full()
-            return True
+            pass
         LOGGER.info(('FAILED'))
-        return False
+        result = False
     except OSError as o:
         LOGGER.warning(('ANOMALY_FOUND_HERE', o))
-        return True
+        result = True
     except Exception as e:
         LOGGER.warning((e))
-        return False
+        result = False
+    finally:
+        if result is True:
+            # Move Store Cash Status into cashbox.status
+            file_cash_status = _Common.store_notes_activity(cash_in, trxid)
+            LOGGER.debug(('file_cash_status', file_cash_status, trxid, cash_in))
+        return result
+    
     # attempt = 0
     # max_attempt = int(BILL['MAX_STORE_ATTEMPT'])
     # while True:
