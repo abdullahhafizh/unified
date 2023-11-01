@@ -24,6 +24,7 @@ Rectangle{
 
     MainTitle{
         id: main_text
+        visible: parent.visible && !smallHeight
         anchors.top: parent.top
         anchors.topMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
