@@ -487,11 +487,10 @@ def store_cash_into_cashbox(trxid, cash_in):
         LOGGER.warning((e))
         result = False
     finally:
-        # No Need To Update Cash Here, Will Be Double When trigger bill_store_note
-        # if result is True:
+        if result is True:
             # Move Store Cash Status into cashbox.status
-            # file_cash_status = _Common.store_notes_activity(cash_in, trxid)
-            # LOGGER.debug(('file_cash_status', file_cash_status, trxid, cash_in))
+            file_cash_status = _Common.store_notes_activity(cash_in, trxid)
+            LOGGER.debug(('file_cash_status', file_cash_status, trxid, cash_in))
         return result
     
     # attempt = 0
@@ -650,9 +649,10 @@ def bill_store_note(trxid):
         if response == 0:
             LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
-            for cash_in in CASH_HISTORY:
-                _Common.store_notes_activity(cash_in, trxid)
-                _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+            # Disabled - Will Not Be Actual From CASH_HISTORY When There Was Partial Error
+            # for cash_in in CASH_HISTORY:
+            #     _Common.store_notes_activity(cash_in, trxid)
+            #     _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
             COLLECTED_CASH = 0
             CASH_HISTORY = []
             CASH_TIME_HISTORY = []
