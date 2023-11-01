@@ -630,7 +630,7 @@ Base{
         id:topup_status_comp
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (smallHeight) ? 30 : 100
+        anchors.bottomMargin: (smallHeight) ? 20 : 100
         visible: VIEW_CONFIG.topup_status && (globalBoxName !== "")
 		width: globalWidth
     }
