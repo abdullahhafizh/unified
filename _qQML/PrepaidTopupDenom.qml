@@ -916,7 +916,7 @@ Base{
     SelectPaymentInline{
         id: select_payment
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         calledFrom: 'prepaid_topup_denom'
         listActivePayment: activePayment
@@ -927,7 +927,7 @@ Base{
     SelectPaymentQR{
         id: select_qr_provider
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
         calledFrom: 'prepaid_topup_denom'
