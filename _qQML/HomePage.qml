@@ -466,7 +466,7 @@ Base{
 
         MasterButtonNew {
             id: check_saldo_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
@@ -493,7 +493,7 @@ Base{
 
         MasterButtonNew {
             id: topup_saldo_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
@@ -528,7 +528,7 @@ Base{
 
         MasterButtonNew {
             id: buy_card_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
@@ -590,7 +590,7 @@ Base{
 
         MasterButtonNew {
             id: ppob_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/shop_cart.png"
