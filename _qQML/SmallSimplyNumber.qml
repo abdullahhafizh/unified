@@ -34,7 +34,7 @@ Rectangle {
 
     Rectangle{
         id: not_active_rec
-        visible: !buttonActive || isSelected
+        visible: !buttonActive
         color: 'black'
         anchors.fill: parent
         opacity: .8
@@ -90,6 +90,13 @@ Rectangle {
         font.family: "Ubuntu"
     }
 
+    Rectangle{
+        id: active_select
+        visible: isSelected
+        color: 'black'
+        anchors.fill: parent
+        opacity: .8
+    }
 
     function set_active(){
         isSelected = true;

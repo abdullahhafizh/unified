@@ -833,7 +833,7 @@ Base{
                     if (minus_sam_balance(tinyDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
-                    parent.isSelected = true;
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose tinyDenom "'+tinyDenomTopup+'"');;
                     release_denom_selection(tiny_denom);
                     set_selected_denom(tinyDenomTopup);
@@ -853,7 +853,7 @@ Base{
                     if (minus_sam_balance(smallDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
-                    parent.isSelected = true;
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');;
                     release_denom_selection(small_denom);
                     set_selected_denom(smallDenomTopup);
@@ -873,7 +873,7 @@ Base{
                     if (minus_sam_balance(midDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
-                    parent.isSelected = true;
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     release_denom_selection(mid_denom);
                     set_selected_denom(midDenomTopup);
@@ -893,7 +893,7 @@ Base{
                     if (minus_sam_balance(highDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
-                    parent.isSelected = true;
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     release_denom_selection(high_denom);
                     set_selected_denom(highDenomTopup);
