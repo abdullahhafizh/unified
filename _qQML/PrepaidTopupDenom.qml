@@ -775,7 +775,7 @@ Base{
         color: "white"
         text: "Saldo Anda sekarang"
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType=='1') ? 250 : (smallHeight) ? 120 : 200
+        anchors.topMargin: (globalScreenType=='1') ? 250 : (smallHeight) ? 150 : 200
         anchors.left: parent.left
         anchors.leftMargin: (globalScreenType=='1') ? 350 : 150
         wrapMode: Text.WordWrap
@@ -817,7 +817,7 @@ Base{
         layoutDirection: Qt.LeftToRight
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 350 : (smallHeight) ? 280 : 320
+        anchors.topMargin: (globalScreenType == '1') ? 350 : (smallHeight) ? 230 : 320
         spacing: rowDenomSpacing
         visible: mainVisible
         SmallSimplyNumber{
@@ -902,7 +902,7 @@ Base{
         id: notice_topup_single_denom
         width: 1300
         height: 120
-        visible: (!select_payment.visible && VIEW_CONFIG.single_denom_trx.indexOf('topup') > -1)
+        visible: (!select_payment.visible && VIEW_CONFIG.single_denom_trx.indexOf('topup') > -1) && !smallHeight
         radius: 50
         fontSize: 30
         border.width: 0
