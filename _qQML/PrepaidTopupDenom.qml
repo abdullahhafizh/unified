@@ -775,7 +775,7 @@ Base{
         color: "white"
         text: "Saldo Anda sekarang"
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType=='1') ? 250 : 200
+        anchors.topMargin: (globalScreenType=='1') ? 250 : (smallHeight) ? 120 : 200
         anchors.left: parent.left
         anchors.leftMargin: (globalScreenType=='1') ? 350 : 150
         wrapMode: Text.WordWrap
@@ -817,7 +817,7 @@ Base{
         layoutDirection: Qt.LeftToRight
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 350 : 320
+        anchors.topMargin: (globalScreenType == '1') ? 350 : (smallHeight) ? 280 : 320
         spacing: rowDenomSpacing
         visible: mainVisible
         SmallSimplyNumber{
