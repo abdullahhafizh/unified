@@ -438,7 +438,7 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 280 : (smallHeight) ? 200 : 230
+        anchors.topMargin: (globalScreenType == '1') ? 280 : (smallHeight) ? 150 : 230
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: "Please Wait, Initiating Machine Setting..."
         visible: !popup_loading.visible
