@@ -681,6 +681,8 @@ def bill_reject_note(trxid):
         response, result = send_command_to_bill(param=BILL["REJECT"]+'|', output=None)
         LOGGER.info((trxid, 'REJECT_NOTES', BILL['TYPE'], response, result))
         if response == 0:
+            # Must Delete Last Cash Input in cashbox.status
+            _Common.remove_notes_activity(trxid)
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('REJECT_BILL|SUCCESS')
             COLLECTED_CASH = 0
             CASH_HISTORY = []

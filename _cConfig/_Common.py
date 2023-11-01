@@ -528,6 +528,33 @@ def store_notes_activity(notes, trxid):
         return False
 
 
+def remove_notes_activity(trxid):
+    try:
+        cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+        LOGGER.info((cash_status_file, trxid))
+        cash_status = open(cash_status_file, 'r').readlines()
+        if len(cash_status) == 0:
+            LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
+            return True
+        notes_activity = []
+        for data in cash_status:
+            if ',' not in data: continue
+            if trxid in data: continue
+            notes_activity.append(data)
+        # Truncate Contents
+        f = open(cash_status_file, 'r+')
+        f.truncate(0)
+        LOGGER.info(('TRUNCATE', cash_status_file))
+        with open(cash_status_file, 'a') as c:
+            for activity in notes_activity:
+                c.write(activity)
+            c.close()
+        return True
+    except Exception as e:
+        LOGGER.warning((e, trxid))
+        return False
+
+
 def store_bulk_notes_activity(rows=[]):
     if len(rows) == 0:
         LOGGER.warning(('NO_DATA_FOUND'))
