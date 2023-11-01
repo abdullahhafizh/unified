@@ -41,10 +41,10 @@ Base{
         width: 300
         height: 200
         anchors.left: parent.left
-        anchors.leftMargin: 200
+        anchors.leftMargin: (smallHeight) ? 100 : 200
         anchors.top: parent.top
         anchors.topMargin: 100
-        scale: 1
+        scale: (smallHeight) ? .7 : 1
         visible: (qrisProvider.indexOf(modeQR))
         source: "source/qr_logo/qris_logo_white.png"
         fillMode: Image.PreserveAspectFit
@@ -55,10 +55,10 @@ Base{
         width: 300
         height: 200
         anchors.right: parent.right
-        anchors.rightMargin: 200
+        anchors.rightMargin: (smallHeight) ? 100 : 200
         anchors.top: parent.top
         anchors.topMargin: 100
-        scale: 1
+        scale: (smallHeight) ? .7 : 1
         visible: (qrisProvider.indexOf(modeQR))
         source: "source/qr_logo/gpn_white_logo.png"
         fillMode: Image.PreserveAspectFit
@@ -121,7 +121,7 @@ Base{
         color: VIEW_CONFIG.text_color
         verticalAlignment: Text.AlignVCenter
         font.family:"Ubuntu"
-        visible: (VIEW_CONFIG.general_qr=='1' && !successPayment)
+        visible: (VIEW_CONFIG.general_qr=='1' && !successPayment) && !smallHeight
     }
 
     Row{
@@ -130,7 +130,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         spacing: 10
-        visible: (VIEW_CONFIG.general_qr=='1' && !successPayment)
+        visible: (VIEW_CONFIG.general_qr=='1' && !successPayment) && !smallHeight
         Image{
             scale: 0.65
             source: "source/ovo_logo.png"
