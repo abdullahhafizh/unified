@@ -487,10 +487,11 @@ def store_cash_into_cashbox(trxid, cash_in):
         LOGGER.warning((e))
         result = False
     finally:
-        if result is True:
+        # No Need To Update Cash Here, Will Be Double When trigger bill_store_note
+        # if result is True:
             # Move Store Cash Status into cashbox.status
-            file_cash_status = _Common.store_notes_activity(cash_in, trxid)
-            LOGGER.debug(('file_cash_status', file_cash_status, trxid, cash_in))
+            # file_cash_status = _Common.store_notes_activity(cash_in, trxid)
+            # LOGGER.debug(('file_cash_status', file_cash_status, trxid, cash_in))
         return result
     
     # attempt = 0
