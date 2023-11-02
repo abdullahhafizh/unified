@@ -10,6 +10,7 @@
 - Disable Param Logger in Topup & QR Request,
 - Handle BRI Log History Sort Data,
 - Improve Cash Collection Status Store,
+- Enhance Layout Cash Collection,
 - ...
 
 16.5.0-GLOBAL:
