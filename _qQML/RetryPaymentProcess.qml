@@ -1561,7 +1561,7 @@ Base{
     }
 
     Text {
-        text: "Jenis Uang yang diterima"
+        text: "Lembar Uang yang diterima"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 150
         anchors.horizontalCenter: parent.horizontalCenter
@@ -1599,12 +1599,14 @@ Base{
             scale: 0.9
             source: "source/20rb.png"
             fillMode: Image.PreserveAspectFit
+            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
         Image{
             id: img_count_10
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
+            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
     }
