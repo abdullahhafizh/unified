@@ -683,6 +683,7 @@ def bill_reject_note(trxid):
         if response == 0:
             # Must Delete Last Cash Input in cashbox.status
             _Common.remove_notes_activity(trxid)
+            _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('REJECT_BILL|SUCCESS')
             COLLECTED_CASH = 0
             CASH_HISTORY = []
