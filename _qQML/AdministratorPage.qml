@@ -670,7 +670,7 @@ Base{
                         popup_loading.open();
                         var epoch = new Date().getTime();
                         var struct_id = userData.username+epoch;
-                        _SLOT.start_admin_print_global(struct_id);
+                        _SLOT.start_generate_cash_collection_event(struct_id);
                         actionList = [];
                         print_receipt_button.visible = false;
                     } else {

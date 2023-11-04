@@ -308,9 +308,9 @@ class SlotHandler(QObject):
         _Common.start_upload_device_state(device, state)
     start_upload_device_state = pyqtSlot(str, str)(start_upload_device_state)
 
-    def start_admin_print_global(self, struct_id):
-        _SalePrintTool.start_admin_print_global(struct_id)
-    start_admin_print_global = pyqtSlot(str)(start_admin_print_global)
+    def start_generate_cash_collection_event(self, struct_id):
+        _SalePrintTool.start_generate_cash_collection_event(struct_id)
+    start_generate_cash_collection_event = pyqtSlot(str)(start_generate_cash_collection_event)
 
     def start_admin_change_stock_print(self, struct_id):
         _SalePrintTool.start_admin_change_stock_print(struct_id)

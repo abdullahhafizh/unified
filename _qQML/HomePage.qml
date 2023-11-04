@@ -37,6 +37,7 @@ Base{
 
     property var selectedMenu: ''
     property bool uiSimplification: VIEW_CONFIG.ui_simplify
+    property bool showingTNC: VIEW_CONFIG.show_tnc
 
     property bool spvButton: false
     property bool comboSaktiFeature: false
@@ -56,7 +57,7 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
-            console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification);
+            console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification, showingTNC);
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
             _SLOT.user_action_log('[Homepage] Standby Mode');
@@ -517,7 +518,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
-                    if (uiSimplification){
+                    if (showingTNC){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
@@ -555,7 +556,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PREPAID';
-                    if (uiSimplification){
+                    if (showingTNC){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
@@ -615,7 +616,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PPOB';
-                    if (uiSimplification){
+                    if (showingTNC){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }

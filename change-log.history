@@ -1,3 +1,10 @@
+16.5.2-GLOBAL:
+- Improve Cash Collection Logging,
+- Improve Cash Collection Event Upload,
+- Enhance Layout Cash Collection,
+- Force Config BCA : Disable Exceess Payment, Not Showing TNC,
+- ...
+
 16.5.1-GLOBAL:
 - Add Enable/Disable Reader Dump,
 - Set Reader Baudrate in setting file,
@@ -9,8 +16,6 @@
 - Disable Online Logger,
 - Disable Param Logger in Topup & QR Request,
 - Handle BRI Log History Sort Data,
-- Improve Cash Collection Status Store,
-- Enhance Layout Cash Collection,
 - ...
 
 16.5.0-GLOBAL:

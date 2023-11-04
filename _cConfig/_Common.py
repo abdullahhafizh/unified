@@ -765,8 +765,15 @@ KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 SPESIFIC_PREPAID_PROVIDER = _ConfigParser.get_set_value('GENERAL', 'spesific^provider', 'bca:0145')
 
+SHOW_TNC = _ConfigParser.get_set_value('GENERAL', 'show^tnc', '1') == '1'
+
 if THEME_NAME.lower() in [x.lower() for x in THEME_WITH_PAYMENT_RULES]:
     PAYMENT_RULES = 'cash:>:10000,qr:<:100000'
+
+# Hardcoded Re-configuration for BCA Theme
+if THEME_NAME.lower() in ['bca']:
+    SHOW_TNC = False
+    ALLOW_EXCEED_PAYMENT = False
 # Handle External Customer Service Information
 EXT_CS_INFO = None
 
@@ -787,6 +794,7 @@ ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'h
 _ConfigParser.set_value('GENERAL', 'page^timer', '120')
         
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
+VIEW_CONFIG['show_tnc'] =  SHOW_TNC
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
 VIEW_CONFIG['tnc_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'tnc^timer', '4'))
 VIEW_CONFIG['success_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'success^page^timer', '7'))
