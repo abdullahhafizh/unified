@@ -471,10 +471,10 @@ def store_cash_into_cashbox(trxid, cash_in):
         _resp, _res = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
         LOGGER.debug((BILL['TYPE'], _resp, _res))
         # 16/08 08:07:59 INFO store_cash_into_cashbox:273: ('1', 'Note stacked\r\n')
-        if BILL['KEY_STORED'].lower() in _res.lower():
+        if BILL['KEY_STORED'] is None and max_attempt == 1: #TODO: Re-validate this handle
             pass
-        elif BILL['KEY_STORED'] is None and max_attempt == 1: #TODO: Re-validate this handle
-            result = False
+        elif BILL['KEY_STORED'].lower() in _res.lower():
+            pass
         elif BILL['KEY_BOX_FULL'].lower() in _res.lower(): #TODO: Re-validate this handle
             set_cashbox_full()
             result = False

@@ -615,8 +615,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
 
     
     res_str, uid = prepaid.send_apdu_cmd(C_Slot, b"00B4000007")
-
-    # res_str = prepaid_utils.to_4digit(res)
+    time.sleep(1)
 
     if res_str == "0000":
         res_str, lastbalance, uidsam, data, attr  = prepaid.topup_C2C_km_balance()
@@ -632,8 +631,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             card_prev_balance = lastbalance
             response, status = send_update_balance(url, C_Token, C_TID, C_MID, cardno, approvalcode, attr, data, uid, card_prev_balance)
 
-            if response == "1":
-                response = status
+            if response == "1": response = status
             
             resp_json = json.loads(response)
             
@@ -664,6 +662,7 @@ def mandiri_update_sam_balance_priv(C_Slot,C_TID, C_MID, C_Token):
             if code == "200" or code == 200:
                 updateStatusConfirm = "PENDING"
                 res_str, resreport = prepaid.send_apdu_cmd(C_Slot, dataToCard)
+                time.sleep(1)
                 # res_str = prepaid_utils.to_4digit(res)
                 #if 200
                 if res_str == "0000":
