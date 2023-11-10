@@ -1631,7 +1631,7 @@ Base{
 
         //BCA Will Directly Execute And Record CS Refund 
         if (!refundFeature){
-            generate_cs_refund_data();
+            generate_cs_refund_data('CUSTOMER-SERVICE');
             release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Perhatikan Instruksi Yang Tertera.');
             return;
         }
@@ -1641,8 +1641,8 @@ Base{
         _SLOT.start_play_audio('please_input_wa_no');
     }
 
-    function generate_cs_refund_data(){
-        details.refund_channel = 'CUSTOMER-SERVICE';
+    function generate_cs_refund_data(channel){
+        details.refund_channel = channel;
         details.refund_status = 'AVAILABLE';
         details.refund_number = '';
         details.refund_amount = refundAmount.toString();
@@ -1651,7 +1651,7 @@ Base{
             customer: 'NO_PHONE_NUMBER',
             reff_no: details.shop_type + details.epoch.toString(),
             remarks: details,
-            channel: 'CUSTOMER-SERVICE',
+            channel: channel,
             mode: 'not_having_phone_no_for_refund',
             payment: details.payment
         }
