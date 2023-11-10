@@ -1,3 +1,10 @@
+16.5.3-GLOBAL:
+- Handle BCA Static Config (TNC, Single Denom, Refund Feature),
+- Improve NV Handling,
+- Set CUSTOMER_SERVICE Refund If Got Exceed Payment,
+- INFO: BILL NV Cannot Handle Exceed on Multi Denom TRX,
+- ...
+
 16.5.2-GLOBAL:
 - Improve Cash Collection Logging,
 - Improve Cash Collection Event Upload,

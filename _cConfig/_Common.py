@@ -771,10 +771,16 @@ SHOW_TNC = _ConfigParser.get_set_value('GENERAL', 'show^tnc', '1') == '1'
 if THEME_NAME.lower() in [x.lower() for x in THEME_WITH_PAYMENT_RULES]:
     PAYMENT_RULES = 'cash:>:10000,qr:<:100000'
 
+
+# ATTENTION PLEASE #
 # Hardcoded Re-configuration for BCA Theme
 if THEME_NAME.lower() in ['bca']:
     SHOW_TNC = False
     ALLOW_EXCEED_PAYMENT = False
+    REFUND_FEATURE = False
+    BILL_SINGLE_DENOM_TRX = 'topup|shop'.split('|')
+    _ConfigParser.set_value('BILL', 'single^denom^trx', 'topup|shop')
+
 # Handle External Customer Service Information
 EXT_CS_INFO = None
 

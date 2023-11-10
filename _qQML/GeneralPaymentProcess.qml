@@ -1629,9 +1629,34 @@ Base{
         press = '0';
         my_timer.stop();
 
+        //BCA Will Directly Execute And Record CS Refund 
+        if (!refundFeature){
+            generate_cs_refund_data();
+            release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Perhatikan Instruksi Yang Tertera.');
+            return;
+        }
+
         exceed_payment_transaction.mainTitle = mode;
         exceed_payment_transaction.open();
         _SLOT.start_play_audio('please_input_wa_no');
+    }
+
+    function generate_cs_refund_data(){
+        details.refund_channel = 'CUSTOMER-SERVICE';
+        details.refund_status = 'AVAILABLE';
+        details.refund_number = '';
+        details.refund_amount = refundAmount.toString();
+        var refundPayload = {
+            amount: details.refund_amount,
+            customer: 'NO_PHONE_NUMBER',
+            reff_no: details.shop_type + details.epoch.toString(),
+            remarks: details,
+            channel: 'CUSTOMER-SERVICE',
+            mode: 'not_having_phone_no_for_refund',
+            payment: details.payment
+        }
+        _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+        console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
     }
 
     function cancel_transaction(t){
@@ -2313,22 +2338,7 @@ Base{
                     press = '1';
                     _SLOT.user_action_log('Press "BATAL" in Transaction Completeness');
                     refundChannel = 'CUSTOMER-SERVICE';
-                    details.refund_channel = refundChannel;
-                    details.refund_status = 'AVAILABLE';
-                    details.refund_number = '';
-                    details.refund_amount = refundAmount.toString();
-//                    _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
-                    var refundPayload = {
-                        amount: details.refund_amount,
-                        customer: 'NO_PHONE_NUMBER',
-                        reff_no: details.shop_type + details.epoch.toString(),
-                        remarks: details,
-                        channel: refundChannel,
-                        mode: 'not_having_phone_no_for_refund',
-                        payment: details.payment
-                    }
-                    _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
-                    console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
+                    generate_cs_refund_data(refundChannel);
                     exceed_payment_transaction.close();
                     release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                 }
