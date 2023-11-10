@@ -352,12 +352,16 @@ class NV200_BILL_ACCEPTOR(object):
                     event = self.parse_event(poll)
                     # return event
             else:
-                event = self.parse_event(poll)
-                if poll[1] == '0xed' or poll[1] == '0xec':
-                    last_reject = self.nv200.last_reject()
-                    event.append(self.parse_reject_code(last_reject))
+                # 602 - Trigger Receiving Notes
+                # Ask NV To Give Poll Status Which Containg Event Notes in poll data
+                if caller != '602':
+                    event = self.parse_event(poll)
+                    if poll[1] == '0xed' or poll[1] == '0xec':
+                        last_reject = self.nv200.last_reject()
+                        event.append(self.parse_reject_code(last_reject))
         
         event.append('')
+        # 602 Will assumpt empty event so it will be retriggered
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
@@ -472,7 +476,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 while True:
                     event = NV200.get_event(command)
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                        return -1, 'Bill Max Attempt Reached'
+                        return -1, 'Bill Receive Max Attempt Reached'
                     LOOP_ATTEMPT += 1
                     if len(event) == 1:
                         time.sleep(1)
@@ -550,7 +554,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
-                
                 # Add Open to Re-enable Bill
                 NV200.open()
                 return 0, "Bill Reset"
