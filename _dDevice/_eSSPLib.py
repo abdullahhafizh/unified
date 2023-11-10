@@ -157,12 +157,16 @@ class eSSP(object):  # noqa
         result = self.send([self.getseq(), '0x1', '0x7'], False)
 
         poll_data = []
-        for i in range(3, int(result[2], 16) + 3):
-            if result[i] in ('0xef', '0xee', '0xe6', '0xe1', '0xe2'):
-                poll_data.append([result[i], int(result[i + 1], 16)])
-                i += 1
-            else:
-                poll_data.append(result[i])
+        try:
+            for i in range(3, int(result[2], 16) + 3):
+                if result[i] in ('0xef', '0xee', '0xe6', '0xe1', '0xe2'):
+                    poll_data.append([result[i], int(result[i + 1], 16)])
+                    i += 1
+                else:
+                    poll_data.append(result[i])
+        except Exception as e:
+            print(result, e)
+            poll_data.append('0xERROR')
 
         return poll_data
 
