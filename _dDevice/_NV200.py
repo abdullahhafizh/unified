@@ -473,10 +473,10 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     event = NV200.get_event(command)
                     if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
                         return -1, 'Bill Max Attempt Reached'
+                    LOOP_ATTEMPT += 1
                     if len(event) == 1:
                         time.sleep(1)
                         continue
-                    LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in event[1]:
                         if COMMAND_MODE == 'hold':
                             time.sleep(.5)
@@ -506,10 +506,10 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 # Set Harcoded only wait for 3 Seconds
                 if LOOP_ATTEMPT >= 3: 
                     return 0, "Noted stacked as Max Attempt Reached"
+                LOOP_ATTEMPT += 1
                 if len(event) == 1:
                     time.sleep(1)
                     continue
-                LOOP_ATTEMPT += 1
                 if config['KEY_RECEIVED'] in event[1] or config['KEY_STORED'] in event[1]:
                     return 0, event[1]
                 if config['KEY_BOX_FULL'] in event[1]:
