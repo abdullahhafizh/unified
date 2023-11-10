@@ -369,12 +369,17 @@ def start_receive_note(trxid):
                                                                                 'COLLECTED': COLLECTED_CASH,
                                                                                 'TARGET': TARGET_CASH_AMOUNT})))
                             break
+                    # ===========================================
                     # Process Store and Update Data Cash
+                    # ===========================================
                     store_result = store_cash_into_cashbox(trxid, str(cash_in))
                     if store_result is True:
                         update_cash_result, store_result = update_cash_status(str(cash_in), store_result)
                         LOGGER.debug(('Cash Store/Update Status:', str(store_result), str(update_cash_result), str(cash_in)))
                         _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
+                        
+                # ===========================================
+                # Next Handling When Notes Already Received
                 if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|COMPLETE')
                     break
