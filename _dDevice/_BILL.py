@@ -618,9 +618,10 @@ def stop_receive_note(trxid):
 
 
 def start_bill_store_note(trxid):
-    if BILL_TYPE == 'NV':
-        _Helper.get_thread().apply_async(bill_store_note, (trxid,))
-        sleep(3)
+    # Whats Handling is This ?
+    # if BILL_TYPE == 'NV':
+    #     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
+    #     sleep(3)
     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
 
 
@@ -631,6 +632,8 @@ def bill_store_note(trxid):
         if not HOLD_NOTES:
             LOGGER.warning((trxid, 'STORE_NOTES', BILL['TYPE'], 'HOLD_NOTES', HOLD_NOTES))
             return
+        
+        if BILL_TYPE == 'NV': sleep(3)
         
         attempt = 3 if BILL_TYPE == 'GRG' else 1
         

@@ -495,6 +495,10 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 NV200.accept()
                 time.sleep(1)
             
+            # Anomaly Handled Here
+            if NV200 is None:
+                return -1, "Bill already stoped"
+            
             LOOP_ATTEMPT = 0
             while True:
                 event = NV200.get_event(command)
