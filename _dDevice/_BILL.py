@@ -359,14 +359,14 @@ def start_receive_note(trxid):
                         if cash_in in SMALL_NOTES_NOT_ALLOWED:
                             sleep(.5)
                             send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
-                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                             break
                         exceed_payment = is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH)
                         LOGGER.info(('Exceed Payment :', exceed_payment))
                         if exceed_payment:
                             sleep(.5)
                             send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
-                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
+                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                             LOGGER.info(('Exceed Payment Detected :', json.dumps({'REJECT': cash_in,
                                                                                 'COLLECTED': COLLECTED_CASH,
                                                                                 'TARGET': TARGET_CASH_AMOUNT})))
