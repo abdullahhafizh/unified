@@ -1510,22 +1510,23 @@ def save_receipt_local(__id, __data, __type):
 
 
 def start_generate_cash_collection_event(struct_id):
-    cash_collection = _Common.COLLECTION_DATA
-    _Helper.get_thread().apply_async(upload_event_cash_collection, (struct_id, None, cash_collection,))
+    _Helper.get_thread().apply_async(upload_event_cash_collection, (struct_id, None, _Common.COLLECTION_DATA,))
     _Helper.get_thread().apply_async(generate_cash_collection_event, (struct_id,))
 
 
-def upload_event_cash_collection(aid, username=None, cash_collection={}):
+def upload_event_cash_collection(aid, username=None, cash_collection_data={}):
     try:
         if username is None:
             username = _Helper.get_char_from(aid)
-        s = cash_collection
-        cash_collected = str(s.get('all_cash', ''))
-        edc_settlement = '0'
-        card_adjustment = s.get('card_adjustment', '')
-        remarks = json.dumps(s)
-        trx_list = s.get('trx_list', '')
-        _Common.upload_admin_access(aid, username, cash_collected, edc_settlement, card_adjustment, remarks, trx_list)
+        s = cash_collection_data
+        _Common.upload_admin_access(aid=aid, 
+                                    username=username, 
+                                    cash_collection=str(s.get('all_cash', '')), 
+                                    edc_settlement='0', 
+                                    card_adjustment=s.get('card_adjustment', ''), 
+                                    remarks=json.dumps(s), 
+                                    trx_list=s.get('trx_list', '')
+                                    )
     except Exception as e:
         LOGGER.warning((e))
 
