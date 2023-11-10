@@ -471,6 +471,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 NV200.enable()
                 while True:
                     event = NV200.get_event(command)
+                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                        return -1, 'Bill Max Attempt Reached'
                     if len(event) == 1:
                         time.sleep(1)
                         continue
@@ -486,8 +488,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     if config['CODE_JAM'] in event[1]:
                         NV200.disable_only()
                         return -1, event[1]
-                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                        break
                     time.sleep(1)
         #===
         elif command == config['STORE']:
@@ -502,6 +502,10 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             while True:
                 event = NV200.get_event(command)
+                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                # Set Harcoded only wait for 3 Seconds
+                if LOOP_ATTEMPT >= 3: 
+                    return 0, "Noted stacked as Max Attempt Reached"
                 if len(event) == 1:
                     time.sleep(1)
                     continue
@@ -513,10 +517,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 if config['CODE_JAM'] in event[1]:
                     NV200.disable_only()
                     return -1, event[1]
-                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                # Set Harcoded only wait for 3 Seconds
-                if LOOP_ATTEMPT >= 3: 
-                    break
                 time.sleep(1)
             return 0, "Noted stacked"
         #===
