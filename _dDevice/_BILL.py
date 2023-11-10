@@ -633,7 +633,7 @@ def bill_store_note(trxid):
             LOGGER.warning((trxid, 'STORE_NOTES', BILL['TYPE'], 'HOLD_NOTES', HOLD_NOTES))
             return
         
-        if BILL_TYPE == 'NV': sleep(3)
+        # if BILL_TYPE == 'NV': sleep(3)
         
         attempt = 3 if BILL_TYPE == 'GRG' else 1
         
