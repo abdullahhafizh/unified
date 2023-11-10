@@ -309,9 +309,9 @@ def start_receive_note(trxid):
     LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT))
     HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
     LOGGER.info(('Hold Notes or Single Denom TRX', trxid, HOLD_NOTES))
-    if not HOLD_NOTES:
+    if not HOLD_NOTES and BILL_TYPE == 'NV' :
         HOLD_NOTES = (len(CASH_HISTORY) == 0)
-        LOGGER.info(('Multi Denom Detected', trxid, HOLD_NOTES, str(CASH_HISTORY)))
+        LOGGER.info(('Multi Denom Detected on NV, Must Enable HOLD Mode', trxid, HOLD_NOTES, str(CASH_HISTORY)))
 
     try:
         attempt = 0
