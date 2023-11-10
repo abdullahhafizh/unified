@@ -517,7 +517,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
-            max_reject_attempt = 10
+            max_reject_attempt = 5 #Seconds To Wait For Confirming Notes
             NV200.reject()
             while True:
                 event = NV200.get_event(command)

@@ -309,6 +309,10 @@ def start_receive_note(trxid):
     LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT))
     HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
     LOGGER.info(('Hold Notes or Single Denom TRX', trxid, HOLD_NOTES))
+    if not HOLD_NOTES:
+        HOLD_NOTES = (len(CASH_HISTORY) == 0)
+        LOGGER.info(('Multi Denom Detected', trxid, HOLD_NOTES, str(CASH_HISTORY)))
+
     try:
         attempt = 0
         IS_RECEIVING = True
@@ -341,12 +345,12 @@ def start_receive_note(trxid):
                     if BILL_TYPE in _Common.BILL_SINGLE_DENOM_TYPE:
                         # Handle Single Denom
                         if HOLD_NOTES:
-                            # Handle Double Read Anomalu in Single Denom TRX
-                            if len(CASH_HISTORY) > 0:
-                                if CASH_HISTORY[0] == cash_in:
-                                    LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', str(CASH_HISTORY)))
-                                    # Return The Process
-                                    return
+                            # Handle Double Read Anomalu in Single Denom TRX -- No More Relevant For Multi Denom But Keep Holded
+                            # if len(CASH_HISTORY) > 0:
+                            #     if CASH_HISTORY[0] == cash_in:
+                            #         LOGGER.info(('NOTES_DETECTED_MULTIPLE_TIMES', str(CASH_HISTORY)))
+                            #         # Return The Process
+                            #         return
                             if int(cash_in) != int(TARGET_CASH_AMOUNT):
                                 sleep(.5)
                                 send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
@@ -361,7 +365,7 @@ def start_receive_note(trxid):
                             sleep(.5)
                             send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|EXCEED')
-                            LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
+                            LOGGER.info(('Exceed Payment Detected :', json.dumps({'REJECT': cash_in,
                                                                                 'COLLECTED': COLLECTED_CASH,
                                                                                 'TARGET': TARGET_CASH_AMOUNT})))
                             break
@@ -458,8 +462,8 @@ def store_cash_into_cashbox(trxid, cash_in):
         result = True
         # ######################################
         # Direct Return Without Any Bill Process
-        # Handle Single Denom TRX
-        if HOLD_NOTES:
+        # Handle Single Denom TRX or Cash History Exist
+        if HOLD_NOTES and len(CASH_HISTORY) == 0:
             return result
         # Dummy Store Per Notes, MEI Actually Doing Bulk Storing in Stop Event
         if BILL_TYPE == 'MEI':
