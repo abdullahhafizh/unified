@@ -198,19 +198,69 @@ def push_settlement_data(__param=None):
         return False
 
 
-def upload_settlement_file(filename, local_path, remote_path=None, protocol='SFTP'):
-    # Bypass Close Sending FS File By Manipulating Sending Result 14.0.G1-GLOBAL
-    if True:
+# def upload_settlement_file(filename, local_path, remote_path=None, protocol='SFTP'):
+#     # Bypass Close Sending FS File By Manipulating Sending Result 14.0.G1-GLOBAL
+#     if True:
+#         return {
+#             "success": True,
+#             "host": 'tsf.mdd.co.id',
+#             "remote_path": remote_path,
+#             "local_path": local_path,
+#         }
+#     if protocol == 'SFTP':
+#         return _SFTPAccess.send_file(filename, local_path=local_path, remote_path=remote_path)
+#     else:
+#         return _FTPAccess.send_file(filename, local_path=local_path, remote_path=remote_path)
+
+
+SEND_DIRECT_SETTLEMENT_FILE = False
+
+
+def upload_settlement_file(filename, local_path, remote_path=None, protocol='SFTP', extras=None):
+    # Force True
+    if not SEND_DIRECT_SETTLEMENT_FILE  and extras is None:
         return {
             "success": True,
-            "host": 'tsf.mdd.co.id',
+            "host": 'N/A',
             "remote_path": remote_path,
             "local_path": local_path,
         }
     if protocol == 'SFTP':
         return _SFTPAccess.send_file(filename, local_path=local_path, remote_path=remote_path)
-    else:
+    elif protocol == 'FTP':
         return _FTPAccess.send_file(filename, local_path=local_path, remote_path=remote_path)
+    elif protocol == 'API':
+        if extras is None:
+            return {
+                "success": False,
+                "host": 'N/A',
+                "remote_path": remote_path,
+                "local_path": local_path,
+                "error": "MISSING_EXTRAS_CONFIG_DATA"
+            }
+        # /topupoffline/transferbalance/settlementfee
+        host_check = extras.get('host_forwarder')
+        url = 'http://'+host_check+'/bridge-service/filepush-ftp.php'
+        host_remote_path = '/topupoffline/transferbalance/settlementfee/' + filename
+        # Redefine Local Path in Forwarder
+        forwarder_local_path = '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee'] + '/' + filename
+        param = {
+            'host' : extras.get('host'), 
+            'user' : extras.get('user'), 
+            'password' : extras.get('password'), 
+            'local_path' : forwarder_local_path, 
+            'content': open(local_path, 'r').readlines(),
+            'remote_path' : host_remote_path, 
+            'file_ext' : '.txt'
+        }
+        status, response = _HTTPAccess.post_to_url(url, param , None, True, 30)
+        LOGGER.info((str(param), status, response))
+        return {
+            "success": (status == 200 and response.get('status', -1) == 0),
+            "host": response.get('host', 'N/A'),
+            "remote_path": remote_path,
+            "local_path": local_path,
+        }
 
 
 def get_response_settlement(filename, remote_path, protocol='SFTP'):
@@ -992,17 +1042,31 @@ def do_prepaid_settlement(bank='BNI', force=False):
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FEE_SETTLEMENT')
         _push_file_sett = upload_settlement_file(filename=_param_sett['filename'],
                                                     local_path=_param_sett['path_file'],
-                                                    remote_path=_Common.SFTP_C2C['path_fee'])
+                                                    remote_path=_Common.SFTP_C2C['path_fee'], 
+                                                    protocol='API', 
+                                                    extras={
+                                                        'host' : _Common.C2C_BANK_HOST, 
+                                                        'user' : _Common.C2C_BANK_USERNAME, 
+                                                        'password' : _Common.C2C_BANK_PASSWORD, 
+                                                        'host_forwarder': _Common.C2C_FORWARDER_HOST
+                                                    })
         if _push_file_sett['success'] is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FEE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GET_C2C_FEE_SETTLEMENT')
-        _result_update_fee = _QPROX.set_c2c_settlement_fee(_param_sett['filename'])
+        _result_update_fee = _QPROX.pull_set_c2c_settlement_fee(_param_sett['filename'])
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPDATE_C2C_FEE_SETTLEMENT')
-        if _result_update_fee is True:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|SUCCESS_SET_C2C_FEE')
-        else:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_SET_C2C_FEE')
+        for i in range(len(_result_update_fee)):
+            result = _result_update_fee[i]['result']
+            applet_type = _result_update_fee[i]['applet_type']
+            process = "SUCCESS" if result is True else 'FAILED'
+            result_text = "_".join(["SET", str(_result_update_fee[i]['fee']), process])
+            if i == 0:
+                emit_text = 'MANDIRI_SETTLEMENT|'+applet_type+":"+result_text
+            else:
+                emit_text += '\n' + (applet_type+":"+result_text) 
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit(emit_text)
+            sleep(1)
     else:
         return
 
@@ -1223,5 +1287,4 @@ def check_last_mandiri_setttlement():
     if (int(last_mandiri_c2c_settlement)+1) < int(current_date):
         LOGGER.info(('YESTERDAY_C2C_MANDIRI_NOT_DETECTED', 'TRIGGER_C2C_SETTLEMENT', last_mandiri_c2c_settlement, current_date))
         daily_mandiri_c2c_settlement()
-
 

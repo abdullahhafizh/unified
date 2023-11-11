@@ -334,6 +334,12 @@ C2C_DEPOSIT_UPDATE_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposi
 C2C_DEPOSIT_UPDATE_MAX_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^max^loop', '10'))
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
+C2C_BANK_HOST = _ConfigParser.get_set_value('MANDIRI_C2C', 'bank^host^ip', '10.17.10.56')
+C2C_BANK_USERNAME = _ConfigParser.get_set_value('MANDIRI_C2C', 'bank^host^user', 'multidaya')
+C2C_BANK_PASSWORD = _ConfigParser.get_set_value('MANDIRI_C2C', 'bank^host^pass', 'adminMDD1')
+C2C_FORWARDER_HOST = _ConfigParser.get_set_value('MANDIRI_C2C', 'forwarder^host', 'tsf.mdd.co.id:28080')
+C2C_FEE_CHECK_INTERVAL = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'fee^check^interval', '10'))
+
 MDR_C2C_TRESHOLD_USAGE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'treshold^usage', '0') == '1' else False
 
 # GENERATE INFO

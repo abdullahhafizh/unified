@@ -2036,19 +2036,21 @@ def bni_crypto_tapcash(cyptogram, card_info):
         LOGGER.warning(str(e))
         return False
 
-    
+
 def get_c2c_settlement_fee():
     # Must Return Array String or False
     output = []
     try:
+        # Must Trigger New Get Fee Then Old Get Fee
         for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
-            param = QPROX['GET_FEE_C2C'] + '|' + str(applet_type) + '|'
+            applet_sequence = '1' if applet_type == 0 else '0' #Reverse Sequence on Get Fee
+            param = QPROX['GET_FEE_C2C'] + '|' + str(applet_sequence) + '|'
             response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-            LOGGER.debug((applet_type, str(response), str(result)))
+            LOGGER.debug((applet_sequence, str(response), str(result)))
             # 0D706E8693EA7B160520115936DC050000831E61CB55C30FC36938ED
             if response == 0 and len(result) > 50:
                 clean_result = result.strip().replace(' ', '')
-                output.append(clean_result)
+                output.insert(0, clean_result)
             else:
                 return False
         return output
@@ -2057,41 +2059,45 @@ def get_c2c_settlement_fee():
         return False
 
 
-def set_c2c_settlement_fee(file):
+def pull_set_c2c_settlement_fee(file):
     attempt = 0
-    host_check = _Common.SFTP_C2C['host']
-    if _Common.SFTP_C2C['port'] != '22':
-        host_check = _Common.SFTP_C2C['host'] + ':18080'
-    _url = 'http://'+host_check+'/bridge-service/filecheck.php?content=1&no_correction=1'
-    _param = {
-        'ext': '.txt',
-        'file_path': '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee_response'] + '/' + file
+    # Host Remote Path
+    # /topupoffline/transferbalance/responsefee
+    host_check = _Common.C2C_FORWARDER_HOST
+    url = 'http://'+host_check+'/bridge-service/fileget-ftp.php'
+    param = {
+        'host' : _Common.C2C_BANK_HOST, 
+        'user' : _Common.C2C_BANK_USERNAME, 
+        'password' : _Common.C2C_BANK_PASSWORD, 
+        'local_path': '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee_response'] + '/' + file,
+        'remote_path': '/topupoffline/transferbalance/responsefee/' + file
     }
-    LOGGER.debug((attempt, file, _url, _param))
+    LOGGER.debug((attempt, url, param))
     while True:
         attempt += 1
-        response, result = _HTTPAccess.post_to_url(_url, _param)
+        response, result = _HTTPAccess.post_to_url(url, param)
         LOGGER.debug((attempt, file, response, result))
-        if response == 200 and result['status'] == 0 and result['file'] is True:
-            new_c2c_fees = result['content'].split('#')[0]
-            if len(new_c2c_fees) != 2:
-                continue
+        if response == 200 and result['status'] == 0:
+            new_c2c_fees = result['content'].split('\r\n')
             result_fee = []
             for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
-                param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(new_c2c_fees[applet_type]) + '|'
+                if _Helper.empty(new_c2c_fees[applet_type]): continue
+                apdu_response = new_c2c_fees[applet_type]
+                fee_data = apdu_response[:8] if applet_type == 0 else apdu_response[2:10]
+                param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(apdu_response) + '|'
                 response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
                 LOGGER.debug((applet_type, str(response), str(result)))
-                # Check Validation of Success Inject Fee
-                if response == 0 and result != '6700':
-                    result_fee.append(True)
-                else:
-                    result_fee.append(False)
-            if result_fee == [True, True]:
-                _Common.log_to_temp_config('last^c2c^set^fee')
-                LOGGER.info(('SUCCESS_UPDATE_ADMIN_FEE_C2C'))
-                return True
-                break
-        sleep(15)
+                data = {
+                    'applet_type': 'OLD_APPLET' if applet_type == 0 else 'NEW_APPLET',
+                    'response': apdu_response,
+                    'fee': _Helper.reverse_hexdec(fee_data),
+                    'result': True if response == 0 else False
+                }
+                result_fee.append(data)
+            if len(result_fee) >= 2:
+                _Common.log_to_temp_config('last^c2c^set^fee', _Helper.time_string())
+                return result_fee
+        sleep(_Common.C2C_FEE_CHECK_INTERVAL)
 
 
 def start_get_card_history(bank):

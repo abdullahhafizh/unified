@@ -522,16 +522,16 @@ def topup_C2C_getfee(Flag):
         LOG.fw("--> CMD READER = $85")
         C_Flag = utils.str_to_bytes(Flag)
         LOG.fw("--> C_Flag = ", C_Flag)
-        res_str, reportSAM = lib.topup_C2C_getfee(C_Flag)
+        res_str, feeC2C = lib.topup_C2C_getfee(C_Flag)
         debErrorStr = res_str
     except Exception as ex:
         LOG.fw("CMD $85 ERROR: ", "{0}".format(ex))
         LOG.fw("Trace: ", traceback.format_exc())
         
-    LOG.fw("<-- reportSAM = ", reportSAM)
+    LOG.fw("<-- feeC2C = ", feeC2C)
     LOG.fw("<-- debErrorStr = ", debErrorStr)
     LOG.fw("<-- CMD RESULT = ",res_str)
-    return res_str, reportSAM, debErrorStr
+    return res_str, feeC2C, debErrorStr
 
 #030
 @func_set_timeout(30)
@@ -897,13 +897,13 @@ def topup_bni_init_key(MASTER_KEY, PIN, TID):
     return res_str
 
 
-def reader_dump(card_no='', trxid=''):
+def reader_dump(event='', reff=''):
     res_str = ""
     dump_data = ""
     try:
         LOG.fw("--> CMD READER = $B4")
-        LOG.fw("--> CARD_NO = ", card_no)
-        LOG.fw("--> TRXID = ", trxid)
+        LOG.fw("--> EVENT = ", event)
+        LOG.fw("--> REFF = ", reff)
         res_str, dump_data = lib.reader_dump()
     except Exception as ex:
         LOG.fw("CMD $B4 ERROR: ", "{0}".format(ex))

@@ -15,6 +15,30 @@ ETX_DUMP = b'EVENT:CMD:B4 Stop'
 WAIT_AFTER_CMD = .2
 
 
+def SYNC_TIME(Ser):
+    sam = {}
+    sam["cmd"] = b"\xF0"
+    st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
+    sam["date_time"] = st
+    
+    LOG.fw("CMD:", sam["cmd"])
+    LOG.fw("SYNC_TIME:", st)
+
+    bal_value = sam["cmd"] + sam["date_time"].encode("utf-8") 
+    p_len, p = proto.Compose_Request(len(bal_value), bal_value)
+    send_command(Ser, p)
+    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+
+    result = parse_default_report(response["data"])
+    LOG.fw("RESPONSE:", result)
+    
+    del data
+    del response
+    return result["code"]
+
+
 def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
 # , PIN_Len, INSTITUTION_Len, TERMINAL_Len
 ):
@@ -217,9 +241,9 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
     LOG.fw("RESPONSE:", result)
     
     Len = ((response["len"][0] << 8)+response["len"][1])-5
+    rep = ''
     
     if result['len'] >= 189:
-        rep = ''
         for i in range(0, Len):
             rep = rep + chr(result["rep"][i])
 
@@ -462,11 +486,8 @@ def GET_FEE_C2C(Ser, Flag):
     sam["cmd"] = b"\x85"
     st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
     sam["date"] = st
-    if Flag == b"1":
-        sam["isNew"] = b"1"
-    else:
-        sam["isNew"] = b"0"
-
+    sam["isNew"] = Flag if Flag == b"1" else b"0"
+    
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["isNew"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
     send_command(Ser, p)
@@ -476,29 +497,20 @@ def GET_FEE_C2C(Ser, Flag):
 
     result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
-
-    # Len = ((response["len"][0] << 8)+response["len"][1])-5
-    # rep = ''
-    # for i in range(0, Len-1):
-    #     rep = rep + chr(result["rep"][i])
     
     del data
     del response
     return result["code"], result["rep"]
 
 
-def SET_FEE_C2C(Ser, Flag, respon):
+def SET_FEE_C2C(Ser, Flag, FeeResponse):
     sam = {}
     sam["cmd"] = b"\x86"
-    # st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
-    # sam["date"] = st
-    if Flag == b"1":
-        sam["isNew"] = b"1"
-    else:
-        sam["isNew"] = b"0"
+    sam["isNew"] = Flag if Flag == b"1" else b"0"
     
-    sam["len"] = bytearray.fromhex(format(len(respon), 'x').upper().zfill(3))
-    sam["data"] = respon
+    # sam["len"] = int(len(FeeResponse)).to_bytes(length=3, byteorder='big')
+    sam["len"] = format(int(len(FeeResponse)), 'X').zfill(3).encode('utf-8')
+    sam["data"] = FeeResponse
 
     bal_value = sam["cmd"] + sam["isNew"] + sam["len"] + sam["data"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
@@ -509,11 +521,6 @@ def SET_FEE_C2C(Ser, Flag, respon):
 
     result = parse_default_response(response["data"])
     LOG.fw("RESPONSE:", result)
-
-    # Len = ((response["len"][0] << 8)+response["len"][1])-5
-    # rep = ''
-    # for i in range(0, Len-1):
-    #     rep = rep + chr(result["rep"][i])
     
     del data
     del response
@@ -525,10 +532,7 @@ def TOPUP_FORCE_C2C(Ser, Flag):
     sam["cmd"] = b"\x84"
     st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
     sam["date"] = st
-    if Flag == b"1":
-        sam["isNew"] = b"1"
-    else:
-        sam["isNew"] = b"0"
+    sam["isNew"] = Flag if Flag == b"1" else b"0"
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["isNew"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
@@ -539,11 +543,6 @@ def TOPUP_FORCE_C2C(Ser, Flag):
 
     result = parse_default_report(response["data"])
     LOG.fw("RESPONSE:", result)
-
-    # Len = ((response["len"][0] << 8)+response["len"][1])-5
-    # rep = ''
-    # for i in range(0, Len-1):
-    #     rep = rep + chr(result["rep"][i])
 
     del data
     del response
@@ -634,10 +633,16 @@ def APDU_SEND(Ser, slot, apdu):
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
     send_command(Ser, p)
     
-    data = retrieve_rs232_data(Ser)
-    response = parse_default_template(data)
-    
-    result = parse_default_report(response["data"])
+    while True:
+        data = retrieve_rs232_data(Ser)
+        response = parse_default_template(data)
+        
+        result = parse_default_report(response["data"])
+        if result['cmd'] == sam['cmd']:
+            LOG.fw("CMD MATCH:", result)
+            break
+        LOG.fw("CMD NOT MATCH:", result['cmd'])
+
     LOG.fw("RESPONSE:", result)
 
     Len = ((response["len"][0] << 8)+response["len"][1])-5
@@ -1132,11 +1137,8 @@ def CLEAR_DUMP(Ser):
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
 
     send_command(Ser, p)
-    data = retrieve_rs232_data(Ser)
-    response = parse_default_template(data)
     
-    del data
-    return '0000', response
+    return '0000'
     
     
 def ENABLE_DUMP(Ser):
@@ -1166,7 +1168,7 @@ def DISABLE_DUMP(Ser):
     response = parse_default_template(data)
     
     # Add Clear Dump in Disable Dump
-    _, data = CLEAR_DUMP(Ser)
+    CLEAR_DUMP(Ser)
     
     del data
     return response['code'].decode(), response
@@ -1190,7 +1192,7 @@ def READER_DUMP(Ser):
         err_message = traceback._cause_message
         print(err_message)
     finally:
-        _, data = CLEAR_DUMP(Ser)
+        CLEAR_DUMP(Ser)
         return '0000', result['raw'].decode('cp1252')
     
 '''
@@ -1291,7 +1293,7 @@ def parse_balance_response(data):
     end; 
     '''
     result = {}
-    result["cmd"] = data[0]
+    result["cmd"] = data[0].to_bytes(length=1, byteorder='big')
     result["code"] = data[1:5]
     try:
         result["sign"] = chr(int(data[5]))
@@ -1315,7 +1317,7 @@ def parse_balance_template(data):
     end; 
     '''
     result = {}
-    result["cmd"] = data[0]
+    result["cmd"] = data[0].to_bytes(length=1, byteorder='big')
     result["code"] = data[1:5]
     result["bal"] = data[5:15]
     return result
@@ -1330,7 +1332,7 @@ def parse_default_km_balance_report(data):
     end; 
     '''
     result = {}
-    result["cmd"] = data[0]
+    result["cmd"] = data[0].to_bytes(length=1, byteorder='big')
     result["code"] = data[1:5]
     result["bal"] = data[5:25]
     return result
@@ -1344,7 +1346,7 @@ def parse_default_response(data):
     end;
     '''
     result = {}
-    result["cmd"] = data[0]
+    result["cmd"] = data[0].to_bytes(length=1, byteorder='big')
     result["code"] = data[1:5]
     return result
 
@@ -1359,7 +1361,7 @@ def parse_default_report(data):
     end;   
     '''
     result = {}
-    result["cmd"] = data[0]
+    result["cmd"] = data[0].to_bytes(length=1, byteorder='big')
     result["code"] = data[1:5]
     result["rep"] = data[5:len(data)]
     result["len"] = len(data)
@@ -1376,7 +1378,7 @@ def parse_default_sn_report(data):
     end;
     '''
     result = {}
-    result["cmd"] = data[0]
+    result["cmd"] = data[0].to_bytes(length=1, byteorder='big')
     result["code"] = data[1:5]
     result["uid"] = data[5:13]
     result["sn"] = data[13:29]
