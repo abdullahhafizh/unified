@@ -1288,3 +1288,4 @@ def check_last_mandiri_setttlement():
         LOGGER.info(('YESTERDAY_C2C_MANDIRI_NOT_DETECTED', 'TRIGGER_C2C_SETTLEMENT', last_mandiri_c2c_settlement, current_date))
         daily_mandiri_c2c_settlement()
 
+
