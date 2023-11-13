@@ -132,10 +132,13 @@ Base{
     }
 
     function validate_cash_refundable(){
+        var result = false;
         if (details.payment == 'cash' && receivedPayment > totalPrice){
-            return parseInt(receivedPayment - totalPrice);
+            result = parseInt(receivedPayment - totalPrice);
         }
-        return false;
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('validate_cash_refundable', now, result);
+        return result;
     }
 
     function ereceipt_show(data){

@@ -85,7 +85,6 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     # print(result)
     LOG.fw("RESPONSE:", result)
     
-    del data
     del response
     return result["code"], result["bal"], result["sn"], result["sign"]
 
@@ -669,7 +668,6 @@ def APDU_SEND(Ser, slot, apdu):
     for i in range(0, Len):
         rep = rep + chr(result["rep"][i])
 
-    del data
     del response
     return result["code"], rep
 
@@ -1246,7 +1244,6 @@ def send_command(Serial, Param, ValidateCMD=None):
 
 
 def pull_result(Serial, BreakCMD=None):
-    if BreakCMD is None: return None
     while True:
         data = retrieve_rs232_data(Serial)
         response = parse_default_template(data)
