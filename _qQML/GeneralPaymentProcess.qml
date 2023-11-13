@@ -1642,6 +1642,7 @@ Base{
     }
 
     function generate_cs_refund_data(channel){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         details.refund_channel = channel;
         details.refund_status = 'AVAILABLE';
         details.refund_number = '';
@@ -2333,7 +2334,6 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "BATAL" in Transaction Completeness');
