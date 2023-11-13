@@ -26,7 +26,9 @@ def SYNC_TIME(Ser):
 
     bal_value = sam["cmd"] + sam["date_time"].encode("utf-8") 
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
+    send_command(
+        Serial=Ser, 
+        Param=p)
     
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
@@ -49,8 +51,9 @@ def SAM_INITIATION(Ser, PIN, INSTITUTION, TERMINAL
     tsam["term"] = TERMINAL
     tsam_value = tsam["cmd"] + tsam["ser"] + tsam["inst"] + tsam["term"]
     p_len, p = proto.Compose_Request(len(tsam_value), tsam_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -72,11 +75,12 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
 
     bal_value = bal["cmd"] + bal["date"].encode("utf-8") + bal["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
+    result, response = send_command(
+            Serial=Ser, 
+            Param=p, 
+            ValidateCMD=bal['cmd']
+        )
     
-    data = retrieve_rs232_data(Ser)
-    response = parse_default_template(data)
-
     result = parse_balance_response(response["data"])
     # print(result)
     LOG.fw("RESPONSE:", result)
@@ -96,8 +100,9 @@ def GET_BALANCE(Ser):
 
     bal_value = bal["cmd"] + bal["date"].encode("utf-8") + bal["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -124,8 +129,9 @@ def DEBIT(Ser, datetime, time_out, value):
 
     deb_value = deb["cmd"] + deb["date"] + deb["amt"] + deb["tout"]
     p_len, p = proto.Compose_Request(len(deb_value), deb_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -167,8 +173,9 @@ def BNI_TOPUP_VALIDATION(Ser, timeout):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["tout"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -188,8 +195,9 @@ def BNI_TERMINAL_UPDATE(Ser, terminal):
 
     bal_value = sam["cmd"] + sam["tid"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -211,8 +219,9 @@ def BNI_TOPUP_INIT_KEY(Ser, C_MASTER_KEY, C_IV, C_PIN, C_TID):
 
     bal_value = sam["cmd"] + sam["mk"] + sam["iv"] + sam["pin"] + sam["tid"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     LOG.fw("RAW_RECV:", response)
@@ -232,8 +241,9 @@ def PURSE_DATA_MULTI_SAM(Ser, slot):
 
     bal_value = sam["cmd"] + sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -259,8 +269,9 @@ def BNI_KM_BALANCE_MULTI_SAM(Ser, slot):
 
     bal_value = sam["cmd"] + sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -280,8 +291,9 @@ def BNI_TOPUP_INIT_MULTI(Ser, slot, TIDs):
 
     bal_value = sam["cmd"] + sam["tids"] +  sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -304,8 +316,9 @@ def BNI_TOPUP_CREDIT_MULTI_SAM(Ser, slot, value, time_out):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["AMOUNT"].encode("utf-8") + sam["slot"] + sam["TIMEOUT"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -330,8 +343,9 @@ def BNI_REFILL_SAM_MULTI(Ser, slot, TIDs):
 
     bal_value = sam["cmd"] + sam["TID"] + sam["slot"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -354,8 +368,9 @@ def PURSE_DATA(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -383,8 +398,9 @@ def DEBIT_NOINIT_SINGLE(Ser, tid, datetime, time_out, value):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"] + sam["term"] + sam["tout"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -411,8 +427,9 @@ def TOP_UP_C2C(Ser, amount, timestamp):
 
     c2c_refill = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"].encode("utf-8") + sam["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(c2c_refill), c2c_refill)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -438,8 +455,9 @@ def INIT_TOPUP_C2C(Ser, tidnew, tidold, C_Slot):
 
     bal_value = sam["cmd"] + sam["tid_new"] + sam["tid_old"] + b"\x00"
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -463,8 +481,9 @@ def TOPUP_C2C_CORRECTION(Ser):
 
     bal_value = sam["cmd"] + sam["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -490,8 +509,9 @@ def GET_FEE_C2C(Ser, Flag):
     
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["isNew"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -514,8 +534,9 @@ def SET_FEE_C2C(Ser, Flag, FeeResponse):
 
     bal_value = sam["cmd"] + sam["isNew"] + sam["len"] + sam["data"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -536,8 +557,9 @@ def TOPUP_FORCE_C2C(Ser, Flag):
 
     bal_value = sam["cmd"] + sam["date"].encode("utf-8") + sam["isNew"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -554,8 +576,9 @@ def MDR_C2C_LAST_REPORT(Ser):
     sam["cmd"] = b"\x7E"
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -577,8 +600,9 @@ def NEW_TOP_UP_C2C(Ser, amount, timestamp):
 
     c2c_refill = sam["cmd"] + sam["date"].encode("utf-8") + sam["amt"].encode("utf-8") + sam["tout"].encode("utf-8")
     p_len, p = proto.Compose_Request(len(c2c_refill), c2c_refill)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -596,8 +620,9 @@ def KM_BALANCE_TOPUP_C2C(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -631,17 +656,11 @@ def APDU_SEND(Ser, slot, apdu):
 
     bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["len"].encode("utf-8") + sam["apdu"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
-    while True:
-        data = retrieve_rs232_data(Ser)
-        response = parse_default_template(data)
-        
-        result = parse_default_report(response["data"])
-        if result['cmd'] == sam['cmd']:
-            LOG.fw("CMD MATCH:", result)
-            break
-        LOG.fw("CMD NOT MATCH:", result['cmd'])
+    result, response = send_command(
+        Serial=Ser, 
+        Param=p, 
+        ValidateCMD=sam["cmd"]
+        )
 
     LOG.fw("RESPONSE:", result)
 
@@ -682,8 +701,9 @@ def BCA_TERMINAL_UPDATE(Ser, TID, MID):
 
     bal_value = sam["cmd"] + sam["TID"] + sam["MID"] + sam["MINBAL"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)    
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -701,8 +721,9 @@ def GET_SN(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -744,8 +765,9 @@ def BCA_CARD_INFO(Ser, ATD):
 
     bal_value = sam["cmd"] + sam["ATD"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -768,8 +790,9 @@ def GET_CARDDATA(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -805,10 +828,9 @@ def CARD_DISCONNECT(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    # send_command(Ser, p)
-    Ser.write(p)
-    Ser.flush()
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)   
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -837,8 +859,9 @@ def BCA_SESSION_1(Ser, ATD, datetimes):
 
     bal_value = sam["cmd"] + sam["ATD"] + sam["date"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -873,8 +896,9 @@ def BCA_SESSION_2(Ser, session):
 
     bal_value = sam["cmd"] + sam["session"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -942,8 +966,9 @@ def BCA_TOPUP_1(Ser, ATD, AccessCard, AccessCode, datetimes, AmountHex):
 
     bal_value = sam["cmd"] + sam["ATD"] + sam["AccessCard"] + sam["AccessCode"] + sam["datetimes"] + sam["AmountHex"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -978,8 +1003,9 @@ def BCA_TOPUP_2(Ser, strConfirm):
     
     bal_value = sam["cmd"] + sam["strConfirm"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -1002,8 +1028,9 @@ def BCA_LAST_REPORT(Ser):
     
     bal_value = sam["cmd"] 
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -1038,8 +1065,9 @@ def BCA_REVERSAL(Ser, ATD):
 
     bal_value = sam["cmd"] + sam["ATD"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -1062,8 +1090,9 @@ def BCA_CARD_HISTORY(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -1086,8 +1115,9 @@ def GET_TOKEN_BRI(Ser):
 
     bal_value = sam["cmd"] 
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -1111,8 +1141,9 @@ def GET_CARD_HISTORY(Ser):
     bal_value = send["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
 
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
 
@@ -1136,8 +1167,9 @@ def CLEAR_DUMP(Ser):
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
 
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     return '0000'
     
     
@@ -1148,7 +1180,9 @@ def ENABLE_DUMP(Ser):
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
 
-    send_command(Ser, p)    
+    send_command(
+        Serial=Ser, 
+        Param=p)   
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -1163,7 +1197,9 @@ def DISABLE_DUMP(Ser):
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
 
-    send_command(Ser, p)
+    send_command(
+        Serial=Ser, 
+        Param=p)   
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     
@@ -1180,8 +1216,9 @@ def READER_DUMP(Ser):
 
     bal_value = sam["cmd"]
     p_len, p = proto.Compose_Request(len(bal_value), bal_value)
-    send_command(Ser, p)
-    
+    send_command(
+        Serial=Ser, 
+        Param=p)       
     result = dict()
     result['raw'] = b''
     
@@ -1199,11 +1236,27 @@ def READER_DUMP(Ser):
 ------------------------------------------------------------------------------------------------
 '''
 
-def send_command(Ser, p):
-    Ser.flush()
-    Ser.write(p)
+def send_command(Serial, Param, ValidateCMD=None):
+    Serial.flush()
+    Serial.write(Param)
     sleep(WAIT_AFTER_CMD)
-    Ser.flush()
+    Serial.flush()
+    if ValidateCMD is not None: return pull_result(Serial, ValidateCMD)
+    return None
+
+
+def pull_result(Serial, BreakCMD=None):
+    if BreakCMD is None: return None
+    while True:
+        data = retrieve_rs232_data(Serial)
+        response = parse_default_template(data)
+        
+        result = parse_default_report(response["data"])
+        if result['cmd'] == BreakCMD:
+            LOG.fw("CMD MATCH:", result)
+            break
+        LOG.fw("CMD NOT MATCH:", result['cmd'])
+    return result, response
 
 
 MIN_REPLY_LENGTH = 5
