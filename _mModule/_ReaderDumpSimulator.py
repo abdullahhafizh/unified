@@ -99,6 +99,23 @@ def parse_card_history_template(data):
     return result
 
 
+def parse_default_report(data):
+    '''
+    Tdebitres = packed record
+    cmd   : byte;
+    code  : array[0..3] of byte;
+    //sign  : byte;                      //MULTIBANK
+    rep   : array[0..218] of byte;
+    end;   
+    '''
+    result = {}
+    result["cmd"] = data[0]
+    result["code"] = data[1:5]
+    result["rep"] = data[5:len(data)]
+    result["len"] = len(data)
+    return result
+
+
 def CLEAR_DUMP(Ser):
     sam = {}
     sam["cmd"] = b"\xB5"
@@ -144,7 +161,7 @@ def DISABLE_DUMP(Ser):
     return response['code'].decode(), response
 
 
-def READER_DUMP(Ser):
+def READER_DUMP(Ser, etx_stop=False):
     sam = {}
     sam["cmd"] = b"\xB4"
 
@@ -155,7 +172,7 @@ def READER_DUMP(Ser):
     
     result = dict()
     result['raw'] = b''
-    result['etx'] = True
+    result['etx'] = etx_stop
     
     try:
         res = retrieve_rs232_dump_data(Ser, result)
@@ -184,6 +201,26 @@ def GET_BALANCE_WITH_SN(Ser=Serial()):
     data = retrieve_rs232_data(Ser)
     response = parse_default_template(data)
     result = parse_card_data_template(response["data"])
+    
+    del data
+    del response
+    return result["code"].decode('utf-8'), result
+
+
+def SYNC_TIME(Ser=Serial()):
+    bal = {}
+    bal["cmd"] = b"\xF0"
+    st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
+    bal["time"] = st
+
+    bal_value = bal["cmd"] + bal["time"].encode("utf-8")
+    p_len, p = compose_request(len(bal_value), bal_value)
+
+    send_command(Ser, p)
+    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+    result = parse_default_report(response["data"])
     
     del data
     del response
@@ -222,6 +259,58 @@ def CARD_DISCONNECT(Ser):
     del data
     return SUCCESS_CODE, response
 
+
+
+def GET_FEE_C2C(Ser, Flag=b"1"):
+    sam = {}
+    sam["cmd"] = b"\x85"
+    st = datetime.datetime.now().strftime("%d%m%y%H%M%S")
+    sam["date"] = st
+        
+    # SYNC TIME
+    SYNC_TIME(Ser)
+
+    bal_value = sam["cmd"] + sam["date"].encode("utf-8") + Flag
+    p_len, p = compose_request(len(bal_value), bal_value)
+    send_command(Ser, p)
+    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+    result = parse_default_report(response["data"])
+    
+    del data
+    del response
+    return result["code"], result["rep"]
+
+
+
+def SEND_APDU(Ser, slot, apdu):
+    sam = {}
+    sam["cmd"] = b"\xB0"
+    sam["slot"] = format(slot, "X")[0:2].zfill(2)
+    sam["len"] = format(len(apdu), "X")[0:2].zfill(2)
+    # Define Max APDU Len on 255 / FF
+    if len(apdu) > 255: sam["len"] = "FF"
+    sam["apdu"] = apdu
+
+    bal_value = sam["cmd"] + sam["slot"].encode("utf-8") + sam["len"].encode("utf-8") + sam["apdu"].encode('utf-8')
+    p_len, p = compose_request(len(bal_value), bal_value)
+    send_command(Ser, p)
+    
+    data = retrieve_rs232_data(Ser)
+    response = parse_default_template(data)
+    
+    result = parse_default_report(response["data"])
+
+    Len = ((response["len"][0] << 8)+response["len"][1])-5
+    rep = ''
+    for i in range(0, Len):
+        rep = rep + chr(result["rep"][i])
+
+    del data
+    del response
+    return result["code"], rep
+
 '''
 ------------------------------------------------------------------------------------------------
 '''
@@ -246,9 +335,10 @@ def retrieve_rs232_data(Ser=Serial()):
             continue
         
         if response.__contains__(ETX):
+            print('Receive', response)
             if response[:2] != STX: 
                 print('Wrong STX', response[:2])
-                response = STX[0].to_bytes(1, 'big') + response
+                response = STX + response
                 print('Fix STX', response[:2])
             i_start = response.index(STX)
             i_end = response.index(ETX)
@@ -257,7 +347,7 @@ def retrieve_rs232_data(Ser=Serial()):
                 response = response[i_start:(i_end+len(ETX))]
             else:
                 response = response[:(i_end+len(ETX))]
-            print('Receive', response)
+            print('Final Response', response)
             return response
 
 
@@ -307,16 +397,24 @@ AVAILABLE_COMMAND = {
     '3': 'Card Log',
     '4': 'Enable Dump',
     '5': 'Disable Dump',
+    '6': 'Sync Time',    
+    '7': 'Send APDU Command',    
+    '8': 'Get Mandiri C2C Fee',    
     '9': 'Get Reader Dump',
     'X': 'Exit'
 }
 
-avail_command_text = 'Pilih Mode Berikut : \n'
+avail_command_text = (32*'+')+'\n'
+avail_command_text += 'Pilih Mode Berikut : \n'
+avail_command_text += (32*'+')+'\n'
 avail_command_text += ( '1 : Card Balance\n')
 avail_command_text += ( '2 : Card Disconnect\n')
 avail_command_text += ( '3 : Card Log\n')
 avail_command_text += ( '4 : Enable Dump\n')
 avail_command_text += ( '5 : Disable Dump\n')
+avail_command_text += ( '6 : Sync Time\n')
+avail_command_text += ( '7 : Send APDU\n')
+avail_command_text += ( '8 : Get Mandiri C2C Fee\n')
 avail_command_text += ( '9 : Get Reader Dump\n')
 avail_command_text += ( 'X : Exit\n')
 avail_command_text += 'Pilih Nomor : '
@@ -355,9 +453,32 @@ if __name__ == '__main__':
                         result, data = ENABLE_DUMP(COMPORT)
                     elif mode == '5':
                         result, data = DISABLE_DUMP(COMPORT)
+                    elif mode == '6':
+                        result, data = SYNC_TIME(COMPORT)
+                    elif mode == '7':
+                        while True:
+                            target = input('Select Target Slot (1,2,3,4) Or 255 For Contactless) : \n')
+                            if target in ['1', '2', '3', '4', '255']:
+                                break
+                        while True:
+                            command = input('Insert Command To Be Executed : \n')
+                            if len(command) >= 8:
+                                break
+                        result, data = SEND_APDU(COMPORT, int(target), command)
+                    elif mode == '8':
+                        while True:
+                            target = input('Select Applet Type 0-Old, 1-New : \n')
+                            if target in ['0', '1']:
+                                break
+                        result, data = GET_FEE_C2C(COMPORT, target.encode('utf-8'))
                     elif mode == '9':
+                        while True:
+                            target = input('0-Timer Stop or 1-ETX Stop : \n')
+                            if target in ['0', '1']:
+                                break
                         _reff = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                        result, data = READER_DUMP(COMPORT)
+                        etx_stop = (target == '1')
+                        result, data = READER_DUMP(COMPORT, etx_stop)
                         if result == SUCCESS_CODE:
                             out_file = log_to_file(content=data, filename=('simulator'+_reff))
                             print(out_file)
