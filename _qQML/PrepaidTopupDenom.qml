@@ -392,6 +392,11 @@ Base{
             allowedBank.push('BCA');
         }
 
+        if (cardData == undefined){
+            switch_frame('source/insert_card_new.png', 'Kartu Anda Tidak Terdeteksi', 'Angkat dan tempelkan kembali kartu Anda pada reader', 'backToMain', false );
+            return;
+        }
+
         if (allowedBank.indexOf(cardData.bank_name) == -1){
             var extra_message = '\nNO_CONNECTION';
             if (['MANDIRI', 'BNI'].indexOf(cardData.bank_name) > -1) extra_message = '';
