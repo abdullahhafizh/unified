@@ -1,6 +1,8 @@
 16.5.4-GLOBAL:
 - Implement Topup Fee Sync as Background Remote Service (MDR_C2C_SYNC_FEE),
 - Implement Topup Fee Sync on App Startup,
+- Disable Card Disconnect on UI Trigger Function,
+- Keep Print Receipt Layout On Exceed Payment,
 - [REQUIRED] Reader FW 2.13 and latest,
 - ...
 

@@ -459,7 +459,7 @@ Base{
             } else if (cardNo.substring(0, 4) == '7546'){
                 _SLOT.start_check_bni_deposit();
             }
-            my_layer.push(ereceipt_view, {details:details});
+            my_layer.push(ereceipt_view, {details:details, receivedPayment: receivedPayment, totalPrice: totalPrice});
             return;
         }
 

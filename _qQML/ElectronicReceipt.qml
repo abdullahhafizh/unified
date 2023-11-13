@@ -30,6 +30,9 @@ Base{
     property int showManualPrintButton: 5
     property int delayExecution: 3000
 
+    property int receivedPayment: 0
+    property var totalPrice: 0
+
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
@@ -123,6 +126,13 @@ Base{
 //            trxNotes = 'Pastikan Anda mendapatkan konfirmasi dari layanan pembayaran/pembelian Anda.';
 //            break;
         }
+    }
+
+    function validate_cash_refundable(){
+        if (details.payment == 'cash' && receivedPayment > totalPrice){
+            return parseInt(receivedPayment - totalPrice);
+        }
+        return false;
     }
 
     function ereceipt_show(data){
@@ -332,6 +342,11 @@ Base{
                     _SLOT.start_play_audio('please_take_new_card_with_receipt');
                 }
                 switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
+                // Check Exceed Payment, If Found Keep Print The TRX Receipt
+                var exceed = validate_cash_refundable();
+                if (exceed == false)return;
+                _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+                
             }
         }
     }
