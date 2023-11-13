@@ -95,6 +95,9 @@ Base{
                     manualButtonVisible = true;
                 }
                 if(abc.counter < 0){
+                    // Check Exceed Payment, If Found Keep Print The TRX Receipt
+                    var exceed = validate_cash_refundable();
+                    if (exceed !== false && parseInt(exceed) > 0) _SLOT.start_direct_sale_print_global(JSON.stringify(details));
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
@@ -341,12 +344,10 @@ Base{
                     msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Baru Anda';
                     _SLOT.start_play_audio('please_take_new_card_with_receipt');
                 }
-                switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
                 // Check Exceed Payment, If Found Keep Print The TRX Receipt
                 var exceed = validate_cash_refundable();
-                if (exceed == false)return;
-                _SLOT.start_direct_sale_print_global(JSON.stringify(details));
-                
+                if (exceed !== false && parseInt(exceed) > 0) _SLOT.start_direct_sale_print_global(JSON.stringify(details));
+                switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
             }
         }
     }
