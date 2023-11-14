@@ -137,7 +137,7 @@ Base{
             result = parseInt(receivedPayment - totalPrice);
         }
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-        console.log('validate_cash_refundable', now, result);
+        console.log('validate_cash_refundable', now, result, receivedPayment, totalPrice);
         return result;
     }
 
