@@ -5,6 +5,8 @@
 - Keep Print Receipt Layout On Exceed Payment,
 - [REQUIRED] Reader FW 2.13 and latest,
 - Disable Resend Last BNI Settlement,
+- Set duwit to Live environment,
+- Disable NV ERROR print,
 - ...
 
 16.5.3-GLOBAL:

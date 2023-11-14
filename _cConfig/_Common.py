@@ -878,7 +878,7 @@ QR_PROD_STATE = {
     'NOBU-QRIS': True,
     'MDR-QRIS': True,
     'BRI-QRIS': False,
-    'DUWIT': False,
+    'DUWIT': True,
     'BCA-QRIS': False,
     'JAKONE': True,
     'GOPAY': True,
