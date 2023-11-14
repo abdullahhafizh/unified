@@ -1200,7 +1200,7 @@ def startup_task():
             sleep(1)
             print("pyt: Resync Mandiri C2C Fee To Host...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Mandiri C2C Fee To Host...')
-            _SettlementService.start_do_c2c_update_fee()    
+            _SettlementService.start_do_c2c_send_fee()    
             sleep(1)
             print("pyt: Check Last Mandiri Settlement...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check Last Mandiri Settlement...')

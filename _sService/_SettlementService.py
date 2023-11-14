@@ -855,7 +855,7 @@ def async_push_settlement_data(param):
     _Helper.get_thread().apply_async(push_settlement_data, (param,))
 
 
-def do_prepaid_settlement(bank='BNI', force=False):
+def do_prepaid_settlement(bank='BNI', force=False, proceed_mode='NORMAL'):
     if bank == 'BNI':
         _SFTPAccess.HOST_BID = 2
         if not _Common.is_online(source='bni_settlement'):
@@ -1053,6 +1053,7 @@ def do_prepaid_settlement(bank='BNI', force=False):
         if _push_file_sett['success'] is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FEE_SETTLEMENT')
             return
+        if proceed_mode == 'SEND_ONLY': return 
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GET_C2C_FEE_SETTLEMENT')
         _result_update_fee = _QPROX.pull_set_c2c_settlement_fee(_param_sett['filename'])
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPDATE_C2C_FEE_SETTLEMENT')
@@ -1075,6 +1076,12 @@ def do_prepaid_settlement(bank='BNI', force=False):
 def start_do_c2c_update_fee():
     bank = 'MANDIRI_C2C_FEE'
     _Helper.get_thread().apply_async(do_prepaid_settlement, (bank, ))
+    
+
+def start_do_c2c_send_fee():
+    bank = 'MANDIRI_C2C_FEE'
+    proceed_mode = 'SEND_ONLY'
+    _Helper.get_thread().apply_async(do_prepaid_settlement, (bank, proceed_mode, ))
 
 
 def mandiri_create_rq1(content):
