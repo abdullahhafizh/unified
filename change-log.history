@@ -4,6 +4,7 @@
 - Disable Card Disconnect on UI Trigger Function,
 - Keep Print Receipt Layout On Exceed Payment,
 - [REQUIRED] Reader FW 2.13 and latest,
+- Disable Resend Last BNI Settlement,
 - ...
 
 16.5.3-GLOBAL:
