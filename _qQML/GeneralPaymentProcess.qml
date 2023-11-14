@@ -451,8 +451,6 @@ Base{
                     }
                 _SLOT.start_do_confirm_promo(JSON.stringify(payload));
             }
-            hide_all_cancel_button();
-            reset_variables_to_default();
             // Trigger Deposit Update Balance Check
             if (cardNo.substring(0, 4) == '6032'){
                 if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
@@ -460,6 +458,8 @@ Base{
                 _SLOT.start_check_bni_deposit();
             }
             my_layer.push(ereceipt_view, {details:details, receivedPayment: receivedPayment, totalPrice: totalPrice});
+            hide_all_cancel_button();
+            reset_variables_to_default();
             return;
         }
 
