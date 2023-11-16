@@ -2084,7 +2084,7 @@ def pull_set_c2c_settlement_fee(file):
             for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
                 if _Helper.empty(new_c2c_fees[applet_type]): continue
                 apdu_response = new_c2c_fees[applet_type]
-                fee_data = apdu_response[:8] if applet_type == 0 else apdu_response[2:10]
+                fee_data = apdu_response[2:10] if apdu_response[:2] == '01' else apdu_response[:8]
                 param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(apdu_response) + '|'
                 response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
                 LOGGER.debug((applet_type, str(response), str(result)))
