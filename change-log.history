@@ -1,3 +1,8 @@
+16.5.5-GLOBAL:
+- Direct Print After Staff Cash Collection,
+- Direct Print After Staff Card Stock Opname,
+- ...
+
 16.5.4-GLOBAL:
 - Implement Topup Fee Sync as Background Remote Service (MDR_C2C_SYNC_FEE),
 - Implement Topup Fee Sync on App Startup,

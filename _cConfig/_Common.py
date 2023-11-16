@@ -824,6 +824,9 @@ VIEW_CONFIG['payment_cancel'] = True if PAYMENT_CANCEL == '1' else False
 VIEW_CONFIG['theme_name'] = THEME_NAME
 VIEW_CONFIG['printer_type'] = PRINTER_TYPE
 VIEW_CONFIG['payment_rules'] = PAYMENT_RULES
+VIEW_CONFIG['auto_print_collection'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^collection', '1') == '1' else False
+VIEW_CONFIG['auto_print_stock_opname'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^stock^opname', '1') == '1' else False
+
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
