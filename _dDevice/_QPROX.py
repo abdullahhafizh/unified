@@ -202,6 +202,7 @@ DO_READER_DUMP_ON_CARD_HISTORY = False
 
 
 def do_get_reader_dump(event, reff=None):
+    if not _Common.SUPPORT_DUMP_VERSION: return
     if not DO_READER_DUMP_ON_CARD_HISTORY and 'get_card_history' in event: return 
     reff = _Helper.time_string('%Y%m%d%H%M%S') if reff is None else reff
     param = QPROX['READER_DUMP'] + '|' + event + '|'  + reff
@@ -218,6 +219,7 @@ def start_enable_reader_dump():
     
 
 def disable_reader_dump():
+    if not _Common.SUPPORT_DUMP_VERSION: return
     if _Common.QPROX_READER_FORCE_DUMP:
         LOGGER.info(('QPROX_READER_FORCE_DUMP', _Common.QPROX_READER_FORCE_DUMP))
         return
@@ -227,6 +229,7 @@ def disable_reader_dump():
     
     
 def enable_reader_dump():
+    if not _Common.SUPPORT_DUMP_VERSION: return
     param = QPROX['ENABLE_READER_DUMP'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((response, result))
