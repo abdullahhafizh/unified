@@ -516,7 +516,7 @@ def topup_C2C_Correct():
 @func_set_timeout(30)
 def topup_C2C_getfee(Flag):
     res_str = ""
-    reportSAM = ""
+    feeC2C = ""
     debErrorStr = ""
     try:
         LOG.fw("--> CMD READER = $85")
