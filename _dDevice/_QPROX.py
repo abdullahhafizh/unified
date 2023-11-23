@@ -213,6 +213,10 @@ def do_get_reader_dump(event, reff=None):
 def start_disable_reader_dump():
     _Helper.get_thread().apply_async(disable_reader_dump)
     
+    
+def start_reset_reader_contact():
+    _Helper.get_thread().apply_async(reset_card_contactless)
+    
 
 def start_enable_reader_dump():
     _Helper.get_thread().apply_async(enable_reader_dump)

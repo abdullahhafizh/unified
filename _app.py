@@ -579,6 +579,10 @@ class SlotHandler(QObject):
     def start_disable_reader_dump(self):
         _QPROX.start_disable_reader_dump()
     start_disable_reader_dump = pyqtSlot()(start_disable_reader_dump)
+    
+    def start_reset_reader_contact(self):
+        _QPROX.start_reset_reader_contact()
+    start_reset_reader_contact = pyqtSlot()(start_reset_reader_contact)
 
     def start_print_card_history(self, payload):
         _SalePrintTool.start_print_card_history(payload)
