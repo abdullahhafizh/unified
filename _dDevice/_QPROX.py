@@ -533,7 +533,10 @@ def init_config():
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
     finally:
-        disable_reader_dump()
+        if _Common.QPROX_READER_FORCE_DUMP:
+            enable_reader_dump()
+        else:
+            disable_reader_dump()
     # finally:
     #     # Retry Read BNI SAM Balance
     #     if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
