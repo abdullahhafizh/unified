@@ -73,7 +73,6 @@ Base{
             selectedMenu = '';
             if (globalBoxName !== ""){
                 _SLOT.start_disable_reader_dump();
-                _SLOT.start_reset_reader_contact();
                 _SLOT.start_get_kiosk_status();
                 _SLOT.start_play_audio('homepage_greeting');
             }

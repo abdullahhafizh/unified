@@ -223,6 +223,8 @@ def start_enable_reader_dump():
     
 
 def disable_reader_dump():
+    # Add Reset Contact
+    reset_card_contactless()
     if not _Common.SUPPORT_DUMP_VERSION: return
     if _Common.QPROX_READER_FORCE_DUMP:
         LOGGER.info(('QPROX_READER_FORCE_DUMP', _Common.QPROX_READER_FORCE_DUMP))
@@ -1234,7 +1236,8 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     # Error Condition/ Failure Transaction Below
     try:
         # Call Reader Dump
-        do_get_reader_dump(str(last_card_check['card_no']), trxid)
+        if 'topup_mandiri' in _Common.SELECTED_DEBUG_MODE:
+            do_get_reader_dump(str(last_card_check['card_no']), trxid)
         # param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
         # dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
         # LOGGER.info((dump_response, dump_result))
@@ -1754,7 +1757,8 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
         # False Condition
         
         # Call Reader Dump
-        do_get_reader_dump(str(last_card_check['card_no']), trxid)
+        if 'topup_bni' in _Common.SELECTED_DEBUG_MODE:
+            do_get_reader_dump(str(last_card_check['card_no']), trxid)
         # param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
         # dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
         # LOGGER.info((dump_response, dump_result))

@@ -1752,6 +1752,10 @@ def topup_online(bank, cardno, amount, trxid=''):
             update_result = update_balance(_param_command, bank='BRI', mode='TOPUP')
             if not update_result:
                 # _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BRI_UPDATE_BALANCE_ERROR')
+                # Add Dump Reader Action
+                if 'topup_bri' in _Common.SELECTED_DEBUG_MODE:
+                    _QPROX.do_get_reader_dump(str(last_card_check['card_no']), trxid)
+                
                 _Common.LAST_BRI_ERR_CODE = '31'
                 if _Common.NEW_TOPUP_FAILURE_HANDLER:
                     pending_result['trxid'] = trxid
@@ -1872,6 +1876,10 @@ def topup_online(bank, cardno, amount, trxid=''):
             #     _QPROX.QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BCA_UPDATE_BALANCE_ERROR')
             #     return
             if update_result is False or update_result == 'BCA_TOPUP_CORRECTION':
+                # Add Dump Reader Action
+                if 'topup_bca' in _Common.SELECTED_DEBUG_MODE:
+                    _QPROX.do_get_reader_dump(str(last_card_check['card_no']), trxid)
+                    
                 _Common.LAST_BCA_ERR_CODE = '41'
                 if _Common.NEW_TOPUP_FAILURE_HANDLER:        
                     pending_result.update(_param)
@@ -2125,6 +2133,11 @@ def topup_online(bank, cardno, amount, trxid=''):
                     # Must Stop Process Here As Success TRX
                     return True        
             # rc = json.loads(result).get('Result', 'FFFF')    
+            
+            # Add Dump Reader Action
+            if 'topup_dki' in _Common.SELECTED_DEBUG_MODE:
+                _QPROX.do_get_reader_dump(str(last_card_check['card_no']), trxid)
+                
             # Failed Request Topup Set To New Handler
             _param['prev_balance'] = last_card_check['balance']
             _Common.LAST_DKI_ERR_CODE = '51'
