@@ -447,6 +447,7 @@ NV200 = None
 LOOP_ATTEMPT = 0
 # Set Max Waiting Event Listen From NV into 120 seconds
 MAX_LOOP_ATTEMPT = 90
+MAX_STORE_ATTEMPT = 5
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
     global NV200, LOOP_ATTEMPT, COMMAND_MODE
@@ -506,10 +507,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             while True:
                 event = NV200.get_event(command)
-                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                # Set Harcoded only wait for 3 Seconds
-                if LOOP_ATTEMPT >= 3: 
-                    return 0, "Noted stacked as Max Attempt Reached"
+                if LOOP_ATTEMPT >= MAX_STORE_ATTEMPT: 
+                    return -1, "Noted cannot stacked on Max Attempt"
                 LOOP_ATTEMPT += 1
                 if len(event) == 1:
                     time.sleep(1)

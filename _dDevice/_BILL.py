@@ -635,11 +635,8 @@ def bill_store_note(trxid):
         if not HOLD_NOTES:
             LOGGER.warning((trxid, 'STORE_NOTES', BILL['TYPE'], 'HOLD_NOTES', HOLD_NOTES))
             return
-        
-        # if BILL_TYPE == 'NV': sleep(3)
-        
+                
         attempt = 3 if BILL_TYPE == 'GRG' else 1
-        
         while True:
             attempt = attempt - 1
             response, result = send_command_to_bill(param=BILL["STORE"]+'|', output=None)
@@ -648,32 +645,34 @@ def bill_store_note(trxid):
             if response == 0: break
             sleep(1)
 
-        # Special Handling For GRG
-        if response != 0 and BILL_TYPE == 'GRG':
-            init_bill()
-            response = 0
-
         if response == 0:
             LOGGER.info(('COLLECTED_CASH', COLLECTED_CASH, 'TARGET_CASH_AMOUNT', TARGET_CASH_AMOUNT))
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|SUCCESS')
-            # Disabled - Will Not Be Actual From CASH_HISTORY When There Was Partial Error
-            # for cash_in in CASH_HISTORY:
-            #     _Common.store_notes_activity(cash_in, trxid)
-            #     _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
-            COLLECTED_CASH = 0
-            CASH_HISTORY = []
-            CASH_TIME_HISTORY = []
         else:
             BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
             LOGGER.warning((trxid, str(response), str(result)))
+            
+            # Do Delete Last Cash Input in cashbox.status
+            _Common.remove_notes_activity(trxid)
+            # Put Error Message In that situation
+            _Common.store_notes_activity('ERROR', trxid)
+            
+            # GRG Do Re-init Bill
+            if BILL_TYPE == 'GRG': init_bill()
+            
     except Exception as e:
         _Common.BILL_ERROR = 'FAILED_STORE_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_STORE.emit('STORE_BILL|ERROR')
         LOGGER.warning(e)
+        
     finally:
+        # Reset Temporary Calculation
+        COLLECTED_CASH = 0
+        CASH_HISTORY = []
+        CASH_TIME_HISTORY = []
         response, result = send_command_to_bill(param=BILL["STOP"]+'|', output=None)
         LOGGER.debug((BILL['TYPE'], trxid, response, result))
-        
+
 
 def start_bill_reject_note(trxid):
     _Helper.get_thread().apply_async(bill_reject_note, (trxid,))

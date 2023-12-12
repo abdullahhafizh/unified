@@ -1,3 +1,8 @@
+16.5.8-GLOBAL:
+- Change Assumption on Bill Store Event,
+- Reset Calculation and Flag ERROR on above condition,
+- ...
+
 16.5.7A-GLOBAL:
 - Selected Debug Mode Function From Setting,
 - Add Reset Contact in Disable Reader Dump,
