@@ -653,7 +653,7 @@ def bill_store_note(trxid):
             LOGGER.warning((trxid, str(response), str(result)))
             
             # Do Delete Last Cash Input in cashbox.status
-            _Common.remove_notes_activity(trxid)
+            # _Common.remove_notes_activity(trxid)
             # Put Error Message In that situation
             _Common.store_notes_activity('ERROR', trxid)
             
