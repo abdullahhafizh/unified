@@ -1734,8 +1734,8 @@ def generate_cash_collection_event(struct_id, ext='.pdf'):
         error_count = 0
         for activity_note in s['cash_activity']['notes']:
             if 'ERROR' in activity_note:
-                error_count += 1
-                continue
+                error_count += (s['cash_activity']['summary'].get('ERROR', 1))
+                break
         for note in _Common.BILL_ACTIVE_NOTES:
             qty = s['cash_activity']['summary'].get(note, 0)
             sub_total = int(qty) * int(note)
@@ -1828,8 +1828,8 @@ def eprinter_admin_global(struct_id, ext='.pdf'):
         error_count = 0
         for activity_note in s['cash_activity']['notes']:
             if 'ERROR' in activity_note:
-                error_count += 1
-                continue
+                error_count += (s['cash_activity']['summary'].get('ERROR', 1))
+                break
         for note in _Common.BILL_ACTIVE_NOTES:
             qty = s['cash_activity']['summary'].get(note, 0)
             sub_total = int(qty) * int(note)

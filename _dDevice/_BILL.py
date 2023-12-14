@@ -173,11 +173,11 @@ TARGET_CASH_AMOUNT = 0
 
 def init_bill():
     global OPEN_STATUS, BILL
+    
     if BILL_TYPE == 'GRG': BILL = GRG 
     if BILL_TYPE == 'NV': BILL = NV 
     if BILL_TYPE == 'MEI': BILL = MEI 
-    # exec('BILL='+BILL_TYPE)
-    # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
+
     if BILL_PORT is None:
         LOGGER.warning(("port", BILL_PORT))
         _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
@@ -188,7 +188,7 @@ def init_bill():
         OPEN_STATUS = True
     else:
         _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
-    # LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
+
     BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     return OPEN_STATUS
 
@@ -212,16 +212,11 @@ def send_command_to_bill(param=None, output=None):
 
 def reset_bill():
     global OPEN_STATUS, BILL
-    # BILL = GRG if BILL_TYPE == 'GRG' else NV
-    # exec('BILL='+BILL_TYPE)
+
     if BILL_TYPE == 'GRG': BILL = GRG 
     if BILL_TYPE == 'NV': BILL = NV 
     if BILL_TYPE == 'MEI': BILL = MEI 
-    # LOGGER.info(('Bill Command(s) Map', BILL_TYPE, str(BILL)))
-    # if BILL_PORT is None:
-    #     LOGGER.warning(("port", BILL_PORT))
-    #     _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
-    #     return False
+
     param = BILL["SET"] + '|' + BILL["PORT"]
     if BILL_TYPE in ['MEI']:
         OPEN_STATUS = True
@@ -238,7 +233,7 @@ def reset_bill():
     else:
         _Common.BILL_ERROR = 'FAILED_RESET_BILL'
         BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('RESET_BILL|ERROR')
-    # LOGGER.info(("STANDBY_MODE BILL", BILL_TYPE, str(OPEN_STATUS)))
+
     return OPEN_STATUS
 
 
@@ -272,10 +267,6 @@ def set_direct_price_with_current(current, price):
 
 
 def start_bill_receive_note(trxid):
-    # Add Billing Initiation En Every Note Receive For NV Only
-    # if IS_RECEIVING is True:
-    #     return
-    # if BILL_TYPE == 'NV' and _Helper.empty(CASH_HISTORY):
     if not OPEN_STATUS:
         init_bill()
     _Helper.get_thread().apply_async(start_receive_note, (trxid,))
@@ -296,8 +287,6 @@ def parse_notes(_result):
     except Exception as e:
         LOGGER.warning((e))
     finally:
-        # Insert Into Table Cashbox
-        # _DAO.insert_cashbox(cash_in)
         return cash_in
     
 
@@ -521,8 +510,7 @@ def store_cash_into_cashbox(trxid, cash_in):
 
 def set_cashbox_full():
     _Common.BILL_ERROR = 'CASHBOX_FULL'
-    # total_cash = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
-    total_cash = _Common.get_cash_activity()['total']
+    # total_cash = _Common.get_cash_activity()['total']
     #_Common.online_logger(['CASHBOX_FULL', str(total_cash)], 'device')
     _Common.log_to_config('BILL', 'last^money^inserted', 'FULL')
 
@@ -621,10 +609,6 @@ def stop_receive_note(trxid):
 
 
 def start_bill_store_note(trxid):
-    # Whats Handling is This ?
-    # if BILL_TYPE == 'NV':
-    #     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
-    #     sleep(3)
     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
 
 
