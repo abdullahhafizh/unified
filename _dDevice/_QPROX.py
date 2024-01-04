@@ -403,7 +403,7 @@ def execute_topup_config_check(_param={}, _bank=''):
     if not _Common.SECURE_CHANNEL_TOPUP:
         return _HTTPAccess.post_to_url(url=_url, param=_param)
     
-    # UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
+    # UPDATE_BALANCE_URL_DEV = 'http://apidev.mdd.co.id:28194/v1/'
     _url = _url.replace('/v1/', '/enc-kiosk/')
     # AES-128-CBC Output in HEX
     encrypt_status, encrypt_result = _Cryptograpy.encrypt_aes(
