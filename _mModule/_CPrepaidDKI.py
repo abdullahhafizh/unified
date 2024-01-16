@@ -211,11 +211,13 @@ def topup_confirm_dki_priv(DataToCard):
     return ResultStr, reportRAPDU
 
 
-
 #053
 def dki_card_get_log(param, __global_response__):
     
-    res_str, errmsg, desc = dki_card_get_log_priv('NEW')
+    if not _Common.SUPPORT_DUMP_VERSION:
+        res_str, errmsg, desc = dki_card_get_log_priv('OLD')
+    else:
+        res_str, errmsg, desc = dki_card_get_log_priv('NEW')
 
     __global_response__["Result"] = res_str
     if res_str == "0000":

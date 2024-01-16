@@ -1,3 +1,7 @@
+16.5.9-GLOBAL:
+- Restore To Previous Card Log BCA & DKI Function,
+- ...
+
 16.5.8-GLOBAL:
 - Change Assumption on Bill Store Event,
 - Reset Calculation and Flag ERROR on above condition,
