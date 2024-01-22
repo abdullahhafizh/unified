@@ -88,11 +88,13 @@ def bca_card_get_log(param, __global_response__):
 def get_bca_card_history_priv():
     # Old Function
     # res_str, card_log = prepaid.topup_bca_lib_cardhistory()
+    res_report = ''
     if not _Common.SUPPORT_DUMP_VERSION:
-        res_str, card_log = prepaid.topup_bca_lib_cardhistory()
+        res_str, __carduid, __cardno = prepaid.get_card_sn()
+        if res_str == '0000':
+            res_str, card_log = prepaid.topup_bca_lib_cardhistory()
     else:
         res_str, card_log = prepaid.get_card_history('BCA')
-    res_report = ''
     if res_str == '0000':
         if not _Common.LIVE_MODE:
             print('Raw BCA Card Log', card_log)

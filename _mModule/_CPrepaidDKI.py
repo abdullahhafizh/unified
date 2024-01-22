@@ -240,7 +240,10 @@ def dki_card_get_log(param, __global_response__):
 #054
 def dki_card_get_log_raw(param, __global_response__):
     
-    res_str, errmsg, desc = dki_card_get_log_raw_priv('NEW')
+    if not _Common.SUPPORT_DUMP_VERSION:
+        res_str, errmsg, desc = dki_card_get_log_raw_priv('OLD')
+    else:
+        res_str, errmsg, desc = dki_card_get_log_raw_priv('NEW')
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -301,7 +304,7 @@ def dki_card_get_log_priv(method='NEW'):
                     resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
                     msg = msg + resreport + "#"
         else:
-            resultStr, uid, cardno = prepaid.get_card_sn()
+            resultStr, __card_uid, __card_no = prepaid.get_card_sn()
             if resultStr == "0000":
                 i = 0
                 while resultStr == "0000" and i <= max_t:
@@ -358,7 +361,7 @@ def dki_card_get_log_raw_priv(methode='NEW'):
                     i = i + 1
                     msg = msg + rapdu
         else:
-            resultStr, uid, cardno = prepaid.get_card_sn()
+            resultStr, __card_uid, __card_no = prepaid.get_card_sn()
             if resultStr == "0000":
                 i = 0
                 while resultStr == "0000" and i <= max_t:
