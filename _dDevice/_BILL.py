@@ -269,6 +269,8 @@ def set_direct_price_with_current(current, price):
 def start_bill_receive_note(trxid):
     if not OPEN_STATUS:
         init_bill()
+    # Assign Cash TRX_ID
+    _Common.ACTIVE_CASH_TRX_ID = trxid
     _Helper.get_thread().apply_async(start_receive_note, (trxid,))
 
 
@@ -308,10 +310,20 @@ def start_receive_note(trxid):
         _result = None
         while True:
             try:
-                # Handle NV IS_RECEIVING Flagging
-                if IS_RECEIVING is False:
-                    LOGGER.info(('[BREAK] start_receive_note Due To Stop Receive Event', str(IS_RECEIVING)))
-                    break
+                # Extra Handling NV BILL Before Call
+                # IS_RECEIVING Flagging
+                if not IS_RECEIVING:
+                    LOGGER.debug(('Stop Bill Acceptor Acceptance By IS_RECEIVING', str(IS_RECEIVING)))
+                    return
+                # IDLE_MODE (Escape From Above Handling)
+                if not _Common.IDLE_MODE:
+                    LOGGER.debug(('Stop Bill Acceptor Acceptance By IDLE_MODE', str(_Common.IDLE_MODE)))
+                    return
+                # Active TRX_ID
+                if trxid != _Common.ACTIVE_CASH_TRX_ID:
+                    LOGGER.debug(('Stop Bill Acceptor Acceptance By ACTIVE_CASH_TRX_ID', str(_Common.ACTIVE_CASH_TRX_ID)))
+                    return
+                
                 attempt += 1
                 
                 _response, _result = send_command_to_bill(param=BILL["RECEIVE"] + '|', output=None)
@@ -320,6 +332,12 @@ def start_receive_note(trxid):
                     if BILL["DIRECT_MODULE"] is False or BILL_TYPE == 'GRG':
                         sleep(1)
                         continue
+                
+                # Handle Get Bill Response in Different thread or racing condition after call
+                if trxid != _Common.ACTIVE_CASH_TRX_ID:
+                    LOGGER.debug(('Void Bill Acceptor Response By Different Thread TRX_ID', str(_Common.ACTIVE_CASH_TRX_ID), trxid, _result))
+                    return
+                
                 if BILL['KEY_BOX_FULL'].lower() in _result.lower():
                     set_cashbox_full()
                     IS_RECEIVING = False
@@ -401,7 +419,7 @@ def start_receive_note(trxid):
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
                     break
                 if attempt == MAX_EXECUTION_TIME:
-                    LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
+                    LOGGER.warning(('Stop Bill Acceptor Acceptance By MAX_EXECUTION_TIME', str(attempt), str(MAX_EXECUTION_TIME)))
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                     break
                 # if IS_RECEIVING is False:
@@ -564,6 +582,11 @@ def stop_receive_note(trxid):
     IS_RECEIVING = False
     # sleep(_Common.BILL_STORE_DELAY)
     try:
+        # Extra Handling Stop Bill Event
+        if trxid != _Common.ACTIVE_CASH_TRX_ID:
+            LOGGER.debug(('Stop Bill Acceptor Disacceptance By ACTIVE_CASH_TRX_ID', str(_Common.ACTIVE_CASH_TRX_ID), str(trxid)))
+            return
+
         if HOLD_NOTES:
             if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
                 cash_received = {

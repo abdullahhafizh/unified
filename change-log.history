@@ -1,5 +1,6 @@
 16.5.9-GLOBAL:
-- Restore To Previous Card Log BCA & DKI Function,
+- Restore To Previous Card Log BCA & DKI Function #1,
+- Extra Handler For NV Race Condition/Multithread Anomaly,
 - ...
 
 16.5.8-GLOBAL:

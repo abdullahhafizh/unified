@@ -56,11 +56,13 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            _SLOT.start_idle_mode();
+            // _SLOT.start_idle_mode();
             console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification, showingTNC);
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
+            // Set Idle Mode Here
             _SLOT.user_action_log('[Homepage] Standby Mode');
+
             press = "0";
             resetMediaTimer();
             kalogButton = false;

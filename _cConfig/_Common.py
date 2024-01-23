@@ -2235,6 +2235,7 @@ def check_retry_able(data):
 
 
 LAST_QR_PAYMENT_HOST_TRX_ID = None
+ACTIVE_CASH_TRX_ID = None
 
 
 def generate_stock_change_data():
