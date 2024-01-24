@@ -315,10 +315,6 @@ def start_receive_note(trxid):
                 if not IS_RECEIVING:
                     LOGGER.debug(('Stop Bill Acceptor Acceptance By IS_RECEIVING', str(IS_RECEIVING)))
                     return
-                # IDLE_MODE (Escape From Above Handling)
-                if not _Common.IDLE_MODE:
-                    LOGGER.debug(('Stop Bill Acceptor Acceptance By IDLE_MODE', str(_Common.IDLE_MODE)))
-                    return
                 # Active TRX_ID
                 if trxid != _Common.ACTIVE_CASH_TRX_ID:
                     LOGGER.debug(('Stop Bill Acceptor Acceptance By ACTIVE_CASH_TRX_ID', str(_Common.ACTIVE_CASH_TRX_ID)))
