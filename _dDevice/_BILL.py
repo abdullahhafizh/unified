@@ -658,7 +658,10 @@ def bill_store_note(trxid):
             # Do Delete Last Cash Input in cashbox.status
             # _Common.remove_notes_activity(trxid)
             # Put Error Message In that situation
-            _Common.store_notes_activity('ERROR', trxid)
+            last_inserted_cash = _Common.load_from_custom_config('BILL', 'last^money^inserted')
+            if len(CASH_HISTORY) > 0:
+                last_inserted_cash = CASH_HISTORY[-1:]
+            _Common.store_notes_activity('ERROR', trxid, last_inserted_cash)
             
             # GRG Do Re-init Bill
             if BILL_TYPE == 'GRG': init_bill()

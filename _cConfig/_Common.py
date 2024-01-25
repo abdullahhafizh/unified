@@ -525,7 +525,7 @@ def get_redeem_activity(keyword=None, trx_output=False):
         return output
 
 
-def store_notes_activity(notes, trxid):
+def store_notes_activity(notes, trxid, notify_amount=False):
     global LAST_INSERT_CASH_TIMESTAMP
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
@@ -534,6 +534,7 @@ def store_notes_activity(notes, trxid):
             c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
             c.close()
         LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
+        if notify_amount is not False: send_bill_store_failure(trxid, notify_amount)
         return True
     except Exception as e:
         LOGGER.warning((e, trxid, notes))
@@ -2480,6 +2481,31 @@ def generate_card_preload_data(operator, struct_id):
     store_stock_opname(struct_id, json.dumps(stock_opname))
     archive_redeem_activity(struct_id+'.redeem')
     return data
+
+
+def send_bill_store_failure(trxid, amount):
+    try:
+        param = {
+            'trxId': trxid,
+            'amount': amount,
+            'trxType': 'SHOP',
+            'customerDetails': {},
+            'createdAt': _Helper.now()
+        }
+        if 'topup' in trxid:
+            param['customerDetails'] = load_from_temp_data('last-card-check', 'json')
+            param['trxType'] = 'TOPUP'
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL+'sync/bill-store-failure', param)
+        LOGGER.info((response, str(param)))
+        if status == 200 and response['result'] == 'OK':
+            return True
+        else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/bill-store-failure', payload=param)
+            return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
+
 
 
 def send_stock_opname(key):

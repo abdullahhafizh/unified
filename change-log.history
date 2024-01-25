@@ -1,3 +1,7 @@
+16.6.0-GLOBAL:
+- Send Bill Store Notes Failure To Monitoring,
+- ...
+
 16.5.9-GLOBAL:
 - Restore To Previous Card Log BCA & DKI Function #1,
 - Extra Handler For NV Race Condition/Multithread Anomaly,
