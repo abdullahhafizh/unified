@@ -534,7 +534,8 @@ def store_notes_activity(notes, trxid, notify_amount=False):
             c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
             c.close()
         LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
-        if notify_amount is not False: send_bill_store_failure(trxid, notify_amount)
+        if notify_amount is not False: 
+            _Helper.get_thread().apply_async(send_bill_store_failure, (trxid, notify_amount,))
         return True
     except Exception as e:
         LOGGER.warning((e, trxid, notes))
