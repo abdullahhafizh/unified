@@ -338,6 +338,7 @@ def start_receive_note(trxid):
                     set_cashbox_full()
                     IS_RECEIVING = False
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|ERROR')
+                    # _Common.log_to_config('BILL', 'last^money^inserted', 'UNKNOWN')
                     _Common.store_notes_activity('ERROR', trxid)
                     break
                 if _response == 0 and BILL["KEY_RECEIVED"] in _result:
@@ -658,10 +659,7 @@ def bill_store_note(trxid):
             # Do Delete Last Cash Input in cashbox.status
             # _Common.remove_notes_activity(trxid)
             # Put Error Message In that situation
-            last_inserted_cash = _Common.load_from_custom_config('BILL', 'last^money^inserted')
-            if len(CASH_HISTORY) > 0:
-                last_inserted_cash = CASH_HISTORY[-1:]
-            _Common.store_notes_activity('ERROR', trxid, last_inserted_cash)
+            _Common.store_notes_activity('ERROR', trxid)
             
             # GRG Do Re-init Bill
             if BILL_TYPE == 'GRG': init_bill()

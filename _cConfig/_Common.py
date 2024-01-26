@@ -525,7 +525,7 @@ def get_redeem_activity(keyword=None, trx_output=False):
         return output
 
 
-def store_notes_activity(notes, trxid, notify_amount=False):
+def store_notes_activity(notes, trxid):
     global LAST_INSERT_CASH_TIMESTAMP
     try:
         cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
@@ -534,8 +534,10 @@ def store_notes_activity(notes, trxid, notify_amount=False):
             c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
             c.close()
         LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
-        if notify_amount is not False: 
-            _Helper.get_thread().apply_async(send_bill_store_failure, (trxid, notify_amount,))
+        if notes == 'ERROR': 
+            _Helper.get_thread().apply_async(
+                send_bill_store_failure, (trxid,)
+                )
         return True
     except Exception as e:
         LOGGER.warning((e, trxid, notes))
@@ -2484,8 +2486,9 @@ def generate_card_preload_data(operator, struct_id):
     return data
 
 
-def send_bill_store_failure(trxid, amount):
+def send_bill_store_failure(trxid):
     try:
+        amount = load_from_custom_config('BILL', 'last^money^inserted')
         param = {
             'trxId': trxid,
             'amount': amount,
