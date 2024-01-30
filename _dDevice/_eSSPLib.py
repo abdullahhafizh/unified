@@ -411,7 +411,8 @@ class eSSP(object):  # noqa
         # response = True
         # if process:
         response = self.read(process)
-        print('pyt: NV200 Debug : ', str(prepedstring). str(response))
+        # Direct Raw Debug
+        # print('pyt: NV200 Debug : ', str(prepedstring), str(response))
         return response
     
     def send_only(self, command):
