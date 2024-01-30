@@ -15,7 +15,7 @@ Base{
     property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var details
-    property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
+    property var notif_text: 'Masukkan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool successTransaction: false
 
     property int receivedPayment: 0
@@ -287,7 +287,7 @@ Base{
             if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
-                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
+                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED', 'warning');
                 abc.counter = 5;
                 return;
             }
@@ -300,7 +300,7 @@ Base{
             if (receivedPayment == initialPayment) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain', false);
-                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED');
+                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED', 'warning');
                 abc.counter = 5;
                 return;
             }
@@ -815,7 +815,7 @@ Base{
         press = '0';
         if (billFunction == 'RECEIVE_BILL'){
             if (billResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
-            if (billResult == "ERROR" || billResult == 'TIMEOUT' || billResult == 'JAMMED'){
+            if (billResult == "ERROR" || billResult == 'JAMMED'){
                 details.process_error = 1;
                 do_refund_or_print('cash_device_error');
                 return;
@@ -831,7 +831,7 @@ Base{
                 if (receivedPayment > initialPayment){
                     back_button.visible = false;
                     modeButtonPopup = 'retrigger_bill';
-                    switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
+                    switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
@@ -840,12 +840,12 @@ Base{
                 }
             } else if (billResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (billResult == 'BAD_NOTES'){
                 back_button.visible = false;
                 modeButtonPopup = 'retrigger_bill';
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
                 back_button.visible = true;
@@ -906,7 +906,7 @@ Base{
                 notif_text = qsTr('Mohon Tunggu, Sedang Mensinkronisasi Ulang.');
                 break;
             case 'CI':
-                notif_text  = qsTr('Silakan Masukan Kartu Anda Di Slot Tersedia.');
+                notif_text  = qsTr('Silakan Masukkan Kartu Anda Di Slot Tersedia.');
                 back_button.visible = true;
                 break;
             case 'PI':

@@ -8,7 +8,7 @@ Base{
     property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var details: undefined
-    property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
+    property var notif_text: 'Masukkan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool isPaid: false
     property int receivedCash: 0
     property var lastBalance: '999000'
@@ -220,7 +220,7 @@ Base{
                 popup_loading.open();
                 notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else if (billResult == 'EXCEED'){
-                false_notif('Mohon Maaf|Silakan Hanya Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+                false_notif('Mohon Maaf|Silakan Hanya Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
                 modeButtonPopup = 'retrigger_bill';
                 standard_notif_view.buttonEnabled = false;
                 standard_notif_view._button_text = 'coba lagi';
@@ -275,7 +275,7 @@ Base{
                 arrow_down.visible = false;
                 break;
             case 'CI':
-                notif_text  = qsTr('Silakan Masukan Kartu Anda Di Slot Tersedia.');
+                notif_text  = qsTr('Silakan Masukkan Kartu Anda Di Slot Tersedia.');
                 back_button.visible = true;
                 arrow_down.visible = true;
                 break;
@@ -387,7 +387,7 @@ Base{
         if (details.payment == 'cash') {
             totalPrice = parseInt(details.value)
             getDenom = totalPrice - adminFee;
-            notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
+            notif_text = 'Masukkan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
             _SLOT.start_set_direct_price(totalPrice.toString());
 //            _SLOT.start_accept_mei();
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString())
@@ -397,7 +397,7 @@ Base{
             totalPrice = getDenom + adminFee;
             var structId = details.shop_type + details.epoch.toString();
             _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
-            notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
+            notif_text = 'Masukkan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
         }
     }
 

@@ -455,7 +455,7 @@ Base{
                 break;
             case 'CI':
                 if (base.language == 'INA'){
-                    payment_view.show_text = qsTr('Silakan Masukan Kartu Anda Di Slot Tersedia.');
+                    payment_view.show_text = qsTr('Silakan Masukkan Kartu Anda Di Slot Tersedia.');
                 } else {
                     payment_view.show_text = qsTr('Please Insert Your Card Into The Card Slot.');
                 }

@@ -13,7 +13,7 @@ Base{
     property int timer_value: (VIEW_CONFIG.page_timer * 3)
     property var press: '0'
     property var details
-    property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
+    property var notif_text: 'Masukkan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool isPaid: false
     property int receivedCash: 0
     property var lastBalance: '999000'
@@ -493,12 +493,12 @@ Base{
                 popup_loading.open();
 //                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else if (billResult == 'EXCEED'){
-//                false_notif('Mohon Maaf|Silakan Hanya Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+//                false_notif('Mohon Maaf|Silakan Hanya Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
 //                standard_notif_view.buttonEnabled = false;
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_bill';
 //                proceedText = 'COBA LAGI';
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (billResult == 'BAD_NOTES'){
 //                false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
@@ -506,7 +506,7 @@ Base{
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_bill';
 //                proceedText = 'COBA LAGI';
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 press = '0'
                 return;
             } else {
@@ -562,7 +562,7 @@ Base{
                 arrow_down.visible = false;
                 break;
             case 'CI':
-                notif_text  = qsTr('Silakan Masukan Kartu Anda Di Slot Tersedia.');
+                notif_text  = qsTr('Silakan Masukkan Kartu Anda Di Slot Tersedia.');
                 back_button.visible = true;
                 arrow_down.visible = true;
                 break;
