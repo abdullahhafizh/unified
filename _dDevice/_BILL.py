@@ -48,7 +48,8 @@ GRG = {
     "KEY_BOX_FULL": '!@#$%^&UI',
     "DIRECT_MODULE": False,
     "TYPE": "GRG_08",
-    "MAX_EXECUTION_TIME": 90
+    "MAX_EXECUTION_TIME": 90,
+    "RECEIVE_ATTEMPT": 90
 }
 
 NV = {
@@ -71,7 +72,8 @@ NV = {
     "KEY_BOX_FULL": 'Stacker full',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
     "TYPE": "NV_200",
-    "MAX_EXECUTION_TIME": 30
+    "MAX_EXECUTION_TIME": 30,
+    "RECEIVE_ATTEMPT": 1
 }
 
 MEI = {
@@ -94,7 +96,8 @@ MEI = {
     "KEY_BOX_FULL": '_cassetteStatus=FULL',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
     "TYPE": "MEI_SCR",
-    "MAX_EXECUTION_TIME": 90
+    "MAX_EXECUTION_TIME": 90,
+    "RECEIVE_ATTEMPT": 90
 }
 
 
@@ -421,7 +424,7 @@ def start_receive_note(trxid):
                     # Call API To Force Update Into Server
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
                     break
-                if attempt == BILL['MAX_EXECUTION_TIME']:
+                if attempt == BILL["RECEIVE_ATTEMPT"]:
                     LOGGER.warning(('Stop Bill Acceptor Acceptance By MAX_EXECUTION_TIME', str(attempt), str(BILL['MAX_EXECUTION_TIME'])))
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                     break
