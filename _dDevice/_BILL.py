@@ -28,6 +28,11 @@ LOG_BILL = os.path.join(sys.path[0], 'log')
 BILL_TYPE = _Common.BILL_TYPE
 BILL_PORT = _Common.BILL_PORT
 
+MAX_EXECUTION_TIME = 180
+# MAX_EXECUTION_TIME For NV Must Use The Same Value as timer_value
+# property int timer_value: (3 * VIEW_CONFIG.page_timer)
+
+
 GRG = {
     "SET": "501",
     "RECEIVE": "502",
@@ -139,11 +144,7 @@ SMALL_NOTES_NOT_ALLOWED = _Common.BILL_RESTRICTED_NOTES.split('|')
 OPEN_STATUS = False
 CASH_HISTORY = []
 CASH_TIME_HISTORY = []
-
-MAX_EXECUTION_TIME = 180
-# MAX_EXECUTION_TIME For NV Must Use The Same Value as timer_value
-# property int timer_value: (3 * VIEW_CONFIG.page_timer)
-
+ 
 IS_RECEIVING = False
 
 # Handle Single Denom TRX With Holding Notes
@@ -305,9 +306,7 @@ def start_receive_note(trxid):
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
     
-    # NV Execution Time Set to 1 minute
-    if BILL_TYPE == 'NV':
-        MAX_EXECUTION_TIME = 60 
+    MAX_EXECUTION_TIME = BILL['MAX_EXECUTION_TIME']
     LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT, MAX_EXECUTION_TIME))
     
     HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
