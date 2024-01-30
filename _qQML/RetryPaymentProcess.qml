@@ -1223,7 +1223,7 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !transactionInProcess && receivedPayment < totalPrice
+        visible: !transactionInProcess && receivedPayment < totalPrice && VIEW_CONFIG.bill_type !== 'NV'
 
 //        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
 
@@ -2149,7 +2149,7 @@ Base{
             button_text: 'Y A'
             modeReverse: true
             blinkingMode: true
-            visible: !transactionInProcess && receivedPayment < totalPrice
+            visible: !transactionInProcess && receivedPayment < totalPrice && VIEW_CONFIG.bill_type !== 'NV'
             MouseArea{
                 anchors.fill: parent
                 onClicked: {

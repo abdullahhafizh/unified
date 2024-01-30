@@ -455,11 +455,11 @@ NV200 = None
 
 LOOP_ATTEMPT = 0
 # Set Max Waiting Event Listen From NV into 120 seconds
-MAX_LOOP_ATTEMPT = 90
+MAX_LOOP_ATTEMPT = 30
 MAX_STORE_ATTEMPT = 5
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
-    global NV200, LOOP_ATTEMPT, COMMAND_MODE
+    global NV200, LOOP_ATTEMPT, COMMAND_MODE, MAX_LOOP_ATTEMPT
     try:
         if NV200 is None:
             NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
@@ -469,6 +469,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         if len(args[1:]) > 0:
             param = "|".join(args[1:])
         # LOGGER.debug((command, param, config))
+        MAX_LOOP_ATTEMPT = config['MAX_EXECUTION_TIME']
         # Define Command
         if command == config['SET']:
             result = NV200.open()

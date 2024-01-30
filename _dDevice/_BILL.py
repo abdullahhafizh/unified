@@ -28,10 +28,6 @@ LOG_BILL = os.path.join(sys.path[0], 'log')
 BILL_TYPE = _Common.BILL_TYPE
 BILL_PORT = _Common.BILL_PORT
 
-MAX_EXECUTION_TIME = 180
-# MAX_EXECUTION_TIME For NV Must Use The Same Value as timer_value
-# property int timer_value: (3 * VIEW_CONFIG.page_timer)
-
 
 GRG = {
     "SET": "501",
@@ -52,7 +48,7 @@ GRG = {
     "KEY_BOX_FULL": '!@#$%^&UI',
     "DIRECT_MODULE": False,
     "TYPE": "GRG_08",
-    "MAX_EXECUTION_TIME": MAX_EXECUTION_TIME
+    "MAX_EXECUTION_TIME": 90
 }
 
 NV = {
@@ -98,7 +94,7 @@ MEI = {
     "KEY_BOX_FULL": '_cassetteStatus=FULL',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
     "TYPE": "MEI_SCR",
-    "MAX_EXECUTION_TIME": MAX_EXECUTION_TIME
+    "MAX_EXECUTION_TIME": 90
 }
 
 
@@ -301,13 +297,12 @@ def parse_notes(_result):
     
 
 def start_receive_note(trxid):
-    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY, HOLD_NOTES, MAX_EXECUTION_TIME
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY, HOLD_NOTES
     if _Common.IDLE_MODE is True:
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
     
-    MAX_EXECUTION_TIME = BILL['MAX_EXECUTION_TIME']
-    LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT, MAX_EXECUTION_TIME))
+    LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT, str(BILL['MAX_EXECUTION_TIME'])))
     
     HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
     LOGGER.info(('Hold Notes | Single Denom TRX', trxid, HOLD_NOTES))
@@ -426,8 +421,8 @@ def start_receive_note(trxid):
                     # Call API To Force Update Into Server
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
                     break
-                if attempt == MAX_EXECUTION_TIME:
-                    LOGGER.warning(('Stop Bill Acceptor Acceptance By MAX_EXECUTION_TIME', str(attempt), str(MAX_EXECUTION_TIME)))
+                if attempt == BILL['MAX_EXECUTION_TIME']:
+                    LOGGER.warning(('Stop Bill Acceptor Acceptance By MAX_EXECUTION_TIME', str(attempt), str(BILL['MAX_EXECUTION_TIME'])))
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                     break
                 # if IS_RECEIVING is False:

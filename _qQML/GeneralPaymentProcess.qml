@@ -1407,7 +1407,7 @@ Base{
         modeReverse: true
         z: 10
 //        visible: !transactionInProcess && receivedPayment < totalPrice
-        visible: !transactionInProcess
+        visible: !transactionInProcess && VIEW_CONFIG.bill_type !== 'NV'
 
         MouseArea{
             anchors.fill: parent
