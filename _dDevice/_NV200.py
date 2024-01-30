@@ -333,8 +333,8 @@ class NV200_BILL_ACCEPTOR(object):
         poll = self.nv200.poll() 
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                print('pyt: [NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE)
-                LOGGER.debug(('[NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE))
+                print('pyt: [NV200] Poll Raw (Mode)', str(caller), str(poll), COMMAND_MODE)
+                LOGGER.debug(('[NV200] Poll Raw (Mode)', str(caller), str(poll), COMMAND_MODE))
             except Exception as e:
                 traceback.format_exc()     
                 
@@ -343,7 +343,15 @@ class NV200_BILL_ACCEPTOR(object):
             if len(poll[1]) == 2:
                 # On Reading Notes
                 if poll[1][0] == '0xef':
-                    if 0 < poll[1][1] < len(self.known_notes):
+                    # This Cause Notes On Reject Will be treated as Normal Reading Notes
+                    # Must be validated with caller/COMMAND MODE
+                    # Extra Handling NV For Reject Activity
+                    if COMMAND_MODE == 'reject' or caller == '604':
+                        if _Common.BILL_LIBRARY_DEBUG is True:
+                            print('pyt: [NV200] Anomaly Response Reading Note After Reject Activity', str(poll))
+                            LOGGER.debug(('[NV200] Anomaly Response Reading Note After Reject Activity', str(poll)))
+                        return event
+                    elif 0 < poll[1][1] < len(self.known_notes):
                         event = self.parse_event(poll)
                         # if COMMAND_MODE == 'hold':
                         #     self.async_hold()
@@ -354,6 +362,7 @@ class NV200_BILL_ACCEPTOR(object):
             else:
                 # 602 - Trigger Receiving Notes
                 # Ask NV To Give Poll Status Which Containg Event Notes in poll data
+                # 604 - Trigger Reject Notes
                 if caller != '602':
                     event = self.parse_event(poll)
                     if poll[1] == '0xed' or poll[1] == '0xec':
