@@ -46,7 +46,8 @@ GRG = {
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": '!@#$%^&UI',
     "DIRECT_MODULE": False,
-    "TYPE": "GRG_08"
+    "TYPE": "GRG_08",
+    "MAX_EXECUTION_TIME": MAX_EXECUTION_TIME
 }
 
 NV = {
@@ -68,7 +69,8 @@ NV = {
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": 'Stacker full',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
-    "TYPE": "NV_200"
+    "TYPE": "NV_200",
+    "MAX_EXECUTION_TIME": 30
 }
 
 MEI = {
@@ -90,7 +92,8 @@ MEI = {
     "MAX_STORE_ATTEMPT": 1,
     "KEY_BOX_FULL": '_cassetteStatus=FULL',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
-    "TYPE": "MEI_SCR"
+    "TYPE": "MEI_SCR",
+    "MAX_EXECUTION_TIME": MAX_EXECUTION_TIME
 }
 
 
@@ -136,7 +139,11 @@ SMALL_NOTES_NOT_ALLOWED = _Common.BILL_RESTRICTED_NOTES.split('|')
 OPEN_STATUS = False
 CASH_HISTORY = []
 CASH_TIME_HISTORY = []
+
 MAX_EXECUTION_TIME = 180
+# MAX_EXECUTION_TIME For NV Must Use The Same Value as timer_value
+# property int timer_value: (3 * VIEW_CONFIG.page_timer)
+
 IS_RECEIVING = False
 
 # Handle Single Denom TRX With Holding Notes
@@ -293,11 +300,16 @@ def parse_notes(_result):
     
 
 def start_receive_note(trxid):
-    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY, HOLD_NOTES
+    global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY, HOLD_NOTES, MAX_EXECUTION_TIME
     if _Common.IDLE_MODE is True:
         LOGGER.info(('[INFO] Machine Try To Reactivate Bill in IDLE Mode', str(_Common.IDLE_MODE)))
         return
-    LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT))
+    
+    # NV Execution Time Set to 1 minute
+    if BILL_TYPE == 'NV':
+        MAX_EXECUTION_TIME = 60 
+    LOGGER.info(('Trigger Bill', BILL_TYPE, trxid, TARGET_CASH_AMOUNT, MAX_EXECUTION_TIME))
+    
     HOLD_NOTES = _Common.single_denom_trx_detected(trxid)
     LOGGER.info(('Hold Notes | Single Denom TRX', trxid, HOLD_NOTES))
     # if not HOLD_NOTES and BILL_TYPE == 'NV' :

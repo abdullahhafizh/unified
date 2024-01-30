@@ -1,5 +1,7 @@
 16.6.0-GLOBAL:
 - Send Bill Store Notes Failure To Monitoring,
+- Disable BATAL button for NV,
+- Adjust Default Timer Payment For NV,
 - ...
 
 16.5.9-GLOBAL:

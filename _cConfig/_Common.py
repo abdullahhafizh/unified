@@ -392,7 +392,11 @@ KIOSK_SETTING = []
 KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
 PRINTER_STATUS = "NORMAL"
+
 PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
+if BILL_TYPE == 'NV':
+    PAYMENT_CANCEL = '0'
+    _ConfigParser.set_value('GENERAL', 'payment^cancel', '0')
 
 # Force Disable Allow Exceed Payment
 ALLOW_EXCEED_PAYMENT = False

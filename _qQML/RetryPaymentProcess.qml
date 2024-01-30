@@ -827,7 +827,7 @@ Base{
                 popup_loading.open();
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                 return;
-            } else if (billResult == 'SERVICE_TIMEOUT'){
+            } else if (billResult == 'SERVICE_TIMEOUT' || billResult == 'TIMEOUT'){
                 if (receivedPayment > initialPayment){
                     back_button.visible = false;
                     modeButtonPopup = 'retrigger_bill';
@@ -1413,6 +1413,22 @@ Base{
     function cancel_transaction(t){
         if (transactionInProcess){
             console.log('[WARNING] Transaction In Process Not Allowed Cancellation', t);
+            return;
+        }
+        // Handle Remove Visibility Button CANCEL
+        if (VIEW_CONFIG.bill_type == 'NV'){
+            switch(t){
+                case 'GLOBAL_FRAME':
+                    cancel_button_global.visible = false;
+                break;
+                case 'CONFIRM_FRAME':
+                    cancel_confirmation.close();
+                break;
+                case 'MAIN_FRAME':
+                    back_button.visible = false;
+                break;
+            }
+            console.log('[WARNING] Transaction Not Allowed Cancellation', VIEW_CONFIG.bill_type);
             return;
         }
         details.receipt_title = 'Transaksi Anda Batal';
