@@ -1671,9 +1671,6 @@ Base{
                 case 'GLOBAL_FRAME':
                     cancel_button_global.visible = false;
                 break;
-                case 'CONFIRM_FRAME':
-                    cancel_confirmation.close();
-                break;
                 case 'MAIN_FRAME':
                     back_button.visible = false;
                 break;
