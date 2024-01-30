@@ -311,6 +311,7 @@ def dki_card_get_log_priv(method='NEW'):
                     if i > max_t:
                         break
                     else:
+                        i = i + 1                        
                         idx = int_padding(i)
                         apdu = "00B2" + str(idx) + "242E"
                         resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)

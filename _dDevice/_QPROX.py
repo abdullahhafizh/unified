@@ -2400,7 +2400,7 @@ def parse_card_history(bank, raw):
 
 
 def reset_card_contactless():
-    # Add Reset Reader Card Contactlerr
+    # Add Reset Reader Card Contactless
     response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))
 

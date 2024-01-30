@@ -2,6 +2,7 @@
 - Send Bill Store Notes Failure To Monitoring,
 - Disable BATAL button for NV,
 - Adjust Default Timer Payment For NV,
+- Fix DKI Card Log To Old Prepaid FW,
 - ...
 
 16.5.9-GLOBAL:
