@@ -533,7 +533,8 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
-            max_reject_attempt = 5 #Seconds To Wait For Confirming Notes
+            LOOP_ATTEMPT = 0
+            max_reject_attempt = 5 #Seconds To Wait For Confirming Notes Reject
             NV200.reject()
             while True:
                 event = NV200.get_event(command)
@@ -548,7 +549,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 # Whats is the Break Point ???
                 time.sleep(1)
             NV200.disable()
-            LOOP_ATTEMPT = 0
             # while True:
             #     pool = NV200.get_event(command)
             #     LOOP_ATTEMPT += 1
