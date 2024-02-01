@@ -392,6 +392,11 @@ Base{
             allowedBank.push('BCA');
         }
 
+        if (cardData == undefined){
+            switch_frame('source/insert_card_new.png', 'Kartu Anda Tidak Terdeteksi', 'Angkat dan tempelkan kembali kartu Anda pada reader', 'backToMain', false );
+            return;
+        }
+
         if (allowedBank.indexOf(cardData.bank_name) == -1){
             var extra_message = '\nNO_CONNECTION';
             if (['MANDIRI', 'BNI'].indexOf(cardData.bank_name) > -1) extra_message = '';
@@ -568,12 +573,18 @@ Base{
         if (bank_name=='MANDIRI'){
             provider = 'e-Money Mandiri';
             maxBalance = 2000000;
+
+            // Enable Reader Dump in Mandiri Only
+            _SLOT.start_enable_reader_dump();
         }
         if (bank_name=='BCA'){
             provider = 'Flazz BCA';
             maxBalance = 2000000;
             //Flazz BCA Only Allowed Topup With Cash in VM BCA Only
             if (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') disable_qr_payment();
+
+            // Enable Reader Dump in Mandiri Only
+            _SLOT.start_enable_reader_dump();
         }
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
@@ -772,7 +783,7 @@ Base{
         color: "white"
         text: "Saldo Anda sekarang"
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType=='1') ? 250 : 200
+        anchors.topMargin: (globalScreenType=='1') ? 250 : (smallHeight) ? 150 : 200
         anchors.left: parent.left
         anchors.leftMargin: (globalScreenType=='1') ? 350 : 150
         wrapMode: Text.WordWrap
@@ -814,7 +825,7 @@ Base{
         layoutDirection: Qt.LeftToRight
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 350 : 320
+        anchors.topMargin: (globalScreenType == '1') ? 350 : (smallHeight) ? 230 : 320
         spacing: rowDenomSpacing
         visible: mainVisible
         SmallSimplyNumber{
@@ -830,6 +841,7 @@ Base{
                     if (minus_sam_balance(tinyDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose tinyDenom "'+tinyDenomTopup+'"');;
                     release_denom_selection(tiny_denom);
                     set_selected_denom(tinyDenomTopup);
@@ -849,6 +861,7 @@ Base{
                     if (minus_sam_balance(smallDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');;
                     release_denom_selection(small_denom);
                     set_selected_denom(smallDenomTopup);
@@ -868,6 +881,7 @@ Base{
                     if (minus_sam_balance(midDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     release_denom_selection(mid_denom);
                     set_selected_denom(midDenomTopup);
@@ -887,6 +901,7 @@ Base{
                     if (minus_sam_balance(highDenomTopup)) return;
                     if (press!='0') return;
                     press = '1';
+                    // parent.isSelected = true;
                     _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     release_denom_selection(high_denom);
                     set_selected_denom(highDenomTopup);
@@ -899,7 +914,7 @@ Base{
         id: notice_topup_single_denom
         width: 1300
         height: 120
-        visible: (!select_payment.visible && VIEW_CONFIG.single_denom_trx.indexOf('topup') > -1)
+        visible: (!select_payment.visible && VIEW_CONFIG.single_denom_trx.indexOf('topup') > -1) && !smallHeight
         radius: 50
         fontSize: 30
         border.width: 0
@@ -913,7 +928,7 @@ Base{
     SelectPaymentInline{
         id: select_payment
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         calledFrom: 'prepaid_topup_denom'
         listActivePayment: activePayment
@@ -924,7 +939,7 @@ Base{
     SelectPaymentQR{
         id: select_qr_provider
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
         calledFrom: 'prepaid_topup_denom'

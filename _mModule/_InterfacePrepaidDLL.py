@@ -29,9 +29,15 @@ def send_command(cmd, param):
     }
     
     try:
-        LOG.fw("{0}:Mulai".format(cmd))
-        if cmd == "ST0":
+        LOG.fw("{0}:TRIGGER".format(cmd))
+        if cmd == "ST0": #Reset Contactless Tag/Session
             prepaid_common.reset_contactless(__global_response__)
+        elif cmd == "RD0": # Reader Dump CMD -- RD0
+            prepaid_common.reader_dump(param, __global_response__)
+        elif cmd == "RD1": # Enable Reader Dump CMD -- RD1
+            prepaid_common.enable_reader_dump(__global_response__)
+        elif cmd == "RD2": # Disable Reader Dump CMD -- RD2
+            prepaid_common.disable_reader_dump(__global_response__)
         elif cmd == "000":
             prepaid_common.open_only(param, __global_response__)
         elif cmd == "001":

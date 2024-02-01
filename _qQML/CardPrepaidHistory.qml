@@ -333,6 +333,7 @@ Base{
                         _SLOT.start_check_card_balance();
                         break;
                     case 'update_balance_online':
+                        // _SLOT.start_enable_reader_dump();
                         _SLOT.start_update_balance_online(bankName);
                         break;
                     case 'get_card_log_history':

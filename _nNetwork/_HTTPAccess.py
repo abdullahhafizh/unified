@@ -205,7 +205,7 @@ def item_download(url, path, name=None):
         return False, item
     with open(file, 'wb') as f:
         shutil.copyfileobj(r.raw, f)
-    LOGGER.debug(('stream down', file, url))
+    LOGGER.debug((file, url))
     del r
     return True, item
 
@@ -232,7 +232,7 @@ def stream_large_download(url, item, temp_path, final_path):
                 media.write(chunk)
     shutil.copy(old_file, new_file)
     # os.remove(file)
-    LOGGER.debug(('stream down', old_file, url))
+    LOGGER.debug((old_file, url))
     del r
     return True, item
 

@@ -1,6 +1,89 @@
+<<<<<<< HEAD
 16.4.7-GLOBAL:
 - Quick Win Solving For BNI Topup Failure Below Threshold,
 - Quick Win Solving BCA Topup Payment Timeout,
+=======
+16.6.0-GLOBAL:
+- Send Bill Store Notes Failure To Monitoring,
+- Disable BATAL button for NV,
+- Adjust Default Timer Payment For NV,
+- Fix DKI Card Log To Old Prepaid FW,
+- ...
+
+16.5.9-GLOBAL:
+- Restore To Previous Card Log BCA & DKI Function #1,
+- Extra Handler For NV Race Condition/Multithread Anomaly,
+- ...
+
+16.5.8-GLOBAL:
+- Change Assumption on Bill Store Event,
+- Reset Calculation and Flag ERROR on above condition,
+- ...
+
+16.5.7A-GLOBAL:
+- Selected Debug Mode Function From Setting,
+- Add Reset Contact in Disable Reader Dump,
+- ...
+
+16.5.7-GLOBAL:
+- Add Reader Reset Contactless,
+- Enable Reader Dump By Panel Config,
+- ...
+
+16.5.6-GLOBAL:
+- Add Reader Version To Identify Dump Function,
+- ...
+
+16.5.5-GLOBAL:
+- Direct Print After Staff Cash Collection,
+- Direct Print After Staff Card Stock Opname,
+- ...
+
+16.5.4-GLOBAL:
+- Implement Topup Fee Sync as Background Remote Service (MDR_C2C_SYNC_FEE),
+- Implement Topup Fee Sync on App Startup,
+- Disable Card Disconnect on UI Trigger Function,
+- Keep Print Receipt Layout On Exceed Payment,
+- [REQUIRED] Reader FW 2.13 and latest,
+- Disable Resend Last BNI Settlement,
+- Set duwit to Live environment,
+- Disable NV ERROR print,
+- ...
+
+16.5.3-GLOBAL:
+- Handle BCA Static Config (TNC, Single Denom, Refund Feature),
+- Improve NV Handling,
+- Set CUSTOMER_SERVICE Refund If Got Exceed Payment,
+- INFO: BILL NV Cannot Handle Exceed on Multi Denom TRX,
+- ...
+
+16.5.2-GLOBAL:
+- Improve Cash Collection Logging,
+- Improve Cash Collection Event Upload,
+- Enhance Layout Cash Collection,
+- Force Config BCA : Disable Exceess Payment, Not Showing TNC,
+- Try Fix Mandiri SAM Update Balance,
+- Try Fix GRG Store Procedure,
+- ...
+
+16.5.1-GLOBAL:
+- Add Enable/Disable Reader Dump,
+- Set Reader Baudrate in setting file,
+- Implement Reader Dump Panel in Application,
+- Switch Card Log From APDU into CMD (Except DKI to Match Existing Reader FW),
+- Set Payment Time to 360 seconds,
+- Enhance BNI Deposit Balance Validation,
+- Enable Topup 1 Override on Topup Deposit Mandiri,
+- Disable Online Logger,
+- Disable Param Logger in Topup & QR Request,
+- Handle BRI Log History Sort Data,
+- ...
+
+16.5.0-GLOBAL:
+- Switch Topup Online to Secure Message,
+- Change Reader Baudrate to 115.200,
+- Add Reader Dump Data in C2C Mandiri Error,
+>>>>>>> 7c4ed118e102832210c5b9a2480573dcbc1f7a7c
 - ...
 
 16.4.6-GLOBAL:

@@ -1509,11 +1509,29 @@ def save_receipt_local(__id, __data, __type):
         return False
 
 
-def start_admin_print_global(struct_id):
-    _Helper.get_thread().apply_async(admin_print_global, (struct_id,))
+def start_generate_cash_collection_event(struct_id):
+    _Helper.get_thread().apply_async(upload_event_cash_collection, (struct_id, None, _Common.COLLECTION_DATA,))
+    _Helper.get_thread().apply_async(generate_cash_collection_event, (struct_id,))
 
 
-def admin_print_global_old(struct_id, ext='.pdf'):
+def upload_event_cash_collection(aid, username=None, cash_collection_data={}):
+    try:
+        if username is None:
+            username = _Helper.get_char_from(aid)
+        s = cash_collection_data
+        _Common.upload_admin_access(aid=aid, 
+                                    username=username, 
+                                    cash_collection=str(s.get('all_cash', '')), 
+                                    edc_settlement='0', 
+                                    card_adjustment=s.get('card_adjustment', ''), 
+                                    remarks=json.dumps(s), 
+                                    trx_list=s.get('trx_list', '')
+                                    )
+    except Exception as e:
+        LOGGER.warning((e))
+
+
+def generate_cash_collection_event_old(struct_id, ext='.pdf'):
     global GENERAL_TITLE
     pdf = None
     # Init Variables
@@ -1522,12 +1540,12 @@ def admin_print_global_old(struct_id, ext='.pdf'):
     padding_left = 0
     print_copy = 2
     user = 'mdd_operator'
-    s = False
+    s = {}
     if _UserService.USER is not None:
         user = _UserService.USER['username']
     try:
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        GENERAL_TITLE = 'VM COLLECTION REPORT'
+        GENERAL_TITLE = '+++CASH COLLECTION REPORT+++'
         pdf = GeneralPDF('P', 'mm', (80, 140))
         s = _Common.COLLECTION_DATA
         # LOGGER.debug(('COLLECTION_DATA', str(s)))
@@ -1547,10 +1565,10 @@ def admin_print_global_old(struct_id, ext='.pdf'):
         _Common.log_to_temp_config('last^collection', collect_time)
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
-        pdf.cell(padding_left, 0, 'Operator : ' + user + ' | ' + struct_id, 0, 0, 'L')
-        # pdf.ln(tiny_space)
-        # pdf.set_font(USED_FONT, 'B', line_size)
-        # pdf.cell(padding_left, 0, 'TRX ID : '+struct_id, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Session : ' + struct_id, 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, 'Tipe BA: '+_Common.BILL_TYPE, 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
@@ -1658,12 +1676,12 @@ def admin_print_global_old(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         # Send To Backend
-        _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
+        upload_event_cash_collection(struct_id, user, s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf
 
 
-def admin_print_global(struct_id, ext='.pdf'):
+def generate_cash_collection_event(struct_id, ext='.pdf'):
     global GENERAL_TITLE
     pdf = None
     # Init Variables
@@ -1672,14 +1690,14 @@ def admin_print_global(struct_id, ext='.pdf'):
     padding_left = 0
     print_copy = 2
     user = 'mdd_operator'
-    s = False
+    s = {}
     if _Common.IS_LINUX or _Common.PRINTER_IP_ACTIVE:
         return eprinter_admin_global(struct_id)
     if _UserService.USER is not None:
         user = _UserService.USER['username']
     try:
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        GENERAL_TITLE = 'VM COLLECTION REPORT'
+        GENERAL_TITLE = '+++CASH COLLECTION REPORT+++'
         pdf = GeneralPDF('P', 'mm', (80, 140))
         s = _Common.COLLECTION_DATA
         # LOGGER.debug(('COLLECTION_DATA', str(s)))
@@ -1699,10 +1717,10 @@ def admin_print_global(struct_id, ext='.pdf'):
         _Common.log_to_temp_config('last^collection', collect_time)
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
-        pdf.cell(padding_left, 0, 'Operator : ' + user + ' | ' + struct_id, 0, 0, 'L')
-        # pdf.ln(tiny_space)
-        # pdf.set_font(USED_FONT, 'B', line_size)
-        # pdf.cell(padding_left, 0, 'TRX ID : '+struct_id, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Session : ' + struct_id, 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, 'B', line_size)
+        pdf.cell(padding_left, 0, 'Tipe BA : '+_Common.BILL_TYPE, 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, 'B', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
@@ -1716,8 +1734,8 @@ def admin_print_global(struct_id, ext='.pdf'):
         error_count = 0
         for activity_note in s['cash_activity']['notes']:
             if 'ERROR' in activity_note:
-                error_count += 1
-                continue
+                error_count += (s['cash_activity']['summary'].get('ERROR', 1))
+                break
         for note in _Common.BILL_ACTIVE_NOTES:
             qty = s['cash_activity']['summary'].get(note, 0)
             sub_total = int(qty) * int(note)
@@ -1764,7 +1782,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         # Send To Backend
-        _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
+        upload_event_cash_collection(struct_id, user, s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf
 
@@ -1789,7 +1807,7 @@ def eprinter_admin_global(struct_id, ext='.pdf'):
         for x in range(header_space):
             printer.text("\n")
         printer.set(align="CENTER",text_type="normal", width=1, height=1)
-        printer.text('VM COLLECTION REPORT' + "\n")
+        printer.text('CASH COLLECTION REPORT' + "\n")
         printer.text(_Common.TID + "-" + _Common.KIOSK_NAME + "\n")
         printer.text("\n")
         s = _Common.COLLECTION_DATA
@@ -1800,7 +1818,8 @@ def eprinter_admin_global(struct_id, ext='.pdf'):
         collect_time = datetime.strftime(datetime.now(), '%d-%m-%Y %H:%M:%S')
         printer.text((' '*padding_left)+'Hingga  : '+ collect_time + "\n")
         _Common.log_to_temp_config('last^collection', collect_time)
-        printer.text((' '*padding_left)+'Operator : ' + user + ' | ' + struct_id + "\n")
+        printer.text((' '*padding_left)+'Session : ' + struct_id + "\n")
+        printer.text((' '*padding_left)+'Tipe BA : ' + _Common.BILL_TYPE + "\n")
         # printer.text((' '*padding_left)+'TRX ID : '+struct_id + "\n")
         printer.text((' '*padding_left)+'_' * max_chars+ "\n")
         printer.text((' '*padding_left)+'NOTES SUMMARY' + "\n")
@@ -1809,8 +1828,8 @@ def eprinter_admin_global(struct_id, ext='.pdf'):
         error_count = 0
         for activity_note in s['cash_activity']['notes']:
             if 'ERROR' in activity_note:
-                error_count += 1
-                continue
+                error_count += (s['cash_activity']['summary'].get('ERROR', 1))
+                break
         for note in _Common.BILL_ACTIVE_NOTES:
             qty = s['cash_activity']['summary'].get(note, 0)
             sub_total = int(qty) * int(note)
@@ -1849,7 +1868,7 @@ def eprinter_admin_global(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         # Send To Backend
-        _Common.upload_admin_access(struct_id, user, str(s.get('all_cash', '')), '0', s.get('card_adjustment', ''), json.dumps(s), s.get('trx_list', ''))
+        upload_event_cash_collection(struct_id, user, s)
         # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         del pdf
 

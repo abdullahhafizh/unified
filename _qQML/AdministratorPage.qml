@@ -93,6 +93,17 @@ Base{
         base.result_cd_move.disconnect(get_admin_action);
     }
 
+    Timer {
+        id: timer_delay
+    }
+
+    function delay(duration, callback) {
+        timer_delay.interval = duration;
+        timer_delay.repeat = false;
+        timer_delay.triggered.connect(callback);
+        timer_delay.start();
+    }
+
     function do_action_signal(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('do_action_signal', now, s);
@@ -227,8 +238,17 @@ Base{
                 switch_notif('Dear '+operatorName+'|Penambahan Stok Kartu Slot '+cp.port+' Berhasil\nSilakan Lanjutkan Slot Berikutnya');
             }
             if (y=='COMPLETE'){
-                printChangeStockButton = true;
-                switch_notif('Dear '+operatorName+'|Stok Opname Kartu Seluruh Slot Selesai\nSilakan Cetak Struk');
+                if (VIEW_CONFIG.auto_print_stock_opname){
+                    delay((3*1000), function(){
+                        // Auto Print Stock Opname Receipt After 3s
+                        var epoch = new Date().getTime();
+                        var struct_id = userData.username+epoch;
+                        _SLOT.start_admin_change_stock_print(struct_id);
+                    });
+                } else {
+                    printChangeStockButton = true;
+                    switch_notif('Dear '+operatorName+'|Stok Opname Kartu Seluruh Slot Selesai\nSilakan Cetak Struk');
+                }
             }            
         } else {
             switch_notif('Dear '+operatorName+'|Perhatian, Kode Proses:\n'+_message);
@@ -670,7 +690,7 @@ Base{
                         popup_loading.open();
                         var epoch = new Date().getTime();
                         var struct_id = userData.username+epoch;
-                        _SLOT.start_admin_print_global(struct_id);
+                        _SLOT.start_generate_cash_collection_event(struct_id);
                         actionList = [];
                         print_receipt_button.visible = false;
                     } else {
@@ -993,10 +1013,19 @@ Base{
                                _SLOT.start_begin_collect_cash();
                                popup_loading.open();
                                _total_cash_available.labelContent = '0';
-                               actionList.push({
-                                                   type: 'collectCash',
-                                                   user: operatorName
-                                               })
+                               if (VIEW_CONFIG.auto_print_collection){
+                                    delay((3*1000), function(){
+                                        // Auto Print Collection Receipt After 3s
+                                        var epoch = new Date().getTime();
+                                        var struct_id = userData.username+epoch;
+                                        _SLOT.start_generate_cash_collection_event(struct_id);
+                                    });
+                                } else {
+                                    actionList.push({
+                                                        type: 'collectCash',
+                                                        user: operatorName
+                                                    });
+                               }
                            } else {
                                switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                            }

@@ -803,7 +803,7 @@ def handle_tasks(tasks):
         try:
             if task['taskName'] == 'REBOOT':
                 if _Common.IDLE_MODE is True:
-                    result = 'EXECUTED_INTO_MACHINE'
+                    result = 'TRIGGERED_INTO_SYSTEM'
                     _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
                     update_task(task, result)
                     sleep(30)
@@ -812,11 +812,15 @@ def handle_tasks(tasks):
                     result = 'FAILED_EXECUTED_VM_ON_USED'
                     return update_task(task, result)
             elif task['taskName'] == 'FORCE_REBOOT':
-                result = 'EXECUTED_INTO_MACHINE'
+                result = 'TRIGGERED_INTO_SYSTEM'
                 _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('REBOOT')
                 update_task(task, result)
                 sleep(30)
                 _KioskService.execute_command('shutdown -r -f -t 0')
+            elif task['taskName'] == 'MDR_C2C_SYNC_FEE':
+                result = 'TRIGGERED_INTO_SYSTEM'
+                update_task(task, result)
+                _SettlementService.start_do_c2c_update_fee()
             elif task['taskName'] == 'RESET_PAPER_ROLL':
                 result = _Common.reset_paper_roll()
                 return update_task(task, result)

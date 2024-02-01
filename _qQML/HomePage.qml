@@ -37,6 +37,7 @@ Base{
 
     property var selectedMenu: ''
     property bool uiSimplification: VIEW_CONFIG.ui_simplify
+    property bool showingTNC: VIEW_CONFIG.show_tnc
 
     property bool spvButton: false
     property bool comboSaktiFeature: false
@@ -55,11 +56,13 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            _SLOT.start_idle_mode();
-            console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification);
+            // _SLOT.start_idle_mode();
+            console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification, showingTNC);
             if (IS_LINUX)  mediaOnPlaying = false;
             resetPopup();
+            // Set Idle Mode Here
             _SLOT.user_action_log('[Homepage] Standby Mode');
+
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -71,7 +74,8 @@ Base{
             productCount6 = 0;
             selectedMenu = '';
             if (globalBoxName !== ""){
-                _SLOT.get_kiosk_status();
+                _SLOT.start_disable_reader_dump();
+                _SLOT.start_get_kiosk_status();
                 _SLOT.start_play_audio('homepage_greeting');
             }
         }
@@ -465,7 +469,7 @@ Base{
 
         MasterButtonNew {
             id: check_saldo_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
@@ -492,7 +496,7 @@ Base{
 
         MasterButtonNew {
             id: topup_saldo_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
@@ -516,7 +520,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'TOPUP_PREPAID';
-                    if (uiSimplification){
+                    if (showingTNC){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
@@ -527,7 +531,7 @@ Base{
 
         MasterButtonNew {
             id: buy_card_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
@@ -554,7 +558,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PREPAID';
-                    if (uiSimplification){
+                    if (showingTNC){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
@@ -589,7 +593,7 @@ Base{
 
         MasterButtonNew {
             id: ppob_button
-            size: (globalScreenType == '1') ? 350 : 250
+            size: (globalScreenType == '1') ? 350 : 260
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/shop_cart.png"
@@ -614,7 +618,7 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'SHOP_PPOB';
-                    if (uiSimplification){
+                    if (showingTNC){
                         preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
                         return;
                     }
@@ -629,7 +633,7 @@ Base{
         id:topup_status_comp
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (smallHeight) ? 30 : 100
+        anchors.bottomMargin: (smallHeight) ? 20 : 100
         visible: VIEW_CONFIG.topup_status && (globalBoxName !== "")
 		width: globalWidth
     }
@@ -696,7 +700,6 @@ Base{
                 if (globalBoxName == ""){
                     _SLOT.start_startup_task();
                     _SLOT.start_play_audio('welcome');
-//                    _SLOT.get_kiosk_status();
                 }
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
@@ -825,7 +828,7 @@ Base{
                 resetMediaTimer();
                 spvButton = false;
                 _SLOT.start_reset_receipt_count('0');
-                _SLOT.get_kiosk_status();
+                _SLOT.start_get_kiosk_status();
             }
         }
     }
@@ -1216,7 +1219,7 @@ Base{
                 onClicked: {
                     preload_combo_sakti.close();
                     _SLOT.start_idle_mode();
-                    _SLOT.get_kiosk_status();
+                    _SLOT.start_get_kiosk_status();
                     press = "0";
                     resetMediaTimer();
                 }
@@ -1270,7 +1273,7 @@ Base{
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
 //                    _SLOT.kiosk_get_product_stock();
-                    _SLOT.get_kiosk_status();
+                    _SLOT.start_get_kiosk_status();
                     press = "0";
                     resetMediaTimer();
                 }
@@ -1316,7 +1319,7 @@ Base{
 //                    selectedMenu = '';
 //                    _SLOT.start_idle_mode();
 ////                    _SLOT.kiosk_get_product_stock();
-//                    _SLOT.get_kiosk_status();
+//                    _SLOT.start_get_kiosk_status();
 //                    press = "0";
 //                    resetMediaTimer();
 //                }

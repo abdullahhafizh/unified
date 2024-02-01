@@ -24,6 +24,20 @@ MINIMUM_SYSTEM_VERSION = (3, 8)
 LOGGER = logging.getLogger()
 
 
+# class TopupFailureStatus():
+#     C_0430 = 'BRI_ONLINE_TOPUP_PENDING_FAILURE' 
+#     C_0431 = 'BRI_ONLINE_UPDATE_BALANCE_FAILURE' 
+#     C_0432 = 'BRI_ONLINE_REVERSAL_BALANCE_FAILURE' 
+#     C_0433 = 'BRI_ONLINE_REFUND_BALANCE_FAILURE' 
+#     C_0440 = 'BCA_ONLINE_TOPUP_PENDING_FAILURE' 
+#     C_0441 = 'BCA_ONLINE_UPDATE_BALANCE_TOPUP1_FAILURE' 
+#     C_0442 = 'BCA_ONLINE_UPDATE_BALANCE_TOPUP2_FAILURE' 
+#     C_0443 = 'BCA_ONLINE_REVERSAL_BALANCE_FAILURE' 
+#     C_0450 = 'DKI_ONLINE_TOPUP_PENDING_FAILURE' 
+#     C_0451 = 'DKI_ONLINE_UPDATE_BALANCE_FAILURE' 
+#     C_0452 = 'DKI_ONLINE_REVERSAL_BALANCE_FAILURE' 
+    
+
 def validate_escpos_lib():
     try:
         import escpos.printer as ESCPOS
@@ -109,6 +123,14 @@ if LIVE_MODE or PTR_MODE:
 _HTTPAccess.HEADER = _HTTPAccess.get_header(TID, TERMINAL_TOKEN)
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
+QPROX_BAUDRATE = _ConfigParser.get_set_value('QPROX_NFC', 'baudrate', '38400')
+QPROX_READER_FORCE_DUMP = True if _ConfigParser.get_set_value('QPROX_NFC', 'force^enable^dump', '0') == '1' else False
+SELECTED_DEBUG_MODE = _ConfigParser.get_set_value('QPROX_NFC', 'selected^debug^mode', 'topup_mandiri|topup_bca').split('|')
+if len(SELECTED_DEBUG_MODE) == 0: 
+    QPROX_READER_FORCE_DUMP = False
+    _ConfigParser.set_value('QPROX_NFC', 'force^enable^dump', '0')
+READER_VERSION = _ConfigParser.get_set_value('QPROX_NFC', 'reader^version', '1.85')
+SUPPORT_DUMP_VERSION = int(READER_VERSION.replace('.', '')) > 200
 INIT_DELAY_TIME = 2
 # _ConfigParser.get_set_value('QPROX_NFC', 'init^delay^time', '5')
 
@@ -317,6 +339,12 @@ C2C_DEPOSIT_UPDATE_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposi
 C2C_DEPOSIT_UPDATE_MAX_LOOP = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'deposit^update^max^loop', '10'))
 # Must Be Set From Process Update Fee C2C [OLD, NEW]
 C2C_ADMIN_FEE = [1500, 1500]
+C2C_BANK_HOST = _ConfigParser.get_set_value('MANDIRI_C2C', 'bank^host^ip', '10.17.10.56')
+C2C_BANK_USERNAME = _ConfigParser.get_set_value('MANDIRI_C2C', 'bank^host^user', 'multidaya')
+C2C_BANK_PASSWORD = _ConfigParser.get_set_value('MANDIRI_C2C', 'bank^host^pass', 'adminMDD1')
+C2C_FORWARDER_HOST = _ConfigParser.get_set_value('MANDIRI_C2C', 'forwarder^host', 'tsf.mdd.co.id:28080')
+C2C_FEE_CHECK_INTERVAL = int(_ConfigParser.get_set_value('MANDIRI_C2C', 'fee^check^interval', '10'))
+
 MDR_C2C_TRESHOLD_USAGE = True if _ConfigParser.get_set_value('MANDIRI_C2C', 'treshold^usage', '0') == '1' else False
 
 # GENERATE INFO
@@ -364,11 +392,17 @@ KIOSK_SETTING = []
 KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
 PRINTER_STATUS = "NORMAL"
+
 PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
-EXCEED_PAYMENT = _ConfigParser.get_set_value('GENERAL', 'exceed^payment', '0')
-ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
+if BILL_TYPE == 'NV':
+    PAYMENT_CANCEL = '0'
+    _ConfigParser.set_value('GENERAL', 'payment^cancel', '0')
+
+# Force Disable Allow Exceed Payment
+ALLOW_EXCEED_PAYMENT = False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('GENERAL', 'payment^confirm', '0')
 SSL_VERIFY = True if _ConfigParser.get_set_value('GENERAL', 'ssl^verify', '0') == '1' else False
+SECURE_CHANNEL_TOPUP = True if _ConfigParser.get_set_value('GENERAL', 'secure^channel^topup', '1') == '1' else False
 
 DISABLE_SENTRY_LOGGING = True if _ConfigParser.get_set_value('GENERAL', 'disable^sentry^logging', '1') == '1' else False
 # NEW_TOPUP_FAILURE_HANDLER = True if _ConfigParser.get_set_value('GENERAL', 'new^topup^failure^handler', '1') == '1' else False
@@ -504,9 +538,40 @@ def store_notes_activity(notes, trxid):
             c.write(','.join([_Helper.time_string(), trxid, notes]) + os.linesep)
             c.close()
         LAST_INSERT_CASH_TIMESTAMP = _Helper.time_string(f='%Y%m%d%H%M%S')
+        if notes == 'ERROR': 
+            _Helper.get_thread().apply_async(
+                send_bill_store_failure, (trxid,)
+                )
         return True
     except Exception as e:
-        LOGGER.warning((e))
+        LOGGER.warning((e, trxid, notes))
+        return False
+
+
+def remove_notes_activity(trxid):
+    try:
+        cash_status_file = os.path.join(CASHBOX_PATH, 'cashbox.status')
+        LOGGER.info((cash_status_file, trxid))
+        cash_status = open(cash_status_file, 'r').readlines()
+        if len(cash_status) == 0:
+            LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
+            return True
+        notes_activity = []
+        for data in cash_status:
+            if ',' not in data: continue
+            if trxid in data: continue
+            notes_activity.append(data)
+        # Truncate Contents
+        f = open(cash_status_file, 'r+')
+        f.truncate(0)
+        LOGGER.info(('TRUNCATE', cash_status_file))
+        with open(cash_status_file, 'a') as c:
+            for activity in notes_activity:
+                c.write(activity)
+            c.close()
+        return True
+    except Exception as e:
+        LOGGER.warning((e, trxid))
         return False
 
 
@@ -620,7 +685,10 @@ def init_temp_data():
 
 def store_to_temp_data(temp, content, log=True):
     if log is True:
-        LOGGER.info((temp, content))
+        if len(content) > 1024:
+            LOGGER.info((temp, content[:1024]+'...'))
+        else:
+            LOGGER.info((temp, content))
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
@@ -717,8 +785,21 @@ KAI_VIEW_CONFIG = load_from_temp_data('kci-view-config', 'json', sys.path[0] + '
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 SPESIFIC_PREPAID_PROVIDER = _ConfigParser.get_set_value('GENERAL', 'spesific^provider', 'bca:0145')
 
+SHOW_TNC = _ConfigParser.get_set_value('GENERAL', 'show^tnc', '1') == '1'
+
 if THEME_NAME.lower() in [x.lower() for x in THEME_WITH_PAYMENT_RULES]:
     PAYMENT_RULES = 'cash:>:10000,qr:<:100000'
+
+
+# ATTENTION PLEASE #
+# Hardcoded Re-configuration for BCA Theme
+if THEME_NAME.lower() in ['bca']:
+    SHOW_TNC = False
+    ALLOW_EXCEED_PAYMENT = False
+    REFUND_FEATURE = False
+    BILL_SINGLE_DENOM_TRX = 'topup|shop'.split('|')
+    _ConfigParser.set_value('BILL', 'single^denom^trx', 'topup|shop')
+
 # Handle External Customer Service Information
 EXT_CS_INFO = None
 
@@ -734,8 +815,12 @@ ERECEIPT_QR_HOST = _ConfigParser.get_set_value('PRINTER', 'ereceipt^qr^host', 'h
 #         VIEW_CONFIG = TJ_VIEW_CONFIG
 #     if THEME_NAME.lower() in ['kai', 'kci']:
 #         VIEW_CONFIG = KAI_VIEW_CONFIG
+
+# Set Force Default Page Timer to 120 Second
+_ConfigParser.set_value('GENERAL', 'page^timer', '120')
         
 VIEW_CONFIG['ui_simplify'] =  True if _ConfigParser.get_set_value('GENERAL', 'ui^simplify', '1') == '1' else False
+VIEW_CONFIG['show_tnc'] =  SHOW_TNC
 VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^timer', '90'))
 VIEW_CONFIG['tnc_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'tnc^timer', '4'))
 VIEW_CONFIG['success_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'success^page^timer', '7'))
@@ -752,6 +837,9 @@ VIEW_CONFIG['payment_cancel'] = True if PAYMENT_CANCEL == '1' else False
 VIEW_CONFIG['theme_name'] = THEME_NAME
 VIEW_CONFIG['printer_type'] = PRINTER_TYPE
 VIEW_CONFIG['payment_rules'] = PAYMENT_RULES
+VIEW_CONFIG['auto_print_collection'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^collection', '1') == '1' else False
+VIEW_CONFIG['auto_print_stock_opname'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^stock^opname', '1') == '1' else False
+
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
@@ -766,7 +854,7 @@ SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '-
 COLOR_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'white')
 COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 
-UPDATE_BALANCE_URL_DEV = 'http://192.168.8.60:28194/v1/'
+UPDATE_BALANCE_URL_DEV = 'http://apidev.mdd.co.id:28194/v1/'
 UPDATE_BALANCE_URL = _ConfigParser.get_set_value('GENERAL', 'update^balance^url', 'http://apiv2.mdd.co.id:2020/v1/')
 
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
@@ -806,7 +894,7 @@ QR_PROD_STATE = {
     'NOBU-QRIS': True,
     'MDR-QRIS': True,
     'BRI-QRIS': False,
-    'DUWIT': False,
+    'DUWIT': True,
     'BCA-QRIS': False,
     'JAKONE': True,
     'GOPAY': True,
@@ -2155,6 +2243,7 @@ def check_retry_able(data):
 
 
 LAST_QR_PAYMENT_HOST_TRX_ID = None
+ACTIVE_CASH_TRX_ID = None
 
 
 def generate_stock_change_data():
@@ -2399,6 +2488,32 @@ def generate_card_preload_data(operator, struct_id):
     store_stock_opname(struct_id, json.dumps(stock_opname))
     archive_redeem_activity(struct_id+'.redeem')
     return data
+
+
+def send_bill_store_failure(trxid):
+    try:
+        amount = load_from_custom_config('BILL', 'last^money^inserted')
+        param = {
+            'trxId': trxid,
+            'amount': amount,
+            'trxType': 'SHOP',
+            'customerDetails': {},
+            'createdAt': _Helper.now()
+        }
+        if 'topup' in trxid:
+            param['customerDetails'] = load_from_temp_data('last-card-check', 'json')
+            param['trxType'] = 'TOPUP'
+        status, response = _HTTPAccess.post_to_url(BACKEND_URL+'sync/bill-store-failure', param)
+        LOGGER.info((response, str(param)))
+        if status == 200 and response['result'] == 'OK':
+            return True
+        else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/bill-store-failure', payload=param)
+            return False
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
+
 
 
 def send_stock_opname(key):

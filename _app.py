@@ -140,9 +140,9 @@ class SlotHandler(QObject):
         _Printer.start_default_print(path)
     start_default_print = pyqtSlot(str)(start_default_print)
 
-    def get_kiosk_status(self):
-        _KioskService.get_kiosk_status()
-    get_kiosk_status = pyqtSlot()(get_kiosk_status)
+    def start_get_kiosk_status(self):
+        _KioskService.start_get_kiosk_status()
+    start_get_kiosk_status = pyqtSlot()(start_get_kiosk_status)
 
     def start_get_price_setting(self):
         _KioskService.start_get_price_setting()
@@ -308,9 +308,9 @@ class SlotHandler(QObject):
         _Common.start_upload_device_state(device, state)
     start_upload_device_state = pyqtSlot(str, str)(start_upload_device_state)
 
-    def start_admin_print_global(self, struct_id):
-        _SalePrintTool.start_admin_print_global(struct_id)
-    start_admin_print_global = pyqtSlot(str)(start_admin_print_global)
+    def start_generate_cash_collection_event(self, struct_id):
+        _SalePrintTool.start_generate_cash_collection_event(struct_id)
+    start_generate_cash_collection_event = pyqtSlot(str)(start_generate_cash_collection_event)
 
     def start_admin_change_stock_print(self, struct_id):
         _SalePrintTool.start_admin_change_stock_print(struct_id)
@@ -571,6 +571,18 @@ class SlotHandler(QObject):
     def start_get_card_history(self, bank):
         _QPROX.start_get_card_history(bank)
     start_get_card_history = pyqtSlot(str)(start_get_card_history)
+    
+    def start_enable_reader_dump(self):
+        _QPROX.start_enable_reader_dump()
+    start_enable_reader_dump = pyqtSlot()(start_enable_reader_dump)
+    
+    def start_disable_reader_dump(self):
+        _QPROX.start_disable_reader_dump()
+    start_disable_reader_dump = pyqtSlot()(start_disable_reader_dump)
+    
+    def start_reset_reader_contact(self):
+        _QPROX.start_reset_reader_contact()
+    start_reset_reader_contact = pyqtSlot()(start_reset_reader_contact)
 
     def start_print_card_history(self, payload):
         _SalePrintTool.start_print_card_history(payload)
@@ -1139,6 +1151,7 @@ def startup_task():
         # print("pyt: Start Topup Service...")
         # _Helper.get_thread().apply_async(start_webserver)
         # sleep(1)
+<<<<<<< HEAD
 
 	#Disabled By Wahyudi 2023-10-28
         #print("pyt: Start Init Cash Activity...")
@@ -1146,6 +1159,15 @@ def startup_task():
         #_Common.init_cash_activity()
         #sleep(1)
 
+=======
+        
+        # Disable Below To Prevent Double Claim Bill Receive : 20231025
+        # print("pyt: Start Init Cash Activity...")
+        # _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Start Init Cash Activity...')
+        # _Common.init_cash_activity()
+        
+        sleep(1)
+>>>>>>> 7c4ed118e102832210c5b9a2480573dcbc1f7a7c
         if _Common.BILL['status'] is True:
             sleep(1)
             print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
@@ -1188,8 +1210,11 @@ def startup_task():
             sleep(1)
             print("pyt: Resync Data Mandiri Card Blacklist...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Data Mandiri Card Blacklist...')
-            # _SettlementService.start_check_mandiri_deposit()    
             _TopupService.get_mandiri_card_blocked_list()
+            sleep(1)
+            print("pyt: Resync Mandiri C2C Fee To Host...")
+            _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Mandiri C2C Fee To Host...')
+            _SettlementService.start_do_c2c_send_fee()    
             sleep(1)
             print("pyt: Check Last Mandiri Settlement...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Check Last Mandiri Settlement...')
@@ -1242,7 +1267,7 @@ def startup_task():
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Startup Completed...')
         print("pyt: Get Kiosk Terminal Status...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Get Kiosk Terminal Status...')
-        _KioskService.get_kiosk_status()
+        _KioskService.start_get_kiosk_status()
     
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ Base{
 //    height: (globalScreenType=='2') ? 1024 : 1080
 //    width: (globalScreenType=='2') ? 1280 : 1920
 //    property int timer_value: (VIEW_CONFIG.page_timer * 2)
-    property int timer_value: 5
+    property int timer_value: 10
     property var press: '0'
     property var cardNo: ''
     property var balance: '0'

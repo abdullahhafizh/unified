@@ -14,7 +14,7 @@ Base{
     property int timer_value: (3 * VIEW_CONFIG.page_timer)
     property var press: '0'
     property var details
-    property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
+    property var notif_text: 'Masukkan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool successTransaction: false
     property int receivedPayment: 0
     property var lastBalance: '999000'
@@ -340,7 +340,7 @@ Base{
             if (receivedPayment == 0) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), false);
-                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED');
+                _SLOT.system_action_log('BILL_DEVICE_ERROR_PAYMENT_NOT_RECEIVED', 'warning');
                 abc.counter = 5;
                 return;
             }
@@ -354,7 +354,7 @@ Base{
             if (receivedPayment == 0) {
                 press = '0';
                 switch_frame('source/smiley_down.png', 'Waktu Pembayaran Habis, Membatalkan Transaksi Anda', '', 'backToMain|'+VIEW_CONFIG.failure_page_timer.toString(), false);
-                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED')
+                _SLOT.system_action_log('BILL_DEVICE_TIMEOUT_PAYMENT_NOT_RECEIVED', 'warning')
                 abc.counter = 5;
                 return;
             }
@@ -451,15 +451,15 @@ Base{
                     }
                 _SLOT.start_do_confirm_promo(JSON.stringify(payload));
             }
-            hide_all_cancel_button();
-            reset_variables_to_default();
             // Trigger Deposit Update Balance Check
             if (cardNo.substring(0, 4) == '6032'){
                 if (VIEW_CONFIG.c2c_mode == 1) _SLOT.start_check_mandiri_deposit();
             } else if (cardNo.substring(0, 4) == '7546'){
                 _SLOT.start_check_bni_deposit();
             }
-            my_layer.push(ereceipt_view, {details:details});
+            my_layer.push(ereceipt_view, {details:details, receivedPayment: receivedPayment, totalPrice: totalPrice});
+            hide_all_cancel_button();
+            reset_variables_to_default();
             return;
         }
 
@@ -979,7 +979,7 @@ Base{
         press = '0';
         if (billFunction == 'RECEIVE_BILL'){
             if (billResult == 'RECEIVE_BILL|SHOW_BACK_BUTTON') return;
-            if (billResult == "ERROR" || billResult == "TIMEOUT" || billResult == "JAMMED"){
+            if (billResult == "ERROR" || billResult == "JAMMED"){
                 details.process_error = 1;
                 do_refund_or_print('cash_device_error');
                 return;
@@ -994,12 +994,12 @@ Base{
                 popup_loading.open();
                 _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
                 return;
-            } else if (billResult == 'SERVICE_TIMEOUT'){
+            } else if (billResult == 'SERVICE_TIMEOUT' || billResult == 'TIMEOUT'){
                 if (receivedPayment > 0){
                     back_button.visible = VIEW_CONFIG.payment_cancel;
                     press = 0;
                     modeButtonPopup = 'retrigger_bill';
-                    switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
+                    switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
@@ -1009,14 +1009,14 @@ Base{
             } else if (billResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
                 _SLOT.start_play_audio('insert_cash_with_good_condition');
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (billResult == 'BAD_NOTES'){
                 back_button.visible = VIEW_CONFIG.payment_cancel;
                 press = 0;
                 modeButtonPopup = 'retrigger_bill';
                 _SLOT.start_play_audio('insert_cash_with_good_condition');
-                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
                 global_frame.close();
@@ -1072,7 +1072,7 @@ Base{
                 notif_text = qsTr('Mohon Tunggu, Sedang Mensinkronisasi Ulang.');
                 break;
             case 'CI':
-                notif_text  = qsTr('Silakan Masukan Kartu Anda Di Slot Tersedia.');
+                notif_text  = qsTr('Silakan Masukkan Kartu Anda Di Slot Tersedia.');
                 back_button.visible = true;
                 break;
             case 'PI':
@@ -1407,7 +1407,7 @@ Base{
         modeReverse: true
         z: 10
 //        visible: !transactionInProcess && receivedPayment < totalPrice
-        visible: !transactionInProcess
+        visible: !transactionInProcess && VIEW_CONFIG.bill_type !== 'NV'
 
         MouseArea{
             anchors.fill: parent
@@ -1629,9 +1629,35 @@ Base{
         press = '0';
         my_timer.stop();
 
+        //BCA Will Directly Execute And Record CS Refund 
+        if (!refundFeature){
+            generate_cs_refund_data('CUSTOMER-SERVICE');
+            release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Perhatikan Instruksi Yang Tertera.');
+            return;
+        }
+
         exceed_payment_transaction.mainTitle = mode;
         exceed_payment_transaction.open();
         _SLOT.start_play_audio('please_input_wa_no');
+    }
+
+    function generate_cs_refund_data(channel){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        details.refund_channel = channel;
+        details.refund_status = 'AVAILABLE';
+        details.refund_number = '';
+        details.refund_amount = refundAmount.toString();
+        var refundPayload = {
+            amount: details.refund_amount,
+            customer: 'NO_PHONE_NUMBER',
+            reff_no: details.shop_type + details.epoch.toString(),
+            remarks: details,
+            channel: channel,
+            mode: 'not_having_phone_no_for_refund',
+            payment: details.payment
+        }
+        _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
+        console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
     }
 
     function cancel_transaction(t){
@@ -1639,6 +1665,20 @@ Base{
             console.log('[WARNING] Transaction In Process Not Allowed Cancellation', t);
             return;
         }
+        // Handle Remove Visibility Button CANCEL
+        if (VIEW_CONFIG.bill_type == 'NV'){
+            switch(t){
+                case 'GLOBAL_FRAME':
+                    cancel_button_global.visible = false;
+                break;
+                case 'MAIN_FRAME':
+                    back_button.visible = false;
+                break;
+            }
+            console.log('[WARNING] Transaction Not Allowed Cancellation', VIEW_CONFIG.bill_type);
+            return;
+        }
+
         if (cancel_confirmation.visible) cancel_confirmation.close();
         global_frame.close();
         details.receipt_title = 'Transaksi Anda Batal';
@@ -1817,7 +1857,7 @@ Base{
     }
 
     Text {
-        text: "Jenis Uang yang diterima"
+        text: "Lembar Uang yang diterima"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 150
         anchors.horizontalCenter: parent.horizontalCenter
@@ -1856,12 +1896,14 @@ Base{
             scale: 0.9
             source: "source/20rb.png"
             fillMode: Image.PreserveAspectFit
+            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
         Image{
             id: img_count_10
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
+            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
     }
@@ -2306,27 +2348,11 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "BATAL" in Transaction Completeness');
                     refundChannel = 'CUSTOMER-SERVICE';
-                    details.refund_channel = refundChannel;
-                    details.refund_status = 'AVAILABLE';
-                    details.refund_number = '';
-                    details.refund_amount = refundAmount.toString();
-//                    _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
-                    var refundPayload = {
-                        amount: details.refund_amount,
-                        customer: 'NO_PHONE_NUMBER',
-                        reff_no: details.shop_type + details.epoch.toString(),
-                        remarks: details,
-                        channel: refundChannel,
-                        mode: 'not_having_phone_no_for_refund',
-                        payment: details.payment
-                    }
-                    _SLOT.start_trigger_global_refund(JSON.stringify(refundPayload));
-                    console.log('start_trigger_global_refund', now, JSON.stringify(refundPayload));
+                    generate_cs_refund_data(refundChannel);
                     exceed_payment_transaction.close();
                     release_print('Pelanggan YTH.', 'Silakan Ambil Struk Transaksi Anda Dan Periksa Transaksi Anda Dengan Memasukkan Kode Ulang Yang Tertera Pada Struk.');
                 }

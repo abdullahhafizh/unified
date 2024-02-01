@@ -615,7 +615,7 @@ Base{
         id: notice_card_purchase
         width: 1200
         height: 120
-        visible: !select_payment.visible && (['transjakarta','bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) !== false ) 
+        visible: !select_payment.visible && (['transjakarta','bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) !== false ) && !smallHeight
         radius: 50
         fontSize: 30
         border.width: 0
@@ -715,7 +715,7 @@ Base{
     SelectPaymentInline{
         id: select_payment
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         anchors.horizontalCenter: parent.horizontalCenter
 //        visible: (productIdx > -1)
 //        visible: true
@@ -728,7 +728,7 @@ Base{
     SelectPaymentQR{
         id: select_qr_provider
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
+        anchors.bottomMargin: (smallHeight) ? 30 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         visible: false
 //        visible: true

@@ -67,6 +67,7 @@ def convert_to_iv(clue='0', length=16):
 BLOCK_SIZE = 32
 BLOCK_SZ = 14
 PADDING = '^'
+DELIMITER = "."
 
 
     # private static function padString($string){
@@ -192,16 +193,19 @@ def encrypt(
     if iv is None:
         if method == 'AES-128-ECB':
             iv = ""
+        elif method == 'AES-128-CBC':
+            iv = chr(0) * 16
         elif method == '3DES-CBC':
             iv = chr(0) * (len(key)/3)
         else:
             iv = chr(0) * len(key)
+    iv = bytes(iv, 'utf-8')
     output['iv'] = iv
     if output['class_method'] == 'AES':
         try:
             if 'HEX' in mode:
                 key = unhexlify(key)
-            cipher = AES.new(key,AES.MODE_CBC,iv)
+            cipher = AES.new(key, AES.MODE_CBC, iv)
             output['process'] = cipher.encrypt(string)
         except Exception as e:
             output['process'] = False
@@ -220,9 +224,10 @@ def encrypt(
             output['result'] = hexlify(output['process']).upper()
         elif mode == 'BASE64':
             output['result'] = base64.encode(hexlify(output['process']))
-    output['status'] = True
-    output['length'] = len(output['result'])
-    output.pop('process')
+    if output['result']:
+        output['status'] = True
+        output['length'] = len(output['result'])
+        output.pop('process')
     if direct is True:
         return output['result']
     return output
@@ -256,10 +261,13 @@ def decrypt(
     if iv is None:
         if method == 'AES-128-ECB':
             iv = ""
+        elif method == 'AES-128-CBC':
+            iv = chr(0) * 16
         elif method == '3DES-CBC':
             iv = chr(0) * (len(key)/3)
         else:
             iv = chr(0) * len(key)
+    iv = bytes(iv, 'utf-8')
     output['iv'] = iv
     if output['class_method'] == 'AES':
         try:
@@ -268,10 +276,9 @@ def decrypt(
                 string = unhexlify(reverse(string))
             elif 'mode' == 'BASE64':
                 string = base64.decode(string)
-            cipher = AES.new(key,AES.MODE_CBC,iv)
+            cipher = AES.new(key, AES.MODE_CBC, iv)
             output['process'] = cipher.decrypt(string)
         except Exception as e:
-            output['result'] = False
             output['error'] = e
     # elif output['class_method'] == '3DES':
         # try:
@@ -290,16 +297,13 @@ def decrypt(
         if padding is not None:
             output['result'] = output['result'].replace(padding, '')
         output['status'] = True
+        output.pop('process')
     else:
-        output['status'] = False
-        output['result'] = False
         output['error'] = 'Failed To Decrypt Cipher'
-    output.pop('process')
     output['mode'] = mode
     if direct is True:
         return output['result']
     return output
-
 
 #     public static function decrypt($string, $key='1DD08E3FC32981B96EDAA6E1768A454D', $direct=FALSE, $method='AES-128-CBC', $mode='HEX', $iv=null, $padding=null){
 #         $class_method = explode('-', $method)[0];
@@ -390,14 +394,46 @@ def decrypt(
 #     }
 
 
+def encrypt_aes(plaintext, key):
+    try:
+        key = hashlib.sha256(key.encode()).digest()
+        encobj = AES.new(key, AES.MODE_GCM)
+        ciphertext, authTag = encobj.encrypt_and_digest(plaintext.encode())
+        data = [
+            hexlify(ciphertext).decode(), 
+            hexlify(authTag).decode(), 
+            hexlify(encobj.nonce).decode()
+            ]
+        result = DELIMITER.join(data)
+        return True, result.upper()
+    except Exception as e:
+        return False, str(e).upper()
+
+
+def decrypt_aes(plain, key):
+    try:
+        key = hashlib.sha256(key.encode()).digest()
+        plain = plain.lower()
+        data = plain.split(DELIMITER)
+        # a2b_hex VS unhexlify
+        ciphertext = unhexlify(data[0].encode())
+        authTag = unhexlify(data[1].encode())
+        nonce = unhexlify(data[2].encode())
+        encobj = AES.new(key, AES.MODE_GCM, nonce)
+        result = (encobj.decrypt_and_verify(ciphertext, authTag)).decode()
+        return True, result
+    except Exception as e:
+        return False, str(e).upper()
+
+
 if __name__ == '__main__':
     time_format = '%Y-%m-%d %H:%M:%S'
     sn = '0811223344'.zfill(16)
     print('SN', sn)
     key = convert_to_key(sn)
     print('Key', key)
-    iv = convert_to_iv(sn)
-    print('IV', iv)
+    # iv = convert_to_iv(sn)
+    # print('IV', iv)
     raw_message = json.dumps({
             'reff_no'   : 'TEST123',
             'caller_id' : 'TERMINAL0001',
@@ -406,22 +442,14 @@ if __name__ == '__main__':
             'trx_type'  : 'SALE'
             })
     print('Raw', raw_message)
-    encrypted = encrypt(
+    encrypted_status, encrypt_result = encrypt_aes(
             raw_message, 
-            key,
-            True,
-            'AES-128-CBC',
-            'HEX',
-            iv
+            key
         )
-    print('Encrypted', encrypted)
-    decrypted = decrypt(
-            encrypted, 
-            key,
-            True,
-            'AES-128-CBC',
-            'HEX',
-            iv,
-            PADDING
-        )
-    print('Decrypted', decrypted)
+    print('Encrypted', encrypt_result)
+    if encrypted_status is not None:
+        decrypted_status, decrypted_result = decrypt_aes(
+                encrypt_result, 
+                key
+            )
+        print('Decrypted', decrypted_result)

@@ -30,6 +30,9 @@ Base{
     property int showManualPrintButton: 5
     property int delayExecution: 3000
 
+    property int receivedPayment: 0
+    property var totalPrice: 0
+
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
@@ -92,6 +95,9 @@ Base{
                     manualButtonVisible = true;
                 }
                 if(abc.counter < 0){
+                    // Check Exceed Payment, If Found Keep Print The TRX Receipt
+                    var exceed = validate_cash_refundable();
+                    if (exceed !== false && parseInt(exceed) > 0) _SLOT.start_direct_sale_print_global(JSON.stringify(details));
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
@@ -123,6 +129,16 @@ Base{
 //            trxNotes = 'Pastikan Anda mendapatkan konfirmasi dari layanan pembayaran/pembelian Anda.';
 //            break;
         }
+    }
+
+    function validate_cash_refundable(){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        var result = false;
+        if (details.payment == 'cash' && receivedPayment > totalPrice){
+            result = parseInt(receivedPayment - totalPrice);
+        }
+        console.log('validate_cash_refundable', now, result, receivedPayment, totalPrice);
+        return result;
     }
 
     function ereceipt_show(data){
@@ -331,6 +347,9 @@ Base{
                     msg = 'Silakan Cek eReceipt Anda di Whatsapp Dan Ambil Kartu Prepaid Baru Anda';
                     _SLOT.start_play_audio('please_take_new_card_with_receipt');
                 }
+                // Check Exceed Payment, If Found Keep Print The TRX Receipt
+                var exceed = validate_cash_refundable();
+                if (exceed !== false && parseInt(exceed) > 0) _SLOT.start_direct_sale_print_global(JSON.stringify(details));
                 switch_frame('source/take_receipt.png', title, msg, 'backToMain|3', true );
             }
         }

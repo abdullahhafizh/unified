@@ -208,7 +208,7 @@ def emit_eject_error(attempt, error_message, method='eject_full_round'):
     if attempt == '106':
         _Common.log_to_temp_config('cd6^error', 'DEVICE_RESPONSE_ERROR')
         _Common.upload_device_state('cd6', 'DEVICE_RESPONSE_ERROR')
-    _Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
+    #_Common.online_logger(['Card Dispenser', attempt, method, error_message], 'device')
     LOGGER.warning((method, str(attempt), error_message))
     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR|'+error_message)
 

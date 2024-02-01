@@ -4,7 +4,7 @@ from _cConfig import _ConfigParser, _Common
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
-from _tTools import _Helper
+from _tTools import _Helper, _Cryptograpy
 from _dDAO import _DAO
 from time import sleep
 import json
@@ -22,6 +22,7 @@ if _Common.IS_WINDOWS:
 
 LOGGER = logging.getLogger()
 QPROX_PORT = _Common.QPROX_PORT
+QPROX_BAUDRATE = _Common.QPROX_BAUDRATE
 MID_MAN = _Common.MID_MAN
 TID_MAN = _Common.TID_MAN
 SAM_MAN = _Common.SAM_MAN
@@ -47,6 +48,10 @@ BNI_SAM_SLOT = {
 
 QPROX = {
     "RESET_CONTACTLESS": "ST0",
+    "READER_DUMP": "RD0",
+    "ENABLE_READER_DUMP": "RD1",
+    "DISABLE_READER_DUMP": "RD2",
+    # -------
     "OPEN": "000",
     "INIT": "001",
     "AUTH": "002",
@@ -103,7 +108,7 @@ QPROX = {
     "CONFIRM_TOPUP_DKI": "052", #parameter data_to_card (From API)
     "CARD_HISTORY_DKI": "053", 
     "CARD_HISTORY_DKI_RAW": "054", 
-    "CARD_HISTORY_BRI_RAW": "078"
+    "CARD_HISTORY_BRI_RAW": "078",
 }
 
 
@@ -191,6 +196,50 @@ ERROR_TOPUP = {
 # Waive BNI Card Validation
 if not _Common.LIVE_MODE:
     ERROR_TOPUP.pop('5106')
+    
+    
+DO_READER_DUMP_ON_CARD_HISTORY = False
+
+
+def do_get_reader_dump(event, reff=None):
+    if not _Common.SUPPORT_DUMP_VERSION: return
+    if not DO_READER_DUMP_ON_CARD_HISTORY and 'get_card_history' in event: return 
+    reff = _Helper.time_string('%Y%m%d%H%M%S') if reff is None else reff
+    param = QPROX['READER_DUMP'] + '|' + event + '|'  + reff
+    dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    LOGGER.info((dump_response, dump_result))
+    
+
+def start_disable_reader_dump():
+    _Helper.get_thread().apply_async(disable_reader_dump)
+    
+    
+def start_reset_reader_contact():
+    _Helper.get_thread().apply_async(reset_card_contactless)
+    
+
+def start_enable_reader_dump():
+    _Helper.get_thread().apply_async(enable_reader_dump)
+    
+
+def disable_reader_dump():
+    # Add Reset Contact
+    reset_card_contactless()
+    if not _Common.SUPPORT_DUMP_VERSION: return
+    if _Common.QPROX_READER_FORCE_DUMP:
+        LOGGER.info(('QPROX_READER_FORCE_DUMP', _Common.QPROX_READER_FORCE_DUMP))
+        return
+    param = QPROX['DISABLE_READER_DUMP'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    LOGGER.info((response, result))
+    
+    
+def enable_reader_dump():
+    if not _Common.SUPPORT_DUMP_VERSION: return
+    param = QPROX['ENABLE_READER_DUMP'] + '|'
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    LOGGER.info((response, result))
+
 
 def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
     if bank == 'BNI':
@@ -250,7 +299,7 @@ def bni_crypto_deposit(card_info, cyptogram, slot=1, bank='BNI'):
             output['last_balance'] = samLastBalance
             return output
         else:
-            _Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
+            #_Common.online_logger([result, card_info, cyptogram, slot, bank], 'general')
             _Common.NFC_ERROR = 'SEND_CRYPTO_BNI_ERROR_SLOT_'+str(slot)
             return False
     else:
@@ -317,7 +366,7 @@ def open():
         LOGGER.debug(("port : ", QPROX_PORT))
         _Common.NFC_ERROR = 'PORT_NOT_DEFINED'
         return False
-    param = QPROX["OPEN"] + "|" + QPROX_PORT
+    param = QPROX["OPEN"] + "|" + QPROX_PORT + "|" + QPROX_BAUDRATE
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug((param, result))
     OPEN_STATUS = True if response == 0 else False
@@ -343,27 +392,58 @@ INIT_LIST = []
 INIT_DELAY_TIME = int(_Common.INIT_DELAY_TIME)
 
 
+# Route Check Method to Non / Secure Channel
+def execute_topup_config_check(_param={}, _bank=''):
+    LOGGER.debug((_param, _bank))
+    if _Helper.empty(_param) or _Helper.empty(_bank): 
+        return False, {'response': {'code': 999}}
+    _bank = _bank.lower()
+    _url = TOPUP_URL + 'topup-'+_bank+'/card-check?tid=' + _Common.TID
+    # Non-Secure channel
+    if not _Common.SECURE_CHANNEL_TOPUP:
+        return _HTTPAccess.post_to_url(url=_url, param=_param)
+    
+    # UPDATE_BALANCE_URL_DEV = 'http://apidev.mdd.co.id:28194/v1/'
+    _url = _url.replace('/v1/', '/enc-kiosk/')
+    # AES-128-CBC Output in HEX
+    encrypt_status, encrypt_result = _Cryptograpy.encrypt_aes(
+                plaintext=json.dumps(_param),
+                key=_Common.CORE_MID
+            )
+    if not _Common.LIVE_MODE:
+        LOGGER.debug(('Encypt Result', str(encrypt_result)))
+    if not encrypt_status:
+        return False, {'response': {'code': 999}}
+    _payload = {
+            'data': encrypt_result
+        }
+    _header = _HTTPAccess.HEADER 
+    _header['Kiosk-Partner-ID'] = _Common.CORE_MID
+    _header['Kiosk-Terminal-ID'] = _Common.TID
+    _header['Kiosk-Timestamp'] = str(_Helper.now())
+    return _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
+
+
 def validate_topup_online_config(bank=None):
     if bank is None: return
     param = _Common.serialize_payload({})
     # Fixed By Using ? to define it as Query String
-    check_query = '?tid=' + _Common.TID
     try:
         if bank == 'BRI':
-            param['card_no'] = '6013' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bri/card-check' + check_query, param)
+            param['card_no'] = '6013' + ('0'*12)            
+            status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.BRI_TOPUP_ONLINE = True
         elif bank == 'BCA':
             param['card_no'] = '0145' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-bca/card-check' + check_query, param)
+            status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.BCA_TOPUP_ONLINE = True
         elif bank == 'DKI':
             param['card_no'] = '9360' + ('0'*12)
-            status, response = _HTTPAccess.post_to_url(_Common.CORE_HOST + 'topup-dki/card-check' + check_query, param)
+            status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
             if status == 200 and response['response']['code'] == 200:
                 _Common.DKI_TOPUP_ONLINE = True
@@ -422,15 +502,30 @@ def init_config():
                         else:
                             LOGGER.warning((BANK['BANK'], result))
                     if BANK['BANK'] == 'BNI':
-                        param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
-                        response, result = _Command.send_request(param=param, output=None)
+                        inject_param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' + TID_BNI
+                        response, result = _Command.send_request(param=inject_param, output=None)
                         if response == 0:
-                            LOGGER.info((BANK['BANK'], result))
-                            INIT_LIST.append(BANK)
-                            INIT_STATUS = True
-                            INIT_BNI = True
-                            sleep(INIT_DELAY_TIME)
-                            bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
+                            LOGGER.info((BANK['BANK'], 'INJECT_KEY', result))
+                            init_param = QPROX['UPDATE_TID_BNI'] + '|' + _Common.TID_BNI
+                            response, result = _Command.send_request(param=init_param, output=None)
+                            LOGGER.info((BANK['BANK'], 'UPDATE_TID', result))
+                            if response == 0:
+                                INIT_LIST.append(BANK)
+                                INIT_STATUS = True
+                                INIT_BNI = True
+                                sleep(1)
+                                bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
+                                sleep(1)
+                                get_card_info(slot=_Common.BNI_ACTIVE, bank='BNI')
+                        # param = QPROX['BNI_TOPUP_INIT_KEY'] + '|' + _Common.BNI_C2C_MASTER_KEY + '|' + _Common.BNI_C2C_PIN + '|' +  TID_BNI
+                        # response, result = _Command.send_request(param=param, output=None)
+                        # if response == 0:
+                        #     LOGGER.info((BANK['BANK'], result))
+                        #     INIT_LIST.append(BANK)
+                        #     INIT_STATUS = True
+                        #     INIT_BNI = True
+                        #     sleep(INIT_DELAY_TIME)
+                        #     bni_c2c_balance_info(slot=_Common.BNI_ACTIVE)
                             # get_bni_wallet_status()
                         else:
                             LOGGER.warning((BANK['BANK'], result))
@@ -439,6 +534,11 @@ def init_config():
     except Exception as e:
         _Common.NFC_ERROR = 'FAILED_TO_INIT'
         LOGGER.warning((e))
+    finally:
+        if _Common.QPROX_READER_FORCE_DUMP:
+            enable_reader_dump()
+        else:
+            disable_reader_dump()
     # finally:
     #     # Retry Read BNI SAM Balance
     #     if INIT_BNI is True and _Common.BNI_ACTIVE_WALLET <= 0:
@@ -589,7 +689,8 @@ def check_card_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(dummy_output))
         return
     # End Force Testing Mode ==========================
-    reset_card_contactless()
+    # reset_card_contactless()
+    
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug((param, result))
     if response == 0 and '|' in result:
@@ -1124,14 +1225,24 @@ def topup_offline_mandiri_c2c(amount, trxid='', slot=None):
     _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.info((_response, _result))
     # {"Result":"0000","Command":"026","Parameter":"2000","Response":"|6308603298180000003600030D706E8693EA7B051040100120D0070000384A0000050520120439FF0E00004D0F03DC0500000768C7603298602554826300020D706E8693EA7B510401880110F4010000CE4A0000050520120439FF0E0000020103E7F2E790A","ErrorDesc":"Sukses"}
+    
     # {"Command": "028", "ErrorDesc": "Gagal", "Result": "0290", "Response": "", "Parameter": "0"}
     if _response == 0 and len(_result) >= 196:
         c2c_report = _result
         _Common.LAST_TOPUP_TRXID = trxid
         parse_c2c_report(report=c2c_report, reff_no=trxid, amount=amount)
         return
-    # Failure Transaction
+    
+    # Error Condition/ Failure Transaction Below
     try:
+        # Call Reader Dump
+        if 'topup_mandiri' in _Common.SELECTED_DEBUG_MODE:
+            do_get_reader_dump(str(last_card_check['card_no']), trxid)
+        # param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
+        # dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        # LOGGER.info((dump_response, dump_result))
+                
+        # Parse Previous Error Result
         topup_result = json.loads(_result)
         
         LAST_C2C_APP_TYPE = '0'
@@ -1645,6 +1756,13 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                     _Common.local_store_topup_record(force_settlement)
         # False Condition
         
+        # Call Reader Dump
+        if 'topup_bni' in _Common.SELECTED_DEBUG_MODE:
+            do_get_reader_dump(str(last_card_check['card_no']), trxid)
+        # param = QPROX['READER_DUMP'] + '|' + str(last_card_check['card_no']) + '|'  + trxid
+        # dump_response, dump_result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        # LOGGER.info((dump_response, dump_result))
+        
         bni_c2c_balance_info(_Common.BNI_ACTIVE)
         LOGGER.info(('BNI LAST_BALANCE_DEPOSIT', _Common.BNI_ACTIVE_WALLET ))
 
@@ -1747,7 +1865,7 @@ def mdr_c2c_balance_info():
             _Common.MANDIRI_ACTIVE_WALLET = -1
             _Common.MANDIRI_WALLET_1 = -1
             _Common.NFC_ERROR = 'C2C_BALANCE_INFO_MANDIRI_ERROR'
-            _Common.online_logger(['C2C INFO ERROR MANDIRI', result], 'device')
+            #_Common.online_logger(['C2C INFO ERROR MANDIRI', result], 'device')
             QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('C2C_BALANCE_INFO|ERROR')
     except Exception as e:
         LOGGER.warning((e))
@@ -1780,7 +1898,7 @@ def ka_info_mandiri(slot=None, caller=''):
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Common.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
-        _Common.online_logger(['KA INFO ERROR MANDIRI', result, slot], 'device')
+        #_Common.online_logger(['KA INFO ERROR MANDIRI', result, slot], 'device')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
 
 
@@ -1813,7 +1931,7 @@ def bni_c2c_balance_info(slot=1):
                 _Common.BNI_SAM_2_WALLET = -1
                 _Common.BNI_ACTIVE_WALLET = -1
             _Common.NFC_ERROR = 'KA_INFO_BNI_ERROR'
-            # _Common.online_logger(['KA INFO ERROR BNI', result, slot], 'device')
+            # #_Common.online_logger(['KA INFO ERROR BNI', result, slot], 'device')
             QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
     except Exception as e:
         LOGGER.warning((e))
@@ -1933,19 +2051,21 @@ def bni_crypto_tapcash(cyptogram, card_info):
         LOGGER.warning(str(e))
         return False
 
-    
+
 def get_c2c_settlement_fee():
     # Must Return Array String or False
     output = []
     try:
+        # Must Trigger New Get Fee Then Old Get Fee
         for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
-            param = QPROX['GET_FEE_C2C'] + '|' + str(applet_type) + '|'
+            applet_sequence = '1' if applet_type == 0 else '0' #Reverse Sequence on Get Fee
+            param = QPROX['GET_FEE_C2C'] + '|' + str(applet_sequence) + '|'
             response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-            LOGGER.debug((applet_type, str(response), str(result)))
+            LOGGER.debug((applet_sequence, str(response), str(result)))
             # 0D706E8693EA7B160520115936DC050000831E61CB55C30FC36938ED
             if response == 0 and len(result) > 50:
                 clean_result = result.strip().replace(' ', '')
-                output.append(clean_result)
+                output.insert(0, clean_result)
             else:
                 return False
         return output
@@ -1954,41 +2074,45 @@ def get_c2c_settlement_fee():
         return False
 
 
-def set_c2c_settlement_fee(file):
+def pull_set_c2c_settlement_fee(file):
     attempt = 0
-    host_check = _Common.SFTP_C2C['host']
-    if _Common.SFTP_C2C['port'] != '22':
-        host_check = _Common.SFTP_C2C['host'] + ':18080'
-    _url = 'http://'+host_check+'/bridge-service/filecheck.php?content=1&no_correction=1'
-    _param = {
-        'ext': '.txt',
-        'file_path': '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee_response'] + '/' + file
+    # Host Remote Path
+    # /topupoffline/transferbalance/responsefee
+    host_check = _Common.C2C_FORWARDER_HOST
+    url = 'http://'+host_check+'/bridge-service/fileget-ftp.php'
+    param = {
+        'host' : _Common.C2C_BANK_HOST, 
+        'user' : _Common.C2C_BANK_USERNAME, 
+        'password' : _Common.C2C_BANK_PASSWORD, 
+        'local_path': '/home/' + _Common.SFTP_C2C['user'] + '/' + _Common.SFTP_C2C['path_fee_response'] + '/' + file,
+        'remote_path': '/topupoffline/transferbalance/responsefee/' + file
     }
-    LOGGER.debug((attempt, file, _url, _param))
+    LOGGER.debug((attempt, url, param))
     while True:
         attempt += 1
-        response, result = _HTTPAccess.post_to_url(_url, _param)
+        response, result = _HTTPAccess.post_to_url(url, param)
         LOGGER.debug((attempt, file, response, result))
-        if response == 200 and result['status'] == 0 and result['file'] is True:
-            new_c2c_fees = result['content'].split('#')[0]
-            if len(new_c2c_fees) != 2:
-                continue
+        if response == 200 and result['status'] == 0:
+            new_c2c_fees = result['content'].split('\r\n')
             result_fee = []
             for applet_type in range(len(_Common.C2C_ADMIN_FEE)):
-                param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(new_c2c_fees[applet_type]) + '|'
+                if _Helper.empty(new_c2c_fees[applet_type]): continue
+                apdu_response = new_c2c_fees[applet_type]
+                fee_data = apdu_response[2:10] if apdu_response[:2] == '01' else apdu_response[:8]
+                param = QPROX['SET_FEE_C2C'] + '|' + str(applet_type) + '|' + str(apdu_response) + '|'
                 response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
                 LOGGER.debug((applet_type, str(response), str(result)))
-                # Check Validation of Success Inject Fee
-                if response == 0 and result != '6700':
-                    result_fee.append(True)
-                else:
-                    result_fee.append(False)
-            if result_fee == [True, True]:
-                _Common.log_to_temp_config('last^c2c^set^fee')
-                LOGGER.info(('SUCCESS_UPDATE_ADMIN_FEE_C2C'))
-                return True
-                break
-        sleep(15)
+                data = {
+                    'applet_type': 'OLD_APPLET' if applet_type == 0 else 'NEW_APPLET',
+                    'response': apdu_response,
+                    'fee': _Helper.reverse_hexdec(fee_data),
+                    'result': True if response == 0 else False
+                }
+                result_fee.append(data)
+            if len(result_fee) >= 2:
+                _Common.log_to_temp_config('last^c2c^set^fee', _Helper.time_string())
+                return result_fee
+        sleep(_Common.C2C_FEE_CHECK_INTERVAL)
 
 
 def start_get_card_history(bank):
@@ -2016,6 +2140,9 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                
+                do_get_reader_dump('get_card_history_bri')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BRI_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2029,6 +2156,8 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                do_get_reader_dump('get_card_history_mdr')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|MANDIRI_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2042,6 +2171,8 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                do_get_reader_dump('get_card_history_bni')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BNI_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2055,6 +2186,8 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                do_get_reader_dump('get_card_history_bca')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|BCA_ERROR')
         except Exception as e:
             LOGGER.warning(str(e))
@@ -2082,6 +2215,9 @@ def get_card_history(bank):
                 _Common.LAST_CARD_LOG_HISTORY = output
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|'+json.dumps(output))
             else:
+                
+                do_get_reader_dump('get_card_history_dki')
+                
                 QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('CARD_HISTORY|DKI_ERROR')
         except Exception as e:
             LOGGER.warning((e))
@@ -2089,6 +2225,7 @@ def get_card_history(bank):
     else:
         QP_SIGNDLER.SIGNAL_CARD_HISTORY.emit('SAM_HISTORY|ERROR')
         return
+
 
 
 def bni_card_history_direct(row=30):
@@ -2099,6 +2236,7 @@ def bni_card_history_direct(row=30):
         card_history = result.split('#')[1]
         return card_purse, card_history
     else:
+        do_get_reader_dump(_Helper.whoami())
         return "", ""
 
 
@@ -2108,6 +2246,7 @@ def mdr_card_history_direct():
     if response == 0 and len(result) > 10:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
         return ''
 
 
@@ -2117,6 +2256,7 @@ def bri_card_history_direct():
     if response == 0:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
         return ""
     
 
@@ -2126,6 +2266,7 @@ def dki_card_history_direct():
     if response == 0:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
         return ""
 
 
@@ -2135,6 +2276,7 @@ def bca_card_history_direct():
     if response == 0:
         return result
     else:
+        do_get_reader_dump(_Helper.whoami())
         return ""
 
 
@@ -2258,7 +2400,7 @@ def parse_card_history(bank, raw):
 
 
 def reset_card_contactless():
-    # Add Reset Reader Card Contactlerr
+    # Add Reset Reader Card Contactless
     response, result = _Command.send_request(param=QPROX['RESET_CONTACTLESS'] + '|', output=_Command.MO_REPORT)
     LOGGER.debug((response, result))
 

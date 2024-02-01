@@ -80,7 +80,7 @@ def use_pending_code(pending_code, reff_no):
     _Common.update_usage_retry_code(reff_no)
 
 
-def get_kiosk_status():
+def start_get_kiosk_status():
     _Helper.get_thread().apply_async(kiosk_status)
 
 
@@ -1004,7 +1004,7 @@ def alter_table(a):
         _DAO.adjust_table(a)
     except Exception as e:
         LOGGER.warning((e))
-        # _Common.online_logger(['Data Alter', a], 'general')
+        # #_Common.online_logger(['Data Alter', a], 'general')
 
 
 def start_migrate_table(s):
@@ -1341,6 +1341,7 @@ def reset_db_record():
 
 def user_action_log(log):
     if '[Homepage]' in log:
+        _Common.IDLE_MODE = True
         LOGGER.info(('[STANDBY IN HOMEPAGE]', _Common.VERSION))
     else:
         LOGGER.info(('[USER_ACTION]', str(log)))
@@ -1462,7 +1463,7 @@ def remove_failed_trx(trx_id):
 
 def start_trigger_explorer():
     _Helper.get_thread().apply_async(trigger_explorer,)
-    
+
 
 def trigger_explorer():
     try:

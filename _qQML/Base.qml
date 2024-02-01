@@ -46,7 +46,7 @@ Rectangle{
     property variant allQRProvider: VIEW_CONFIG.all_qr_provider
     property bool printerAvailable: true
 
-    property bool smallHeight: (parseInt(SCREEN_HEIGHT)==800)
+    property bool smallHeight: (parseInt(SCREEN_HEIGHT)<=800)
 
 // =========
 
@@ -142,7 +142,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 25
-        visible: (partner_logos.length > 1)
+        visible: (partner_logos.length > 1) && !smallHeight
 
         Image{
             visible: (partner_logos.length > 0 && partner_logos[0] !== undefined)

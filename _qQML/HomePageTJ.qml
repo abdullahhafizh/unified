@@ -24,7 +24,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            _SLOT.get_kiosk_status();
+            _SLOT.start_get_kiosk_status();
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
             press = "0";
@@ -49,7 +49,7 @@ Base{
         base.result_product_stock.connect(get_product_stock);
         base.result_generate_pdf.connect(get_pdf);
         base.result_general.connect(handle_general);
-        base.result_kiosk_status.connect(get_kiosk_status);
+        base.result_kiosk_status.connect(start_get_kiosk_status);
         base.result_topup_readiness.connect(topup_readiness);
         base.result_auth_qprox.connect(ka_login_status);
     }
@@ -60,7 +60,7 @@ Base{
         base.result_product_stock.connect(get_product_stock);
         base.result_generate_pdf.disconnect(get_pdf);
         base.result_general.disconnect(handle_general);
-        base.result_kiosk_status.disconnect(get_kiosk_status);
+        base.result_kiosk_status.disconnect(start_get_kiosk_status);
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_auth_qprox.disconnect(ka_login_status);
     }
@@ -120,8 +120,8 @@ Base{
         console.log('productCountAll', productCountAll);
     }
 
-    function get_kiosk_status(r){
-        console.log("get_kiosk_status : ", JSON.stringify(r));
+    function start_get_kiosk_status(r){
+        console.log("start_get_kiosk_status : ", JSON.stringify(r));
         var kiosk = JSON.parse(r);
         base.globalBoxName = kiosk.name;
         box_version.text = kiosk.version;

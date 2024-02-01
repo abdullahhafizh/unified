@@ -333,8 +333,8 @@ class NV200_BILL_ACCEPTOR(object):
         poll = self.nv200.poll() 
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                print('pyt: [NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE)
-                LOGGER.debug(('[NV200] Poll Raw (Mode)', str(poll), COMMAND_MODE))
+                print('pyt: [NV200] Poll Raw (Mode)', str(caller), str(poll), COMMAND_MODE)
+                LOGGER.debug(('[NV200] Poll Raw (Mode)', str(caller), str(poll), COMMAND_MODE))
             except Exception as e:
                 traceback.format_exc()     
                 
@@ -343,7 +343,15 @@ class NV200_BILL_ACCEPTOR(object):
             if len(poll[1]) == 2:
                 # On Reading Notes
                 if poll[1][0] == '0xef':
-                    if 0 < poll[1][1] < len(self.known_notes):
+                    # This Cause Notes On Reject Will be treated as Normal Reading Notes
+                    # Must be validated with caller/COMMAND MODE
+                    # Extra Handling NV For Reject Activity
+                    if COMMAND_MODE == 'reject' or caller == '604':
+                        if _Common.BILL_LIBRARY_DEBUG is True:
+                            print('pyt: [NV200] Anomaly Response Reading Note After Reject Activity', str(poll))
+                            LOGGER.debug(('[NV200] Anomaly Response Reading Note After Reject Activity', str(poll)))
+                        return event
+                    elif 0 < poll[1][1] < len(self.known_notes):
                         event = self.parse_event(poll)
                         # if COMMAND_MODE == 'hold':
                         #     self.async_hold()
@@ -352,12 +360,17 @@ class NV200_BILL_ACCEPTOR(object):
                     event = self.parse_event(poll)
                     # return event
             else:
-                event = self.parse_event(poll)
-                if poll[1] == '0xed' or poll[1] == '0xec':
-                    last_reject = self.nv200.last_reject()
-                    event.append(self.parse_reject_code(last_reject))
+                # 602 - Trigger Receiving Notes
+                # Ask NV To Give Poll Status Which Containg Event Notes in poll data
+                # 604 - Trigger Reject Notes
+                if caller != '602':
+                    event = self.parse_event(poll)
+                    if poll[1] == '0xed' or poll[1] == '0xec':
+                        last_reject = self.nv200.last_reject()
+                        event.append(self.parse_reject_code(last_reject))
         
         event.append('')
+        # 602 Will assumpt empty event so it will be retriggered
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
@@ -442,10 +455,11 @@ NV200 = None
 
 LOOP_ATTEMPT = 0
 # Set Max Waiting Event Listen From NV into 120 seconds
-MAX_LOOP_ATTEMPT = 90
+MAX_LOOP_ATTEMPT = 30
+MAX_STORE_ATTEMPT = 5
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
-    global NV200, LOOP_ATTEMPT, COMMAND_MODE
+    global NV200, LOOP_ATTEMPT, COMMAND_MODE, MAX_LOOP_ATTEMPT
     try:
         if NV200 is None:
             NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
@@ -455,6 +469,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         if len(args[1:]) > 0:
             param = "|".join(args[1:])
         # LOGGER.debug((command, param, config))
+        MAX_LOOP_ATTEMPT = config['MAX_EXECUTION_TIME']
         # Define Command
         if command == config['SET']:
             result = NV200.open()
@@ -471,10 +486,12 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 NV200.enable()
                 while True:
                     event = NV200.get_event(command)
+                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
+                        return -1, 'Bill Receive Max Attempt Reached'
+                    LOOP_ATTEMPT += 1
                     if len(event) == 1:
                         time.sleep(1)
                         continue
-                    LOOP_ATTEMPT += 1
                     if config['KEY_RECEIVED'] in event[1]:
                         if COMMAND_MODE == 'hold':
                             time.sleep(.5)
@@ -486,8 +503,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     if config['CODE_JAM'] in event[1]:
                         NV200.disable_only()
                         return -1, event[1]
-                    if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                        break
                     time.sleep(1)
         #===
         elif command == config['STORE']:
@@ -495,13 +510,19 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 NV200.accept()
                 time.sleep(1)
             
+            # Anomaly Handled Here
+            if NV200 is None:
+                return -1, "Bill already stoped"
+            
             LOOP_ATTEMPT = 0
             while True:
                 event = NV200.get_event(command)
+                if LOOP_ATTEMPT >= MAX_STORE_ATTEMPT: 
+                    return -1, "Noted cannot stacked on Max Attempt"
+                LOOP_ATTEMPT += 1
                 if len(event) == 1:
                     time.sleep(1)
                     continue
-                LOOP_ATTEMPT += 1
                 if config['KEY_RECEIVED'] in event[1] or config['KEY_STORED'] in event[1]:
                     return 0, event[1]
                 if config['KEY_BOX_FULL'] in event[1]:
@@ -509,18 +530,26 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 if config['CODE_JAM'] in event[1]:
                     NV200.disable_only()
                     return -1, event[1]
-                # if LOOP_ATTEMPT >= MAX_LOOP_ATTEMPT:
-                # Set Harcoded only wait for 3 Seconds
-                if LOOP_ATTEMPT >= 3: 
-                    break
                 time.sleep(1)
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
-            NV200.reject()
-            time.sleep(1)
-            NV200.disable()
             LOOP_ATTEMPT = 0
+            max_reject_attempt = 5 #Seconds To Wait For Confirming Notes Reject
+            NV200.reject()
+            while True:
+                event = NV200.get_event(command)
+                LOOP_ATTEMPT += 1
+                if LOOP_ATTEMPT >= max_reject_attempt:
+                    break
+                if len(event) == 1:
+                    time.sleep(1)
+                    continue
+                if "Rejected" in event[1]:
+                    break
+                # Whats is the Break Point ???
+                time.sleep(1)
+            NV200.disable()
             # while True:
             #     pool = NV200.get_event(command)
             #     LOOP_ATTEMPT += 1
@@ -534,7 +563,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['RESET']:
             action = NV200.reset_bill()
             if action is True:
-                
                 # Add Open to Re-enable Bill
                 NV200.open()
                 return 0, "Bill Reset"

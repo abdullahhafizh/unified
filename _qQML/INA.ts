@@ -759,7 +759,7 @@
     <message>
         <location filename="PaymentView.qml"/>
         <source>Please use exact money, This machine don't provide changes.</source>
-        <translation>Masukan uang kertas Anda ke Bill Acceptor.</translation>
+        <translation>Masukkan uang kertas Anda ke Bill Acceptor.</translation>
     </message>
     <message>
         <location filename="PaymentView.qml"/>

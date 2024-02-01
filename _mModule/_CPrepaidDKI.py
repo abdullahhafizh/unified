@@ -120,18 +120,18 @@ def topup_request_dki(param, __global_response__):
     
     LOG.fw("051:Parameter = ", C_Denom)
 
-    result_str, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report = topup_request_dki_priv(C_Denom)
+    result_str, card_info = topup_request_dki_priv(C_Denom)
 
     __global_response__["Result"] = result_str
     if result_str == "0000":
-        __global_response__["Response"] = CardNo + "|" + BalValue + "|" + reportPurse + "|" + DepositCard + "|" + ExpireCardDate + "|" + report
+        __global_response__["Response"] = card_info
         __global_response__["ErrorDesc"] = "Sukses"
         LOG.fw("051:Response = ", __global_response__["Response"])
 
         LOG.fw("051:Result = ", result_str)
         LOG.fw("051:Sukses")
     else:
-        __global_response__["Response"] = CardNo + "|" + BalValue + "|" + reportPurse + "|" + DepositCard + "|" + ExpireCardDate + "|" + report
+        __global_response__["Response"] = card_info
         __global_response__["ErrorDesc"] = "Gagal"
 
         LOG.fw("051:Response = ", __global_response__["Response"], True)
@@ -147,15 +147,14 @@ def topup_request_dki_priv(Denom):
 
     prepaid.topup_card_disconnect()
 
-    ResultStr, BalValue, CardNo, SIGN = prepaid.topup_balance_with_sn()
-    sleep(1)
-    ResultStr, reportPurse, debErrorStr = prepaid.topup_pursedata()
-    sleep(1)
+    #F7 (Get Card SN) Mandatory Before Call $B0
+    ResultStr, CardUid, CardNo = prepaid.get_card_sn()
+    sleep(.5)
     ResultStr, reportAPDU = prepaid.send_apdu_cmd("255", "00A4040008A0000005714E4A43")
 
     if ResultStr == "0000":
-        CardNo = reportAPDU[16:32]
-        LOG.fw("051:CardNo = ", CardNo)
+        # CardNo = reportAPDU[16:32]
+        # LOG.fw("051:CardNo = ", CardNo)
         ExpireCardDate = reportAPDU[50:58]
         LOG.fw("051:ExpireCardDate = ", ExpireCardDate)
         DepositCard = reportAPDU[74:82]
@@ -164,14 +163,14 @@ def topup_request_dki_priv(Denom):
         amounthex = format(int(Denom), "x").upper().zfill(8)
         padding = "11111111111111111111111111"
         dtm_now = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-
         DATACARD = "9040000118" + amounthex + dtm_now + padding
-        
         LOG.fw("051:DATACARD Send = ", DATACARD)
         ResultStr, report = prepaid.send_apdu_cmd("255", DATACARD)            
         LOG.fw("051:DATACARD Receive = ", report)
+        card_info = report + DepositCard + ExpireCardDate
+        LOG.fw("051:CARDINFO = ", card_info)
 
-    return ResultStr, BalValue, CardNo, reportPurse, DepositCard, ExpireCardDate, report
+    return ResultStr, card_info
 
 
 def topup_confirm_dki(param, __global_response__):
@@ -212,11 +211,13 @@ def topup_confirm_dki_priv(DataToCard):
     return ResultStr, reportRAPDU
 
 
-
 #053
 def dki_card_get_log(param, __global_response__):
     
-    res_str, errmsg, desc = dki_card_get_log_priv()
+    if not _Common.SUPPORT_DUMP_VERSION:
+        res_str, errmsg, desc = dki_card_get_log_priv('OLD')
+    else:
+        res_str, errmsg, desc = dki_card_get_log_priv('NEW')
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -239,7 +240,10 @@ def dki_card_get_log(param, __global_response__):
 #054
 def dki_card_get_log_raw(param, __global_response__):
     
-    res_str, errmsg, desc = dki_card_get_log_raw_priv()
+    if not _Common.SUPPORT_DUMP_VERSION:
+        res_str, errmsg, desc = dki_card_get_log_raw_priv('OLD')
+    else:
+        res_str, errmsg, desc = dki_card_get_log_raw_priv('NEW')
 
     __global_response__["Result"] = res_str
     if res_str == "0000":
@@ -261,7 +265,7 @@ def dki_card_get_log_raw(param, __global_response__):
     return res_str
 
 
-def dki_card_get_log_priv():
+def dki_card_get_log_priv(method='NEW'):
     resultStr = ""
     resreport = ""
     msg = ""
@@ -271,37 +275,61 @@ def dki_card_get_log_priv():
     max_t = 10
 
     try:
-        # resultStr = prepaid.topup_card_disconnect()
-        resultStr, uid, cardno = prepaid.get_card_sn()
-        # resultStr, purseData, errMessage = prepaid.topup_pursedata()
-        if resultStr == "0000":
-            i = 0
-            while resultStr == "0000" and i <= max_t:
-                if i > max_t:
-                    break
-                else:
-                    i = i + 1                        
-
-                    idx = int_padding(i)
-                    apdu = "00B2" + str(idx) + "242E"
-                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
-                    if resultStr in ["9000", "0000"]:
-                        # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
-                        # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
-                        if rapdu in listRAPDU:
-                            continue
-                        listRAPDU.append(rapdu)
-                        types = rapdu[:2]
-                        amount = int(rapdu[20:28], 16)
-                        balance = int(rapdu[4:12], 16)
-                        dates = rapdu[52:66]
-                        resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
-                        msg = msg + resreport + "#"
+        if method == 'NEW':
+            prepaid.topup_card_disconnect()
+            resultStr, history = prepaid.get_card_history('DKI')
+            
+            # 01 (type) - 2
+            # 2C - 2
+            # 00001194 (balance) - 8
+            # 00000004 - 8
+            # 00000DAC - 8
+            # 3019061300002EBF0000062A - 24
+            # 20231024091214 - 14 
+            # 11111111111111111111111111 
+            if resultStr in ['0000', "9000"]:
+                resultStr = "0000"
+                i = 0
+                for rapdu in history:
+                    if i > max_t:
+                        break
+                    if rapdu in listRAPDU:
+                        continue
+                    listRAPDU.append(rapdu)
+                    i = i + 1
+                    types = rapdu[:2]
+                    amount = int(rapdu[20:28], 16)
+                    balance = int(rapdu[4:12], 16)
+                    dates = rapdu[52:66]
+                    resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
+                    msg = msg + resreport + "#"
+        else:
+            resultStr, __card_uid, __card_no = prepaid.get_card_sn()
+            if resultStr == "0000":
+                i = 0
+                while resultStr == "0000" and i <= max_t:
+                    if i > max_t:
+                        break
                     else:
-                        GetLogDKI= rapdu
-
-        msg = msg + GetLogDKI
+                        i = i + 1                        
+                        idx = int_padding(i)
+                        apdu = "00B2" + str(idx) + "242E"
+                        resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
+                        if resultStr in ["9000", "0000"]:
+                            # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
+                            # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
+                            if rapdu in listRAPDU:
+                                continue
+                            listRAPDU.append(rapdu)
+                            i = i + 1
+                            types = rapdu[:2]
+                            amount = int(rapdu[20:28], 16)
+                            balance = int(rapdu[4:12], 16)
+                            dates = rapdu[52:66]
+                            resreport = str(i) + "|" + types + "|" + str(amount) + "|" + dates + "|" + str(balance)
+                            msg = msg + resreport + "#"
         
+        msg = msg + GetLogDKI
     except Exception as ex:
         resultStr = "1"
         msg = "{0}".format(ex)
@@ -311,34 +339,47 @@ def dki_card_get_log_priv():
     return resultStr, msg, listRAPDU
 
 
-def dki_card_get_log_raw_priv():
+def dki_card_get_log_raw_priv(methode='NEW'):
     resultStr = ""
     msg = ""
     listRAPDU = []
     # Max History
     max_t = 10
-
+    # slot => Not used in this new function
     try:
-        # resultStr = prepaid.topup_card_disconnect()
-        resultStr, uid, cardno = prepaid.get_card_sn()
-        # resultStr, purseData, errMessage = prepaid.topup_pursedata()
-        if resultStr == "0000":
-            i = 0
-            while resultStr == "0000" and i <= max_t:
-                if i > max_t:
-                    break
-                else:
-                    i = i + 1                        
-                    idx = int_padding(i)
-                    apdu = "00B2" + str(idx) + "242E"
-                    resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
-                    if resultStr in ["9000", "0000"]:
-                        # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
-                        # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
-                        if rapdu in listRAPDU:
-                            continue
-                        listRAPDU.append(rapdu)
-                        msg = msg + rapdu
+        if methode == 'NEW':
+            prepaid.topup_card_disconnect()
+            resultStr, history = prepaid.get_card_history('DKI')
+            if resultStr in ['0000', "9000"]:
+                resultStr = "0000"
+                i = 0
+                for rapdu in history:
+                    if i > max_t:
+                        break
+                    if rapdu in listRAPDU:
+                        continue
+                    listRAPDU.append(rapdu)
+                    i = i + 1
+                    msg = msg + rapdu
+        else:
+            resultStr, __card_uid, __card_no = prepaid.get_card_sn()
+            if resultStr == "0000":
+                i = 0
+                while resultStr == "0000" and i <= max_t:
+                    if i > max_t:
+                        break
+                    else:
+                        i = i + 1                        
+                        idx = int_padding(i)
+                        apdu = "00B2" + str(idx) + "242E"
+                        resultStr, rapdu = prepaid.send_apdu_cmd("255", apdu)
+                        if resultStr in ["9000", "0000"]:
+                            # Type Fix Balance  Seq Num  TRX Amt  SAM              SAM Seq  Time (BCD)     AL Amt AL AccTl AL AcM AL AcD
+                            # 01   2C  0000ABE0 00000004 00001770 D360010100000060 00000022 00000000000000 000000 00000000 000000 000000
+                            if rapdu in listRAPDU:
+                                continue
+                            listRAPDU.append(rapdu)
+                            msg = msg + rapdu
         
     except Exception as ex:
         resultStr = "1"
