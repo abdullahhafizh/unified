@@ -421,7 +421,7 @@ def execute_topup_pending(_param={}, _bank='', _mode=''):
     # Non-Secure channel
     if not _Common.SECURE_CHANNEL_TOPUP:
         return _HTTPAccess.post_to_url(url=_url, param=_param)
-    
+
     # UPDATE_BALANCE_URL_DEV = 'http://apidev.mdd.co.id:28194/v1/'
     _url = _url.replace('/v1/', '/enc-kiosk/')
     # AES-128-CBC Output in HEX
@@ -1217,11 +1217,6 @@ def get_topup_readiness():
             'bni_wallet_2': str(_Common.BNI_SAM_2_WALLET),
             'mandiri': 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > _Common.C2C_THRESHOLD and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
             'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
-<<<<<<< HEAD
-            #'mandiri': 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0 and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
-            #'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
-=======
->>>>>>> 7c4ed118e102832210c5b9a2480573dcbc1f7a7c
             'bri': 'N/A',
             'bca': 'N/A',
             'dki': 'N/A',

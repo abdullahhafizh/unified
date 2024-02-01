@@ -1151,23 +1151,7 @@ def startup_task():
         # print("pyt: Start Topup Service...")
         # _Helper.get_thread().apply_async(start_webserver)
         # sleep(1)
-<<<<<<< HEAD
 
-	#Disabled By Wahyudi 2023-10-28
-        #print("pyt: Start Init Cash Activity...")
-        #_KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Start Init Cash Activity...')
-        #_Common.init_cash_activity()
-        #sleep(1)
-
-=======
-        
-        # Disable Below To Prevent Double Claim Bill Receive : 20231025
-        # print("pyt: Start Init Cash Activity...")
-        # _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Start Init Cash Activity...')
-        # _Common.init_cash_activity()
-        
-        sleep(1)
->>>>>>> 7c4ed118e102832210c5b9a2480573dcbc1f7a7c
         if _Common.BILL['status'] is True:
             sleep(1)
             print("pyt: Connecting to " +_Common.BILL_TYPE+ " Bill Acceptor...")
