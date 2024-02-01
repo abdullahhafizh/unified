@@ -1416,7 +1416,7 @@ Base{
             return;
         }
         // Handle Remove Visibility Button CANCEL
-        if (VIEW_CONFIG.bill_type == 'NV'){
+        if (VIEW_CONFIG.bill_type == 'NV' && details.payment == 'cash'){
             switch(t){
                 case 'GLOBAL_FRAME':
                     cancel_button_global.visible = false;
