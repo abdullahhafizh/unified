@@ -1351,7 +1351,7 @@ def update_balance_online(bank):
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
         finally:
-            if _Helper.empty(output):
+            if _Helper.empty(output) or _Common.PTR_MODE is True:
                 do_dump_reader(_Helper.whoami()+'_'+bank)
     elif bank == 'BNI':
         try:
@@ -1399,7 +1399,7 @@ def update_balance_online(bank):
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
         finally:
-            if _Helper.empty(output):
+            if _Helper.empty(output) or _Common.PTR_MODE is True:
                 do_dump_reader(_Helper.whoami()+'_'+bank)
     elif bank == 'BRI':
         try:
@@ -1425,7 +1425,7 @@ def update_balance_online(bank):
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
         finally:
-            if _Helper.empty(output):
+            if _Helper.empty(output) or _Common.PTR_MODE is True:
                 do_dump_reader(_Helper.whoami()+'_'+bank)
     elif bank == 'BCA':
         try:
@@ -1464,7 +1464,7 @@ def update_balance_online(bank):
             LOGGER.warning(str(e))
             TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
         finally:
-            if _Helper.empty(output):
+            if _Helper.empty(output) or _Common.PTR_MODE is True:
                 do_dump_reader(_Helper.whoami()+'_'+bank)
     else:
         TP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
