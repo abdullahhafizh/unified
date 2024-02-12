@@ -1,3 +1,7 @@
+16.6.1-GLOBAL:
+- Rollback Old BCA Card Log For Topup Failure,
+- ...
+
 16.6.0-GLOBAL:
 - Send Bill Store Notes Failure To Monitoring,
 - Disable BATAL button for NV,

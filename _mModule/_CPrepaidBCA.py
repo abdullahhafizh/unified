@@ -131,15 +131,23 @@ def get_bca_card_history_priv():
 #079
 def bca_card_get_log_raw(param, __global_response__):
     
-    res_str, report = prepaid.get_card_history('BCA')
-    if type(report) == list: report = ';'.join(report)
+    res_report = ''
+    if not _Common.SUPPORT_DUMP_VERSION:
+        res_str, __carduid, __cardno = prepaid.get_card_sn()
+        if res_str == '0000':
+            res_str, res_report = prepaid.topup_bca_lib_cardhistory()
+    else:
+        res_str, res_report = prepaid.get_card_history('BCA')
+    
+    # Handle Serielise New Card Log BCA Function (Output List)
+    if type(res_report) == list: res_report = ';'.join(res_report)
     
     __global_response__["Result"] = res_str
     if res_str == "0000":
         __global_response__["ErrorDesc"] = "Sukses"
-        __global_response__["Response"] =  report
+        __global_response__["Response"] =  res_report
         LOG.fw("047:Result = ", res_str)
-        LOG.fw("047:Response = ", report)
+        LOG.fw("047:Response = ", res_report)
         LOG.fw("047:Sukses", None)
     else:
         __global_response__["ErrorDesc"] = "Gagal"
