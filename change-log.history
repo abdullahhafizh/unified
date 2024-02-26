@@ -1,7 +1,10 @@
-16.6.1-GLOBAL:
-- Rollback Old BCA Card Log For Topup Failure,
+16.6.2-GLOBAL:
 - Fix Missing card_info Reference TopupDKI,
 - Handle Race Condition CD Trigger,
+- ...
+
+16.6.1-GLOBAL:
+- Rollback Old BCA Card Log For Topup Failure,
 - ...
 
 16.6.0-GLOBAL:
