@@ -90,9 +90,10 @@ def start_card_validate_redeem(attempt, multiply, vcode):
 
 def trigger_card_dispenser(port, slot, multiply='1'):
     try:
-        LOGGER.info(("Start Execute CD", port, slot, multiply))
         # Handle Multiply CD Vendor By Type
         cd_type = _Common.CD_TYPES.get(port, False)
+        LOGGER.info(("Start Execute CD", cd_type , port, slot, multiply))
+
         if not cd_type:
             emit_eject_error(slot, 'Card Type Not Found', 'trigger_card_dispenser')
             return
@@ -102,6 +103,7 @@ def trigger_card_dispenser(port, slot, multiply='1'):
         if cd_type == 'SYN':
             trigger_card_dispenser_syn(port, slot, multiply)
             return
+        
         command = " ".join([CMD_CD_EXEC, str(port), "9600", multiply])
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         # Multi replace below must be performed to get the response object
