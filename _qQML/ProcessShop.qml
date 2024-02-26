@@ -187,7 +187,7 @@ Base{
             case 'shop':
 //                var unit = details.qty.toString() change to details.status
                 var unit = details.status.toString()
-                _SLOT.start_multiple_eject(unit)
+                // _SLOT.start_multiple_eject(unit)
                 slave_title.text = 'Sedang Memproses Kartu Prabayar Baru Anda Dalam Beberapa Saat...'
                 break;
             case 'topup':
