@@ -140,37 +140,32 @@ def topup_request_dki(param, __global_response__):
 
 
 def topup_request_dki_priv(Denom):
-    ResultStr = ""
-    DepositCard=""
-    ExpireCardDate=""
-    report=""
-
+    result_str = ""
+    card_info = ""
     prepaid.topup_card_disconnect()
-
     #F7 (Get Card SN) Mandatory Before Call $B0
-    ResultStr, CardUid, CardNo = prepaid.get_card_sn()
-    sleep(.5)
-    ResultStr, reportAPDU = prepaid.send_apdu_cmd("255", "00A4040008A0000005714E4A43")
-
-    if ResultStr == "0000":
-        # CardNo = reportAPDU[16:32]
-        # LOG.fw("051:CardNo = ", CardNo)
-        ExpireCardDate = reportAPDU[50:58]
-        LOG.fw("051:ExpireCardDate = ", ExpireCardDate)
-        DepositCard = reportAPDU[74:82]
-        LOG.fw("051:DepositCard = ", DepositCard)
-
-        amounthex = format(int(Denom), "x").upper().zfill(8)
-        padding = "11111111111111111111111111"
-        dtm_now = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        DATACARD = "9040000118" + amounthex + dtm_now + padding
-        LOG.fw("051:DATACARD Send = ", DATACARD)
-        ResultStr, report = prepaid.send_apdu_cmd("255", DATACARD)            
-        LOG.fw("051:DATACARD Receive = ", report)
-        card_info = report + DepositCard + ExpireCardDate
-        LOG.fw("051:CARDINFO = ", card_info)
-
-    return ResultStr, card_info
+    result_str, __uid, __card_no = prepaid.get_card_sn()
+    if result_str == "0000":
+        sleep(.5)
+        result_str, reportAPDU = prepaid.send_apdu_cmd("255", "00A4040008A0000005714E4A43")
+        if result_str == "0000":
+            # CardNo = reportAPDU[16:32]
+            # LOG.fw("051:CardNo = ", CardNo)
+            ExpireCardDate = reportAPDU[50:58]
+            LOG.fw("051:ExpireCardDate = ", ExpireCardDate)
+            DepositCard = reportAPDU[74:82]
+            LOG.fw("051:DepositCard = ", DepositCard)
+            amounthex = format(int(Denom), "x").upper().zfill(8)
+            padding = "11111111111111111111111111"
+            dtm_now = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+            DATACARD = "9040000118" + amounthex + dtm_now + padding
+            LOG.fw("051:DATACARD Send = ", DATACARD)
+            result_str, report = prepaid.send_apdu_cmd("255", DATACARD)            
+            LOG.fw("051:DATACARD Receive = ", report)
+            if result_str == "0000":
+                card_info = report + DepositCard + ExpireCardDate
+                LOG.fw("051:CARDINFO = ", card_info)
+    return result_str, card_info
 
 
 def topup_confirm_dki(param, __global_response__):

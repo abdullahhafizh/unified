@@ -63,7 +63,14 @@ def get_multiple_eject_status():
     CD_SIGNDLER.SIGNAL_MULTIPLE_EJECT.emit(MULTIPLE_EJECT)
 
 
-def start_multiple_eject(attempt, multiply):
+ACTIVE_TRX_ID = ''
+
+
+def start_multiple_eject(trx_id, attempt, multiply):
+    if ACTIVE_TRX_ID == trx_id: 
+        LOGGER.warning(('ACTIVE_TRX_ID', ACTIVE_TRX_ID, trx_id))
+        return
+    ACTIVE_TRX_ID = trx_id
     port = CD_PORT_LIST.get(attempt)
     # Generalise Command
     # false_ok = False

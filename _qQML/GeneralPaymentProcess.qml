@@ -946,7 +946,8 @@ Base{
                 attemptCD = details.qty;
                 var attempt = details.status.toString();
                 var multiply = details.qty.toString();
-                _SLOT.start_multiple_eject(attempt, multiply);
+                var trxId = details.shop_type + details.epoch.toString();
+                _SLOT.start_multiple_eject(trxId, attempt, multiply);
                 console.log('DO_SHOP_TRX', now, channel, attempt, multiply)
                 break;
             case 'topup':
@@ -2027,7 +2028,8 @@ Base{
                         break;
                     case 'retrigger_card':
                         var attempt = details.status.toString();
-                        _SLOT.start_multiple_eject(attempt, attemptCD.toString());
+                        var trxId = details.shop_type + details.epoch.toString() + '_' + attempt;
+                        _SLOT.start_multiple_eject(trxId, attempt, attemptCD.toString());
                         centerOnlyButton = false;
                         popup_loading.open();
                         break;

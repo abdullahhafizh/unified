@@ -220,9 +220,9 @@ class SlotHandler(QObject):
         _BILL.start_set_direct_price_with_current(current, price)
     start_set_direct_price_with_current = pyqtSlot(str, str)(start_set_direct_price_with_current)
 
-    def start_multiple_eject(self, attempt, multiply):
-        _CD.start_multiple_eject(attempt, multiply)
-    start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
+    def start_multiple_eject(self, trx_id, attempt, multiply):
+        _CD.start_multiple_eject(trx_id, attempt, multiply)
+    start_multiple_eject = pyqtSlot(str, str, str)(start_multiple_eject)
     
     def start_card_validate_redeem(self, attempt, multiply, vcode):
         _CD.start_card_validate_redeem(attempt, multiply, vcode)
