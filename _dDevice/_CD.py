@@ -67,6 +67,8 @@ ACTIVE_TRX_ID = ''
 
 
 def start_multiple_eject(trx_id, attempt, multiply):
+    global ACTIVE_TRX_ID
+    LOGGER.debug(("Trigger CD", trx_id, attempt))
     if ACTIVE_TRX_ID == trx_id: 
         LOGGER.warning(('ACTIVE_TRX_ID', ACTIVE_TRX_ID, trx_id))
         return
@@ -88,6 +90,7 @@ def start_card_validate_redeem(attempt, multiply, vcode):
 
 def trigger_card_dispenser(port, slot, multiply='1'):
     try:
+        LOGGER.info(("Start Execute CD", port, slot, multiply))
         # Handle Multiply CD Vendor By Type
         cd_type = _Common.CD_TYPES.get(port, False)
         if not cd_type:
