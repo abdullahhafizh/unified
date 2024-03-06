@@ -1922,30 +1922,28 @@ Base{
             // visible: (totalPrice >= 10000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
+        AnimatedImage  {
+            width: 100
+            height: 100
+            scale: 1
+            source: 'source/blue_gradient_circle_loading.gif'
+            fillMode: Image.PreserveAspectFit
+            visible: (details.payment == 'cash') && parseInt(showBillDuration) > 0
+            Text{
+                id: text_timer_show
+                anchors.fill: parent
+                text: showBillDuration
+                horizontalAlignment: Text.AlignHCenter
+                wrapMode: Text.WordWrap
+                font.pixelSize: 25
+                color: 'yellow'
+                verticalAlignment: Text.AlignVCenter
+                font.family:"Ubuntu"
+            }
+        }
+
     }
 
-    AnimatedImage  {
-        width: 100
-        height: 100
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 300
-        anchors.horizontalCenter: parent.horizontalCenter
-        scale: 1
-        source: 'source/blue_gradient_circle_loading.gif'
-        fillMode: Image.PreserveAspectFit
-        visible: (details.payment == 'cash') && parseInt(showBillDuration) > 0
-        Text{
-            id: text_timer_show
-            anchors.fill: parent
-            text: showBillDuration
-            horizontalAlignment: Text.AlignHCenter
-            wrapMode: Text.WordWrap
-            font.pixelSize: 25
-            color: 'yellow'
-            verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
-        }
-    }
 
     //==============================================================
 
