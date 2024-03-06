@@ -1099,10 +1099,10 @@ Base{
     }
 
     function init_denom_available_show(){
-        img_denom_100K.visible = totalPrice >= 100000;
-        img_denom_50K.visible = totalPrice >= 50000;
-        img_denom_20K.visible = totalPrice >= 20000 && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false );
-        img_denom_10K.visible = totalPrice >= 10000 && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false );
+        img_denom_100K.visible = (totalPrice == 100000);
+        img_denom_50K.visible = (totalPrice == 50000);
+        img_denom_20K.visible = (totalPrice == 20000);
+        img_denom_10K.visible = (totalPrice == 10000);
     }
 
     Rectangle{
