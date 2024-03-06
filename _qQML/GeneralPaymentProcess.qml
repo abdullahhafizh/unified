@@ -1904,16 +1904,14 @@ Base{
             scale: 0.9
             source: "source/20rb.png"
             fillMode: Image.PreserveAspectFit
-            // visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
-            visible: (totalPrice >= 20000)
+            visible: (totalPrice >= 20000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
         Image{
             id: img_count_10
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
-            // visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
-            visible: (totalPrice >= 10000)
+            visible: (totalPrice >= 10000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
     }
