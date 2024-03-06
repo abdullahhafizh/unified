@@ -1915,7 +1915,7 @@ Base{
             // visible: (totalPrice >= 20000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
         Image{
-            id: omg_denom_10K
+            id: img_denom_10K
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
