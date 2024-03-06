@@ -125,7 +125,7 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
     return res_str, NIKKL
 
 #003-1 / 012-3
-# Must Set Similar To Reader Timeout
+# Must Set Similar To Reader Timeout 5 Seconds
 @func_set_timeout(5)
 def topup_balance_with_sn():
     res_str = ""
