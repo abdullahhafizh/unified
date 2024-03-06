@@ -300,7 +300,7 @@ Base{
             var item_id = items[x].pid;
             if (item_image=='') item_image = 'source/card/bni_tapcash_card.png';
             if (item_status==101){
-                card_show_1.visible = true;
+                card_show_1.visible = parseInt(item_stock) > 0;
                 card_show_1.itemName = item_name;
                 card_show_1.itemImage = item_image;
                 card_show_1.itemPrice = item_price.toString();
@@ -308,7 +308,7 @@ Base{
                 card_show_1.outOfService = (cdReadiness.cd1 == 'N/A')
             }
             if (item_status==102){
-                card_show_2.visible = true;
+                card_show_2.visible = parseInt(item_stock) > 0;
                 card_show_2.itemName = item_name;
                 card_show_2.itemImage = item_image;
                 card_show_2.itemPrice = item_price.toString();
@@ -316,7 +316,7 @@ Base{
                 card_show_2.outOfService = (cdReadiness.cd2 == 'N/A')
             }
             if (item_status==103){
-                card_show_3.visible = true;
+                card_show_3.visible = parseInt(item_stock) > 0;
                 card_show_3.itemName = item_name;
                 card_show_3.itemImage = item_image;
                 card_show_3.itemPrice = item_price.toString();
@@ -326,8 +326,13 @@ Base{
             // TODO: Add 3 More Product Card (4,5,6)
             if (item_stock!='0') availItems.push(item_id);
         }
-//        console.log('avaialable_items', availItems.length);
+
         popup_loading.close();
+        if (availItems.length == 0){
+            console.log('available_items', availItems.length);
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Tidak Ada Kartu Tersedia', 'backToMain', false )
+            return;
+        }
     }
 
     function defineProductIndex(products){

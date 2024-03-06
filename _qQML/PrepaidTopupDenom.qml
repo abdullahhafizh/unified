@@ -755,6 +755,14 @@ Base{
         if (topup_amount > sam_balance){
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Mesin Tidak Mencukupi', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
+            if (VIEW_CONFIG.auto_reload_insufficient_notif){
+                switch(cardData.bank_name){
+                    case 'MANDIRI':
+                        _SLOT.start_force_mandiri_deposit_reload():
+                        break;
+                    default: break;
+                }
+            }
             return true;
         } else {
             return false;

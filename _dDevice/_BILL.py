@@ -48,7 +48,7 @@ GRG = {
     "KEY_BOX_FULL": '!@#$%^&UI',
     "DIRECT_MODULE": False,
     "TYPE": "GRG_08",
-    "MAX_EXECUTION_TIME": 90,
+    "MAX_EXECUTION_TIME": _Common.BILL_PAYMENT_TIME,
     "RECEIVE_ATTEMPT": 90
 }
 
@@ -72,7 +72,7 @@ NV = {
     "KEY_BOX_FULL": 'Stacker full',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
     "TYPE": "NV_200",
-    "MAX_EXECUTION_TIME": 30,
+    "MAX_EXECUTION_TIME": _Common.BILL_PAYMENT_TIME,
     "RECEIVE_ATTEMPT": 1
 }
 
@@ -96,7 +96,7 @@ MEI = {
     "KEY_BOX_FULL": '_cassetteStatus=FULL',
     "DIRECT_MODULE": _Common.BILL_NATIVE_MODULE,
     "TYPE": "MEI_SCR",
-    "MAX_EXECUTION_TIME": 90,
+    "MAX_EXECUTION_TIME": _Common.BILL_PAYMENT_TIME,
     "RECEIVE_ATTEMPT": 90
 }
 

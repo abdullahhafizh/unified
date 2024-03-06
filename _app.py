@@ -591,6 +591,10 @@ class SlotHandler(QObject):
     def start_check_mandiri_deposit(self):
         _SettlementService.start_check_mandiri_deposit()
     start_check_mandiri_deposit = pyqtSlot()(start_check_mandiri_deposit)
+    
+    def start_force_mandiri_deposit_reload(self):
+        _SettlementService.start_force_mandiri_deposit_reload()
+    start_force_mandiri_deposit_reload = pyqtSlot()(start_force_mandiri_deposit_reload)
 
     def start_mandiri_c2c_force_settlement(self, amount, trxid):
         _QPROX.start_mandiri_c2c_force_settlement(amount, trxid)

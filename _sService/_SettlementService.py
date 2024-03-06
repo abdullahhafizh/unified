@@ -1136,11 +1136,21 @@ def start_check_mandiri_deposit():
     else:
         print("pyt: [FAILED] CHECK_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
         
+        
+def start_force_mandiri_deposit_reload():
+    if _Common.C2C_MODE:
+        force = True
+        _Helper.get_thread().apply_async(check_mandiri_deposit, (force, ))
+    else:
+        print("pyt: [FAILED] FORCE_C2C_TOPUP_DEPOSIT, Not In C2C_MODE")
+        
 
-def check_mandiri_deposit():
+def check_mandiri_deposit(force=False):
     # Triggered After Success Transaction
     LOGGER.info(('MANDIRI DEPOSIT', _Common.MANDIRI_ACTIVE_WALLET, 'MANDIRI THRESHOLD', _Common.C2C_THRESHOLD))
-    if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD:
+    if force:
+        LOGGER.info(('MODE FORCE MANDIRI DEPOSIT', force))
+    if _Common.MANDIRI_ACTIVE_WALLET <= _Common.C2C_THRESHOLD or force is True:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         # _Common.MANDIRI_ACTIVE_WALLET = 0
         # _TopupService.send_kiosk_status()

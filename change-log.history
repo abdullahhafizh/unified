@@ -1,3 +1,11 @@
+16.6.3-GLOBAL:
+- Enable Mode TRX Retry Duration Validation to EXACT_DATE,
+- Timer On Bill Acceptance,
+- Item Card Not Shown If Not Available,
+- Sync Bill Deactivation with UI When back to Homepage,
+- Trigger Auto Reload When Limit Deposit Notif,
+- ...
+
 16.6.2-GLOBAL:
 - Fix Missing card_info Reference TopupDKI,
 - Handle Race Condition CD Trigger,

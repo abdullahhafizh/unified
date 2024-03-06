@@ -157,7 +157,8 @@ BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
 # Handle Single Denom For Spesific Transaction Type
 BILL_SINGLE_DENOM_TRX = _ConfigParser.get_set_value('BILL', 'single^denom^trx', 'topup').split('|')
 BILL_SINGLE_DENOM_TYPE = 'GRG|MEI|NV'.split('|')
-
+BILL_PAYMENT_TIME = 30 if BILL_TYPE.lower() in ['nv'] else 90
+    
 AMQP_ENABLE = True if _ConfigParser.get_set_value('AMQP', 'active', '0') == '1' else False
 AMQP_HOST = _ConfigParser.get_set_value('AMQP', 'host', 'amqp.mdd.co.id')
 AMQP_PORT = _ConfigParser.get_set_value('AMQP', 'port', '5672')
@@ -825,6 +826,7 @@ VIEW_CONFIG['page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'page^ti
 VIEW_CONFIG['tnc_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'tnc^timer', '4'))
 VIEW_CONFIG['success_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'success^page^timer', '7'))
 VIEW_CONFIG['failure_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'failure^page^timer', '5'))
+VIEW_CONFIG['bill_failure_page_timer'] =  int(_ConfigParser.get_set_value('GENERAL', 'bill^failure^page^timer', '10'))
 VIEW_CONFIG['promo_check'] =  True if _ConfigParser.get_set_value('GENERAL', 'promo^check', '0') == '1' else False
 VIEW_CONFIG['host_qr_generator'] =  _ConfigParser.get_set_value('GENERAL', 'host^qr^generator', '---')
 VIEW_CONFIG['disable_print_on_cancel'] = True if _ConfigParser.get_set_value('EDC', 'disable^print^on^cancel', '1') == '1' else False
@@ -839,6 +841,8 @@ VIEW_CONFIG['printer_type'] = PRINTER_TYPE
 VIEW_CONFIG['payment_rules'] = PAYMENT_RULES
 VIEW_CONFIG['auto_print_collection'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^collection', '1') == '1' else False
 VIEW_CONFIG['auto_print_stock_opname'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^stock^opname', '1') == '1' else False
+VIEW_CONFIG['auto_reload_insufficient_notif'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^reload^insufficient^notif', '1') == '1' else False
+VIEW_CONFIG['bill_payment_time'] = BILL_PAYMENT_TIME
 
 
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
@@ -2365,11 +2369,27 @@ LOGGED_OPERATOR = None
 
 LAST_BCA_ONLINE_PENDING = ''
 LAST_BRI_ONLINE_PENDING = ''
+MODE_RETRY_TRX_DURATION = _ConfigParser.get_set_value('GENERAL', 'mode^retry^duration^validation', 'EXACT_DATE')
 
 
 def validate_duration_pending_code(timestamp):
-    # if _Helper.empty(time): 
-    #     return False
+    if MODE_RETRY_TRX_DURATION == 'EXACT_TIME':
+        return validate_exact_time(timestamp)
+    elif MODE_RETRY_TRX_DURATION == 'EXACT_DATE':
+        return validate_exact_date(timestamp)
+
+
+def validate_exact_date(timestamp):
+    current_date = _Helper.time_string(f='%Y-%m-%d')
+    LOGGER.info(('Current Date', current_date))
+    trx_date = _Helper.convert_epoch(t = timestamp, f='%Y-%m-%d')
+    LOGGER.info(('TRX Date', trx_date))
+    if trx_date !=  current_date:
+        return False
+    return True
+
+
+def validate_exact_time(timestamp):
     duration = (MAX_PENDING_CODE_DURATION * 24 * 60 * 60)
     limit_timestamp = int(timestamp) + duration
     LOGGER.info(('Time Duration Day - Epoch', MAX_PENDING_CODE_DURATION, duration))

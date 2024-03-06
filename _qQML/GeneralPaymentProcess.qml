@@ -59,6 +59,8 @@ Base{
     property bool promoCodeActive: false
     property var promoData
 
+    property var showBillDuration: 0
+
     logo_vis: !smallHeight
     isHeaderActive: !smallHeight
     isBoxNameActive: false
@@ -274,6 +276,7 @@ Base{
         promoCodeActive = false;
         promoData = undefined;
         serviceCharge = 0;
+        showBillDuration = VIEW_CONFIG.bill_payment_time;
     }
 
     function do_refund_or_print(error){
@@ -1004,7 +1007,7 @@ Base{
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
-                    exit_with_message(VIEW_CONFIG.failure_page_timer);
+                    exit_with_message(VIEW_CONFIG.bill_failure_page_timer);
                     return;
                 }
             } else if (billResult == 'EXCEED'){
@@ -1284,6 +1287,8 @@ Base{
             onTriggered:{
                 // console.log('[GLOBAL-PAYMENT]', abc.counter);
                 abc.counter -= 1;
+                // Bill Timer Counter
+                showBillDuration -= 1;
                 //Disable Force Allowed Back Button For Cash after 240 seconds
                 // if (details.payment=='cash'){
                 //     if (abc.counter < (timer_value-240)){
@@ -1711,7 +1716,7 @@ Base{
                 do_refund_or_print('user_cancellation');
                 return;
             } else {
-                exit_with_message(VIEW_CONFIG.failure_page_timer);
+                exit_with_message(VIEW_CONFIG.bill_failure_page_timer);
                 return;
             }
         }
@@ -1907,6 +1912,29 @@ Base{
             visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
+    }
+
+    AnimatedImage  {
+        width: 100
+        height: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        anchors.horizontalCenter: parent.horizontalCenter
+        scale: 1
+        source: 'source/blue_gradient_circle_loading.gif'
+        fillMode: Image.PreserveAspectFit
+        visible: (details.payment == 'cash')
+        Text{
+            id: text_timer_show
+            anchors.fill: parent
+            text: showBillDuration
+            horizontalAlignment: Text.AlignHCenter
+            wrapMode: Text.WordWrap
+            font.pixelSize: 25
+            color: 'yellow'
+            verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+        }
     }
 
     //==============================================================
