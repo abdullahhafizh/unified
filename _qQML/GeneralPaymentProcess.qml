@@ -1923,7 +1923,7 @@ Base{
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'
         fillMode: Image.PreserveAspectFit
-        visible: (details.payment == 'cash')
+        visible: (details.payment == 'cash') && parseInt(showBillDuration) > 0
         Text{
             id: text_timer_show
             anchors.fill: parent
