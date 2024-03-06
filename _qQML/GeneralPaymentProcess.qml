@@ -1889,12 +1889,14 @@ Base{
             id: img_count_100
             scale: 0.9
             source: "source/100rb.png"
+            visible: (totalPrice >= 100000)
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_50
             scale: 0.9
             source: "source/50rb.png"
+            visible: (totalPrice >= 50000)
             fillMode: Image.PreserveAspectFit
         }
         Image{
@@ -1902,14 +1904,16 @@ Base{
             scale: 0.9
             source: "source/20rb.png"
             fillMode: Image.PreserveAspectFit
-            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            // visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            visible: (totalPrice >= 20000)
         }
         Image{
             id: img_count_10
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
-            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            // visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            visible: (totalPrice >= 10000)
         }
 
     }
@@ -1918,7 +1922,7 @@ Base{
         width: 100
         height: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 25
+        anchors.bottomMargin: 250
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'
