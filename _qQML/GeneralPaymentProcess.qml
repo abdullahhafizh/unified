@@ -1244,6 +1244,7 @@ Base{
             // open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
+            init_denom_available_show();
             _SLOT.start_set_direct_price(totalPrice.toString());
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
             _SLOT.start_play_audio('insert_cash_with_good_condition');
@@ -1262,6 +1263,13 @@ Base{
             return;
         }
 
+    }
+
+    function init_denom_available_show(){
+        img_denom_100K.visible = totalPrice >= 100000;
+        img_denom_50K.visible = totalPrice >= 50000;
+        img_denom_20K.visible = totalPrice >= 20000 && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false );
+        img_denom_10K.visible = totalPrice >= 10000 && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false );
     }
 
     Rectangle{
@@ -1886,32 +1894,32 @@ Base{
         spacing: 15
 
         Image{
-            id: img_count_100
+            id: img_denom_100K
             scale: 0.9
             source: "source/100rb.png"
-            visible: (totalPrice >= 100000)
+            // visible: (totalPrice >= 100000)
             fillMode: Image.PreserveAspectFit
         }
         Image{
-            id: img_count_50
+            id: img_denom_50K
             scale: 0.9
             source: "source/50rb.png"
-            visible: (totalPrice >= 50000)
+            // visible: (totalPrice >= 50000)
             fillMode: Image.PreserveAspectFit
         }
         Image{
-            id: img_count_20
+            id: img_denom_20K
             scale: 0.9
             source: "source/20rb.png"
             fillMode: Image.PreserveAspectFit
-            visible: (totalPrice >= 20000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            // visible: (totalPrice >= 20000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
         Image{
-            id: img_count_10
+            id: omg_denom_10K
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
-            visible: (totalPrice >= 10000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            // visible: (totalPrice >= 10000) && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
     }
@@ -1920,7 +1928,7 @@ Base{
         width: 100
         height: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 250
+        anchors.bottomMargin: 300
         anchors.horizontalCenter: parent.horizontalCenter
         scale: 1
         source: 'source/blue_gradient_circle_loading.gif'

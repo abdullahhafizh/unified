@@ -1074,6 +1074,7 @@ Base{
             // open_preload_notif();
 //            totalPrice = parseInt(details.value) * parseInt(details.qty);
 //            getDenom = totalPrice - adminFee;
+            init_denom_available_show();
             _SLOT.start_set_direct_price_with_current(receivedPayment.toString(), totalPrice.toString());
             _SLOT.start_bill_receive_note(details.shop_type + details.epoch.toString());
             _SLOT.start_play_audio('insert_cash_with_good_condition');
@@ -1095,6 +1096,13 @@ Base{
             return;
         }
 
+    }
+
+    function init_denom_available_show(){
+        img_denom_100K.visible = totalPrice >= 100000;
+        img_denom_50K.visible = totalPrice >= 50000;
+        img_denom_20K.visible = totalPrice >= 20000 && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false );
+        img_denom_10K.visible = totalPrice >= 10000 && (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false );
     }
 
     Rectangle{
@@ -1601,30 +1609,30 @@ Base{
         scale: 1
         spacing: 15
         Image{
-            id: img_count_100
+            id: img_denom_100K
             scale: 0.9
             source: "source/100rb.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
-            id: img_count_50
+            id: img_denom_50K
             scale: 0.9
             source: "source/50rb.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
-            id: img_count_20
+            id: img_denom_20K
             scale: 0.9
             source: "source/20rb.png"
             fillMode: Image.PreserveAspectFit
-            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            // visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
         Image{
-            id: img_count_10
+            id: img_denom_10K
             scale: 0.9
             source: "source/10rb.png"
             fillMode: Image.PreserveAspectFit
-            visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
+            // visible: (['bca'].indexOf(VIEW_CONFIG.theme_name.toLowerCase()) === false )
         }
 
     }
