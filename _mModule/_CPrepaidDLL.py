@@ -125,7 +125,8 @@ def topup_auth(PORT, Slot, PinSAM, Institution, Terminal, PinKA, PinKL):
     return res_str, NIKKL
 
 #003-1 / 012-3
-@func_set_timeout(30)
+# Must Set Similar To Reader Timeout
+@func_set_timeout(5)
 def topup_balance_with_sn():
     res_str = ""
     balance = ""
@@ -713,7 +714,8 @@ def topup_get_carddata():
     LOG.fw("<-- CMD RESULT = ", res_str)
     return res_str, repUID, repData, repAttr
 
-@func_set_timeout(30)
+# Must Set in A Short Time
+@func_set_timeout(2)
 def topup_card_disconnect():
     res_str = ""
     try:
