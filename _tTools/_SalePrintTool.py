@@ -567,7 +567,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
-                    if _Common.EXT_CS_INFO is None:
+                    if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                         pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
                     else:
                         pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')
@@ -624,7 +624,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
                 else:
                     pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')            
@@ -873,7 +873,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
                 else:
                     pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')
@@ -937,7 +937,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
                 else:
                     pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')
@@ -1208,7 +1208,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
                 else:
                     pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')            
@@ -1262,7 +1262,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'PADA MENU CEK/LANJUT TRANSAKSI', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.cell(padding_left, 0, 'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO, 0, 0, 'L')
                 else:
                     pdf.cell(padding_left, 0, _Common.EXT_CS_INFO, 0, 0, 'L')            
@@ -1382,7 +1382,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                 printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
                 else:
                     printer.text((' '*padding_left)+ _Common.EXT_CS_INFO + "\n")
@@ -1407,7 +1407,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                 printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     printer.text((' '*padding_left)+'HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO + "\n")
                 else:
                     printer.text((' '*padding_left)+ _Common.EXT_CS_INFO + "\n")        
@@ -2581,7 +2581,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                     pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                     pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                     pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                    if _Common.EXT_CS_INFO is None:
+                    if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                         pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
                     else:
                         pdf.set_line(_Common.EXT_CS_INFO)
@@ -2602,7 +2602,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
                 else:
                     pdf.set_line(_Common.EXT_CS_INFO)
@@ -2688,7 +2688,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
                 else:
                     pdf.set_line(_Common.EXT_CS_INFO)
@@ -2710,7 +2710,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
                 else:
                     pdf.set_line(_Common.EXT_CS_INFO)
@@ -2823,7 +2823,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
                 else:
                     pdf.set_line(_Common.EXT_CS_INFO)
@@ -2846,7 +2846,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
                 pdf.set_line('PADA MENU CEK/LANJUT TRANSAKSI')
-                if _Common.EXT_CS_INFO is None:
+                if _Common.EXT_CS_INFO is None and len(_Common.CUSTOMER_SERVICE_NO) > 10:
                     pdf.set_line('HUBUNGI CS DI WHATSAPP ' + _Common.CUSTOMER_SERVICE_NO)
                 else:
                     pdf.set_line(_Common.EXT_CS_INFO)
