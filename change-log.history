@@ -5,6 +5,8 @@
 - Sync Bill Deactivation with UI When back to Homepage,
 - Trigger Auto Reload When Limit Deposit Notif,
 - Set Back Setting single^denom^trx for BCA,
+- Enhance Wording User Insert Cash,
+- Force Stop Bill When Transaction Failure If No Cash Inserted,
 - ...
 
 16.6.2-GLOBAL:

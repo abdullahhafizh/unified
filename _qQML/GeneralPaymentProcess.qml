@@ -1463,8 +1463,8 @@ Base{
         global_frame.close();
         closeTrxSession = true;
         popup_loading.open();
-        popup_loading.textMain = 'Harap Tunggu Sebentar';
-        popup_loading.textSlave = 'Menutup Sesi Bayar Anda';
+        popup_loading.textMain = 'Membatalkan Sesi Pembayaran Anda';
+        popup_loading.textSlave = 'Mohon Untuk Tidak Melakukan Pembayaran Saat Ini';
         popup_loading.z = 999;
         back_button.visible = false;
         cancel_button_global.visible = false;
