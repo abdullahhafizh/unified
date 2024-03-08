@@ -220,7 +220,7 @@ Base{
                 popup_loading.open();
                 notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else if (billResult == 'EXCEED'){
-                false_notif('Mohon Maaf|Silakan Hanya Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+                false_notif('Mohon Maaf|Silakan Hanya Masukkan 1 Lembar Uang Dengan Nilai Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
                 modeButtonPopup = 'retrigger_bill';
                 standard_notif_view.buttonEnabled = false;
                 standard_notif_view._button_text = 'coba lagi';

@@ -832,7 +832,7 @@ Base{
                 if (receivedPayment > initialPayment){
                     back_button.visible = false;
                     modeButtonPopup = 'retrigger_bill';
-                    switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
+                    switch_frame_with_button('source/insert_money.png', 'Masukkan 1 Lembar Uang Dengan Nilai Yang Sesuai Dengan Nominal Transaksi', '(Pastikan Lembar Uang Anda Dalam Keadaan Baik)', 'closeWindow|30', true );
                     return;
                 } else {
                     _SLOT.stop_bill_receive_note(details.shop_type + details.epoch.toString());
@@ -841,12 +841,12 @@ Base{
                 }
             } else if (billResult == 'EXCEED'){
                 modeButtonPopup = 'retrigger_bill';
-                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan 1 Lembar Uang Dengan Nilai Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (billResult == 'BAD_NOTES'){
                 back_button.visible = false;
                 modeButtonPopup = 'retrigger_bill';
-                switch_frame_with_button('source/insert_money.png', 'Masukkan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukkan 1 Lembar Uang Dengan Nilai Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
                 back_button.visible = true;
