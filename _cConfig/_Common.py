@@ -798,8 +798,8 @@ if THEME_NAME.lower() in ['bca']:
     SHOW_TNC = False
     ALLOW_EXCEED_PAYMENT = False
     REFUND_FEATURE = False
-    BILL_SINGLE_DENOM_TRX = 'topup|shop'.split('|')
-    _ConfigParser.set_value('BILL', 'single^denom^trx', 'topup|shop')
+    # BILL_SINGLE_DENOM_TRX = 'topup|shop'.split('|')
+    # _ConfigParser.set_value('BILL', 'single^denom^trx', 'topup|shop')
 
 # Handle External Customer Service Information
 EXT_CS_INFO = None
