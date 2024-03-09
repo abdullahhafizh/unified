@@ -424,11 +424,7 @@ class eSSP(object):  # noqa
                 prepedstring += '0'
             prepedstring += command[i][2:]
 
-        # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
-        #                    for x in range(0, len(prepedstring), 2)]))
-
         prepedstring = bytes.fromhex(prepedstring)
-        #prepedstring = prepedstring.decode('hex')
 
         self.__ser.write(prepedstring)
         # response = True
@@ -550,14 +546,9 @@ class eSSP(object):  # noqa
         for i in range(0, len(command)):
             if (len(command[i]) % 2 == 1):
                 prepedstring += '0'
-
             prepedstring += command[i][2:]
 
-        # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
-        #                    for x in range(0, len(prepedstring), 2)]))
         prepedstring = bytes.fromhex(prepedstring)
-        #prepedstring = prepedstring.decode('hex')
-
         self.__ser.write(prepedstring)
 
         response = self.read(False, True)

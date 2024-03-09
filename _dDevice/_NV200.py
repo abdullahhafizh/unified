@@ -458,6 +458,9 @@ LOOP_ATTEMPT = 0
 MAX_LOOP_ATTEMPT = 30
 MAX_STORE_ATTEMPT = 5
 
+# Set Loop Interval For The Event Polling
+LOOP_INTERVAL = .25
+
 def send_command(param=None, config=[], restricted=[], hold_note=False):
     global NV200, LOOP_ATTEMPT, COMMAND_MODE, MAX_LOOP_ATTEMPT
     try:
@@ -503,7 +506,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     if config['CODE_JAM'] in event[1]:
                         NV200.disable_only()
                         return -1, event[1]
-                    time.sleep(1)
+                    time.sleep(LOOP_INTERVAL)
         #===
         elif command == config['STORE']:
             if COMMAND_MODE != '':
@@ -530,7 +533,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 if config['CODE_JAM'] in event[1]:
                     NV200.disable_only()
                     return -1, event[1]
-                time.sleep(1)
+                time.sleep(LOOP_INTERVAL)
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
@@ -548,7 +551,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 if "Rejected" in event[1]:
                     break
                 # Whats is the Break Point ???
-                time.sleep(1)
+                time.sleep(LOOP_INTERVAL)
             NV200.disable()
             # while True:
             #     pool = NV200.get_event(command)
@@ -587,7 +590,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 #         break
                 #     time.sleep(1)
                 return 0, "Bill Stop"
-        
         # Default Response
         return -1, ""
     except Exception as e:
