@@ -578,6 +578,16 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
+                # Must Do Get Poll To Reset Cashbox Status
+                attempt = 0
+                while True:
+                    attempt += 1
+                    event = NV200.get_event(command)
+                    # Wait 3 Seconds
+                    if attempt >= (3*4): 
+                        break
+                    time.sleep(LOOP_INTERVAL)
+                
                 # Release & Flush the NV200 Object
                 NV200.disconnect()
                 del NV200
