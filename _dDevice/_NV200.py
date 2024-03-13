@@ -575,7 +575,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 return 0, "Bill Reset"
         #===
         elif command == config['STOP']:
-            LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
+            # LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
                 # Must Do Get Poll To Reset Cashbox Status
