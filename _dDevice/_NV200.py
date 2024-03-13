@@ -456,11 +456,13 @@ NV200 = None
 LOOP_ATTEMPT = 0
 # Set Max Waiting Event Listen From NV into 120 seconds
 MAX_LOOP_ATTEMPT = 30
-MAX_STORE_ATTEMPT = 5
 
 # Set Loop Interval For The Event Polling
 # Must use If Converter + Wire Grounding To Have Stable Connection
 LOOP_INTERVAL = .25
+
+MAX_STORE_ATTEMPT = 5 * (1/LOOP_INTERVAL)
+
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
     global NV200, LOOP_ATTEMPT, COMMAND_MODE, MAX_LOOP_ATTEMPT
@@ -528,7 +530,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     return -1, "Noted cannot stacked on Max Attempt"
                 LOOP_ATTEMPT += 1
                 if len(event) == 1:
-                    time.sleep(1)
+                    time.sleep(LOOP_INTERVAL)
                     continue
                 if config['KEY_RECEIVED'] in event[1] or config['KEY_STORED'] in event[1]:
                     return 0, event[1]
@@ -592,17 +594,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 NV200.disconnect()
                 del NV200
                 NV200 = None
-                # while True:
-                #     # pool = NV200.get_event()
-                #     LOOP_ATTEMPT += 1
-                #     # if config['KEY_RECEIVED'] in pool[1]:
-                #     #     return 0, pool[1]
-                #     # if config['KEY_BOX_FULL'] in pool[1]:
-                #     #     return 0, pool[1]
-                #     #     break
-                #     if LOOP_ATTEMPT >= 3:
-                #         break
-                #     time.sleep(1)
                 return 0, "Bill Stop"
         # Default Response
         return -1, ""
