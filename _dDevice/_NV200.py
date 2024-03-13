@@ -476,7 +476,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         if len(args[1:]) > 0:
             param = "|".join(args[1:])
         # LOGGER.debug((command, param, config))
-        MAX_LOOP_ATTEMPT = config['MAX_EXECUTION_TIME']
+        MAX_LOOP_ATTEMPT = config['MAX_EXECUTION_TIME'] * (1/LOOP_INTERVAL)
         # Define Command
         if command == config['SET']:
             result = NV200.open()
