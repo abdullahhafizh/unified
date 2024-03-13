@@ -1742,7 +1742,11 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             remarks['host_trx_id'] = LAST_QR_PAYMENT_HOST_TRX_ID
             remarks = json.dumps(remarks)
             __param['remarks'] = remarks
-        
+            # If Payment With QR Any TOPUP_FAILURE Must Be Reassign as PENDING_TRANSACTION To Be Able Pending Code
+            if failure_type != 'TOPUP_FAILURE_03' and 'topup' in trxid: 
+                LOGGER.info(('Reset Failure Type To PENDING_TRANSACTION', failure_type, trxid))
+                failure_type = 'PENDING_TRANSACTION'
+            
         if 'topup' in trxid:
             last_card_check = load_from_temp_data('last-card-check', 'json')
 
@@ -1752,8 +1756,8 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             # __param['remarks3']['last_card_no'] = last_card_check.get('card_no', '')
             if type(__param['remarks3']) != dict: __param['remarks3'] = {}
             __param['remarks3']['last_card_check'] = last_card_check
-            
         
+        # TOPUP_FAILURE : Cash Already Return
         # Only Store Pending Transaction To Transaction Failure Table
         if failure_type in ['PENDING_TRANSACTION', 'TOPUP_FAILURE_03']:
             _DAO.delete_transaction_failure({

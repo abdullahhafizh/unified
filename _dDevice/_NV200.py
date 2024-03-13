@@ -459,13 +459,17 @@ MAX_LOOP_ATTEMPT = 30
 MAX_STORE_ATTEMPT = 5
 
 # Set Loop Interval For The Event Polling
+# Must use If Converter + Wire Grounding To Have Stable Connection
 LOOP_INTERVAL = .25
 
 def send_command(param=None, config=[], restricted=[], hold_note=False):
     global NV200, LOOP_ATTEMPT, COMMAND_MODE, MAX_LOOP_ATTEMPT
     try:
         if NV200 is None:
-            NV200 = NV200_BILL_ACCEPTOR(serial_port=config['PORT'], restricted_denom=restricted)
+            NV200 = NV200_BILL_ACCEPTOR(
+                serial_port=config['PORT'], 
+                restricted_denom=restricted
+                )
         args = param.split('|')
         command = args[0]
         param = "0"
