@@ -391,7 +391,7 @@ class NV200_BILL_ACCEPTOR(object):
                 self.nv200.hold()
             else:
                 break
-            time.sleep(5)
+            time.sleep(3)
             
             
     def reject(self):
@@ -497,11 +497,11 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                         return -1, 'Bill Receive Max Attempt Reached'
                     LOOP_ATTEMPT += 1
                     if len(event) == 1:
-                        time.sleep(1)
+                        time.sleep(LOOP_INTERVAL)
                         continue
                     if config['KEY_RECEIVED'] in event[1]:
                         if COMMAND_MODE == 'hold':
-                            time.sleep(.5)
+                            time.sleep(LOOP_INTERVAL)
                             NV200.async_hold()
                         return 0, event[1]
                     if config['KEY_BOX_FULL'] in event[1]:
