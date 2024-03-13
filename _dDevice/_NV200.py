@@ -584,7 +584,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     attempt += 1
                     event = NV200.get_event(command)
                     # Wait 3 Seconds
-                    if attempt >= (3*4): 
+                    if attempt >= (3*(1/LOOP_INTERVAL)): 
                         break
                     time.sleep(LOOP_INTERVAL)
                 
