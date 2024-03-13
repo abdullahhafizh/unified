@@ -603,9 +603,11 @@ def stop_receive_note(trxid):
                 sleep(.5)
                 GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.emit('CASH_PAYMENT')
             else:
+                # Not Receive Any Cash Must VOID Any Signal
                 if COLLECTED_CASH == 0:
                     response, result = send_command_to_bill(param=BILL["STOP"]+'|', output=None)
-                    LOGGER.info(('HOLD_NOTES WITHOUT ANY CASH RECEIVED', COLLECTED_CASH))
+                    LOGGER.info(('HOLD_NOTES WITHOUT ANY CASH RECEIVED', trxid, COLLECTED_CASH))
+                    return
                 BILL_SIGNDLER.SIGNAL_BILL_STOP.emit('STOP_BILL|SUCCESS')
             return
         
