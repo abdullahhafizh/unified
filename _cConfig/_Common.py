@@ -157,7 +157,7 @@ BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
 # Handle Single Denom For Spesific Transaction Type
 BILL_SINGLE_DENOM_TRX = _ConfigParser.get_set_value('BILL', 'single^denom^trx', 'topup').split('|')
 BILL_SINGLE_DENOM_TYPE = 'GRG|MEI|NV'.split('|')
-BILL_PAYMENT_TIME = 30 if BILL_TYPE.lower() in ['nv'] else 90
+BILL_PAYMENT_TIME = 57 if BILL_TYPE.lower() in ['nv'] else 90
     
 AMQP_ENABLE = True if _ConfigParser.get_set_value('AMQP', 'active', '0') == '1' else False
 AMQP_HOST = _ConfigParser.get_set_value('AMQP', 'host', 'amqp.mdd.co.id')

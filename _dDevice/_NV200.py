@@ -331,12 +331,6 @@ class NV200_BILL_ACCEPTOR(object):
     def get_event(self, caller):
         
         poll = self.nv200.poll() 
-        if _Common.BILL_LIBRARY_DEBUG is True:
-            try:
-                print('pyt: [NV200] Poll Raw (Mode)', str(caller), str(poll), COMMAND_MODE)
-                LOGGER.debug(('[NV200] Poll Raw (Mode)', str(caller), str(poll), COMMAND_MODE))
-            except Exception as e:
-                traceback.format_exc()     
                 
         event = []
         if len(poll) > 1:     
@@ -374,8 +368,8 @@ class NV200_BILL_ACCEPTOR(object):
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event))
-                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event)))
+                print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event))
+                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event)))
             except Exception as e:
                 traceback.format_exc()
             # Ensure This Will Break Here
@@ -403,9 +397,9 @@ class NV200_BILL_ACCEPTOR(object):
     
     def accept(self):
         global COMMAND_MODE
-        # if COMMAND_MODE == 'hold':
-        COMMAND_MODE = 'accept'
+        # Accept First Then Set Command Mode Flag
         self.nv200.accept_note()
+        COMMAND_MODE = 'accept'
     
     
     def poll_once(self):
@@ -577,7 +571,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 return 0, "Bill Reset"
         #===
         elif command == config['STOP']:
-            # LOOP_ATTEMPT = MAX_LOOP_ATTEMPT
             action = NV200.disable()
             if action is True:
                 # Must Do Get Poll To Reset Cashbox Status
