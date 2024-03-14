@@ -1827,6 +1827,12 @@ def topup_online(bank, cardno, amount, trxid=''):
             if not validate_card:
                 return False
             # last_check = _QPROX.LAST_CARD_CHECK            
+            # New Mechanism
+            if _Common.BCA_RELOAD_INIT:
+                LOGGER.debug(('Reload BCA Config Initiation', _Common.BCA_RELOAD_INIT, trxid))
+                _QPROX.start_init_config_bca()
+                reset_bca_session()
+            
             _param = {
                 'card_no': cardno,
                 'amount': amount,

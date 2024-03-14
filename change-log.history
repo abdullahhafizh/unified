@@ -3,6 +3,7 @@
 - Bill NV Timeout Resync On Polling Every 0.25 seconds,
 - Set NV Accept Timeout to 60 seconds,
 - Replace CS Number to PWA Link,
+- Add Re-init BCA Topup Config On Every Transaction,
 - ...
 
 16.6.3-GLOBAL:

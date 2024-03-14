@@ -280,6 +280,8 @@ TID_BCA = _ConfigParser.get_set_value('BCA', 'tid', '---')
 MID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'mid^topup', '000942678')
 TID_TOPUP_BCA = _ConfigParser.get_set_value('BCA', 'tid^topup', 'ELZSYB01')
 
+BCA_RELOAD_INIT = True if _ConfigParser.get_set_value('BCA', 'reload^init', '1') == '1' else False
+
 
 # if not LIVE_MODE:
 #     # Force Set MID/TID BCA On Development Stage
