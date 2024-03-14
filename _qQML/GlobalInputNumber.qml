@@ -737,7 +737,7 @@ Base{
             }
         }
         if (i.show_info_cs !== undefined && i.show_info_cs === 1){
-            notice_retry_able.title_text = 'SILAKAN HUBUNGI CS DI NO WHATSAPP ' + VIEW_CONFIG.whatsapp_no;
+            notice_retry_able.title_text = 'SILAKAN AKSES LAYANAN PELANGGAN https://bit.ly/CSMultidaya';
             if (VIEW_CONFIG.theme_name.toLowerCase() == 'bca') notice_retry_able.title_text = 'SILAKAN HUBUNGI CS DI HALO BCA';
             notice_retry_able.visible = true;
         }
