@@ -2,6 +2,7 @@
 - Re-enable Pending Code in TOPUP FAILURE QRIS,
 - Bill NV Timeout Resync On Polling Every 0.25 seconds,
 - Set NV Accept Timeout to 60 seconds,
+- Replace CS Number to PWA Link,
 - ...
 
 16.6.3-GLOBAL:
