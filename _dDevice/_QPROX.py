@@ -1729,7 +1729,7 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
                 param = {
                     'trxid': trxid,
-                    'samCardNo': _Common.BNI_SAM_1_NO if slot == 1 else _Common.BNI_SAM_2_NO,
+                    'samCardNo': _Common.BNI_SAM_1_NO,
                     'samCardSlot': slot,
                     'samPrevBalance': deposit_prev_balance,
                     'samLastBalance': deposit_last_balance,
