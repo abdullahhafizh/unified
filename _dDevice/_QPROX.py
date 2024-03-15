@@ -1718,10 +1718,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 if _slot == 1: _Common.BNI_SAM_2_WALLET = _Common.BNI_ACTIVE_WALLET
                 
                 remarks = data[5]
+                deposit_no = _Common.BNI_SAM_1_NO
                 # Store Topup Success Record Into Local DB
                 _Common.local_store_topup_record(output)
                 output['prev_balance'] = card_prev_balance
-                output['deposit_no'] = data[1]
+                output['deposit_no'] = deposit_no
                 output['deposit_prev_balance'] = deposit_prev_balance
                 output['deposit_last_balance'] = deposit_last_balance
                 output['topup_report'] = report_sam
@@ -1729,11 +1730,11 @@ def topup_offline_bni(amount, trxid, slot=None, attempt=None):
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(status+'|'+json.dumps(output))
                 param = {
                     'trxid': trxid,
-                    'samCardNo': _Common.BNI_SAM_1_NO,
+                    'samCardNo': deposit_no,
                     'samCardSlot': slot,
                     'samPrevBalance': deposit_prev_balance,
                     'samLastBalance': deposit_last_balance,
-                    'topupCardNo': data[6],
+                    'topupCardNo': card_no,
                     'topupPrevBalance': card_prev_balance,
                     'topupLastBalance': card_last_balance,
                     'status': status,
