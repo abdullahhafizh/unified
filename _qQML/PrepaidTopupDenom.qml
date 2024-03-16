@@ -758,8 +758,12 @@ Base{
             if (VIEW_CONFIG.auto_reload_insufficient_notif){
                 switch(cardData.bank_name){
                     case 'MANDIRI':
-                        //Do Auto Reload For Mandiri Only 
+                        //Do Auto Reload For Mandiri 
                         _SLOT.start_force_mandiri_deposit_reload();
+                        break;
+                    case 'BNI':
+                        //Do Auto Reload For Mandiri 
+                        _SLOT.start_force_bni_deposit_reload()
                         break;
                     default: break;
                 }

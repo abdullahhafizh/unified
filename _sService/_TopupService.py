@@ -186,7 +186,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         if _Common.BNI_SINGLE_SAM is True:
             slot = 1
         # Check Lastest Deposit Balance Removed
-        if _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD:
+        if _Common.BNI_ACTIVE_WALLET > _Common.BNI_THRESHOLD and force is False:
             LOGGER.warning(('DEPOSIT_STILL_SUFFICIENT', slot, _Common.BNI_ACTIVE_WALLET, _Common.BNI_THRESHOLD))
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_DEPOSIT_STILL_SUFFICIENT')
             return 'DEPOSIT_STILL_SUFFICIENT'
@@ -214,7 +214,7 @@ def do_topup_deposit_bni(slot=1, force=False, activation=False):
         if not _Common.BNI_C2C_TRESHOLD_USAGE:
             _Common.BNI_ACTIVE_WALLET = 0
         _result_pending = pending_balance({
-            'card_no': _get_card_data['card_no'],
+            'card_no': _Common.BNI_SAM_1_NO,
             'amount': _Common.BNI_TOPUP_AMOUNT,
             'invoice_no': invoice_no,
             'card_tid': _Common.TID_BNI
