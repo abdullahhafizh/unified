@@ -385,7 +385,7 @@ class NV200_BILL_ACCEPTOR(object):
                 self.nv200.hold()
             else:
                 break
-            time.sleep(3)
+            time.sleep(.25)
             
             
     def reject(self):
