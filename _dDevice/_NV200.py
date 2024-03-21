@@ -21,7 +21,11 @@ class NV200_BILL_ACCEPTOR(object):
     global COMMAND_MODE
     
     def __init__(self, serial_port='COM3', restricted_denom=["1000", "2000"]):
-        self.nv200 = _eSSPLib.eSSP(serial_port, 0, SOCKET_TIMEOUT)
+        self.nv200 = _eSSPLib.eSSP(
+            serialport=serial_port, 
+            eSSPId=0, 
+            timeout=SOCKET_TIMEOUT,
+            debugging=_Common.BILL_LIBRARY_DEBUG)
         self.serial_port = serial_port
         self.default_channel = [0,0,1,1,1,1,1,1]
         if len(restricted_denom) == 3 and restricted_denom == ["1000", "2000", "5000"]:
@@ -39,7 +43,7 @@ class NV200_BILL_ACCEPTOR(object):
             inhibits = self.nv200.easy_inhibit(self.default_channel)
             result = self.nv200.set_inhibits(inhibits, '0xFF')
             if _Common.BILL_LIBRARY_DEBUG is True:
-                print('pyt: [NV200] Channel Setting', str(inhibits), str(result))   
+                # print('pyt: [NV200] Channel Setting', str(inhibits), str(result))   
                 LOGGER.debug(('[NV200] Channel Setting', str(inhibits), str(result)))
             self.open_status =  True
         except Exception as e:
@@ -54,7 +58,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_on()
             result = self.nv200.enable()
             if _Common.BILL_LIBRARY_DEBUG is True:
-                print('pyt: [NV200] Enabling', str(result), str(COMMAND_MODE))   
+                # print('pyt: [NV200] Enabling', str(result), str(COMMAND_MODE))   
                 LOGGER.debug(('[NV200] Enabling', str(result), str(COMMAND_MODE)))
             return True
         except Exception as e:
@@ -66,7 +70,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.disable()
             if _Common.BILL_LIBRARY_DEBUG is True:
-                print('pyt: [NV200] Disabling', str(result))   
+                # print('pyt: [NV200] Disabling', str(result))   
                 LOGGER.debug(('[NV200] Disabling', str(result)))
             return True
         except Exception as e:
@@ -78,7 +82,7 @@ class NV200_BILL_ACCEPTOR(object):
             # result = self.nv200.bulb_off()
             result = self.nv200.disable()
             if _Common.BILL_LIBRARY_DEBUG is True:
-                print('pyt: [NV200] Disabling', str(result))   
+                # print('pyt: [NV200] Disabling', str(result))   
                 LOGGER.debug(('[NV200] Disabling', str(result)))
             return True
         except Exception as e:
@@ -90,7 +94,7 @@ class NV200_BILL_ACCEPTOR(object):
             result = self.nv200.bulb_off()
             result = self.nv200.reject_note()
             if _Common.BILL_LIBRARY_DEBUG is True:
-                print('pyt: [NV200] Rejecting', str(result))   
+                # print('pyt: [NV200] Rejecting', str(result))   
                 LOGGER.debug(('[NV200] Rejecting', str(result)))
             return True
         except Exception as e:
@@ -102,7 +106,7 @@ class NV200_BILL_ACCEPTOR(object):
         del self.nv200
         self.nv200 = None
         if _Common.BILL_LIBRARY_DEBUG is True:
-            print('pyt: [NV200] Releasing', str(result))   
+            # print('pyt: [NV200] Releasing', str(result))   
             LOGGER.debug(('[NV200] Releasing', str(result)))
         return result
     
@@ -129,7 +133,7 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             result = self.nv200.sync()   
             if _Common.BILL_LIBRARY_DEBUG is True: 
-                print('pyt: [NV200] Active Check', str(result))
+                # print('pyt: [NV200] Active Check', str(result))
                 LOGGER.debug(('[NV200] Active Check', str(result)))
         except Exception as e:
             # LOGGER.warning(('NV200_Module', e))
@@ -151,7 +155,7 @@ class NV200_BILL_ACCEPTOR(object):
                 if port.device == self.serial_port:
                     if self.check_active():
                         if _Common.BILL_LIBRARY_DEBUG is True:
-                            print('pyt: [NV200] Resetting', 'Bill Re/Activated')
+                            # print('pyt: [NV200] Resetting', 'Bill Re/Activated')
                             LOGGER.debug(('[NV200] Resetting', 'Bill Re/Activated'))
                         return True
             if attempt >= 5:
@@ -342,7 +346,7 @@ class NV200_BILL_ACCEPTOR(object):
                     # Extra Handling NV For Reject Activity
                     if COMMAND_MODE == 'reject' or caller == '604':
                         if _Common.BILL_LIBRARY_DEBUG is True:
-                            print('pyt: [NV200] Anomaly Response Reading Note After Reject Activity', str(poll))
+                            # print('pyt: [NV200] Anomaly Response Reading Note After Reject Activity', str(poll))
                             LOGGER.debug(('[NV200] Anomaly Response Reading Note After Reject Activity', str(poll)))
                         return event
                     elif 0 < poll[1][1] < len(self.known_notes):
@@ -368,7 +372,7 @@ class NV200_BILL_ACCEPTOR(object):
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event))
+                # print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event))
                 LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event)))
             except Exception as e:
                 traceback.format_exc()
@@ -380,7 +384,7 @@ class NV200_BILL_ACCEPTOR(object):
         while True:
             if COMMAND_MODE == 'hold':
                 if _Common.BILL_LIBRARY_DEBUG is True:
-                    print('pyt: [NV200] Trigger Hold Notes')
+                    # print('pyt: [NV200] Trigger Hold Notes')
                     LOGGER.debug(('[NV200] Trigger Hold Notes'))
                 self.nv200.hold()
             else:

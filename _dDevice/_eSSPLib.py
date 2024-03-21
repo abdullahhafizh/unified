@@ -14,7 +14,7 @@ class eSSPTimeoutError(eSSPError):  # noqa
 class eSSP(object):  # noqa
     """General class for talking to an eSSP device."""
     
-    def __init__(self, serialport='/dev/ttyUSB0', eSSPId=0, timeout=None):  # noqa
+    def __init__(self, serialport='/dev/ttyUSB0', eSSPId=0, timeout=None, debugging=False):  # noqa
         """
         Initialize a new eSSP object.
 
@@ -30,6 +30,7 @@ class eSSP(object):  # noqa
         else:
             serial_timeout = 0.1
         self.timeout = timeout
+        self.debug = debugging
         self.__ser = serial.Serial(serialport, 9600, timeout=serial_timeout)
         self.__eSSPId = eSSPId
         self.__sequence = '0x80'
@@ -412,7 +413,8 @@ class eSSP(object):  # noqa
         # if process:
         response = self.read(process)
         # Direct Raw Debug
-        # print('pyt: NV200 Debug : ', str(prepedstring), str(response))
+        if self.debug:
+            print('pyt: NV200 Debug : ', str(prepedstring), str(response))
         return response
     
     def send_only(self, command):
