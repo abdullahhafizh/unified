@@ -43,8 +43,8 @@ class eSSP(object):  # noqa
         self.timeout = timeout
         self.debug = debugging
         NV200_DEBUG = debugging
-        log_print('ACTIVATE NV Debugging')
-        log_print(str(NV200_DEBUG))
+        if NV200_DEBUG:
+            log_print('Activate NV200 Debugging')
         self.__ser = serial.Serial(serialport, 9600, timeout=serial_timeout)
         self.__eSSPId = eSSPId
         self.__sequence = '0x80'
