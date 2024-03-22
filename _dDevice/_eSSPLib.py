@@ -492,7 +492,7 @@ class eSSP(object):  # noqa
 
         response = self.arrayify_response(bytes_read)
         
-        self.log_print('RECV: ' + str(response))
+        self.log_print('RECV: ' + str(bytes_read))
 
         if process:
             response = self.process_response(response)
