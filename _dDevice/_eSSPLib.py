@@ -431,15 +431,12 @@ class eSSP(object):  # noqa
         # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
         #                    for x in range(0, len(prepedstring), 2)]))
         
-        self.log_print('SEND: ' + str(prepedstring))
         prepedstring = bytes.fromhex(prepedstring)
-        #prepedstring = prepedstring.decode('hex')
 
+        self.log_print('SEND: ' + str(prepedstring))
         self.__ser.write(prepedstring)
 
         response = self.read(process)
-        # Direct Raw Debug
-        self.log_print('RECV: ' + str(response))
         return response
     
     def send_only(self, command):
@@ -494,7 +491,8 @@ class eSSP(object):  # noqa
                     break
 
         response = self.arrayify_response(bytes_read)
-        # self._logger.debug("IN:  " + ' '.join(response))
+        
+        self.log_print('RECV: ' + str(response))
 
         if process:
             response = self.process_response(response)
