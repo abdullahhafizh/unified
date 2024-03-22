@@ -1,3 +1,7 @@
+16.6.5-GLOBAL:
+- Add Bill NV debug Log,
+- ...
+
 16.6.4-GLOBAL:
 - Re-enable Pending Code in TOPUP FAILURE QRIS,
 - Bill NV Timeout Resync On Polling Every 0.25 seconds,

@@ -14,7 +14,8 @@ from sys import _getframe as whois
 import re
 import hmac
 import hashlib 
-# import inspect
+import os
+import sys
 
 # Hardcoded Maximum Thread at a time
 MAX_THREAD = 16
@@ -262,3 +263,20 @@ def split_string(s='', x = 3):
     splitted = [s[y-x:y] for y in range(x, len(s)+x, x)]
     result = [d for d in splitted if len(d) == x]
     return result
+
+
+def log_to_file(message='', log_name='', log_rotate='DAILY', log_ext='.log'):
+    if empty(message) is True or empty(log_name) is True:
+        return
+    log_path = sys.path[0] + '/_lLog/'
+    if log_rotate == 'DAILY':
+        log_name = log_name + '_' + time_string(f='%Y-%m-%d')
+    if '.' not in log_name:
+        log_name = log_name + log_ext
+    log_file = os.path.join(log_path, log_name)
+    if type(message) != str:
+        message = str(message)
+    message = time_string(f='%F %T.%f')[:-3] + ' --- ' + message
+    with open(log_file, 'w+') as file_logging:
+        file_logging.write(message)
+        file_logging.close()
