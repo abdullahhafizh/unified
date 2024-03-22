@@ -276,7 +276,7 @@ def log_to_file(message='', log_name='', log_rotate='DAILY', log_ext='.log'):
     log_file = os.path.join(log_path, log_name)
     if type(message) != str:
         message = str(message)
-    message = time_string(f='%F %T.%f')[:-3] + ' --- ' + message
+    message = time_string(f='%Y-%m-%d %H:%M:%S.%f') + ' --- ' + message
     with open(log_file, 'w+') as file_logging:
         file_logging.write(message)
         file_logging.close()
