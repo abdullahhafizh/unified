@@ -279,5 +279,5 @@ def log_to_file(message='', log_name='', log_rotate='DAILY', log_ext='.log'):
         message = str(message)
     message = time_string(f='%Y-%m-%d %H:%M:%S.%f') + ' --- ' + message
     with open(log_file, mode) as file_logging:
-        file_logging.write(message)
+        file_logging.write("\n"+message)
         file_logging.close()
