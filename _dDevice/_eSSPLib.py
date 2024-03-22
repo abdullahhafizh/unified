@@ -43,7 +43,8 @@ class eSSP(object):  # noqa
         self.timeout = timeout
         self.debug = debugging
         NV200_DEBUG = debugging
-        log_print('ACTIVATE debugging', str(NV200_DEBUG))
+        log_print('ACTIVATE NV Debugging')
+        log_print(str(NV200_DEBUG))
         self.__ser = serial.Serial(serialport, 9600, timeout=serial_timeout)
         self.__eSSPId = eSSPId
         self.__sequence = '0x80'
@@ -184,7 +185,8 @@ class eSSP(object):  # noqa
                 else:
                     poll_data.append(result[i])
         except Exception as e:
-            log_print(e, str(result))
+            log_print(e)
+            log_print(str(result))
             poll_data.append('0xERROR')
 
         return poll_data
@@ -443,7 +445,8 @@ class eSSP(object):  # noqa
         response = self.read(process)
         # Direct Raw Debug
         if self.debug:
-            log_print(str(prepedstring), str(response))
+            log_print(str(prepedstring))
+            log_print(str(response))
         return response
     
     def send_only(self, command):
