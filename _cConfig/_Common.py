@@ -78,17 +78,17 @@ def clean_white_space(s):
 
 VIEW_FOLDER = '_qQML/'
 APP_MODE = _ConfigParser.get_set_value('GENERAL', 'mode', 'live')
-LIVE_MODE = True if APP_MODE == 'live' else False
+LIVE_MODE = True if APP_MODE in ['live', 'bca'] else False
 BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/')
 TEST_MODE = not LIVE_MODE
 if LIVE_MODE is True:
     BACKEND_URL = 'http://vm-service.mdd.co.id:471/kiosk-api/v2/'
     _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
-    os.system('git checkout live')
+    # os.system('git checkout live')
 if TEST_MODE is True:
     BACKEND_URL = 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/'
     _ConfigParser.set_value('GENERAL', 'backend^server', BACKEND_URL)
-    os.system('git checkout ' +APP_MODE)
+    # os.system('git checkout ' +APP_MODE)
 
 TIME_TOLERANCE = int(_ConfigParser.get_set_value('GENERAL', 'time^tolerance', '60'))
 TIME_SYNC_SERVER = _ConfigParser.get_set_value('GENERAL', 'time^sync^server', 'asia.pool.ntp.org')
