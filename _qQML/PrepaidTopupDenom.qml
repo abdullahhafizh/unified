@@ -141,6 +141,9 @@ Base{
 
     function get_payment_fee(p, d){
         if (p === undefined || paymentFeeSetting[p] === undefined) return 0;
+        // Validate Fee Based On Transaction Type
+        if (VIEW_CONFIG.include_fee_trx.indexOf('topup') === false) return 0;
+
         var fee = paymentFeeSetting[p];
         var init_price = d;
         if (parseInt(fee) < 1) fee = (fee * 100 * parseInt(init_price));
