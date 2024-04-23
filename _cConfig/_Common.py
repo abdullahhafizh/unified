@@ -869,7 +869,7 @@ QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
 QRIS_RECEIPT = _ConfigParser.get_set_value('QR', 'qris^receipt', 'BCA-QRIS|DUWIT').split('|')
 GENERAL_QR = True if _ConfigParser.get_set_value('QR', 'general^qr', '1') == '1' else False
-QR_FEE_TRX = _ConfigParser.set_value('QR', 'include^fee^trx', 'topup').split('|')
+QR_FEE_TRX = _ConfigParser.get_set_value('QR', 'include^fee^trx', 'topup').split('|')
 VIEW_CONFIG['include_fee_trx'] = QR_FEE_TRX
 
 
