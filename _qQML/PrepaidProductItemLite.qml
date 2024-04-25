@@ -124,7 +124,7 @@ Rectangle{
         anchors.bottomMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-        visible: false
+        visible: VIEW_CONFIG.show_card_stock
         horizontalAlignment: Text.AlignRight
         font.pixelSize: 15
         verticalAlignment: Text.AlignVCenter

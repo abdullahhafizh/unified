@@ -846,6 +846,8 @@ VIEW_CONFIG['auto_print_collection'] = True if _ConfigParser.get_set_value('GENE
 VIEW_CONFIG['auto_print_stock_opname'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^print^stock^opname', '1') == '1' else False
 VIEW_CONFIG['auto_reload_insufficient_notif'] = True if _ConfigParser.get_set_value('GENERAL', 'auto^reload^insufficient^notif', '1') == '1' else False
 VIEW_CONFIG['bill_payment_time'] = BILL_PAYMENT_TIME + BILL_TIMEOUT_TOLERANCE
+VIEW_CONFIG['show_card_stock'] = True if _ConfigParser.get_set_value('GENERAL', 'show^card^stock', '0') == '1' else False
+
 
 
 PARKOUR_URL = _ConfigParser.get_set_value('PARKOUR', 'host^payment', 'http://1.2.3.4:1000')
