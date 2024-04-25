@@ -1257,7 +1257,7 @@ Base{
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;
             qrPayload = {
-                trx_id: details.shop_type + details.epoch.toString();,
+                trx_id: details.shop_type + details.epoch.toString(),
                 amount: totalPrice.toString(),
                 mode: details.payment
             }
