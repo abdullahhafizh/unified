@@ -107,6 +107,20 @@ Base{
                     popup_loading.open();
                     _SLOT.start_get_ppob_product();
                     break;
+                case 'PARKOUR':
+                    popup_loading.open();
+                    var details = {
+                        category: 'Parking',
+                        operator: 'parkour',
+                        description: 'Pembayaran Tiket Parking}',
+                        product_id: 'PARKOUR',
+                        rs_price: 1,
+                        amount: 1,
+                        product_channel: 'MDD',
+                    }
+                    console.log('Parking Payment: ', JSON.stringify(details));
+                    my_layer.push(global_input_number, {selectedProduct: details, mode: 'PARKING'});
+                    break;
                 }
             }
         }

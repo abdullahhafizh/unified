@@ -183,6 +183,15 @@ GET_TOTAL_NOTES = 0
 MAX_LENGTH = 40
 
 
+# Hardcoded Re-configuration for BCA Theme
+# if THEME_NAME.lower() in ['bca']:
+#     SHOW_TNC = False
+#     ALLOW_EXCEED_PAYMENT = False
+#     REFUND_FEATURE = False
+
+LITE_VERSION_RECEIPT = _Common.THEME_NAME.lower() in ['bca']
+
+
 def chunk_text(text, length=24, delimiter="\r\n"):
     if len(text) <= length:
         return text
@@ -502,7 +511,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                         pdf.ln(small_space)
                         pdf.set_font(USED_FONT, 'B', regular_space)
                         pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-                # elif 'pending_trx_code' in p.keys():
+                # elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 #     pdf.ln(small_space)
                 #     pdf.set_font(USED_FONT, 'B', regular_space)
                 #     pdf.cell(padding_left, 0, 'VOUCHER TRX  : ' + p['pending_trx_code'], 0, 0, 'L')
@@ -552,7 +561,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                         pdf.ln(small_space)
                         pdf.set_font(USED_FONT, 'B', regular_space)
                         pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-                elif 'pending_trx_code' in p.keys():
+                elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
@@ -609,7 +618,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
@@ -730,7 +739,7 @@ def eprinter_topup_trx(p, t):
                     fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                     if fee_refund_exist:
                         printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
-                elif 'pending_trx_code' in p.keys():
+                elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                     printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
                     printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                     printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
@@ -745,7 +754,7 @@ def eprinter_topup_trx(p, t):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                 printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
@@ -857,7 +866,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 if not _Common.DISABLE_CARD_RETRY_CODE:
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -921,7 +930,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 if not _Common.DISABLE_CARD_RETRY_CODE:
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1022,7 +1031,7 @@ def eprinter_shop_trx(p, t):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     printer.text((' '*padding_left)+'ADMIN KEMBALIAN: ' + serialize_number(str(fee_refund)) + "\n")
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
                 printer.text((' '*padding_left)+'PADA MENU CEK/LANJUT TRANSAKSI' + "\n")
@@ -1104,7 +1113,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             provider = provider.split('(Admin')[0]
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
-        pdf.cell(padding_left, 0, 'PROVIDER  : ' + provider, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'PROVIDER  : ' + provider.upper(), 0, 0, 'L')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
         pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
@@ -1128,6 +1137,22 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']), 0, 0, 'L')
+            elif p['ppob_mode'] == 'payment-parking':
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'NO TIKET : ' + str(p['raw']['ticket']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'LOKASI   : ' + str(p['raw']['location']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'KENDARAAN: Rp. ' + clean_number(str(p['raw']['vehicletype'])), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'DURASI   : ' + str(p['raw']['duration_hour']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, 'B', regular_space)
+                pdf.cell(padding_left, 0, 'BIAYA    : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
             else:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1193,7 +1218,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
@@ -1247,7 +1272,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
                     pdf.cell(padding_left, 0, 'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)), 0, 0, 'L')
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'KODE ULANG : ' + p['pending_trx_code'], 0, 0, 'L')
@@ -1338,6 +1363,12 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 printer.text((' '*padding_left)+'BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])) + "\n")
                 if p.get('service_charge', 0) > 0:
                     printer.text((' '*padding_left)+'BIAYA LAYANAN: ' + serialize_number(p['service_charge']) + "\n")
+            elif p['ppob_mode'] == 'payment-parking':
+                printer.text((' '*padding_left)+'NO TIKET : ' + str(p['raw']['ticket']) +  + "\n")
+                printer.text((' '*padding_left)+'LOKASI   : ' + str(p['raw']['location']) +  + "\n")
+                printer.text((' '*padding_left)+'KENDARAAN: Rp. ' + clean_number(str(p['raw']['vehicletype'])) +  + "\n")
+                printer.text((' '*padding_left)+'DURASI   : ' + str(p['raw']['duration_hour']) +  + "\n")
+                printer.text((' '*padding_left)+'BIAYA    : Rp. ' + clean_number(str(p['value'])) +  + "\n")
             else:
                 printer.text((' '*padding_left)+'JUMLAH     : ' + str(p['qty']) + "\n")
                 ovo_cashin = False
@@ -1377,7 +1408,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     printer.text((' '*padding_left)+'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)) + "\n")
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
                 printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
@@ -1402,7 +1433,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     printer.text((' '*padding_left)+'ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)) + "\n")
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 printer.text((' '*padding_left)+'KODE ULANG : ' + p['pending_trx_code'] + "\n")
                 printer.text((' '*padding_left)+'BERLAKU : ' + get_retry_code_tnc() + "\n") # 7x percobaan / 2x24 jam
                 printer.text((' '*padding_left)+'DAPAT MELANJUTKAN TRANSAKSI KEMBALI' + "\n")
@@ -2576,7 +2607,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                     fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                     if fee_refund_exist:
                         pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
-                elif 'pending_trx_code' in p.keys():
+                elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                     pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
                     pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                     pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
@@ -2597,7 +2628,7 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
@@ -2683,7 +2714,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
@@ -2705,7 +2736,7 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
@@ -2789,6 +2820,12 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.set_line('BIAYA ADMIN: Rp. ' + clean_number(str(p['admin_fee'])))
                 if p.get('service_charge', 0) > 0:
                     pdf.set_line('BIAYA LAYANAN: Rp. ' + clean_number(p['service_charge']))
+            elif p['ppob_mode'] == 'payment-parking':
+                pdf.set_line('NO TIKET   : ' + str(p['raw']['ticket']))
+                pdf.set_line('LOKASI     : ' + str(p['raw']['location']))
+                pdf.set_line('KENDARAAN  : Rp. ' + clean_number(str(p['raw']['vehicletype'])))
+                pdf.set_line('DURASI     : ' + str(p['raw']['duration_hour']))
+                pdf.set_line('BIAYA      : Rp. ' + clean_number(str(p['value'])))
             else:
                 pdf.set_line('JUMLAH     : ' + str(p['qty']))
                 pdf.set_line('HARGA/UNIT : Rp. ' + clean_number(str(p['value'])))
@@ -2818,7 +2855,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')
@@ -2841,7 +2878,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 fee_refund_exist, fee_refund = validate_refund_fee(p['refund_channel'])
                 if fee_refund_exist:
                     pdf.set_line('ADMIN KEMBALIAN: Rp. ' + clean_number(str(fee_refund)))
-            elif 'pending_trx_code' in p.keys():
+            elif 'pending_trx_code' in p.keys() and not LITE_VERSION_RECEIPT:
                 pdf.set_line('KODE ULANG : ' + p['pending_trx_code'])
                 pdf.set_line('BERLAKU : ' + get_retry_code_tnc()) # 7x percobaan / 2x24 jam
                 pdf.set_line('DAPAT MELANJUTKAN TRANSAKSI KEMBALI')

@@ -371,6 +371,96 @@ def do_check_trx(reff_no):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|TRX_NOT_FOUND')
+        
+
+def start_do_parking_inquiry(ticket_no):
+    _Helper.get_thread().apply_async(do_parking_inquiry, (ticket_no,))
+
+
+def do_parking_inquiry(ticket_no):
+    try:
+        url = _Common.PARKOUR_URL+'/api/pas/get_ticket'
+        payload = {
+                'p1': ticket_no,
+                'ticket': ticket_no,
+                'p2': _Common.PARKOUR_SITE_ID
+            }
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'UNPAID':
+            data = r
+            # {
+            #     "ticket": "PMRSBD1131450800754",
+            #     "ticketstatus": "VALID",
+            #     "intime": "2024-04-15 08:38:00",
+            #     "duration": "12878",
+            #     "tarif": "99000",
+            #     "vehicletype": "Mobil",
+            #     "outtime": "",
+            #     "graceperiod": "0",
+            #     "location": "New Parkour RSHS Bandung",
+            #     "paymentstatus": "UNPAID",
+            #     "code": "00",
+            #     "message": "Ticket Found!",
+            #     "platenumber": "",
+            #     "address": "Jl. Pasteur No.38, Pasteur, Kec. Sukajadi, Kota Bandung, Jawa Barat  ",
+            #     "timenow": "2024-04-24T07:15:03+07:00"
+            #   }
+            data['duration_hour'] = _Helper.convert_minutes(r['duration'])
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PARKING_INQUIRY|'+json.dumps(data))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PARKING_INQUIRY|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('PARKING_INQUIRY|ERROR')
+        
+        
+def start_do_parking_payment(payload):
+    _Helper.get_thread().apply_async(do_parking_payment, (payload,))
+    
+
+def do_parking_payment(payload):
+    payload = json.loads(payload)
+    try:
+        url = _Common.PARKOUR_URL+'/api/pas/payment_ticket'
+        # {
+        #     "ticket": "PM1139083180809",
+        #     "tarif": "2000",
+        #     "paymentreferenceid": "PM1139083180809-1713909922846",
+        #     "paymentmethod": "gopay",
+        #     "customerphone": "N/A"
+        # }
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'PAID':
+            data = r
+            # {
+            #     "ticket": "PM1139083180809",
+            #     "ticketstatus": "VALID",
+            #     "intime": "2024-04-24 04:38:38",
+            #     "duration": "28",
+            #     "tarif": "2000",
+            #     "vehicletype": "MOTORCYCLE",
+            #     "outtime": "2024-04-24 05:38:38",
+            #     "graceperiod": "0",
+            #     "location": "IGF Parking Masjid Istiqlal",
+            #     "paymentstatus": "PAID",
+            #     "code": "00",
+            #     "message": "Payment Success!",
+            #     "paymentreferenceid": "PM1139083180809-1713909922846",
+            #     "transactionstatus": "0",
+            #     "paymentmethod": "gopay",
+            #     "customerphone": "N/A",
+            #     "platenumber": "",
+            #     "address": "Pasar Baru Central Jakarta ",
+            #     "outgraceperiod": "2024-04-24 05:38:38"
+            # }
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PARKING_PAYMENT|'+json.dumps(data))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PARKING_PAYMENT|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PARKING_PAYMENT|ERROR')
 
 
 def start_do_inquiry_trx(payload):

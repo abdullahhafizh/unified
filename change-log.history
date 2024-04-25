@@ -1,5 +1,6 @@
 16.6.6-GLOBAL:
 - Handle QRIS Payment Fee Per Transaction Type,
+- Enable Lite Layout Receipt For BCA,
 - ...
 
 16.6.5-GLOBAL:

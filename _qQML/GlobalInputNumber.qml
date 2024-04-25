@@ -551,6 +551,36 @@ Base{
         }
     }
 
+    function parse_parking_inquiry_status(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('parse_parking_inquiry_status', now, r);
+        popup_loading.close();
+        var result = r.split('|')[1];
+        if (result=='ERROR'){
+            switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Terjadi Kesalahan Saat Memeriksa Tiket Parkir Anda. Silakan Coba Lagi.', 'backToMain', false );
+            return;
+        } 
+        var res = r.split('|')[2];
+        var data = JSON.parse(res);
+        var rows = [
+                        {label: 'Tanggal', content: now},
+                        {label: 'No Tiket', content: data.ticket},
+                        {label: 'Lokasi', content: data.location},
+                        {label: 'Kendaraan', content: data.vehicletype + ' ' + data.platenumber},
+                        {label: 'Waktu Masuk', content: data.intime},
+                        {label: 'Durasi', content: data.duration_hour},
+                        {label: 'Biaya', content: FUNC.insert_dot(data.tarif)},
+                    ]
+        selectedProduct.rs_price = parseInt(data.tarif);
+        selectedProduct.amount = parseInt(data.tarif);
+        selectedProduct.description = 'Parking Ticket';
+
+        var mergedObject = Object.assign({}, data, selectedProduct);
+        selectedProduct = mergedObject;
+        ppobMode = 'payment-parking';
+        generateConfirm(rows, true);
+    }
+
     function parse_ppob_inquiry_status(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('parse_ppob_detail_status', now, r);
@@ -626,6 +656,10 @@ Base{
         }
         if (r.indexOf('TRX_INQUIRY|') > -1){
             parse_ppob_inquiry_status(r);
+            return;
+        }
+        if (r.indexOf('PARKING_INQUIRY|') > -1){
+            parse_parking_inquiry_status(r);
             return;
         }
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -751,6 +785,11 @@ Base{
     }
 
     function define_wording(){
+        if (mode=='PARKING'){
+            wording_text = 'Scan Tiket Parkir Anda Pada Reader';
+            min_count = 10;
+            return;
+        }
         if (mode=='WA_VOUCHER'){
             wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
             min_count = 8;
@@ -771,6 +810,11 @@ Base{
         var category = selectedProduct.category.toLowerCase();
         var operator = selectedProduct.operator;
         switch(category){
+            case 'parking':
+                wording_text = 'Masukkan/Pindai Tiket Parkir Anda';
+                checkMode = true;
+                min_count = 9;
+            break;
             case 'combo sakti':
                 wording_text = 'Masukkan Kode Bayar Telkomsel Paket Murah';
                 checkMode = true;
@@ -882,6 +926,7 @@ Base{
         details.amount = selectedProduct.amount;
         details.ppob_mode = ppobMode;
         details.product_channel = selectedProduct.product_channel;
+
         if (ppobTagihanData!==undefined && ppobMode=='tagihan'){
             details.customer = ppobTagihanData.customer;
             details.value = ppobTagihanData.value;
@@ -901,6 +946,13 @@ Base{
                 details.value = (parseInt(selectedProduct.rs_price) - 1500).toString();
                 details.admin_fee = '1500';
             }
+        } else if (ppobMode=='payment-parking'){
+            details.shop_type = selectedProduct.operator;
+            details.customer = textInput;
+            details.value = selectedProduct.rs_price.toString();
+            details.admin_fee = '0';
+            details.msisdn = textInput;
+            details.provider = selectedProduct.category;
         }
 
         details.init_total = details.qty * parseInt(details.value);
@@ -991,6 +1043,11 @@ Base{
         if (device.QR_BRI == 'AVAILABLE') {
             activeQRISProvider.push('bri-qris');
             activePayment.push('bri-qris');
+        }
+
+        if (selectedProduct !== undefined && selectedProduct.category == 'Parking'){
+            // Remove Cash Payment For Parking Payment
+            activePayment.pop('cash');
         }
         //================================
 //        isConfirm = true;
@@ -1164,6 +1221,11 @@ Base{
                         // generateConfirm(rows, true);
                         // return;
                     }
+                case 'PARKING':
+                    console.log('Checking Transaction Number : ', now, textInput);
+                    popup_loading.open('Memeriksa Tiket Parkir Anda...')
+                    _SLOT.start_do_parking_inquiry(textInput);
+                    return
                 case 'SEARCH_TRX':
                     console.log('Checking Transaction Number : ', now, textInput);
                     popup_loading.open('Memeriksa Transaksi Anda...')

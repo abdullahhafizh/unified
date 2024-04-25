@@ -535,6 +535,12 @@ Base{
         successTransaction = true;
         details.ppob_details = info;
         details.receipt_title = 'Transaksi Sukses';
+        // Overwrite Shoptype to PPOB
+        if (details.shop_type == 'parkour'){
+            details.shop_type = 'ppob';
+            details.receipt_title = 'Pembayaran Parkir Sukses';
+        }
+
         if (useTransactionStatusFrame){
             validate_transaction_success('Transaksi Sukses');
             return;
@@ -628,6 +634,10 @@ Base{
             msg = msg + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
             if (details.ppob_mode=='tagihan') msg = '*' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString());
         }
+        if (details.shop_type=='parkour') {
+            msg =  '*Parkir ' + details.raw.vehicletype + ' No Tiket ' + details.raw.ticket + ' Rp. ' + FUNC.insert_dot(details.value) + '\n' + details.raw.location;
+        }
+
         if (details.service_charge > 0 ) msg = msg +'\nBiaya Layanan Rp. ' + FUNC.insert_dot(details.service_charge.toString());
         if (promoCodeActive) msg = msg +'\nPromo Aktif '+promoData.promo.code+' '+promoData.promo.name;
         press = '0'
@@ -965,6 +975,17 @@ Base{
                 console.log('DO_TOPUP_TRX', now, channel, provider, amount, structId);
                 perform_do_topup();
                 break;
+            case 'parkour':
+                var provider = details.provider;
+                var amount = getDenom.toString();
+                var structId = details.shop_type + details.epoch.toString();
+                console.log('DO_PAYMENT_PARKING', now, channel, provider, amount, structId);
+                var payload = details.raw;
+                payload.paymentreferenceid = structId
+                payload.paymentmethod = details.payment
+                payload.customerphone = "N/A"
+                _SLOT.start_do_parking_payment(JSON.stringify(payload));
+                break;
         }
         _SLOT.system_action_log('EXECUTE_TRANSACTION | ' +
                                 channel.toUpperCase()  + ' | ' +
@@ -1210,6 +1231,10 @@ Base{
             info_trx_price.labelName = 'Nilai Denom';
             if (details.product_channel == 'MDD' && details.operator == 'CASHIN OVO') info_trx_price.visible = false;
         }
+
+        if (details.shop_type=='parkour') {
+            info_trx_price.labelName = 'Biaya';
+        }
         
         // Define Service Charge
         if (details.service_charge !== undefined && details.service_charge > 0) serviceCharge = details.service_charge;
@@ -1232,7 +1257,7 @@ Base{
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;
             qrPayload = {
-                trx_id: details.shop_type + details.epoch.toString(),
+                trx_id: details.shop_type + details.epoch.toString();,
                 amount: totalPrice.toString(),
                 mode: details.payment
             }

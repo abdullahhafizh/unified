@@ -848,6 +848,12 @@ VIEW_CONFIG['auto_reload_insufficient_notif'] = True if _ConfigParser.get_set_va
 VIEW_CONFIG['bill_payment_time'] = BILL_PAYMENT_TIME + BILL_TIMEOUT_TOLERANCE
 
 
+PARKOUR_URL = _ConfigParser.get_set_value('PARKOUR', 'host^payment', 'http://1.2.3.4:1000')
+PARKOUR_SITE_ID = _ConfigParser.get_set_value('PARKOUR', 'site^id', 'TEST01')
+PARKOUR_ENABLE = (PARKOUR_URL != 'http://1.2.3.4:1000' and PARKOUR_SITE_ID != 'TEST01')
+VIEW_CONFIG['parking_payment'] = PARKOUR_ENABLE
+
+
 THEME_WA_NO = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^no', '---')
 THEME_WA_QR = _ConfigParser.get_set_value('TEMPORARY', 'theme^wa^url', '---')
 

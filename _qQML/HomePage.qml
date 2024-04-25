@@ -356,6 +356,11 @@ Base{
             preload_customer_info.whatsappNo = VIEW_CONFIG.whatsapp_no;
         }
 
+        if (VIEW_CONFIG.parking_payment){
+            parking_button.visible = true;
+            ppob_button.visible = false;
+        }
+
         // if (kiosk.refund_feature == '0') uiSimplification = true;
         // else uiSimplification = false;
 
@@ -624,6 +629,47 @@ Base{
                     }
                     popup_loading.open();
                     _SLOT.start_get_ppob_product();
+                }
+            }
+        }
+
+        MasterButtonNew {
+            id: parking_button
+            size: (globalScreenType == '1') ? 350 : 260
+            x: 150
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/parking.png"
+            text_: qsTr("Bayar Parkir")
+            text2_: qsTr("Pay Parking")
+            modeReverse: false
+            visible: false
+            rounded: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "Bayar Parkir"');
+                    if (press!="0" || maintenance_mode.visible) return;
+                    press = "1";
+                    resetMediaTimer();
+                    _SLOT.stop_idle_mode();
+                    show_tvc_loading.stop();
+                    selectedMenu = 'PARKOUR';
+                    if (showingTNC){
+                        preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
+                        return;
+                    }
+                    popup_loading.open();
+                    var details = {
+                        category: 'Parking',
+                        operator: 'parkour',
+                        description: 'Pembayaran Tiket Parking}',
+                        product_id: 'PARKOUR',
+                        rs_price: 1,
+                        amount: 1,
+                        product_channel: 'MDD',
+                    }
+                    console.log('Parking Payment: ', JSON.stringify(details));
+                    my_layer.push(global_input_number, {selectedProduct: details, mode: 'PARKING'});
                 }
             }
         }

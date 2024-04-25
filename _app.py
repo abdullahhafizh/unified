@@ -644,6 +644,14 @@ class SlotHandler(QObject):
         _PPOBService.start_do_inquiry_trx(payload)
     start_do_inquiry_trx = pyqtSlot(str)(start_do_inquiry_trx)
     
+    def start_do_parking_inquiry(self, payload):
+        _PPOBService.start_do_parking_inquiry(payload)
+    start_do_parking_inquiry = pyqtSlot(str)(start_do_parking_inquiry)
+    
+    def start_do_parking_payment(self, payload):
+        _PPOBService.start_do_parking_payment(payload)
+    start_do_parking_payment = pyqtSlot(str)(start_do_parking_payment)
+    
     def start_use_pending_code(self, pending_code, reff_no):
         _KioskService.start_use_pending_code(pending_code, reff_no)
     start_use_pending_code = pyqtSlot(str, str)(start_use_pending_code)
