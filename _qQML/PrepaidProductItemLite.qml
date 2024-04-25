@@ -17,6 +17,7 @@ Rectangle{
     property var itemDesc: 'Product Description Product Description Product Description Product Description Product Description Product Description'
     property bool isSelected: false
     property bool outOfService: false
+
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -123,7 +124,7 @@ Rectangle{
         anchors.bottomMargin: 10
         anchors.right: parent.right
         anchors.rightMargin: 10
-//        visible: false
+        visible: false
         horizontalAlignment: Text.AlignRight
         font.pixelSize: 15
         verticalAlignment: Text.AlignVCenter
