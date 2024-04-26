@@ -315,6 +315,9 @@ def sale_print_global_new_layout():
         new_print_shop_trx(p, 'PEMBELIAN KARTU')
     if p['shop_type'] == 'ppob':    
         new_print_ppob_trx(p, 'BELI/BAYAR')
+    if p['shop_type'] == 'parkour':    
+        new_print_ppob_trx(p, 'BAYAR PARKIR')
+    
 
 
 def start_reprint_pending_task():
@@ -340,6 +343,9 @@ def reprint_pending_task():
     if p['shop_type'] == 'ppob':    
         print('pyt: Printing PPOB Transaction Data')
         new_print_ppob_trx(p, 'BELI/BAYAR')
+    if p['shop_type'] == 'parkour': 
+        print('pyt: Printing Parking Payment Data')
+        new_print_ppob_trx(p, 'BAYAR PARKIR')
     os.remove(print_data_path)
 
 
@@ -351,6 +357,8 @@ def sale_print_global_ereceipt():
         ereceipt_print_shop_trx(p, 'PEMBELIAN KARTU')
     if p['shop_type'] == 'ppob':    
         ereceipt_print_ppob_trx(p, 'BELI/BAYAR')
+    if p['shop_type'] == 'parkour':    
+        ereceipt_print_ppob_trx(p, 'BAYAR PARKIR')
 
 
 def merge_text(text=[]):
@@ -1111,12 +1119,13 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         provider = str(p['provider'])
         if '(Admin' in provider:
             provider = provider.split('(Admin')[0]
-        pdf.ln(small_space)
-        pdf.set_font(USED_FONT, 'B', regular_space)
-        pdf.cell(padding_left, 0, 'PROVIDER  : ' + provider.upper(), 0, 0, 'L')
-        pdf.ln(small_space)
-        pdf.set_font(USED_FONT, 'B', regular_space)
-        pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
+        if p['ppob_mode'] != 'payment-parking':
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, 'B', regular_space)
+            pdf.cell(padding_left, 0, 'PROVIDER  : ' + provider.upper(), 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, 'B', regular_space)
+            pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
         # pdf.set_font(USED_FONT, 'B', regular_space)
         # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
         if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
@@ -1349,8 +1358,9 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
         provider = str(p['provider'])
         if '(Admin' in provider:
             provider = provider.split('(Admin')[0]
-        printer.text((' '*padding_left)+'PROVIDER  : ' + provider + "\n")
-        printer.text((' '*padding_left)+'MSISDN    : ' + str(p['msisdn']) + "\n")
+        if p['ppob_mode'] != 'payment-parking':
+            printer.text((' '*padding_left)+'PROVIDER  : ' + provider + "\n")
+            printer.text((' '*padding_left)+'MSISDN    : ' + str(p['msisdn']) + "\n")
         # pdf.set_font(USED_FONT, 'B', regular_space)
         # printer.text((' '*padding_left)+p['shop_type'].upper()+' '+p['provider'] + "\n")
         if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
@@ -2811,8 +2821,9 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
         provider = str(p['provider'])
         if '(Admin' in provider:
             provider = provider.split('(Admin')[0]
-        pdf.set_line('PROVIDER  : ' + provider)
-        pdf.set_line('MSISDN    : ' + str(p['msisdn']))
+        if p['ppob_mode'] != 'payment-parking':
+            pdf.set_line('PROVIDER  : ' + provider)
+            pdf.set_line('MSISDN    : ' + str(p['msisdn']))
         if 'ppob_details' in p.keys() and 'payment_error' not in p.keys() and 'process_error' not in p.keys():
             if p['ppob_mode'] == 'tagihan':
                 pdf.set_line('PELANGGAN  : Rp. ' + str(p['customer']))

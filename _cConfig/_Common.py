@@ -849,7 +849,6 @@ VIEW_CONFIG['bill_payment_time'] = BILL_PAYMENT_TIME + BILL_TIMEOUT_TOLERANCE
 VIEW_CONFIG['show_card_stock'] = True if _ConfigParser.get_set_value('GENERAL', 'show^card^stock', '0') == '1' else False
 
 
-
 PARKOUR_URL = _ConfigParser.get_set_value('PARKOUR', 'host^payment', 'http://1.2.3.4:1000')
 PARKOUR_SITE_ID = _ConfigParser.get_set_value('PARKOUR', 'site^id', 'TEST01')
 PARKOUR_ENABLE = (PARKOUR_URL != 'http://1.2.3.4:1000' and PARKOUR_SITE_ID != 'TEST01')

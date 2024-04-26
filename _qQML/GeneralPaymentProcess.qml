@@ -535,9 +535,7 @@ Base{
         successTransaction = true;
         details.ppob_details = info;
         details.receipt_title = 'Transaksi Sukses';
-        // Overwrite Shoptype to PPOB
-        if (details.shop_type == 'parkour'){
-            details.shop_type = 'ppob';
+        if (details.shop_type=='parkour'){
             details.receipt_title = 'Pembayaran Parkir Sukses';
         }
 

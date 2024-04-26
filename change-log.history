@@ -2,6 +2,7 @@
 - Handle QRIS Payment Fee Per Transaction Type,
 - Enable Lite Layout Receipt For BCA,
 - Disable Card Stock Visible By Config,
+- Parkour Payment Integration,
 - ...
 
 16.6.5-GLOBAL:
