@@ -291,6 +291,6 @@ def convert_minutes(total_minutes, mode='human-readable'):
     # Calculate remaining seconds
     seconds = (total_minutes % 1) * 60
     if mode == 'human-readable':
-        return str(hours) + 'Jam ' + str(remaining_minutes).zfill(2) + ' Menit'
+        return ' '.join([str(hours),'Jam', str(remaining_minutes).zfill(2),'Menit'])
     else:
-        return ':'.join([str(hours), str(remaining_minutes).zfill(2), str(seconds).zfill(2)])
+        return ':'.join([str(hours),str(remaining_minutes).zfill(2),str(seconds).zfill(2)])
