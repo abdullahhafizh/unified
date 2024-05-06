@@ -126,6 +126,7 @@ def post_to_url(url, param=None, header=None, log=False, custom_timeout=None):
     if header is None:
         header = HEADER
     try:
+        param = json.loads(json.dumps(param))
         s = requests.session()
         s.keep_alive = False
         s.headers['Connection'] = 'close'
@@ -142,8 +143,8 @@ def post_to_url(url, param=None, header=None, log=False, custom_timeout=None):
         LOGGER.warning((url, TIMEOUT, t))
         return -13, TIMEOUT
     except Exception as e:
-        LOGGER.warning((url, NO_INTERNET, e))
-        return -1, NO_INTERNET
+        LOGGER.warning((url, str(param), e))
+        return -1, ERROR_RESPONSE
 
     try:
         if '/ping' in url:

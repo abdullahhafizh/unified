@@ -48,6 +48,7 @@ def init_scanner():
         if BARCODE_TYPE in d.name:
             print("Found Scanner Device " + d.name)
             __device = d
+            break
     return __device
 
 

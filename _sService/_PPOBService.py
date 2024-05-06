@@ -455,6 +455,7 @@ def do_parking_payment(payload):
             #     "outgraceperiod": "2024-04-24 05:38:38"
             # }
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PARKING_PAYMENT|'+json.dumps(data))
+            _Common.sync_parking_transaction(data)
         else:
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PARKING_PAYMENT|ERROR')
         LOGGER.debug((str(payload), str(r)))

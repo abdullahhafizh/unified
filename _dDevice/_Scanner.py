@@ -1,12 +1,13 @@
 __author__ = "wahyudi@multidaya.id"
 
 from _dDevice import _HID
+from _cConfig import _Common
 import sys
 #from hid import AccessDeniedError, PathNotFoundError
 
 # The scanner VID/PID change if neessary
-VENDORID = 0x05e0
-PRODUCTID = 0x1300
+VENDORID = int(_Common.SCANNER_VID)
+PRODUCTID = int(_Common.SCANNER_PID)
 
 class Scanner(object):
     """ this library is platform-independent but depends on the backend HID.py"""
@@ -46,7 +47,6 @@ class Scanner(object):
             # f = urllib.urlopen("http://www.google.com/search?%s" % urllib.urlencode( {'q':line} ))
             return barcode 
         
-         
 def get_scanners():
     """Returns a collection of barcode scanner objects."""
     targets = _HID.OpenDevices(VENDORID, PRODUCTID)

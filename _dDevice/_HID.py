@@ -1,20 +1,15 @@
 __author__ = "wahyudi@multidaya.id"
 
-
-class AccessDeniedError(Exception): pass
-
-
-class PathNotFoundError(Exception): pass
-
-
-class UnknownHandleError(Exception): pass
-
-
 from ctypes import *
 
-kernel = windll.kernel32
-hid = windll.hid
-setupapi = windll.setupapi
+class AccessDeniedError(Exception): pass
+class PathNotFoundError(Exception): pass
+class UnknownHandleError(Exception): pass
+
+# Setup Global
+GLOBAL_KERNEL = windll.kernel32
+GLOBAL_HID = windll.hid
+GLOBAL_SETUPAPI = windll.setupapi
 
 # define setupapi flags used
 DIGCF_DEFAULT = 0x00000001  # only valid with DIGCF_DEVICEINTERFACE
@@ -65,73 +60,135 @@ class GUID(Structure):
 
 
 class DeviceInterfaceData(Structure):
-    _fields_ = [('cbSize', c_ulong), ('InterfaceClassGuid', GUID), ('Flags', c_ulong), ('Reserved', POINTER(c_ulong))]
+    _fields_ = [
+        ('cbSize', c_ulong), 
+        ('InterfaceClassGuid', GUID), 
+        ('Flags', c_ulong), 
+        ('Reserved', POINTER(c_ulong))
+        ]
 
 
 # the following classes are defined so that we can create an OVERLAPPED structure.
 class struct(Structure):
-    _fields_ = [("Offset", c_ulong), ("OffsetHigh", c_ulong)]
+    _fields_ = [
+        ("Offset", c_ulong), 
+        ("OffsetHigh", c_ulong)
+        ]
 
 
 class union(Union):
-    _fields_ = [("", struct), ("Pointer", c_void_p)]
+    _fields_ = [
+        ("", struct), 
+        ("Pointer", c_void_p)
+        ]
 
 
 # class OVERLAPPED(Structure):
 #    _fields_ = [("Internal",POINTER(c_ulong)), ("Internal_High",POINTER(c_ulong)),("",union),("hEvent",c_void_p)]
 
 class HidAttributes(Structure):
-    _fields_ = [('Size', c_ulong), ('VendorID', c_ushort), ('ProductID', c_ushort), ('VersionNumber', c_ushort)]
+    _fields_ = [
+        ('Size', c_ulong), 
+        ('VendorID', c_ushort), 
+        ('ProductID', c_ushort), 
+        ('VersionNumber', c_ushort)
+        ]
 
 
 class CommTimeouts(Structure):
-    _fields_ = [('ReadIntervalTimeout', c_ulong),
-                ('ReadTotalTimeoutMultiplier', c_ulong),
-                ('ReadTotalTimeoutConstant', c_ulong),
-                ('WriteTotalTimeoutMultiplier', c_ulong),
-                ('WriteTotalTimeoutConstant', c_ulong)]
+    _fields_ = [
+        ('ReadIntervalTimeout', c_ulong),
+        ('ReadTotalTimeoutMultiplier', c_ulong),
+        ('ReadTotalTimeoutConstant', c_ulong),
+        ('WriteTotalTimeoutMultiplier', c_ulong),
+        ('WriteTotalTimeoutConstant', c_ulong)
+        ]
 
 
 def OpenDevice(index):
     guid = GUID()
-    hid.HidD_GetHidGuid(byref(guid))
-    setupapi.SetupDiGetClassDevsA.restype = c_void_p
+    GLOBAL_HID.HidD_GetHidGuid(byref(guid))
+    GLOBAL_SETUPAPI.SetupDiGetClassDevsA.restype = c_void_p
     # classdevices = c_void_p(setupapi.SetupDiGetClassDevsA(byref(guid),None,None,(DIGCF_PRESENT|DIGCF_DEVICEINTERFACE)))
-    classdevices = setupapi.SetupDiGetClassDevsA(byref(guid), None, None, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE))
-    # setupapi.SetupDiGetClassDevsA(byref(guid),None,None,(DIGCF_PRESENT|DIGCF_DEVICEINTERFACE))
+    classdevices = GLOBAL_SETUPAPI.SetupDiGetClassDevsA(
+        byref(guid), 
+        None, 
+        None, 
+        (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE)
+        )
+    # GLOBAL_SETUPAPI.SetupDiGetClassDevsA(byref(guid),None,None,(DIGCF_PRESENT|DIGCF_DEVICEINTERFACE))
     deviceinterfacedata = DeviceInterfaceData()
     deviceinterfacedata.cbSize = sizeof(deviceinterfacedata)  # 16+4+4+4
     deviceinterfacedata.InterfaceClassGuid = guid
     deviceinterfacedata.Flags = 0
     deviceinterfacedata.Reserved = None
 
-    device = setupapi.SetupDiEnumDeviceInterfaces(classdevices, None, byref(guid), index, byref(deviceinterfacedata))
+    device = GLOBAL_SETUPAPI.SetupDiEnumDeviceInterfaces(
+        classdevices, 
+        None, 
+        byref(guid), 
+        index, 
+        byref(deviceinterfacedata)
+        )
+    
     buflen = c_ulong()
-    setupapi.SetupDiGetDeviceInterfaceDetailA(classdevices, byref(deviceinterfacedata), None, 0, byref(buflen), 0)
+    
+    GLOBAL_SETUPAPI.SetupDiGetDeviceInterfaceDetailA(
+        classdevices, 
+        byref(deviceinterfacedata), 
+        None, 
+        0, 
+        byref(buflen), 
+        0
+        )
 
     class DeviceInterfaceDetailData(Structure):
-        _fields_ = [('cbSize', c_ulong), ('DevicePath', c_char * (buflen.value + 1))]
+        _fields_ = [
+            ('cbSize', c_ulong), 
+            ('DevicePath', c_char * (buflen.value + 1))
+            ]
 
-    device = setupapi.SetupDiEnumDeviceInterfaces(classdevices, None, byref(guid), index, byref(deviceinterfacedata))
+    device = GLOBAL_SETUPAPI.SetupDiEnumDeviceInterfaces(
+        classdevices, 
+        None, 
+        byref(guid), 
+        index, 
+        byref(deviceinterfacedata)
+        )
+    
     detail = DeviceInterfaceDetailData()
+    
     detail.cbSize = sizeof(c_ulong) + 1  # Size of cbSize itself plus size of a null string.
-    setupapi.SetupDiGetDeviceInterfaceDetailA(classdevices, byref(deviceinterfacedata), byref(detail), buflen, None,
-                                              None)
+    
+    GLOBAL_SETUPAPI.SetupDiGetDeviceInterfaceDetailA(
+        classdevices, 
+        byref(deviceinterfacedata), 
+        byref(detail), 
+        buflen, 
+        None, 
+        None
+        )
 
-    if setupapi.SetupDiDestroyDeviceInfoList(classdevices):
+    if GLOBAL_SETUPAPI.SetupDiDestroyDeviceInfoList(classdevices):
         pass
         # return detail.DevicePath
     else:
         print("Unable to delete device list.")
         raise OSError
 
-    kernel.CreateFileA.restype = c_void_p
-    handle = kernel.CreateFileA(detail.DevicePath, GENERIC_READ | GENERIC_WRITE,
-                                FILE_SHARE_READ | FILE_SHARE_WRITE, None,
-                                OPEN_EXISTING, None, None)
-    # print kernel.GetLastError()
+    GLOBAL_KERNEL.CreateFileA.restype = c_void_p
+    
+    handle = GLOBAL_KERNEL.CreateFileA(
+        detail.DevicePath, GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, 
+        None,
+        OPEN_EXISTING, 
+        None, 
+        None
+        )
+    # print GLOBAL_KERNEL.GetLastError()
     if handle == -1:
-        error = kernel.GetLastError()
+        error = GLOBAL_KERNEL.GetLastError()
         print(error)
         if error == ERROR_ACCESS_DENIED:
             raise AccessDeniedError
@@ -140,7 +197,7 @@ def OpenDevice(index):
         else:
             raise UnknownHandleError  # we should give people some way of accessing the error code in this case.
 
-        # kernel.CloseHandle(handle) => Disabled By Yudi
+        # GLOBAL_KERNEL.CloseHandle(handle) => Disabled By Yudi
         # return error
 
     return handle
@@ -164,7 +221,6 @@ def OpenDevices(vendorid=None, productid=None):
             # if (temp.vendorid == 0) and (temp.productid == 0):
             #   break
             if temp.vendorid in [vendorid, None] and temp.productid in [productid, None]:
-
                 devices.append(temp)
             else:  # disconnect from them, just to be sure we don't leak anything.
                 temp.disconnect()
@@ -175,8 +231,7 @@ def OpenDevices(vendorid=None, productid=None):
             # so it's time to exit.
             end = True
         x += 1
-        if x == 100:
-            end = True
+        if x == 100: end = True
         # don't catch UnknownHandleError.
     return devices
 
@@ -197,7 +252,7 @@ class HIDDevice(object):
 
         attrib = HidAttributes()
         attrib.Size = sizeof(attrib)
-        hid.HidD_GetAttributes(self.handle, byref(attrib))
+        GLOBAL_HID.HidD_GetAttributes(self.handle, byref(attrib))
         self.vendorid = attrib.VendorID
         self.productid = attrib.ProductID
         self.version = attrib.VersionNumber
@@ -206,7 +261,7 @@ class HIDDevice(object):
 
     def disconnect(self):
         if self.connected:
-            if kernel.CloseHandle(self.handle):  # and kernel.CloseHandleA(self.event):
+            if GLOBAL_KERNEL.CloseHandle(self.handle):  # and kernel.CloseHandleA(self.event):
                 self.connected = False
                 return True
             return False
@@ -236,7 +291,13 @@ class HIDDevice(object):
         # result = hid.HidD_SetOutputReport(handle, byref(temp), c_int(len(data)-1))
         bytes_written = c_int(-1)
         # result = hid.HidD_SetOutputReport(handle,byref((c_byte * 3)(0x12,0x00,0x31)),c_int(3))
-        result = kernel.WriteFile(self.handle, byref(temp), c_int(22), byref(bytes_written), None)
+        result = GLOBAL_KERNEL.WriteFile(
+            self.handle, 
+            byref(temp),
+            c_int(22), 
+            byref(bytes_written), 
+            None
+            )
 
         # print kernel.GetLastError()
         # print "%s bytes written. " % bytes_written
@@ -282,7 +343,13 @@ class HIDDevice(object):
         #    return (0, None)
         #
         # print("reading...")
-        kernel.ReadFile(self.handle, byref(temp), bufsize, byref(bytes_read), None)
+        GLOBAL_KERNEL.ReadFile(
+            self.handle, 
+            byref(temp), 
+            bufsize, 
+            byref(bytes_read),
+            None
+            )
         # print "lasterror: ", kernel.GetLastError()
         # print("read")
         # print x

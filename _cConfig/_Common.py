@@ -1142,6 +1142,9 @@ DKI_WALLET = 0
 BNI_SAM_1_NO = _ConfigParser.get_set_value('BNI', 'sam1^no', '---')
 BNI_SAM_2_NO = _ConfigParser.get_set_value('BNI', 'sam2^no', '---')
 
+SCANNER_VID = int(_ConfigParser.get_set_value('SCANNER', 'vendor^id', '0x1234'))
+SCANNER_PID = int(_ConfigParser.get_set_value('SCANNER', 'product^id', '0x4567'))
+
 EDC_ERROR = ''
 NFC_ERROR = ''
 BILL_ERROR = ''
@@ -2638,3 +2641,19 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
     return True, 'OK'
 
 REBOOT_TIME = 0
+
+
+def sync_parking_transaction(payload):
+    try:
+        payload = json.loads(json.dumps(payload))
+        payload['paid_at'] = _Helper.time_string()
+        payload['site_id'] = PARKOUR_SITE_ID
+        url = BACKEND_URL + 'sync/transaction-parking'
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
+        if s != 200 or r.get('result') != 'OK':
+            payload['endpoint'] = 'sync/transaction-parking'
+            store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+        return True
+    except Exception as e:
+        LOGGER.warning(e)
+        return False
