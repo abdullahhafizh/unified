@@ -283,14 +283,14 @@ def log_to_file(message='', log_name='', log_rotate='DAILY', log_ext='.log'):
         file_logging.close()
         
         
-def convert_minutes(total_minutes, mode='normal'):
+def convert_minutes(total_minutes, mode='human-readable'):
     # Calculate hours
     hours = total_minutes // 60
     # Calculate remaining minutes
     remaining_minutes = total_minutes % 60
     # Calculate remaining seconds
     seconds = (total_minutes % 1) * 60
-    if mode == 'normal':
+    if mode == 'human-readable':
         return str(hours) + 'Jam ' + str(remaining_minutes).zfill(2) + ' Menit'
     else:
         return ':'.join([str(hours), str(remaining_minutes).zfill(2), str(seconds).zfill(2)])
