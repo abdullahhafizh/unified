@@ -568,10 +568,10 @@ Rectangle{
             img_: "source/qr_logo/jakone_white_logo.png"
             text_: qsTr("JAKONE")
             text2_: qsTr("")
-            isActivated: _qrJakoneEnable
+            isActivated: listActivePayment.indexOf('jakone') > -1
             modeReverse: false
             MouseArea{
-                enabled: _qrJakoneEnable
+                enabled: listActivePayment.indexOf('jakone') > -1
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('choose "JAKONE" Payment Method');
