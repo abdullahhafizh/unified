@@ -63,8 +63,6 @@ def get_scanners():
     return [Scanner(scanner) for scanner in targets]
 
 
-
-SKIP_CHARS = ['shift']
 BREAK_CHARS = ['enter']
 MIN_READ_LEN = 15
 
@@ -75,13 +73,14 @@ def start_simple_read_scanner():
 
 def simple_read_scanner():
     keyboard.on_press(on_key_event)
-    
+    keyboard.wait(BREAK_CHARS[0])
+
 
 def on_key_event(event):
     chars = ''
     while len(chars) < MIN_READ_LEN:
-        if event.name not in SKIP_CHARS:
-            chars += event.name
         if event.name in BREAK_CHARS:
             break
+        if len(event.name) == 1:
+            chars += event.name
     SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
