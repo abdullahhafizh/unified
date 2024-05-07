@@ -382,10 +382,13 @@ def do_parking_inquiry(ticket_no):
         url = _Common.PARKOUR_URL+'/api/pas/get_ticket'
         payload = {
                 'p1': ticket_no,
+                'p2': _Common.PARKOUR_SITE_ID,
                 'ticket': ticket_no,
-                'p2': _Common.PARKOUR_SITE_ID
+                'site_id': _Common.PARKOUR_SITE_ID
             }
-        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
+        __header = _HTTPAccess.get_header()
+        __header['X-Signature'] = _Helper.to_md5(payload['ticket'] + 'parkour' + payload['site_id'])
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload, header=__header)
         if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'UNPAID':
             data = r
             # {
@@ -423,6 +426,7 @@ def do_parking_payment(payload):
     payload = json.loads(payload)
     try:
         url = _Common.PARKOUR_URL+'/api/pas/payment_ticket'
+        payload['site_id'] = _Common.PARKOUR_SITE_ID
         # {
         #     "ticket": "PM1139083180809",
         #     "tarif": "2000",
@@ -430,7 +434,9 @@ def do_parking_payment(payload):
         #     "paymentmethod": "gopay",
         #     "customerphone": "N/A"
         # }
-        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
+        __header = _HTTPAccess.get_header()
+        __header['X-Signature'] = _Helper.to_md5(payload['ticket'] + 'parkour' + payload['site_id'])
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload, header=__header)
         if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'PAID':
             data = r
             # paymentreferenceid as trx_id

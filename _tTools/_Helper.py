@@ -304,3 +304,7 @@ def convert_minutes(total_minutes, mode='human-readable'):
             str(remaining_minutes).zfill(2),
             str(seconds).zfill(2)
             ])
+
+
+def to_md5(s):
+    return hashlib.md5(s.lower()).hexdigest()
