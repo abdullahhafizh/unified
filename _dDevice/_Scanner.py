@@ -78,10 +78,10 @@ def simple_read_scanner():
 
 def on_key_event(event):
     chars = ''
-    while event.name or len(chars) > MIN_READ_LEN:
+    while event.name or len(chars) < MIN_READ_LEN:
         if event.name in BREAK_CHARS:
             break
         if len(event.name) == 1:
             chars += event.name
-    if len(chars) > MIN_READ_LEN:
+    if len(chars) >= MIN_READ_LEN:
         SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
