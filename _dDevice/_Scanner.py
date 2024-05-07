@@ -73,7 +73,7 @@ def start_simple_read_scanner():
 
 def simple_read_scanner():
     keyboard.on_press(on_key_event)
-    keyboard.wait(BREAK_CHARS[0])
+    # keyboard.wait(BREAK_CHARS[0])
 
 
 def on_key_event(event):
