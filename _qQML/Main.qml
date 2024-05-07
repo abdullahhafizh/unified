@@ -104,6 +104,7 @@ Rectangle {
     signal result_general_payment(string str)
     signal result_ppob_check_customer(string str)
     signal result_panel_setting(string str)
+    signal result_scanner_read(string str)
 
 
     //==================================================================================================//

@@ -281,4 +281,29 @@ function serialize_qris_provider(p){
     return rop.join(' ').toUpperCase();
 }
 
+function parse_query_string(queryString) {
+    var queryParams = {};
+    // Remove leading '?' if present
+    if (queryString.charAt(0) === '?') {
+        queryString = queryString.substring(1);
+    }
+    // Split query string into key-value pairs
+    var pairs = queryString.split('&');
+    for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].split('=');
+        var key = decodeURIComponent(pair[0]);
+        var value = decodeURIComponent(pair[1] || '');
+        // If the key already exists, convert it to an array
+        if (queryParams.hasOwnProperty(key)) {
+            if (!Array.isArray(queryParams[key])) {
+                queryParams[key] = [queryParams[key]];
+            }
+            queryParams[key].push(value);
+        } else {
+            queryParams[key] = value;
+        }
+    }
+    return queryParams;
+}
+
 

@@ -48,8 +48,6 @@ Base{
 
     property var adminFee: 1500
 
-    property bool scannerActive: false
-
     property variant activeQRISProvider: []
     property var activePayment: []
 
@@ -80,7 +78,6 @@ Base{
             cardBalance = 0;
             activeQRISProvider = [];
             press = '0';
-            scannerActive = false;
             abc.counter = timer_value;
             my_timer.start();
             if (mode=='PPOB' && ppobDetails==undefined){
@@ -109,6 +106,7 @@ Base{
         base.result_cd_move.connect(card_eject_result);
         base.result_balance_qprox.connect(get_balance);
         base.result_ppob_check_customer.connect(get_ppob_check);
+        base.result_scanner_read.connect(get_scanner_result);
     }
 
     Component.onDestruction:{
@@ -122,6 +120,7 @@ Base{
         base.result_cd_move.disconnect(card_eject_result);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_ppob_check_customer.disconnect(get_ppob_check);
+        base.result_scanner_read.disconnect(get_scanner_result);
     }
 
     Rectangle{
@@ -226,6 +225,21 @@ Base{
         }
         ppobMode = 'non-tagihan';
         generateConfirm(rows, true);
+    }
+
+    function get_scanner_result(text){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_scanner_result', text, now);
+        var result = text.split('|')[1];
+        if (mode=='PARKING'){
+            if (result.indexOf('https:') > -1 && result.indexOf('?') > -1){
+                result = result.split('?')[1];
+                var queryData = FUNC.parse_query_string(result);
+                result = queryData.ticket;
+            }
+            console.log('FINAL SCANNER RESULT', result);
+            textInput = result;
+        }
     }
 
     function get_balance(text){
@@ -790,8 +804,8 @@ Base{
     function define_wording(){
         if (mode=='PARKING'){
             wording_text = 'Scan Tiket Parkir Anda Pada Reader';
-            scannerActive = true;
-            min_count = 10;
+            _SLOT.start_simple_read_scanner();
+            min_count = 12;
             return;
         }
         if (mode=='WA_VOUCHER'){
@@ -1100,23 +1114,6 @@ Base{
         clip: true
         visible: true
         focus: true
-        
-        // Keys.onPressed: {
-        //     if (scannerActive){
-        //         if (event.text && event.text.length > 0) {
-        //             // Append the pressed key to the text
-        //             inputText.text += event.text;
-        //             console.log(event.text);
-        //         }
-        //     }
-        // }
-    }
-
-    Keys.onPressed: {
-        // Access the native scan code of the key event
-        var scanCode = event.nativeScanCode;
-        textInput += scanCode;
-        console.log(textInput)
     }
 
 

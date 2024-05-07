@@ -20,6 +20,7 @@ from _dDevice import _EDC
 from _dDevice import _QPROX
 from _dDevice import _CD
 from _dDevice import _Printer
+from _dDevice import _Scanner
 from time import sleep
 from _tTools import _CheckIn
 from _tTools import _SalePrintTool
@@ -707,7 +708,11 @@ class SlotHandler(QObject):
     def start_reset_cd_status(self, slot):
         _CD.start_reset_cd_status(slot)
     start_reset_cd_status = pyqtSlot(str)(start_reset_cd_status)
-
+    
+    def start_simple_read_scanner(self):
+        _Scanner.start_simple_read_scanner()
+    start_simple_read_scanner = pyqtSlot()(start_simple_read_scanner)
+        
 
 def set_signal_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -787,6 +792,7 @@ def set_signal_handler():
     _QPROX.QP_SIGNDLER.SIGNAL_CARD_HISTORY.connect(view.rootObject().result_card_log_history)
     _GeneralPaymentService.GENERALPAYMENT_SIGNDLER.SIGNAL_GENERAL_PAYMENT.connect(view.rootObject().result_general_payment)
     _KioskService.K_SIGNDLER.SIGNAL_PANEL_SETTING.connect(view.rootObject().result_panel_setting)
+    _Scanner.SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.connect(view.rootObject().result_scanner_read)
 
 
 LOGGER = None
@@ -1277,7 +1283,7 @@ if __name__ == '__main__':
     # sleep(1)
     # print("pyt: Initiating Setting From Host...")
     # init_local_setting_from_host()
-    update_module(['ntplib'])
+    update_module(['ntplib', 'keyboard'])
     # install_font()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()

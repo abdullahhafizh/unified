@@ -1,8 +1,18 @@
 __author__ = "wahyudi@multidaya.id"
 
+from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _HID
 from _cConfig import _Common
 import sys
+import keyboard
+from _tTools import _Helper
+
+
+class ScannerSignalHandler(QObject):
+    __qualname__ = 'ScannerSignalHandler'
+    SIGNAL_READ_SCANNER = pyqtSignal(str)
+
+SCANNER_SIGNDLER = ScannerSignalHandler()
 #from hid import AccessDeniedError, PathNotFoundError
 
 # The scanner VID/PID change if neessary
@@ -51,3 +61,27 @@ def get_scanners():
     """Returns a collection of barcode scanner objects."""
     targets = _HID.OpenDevices(VENDORID, PRODUCTID)
     return [Scanner(scanner) for scanner in targets]
+
+
+
+SKIP_CHARS = ['shift']
+BREAK_CHARS = ['enter']
+MIN_READ_LEN = 15
+
+
+def start_simple_read_scanner():
+    _Helper.get_thread().apply_async(simple_read_scanner)
+
+
+def simple_read_scanner():
+    keyboard.on_press(on_key_event)
+    
+
+def on_key_event(event):
+    chars = ''
+    while len(chars) < MIN_READ_LEN:
+        if event.name not in SKIP_CHARS:
+            chars += event.name
+        if event.name in BREAK_CHARS:
+            break
+    SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
