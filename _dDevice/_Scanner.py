@@ -6,8 +6,8 @@ import sys
 #from hid import AccessDeniedError, PathNotFoundError
 
 # The scanner VID/PID change if neessary
-VENDORID = int(_Common.SCANNER_VID)
-PRODUCTID = int(_Common.SCANNER_PID)
+VENDORID = _Common.SCANNER_VID
+PRODUCTID = _Common.SCANNER_PID
 
 class Scanner(object):
     """ this library is platform-independent but depends on the backend HID.py"""

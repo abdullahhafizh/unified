@@ -1142,8 +1142,8 @@ DKI_WALLET = 0
 BNI_SAM_1_NO = _ConfigParser.get_set_value('BNI', 'sam1^no', '---')
 BNI_SAM_2_NO = _ConfigParser.get_set_value('BNI', 'sam2^no', '---')
 
-SCANNER_VID = int(_ConfigParser.get_set_value('SCANNER', 'vendor^id', '0x1234'))
-SCANNER_PID = int(_ConfigParser.get_set_value('SCANNER', 'product^id', '0x4567'))
+SCANNER_VID = _ConfigParser.get_set_value('SCANNER', 'vendor^id', '0x1234')
+SCANNER_PID = _ConfigParser.get_set_value('SCANNER', 'product^id', '0x4567')
 
 EDC_ERROR = ''
 NFC_ERROR = ''
