@@ -1,3 +1,9 @@
+16.6.7-GLOBAL:
+- Filter User For Collection,
+- Validate & Input Cashbox SN Before Cash Collection,
+- HID Scanner Event Capture,
+- ...
+
 16.6.6-GLOBAL:
 - Handle QRIS Payment Fee Per Transaction Type,
 - Enable Lite Layout Receipt For BCA,

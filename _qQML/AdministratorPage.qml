@@ -284,6 +284,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('parse_user_data', now, JSON.stringify(userData));
         operatorName = userData.first_name;
+        button_collect_cash.visible = (parseInt(userData.isAbleCollect)==1);
         if (userData.isAbleCollect==0){
             switch_notif('Selamat Datang '+operatorName+'|Akses Akun Anda Terbatas, Jika Anda Memerlukan Perubahan, Silakan Hubungi Master Admin')
         } else {
@@ -327,6 +328,25 @@ Base{
         _total_edc_available.labelContent = FUNC.insert_dot(info.edc_not_settle.toString());
         popup_loading.close();
 
+    }
+
+    function do_collect_bill_cash(){
+        _SLOT.start_begin_collect_cash();
+        popup_loading.open();
+        _total_cash_available.labelContent = '0';
+        if (VIEW_CONFIG.auto_print_collection){
+            delay((3*1000), function(){
+                // Auto Print Collection Receipt After 3s
+                var epoch = new Date().getTime();
+                var struct_id = userData.username+epoch;
+                _SLOT.start_generate_cash_collection_event(struct_id);
+            });
+        } else {
+            actionList.push({
+                                type: 'collectCash',
+                                user: operatorName
+                            });
+        }
     }
 
     Rectangle{
@@ -1010,22 +1030,11 @@ Base{
                            _SLOT.user_action_log('Admin Page "Collect Cash"');
                            console.log('Collect Cash Button is Pressed..!')
                            if (userData.isAbleCollect==1){
-                               _SLOT.start_begin_collect_cash();
-                               popup_loading.open();
-                               _total_cash_available.labelContent = '0';
-                               if (VIEW_CONFIG.auto_print_collection){
-                                    delay((3*1000), function(){
-                                        // Auto Print Collection Receipt After 3s
-                                        var epoch = new Date().getTime();
-                                        var struct_id = userData.username+epoch;
-                                        _SLOT.start_generate_cash_collection_event(struct_id);
-                                    });
-                                } else {
-                                    actionList.push({
-                                                        type: 'collectCash',
-                                                        user: operatorName
-                                                    });
-                               }
+                                if (userData.activeCashboxList !== undefined && userData.activeCashboxList.length > 0){
+                                    popup_input_cashbox_no.open('');
+                                    return;
+                                }
+                               do_collect_bill_cash();
                            } else {
                                switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                            }
@@ -1351,13 +1360,10 @@ Base{
                     globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
-
             }
-
         }
 
     }
-
 
     function switch_notif(param, button){
         press = '0';
@@ -1366,6 +1372,21 @@ Base{
         var buttonEnable = true;
         if (button!=undefined) buttonEnable = button;
         standard_notif_view.buttonEnabled = buttonEnable;
+        if (param==undefined){
+            standard_notif_view.show_text = "Mohon Maaf";
+            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
+        } else {
+            standard_notif_view.show_text = param.split('|')[0];
+            standard_notif_view.show_detail = param.split('|')[1];
+        }
+        standard_notif_view.open();
+    }
+
+
+    function false_notif(param){
+        press = '0';
+        standard_notif_view.z = 100;
+        standard_notif_view._button_text = 'tutup';
         if (param==undefined){
             standard_notif_view.show_text = "Mohon Maaf";
             standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
@@ -1413,6 +1434,60 @@ Base{
 
     PopupUpdateStock{
         id: popup_update_stock
+    }
+
+    PopupInputCashboxNumber{
+        id: popup_input_cashbox_no
+//        calledFrom: 'general_payment_process'
+        handleButtonVisibility: next_button_input_number
+        z: 99
+
+        CircleButton{
+            id: cancel_button_input_number
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL" in Input Cashbox Number');
+                    popup_input_cashbox_no.close();
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_input_number
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'LANJUT'
+            modeReverse: true
+            visible: false
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (press != '0') return;
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT" Cashbox Number ' + popup_input_cashbox_no.numberInput);
+                    if (_userData.activeCashboxList.indexOf(VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput) > -1){
+                        console.log('Cashbox Number Match : ' + VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput);
+                        do_collect_bill_cash();
+                    } else {
+                        false_notif('Mohon Maaf|Nomor Serial Cashbox Salah, Silakan Hubungi Administrator');
+                        press = '0';
+                        popup_input_cashbox_no.reset_counter();
+                    }
+                    popup_input_cashbox_no.close();
+                }
+            }
+        }
     }
 
 

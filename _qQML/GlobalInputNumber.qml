@@ -48,6 +48,8 @@ Base{
 
     property var adminFee: 1500
 
+    property bool scannerActive: false
+
     property variant activeQRISProvider: []
     property var activePayment: []
 
@@ -787,6 +789,7 @@ Base{
     function define_wording(){
         if (mode=='PARKING'){
             wording_text = 'Scan Tiket Parkir Anda Pada Reader';
+            scannerActive = true;
             min_count = 10;
             return;
         }
@@ -1096,6 +1099,16 @@ Base{
         clip: true
         visible: true
         focus: true
+        
+        Keys.onPressed: {
+            if (scannerActive){
+                if (event.text && event.text.length > 0) {
+                    // Append the pressed key to the text
+                    // textInput.text += event.text;
+                    console.log(event.text);
+                }
+            }
+        }
     }
 
 
@@ -1223,17 +1236,17 @@ Base{
                     }
                 case 'PARKING':
                     console.log('Checking Transaction Number : ', now, textInput);
-                    popup_loading.open('Memeriksa Tiket Parkir Anda...')
+                    popup_loading.open('Memeriksa Tiket Parkir Anda...');
                     _SLOT.start_do_parking_inquiry(textInput);
                     return
                 case 'SEARCH_TRX':
                     console.log('Checking Transaction Number : ', now, textInput);
-                    popup_loading.open('Memeriksa Transaksi Anda...')
+                    popup_loading.open('Memeriksa Transaksi Anda...');
                     _SLOT.start_check_status_trx(textInput);
                     return
                 case 'WA_VOUCHER':
                     console.log('Checking WA Invoice Number : ', now, textInput);
-                    popup_loading.open('Memeriksa Voucher Code (VCODE) Anda...')
+                    popup_loading.open('Memeriksa Voucher Code (VCODE) Anda...');
                     _SLOT.start_check_voucher(textInput);
                     return;
                 default:

@@ -77,6 +77,7 @@ def kiosk_login(username, password):
             #     "last_activity": 1552546792
             #     }
             USER['otpCode'] = str(response['data'].get('otpCode', 0))
+            USER['activeCashboxList'] = response['data'].get('activeCashboxList', [])
             if not _Common.LIVE_MODE:
                 USER['forceLogin'] = 1
             US_SIGNDLER.SIGNAL_USER_LOGIN.emit('SUCCESS|'+json.dumps(USER))
@@ -95,7 +96,8 @@ def kiosk_login(username, password):
                             "isAbleTerminal": 1,
                             "isAbleCollect": 1,
                             "last_activity": _Helper.now(),
-                            "otpCode": "000000"
+                            "otpCode": "000000",
+                            "activeCashboxList": []
                             }
                         US_SIGNDLER.SIGNAL_USER_LOGIN.emit('SUCCESS|' + json.dumps(USER))
                     else:

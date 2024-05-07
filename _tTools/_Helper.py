@@ -293,11 +293,14 @@ def convert_minutes(total_minutes, mode='human-readable'):
     if mode == 'human-readable':
         notation = ['Jam', 'Menit', 'Detik']
         return ' '.join([
-            str(hours), notation[0], 
+            str(hours), 
+            notation[0], 
             str(remaining_minutes).zfill(2), 
-            notation[1]])
+            notation[1]
+            ])
     else:
         return ':'.join([
             str(hours),
             str(remaining_minutes).zfill(2),
-            str(seconds).zfill(2)])
+            str(seconds).zfill(2)
+            ])

@@ -433,6 +433,7 @@ def do_parking_payment(payload):
         s, r = _HTTPAccess.post_to_url(url=url, param=payload)
         if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'PAID':
             data = r
+            # paymentreferenceid as trx_id
             # {
             #     "ticket": "PM1139083180809",
             #     "ticketstatus": "VALID",
