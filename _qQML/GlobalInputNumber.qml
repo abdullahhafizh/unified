@@ -80,6 +80,7 @@ Base{
             cardBalance = 0;
             activeQRISProvider = [];
             press = '0';
+            scannerActive = false;
             abc.counter = timer_value;
             my_timer.start();
             if (mode=='PPOB' && ppobDetails==undefined){
