@@ -1101,15 +1101,22 @@ Base{
         visible: true
         focus: true
         
-        Keys.onPressed: {
-            if (scannerActive){
-                if (event.text && event.text.length > 0) {
-                    // Append the pressed key to the text
-                    inputText.text += event.text;
-                    console.log(event.text);
-                }
-            }
-        }
+        // Keys.onPressed: {
+        //     if (scannerActive){
+        //         if (event.text && event.text.length > 0) {
+        //             // Append the pressed key to the text
+        //             inputText.text += event.text;
+        //             console.log(event.text);
+        //         }
+        //     }
+        // }
+    }
+
+    Keys.onPressed: {
+        // Access the native scan code of the key event
+        var scanCode = event.nativeScanCode;
+        textInput += scanCode;
+        console.log(textInput)
     }
 
 
