@@ -1,4 +1,5 @@
 import keyboard
+import time
 
 def on_key_event(event):
     # Check if the event is a key press event        
@@ -8,7 +9,11 @@ def on_key_event(event):
 
 if __name__ == '__main__':
     # Set up the keyboard event listener
-    keyboard.on_press(on_key_event)
+    # keyboard.on_press(on_key_event)
+    while True:
+        event = keyboard.read_event()
+        print("Pressed key:", event.name)
+        time.sleep(.5)
 
     # Keep the script running to continue listening for events
     keyboard.wait('esc')

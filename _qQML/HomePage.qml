@@ -654,11 +654,11 @@ Base{
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                     selectedMenu = 'PARKOUR';
-                    if (showingTNC){
-                        preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
-                        return;
-                    }
-                    popup_loading.open();
+                    // if (showingTNC){
+                    //     preload_customer_info.open(selectedMenu, VIEW_CONFIG.tnc_timer);
+                    //     return;
+                    // }
+                    // popup_loading.open();
                     var details = {
                         category: 'Parking',
                         operator: 'parkour',

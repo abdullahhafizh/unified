@@ -84,7 +84,7 @@ def start_simple_read_scanner():
 def simple_read_scanner():
     global EVENT_RESULT
     while True:
-        event = keyboard.read_key()
+        event = keyboard.read_event()
         print(event)
         if event.name in BREAK_EVENT:
             SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
