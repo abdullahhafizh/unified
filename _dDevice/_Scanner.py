@@ -86,8 +86,8 @@ def on_key_event(event):
         print(event.name, type(event.name), str(len(event.name)))
         if event.name in BREAK_EVENT:
             break
-        if event.name in SKIP_EVENT:
-            chars += event.name
+        if event.name in SKIP_EVENT: continue
+        chars += event.name
     if RELEASE_RESULT:
         SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
         RELEASE_RESULT = False
