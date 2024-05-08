@@ -4,8 +4,6 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _HID
 from _cConfig import _Common
 import sys
-import time
-import keyboard
 from _tTools import _Helper
 
 
@@ -77,9 +75,15 @@ def start_simple_read_scanner():
 
 
 def simple_read_scanner():
-    keyboard.on_press(on_key_event)
-    keyboard.wait('enter')
-    SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
+    try:
+        import keyboard
+        keyboard.on_press(on_key_event)
+        keyboard.wait('enter')
+    except Exception as e:
+        EVENT_RESULT = 'ERROR'
+    finally:
+        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
+        del keyboard
 
 
 def on_key_event(event):
