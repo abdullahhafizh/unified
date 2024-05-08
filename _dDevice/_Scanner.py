@@ -72,22 +72,32 @@ BREAK_EVENT = ['enter']
 SKIP_EVENT = ['tab', 'alt', 'menu', 'shift', 'ctrl', 'delete', 'backspace', 'right ctrl', 'left ctrl', 'esc']
 MIN_READ_LEN = 15
 EVENT_RESULT = ''
+SCANNER_ACTIVE = False
 
+    
+def reset_state():
+    global EVENT_RESULT, SCANNER_ACTIVE
+    EVENT_RESULT = ''
+    SCANNER_ACTIVE = False
+    
+    
+def on_key_event(event):
+    global EVENT_RESULT
+    if event.name in BREAK_EVENT and SCANNER_ACTIVE is True:
+        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
+        reset_state()
+        return
+    if len(event.name) == 1:
+        EVENT_RESULT += event.name
+        
 
 def start_simple_read_scanner():
-    global EVENT_RESULT
-    EVENT_RESULT = ''
     _Helper.get_thread().apply_async(simple_read_scanner)
 
 
 def simple_read_scanner():
+    global SCANNER_ACTIVE
+    SCANNER_ACTIVE = True
     keyboard.on_press(on_key_event)
-    keyboard.wait('enter')
-    SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
-
-def on_key_event(event):
-    global EVENT_RESULT
-    if event.name in BREAK_EVENT:
-        return
-    if event.name not in SKIP_EVENT and len(event.name) == 1:
-        EVENT_RESULT += event.name
+        
+keyboard.wait()
