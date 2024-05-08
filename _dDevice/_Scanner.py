@@ -139,5 +139,7 @@ def read_serial_scanner():
         if handle is not None:
             if handle.isOpen():
                 handle.disconnect()
+        handle = None
+        del handle
         reset_state()
         
