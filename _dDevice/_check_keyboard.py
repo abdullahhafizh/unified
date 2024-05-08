@@ -18,11 +18,6 @@ def on_key_event(event):
 def reset_state():
     global chars
     chars = ''
-    try:
-        keyboard.restore_state()
-    except Exception as e:
-        print(str(e))
-
 
 if __name__ == '__main__':
     keyboard.on_press(on_key_event)
