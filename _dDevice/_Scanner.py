@@ -63,24 +63,31 @@ def get_scanners():
     return [Scanner(scanner) for scanner in targets]
 
 
-BREAK_CHARS = ['enter']
+BREAK_EVENT = ['enter']
+SKIP_EVENT = ['enter', 'tab', 'alt', 'menu', 'shift', 'ctrl', 'delete', 'backspace', 'right ctrl', 'left ctrl', 'esc']
 MIN_READ_LEN = 15
+RELEASE_RESULT = False
 
 
 def start_simple_read_scanner():
+    global RELEASE_RESULT
+    RELEASE_RESULT = True
     _Helper.get_thread().apply_async(simple_read_scanner)
 
 
 def simple_read_scanner():
     keyboard.on_press(on_key_event)
-    # keyboard.wait(BREAK_CHARS[0])
 
 
 def on_key_event(event):
+    global RELEASE_RESULT
     chars = ''
     while event.name:
-        if event.name in BREAK_CHARS:
+        print(event.name, type(event.name), str(len(event.name)))
+        if event.name in BREAK_EVENT:
             break
-        if len(event.name) == 1:
+        if event.name in SKIP_EVENT:
             chars += event.name
-    SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
+    if RELEASE_RESULT:
+        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
+        RELEASE_RESULT = False
