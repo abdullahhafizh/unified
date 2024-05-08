@@ -587,13 +587,24 @@ Base{
                         {label: 'Durasi', content: data.duration_hour},
                         {label: 'Biaya', content: FUNC.insert_dot(data.tarif)},
                     ]
+        // Assign to SelectedProduct
         selectedProduct.rs_price = parseInt(data.tarif);
         selectedProduct.amount = parseInt(data.tarif);
         selectedProduct.description = 'Parking Ticket';
-
-        var mergedObject = selectedProduct.extend(data);
-        console.log('merge_parkour_data', mergedObject);
-        selectedProduct = mergedObject;
+        selectedProduct.ticket = data.ticket;
+        selectedProduct.ticketstatus = data.ticketstatus;
+        selectedProduct.intime = data.intime;
+        selectedProduct.duration = data.duration;
+        selectedProduct.duration_hour = data.duration_hour;
+        selectedProduct.tarif = data.tarif;
+        selectedProduct.vehicletype = data.vehicletype;
+        selectedProduct.location = data.location;
+        selectedProduct.paymentstatus = data.paymentstatus;
+        selectedProduct.platenumber = data.platenumber;
+        selectedProduct.address = data.address;
+        selectedProduct.outtime = data.outtime;
+        selectedProduct.timenow = data.timenow;
+        selectedProduct.graceperiod = data.graceperiod;
         ppobMode = 'payment-parking';
         generateConfirm(rows, true);
     }
