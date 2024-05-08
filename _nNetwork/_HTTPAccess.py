@@ -70,17 +70,17 @@ LOGGER = logging.getLogger()
 GLOBAL_TIMEOUT = 60
 
 
-def get_header(tid='', token=''):
+def get_header(extras={}):
     header = {
         'Accept': '*/*',
         'Accept-Encoding': 'gzip, deflate',
         'Connection': 'close',
         'Content-Type': 'application/json',
-        'tid': tid,
-        'token': token,
         'unique': DISK_SERIAL_NUMBER,
-        'User-Agent': 'MDD Vending Machine ID ['+tid+']'
+        'User-Agent': 'MDD Vending Machine ID ['+extras.get('tid', '')+']'
     }
+    if len(extras.keys()) > 0:
+        header = {**header, **extras}
     return header
 
 
