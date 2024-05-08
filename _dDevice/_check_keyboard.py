@@ -8,7 +8,7 @@ def on_key_event(event):
     # Check if the event is a key press event        
     # Print the name of the pressed key
     # print("Pressed key:", event.name)
-    if event.name not in keyboard.all_modifiers():
+    if len(event.name) == 1:
         chars += event.name
 
 
