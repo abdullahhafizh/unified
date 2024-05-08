@@ -85,17 +85,9 @@ def simple_read_scanner():
     keyboard.wait('enter')
     SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
 
-
-DEBOUNCE_DELAY = 0.5 
-LAST_EVENT_TIME = 0
-
 def on_key_event(event):
     global EVENT_RESULT
-    global LAST_EVENT_TIME
-    current_time = time.time()
     if event.name in BREAK_EVENT:
         return
     if event.name not in SKIP_EVENT and len(event.name) == 1:
-        if current_time - LAST_EVENT_TIME >= DEBOUNCE_DELAY:
-            LAST_EVENT_TIME = current_time
-            EVENT_RESULT += event.name
+        EVENT_RESULT += event.name
