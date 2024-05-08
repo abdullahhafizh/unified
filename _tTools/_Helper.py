@@ -284,6 +284,7 @@ def log_to_file(message='', log_name='', log_rotate='DAILY', log_ext='.log'):
         
         
 def convert_minutes(total_minutes, mode='human-readable'):
+    total_minutes = int(total_minutes)
     # Calculate hours
     hours = total_minutes // 60
     # Calculate remaining minutes
