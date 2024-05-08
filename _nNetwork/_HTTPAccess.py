@@ -80,7 +80,8 @@ def get_header(extras={}):
         'User-Agent': 'MDD Vending Machine ID ['+extras.get('tid', '')+']'
     }
     if len(extras.keys()) > 0:
-        header = {**header, **extras}
+        for k in extras.keys():
+            header[k] = extras[k]
     return header
 
 
