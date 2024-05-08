@@ -120,7 +120,10 @@ if LIVE_MODE or PTR_MODE:
 
 # Initiate Network Header
 # HEADER = get_header()
-_HTTPAccess.HEADER = _HTTPAccess.get_header({})
+_HTTPAccess.HEADER = _HTTPAccess.get_header({
+    'tid': TID,
+    'token': TERMINAL_TOKEN
+})
 
 QPROX_PORT = _ConfigParser.get_set_value('QPROX_NFC', 'port', 'COM')
 QPROX_BAUDRATE = _ConfigParser.get_set_value('QPROX_NFC', 'baudrate', '38400')
