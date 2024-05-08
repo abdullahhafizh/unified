@@ -577,8 +577,7 @@ Base{
             switch_frame('source/smiley_down.png', 'Mohon Maaf', 'Terjadi Kesalahan Saat Memeriksa Tiket Parkir Anda. Silakan Coba Lagi.', 'backToMain', false );
             return;
         } 
-        var res = r.split('|')[2];
-        var data = JSON.parse(res);
+        var data = JSON.parse(result);
         var rows = [
                         {label: 'Tanggal', content: now},
                         {label: 'No Tiket', content: data.ticket},
