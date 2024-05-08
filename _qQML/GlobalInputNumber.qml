@@ -232,12 +232,13 @@ Base{
         console.log('get_scanner_result', text, now);
         var result = text.split('|')[1];
         if (mode=='PARKING'){
-            if (result.indexOf('https:') > -1 && result.indexOf('?') > -1){
+            if (result.indexOf('http') > -1 && result.indexOf('?') > -1){
                 result = result.split('?')[1];
                 var queryData = FUNC.parse_query_string(result);
-                result = queryData.ticket;
+                console.log('parse_query_string', result, JSON.stringify(queryData));
+                result = queryData.p1;
             }
-            console.log('FINAL SCANNER RESULT', result);
+            console.log('final_scanner', result);
             textInput = result;
         }
     }
