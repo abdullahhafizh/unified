@@ -19,7 +19,6 @@ def reset_state():
     global chars
     chars = ''
     try:
-        keyboard.release()
         keyboard.restore_state()
     except Exception as e:
         print(str(e))
