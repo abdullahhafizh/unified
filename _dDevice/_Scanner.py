@@ -82,7 +82,7 @@ def simple_read_scanner():
 def on_key_event(event):
     global RELEASE_RESULT
     chars = ''
-    while event.name:
+    while True:
         print(event.name, type(event.name), str(len(event.name)))
         if event.name in BREAK_EVENT:
             break
