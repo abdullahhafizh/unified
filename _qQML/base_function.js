@@ -244,6 +244,10 @@ function strip(str){
     return str.split(' ').join('');
 }
 
+function alphanum_only(s){
+    return s.replace(/[\W]+/g," ");
+}
+
 function get_value(v){
     if (v==undefined) return '';
     return v;

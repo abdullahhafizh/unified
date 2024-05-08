@@ -239,7 +239,7 @@ Base{
                 result = queryData.p1;
             }
             console.log('final_scanner', result);
-            textInput = result;
+            textInput = FUNC.alphanum_only(result);
         }
     }
 
