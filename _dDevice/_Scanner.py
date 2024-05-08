@@ -6,6 +6,8 @@ from _cConfig import _Common
 import sys
 from _tTools import _Helper
 import logging
+import time
+import keyboard
 
 
 LOGGER = logging.getLogger()
@@ -80,7 +82,6 @@ def start_simple_read_scanner():
 
 def simple_read_scanner():
     try:
-        import keyboard
         keyboard.on_press(on_key_event)
         keyboard.wait('enter')
     except Exception as e:
@@ -91,9 +92,16 @@ def simple_read_scanner():
         del keyboard
 
 
+DEBOUNCE_DELAY = 0.5 
+LAST_EVENT_TIME = 0
+
 def on_key_event(event):
     global EVENT_RESULT
+    global LAST_EVENT_TIME
+    current_time = time.time()
     if event.name in BREAK_EVENT:
         return
     if event.name not in SKIP_EVENT and len(event.name) == 1:
-        EVENT_RESULT += event.name
+        if current_time - LAST_EVENT_TIME >= DEBOUNCE_DELAY:
+            LAST_EVENT_TIME = current_time
+            EVENT_RESULT += event.name
