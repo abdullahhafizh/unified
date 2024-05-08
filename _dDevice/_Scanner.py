@@ -6,7 +6,7 @@ from _cConfig import _Common
 import sys
 from _tTools import _Helper
 import logging
-import time
+from serial import Serial
 import keyboard
 
 
@@ -92,10 +92,52 @@ def on_key_event(event):
         
 
 def start_simple_read_scanner():
-    _Helper.get_thread().apply_async(simple_read_scanner)
-
-
-def simple_read_scanner():
     global SCANNER_ACTIVE
     SCANNER_ACTIVE = True
+    if _Common.SCANNER_SERIAL_MODE:
+        _Helper.get_thread().apply_async(read_serial_scanner)
+    else:
+        _Helper.get_thread().apply_async(read_hid_scanner)
+
+
+def read_hid_scanner():
     keyboard.on_press(on_key_event)
+    
+    
+SCANNER_BAUDRATE = 9600
+SCANNER_TIMEOUT = 15
+SCANNER_STOPBITS = 1
+SCANNER_DATABITS = 8
+    
+def read_serial_scanner():
+    global EVENT_RESULT
+    handle = None
+    try:
+        if handle is None:
+            handle = Serial(
+                    port=_Common.SCANNER_COM, 
+                    bytesize=SCANNER_DATABITS,
+                    stopbits=SCANNER_STOPBITS,
+                    baudrate=SCANNER_BAUDRATE, 
+                    timeout=SCANNER_TIMEOUT
+                    )
+        if handle.isOpen():
+            while True:
+                EVENT_RESULT = handle.read_all()
+                if len(EVENT_RESULT):
+                    EVENT_RESULT = EVENT_RESULT.decode('utf-8')
+                    print(EVENT_RESULT)       
+                    if SCANNER_ACTIVE:         
+                        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
+                    break
+        else:
+            SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|ERROR')
+    except Exception as e:
+        LOGGER.warning((e))
+        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|ERROR')
+    finally:
+        if handle is not None:
+            if handle.isOpen():
+                handle.disconnect()
+        reset_state()
+        

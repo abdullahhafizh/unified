@@ -1147,6 +1147,9 @@ BNI_SAM_2_NO = _ConfigParser.get_set_value('BNI', 'sam2^no', '---')
 
 SCANNER_VID = _ConfigParser.get_set_value('SCANNER', 'vendor^id', '0x1234')
 SCANNER_PID = _ConfigParser.get_set_value('SCANNER', 'product^id', '0x4567')
+SCANNER_COM = _ConfigParser.get_set_value('SCANNER', 'serial^com', 'COM37')
+
+SCANNER_SERIAL_MODE = digit_in(SCANNER_COM)
 
 EDC_ERROR = ''
 NFC_ERROR = ''
