@@ -390,7 +390,7 @@ def do_parking_inquiry(ticket_no):
             {
                 'tid': _Common.TID,
                 'token': _Common.TERMINAL_TOKEN,
-                'X-Signature': _Helper.to_md5((payload['ticket'] + 'parkour' + payload['site_id']))
+                'X-Signature': _Helper.to_md5(''.join([payload['ticket'], 'parkour', payload['site_id']]))
             }
         ))
         if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'UNPAID':
@@ -442,7 +442,7 @@ def do_parking_payment(payload):
             {
                 'tid': _Common.TID,
                 'token': _Common.TERMINAL_TOKEN,
-                'X-Signature': _Helper.to_md5((payload['ticket'] + 'parkour' + payload['site_id']))
+                'X-Signature': _Helper.to_md5(''.join([payload['ticket'], 'parkour', payload['site_id']]))
             }
         ))
         if s == 200 and r.get('code') == '00' and r.get('ticketstatus') == 'VALID'and r.get('paymentstatus') == 'PAID':
