@@ -127,7 +127,7 @@ def read_serial_scanner():
                 EVENT_RESULT = SCANNER_HANDLER.read_all()
                 if len(EVENT_RESULT):
                     EVENT_RESULT = EVENT_RESULT.decode('utf-8').replace(' ', '')
-                    print(EVENT_RESULT)       
+                    print('pyt: Scanner Result ', EVENT_RESULT)       
                     if SCANNER_ACTIVE:         
                         SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
                     break
