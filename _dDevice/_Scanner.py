@@ -81,15 +81,9 @@ def start_simple_read_scanner():
 
 
 def simple_read_scanner():
-    try:
-        keyboard.on_press(on_key_event)
-        keyboard.wait('enter')
-    except Exception as e:
-        LOGGER.warning((e))
-        EVENT_RESULT = 'ERROR'
-    finally:
-        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
-        del keyboard
+    keyboard.on_press(on_key_event)
+    keyboard.wait('enter')
+    SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
 
 
 DEBOUNCE_DELAY = 0.5 
