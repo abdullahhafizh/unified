@@ -5,6 +5,10 @@ from _dDevice import _HID
 from _cConfig import _Common
 import sys
 from _tTools import _Helper
+import logging
+
+
+LOGGER = logging.getLogger()
 
 
 class ScannerSignalHandler(QObject):
@@ -80,6 +84,7 @@ def simple_read_scanner():
         keyboard.on_press(on_key_event)
         keyboard.wait('enter')
     except Exception as e:
+        LOGGER.warning((e))
         EVENT_RESULT = 'ERROR'
     finally:
         SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
