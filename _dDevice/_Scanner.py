@@ -108,22 +108,23 @@ SCANNER_BAUDRATE = 9600
 SCANNER_TIMEOUT = 15
 SCANNER_STOPBITS = 1
 SCANNER_DATABITS = 8
+
+SCANNER_HANDLER = None
     
 def read_serial_scanner():
-    global EVENT_RESULT
-    handle = None
+    global EVENT_RESULT, SCANNER_HANDLER
     try:
-        if handle is None:
-            handle = Serial(
+        if SCANNER_HANDLER is None:
+            SCANNER_HANDLER = Serial(
                     port=_Common.SCANNER_COM, 
                     bytesize=SCANNER_DATABITS,
                     stopbits=SCANNER_STOPBITS,
                     baudrate=SCANNER_BAUDRATE, 
                     timeout=SCANNER_TIMEOUT
                     )
-        if handle.isOpen():
+        if SCANNER_HANDLER.isOpen():
             while True:
-                EVENT_RESULT = handle.read_all()
+                EVENT_RESULT = SCANNER_HANDLER.read_all()
                 if len(EVENT_RESULT):
                     EVENT_RESULT = EVENT_RESULT.decode('utf-8')
                     print(EVENT_RESULT)       
@@ -136,10 +137,5 @@ def read_serial_scanner():
         LOGGER.warning((e))
         SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|ERROR')
     finally:
-        if handle is not None:
-            if handle.isOpen():
-                handle.disconnect()
-        handle = None
-        del handle
         reset_state()
         
