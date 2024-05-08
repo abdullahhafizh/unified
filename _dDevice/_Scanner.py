@@ -76,19 +76,15 @@ def start_simple_read_scanner():
     _Helper.get_thread().apply_async(simple_read_scanner)
 
 
-# def simple_read_scanner():
-#     keyboard.on_press(on_key_event)
-
-
-# def on_key_event(event):
 def simple_read_scanner():
+    keyboard.on_press(on_key_event)
+    keyboard.wait('enter')
+    SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
+
+
+def on_key_event(event):
     global EVENT_RESULT
-    while True:
-        event = keyboard.read_event()
-        print(event)
-        if event.name in BREAK_EVENT:
-            SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
-            return
-        if event.name not in SKIP_EVENT and len(event.name) == 1:
-            EVENT_RESULT += event.name
-        time.sleep(.5)
+    if event.name in BREAK_EVENT:
+        return
+    if event.name not in SKIP_EVENT and len(event.name) == 1:
+        EVENT_RESULT += event.name
