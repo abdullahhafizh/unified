@@ -309,3 +309,7 @@ def convert_minutes(total_minutes, mode='human-readable'):
 
 def to_md5(s):
     return hashlib.md5((s.lower().encode('utf-8'))).hexdigest()
+
+
+def cleanup_whitespace(t):
+    return ''.join(t.split())

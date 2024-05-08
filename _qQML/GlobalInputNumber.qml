@@ -238,8 +238,9 @@ Base{
                 console.log('parse_query_string', result, JSON.stringify(queryData));
                 result = queryData.p1;
             }
+            result = FUNC.alphanum_only(result);
             console.log('final_scanner', result);
-            textInput = FUNC.alphanum_only(result);
+            textInput = result;
         }
     }
 
