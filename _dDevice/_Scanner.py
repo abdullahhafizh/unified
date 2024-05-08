@@ -99,5 +99,3 @@ def simple_read_scanner():
     global SCANNER_ACTIVE
     SCANNER_ACTIVE = True
     keyboard.on_press(on_key_event)
-        
-keyboard.wait()
