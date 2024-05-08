@@ -591,7 +591,7 @@ Base{
         selectedProduct.amount = parseInt(data.tarif);
         selectedProduct.description = 'Parking Ticket';
 
-        var mergedObject = {...data, ...selectedProduct};
+        var mergedObject = selectedProduct.extend(data);
         console.log('merge_parkour_data', mergedObject);
         selectedProduct = mergedObject;
         ppobMode = 'payment-parking';
