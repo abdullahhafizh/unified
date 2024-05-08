@@ -8,17 +8,24 @@ def on_key_event(event):
     # Check if the event is a key press event        
     # Print the name of the pressed key
     # print("Pressed key:", event.name)
+    if (event.name == 'enter'):
+        print(chars)
+        reset_state()
     if len(event.name) == 1:
         chars += event.name
 
 
+def reset_state():
+    global chars
+    chars = ''
+    try:
+        keyboard.remove_word_listener()
+        keyboard.release()
+        keyboard.restore_state()
+    except Exception as e:
+        print(str(e))
+
+
 if __name__ == '__main__':
-    # Set up the keyboard event listener
     keyboard.on_press(on_key_event)
-    # while True:
-    #     event = keyboard.read_event()
-    #     print("Pressed key:", event.name)
-    #     time.sleep(.5)
-    # Keep the script running to continue listening for events
-    keyboard.wait('enter')
-    print(chars)
+    keyboard.wait()
