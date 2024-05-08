@@ -66,9 +66,12 @@ def get_scanners():
 BREAK_EVENT = ['enter']
 SKIP_EVENT = ['tab', 'alt', 'menu', 'shift', 'ctrl', 'delete', 'backspace', 'right ctrl', 'left ctrl', 'esc']
 MIN_READ_LEN = 15
+EVENT_RESULT = ''
 
 
 def start_simple_read_scanner():
+    global EVENT_RESULT
+    EVENT_RESULT = ''
     _Helper.get_thread().apply_async(simple_read_scanner)
 
 
@@ -77,9 +80,9 @@ def simple_read_scanner():
 
 
 def on_key_event(event):
-    chars = ''
+    global EVENT_RESULT
     if event.name in BREAK_EVENT:
-        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+chars)
+        SCANNER_SIGNDLER.SIGNAL_READ_SCANNER.emit('SCANNER|'+EVENT_RESULT)
         return
     if event.name not in SKIP_EVENT or len(event.name) == 1:
-        chars += event.name
+        EVENT_RESULT += event.name
