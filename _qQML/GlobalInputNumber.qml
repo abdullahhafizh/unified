@@ -815,12 +815,11 @@ Base{
     }
 
     function define_wording(){
-        if (mode=='PARKING'){
-            wording_text = 'Scan Tiket Parkir Anda Pada Reader';
-            _SLOT.start_simple_read_scanner();
-            min_count = 12;
-            return;
-        }
+        // if (mode=='PARKING'){
+        //     wording_text = 'Scan Tiket Parkir Anda Pada Reader';
+        //     min_count = 12;
+        //     return;
+        // }
         if (mode=='WA_VOUCHER'){
             wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
             min_count = 8;
@@ -842,9 +841,11 @@ Base{
         var operator = selectedProduct.operator;
         switch(category){
             case 'parking':
-                wording_text = 'Masukkan/Pindai Tiket Parkir Anda';
+                _SLOT.start_simple_read_scanner();
+
+                wording_text = 'Scan Tiket Parkir Anda Pada Reader';
                 checkMode = true;
-                min_count = 9;
+                min_count = 12;
             break;
             case 'combo sakti':
                 wording_text = 'Masukkan Kode Bayar Telkomsel Paket Murah';
@@ -1078,7 +1079,9 @@ Base{
 
         if (selectedProduct !== undefined && selectedProduct.category == 'Parking'){
             // Remove Cash Payment For Parking Payment
+            console.log('Active Category', selectedProduct.category);
             activePayment.pop('cash');
+            console.log('Active Payment Channel', JSON.stringify(activePayment));
         }
         //================================
 //        isConfirm = true;
