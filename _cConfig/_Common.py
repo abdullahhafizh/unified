@@ -78,7 +78,7 @@ def clean_white_space(s):
 
 VIEW_FOLDER = '_qQML/'
 APP_MODE = _ConfigParser.get_set_value('GENERAL', 'mode', 'live')
-LIVE_MODE = True if APP_MODE in ['live', 'bca'] else False
+LIVE_MODE = True if APP_MODE in ['live', 'bca'] or 'live' in APP_MODE.lower() else False
 BACKEND_URL = _ConfigParser.get_set_value('GENERAL', 'backend^server', 'http://vm-api.mdd.co.id:11199/kiosk-api/v2/')
 TEST_MODE = not LIVE_MODE
 if LIVE_MODE is True:
