@@ -842,7 +842,6 @@ Base{
         switch(category){
             case 'parking':
                 _SLOT.start_simple_read_scanner();
-
                 wording_text = 'Scan Tiket Parkir Anda Pada Reader';
                 checkMode = true;
                 min_count = 12;
