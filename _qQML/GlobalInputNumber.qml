@@ -80,7 +80,7 @@ Base{
             press = '0';
             abc.counter = timer_value;
             my_timer.start();
-            if (mode=='PPOB' && ppobDetails==undefined){
+            if (ppobDetails==undefined){
                 ppobDetails = {
                     shop_type: 'ppob',
                     time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
@@ -929,6 +929,8 @@ Base{
     }
 
     function process_selected_payment(channel){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('process_selected_payment', now, channel);
         if (channel=='MULTI_QR'){
             press = '0';
             if (activeQRISProvider.length > 1){
