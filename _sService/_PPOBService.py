@@ -431,6 +431,8 @@ def do_parking_payment(payload):
     try:
         url = _Common.PARKOUR_URL+'/api/pas/payment_ticket'
         payload['site_id'] = _Common.PARKOUR_SITE_ID
+        # Override Payment Method As QRIS For Parkour
+        payload['paymentmethod'] = 'QRIS'
         # {
         #     "ticket": "PM1139083180809",
         #     "tarif": "2000",
