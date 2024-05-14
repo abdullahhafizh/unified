@@ -447,7 +447,7 @@ def new_print_topup_trx(p, t, ext='.pdf'):
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
-        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO TRX   : '+trxid, 0, 0, 'L')
         # pdf.ln(small_space)
         # pdf.set_font(USED_FONT, 'B', regular_space)
         # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
@@ -835,7 +835,7 @@ def new_print_shop_trx(p, t, ext='.pdf'):
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
-        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO TRX   : '+trxid, 0, 0, 'L')
         # pdf.set_font(USED_FONT, 'B', regular_space)
         # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
         if 'payment_error' not in p.keys() and 'process_error' not in p.keys():
@@ -1112,7 +1112,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, 'B', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
-        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO TRX   : '+trxid, 0, 0, 'L')
         # pdf.ln(small_space)
         # pdf.set_font(USED_FONT, 'B', regular_space)
         # pdf.cell(padding_left, 0, 'KATEGORI  : ' + str(p['category']), 0, 0, 'L')
@@ -1155,7 +1155,7 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'LOKASI   : ' + str(p['raw']['location']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
-                pdf.cell(padding_left, 0, 'KENDARAAN: Rp. ' + clean_number(str(p['raw']['vehicletype'])), 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'KENDARAAN: ' + clean_number(str(p['raw']['vehicletype'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
                 pdf.cell(padding_left, 0, 'DURASI   : ' + str(p['raw']['duration_hour']), 0, 0, 'L')
@@ -1354,7 +1354,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
         __title = t
         printer.text((' '*padding_left)+merge_text([__title, p['payment'].upper(), ]) + "\n")
         trxid = p['shop_type']+str(p['epoch'])
-        printer.text((' '*padding_left)+'NO TRX    : '+trxid + "\n")
+        printer.text((' '*padding_left)+'NO TRX   : '+trxid + "\n")
         provider = str(p['provider'])
         if '(Admin' in provider:
             provider = provider.split('(Admin')[0]
@@ -1376,7 +1376,7 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
             elif p['ppob_mode'] == 'payment-parking':
                 printer.text((' '*padding_left)+'NO TIKET : ' + str(p['raw']['ticket']) +  + "\n")
                 printer.text((' '*padding_left)+'LOKASI   : ' + str(p['raw']['location']) +  + "\n")
-                printer.text((' '*padding_left)+'KENDARAAN: Rp. ' + clean_number(str(p['raw']['vehicletype'])) +  + "\n")
+                printer.text((' '*padding_left)+'KENDARAAN: ' + clean_number(str(p['raw']['vehicletype'])) +  + "\n")
                 printer.text((' '*padding_left)+'DURASI   : ' + str(p['raw']['duration_hour']) +  + "\n")
                 printer.text((' '*padding_left)+'BIAYA    : Rp. ' + clean_number(str(p['value'])) +  + "\n")
             else:
@@ -2834,7 +2834,7 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
             elif p['ppob_mode'] == 'payment-parking':
                 pdf.set_line('NO TIKET   : ' + str(p['raw']['ticket']))
                 pdf.set_line('LOKASI     : ' + str(p['raw']['location']))
-                pdf.set_line('KENDARAAN  : Rp. ' + clean_number(str(p['raw']['vehicletype'])))
+                pdf.set_line('KENDARAAN  : ' + clean_number(str(p['raw']['vehicletype'])))
                 pdf.set_line('DURASI     : ' + str(p['raw']['duration_hour']))
                 pdf.set_line('BIAYA      : Rp. ' + clean_number(str(p['value'])))
             else:
