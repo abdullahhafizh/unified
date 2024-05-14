@@ -1076,10 +1076,10 @@ Base{
             activePayment.push('bri-qris');
         }
 
-        if (selectedProduct !== undefined && selectedProduct.category == 'Parking'){
+        if (selectedProduct !== undefined && selectedProduct.category.toLowerCase() == 'parking'){
             // Remove Cash Payment For Parking Payment
             console.log('Active Category', selectedProduct.category);
-            activePayment.pop('cash');
+            activePayment = activeQRISProvider;
             console.log('Active Payment Channel', JSON.stringify(activePayment));
         }
         //================================
