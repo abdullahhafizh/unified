@@ -1,7 +1,8 @@
 16.6.7-GLOBAL:
-- Filter User For Collection,
+- Implement Strict User Role For Collection,
 - Validate & Input Cashbox SN Before Cash Collection,
 - HID Scanner Event Capture,
+- Local Setting Free Admin Promo,
 - ...
 
 16.6.6-GLOBAL:

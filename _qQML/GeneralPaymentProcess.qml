@@ -1170,6 +1170,12 @@ Base{
         }
     }
 
+    function adjust_topup_value(base_amount){
+        var free_amount = VIEW_CONFIG.free_admin_value;
+        var final_amount = parseInt(base_amount) + parseInt(free_amount)
+        return final_amount.toString();
+    }
+
     function perform_do_topup(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         var provider = details.provider;
@@ -1179,16 +1185,16 @@ Base{
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
             //Re-define topup amount for C2C Mode
             if (VIEW_CONFIG.c2c_mode == 1) amount = details.value;
-            _SLOT.start_topup_offline_mandiri(amount, structId);
+            _SLOT.start_topup_offline_mandiri(adjust_topup_value(amount), structId);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
-            _SLOT.start_topup_offline_bni(amount, structId);
+            _SLOT.start_topup_offline_bni(adjust_topup_value(amount), structId);
         } else if (provider.indexOf('DKI') > -1){
-//            _SLOT.start_fake_update_dki(cardNo, amount);
-            _SLOT.start_topup_online_dki(cardNo, amount, structId)
+//            _SLOT.start_fake_update_dki(cardNo, adjust_topup_value(amount));
+            _SLOT.start_topup_online_dki(cardNo, adjust_topup_value(amount), structId)
         } else if (provider.indexOf('BRI') > -1){
-            _SLOT.start_topup_online_bri(cardNo, amount, structId);
+            _SLOT.start_topup_online_bri(cardNo, adjust_topup_value(amount), structId);
         } else if (provider.indexOf('BCA') > -1){
-            _SLOT.start_topup_online_bca(cardNo, amount, structId);
+            _SLOT.start_topup_online_bca(cardNo, adjust_topup_value(amount), structId);
         }
     }
 

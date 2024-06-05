@@ -2664,3 +2664,20 @@ def sync_parking_transaction(payload):
     except Exception as e:
         LOGGER.warning(e)
         return False
+
+
+FREE_ADMIN_VALUE = _ConfigParser.get_set_value('GENERAL', 'free^admin^value', '0')
+FREE_ADMIN_START = _ConfigParser.get_set_value('GENERAL', 'free^admin^start', '20240609')
+FREE_ADMIN_END = _ConfigParser.get_set_value('GENERAL', 'free^admin^end', '20240615')
+
+
+def define_free_admin_value():
+    value = 0
+    this_date = _Helper.time_string(f='%Y%m%d')
+    if (int(this_date) > int(FREE_ADMIN_START)) and (int(this_date) < int(FREE_ADMIN_END)):
+        if int(FREE_ADMIN_VALUE) > 0:
+            value = FREE_ADMIN_VALUE
+    return int(value)
+
+
+VIEW_CONFIG['free_admin_value'] = define_free_admin_value()
