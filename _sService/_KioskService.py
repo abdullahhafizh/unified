@@ -151,7 +151,8 @@ def update_kiosk_status(s=400, r=None):
     except Exception as e:
         LOGGER.warning((e))
         # load_previous_kiosk_status() 
-    # finally:
+    finally:
+        _Common.define_free_admin_value()
     #     sleep(10)
     #     kiosk_status()
     #     pprint(_Common.KIOSK_SETTING)
