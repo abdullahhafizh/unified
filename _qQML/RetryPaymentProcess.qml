@@ -984,7 +984,7 @@ Base{
 
     function adjust_topup_value(base_amount){
         var free_amount = VIEW_CONFIG.free_admin_value;
-        var final_amount = parseInt(base_amount) + parseInt(free_amount)
+        var final_amount = parseInt(base_amount) + parseInt(free_amount);
         return final_amount.toString();
     }
 
