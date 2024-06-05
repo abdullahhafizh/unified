@@ -2675,7 +2675,7 @@ def define_free_admin_value():
     global KIOSK_ADMIN
     value = 0
     this_date = _Helper.time_string(f='%Y%m%d')
-    if (int(this_date) > int(FREE_ADMIN_START)) and (int(this_date) < int(FREE_ADMIN_END)):
+    if (int(this_date) >= int(FREE_ADMIN_START)) and (int(this_date) =< int(FREE_ADMIN_END)):
         value = DEFAULT_KIOSK_ADMIN
         KIOSK_ADMIN = 0
         LOGGER.info(('value', value))
