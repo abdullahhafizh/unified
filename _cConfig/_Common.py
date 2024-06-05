@@ -398,6 +398,7 @@ KIOSK_REAL_STATUS = 'ONLINE'
 KIOSK_SETTING = []
 KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
+DEFAULT_KIOSK_ADMIN = KIOSK_ADMIN
 PRINTER_STATUS = "NORMAL"
 
 PAYMENT_CANCEL = _ConfigParser.get_set_value('GENERAL', 'payment^cancel', '1')
@@ -2675,8 +2676,10 @@ def define_free_admin_value():
     value = 0
     this_date = _Helper.time_string(f='%Y%m%d')
     if (int(this_date) > int(FREE_ADMIN_START)) and (int(this_date) < int(FREE_ADMIN_END)):
-        value = KIOSK_ADMIN
+        value = DEFAULT_KIOSK_ADMIN
         KIOSK_ADMIN = 0
+        LOGGER.info(('value', value))
+        LOGGER.info(('KIOSK_ADMIN', KIOSK_ADMIN))
     return int(value)
 
 
