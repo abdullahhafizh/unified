@@ -2678,7 +2678,7 @@ def define_free_admin_value():
     if (int(this_date) >= int(FREE_ADMIN_START)) and (int(this_date) <= int(FREE_ADMIN_END)):
         value = DEFAULT_KIOSK_ADMIN
         KIOSK_ADMIN = 0
-        LOGGER.info(('value', value))
+        LOGGER.info(('FREE_ADMIN', value))
         LOGGER.info(('KIOSK_ADMIN', KIOSK_ADMIN))
     return int(value)
 
