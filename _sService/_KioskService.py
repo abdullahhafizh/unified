@@ -955,7 +955,7 @@ def begin_collect_cash():
     # post_cash_collection(list_collect, _Helper.now())
     # Generate Admin Data Here
     collection_data = _Common.generate_collection_data()
-    K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECTION_DATA|'+json.dumps(collection_data))
+    K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECTION_DATA|FOUND '+str(len(collection_data)))
     sleep(1)
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|DONE')
 
