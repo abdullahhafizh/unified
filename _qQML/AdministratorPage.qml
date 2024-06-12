@@ -1397,6 +1397,19 @@ Base{
         standard_notif_view.open();
     }
 
+    function validate_bill_sn(input){
+        // Bill Prefix Must Be Delimited By /
+        var bill_prefixes = VIEW_CONFIG.bill_cashbox_prefix.split('/');
+        if (bill_prefixes.length > 1){
+            for (var i=0; i < bill_prefixes.length; i++){
+                if (userData.activeCashboxList.indexOf(bill_prefixes[i]+popup_input_cashbox_no.numberInput) > -1) {
+                    return true;
+                }
+            }
+        }
+        return userData.activeCashboxList.indexOf(VIEW_CONFIG.bill_cashbox_prefix+popup_input_cashbox_no.numberInput) > -1;
+    }
+
 
     //==============================================================
 
@@ -1476,7 +1489,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" Cashbox Number ' + popup_input_cashbox_no.numberInput);
-                    if (_userData.activeCashboxList.indexOf(VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput) > -1){
+                    if (validate_bill_sn(popup_input_cashbox_no.numberInput)){
                         console.log('Cashbox Number Match : ' + VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput);
                         do_collect_bill_cash();
                     } else {

@@ -1396,7 +1396,7 @@ BILL = {
 }
 
 VIEW_CONFIG['bill_type'] = BILL_TYPE
-VIEW_CONFIG['bill_cashbox_prefix'] = 'CN' if BILL_TYPE == 'NV' else 'B'
+VIEW_CONFIG['bill_cashbox_prefix'] = 'CN/CG' if BILL_TYPE == 'NV' else 'B'
 
 # Handling MEI VS BILL Duplicate Port Activation
 if BILL['status'] is True:
