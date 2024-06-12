@@ -1014,32 +1014,32 @@ Base{
                     theme: 'white'
                 }
                 NextButton{
-                   id: button_collect_cash
-                   width: 110
-                   height: 40
-                   anchors.right: _total_cash_available.right
-                   anchors.rightMargin: 0
-                   fontSize: 15
-                   modeRadius: false
-                   button_text: 'do-collect'
-                   modeReverse: true
-                   MouseArea{
-                       anchors.fill: parent
-                       enabled: (parseInt(_total_cash_available.labelContent) > 0) ? true : false
-                       onClicked: {
-                           _SLOT.user_action_log('Admin Page "Collect Cash"');
-                           console.log('Collect Cash Button is Pressed..!')
-                           if (userData.isAbleCollect==1){
+                    id: button_collect_cash
+                    width: 110
+                    height: 40
+                    anchors.right: _total_cash_available.right
+                    anchors.rightMargin: 0
+                    fontSize: 15
+                    modeRadius: false
+                    button_text: 'do-collect'
+                    modeReverse: true
+                    MouseArea{
+                        anchors.fill: parent
+                        // enabled: (parseInt(_total_cash_available.labelContent) > 0) ? true : false
+                        onClicked: {
+                            _SLOT.user_action_log('Admin Page "Collect Cash"');
+                            console.log('Collect Cash Button is Pressed..!')
+                            if (userData.isAbleCollect==1){
                                 if (userData.activeCashboxList !== undefined && userData.activeCashboxList.length > 0){
                                     popup_input_cashbox_no.open('');
                                     return;
                                 }
-                               do_collect_bill_cash();
-                           } else {
-                               switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
-                           }
-                       }
-                   }
+                                do_collect_bill_cash();
+                            } else {
+                                switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                            }
+                        }
+                    }
                 }
                 TextDetailRowNew{
                     id: _total_edc_available
