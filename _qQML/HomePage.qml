@@ -41,7 +41,7 @@ Base{
 
     property bool spvButton: false
     property bool comboSaktiFeature: false
-    property bool randomPad: 200
+    property var randomPad: 200
 
     property var cardStockTreshold: 25
 
