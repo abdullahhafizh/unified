@@ -809,7 +809,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: 400
         anchors.left: parent.left
         anchors.leftMargin: -30
         width: 100
@@ -847,7 +847,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.top: parent.top
-        anchors.topMargin: 300
+        anchors.topMargin: 500
         anchors.left: parent.left
         anchors.leftMargin: -30
         width: 100
