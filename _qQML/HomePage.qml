@@ -41,6 +41,7 @@ Base{
 
     property bool spvButton: false
     property bool comboSaktiFeature: false
+    property bool randomPad: 200
 
     property var cardStockTreshold: 25
 
@@ -718,6 +719,7 @@ Base{
         height: 100
         onDoubleClicked: {
             console.log('SPV Button Activated');
+            randomPad = FUNC.get_random(200, 800);
             spvButton = true;
         }
     }
@@ -809,7 +811,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.top: parent.top
-        anchors.topMargin: 400
+        anchors.topMargin: randomPad + 200
         anchors.left: parent.left
         anchors.leftMargin: -30
         width: 100
@@ -847,7 +849,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.top: parent.top
-        anchors.topMargin: 500
+        anchors.topMargin: randomPad + 300
         anchors.left: parent.left
         anchors.leftMargin: -30
         width: 100

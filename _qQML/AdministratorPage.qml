@@ -277,6 +277,11 @@ Base{
             if (productData[2].status==102) _total_stock_102.labelContent = productData[2].stock.toString();
             if (productData[2].status==103) _total_stock_103.labelContent = productData[2].stock.toString();
         }
+        if (!VIEW_CONFIG.show_card_stock){
+            _total_stock_101.labelContent = 'XXX';
+            _total_stock_102.labelContent = 'XXX';
+            _total_stock_103.labelContent = 'XXX';
+        }
         console.log('show_card_stock', show_card_stock);
         popup_loading.close();
     }

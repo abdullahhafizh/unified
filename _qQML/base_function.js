@@ -310,4 +310,8 @@ function parse_query_string(queryString) {
     return queryParams;
 }
 
+function get_random(min, max) {
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
+
 
