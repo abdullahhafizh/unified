@@ -719,7 +719,7 @@ Base{
         height: 100
         onDoubleClicked: {
             console.log('SPV Button Activated');
-            randomPad = FUNC.get_random(200, 800);
+            randomPad = FUNC.get_random(100, 600);
             spvButton = true;
         }
     }
