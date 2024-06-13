@@ -25,7 +25,7 @@ class NV200_BILL_ACCEPTOR(object):
             serialport=serial_port, 
             eSSPId=0, 
             timeout=SOCKET_TIMEOUT,
-            debugging=_Common.BILL_LIBRARY_DEBUG)
+            )
         self.serial_port = serial_port
         self.default_channel = [0,0,1,1,1,1,1,1]
         if len(restricted_denom) == 3 and restricted_denom == ["1000", "2000", "5000"]:
@@ -389,7 +389,7 @@ class NV200_BILL_ACCEPTOR(object):
                 self.nv200.hold()
             else:
                 break
-            time.sleep(.25)
+            time.sleep(3)
             
             
     def reject(self):

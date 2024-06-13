@@ -2,8 +2,6 @@ __author__ = 'wahyudi@multidaya.id'
 
 import datetime
 import serial
-from _tTools import _Helper
-
 
 class eSSPError(IOError):  # noqa
     """Generic error exception for eSSP problems."""
@@ -14,10 +12,9 @@ class eSSPTimeoutError(eSSPError):  # noqa
     pass
 
 class eSSP(object):  # noqa
-    global NV200_DEBUG
     """General class for talking to an eSSP device."""
     
-    def __init__(self, serialport='/dev/ttyUSB0', eSSPId=0, timeout=None, debugging=False):  # noqa
+    def __init__(self, serialport='/dev/ttyUSB0', eSSPId=0, timeout=None):  # noqa
         """
         Initialize a new eSSP object.
 
@@ -33,18 +30,13 @@ class eSSP(object):  # noqa
         else:
             serial_timeout = 0.1
         self.timeout = timeout
-        self.debug = debugging
-        self.log_print('Activate NV200 Debugging')
         self.__ser = serial.Serial(serialport, 9600, timeout=serial_timeout)
         self.__eSSPId = eSSPId
         self.__sequence = '0x80'
         self.__timeout_excp = ['0xETIMEDOUT']
 
-
-    def log_print(self, msg):
-        if not self.debug: return
-        _Helper.log_to_file(message=msg, log_name='nv200')
-
+        # self._logger = logging.getLogger(__name__)
+        # self._logger.debug("Startup at " + str(datetime.datetime.now()))
         
     def release(self):
         try:
@@ -52,19 +44,17 @@ class eSSP(object):  # noqa
             del self.__ser
             self.__ser = None
         except Exception as e:
-            self.log_print(e)
+            print(e)
             self.__ser = None
         finally:
             return self.__ser is None
 
     def reset(self):
-        self.log_print(_Helper.whoami())
         """Reset the device completely."""
         result = self.send([self.getseq(), '0x1', '0x1'])
         return result
 
     def set_inhibits(self, lowchannels, highchannels):
-        self.log_print(_Helper.whoami())
         # lowchannels: Channel 1 to 8
         # highchannels: Channel 9 to 16
         # takes a bitmask
@@ -73,24 +63,20 @@ class eSSP(object):  # noqa
         return result
 
     def bulb_on(self):
-        self.log_print(_Helper.whoami())
         """Illuminate bezel."""
         result = self.send([self.getseq(), '0x1', '0x3'])
         return result
 
     def bulb_off(self):
-        self.log_print(_Helper.whoami())
         """Nox bezel."""
         result = self.send([self.getseq(), '0x1', '0x4'])
         return result
 
     def configure_bezel(self, red, green, blue, volatile, bezel_type):
-        self.log_print(_Helper.whoami())
         result = self.send([self.getseq(), '0x6', '0x54', red, green, blue, volatile, bezel_type])
         return result
 
     def setup_request(self):
-        self.log_print(_Helper.whoami())
         # Response consits of
         # Unit-Type (0 = BNV)
         # Firmware-Version
@@ -147,7 +133,6 @@ class eSSP(object):  # noqa
 #       return result
 
     def poll(self):
-        self.log_print(_Helper.whoami())
         """
         Poll the device.
         0xF1 = Slave Reset (right after booting up)
@@ -180,20 +165,17 @@ class eSSP(object):  # noqa
                 else:
                     poll_data.append(result[i])
         except Exception as e:
-            self.log_print(e)
-            self.log_print(str(result))
+            # print(e, str(result))
             poll_data.append('0xERROR')
 
         return poll_data
 
     def reject_note(self):
-        self.log_print(_Helper.whoami())
         """Reject the current note."""
         result = self.send([self.getseq(), '0x1', '0x8'])
         return result
 
     def disable(self):
-        self.log_print(_Helper.whoami())
         """
         Disable the device.
 
@@ -203,7 +185,6 @@ class eSSP(object):  # noqa
         return result
 
     def enable(self):
-        self.log_print(_Helper.whoami())
         """Resume from disable()'d state."""
         result = self.send([self.getseq(), '0x1', '0xA'])
         return result
@@ -211,7 +192,6 @@ class eSSP(object):  # noqa
     # SSP_CMD_PROGRAM 0xB not implented
 
     def serial_number(self):
-        self.log_print(_Helper.whoami())
         """Return formatted serialnumber."""
         result = self.send([self.getseq(), '0x1', '0xC'], False)
 
@@ -222,7 +202,6 @@ class eSSP(object):  # noqa
         return serial
 
     def unit_data(self):
-        self.log_print(_Helper.whoami())
         # Response consits of
         # Unit-Type (0 = BNV)
         # Firmware-Version
@@ -252,7 +231,6 @@ class eSSP(object):  # noqa
         return unit_data
 
     def channel_values(self):
-        self.log_print(_Helper.whoami())
         """
         Return the real values of the channels.
 
@@ -273,7 +251,6 @@ class eSSP(object):  # noqa
         return channel_data
 
     def channel_security(self):
-        self.log_print(_Helper.whoami())
         """
         Return the security settings of all channels.
 
@@ -296,7 +273,6 @@ class eSSP(object):  # noqa
         return security_data
 
     def channel_reteach(self):
-        self.log_print(_Helper.whoami())
         """
         Return the (somewhat un-useful?) Re-Teach Data by Channel.
 
@@ -315,7 +291,6 @@ class eSSP(object):  # noqa
         return reteach_result
 
     def sync(self):
-        self.log_print(_Helper.whoami())
         """
         Reset Sequence to be 0x00.
 
@@ -365,7 +340,6 @@ class eSSP(object):  # noqa
         return result[4]
 
     def hold(self):
-        self.log_print(_Helper.whoami())
         result = self.send([self.getseq(), '0x1', '0x18'])
         return result
 
@@ -374,7 +348,6 @@ class eSSP(object):  # noqa
     # SSP_CMD_EXPANSION 0x30 not implemented, collides with SSP_CMD_MANUFACTURER?
 
     def enable_higher_protocol(self):
-        self.log_print(_Helper.whoami())
         """Enable functions from implemented with version >= 3."""
         result = self.send([self.getseq(), '0x1', '0x19'])
         return result
@@ -430,13 +403,16 @@ class eSSP(object):  # noqa
 
         # self._logger.debug("OUT: 0x" + ' 0x'.join([prepedstring[x:x + 2]
         #                    for x in range(0, len(prepedstring), 2)]))
-        
+
         prepedstring = bytes.fromhex(prepedstring)
+        #prepedstring = prepedstring.decode('hex')
 
-        self.log_print('SEND: ' + str(prepedstring))
         self.__ser.write(prepedstring)
-
+        # response = True
+        # if process:
         response = self.read(process)
+        # Direct Raw Debug
+        # print('pyt: NV200 Debug : ', str(prepedstring), str(response))
         return response
     
     def send_only(self, command):
@@ -457,7 +433,6 @@ class eSSP(object):  # noqa
         return ['0xf0']
 
     def read(self, process=True, break_in_empty = False):
-        self.log_print(_Helper.whoami())
         """Read the requested data from the serial port."""
         bytes_read = []
         # initial response length is only the header.
@@ -474,9 +449,8 @@ class eSSP(object):  # noqa
                     if not process:
                         return self.__timeout_excp
                     else:
-                        m = 'Unable to read the expected response of {} bytes within {} seconds'.format(expected_bytes, self.timeout)
-                        self.log_print(m)
-                        raise eSSPTimeoutError(m)
+                        raise eSSPTimeoutError('Unable to read the expected response of {} bytes within {} seconds'.format(
+                                                expected_bytes, self.timeout))
 
             if expected_bytes == 3 and len(bytes_read) >= 3:
                 # extract the actual message length
@@ -491,8 +465,7 @@ class eSSP(object):  # noqa
                     break
 
         response = self.arrayify_response(bytes_read)
-        
-        self.log_print('RECV: ' + str(bytes_read))
+        # self._logger.debug("IN:  " + ' '.join(response))
 
         if process:
             response = self.process_response(response)
@@ -558,15 +531,13 @@ class eSSP(object):  # noqa
         return bitmask
     
     def accept_note(self):
-        self.log_print(_Helper.whoami())
         accept_res = self.send_and_flush([self.getseq(), '0x1', '0x7'])
         if accept_res == self.__timeout_excp:
             self.send_and_flush([self.getseq(), '0x1', '0x7'])
-        # self.log_print("SYNC")
+        # print("SYNC")
         # self.sync()
     
     def send_and_flush(self, command):
-        self.log_print(_Helper.whoami())
         crc = self.crc(command)
 
         prepedstring = '7F'
