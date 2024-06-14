@@ -937,10 +937,13 @@ def begin_collect_cash():
         K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|CONNECTION_ERROR')
         return
     # count_uncollected_cash = _DAO.custom_query(' SELECT IFNULL(count(*), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__']
-    count_uncollected_cash = _Common.get_cash_activity()['total']
-    if count_uncollected_cash == 0:
-        K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')
-        return
+    
+    # Bypass Enable Zero Amount Cashbox Collection
+    # count_uncollected_cash = _Common.get_cash_activity()['total']
+    # if count_uncollected_cash == 0:
+    #     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|NOT_FOUND')
+    #     return
+    
     operator = 'OPERATOR'
     if _UserService.USER is not None:
         operator = _UserService.USER['first_name']
