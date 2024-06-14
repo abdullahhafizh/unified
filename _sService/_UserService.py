@@ -94,6 +94,7 @@ def kiosk_login(username, password):
                             "first_name": "Offline",
                             "active": 1,
                             "isAbleTerminal": 1,
+                            "isSupervisor": 0,
                             "isAbleCollect": 1,
                             "last_activity": _Helper.now(),
                             "otpCode": "000000",

@@ -262,22 +262,23 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('product_stock', now, p);
         productData = JSON.parse(p);
-        if (productData.length > 0 && VIEW_CONFIG.show_card_stock) {
+        if (productData.length > 0) {
             if (productData[0].status==101) _total_stock_101.labelContent = productData[0].stock.toString();
             if (productData[0].status==102) _total_stock_102.labelContent = productData[0].stock.toString();
             if (productData[0].status==103) _total_stock_103.labelContent = productData[0].stock.toString();
         }
-        if (productData.length > 1 && VIEW_CONFIG.show_card_stock) {
+        if (productData.length > 1) {
             if (productData[1].status==101) _total_stock_101.labelContent = productData[1].stock.toString();
             if (productData[1].status==102) _total_stock_102.labelContent = productData[1].stock.toString();
             if (productData[1].status==103) _total_stock_103.labelContent = productData[1].stock.toString();
         }
-        if (productData.length > 2 && VIEW_CONFIG.show_card_stock) {
+        if (productData.length > 2) {
             if (productData[2].status==101) _total_stock_101.labelContent = productData[2].stock.toString();
             if (productData[2].status==102) _total_stock_102.labelContent = productData[2].stock.toString();
             if (productData[2].status==103) _total_stock_103.labelContent = productData[2].stock.toString();
         }
-        if (!VIEW_CONFIG.show_card_stock){
+        var show_card_stock = (userData.isSupervisor == 1 || VIEW_CONFIG.show_card_stock)
+        if (!show_card_stock){
             _total_stock_101.labelContent = 'XXX';
             _total_stock_102.labelContent = 'XXX';
             _total_stock_103.labelContent = 'XXX';
