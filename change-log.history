@@ -1,10 +1,7 @@
+16.6.8-GLOBAL:
+- Refer To 16.6.5-GLOBAL
+
 16.6.7-GLOBAL:
-- Implement Strict User Role For Collection,
-- Validate & Input Cashbox SN Before Cash Collection,
-- HID Scanner Event Capture,
-- Local Setting Free Admin Promo,
-- Enable Collect Zero Amount,
-- Show Card Stock For Supervisor Role in Admin Page,
 - ...
 
 16.6.6-GLOBAL:
@@ -15,7 +12,12 @@
 - ...
 
 16.6.5-GLOBAL:
-- Add Bill NV debug Log,
+- Implement Strict User Role For Collection,
+- Validate & Input Cashbox SN Before Cash Collection,
+- HID Scanner Event Capture,
+- Local Setting Free Admin Promo,
+- Enable Collect Zero Amount,
+- Show Card Stock For Supervisor Role in Admin Page,
 - ...
 
 16.6.4-GLOBAL:
