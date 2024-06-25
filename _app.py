@@ -35,10 +35,11 @@ from _sService import _GeneralPaymentService
 from _sService import _AudioService
 # from _mModule import _MainService
 import json
-import sentry_sdk
 
 if _Common.IS_WINDOWS:
     import wmi
+    # import sentry_sdk
+
 
 if _Common.chatbot_feature():
     from _sService import _ChatbotService
@@ -817,15 +818,15 @@ def config_log():
     # Sentry Initiation
     sentry_dsn = _ConfigParser.get_set_value('GENERAL', 'sentry^dsn', "https://d1e7e31740c147b289ee1414b2d48874@sentry-logging.multidaya.id/3")
     try:
-        sentry_sdk.init(
-            sentry_dsn,
-            max_breadcrumbs=10,
-            debug=False,
-            environment=_Common.APP_MODE,
-            server_name='VM-ID '+_Common.TID,
-            release='APP-VER. '+_Common.VERSION,
-            # default_integrations=False,
-        )
+        # sentry_sdk.init(
+        #     sentry_dsn,
+        #     max_breadcrumbs=10,
+        #     debug=False,
+        #     environment=_Common.APP_MODE,
+        #     server_name='VM-ID '+_Common.TID,
+        #     release='APP-VER. '+_Common.VERSION,
+        #     # default_integrations=False,
+        # )
         if not os.path.exists(sys.path[0] + '/_lLog/'):
             os.makedirs(sys.path[0] + '/_lLog/')
         handler = logging.handlers.TimedRotatingFileHandler(filename=sys.path[0] + '/_lLog/debug.log',

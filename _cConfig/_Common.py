@@ -10,10 +10,9 @@ import os
 import sys
 import json
 import re
-from sentry_sdk import capture_exception
+# from sentry_sdk import capture_exception
 import platform
 import subprocess
-# from sentry_sdk import capture_exception
 
 IS_LINUX = platform.system() == 'Linux'
 IS_WINDOWS = not IS_LINUX
@@ -2045,23 +2044,24 @@ def serialize_error_message(e):
 
 
 def online_logger(e='', mode='service'):
+    pass
     # _Helper.get_thread().apply_async(async_online_logger, (e, mode,))
-    async_online_logger(e, mode)
+    # async_online_logger(e, mode)
 
 
-def async_online_logger(e='', mode='service'):
-    # pass
-    if DISABLE_SENTRY_LOGGING:
-        return
-    e = serialize_error_message(e)
-    if mode == 'service':
-        capture_exception(KioskServiceErrorResponse(e))
-    elif mode == 'connection':
-        capture_exception(KioskConnectionError(e))
-    elif mode == 'device':
-        capture_exception(KioskDeviceError(e))
-    else:
-        capture_exception(KioskGeneralError(e))
+# def async_online_logger(e='', mode='service'):
+#     # pass
+#     if DISABLE_SENTRY_LOGGING:
+#         return
+#     e = serialize_error_message(e)
+#     if mode == 'service':
+#         capture_exception(KioskServiceErrorResponse(e))
+#     elif mode == 'connection':
+#         capture_exception(KioskConnectionError(e))
+#     elif mode == 'device':
+#         capture_exception(KioskDeviceError(e))
+#     else:
+#         capture_exception(KioskGeneralError(e))
 
 
 LAST_UPDATED_STOCK = []

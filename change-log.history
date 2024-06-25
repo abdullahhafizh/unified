@@ -1,6 +1,7 @@
 16.6.8-GLOBAL:
 - Refer To 16.6.5-GLOBAL
 - Include Service Charge as Received Payment in TRX Failure Receipt,
+- Deprecated Sentry SDK,
 - ...
 
 16.6.7-GLOBAL:
