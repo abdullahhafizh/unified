@@ -504,6 +504,8 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 if 'refund_status' in p.keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
+                    if p.get('service_charge', 0) > 0:
+                        p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                     pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, 'B', regular_space)
@@ -553,6 +555,8 @@ def new_print_topup_trx(p, t, ext='.pdf'):
                 # pdf.cell(padding_left, 0, 'STATUS ISI ULANG KARTU GAGAL', 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 if 'refund_status' in p.keys():
                     pdf.ln(small_space)
@@ -610,6 +614,8 @@ def new_print_topup_trx(p, t, ext='.pdf'):
             # pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
             pdf.ln(small_space)
             pdf.set_font(USED_FONT, 'B', regular_space)
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
@@ -729,6 +735,8 @@ def eprinter_topup_trx(p, t):
                     if int(p['receive_discount']) > 0:
                         printer.text((' '*padding_left)+'PROMO AKTIF: ' + p['promo']['code'] + "\n")
                 if 'refund_status' in p.keys():
+                    if p.get('service_charge', 0) > 0:
+                        p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                     printer.text((' '*padding_left)+'UANG DITERIMA: ' + serialize_number(str(p['payment_received'])) + "\n")
                     printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
                     printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
@@ -739,6 +747,8 @@ def eprinter_topup_trx(p, t):
             else:
                 printer.text((' '*padding_left)+'NO. KARTU   : ' + p['raw']['card_no'] + "\n")
                 printer.text((' '*padding_left)+'SISA SALDO  : ' + serialize_number(p['raw']['prev_balance']) + "\n")
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 printer.text((' '*padding_left)+'UANG DITERIMA: ' + serialize_number(str(p['payment_received'])) + "\n")
                 if 'refund_status' in p.keys():
                     printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
@@ -754,6 +764,8 @@ def eprinter_topup_trx(p, t):
         else:
             printer.text((' '*padding_left)+'NO. KARTU   : ' + p['raw']['card_no'] + "\n")
             printer.text((' '*padding_left)+'SISA SALDO  : ' + serialize_number(p['raw']['prev_balance']) + "\n")
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             printer.text((' '*padding_left)+'UANG DITERIMA: ' + serialize_number(str(p['payment_received'])) + "\n")
             if 'refund_status' in p.keys():
                 printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
@@ -859,6 +871,8 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -922,6 +936,8 @@ def new_print_shop_trx(p, t, ext='.pdf'):
             # pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
             pdf.ln(small_space)
             pdf.set_font(USED_FONT, 'B', regular_space)
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
@@ -1212,6 +1228,8 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, 'B', regular_space)
@@ -1265,6 +1283,8 @@ def new_print_ppob_trx(p, t, ext='.pdf'):
             # pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
             pdf.ln(small_space)
             pdf.set_font(USED_FONT, 'B', regular_space)
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
@@ -1411,6 +1431,8 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 if int(p['receive_discount']) > 0:
                     printer.text((' '*padding_left)+'PROMO AKTIF: ' + p['promo']['code'] + "\n")
             if 'refund_status' in p.keys():
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 printer.text((' '*padding_left)+'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])) + "\n")
                 printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
                 printer.text((' '*padding_left)+'STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'] + "\n")
@@ -1435,6 +1457,8 @@ def eprinter_ppob_trx(p, t, ext='.pdf'):
                 total_pay = str(int(total_pay) + int(p['admin_fee']))
             printer.text((' '*padding_left)+'TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)) + "\n")
         else:
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             printer.text((' '*padding_left)+'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])) + "\n")
             if 'refund_status' in p.keys():
                 printer.text((' '*padding_left)+'CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']) + "\n")
@@ -2599,6 +2623,8 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
                     if int(p['receive_discount']) > 0:
                         pdf.set_line('PROMO AKTIF: ' + p['promo']['code'])
                 if 'refund_status' in p.keys():
+                    if p.get('service_charge', 0) > 0:
+                        p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                     pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                     pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
                     pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
@@ -2609,6 +2635,8 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
             else:
                 pdf.set_line('NO. KARTU   : ' + p['raw']['card_no'])
                 pdf.set_line('SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']))
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                 if 'refund_status' in p.keys():
                     pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
@@ -2630,6 +2658,8 @@ def ereceipt_print_topup_trx(p, t, ext='.pdf'):
         else:
             pdf.set_line('NO. KARTU   : ' + p['raw']['card_no'])
             pdf.set_line('SISA SALDO  : Rp. ' + clean_number(p['raw']['prev_balance']))
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
             if 'refund_status' in p.keys():
                 pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
@@ -2717,6 +2747,8 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
                 if int(p['receive_discount']) > 0:
                     pdf.set_line('PROMO AKTIF: ' + p['promo']['code'])
             if 'refund_status' in p.keys():
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                 pdf.set_line('PENGEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
                 pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
@@ -2738,6 +2770,8 @@ def ereceipt_print_shop_trx(p, t, ext='.pdf'):
             total_pay = str(int(int(p['value']) * int(p['qty'])))
             pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)))
         else:
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))
             if 'refund_status' in p.keys():
                 pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
@@ -2859,6 +2893,8 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                 if int(p['receive_discount']) > 0:
                     pdf.set_line('PROMO AKTIF: ' + p['promo']['code'])
             if 'refund_status' in p.keys():
+                if p.get('service_charge', 0) > 0:
+                    p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
                 pdf.set_line('UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])))
                 pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
                 pdf.set_line('STATUS KEMBALIAN: ' + p['refund_number'] + ' ' + p['refund_status'])
@@ -2881,6 +2917,8 @@ def ereceipt_print_ppob_trx(p, t, ext='.pdf'):
                     total_pay = str(int(int(p['value']) * int(p['qty']) + int(p['admin_fee'])))
             pdf.set_line('TOTAL BAYAR : Rp. ' + clean_number(int(total_pay) + p.get('service_charge', 0)))
         else:
+            if p.get('service_charge', 0) > 0:
+                p['payment_received'] = int(p['payment_received']) + int(p['service_charge'])
             pdf.set_line('UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])))
             if 'refund_status' in p.keys():
                 pdf.set_line('CARA KEMBALIAN: ' + _Common.serialize_refund(p['refund_channel']))
