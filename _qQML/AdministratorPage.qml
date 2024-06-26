@@ -1071,18 +1071,14 @@ Base{
                        anchors.fill: parent
                        enabled: (parseInt(_total_edc_available.labelContent) > 0) ? true : false
                        onClicked: {
-                           _SLOT.user_action_log('Admin Page "EDC Settlement"');
-                           console.log('Settlement EDC Button is Pressed..!')
-                           if (userData.isAbleCollect==1){
-                               _SLOT.start_edc_settlement();
-                               popup_loading.open();
+                            _SLOT.user_action_log('Admin Page "EDC Settlement"');
+                            console.log('Settlement EDC Button is Pressed..!')
+                            _SLOT.start_edc_settlement();
+                            popup_loading.open();
 //                               actionList.push({
 //                                                   type: 'settleEdc',
 //                                                   user: operatorName
 //                                               })
-                           } else {
-                               switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
-                           }
                        }
                    }
                 }
@@ -1137,11 +1133,7 @@ Base{
                            onClicked: {
                                 _SLOT.user_action_log('Admin Page "Update Slot 1"');
                                 console.log('Update Stock Button 1 is Pressed..!')
-                                if (userData.isAbleCollect==1){
-                                    popup_update_stock.open('101');
-                                } else {
-                                    switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
-                                }
+                                popup_update_stock.open('101');
                            }
                        }
                     }
@@ -1195,13 +1187,9 @@ Base{
                        MouseArea{
                            anchors.fill: parent
                            onClicked: {
-                               _SLOT.user_action_log('Admin Page "Update Slot 2"');
-                               console.log('Update Stock Button 2 is Pressed..!')
-                               if (userData.isAbleCollect==1){
-                                   popup_update_stock.open('102');
-                               } else {
-                                   switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
-                               }
+                                _SLOT.user_action_log('Admin Page "Update Slot 2"');
+                                console.log('Update Stock Button 2 is Pressed..!')
+                                popup_update_stock.open('102');
                            }
                        }
                     }
@@ -1253,13 +1241,9 @@ Base{
                        MouseArea{
                            anchors.fill: parent
                            onClicked: {
-                               _SLOT.user_action_log('Admin Page "Update Slot 3"');
-                               console.log('Update Stock Button 3 is Pressed..!')
-                               if (userData.isAbleCollect==1){
-                                    popup_update_stock.open('103');
-                               } else {
-                                   switch_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
-                               }
+                                _SLOT.user_action_log('Admin Page "Update Slot 3"');
+                                console.log('Update Stock Button 3 is Pressed..!')
+                                popup_update_stock.open('103');
                            }
                        }
                     }
