@@ -2,6 +2,7 @@
 - Refer To 16.6.5-GLOBAL
 - Include Service Charge as Received Payment in TRX Failure Receipt,
 - Deprecated Sentry SDK,
+- Enable Mandiri Release Lock on Remote Task,
 - ...
 
 16.6.7-GLOBAL:

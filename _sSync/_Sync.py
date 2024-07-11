@@ -903,7 +903,12 @@ def handle_tasks(tasks):
                 return update_task(task, result)
             elif task['taskName'] == 'RELEASE_BNI_DEPOSIT_LOCK':
                 _Common.remove_temp_data('BNI_DEPOSIT_RELOAD_IN_PROGRES')
-                result = 'SUCCESS_REMOVE_FILE'
+                result = 'SUCCESS_REMOVE_LOCK'
+                return update_task(task, result)
+            elif task['taskName'] == 'RELEASE_MDR_DEPOSIT_LOCK':
+                _Common.remove_temp_data('MDR_DEPOSIT_UPDATE_POSTPONED')
+                _Common.remove_temp_data('MANDIRI_DEPOSIT_RELOAD_IN_PROGRES')
+                result = 'SUCCESS_REMOVE_LOCK'
                 return update_task(task, result)
             elif 'FORCE_LAST_STOCK' in task['taskName']:
                 # 'taskName' => "|".join(['FORCE_LAST_STOCK', $reloadData->slot, $last_stock]),
