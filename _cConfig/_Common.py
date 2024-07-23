@@ -158,7 +158,7 @@ BILL_SOCKET_TIMEOUT =  int(_ConfigParser.get_set_value('BILL', 'socket^timeout',
 BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
 # Handle Single Denom For Spesific Transaction Type
 BILL_SINGLE_DENOM_TRX = _ConfigParser.get_set_value('BILL', 'single^denom^trx', 'topup').split('|')
-BILL_SINGLE_DENOM_TYPE = 'GRG|MEI|NV'.split('|')
+BILL_SINGLE_DENOM_TYPE = _ConfigParser.get_set_value('BILL', 'single^denom^bill^type', 'GRG|MEI').split('|')
 BILL_TIMEOUT_TOLERANCE = 3
 BILL_PAYMENT_TIME = 57 if BILL_TYPE.lower() in ['nv'] else 87
     
