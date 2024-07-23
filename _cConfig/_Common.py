@@ -158,10 +158,10 @@ BILL_SOCKET_TIMEOUT =  int(_ConfigParser.get_set_value('BILL', 'socket^timeout',
 BILL_ACTIVE_NOTES = ['5000', '10000', '20000', '50000', '75000', '100000']
 # Handle Single Denom For Spesific Transaction Type
 BILL_SINGLE_DENOM_TRX = _ConfigParser.get_set_value('BILL', 'single^denom^trx', 'topup').split('|')
-BILL_SINGLE_DENOM_TYPE = _ConfigParser.get_set_value('BILL', 'single^denom^bill^type', 'GRG|MEI').split('|')
+BILL_SINGLE_DENOM_TYPE = _ConfigParser.get_set_value('BILL', 'single^denom^bill^type', 'GRG|MEI|NV').split('|')
 BILL_TIMEOUT_TOLERANCE = 3
 BILL_PAYMENT_TIME = 57 if BILL_TYPE.lower() in ['nv'] else 87
-    
+
 AMQP_ENABLE = True if _ConfigParser.get_set_value('AMQP', 'active', '0') == '1' else False
 AMQP_HOST = _ConfigParser.get_set_value('AMQP', 'host', 'amqp.mdd.co.id')
 AMQP_PORT = _ConfigParser.get_set_value('AMQP', 'port', '5672')
@@ -625,6 +625,8 @@ def get_cash_activity(keyword=None, trx_output=False):
             with open(cash_status_file, 'w+') as c:
                 c.close()
         cash_status = open(cash_status_file, 'r').readlines()
+        # Handle Duplicate Rows By Anomaly
+        cash_status = list(set(cash_status))
         if len(cash_status) == 0:
             LOGGER.warning(('CASH_STATUS_NOT_FOUND', str(cash_status)))
             return output
@@ -678,7 +680,13 @@ def backup_cash_activity(collection_file):
         return False
     # collection_file = cash_status_file.replace('status', collection_id)
     collection_file = os.path.join(CASHBOX_PATH, collection_file)
-    os.rename(cash_status_file, collection_file)
+    cash_status = open(cash_status_file, 'r').readlines()
+    # Handle Duplicate Rows By Anomaly
+    cash_status = list(set(cash_status))
+    with open(collection_file, 'w') as outfile:
+        outfile.writelines(cash_status)
+    # Reset cashbox.status
+    os.remove(cash_status_file)
     LOGGER.info(('BACKUP_CASH_ACTIVITY', cash_status_file, collection_file))
     return True
 
