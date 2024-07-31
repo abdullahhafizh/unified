@@ -606,7 +606,8 @@ def machine_summary():
         'current_cash': _Common.get_cash_activity()['total'],
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
-        'last_reboot': _Common.REBOOT_TIME
+        'last_reboot': _Common.REBOOT_TIME,
+        'mandiri_blacklist_version': _Common.MANDIRI_CARD_BLOCKED_VERSION
     }
     try:
         summary['gui_version'] = _Common.VERSION

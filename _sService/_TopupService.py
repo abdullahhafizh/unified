@@ -2307,6 +2307,7 @@ def get_mandiri_card_blocked_list():
                     content += data + '\n'
                 _Common.store_to_temp_data('mandiri_card_blocked_list', content)
                 _Common.MANDIRI_CARD_BLOCKED_LIST = response['data']['blacklist']
+                _Common.MANDIRI_CARD_BLOCKED_VERSION = response['data'].get('version', '---')
                 LOGGER.info(('MANDIRI_CARD_BLOCKED_LIST UPDATED'))
             return True
         else:

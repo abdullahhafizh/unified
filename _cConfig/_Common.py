@@ -1605,6 +1605,7 @@ def get_refunds():
 FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA", "CUSTOMER-SERVICE"]
 
 MANDIRI_CARD_BLOCKED_LIST = load_from_temp_data('mandiri_card_blocked_list', 'text').split('\n')
+MANDIRI_CARD_BLOCKED_VERSION = '---'
 MANDIRI_CHECK_CARD_BLOCKED = True 
 _ConfigParser.set_value('GENERAL', 'mandiri^card^blocked', '1')
 MANDIRI_CARD_BLOCKED_URL = _ConfigParser.get_set_value('GENERAL', 'mandiri^card^blocked^url', 'https://prepaid-service.mdd.co.id/topup-mandiri/blacklist')
