@@ -1,21 +1,32 @@
 16.6.9-GLOBAL:
 - Add Mandiri Card Blocklist Version Sync,
-- Sync Mandiri Card Blocklist on 6:00 AM,
+- Extra Sync Mandiri Card Blocklist on 6:00 AM,
 - ...
 
-
-16.6.6-BCA:
-- Add Printer Indicator,
-- Add Printer Reset Spooler Function,
-- Show Tombol BATAL After Payment Failure,
-- Disable Print EDC By Panel Setting,
-- Fix Button Color in Admin Page,
-- Fix Control Access in Card Stock,
+16.6.8-GLOBAL:
+- Refer To 16.6.5-GLOBAL
+- Include Service Charge as Received Payment in TRX Failure Receipt,
+- Deprecated Sentry SDK,
+- Enable Mandiri Release Lock on Remote Task,
 - ...
 
+16.6.7-GLOBAL:
+- ...
+
+16.6.6-GLOBAL:
+- Handle QRIS Payment Fee Per Transaction Type,
+- Enable Lite Layout Receipt For BCA,
+- Disable Card Stock Visible By Config,
+- Parkour Payment Integration,
+- ...
 
 16.6.5-GLOBAL:
-- Add Bill NV debug Log,
+- Implement Strict User Role For Collection,
+- Validate & Input Cashbox SN Before Cash Collection,
+- HID Scanner Event Capture,
+- Local Setting Free Admin Promo,
+- Enable Collect Zero Amount,
+- Show Card Stock For Supervisor Role in Admin Page,
 - ...
 
 16.6.4-GLOBAL:

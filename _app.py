@@ -1217,7 +1217,7 @@ def startup_task():
             sleep(1)
             print("pyt: Resync Data Mandiri Card Blacklist...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Data Mandiri Card Blacklist...')
-            _TopupService.get_mandiri_card_blocked_list()
+            _TopupService.start_get_mandiri_card_blocked_list()
             sleep(1)
             print("pyt: Resync Mandiri C2C Fee To Host...")
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Resync Mandiri C2C Fee To Host...')

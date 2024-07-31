@@ -117,6 +117,10 @@ def do_scheduler_job():
                     break
                 daily_report_send_attempt -= 1
     # Add Daily Reboot Time Local Setting
+    # Add Daily Sync Mandiri Blacklist at 6:00 AM
+        if _Helper.time_string('%H:%M') == '06:00' and not _Common.MANDIRI_EXTRA_SYNC_TIME:
+            _TopupService.start_get_mandiri_card_blocked_list()
+            _Common.MANDIRI_EXTRA_SYNC_TIME = True
         if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
             LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
             sleep(30)
@@ -124,7 +128,8 @@ def do_scheduler_job():
                 _KioskService.execute_command('shutdown -r -f -t 0')
             else:
                 _KioskService.execute_command('reboot now')
-    except:
+    except Exception as e:
+        LOGGER.warning(e)
         pass
 
 

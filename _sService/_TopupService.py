@@ -2291,7 +2291,11 @@ def refund_bri_pending(data=None):
     except Exception as e:
         LOGGER.warning(str(e))
         return False
-    
+
+
+def start_get_mandiri_card_blocked_list():
+    _Helper.get_thread().apply_async(get_mandiri_card_blocked_list)
+
 
 def get_mandiri_card_blocked_list():
     if not _Common.MANDIRI_CHECK_CARD_BLOCKED or _Common.MANDIRI_CARD_BLOCKED_URL == '---':
