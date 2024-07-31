@@ -118,9 +118,9 @@ def do_scheduler_job():
                 daily_report_send_attempt -= 1
     # Add Daily Reboot Time Local Setting
     # Add Daily Sync Mandiri Blacklist at 6:00 AM
-        if _Helper.time_string('%H:%M') == '06:00' and not _Common.MANDIRI_EXTRA_SYNC_TIME:
+        if _Helper.time_string('%H:%M') == '06:00' and not _Common.MANDIRI_CARD_BLOCKED_EXTRA_SYNC_TIME:
             _TopupService.start_get_mandiri_card_blocked_list()
-            _Common.MANDIRI_EXTRA_SYNC_TIME = True
+            _Common.MANDIRI_CARD_BLOCKED_EXTRA_SYNC_TIME = True
         if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
             LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
             sleep(30)
