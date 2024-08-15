@@ -1300,6 +1300,28 @@ def update_receipt_count():
 
 def start_reset_receipt_count(count):
     _Helper.get_thread().apply_async(reset_receipt_count, (count,))
+    _Helper.get_thread().apply_async(clear_print_spooler)
+    
+    
+def clear_print_spooler():
+    if not IS_WINDOWS: return
+    try:
+        subprocess.run(['net', 'stop', 'spooler'], check=True)
+        sleep(2)
+        spooler_directory = r'C:\Windows\System32\spool\PRINTERS'
+        for file_name in os.listdir(spooler_directory):
+            file_path = os.path.join(spooler_directory, file_name)
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                pass
+        sleep(2)
+        subprocess.run(['net', 'start', 'spooler'], check=True)
+        print("pyt: Print spooler cleared and restarted successfully.")
+    except subprocess.CalledProcessError as e:
+        print("pyt: CalledProcessError " + str(e))
+    except Exception as e:
+        print("pyt: Exception " + str(e))
 
 
 def reset_paper_roll():
@@ -2054,24 +2076,23 @@ def serialize_error_message(e):
 
 
 def online_logger(e='', mode='service'):
-    pass
     # _Helper.get_thread().apply_async(async_online_logger, (e, mode,))
-    # async_online_logger(e, mode)
+    async_online_logger(e, mode)
 
 
-# def async_online_logger(e='', mode='service'):
-#     # pass
-#     if DISABLE_SENTRY_LOGGING:
-#         return
-#     e = serialize_error_message(e)
-#     if mode == 'service':
-#         capture_exception(KioskServiceErrorResponse(e))
-#     elif mode == 'connection':
-#         capture_exception(KioskConnectionError(e))
-#     elif mode == 'device':
-#         capture_exception(KioskDeviceError(e))
-#     else:
-#         capture_exception(KioskGeneralError(e))
+def async_online_logger(e='', mode='service'):
+    pass
+    # if DISABLE_SENTRY_LOGGING or 1==1:
+    #     return
+    # e = serialize_error_message(e)
+    # if mode == 'service':
+    #     capture_exception(KioskServiceErrorResponse(e))
+    # elif mode == 'connection':
+    #     capture_exception(KioskConnectionError(e))
+    # elif mode == 'device':
+    #     capture_exception(KioskDeviceError(e))
+    # else:
+    #     capture_exception(KioskGeneralError(e))
 
 
 LAST_UPDATED_STOCK = []
@@ -2661,36 +2682,11 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
 REBOOT_TIME = 0
 
 
-def sync_parking_transaction(payload):
-    try:
-        payload = json.loads(json.dumps(payload))
-        payload['paid_at'] = _Helper.time_string()
-        payload['site_id'] = PARKOUR_SITE_ID
-        url = BACKEND_URL + 'sync/transaction-parking'
-        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
-        if s != 200 or r.get('result') != 'OK':
-            payload['endpoint'] = 'sync/transaction-parking'
-            store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
-        return True
-    except Exception as e:
-        LOGGER.warning(e)
-        return False
-
-
-FREE_ADMIN_START = _ConfigParser.get_set_value('GENERAL', 'free^admin^start', '20240609')
-FREE_ADMIN_END = _ConfigParser.get_set_value('GENERAL', 'free^admin^end', '20240615')
-
-
-def define_free_admin_value():
-    global KIOSK_ADMIN
-    value = 0
-    this_date = _Helper.time_string(f='%Y%m%d')
-    if (int(this_date) >= int(FREE_ADMIN_START)) and (int(this_date) <= int(FREE_ADMIN_END)):
-        value = DEFAULT_KIOSK_ADMIN
-        KIOSK_ADMIN = 0
-        LOGGER.info(('FREE_ADMIN', value))
-        LOGGER.info(('KIOSK_ADMIN', KIOSK_ADMIN))
-    return int(value)
-
-
-VIEW_CONFIG['free_admin_value'] = define_free_admin_value()
+def remark_transaction_by_date(selected_date):
+    start_time = _Helper.convert_string_to_epoch(selected_date + ' 00:00:00')
+    end_time = _Helper.convert_string_to_epoch(selected_date + ' 23:59:59')
+    count_data = _DAO.custom_query('SELECT count(*) AS __ FROM TransactionsNew WHERE createdAt > '+str(start_time)+' AND createdAt < '+str(end_time))[0]['__']
+    _DAO.custom_update('UPDATE TransactionsNew SET syncFlag=0 WHERE createdAt > '+str(start_time)+' AND createdAt < '+str(end_time))
+    final_count_data = _DAO.custom_query('SELECT count(*) AS __ FROM TransactionsNew WHERE syncFlag=0 AND createdAt > '+str(start_time)+' AND createdAt < '+str(end_time))[0]['__']
+    message = 'UPDATE TransactionsNew SET syncFlag=0 WHERE createdAt > '+str(start_time)+' AND createdAt < '+str(end_time)+ ' :  Updated ' + str(final_count_data)
+    return message, count_data, final_count_data

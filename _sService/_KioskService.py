@@ -1291,6 +1291,9 @@ def store_transaction_global(param, retry=False):
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + trx_id)
         else:
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + trx_id)
+        sleep(3)
+        # Double Push To Server After 3 Seconds
+        _HTTPAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/transaction-new', param=trx_data)
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')

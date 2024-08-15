@@ -76,10 +76,22 @@ def convert_epoch(t = None, f=''):
     return datetime.datetime.fromtimestamp(t).strftime(f)
 
 
+def convert_string_to_epoch(date_str):
+    if date_str is None: return False
+    dt = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+    return int(dt.timestamp()) * 1000
+
+
 def time_string(f=''):
     if len(f) == 0:
         f = TIME_FORMAT
     return datetime.datetime.now().strftime(f)
+
+
+def yesterday_date(f='%Y-%m-%d'):
+    today = datetime.datetime.now()
+    yesterday = today - datetime.timedelta(days=1)
+    return yesterday.strftime(f)
 
 
 def get_uuid():

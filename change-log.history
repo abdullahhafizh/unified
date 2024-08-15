@@ -1,3 +1,9 @@
+16.7.0-GLOBAL:
+- Add Remote Command RESYNC_ALL_TRX_BY_DATE|<DATE>,
+- Force Enable sync_data_transaction,
+- Local Resync Transaction Data on Daily Basis,
+- ...
+
 16.6.9-GLOBAL:
 - Add Mandiri Card Blocklist Version Sync,
 - Extra Sync Mandiri Card Blocklist on 6:00 AM,

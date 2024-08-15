@@ -50,13 +50,13 @@ def do_recheck_time():
                 os.system('date ' +  t.strftime("%x"))
                 os.system('time ' +  t.strftime("%X"))
             LAST_CAPTURED_TIME = _Helper.epoch()
-            print('pyt: Resync Done', _Helper.time_string())
-            LOGGER.debug(('Resync Skip', _Helper.time_string()))
+            print('pyt: Resync Datetime Done', _Helper.time_string())
+            LOGGER.debug(('Resync Datetime Skip', _Helper.time_string()))
         else:
-            print('pyt: Resync Skip', _Helper.time_string())
-            LOGGER.debug(('Resync Skip', _Helper.time_string()))
+            print('pyt: Resync Datetime Skip', _Helper.time_string())
+            LOGGER.debug(('Resync Datetime Skip', _Helper.time_string()))
     except Exception as e:
-        print('pyt: ERROR Recheck Time', e)
+        print('pyt: ERROR Recheck Datetime', e)
         LOGGER.error((e))
     
 
@@ -122,6 +122,9 @@ def do_scheduler_job():
             _TopupService.start_get_mandiri_card_blocked_list()
             _Common.MANDIRI_CARD_BLOCKED_EXTRA_SYNC_TIME = True
         if _Common.DAILY_REBOOT_TIME == _Helper.time_string('%H:%M'):
+            message, _, __ = _Common.remark_transaction_by_date(_Helper.yesterday_date())
+            print('pyt: '+message)
+            LOGGER.debug((message))
             LOGGER.info(('Trigger Daily Reboot Time (Countdown 30)', _Common.DAILY_REBOOT_TIME, _Helper.time_string()))            
             sleep(30)
             if _Common. IS_WINDOWS:
@@ -471,28 +474,29 @@ def sync_data_transaction():
     url = _Common.BACKEND_URL + 'sync/transaction-new'
     _table_ = 'TransactionsNew'
     while True:
-        if not _Common.IS_ONLINE: continue
         try:
-            if _Common.is_online(source='sync_data_transaction') is True:
-                transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
-                if len(transactions) > 0:
-                    # print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
-                    for t in transactions:
-                        # Revert Flag Validation mid for Sale Calculation If Not Synced Before
-                        t['mid'] = ''
-                        status, response = _HTTPAccess.post_to_url(url=url, param=t)
-                        if status == 200 and response['id'] == t['trxId']:
-                            LOGGER.info(response)
-                            t['key'] = t['trxId']
-                            _DAO.mark_sync(param=t, _table=_table_, _key='trxId')
-                        else:
-                            LOGGER.warning(response)
+            transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
+            if len(transactions) == 0:
+                print('pyt: sync_data_transaction ' + _Helper.time_string() + ' NO Re-Sync Transaction Data!')
+            else:
+                print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
+                for t in transactions:
+                    LOGGER.info(str(t))                
+                    # Revert Flag Validation mid for Sale Calculation If Not Synced Before
+                    t['mid'] = ''
+                    status, response = _HTTPAccess.post_to_url(url=url, param=t)
+                    if status == 200 and response['id'] == t['trxId']:
+                        LOGGER.info(str(response))
+                        t['key'] = t['trxId']
+                        _DAO.mark_sync(param=t, _table=_table_, _key='trxId')
+                    else:
+                        LOGGER.warning(str(response))           
         except Exception as e:
             LOGGER.warning(e)
-        finally:
-            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
-                break
+        # finally:
+        #     if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
+        #         LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+        #         break
         sleep(60*5)
         
 
@@ -1042,7 +1046,14 @@ def handle_tasks(tasks):
                 trx_id = task['taskName'].split('|')[1]
                 result = _Common.get_cash_activity(keyword=trx_id)
                 return update_task(task, result)
-            
+            elif 'RESYNC_ALL_TRX_BY_DATE|' in task['taskName']:
+                # RESYNC_ALL_TRX_BY_DATE|2024-08-10
+                selected_date = task['taskName'].split('|')[1]
+                message, count_data, final_count_data = _Common.remark_transaction_by_date(selected_date)
+                print('pyt: '+message)
+                LOGGER.debug((message))
+                result = 'SUCCESS_RESYNC_TRX_COUNT['+str(count_data)+'] == '+str(final_count_data)
+                return update_task(task, result)
             # Add Intruction Above
             else:
                 result = 'NOT_UNDERSTAND'
