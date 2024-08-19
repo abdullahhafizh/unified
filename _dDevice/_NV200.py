@@ -541,10 +541,17 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
-            # Back To Old Way
-            NV200.reject()
-            time.sleep(1)
-            NV200.disable()
+            action = NV200.reject()
+            LOOP_ATTEMPT = 0
+            while True:
+                pool = NV200.listen_poll()
+                LOOP_ATTEMPT += 1
+                if "Rejected" in pool[1]:
+                    # return 0, pool[1]
+                    break
+                if LOOP_ATTEMPT >= 3:
+                    break
+                time.sleep(1)
             LOOP_ATTEMPT = 0
             return 0, "Note Rejected"
             #Below Disabled
