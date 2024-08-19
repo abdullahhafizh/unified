@@ -543,15 +543,15 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['REJECT']:
             action = NV200.reject()
             LOOP_ATTEMPT = 0
-            while True:
-                pool = NV200.get_event(command)
-                LOOP_ATTEMPT += 1
-                if "Rejected" in pool[1]:
-                    # return 0, pool[1]
-                    break
-                if LOOP_ATTEMPT >= 3:
-                    break
-                time.sleep(1)
+            # while True:
+            #     event = NV200.get_event(command)
+            #     LOOP_ATTEMPT += 1
+            #     if "Rejected" in event[1]:
+            #         # return 0, pool[1]
+            #         break
+            #     if LOOP_ATTEMPT >= 3:
+            #         break
+            #     time.sleep(1)
             NV200.disable()
             return 0, "Note Rejected"
             #Below Disabled
