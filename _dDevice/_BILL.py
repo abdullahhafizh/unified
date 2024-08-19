@@ -357,7 +357,7 @@ def start_receive_note(trxid):
                     exceed_payment = is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH)
                     LOGGER.info(('Exceed Payment :', BILL_TYPE, exceed_payment))
                     # NV Cannot Reject Notes Which Enabled Without Special Hold Command
-                    if exceed_payment is True and BILL_TYPE != 'NV':
+                    if exceed_payment is True:
                         sleep(.5)
                         send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
                         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
