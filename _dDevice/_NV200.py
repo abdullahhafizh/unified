@@ -55,8 +55,8 @@ class NV200_BILL_ACCEPTOR(object):
         try:
             if not self.check_active():
                 result = self.open()
-            result = self.nv200.bulb_on()
             result = self.nv200.enable()
+            result = self.nv200.bulb_on()
             if _Common.BILL_LIBRARY_DEBUG is True:
                 # print('pyt: [NV200] Enabling', str(result), str(COMMAND_MODE))   
                 LOGGER.debug(('[NV200] Enabling', str(result), str(COMMAND_MODE)))
@@ -67,8 +67,8 @@ class NV200_BILL_ACCEPTOR(object):
 
     def disable(self):
         try:
-            result = self.nv200.bulb_off()
             result = self.nv200.disable()
+            result = self.nv200.bulb_off()
             if _Common.BILL_LIBRARY_DEBUG is True:
                 # print('pyt: [NV200] Disabling', str(result))   
                 LOGGER.debug(('[NV200] Disabling', str(result)))
@@ -91,8 +91,8 @@ class NV200_BILL_ACCEPTOR(object):
 
     def reject(self):
         try:
-            result = self.nv200.bulb_off()
             result = self.nv200.reject_note()
+            result = self.nv200.bulb_off()
             if _Common.BILL_LIBRARY_DEBUG is True:
                 # print('pyt: [NV200] Rejecting', str(result))   
                 LOGGER.debug(('[NV200] Rejecting', str(result)))
@@ -543,6 +543,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['REJECT']:
             LOOP_ATTEMPT = 0
             max_reject_attempt = 5 #Seconds To Wait For Confirming Notes Reject
+            NV200.reject()
             NV200.reject()
             while True:
                 event = NV200.get_event(command)

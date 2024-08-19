@@ -353,6 +353,19 @@ def start_receive_note(trxid):
                 if _response == 0 and BILL["KEY_RECEIVED"] in _result:
                     cash_in = parse_notes(_result)
                     
+                    # Validate Exceed Payment
+                    exceed_payment = is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH)
+                    LOGGER.info(('Exceed Payment :', BILL_TYPE, exceed_payment))
+                    # NV Cannot Reject Notes Which Enabled Without Special Hold Command
+                    if exceed_payment is True and BILL_TYPE != 'NV':
+                        sleep(.5)
+                        send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
+                        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                        LOGGER.warning(('Exceed Payment Detected :', json.dumps({'REJECT': cash_in,
+                                                                            'COLLECTED': COLLECTED_CASH,
+                                                                            'TARGET': TARGET_CASH_AMOUNT})))
+                        break
+                    
                     # -------------------------
                     # Dummy True Condition (Must Be True)
                     if BILL_TYPE in _Common.BILL_SINGLE_DENOM_TYPE:
@@ -374,17 +387,17 @@ def start_receive_note(trxid):
                             send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
                             BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
                             break
-                        exceed_payment = is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH)
-                        LOGGER.info(('Exceed Payment :', BILL_TYPE, exceed_payment))
-                        # NV Cannot Reject Notes Which Enabled Without Special Hold Command
-                        if exceed_payment is True and BILL_TYPE != 'NV':
-                            sleep(.5)
-                            send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
-                            BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
-                            LOGGER.warning(('Exceed Payment Detected :', json.dumps({'REJECT': cash_in,
-                                                                                'COLLECTED': COLLECTED_CASH,
-                                                                                'TARGET': TARGET_CASH_AMOUNT})))
-                            break
+                        # exceed_payment = is_exceed_payment(TARGET_CASH_AMOUNT, cash_in, COLLECTED_CASH)
+                        # LOGGER.info(('Exceed Payment :', BILL_TYPE, exceed_payment))
+                        # # NV Cannot Reject Notes Which Enabled Without Special Hold Command
+                        # if exceed_payment is True and BILL_TYPE != 'NV':
+                        #     sleep(.5)
+                        #     send_command_to_bill(param=BILL["REJECT"] + '|', output=None)
+                        #     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|BAD_NOTES')
+                        #     LOGGER.warning(('Exceed Payment Detected :', json.dumps({'REJECT': cash_in,
+                        #                                                         'COLLECTED': COLLECTED_CASH,
+                        #                                                         'TARGET': TARGET_CASH_AMOUNT})))
+                        #     break
                     # ===========================================
                     # Process Store and Update Data Cash
                     # ===========================================
