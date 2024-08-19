@@ -544,7 +544,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             action = NV200.reject()
             LOOP_ATTEMPT = 0
             while True:
-                pool = NV200.listen_poll()
+                pool = NV200.get_event()
                 LOOP_ATTEMPT += 1
                 if "Rejected" in pool[1]:
                     # return 0, pool[1]
@@ -557,7 +557,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             #Below Disabled
             # LOOP_ATTEMPT = 0
             # max_reject_attempt = 5 #Seconds To Wait For Confirming Notes Reject
-            # NV200.reject()
             # NV200.reject()
             # while True:
             #     event = NV200.get_event(command)
