@@ -90,12 +90,14 @@ class NV200_BILL_ACCEPTOR(object):
             return False
 
     def reject(self):
+        global COMMAND_MODE
         try:
             result = self.nv200.reject_note()
             result = self.nv200.bulb_off()
             if _Common.BILL_LIBRARY_DEBUG is True:
                 # print('pyt: [NV200] Rejecting', str(result))   
                 LOGGER.debug(('[NV200] Rejecting', str(result)))
+            COMMAND_MODE = 'reject'
             return True
         except Exception as e:
             LOGGER.warning(('[NV200', e))
@@ -389,14 +391,7 @@ class NV200_BILL_ACCEPTOR(object):
                 self.nv200.hold()
             else:
                 break
-            time.sleep(3)
-            
-            
-    def reject(self):
-        global COMMAND_MODE
-        self.nv200.reject_note()
-        COMMAND_MODE = 'reject'
-    
+            time.sleep(3)    
     
     def accept(self):
         global COMMAND_MODE
