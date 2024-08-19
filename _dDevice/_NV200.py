@@ -394,9 +394,8 @@ class NV200_BILL_ACCEPTOR(object):
             
     def reject(self):
         global COMMAND_MODE
-        # if COMMAND_MODE == 'hold':
-        COMMAND_MODE = 'reject'
         self.nv200.reject_note()
+        COMMAND_MODE = 'reject'
     
     
     def accept(self):
@@ -541,17 +540,16 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
-            action = NV200.reject()
+            NV200.reject()
             LOOP_ATTEMPT = 0
-            # while True:
-            #     event = NV200.get_event(command)
-            #     LOOP_ATTEMPT += 1
-            #     if "Rejected" in event[1]:
-            #         # return 0, pool[1]
-            #         break
-            #     if LOOP_ATTEMPT >= 3:
-            #         break
-            #     time.sleep(1)
+            while True:
+                event = NV200.get_event(command)
+                LOOP_ATTEMPT += 1
+                if LOOP_ATTEMPT >= 3:
+                    break
+                if len(event) > 1 and  "Rejected" in event[1]:
+                    break
+                time.sleep(.25)
             NV200.disable()
             return 0, "Note Rejected"
             #Below Disabled
