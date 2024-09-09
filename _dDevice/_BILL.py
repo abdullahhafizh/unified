@@ -12,7 +12,8 @@ import sys
 import os
 import subprocess
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
-from _dDevice import _NV200
+from _dDevice import _NV200, _NVProcess
+from threading import Event
 
 if _Common.IS_LINUX:
     from _dDevice import _MeiSCR
@@ -24,6 +25,8 @@ TEST_MODE = _Common.TEST_MODE
 
 CONFIG_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'BILLDTATM_CommCfg.ini')
 EXEC_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'bill.exe')
+NV_LIB_MODE = True
+NV_ENGINE_LIB = os.path.join(sys.path[0], '_lLib', 'nv_itl')
 LOG_BILL = os.path.join(sys.path[0], 'log')
 BILL_TYPE = _Common.BILL_TYPE
 BILL_PORT = _Common.BILL_PORT
@@ -74,6 +77,31 @@ NV = {
     "TYPE": "NV_200",
     "MAX_EXECUTION_TIME": _Common.BILL_PAYMENT_TIME,
     "RECEIVE_ATTEMPT": 1
+}
+
+NV_ITL = {
+    "SET": "611",
+    "RECEIVE": "612",
+    "STOP": "613",
+    "STATUS": "614",
+    "STORE": "615",
+    "REJECT": "616",
+    "GET_STATE": "617",
+    "ENABLE": "618",
+    "PORT": BILL_PORT,
+    "KEY_RECEIVED": "Note held in escrow, amount: ",
+    "CODE_JAM": "Unsafe jam|Safe jam",
+    "TIMEOUT_BAD_NOTES": "Invalid note",
+    "UNKNOWN_ITEM": None,
+    "LOOP_DELAY": 0.25,
+    "KEY_STORED": "Note stacked",
+    "MAX_STORE_ATTEMPT": 1,
+    "KEY_BOX_FULL": 'Stacker full',
+    "DIRECT_MODULE": False,
+    "TYPE": "NV_200_ITL",
+    "MAX_EXECUTION_TIME": _Common.BILL_PAYMENT_TIME,
+    "RECEIVE_ATTEMPT": 1,
+    "ENGINE_LIB": NV_ENGINE_LIB
 }
 
 MEI = {
@@ -182,7 +210,11 @@ def init_bill():
     global OPEN_STATUS, BILL
     
     if BILL_TYPE == 'GRG': BILL = GRG 
-    if BILL_TYPE == 'NV': BILL = NV 
+    if BILL_TYPE == 'NV':
+        if NV_LIB_MODE:
+            BILL = NV_ITL
+        else:
+            BILL = NV 
     if BILL_TYPE == 'MEI': BILL = MEI 
 
     if BILL_PORT is None:
@@ -202,7 +234,10 @@ def init_bill():
 
 def send_command_to_bill(param=None, output=None):
     if BILL_TYPE == 'NV':
-        result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
+        if NV_LIB_MODE:
+            result = _NVProcess.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
+        else:
+            result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
         # code, message = result
         # Retry Command if Exception Raise
         # if code == -99:
@@ -221,9 +256,13 @@ def reset_bill():
     global OPEN_STATUS, BILL
 
     if BILL_TYPE == 'GRG': BILL = GRG 
-    if BILL_TYPE == 'NV': BILL = NV 
+    if BILL_TYPE == 'NV': 
+        if NV_LIB_MODE:
+            BILL = NV_ITL
+        else:
+            BILL = NV 
     if BILL_TYPE == 'MEI': BILL = MEI 
-
+ 
     param = BILL["SET"] + '|' + BILL["PORT"]
     if BILL_TYPE in ['MEI']:
         OPEN_STATUS = True
@@ -278,7 +317,7 @@ def start_bill_receive_note(trxid):
         init_bill()
     # Assign Cash TRX_ID
     _Common.ACTIVE_CASH_TRX_ID = trxid
-    _Helper.get_thread().apply_async(start_receive_note, (trxid,))
+    _Helper.get_thread().apply_async(wrapper_start_receive_note, (trxid,))
 
 
 def parse_notes(_result):
@@ -291,12 +330,37 @@ def parse_notes(_result):
             # Received=IDR|Denomination=10000.0|Version=286318130
             cash_in = _result.split('|')[1].split('=')[1].replace('.0', '')
         elif BILL_TYPE == 'NV':
-            # Note in escrow, amount: 2000.00  IDR
-            cash_in = _result.split('amount: ')[1].split('.00')[0]
+            if NV_LIB_MODE:
+                cash_in = _result.split(BILL["KEY_RECEIVED"])[1].split('.00')[0]
+            else:
+                # Note in escrow, amount: 2000.00  IDR
+                cash_in = _result.split('amount: ')[1].split('.00')[0]
     except Exception as e:
         LOGGER.warning((e))
     finally:
         return cash_in
+
+NV_ITL= Event()
+def wrapper_start_receive_note(trxid):
+    # Ada banyak return di start_receive_note yg membuat kompleks untuk enable dan disable NV, kalau sudah atomic level race condition ini ga bisa prevent multiple running
+    global NV_ITL
+    if BILL_TYPE == "NV" and NV_LIB_MODE:
+        if NV_ITL.is_set():
+            # kalau sudah set jgn jalankan lagi, berarti ada process/thread yg sedang jalan
+            return        
+        NV_ITL.set()
+
+        _response, _result = send_command_to_bill(param=BILL["ENABLE"], output=None)
+        if _response != 0:
+            # ERROR, perlu log?
+            NV_ITL.clear()
+            return
+    
+    start_receive_note(trxid)
+
+    if BILL_TYPE == "NV" and NV_LIB_MODE:
+        _response, _result = send_command_to_bill(param=BILL["STOP"], output=None)
+        NV_ITL.clear()
     
 
 def start_receive_note(trxid):
@@ -656,6 +720,9 @@ def stop_receive_note(trxid):
 
 
 def start_bill_store_note(trxid):
+    if BILL_TYPE == "NV" and NV_LIB_MODE:
+        #bill store diluar loop akan membahayakan logic sistem ketika membaca note di fungsi receive.
+        return
     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
 
 
@@ -706,6 +773,9 @@ def bill_store_note(trxid):
 
 
 def start_bill_reject_note(trxid):
+    if BILL_TYPE == "NV" and NV_LIB_MODE:
+        #reject diluar loop akan membahayakan logic sistem ketika membaca note di fungsi receive.
+        return
     _Helper.get_thread().apply_async(bill_reject_note, (trxid,))
 
 
