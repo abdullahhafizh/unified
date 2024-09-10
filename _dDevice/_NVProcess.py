@@ -220,7 +220,7 @@ def get_response(response_nv:Queue, expected_response):
             attempt -= 1
             continue
 
-        if response == expected_response:
+        if response.__contains__(expected_response):
             code = 0
             response_list.append(response)
             break
