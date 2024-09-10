@@ -216,6 +216,7 @@ def init_bill():
         if BILL_TYPE == 'NV':
             if NV_LIB_MODE:
                 BILL = NV_ITL
+                LOGGER.debug(("BILL", BILL))
             else:
                 BILL = NV 
         if BILL_TYPE == 'MEI': BILL = MEI 
