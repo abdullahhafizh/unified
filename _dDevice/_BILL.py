@@ -208,33 +208,40 @@ TARGET_CASH_AMOUNT = 0
 
 def init_bill():
     global OPEN_STATUS, BILL
-    
-    if BILL_TYPE == 'GRG': BILL = GRG 
-    if BILL_TYPE == 'NV':
-        if NV_LIB_MODE:
-            BILL = NV_ITL
+    try:
+        LOGGER.debug(("BILL_TYPE", BILL_TYPE))
+        
+        if BILL_TYPE == 'GRG': BILL = GRG 
+        if BILL_TYPE == 'NV':
+            if NV_LIB_MODE:
+                BILL = NV_ITL
+            else:
+                BILL = NV 
+        if BILL_TYPE == 'MEI': BILL = MEI 
+
+        if BILL_PORT is None:
+            LOGGER.warning(("port", BILL_PORT))
+            _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
+            return False
+        param = BILL["SET"] + '|' + BILL["PORT"]
+        response, result = send_command_to_bill(param=param, output=None)
+        if response == 0:
+            OPEN_STATUS = True
         else:
-            BILL = NV 
-    if BILL_TYPE == 'MEI': BILL = MEI 
+            _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
 
-    if BILL_PORT is None:
-        LOGGER.warning(("port", BILL_PORT))
-        _Common.BILL_ERROR = 'BILL_PORT_NOT_DEFINED'
-        return False
-    param = BILL["SET"] + '|' + BILL["PORT"]
-    response, result = send_command_to_bill(param=param, output=None)
-    if response == 0:
-        OPEN_STATUS = True
-    else:
-        _Common.BILL_ERROR = 'FAILED_INIT_BILL_PORT'
-
-    BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
+        BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
+    except Exception as e:
+        LOGGER.warning(e)
+        _Common.BILL_ERROR = 'INIT_BILL_ERROR'
+        BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('INIT_BILL|ERROR')
     return OPEN_STATUS
 
 
 def send_command_to_bill(param=None, output=None):
     if BILL_TYPE == 'NV':
         if NV_LIB_MODE:
+            LOGGER.debug(("nv_send_command", param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES))
             result = _NVProcess.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
         else:
             result = _NV200.send_command(param, BILL, SMALL_NOTES_NOT_ALLOWED, HOLD_NOTES)
