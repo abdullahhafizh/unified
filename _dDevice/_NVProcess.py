@@ -1,4 +1,4 @@
-import _NVEngine
+from . import _NVEngine
 import time
 from multiprocessing import Queue, Process
 from threading import Event
