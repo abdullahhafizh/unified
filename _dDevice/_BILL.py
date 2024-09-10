@@ -361,7 +361,7 @@ def wrapper_start_receive_note(trxid):
             return        
         NV_ITL_EVENT.set()
 
-        _response, _result = send_command_to_bill(param=BILL["ENABLE"], output=None)
+        _response, _result = send_command_to_bill(param=BILL["ENABLE"]+"|", output=None)
         if _response != 0:
             # ERROR, perlu log?
             NV_ITL_EVENT.clear()
@@ -370,7 +370,7 @@ def wrapper_start_receive_note(trxid):
     start_receive_note(trxid)
 
     if BILL_TYPE == "NV" and NV_LIB_MODE:
-        _response, _result = send_command_to_bill(param=BILL["STOP"], output=None)
+        _response, _result = send_command_to_bill(param=BILL["STOP"]+"|", output=None)
         NV_ITL_EVENT.clear()
     
 
