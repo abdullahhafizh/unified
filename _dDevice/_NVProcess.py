@@ -152,7 +152,12 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     response = ""
                     attempt = 10
                     while attempt > 0:
-                        response = RESPONSE_NV.get(timeout=1)
+                        try:
+                            response = RESPONSE_NV.get(timeout=1)
+                        except:
+                            response = ""
+                            pass
+
                         if response == "ENABLE_OK":
                             code = 0
                             message = "OK"
