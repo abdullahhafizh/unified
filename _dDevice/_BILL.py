@@ -14,6 +14,7 @@ import subprocess
 from _sService._GeneralPaymentService import GENERALPAYMENT_SIGNDLER
 from _dDevice import _NV200, _NVProcess
 from threading import Event
+import traceback
 
 if _Common.IS_LINUX:
     from _dDevice import _MeiSCR
@@ -232,7 +233,9 @@ def init_bill():
 
         BILL_SIGNDLER.SIGNAL_BILL_INIT.emit('INIT_BILL|DONE')
     except Exception as e:
-        LOGGER.warning(e)
+        error_string = traceback.format_exc()
+        LOGGER.warning((e))
+        LOGGER.debug(error_string)
         _Common.BILL_ERROR = 'INIT_BILL_ERROR'
         BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('INIT_BILL|ERROR')
     return OPEN_STATUS
