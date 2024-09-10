@@ -24,6 +24,9 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
                 response.put("EXIT_OK")
             else:
                 response.put("EXIT_FAIL")
+        elif len(request) > 0:
+            #GIVE FALSE POSITIF
+            response.put(request+"_OK")
 
         while is_connected:
             isOk, message = nv.DoPoll()
@@ -124,7 +127,8 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
     global IS_ENABLE
 
     if MUTEX_HOLDER.is_set():
-        return -1, "OTHER INSTANCE RUNNING"
+        # Change to false positif
+        return 0, "OTHER INSTANCE RUNNING"
     
     MUTEX_HOLDER.set()
 
@@ -162,7 +166,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     response = "NONE"
                     while len(response) > 0:
                         try:
-                            response = RESPONSE_NV.get(timeout=1000)
+                            response = RESPONSE_NV.get(timeout=1)
                             response_list.append(response)
                         except:
                             response = ""
@@ -210,7 +214,7 @@ def get_response(response_nv:Queue, expected_response):
     response_list = []
     while attempt > 0:
         try:
-            response = response_nv.get(timeout=1000)
+            response = response_nv.get(timeout=1)
         except:
             response = ""
             attempt -= 1
