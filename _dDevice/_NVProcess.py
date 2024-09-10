@@ -28,7 +28,7 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
         while is_connected:
             isOk, message = nv.DoPoll()
             if not isOk:
-                response.put("POLL_FAIL|".format(message))
+                response.put("POLL_FAIL|{}".format(message))
                 is_connected = False
                 # Try Reconnect
                 while not is_connected:
@@ -38,7 +38,7 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
                 continue
             
             if len(message)>0:
-                response.put("POLL_OK|".format(message))
+                response.put("POLL_OK|{}".format(message))
 
             time.sleep(0.25)
 
