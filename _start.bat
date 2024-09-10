@@ -1,14 +1,14 @@
 @echo off
 
 set _interval=5
-set _processName=python
+set _processName=python.exe
 set _processCmd=%CD%\_app.py
 set _processTimeout=5
 
 :LOOP
 set /a isAlive=false
 
-tasklist | find /C "%_processName%" > temp.txt
+tasklist | find /C -name "%_processName%" > temp.txt
 set /p num= < temp.txt
 del /F temp.txt
 
