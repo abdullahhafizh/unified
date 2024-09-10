@@ -166,12 +166,12 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     response = "NONE"
                     while len(response) > 0:
                         try:
-                            response = RESPONSE_NV.get(timeout=1)
+                            response = RESPONSE_NV.get_nowait()
                             response_list.append(response)
                         except:
                             response = ""
                             break
-                        if len(response_list)> 10:
+                        if len(response_list)> 100:
                             #MAX 10 message kemudian balikan agar tidak stay in the loop
                             break
 
