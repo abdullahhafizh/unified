@@ -40,7 +40,7 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
             if len(message)>0:
                 response.put("POLL_OK|".format(message))
 
-            time.sleep(0.001)
+            time.sleep(0.25)
 
             try:
                 request = user_request.get_nowait()
