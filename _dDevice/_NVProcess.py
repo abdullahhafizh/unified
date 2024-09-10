@@ -153,7 +153,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     attempt = 10
                     while attempt > 0:
                         try:
-                            response = RESPONSE_NV.get(timeout=1)
+                            response = RESPONSE_NV.get(timeout=500)
                         except:
                             response = ""
                             pass
@@ -164,9 +164,10 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                             break
                         else:
                             code = -1
+                            message = response
                         attempt -= 1
                     if attempt == 0:
-                        message = "TIMEOUT"
+                        message += "|TIMEOUT"
                 elif cmd == config["RECEIVE"]:
                     response_list = []
                     response = "NONE"
