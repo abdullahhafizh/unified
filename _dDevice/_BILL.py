@@ -351,27 +351,27 @@ def parse_notes(_result):
     finally:
         return cash_in
 
-NV_ITL= Event()
+NV_ITL_EVENT= Event()
 def wrapper_start_receive_note(trxid):
     # Ada banyak return di start_receive_note yg membuat kompleks untuk enable dan disable NV, kalau sudah atomic level race condition ini ga bisa prevent multiple running
-    global NV_ITL
+    global NV_ITL_EVENT
     if BILL_TYPE == "NV" and NV_LIB_MODE:
-        if NV_ITL.is_set():
+        if NV_ITL_EVENT.is_set():
             # kalau sudah set jgn jalankan lagi, berarti ada process/thread yg sedang jalan
             return        
-        NV_ITL.set()
+        NV_ITL_EVENT.set()
 
         _response, _result = send_command_to_bill(param=BILL["ENABLE"], output=None)
         if _response != 0:
             # ERROR, perlu log?
-            NV_ITL.clear()
+            NV_ITL_EVENT.clear()
             return
     
     start_receive_note(trxid)
 
     if BILL_TYPE == "NV" and NV_LIB_MODE:
         _response, _result = send_command_to_bill(param=BILL["STOP"], output=None)
-        NV_ITL.clear()
+        NV_ITL_EVENT.clear()
     
 
 def start_receive_note(trxid):
