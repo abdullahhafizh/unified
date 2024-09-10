@@ -14,8 +14,16 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
         request = user_request.get()
         if request == "ENABLE":
             is_connected = nv.ConnectToValidator()
+            if is_connected:
+                response.put("ENABLE_OK")
+            else:
+                response.put("ENABLE_FAIL")
         elif request == "EXIT":
             is_exit = True
+            if is_exit:
+                response.put("EXIT_OK")
+            else:
+                response.put("EXIT_FAIL")
 
         while is_connected:
             isOk, message = nv.DoPoll()
@@ -153,7 +161,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     attempt = 10
                     while attempt > 0:
                         try:
-                            response = RESPONSE_NV.get(timeout=500)
+                            response = RESPONSE_NV.get(timeout=1000)
                         except:
                             response = ""
                             pass
