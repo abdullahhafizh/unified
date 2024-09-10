@@ -151,11 +151,9 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     IS_RUNNING = True
                     code = 0
                     message = "SET OK"
-            else:
-                if not IS_RUNNING:
-                    return -1, "PROCESS NOT STARTED/SET"
-                
-                if cmd == config["ENABLE"]:
+                elif not IS_RUNNING:
+                    return -1, "PROCESS NOT STARTED/SET"                
+                elif cmd == config["ENABLE"]:
                     USER_REQUEST_NV.put("ENABLE")
                     response = ""
                     attempt = 10
@@ -181,7 +179,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     response = "NONE"
                     while len(response) > 0:
                         try:
-                            response = USER_REQUEST_NV.get_nowait()
+                            response = RESPONSE_NV.get_nowait()
                             response_list.append(response)
                         except:
                             response = ""
@@ -216,6 +214,8 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                         code = 0
                         message = "OK"
                     else: code = -1
+            else:
+                message = "PLEASE ADD | after cmd in param"
 
             MUTEX_HOLDER.clear()
             return code, message
