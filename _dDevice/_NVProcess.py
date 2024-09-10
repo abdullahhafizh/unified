@@ -166,6 +166,11 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                             response_list.append(response)
                         except:
                             response = ""
+                            pass
+                        if len(response_list)> 10:
+                            #MAX 10 message kemudian balikan agar tidak stay in the loop
+                            break
+
                     code = 0
                     message = str(response_list)
                 elif cmd == config["STOP"]:
