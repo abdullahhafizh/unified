@@ -291,6 +291,7 @@ class NVEngine():
     def AcceptNote(self):
         LOGGER.info("Accepting Note")
         self.m_HoldCount = 0
+        return True
         #Todo DoPoll again?
 
     def ReturnNote(self):

@@ -156,7 +156,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     return -1, "PROCESS NOT STARTED/SET"                
                 elif cmd == config["ENABLE"]:
                     USER_REQUEST_NV.put("ENABLE")
-                    code, message = get_response("ENABLE_OK")
+                    code, message = get_response(RESPONSE_NV, "ENABLE_OK")
                 elif cmd == config["RECEIVE"]:
                     response_list = []
                     response = "NONE"
@@ -166,7 +166,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                             response_list.append(response)
                         except:
                             response = ""
-                            pass
+                            break
                         if len(response_list)> 10:
                             #MAX 10 message kemudian balikan agar tidak stay in the loop
                             break
@@ -175,16 +175,18 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     message = str(response_list)
                 elif cmd == config["STOP"]:
                     USER_REQUEST_NV.put("DISABLE")
-                    code, message = get_response("DISABLE_OK")
+                    code, message = get_response(RESPONSE_NV, "DISABLE_OK")
                 elif cmd == config["STORE"]:
                     USER_REQUEST_NV.put("ACCEPT")
-                    code, message = get_response("ACCEPT_OK")
+                    code, message = get_response(RESPONSE_NV, "ACCEPT_OK")
+                    if code == 0:
+                        code, message = get_response(RESPONSE_NV, config["KEY_STORED"])
                 elif cmd == config["REJECT"]:
                     USER_REQUEST_NV.put("REJECT")
-                    code, message = get_response("REJECT_OK")
+                    code, message = get_response(RESPONSE_NV, "REJECT_OK")
                 elif cmd == config["RESET"]:
                     USER_REQUEST_NV.put("RESET")
-                    code, message = get_response("RESET_OK")
+                    code, message = get_response(RESPONSE_NV, "RESET_OK")
             else:
                 message = "PLEASE ADD | after cmd in param"
 
@@ -201,26 +203,28 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
         MUTEX_HOLDER.clear()
         return -99, str(e)
 
-def get_response(expected_response):
+def get_response(response_nv:Queue, expected_response):
     response = ""
     code = -1
     attempt = 10
+    response_list = []
     while attempt > 0:
         try:
-            response = RESPONSE_NV.get(timeout=1000)
+            response = response_nv.get(timeout=1000)
         except:
             response = ""
-            pass
+            attempt -= 1
+            continue
 
         if response == expected_response:
             code = 0
-            message = "OK"
+            response_list.append(response)
             break
         else:
             code = -1
-            message = response
+            response_list.append(response)
         attempt -= 1
     if attempt == 0:
-        message += "|TIMEOUT"
+        response_list.append("TIMEOUT")
 
-    return code, message
+    return code, str(response_list)
