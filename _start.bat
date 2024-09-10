@@ -1,7 +1,7 @@
 @echo off
 
 set _interval=5
-set _processName=python.exe
+set _processName=python
 set _processCmd=%CD%\_app.py
 set _processTimeout=5
 
