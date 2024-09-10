@@ -149,11 +149,19 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                 
                 if cmd == config["ENABLE"]:
                     USER_REQUEST_NV.put("ENABLE")
-                    response = RESPONSE_NV.get()
-                    if response == "ENABLE_OK":
-                        code = 0
-                        message = "OK"
-                    else: code = -1
+                    response = ""
+                    attempt = 10
+                    while attempt > 0:
+                        response = RESPONSE_NV.get(timeout=1)
+                        if response == "ENABLE_OK":
+                            code = 0
+                            message = "OK"
+                            break
+                        else:
+                            code = -1
+                        attempt -= 1
+                    if attempt == 0:
+                        message = "TIMEOUT"
                 elif cmd == config["RECEIVE"]:
                     response_list = []
                     response = "NONE"
