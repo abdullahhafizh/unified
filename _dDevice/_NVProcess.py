@@ -100,8 +100,8 @@ def init(lib_path:str, com_port:str):
     return nv
 
 PROCESS_NV = None
-USER_REQUEST_NV = Queue
-RESPONSE_NV = Queue
+USER_REQUEST_NV = Queue()
+RESPONSE_NV = Queue()
 MUTEX_HOLDER = Event()
 IS_RUNNING = False
 IS_ENABLE = False
