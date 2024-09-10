@@ -37,7 +37,8 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
                         time.sleep(0.001)
                 continue
             
-            response.put("POLL_OK|".format(message))
+            if len(message)>0:
+                response.put("POLL_OK|".format(message))
 
             time.sleep(0.001)
 
@@ -161,7 +162,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     response = "NONE"
                     while len(response) > 0:
                         try:
-                            response = RESPONSE_NV.get_nowait()
+                            response = RESPONSE_NV.get(timeout=1000)
                             response_list.append(response)
                         except:
                             response = ""
