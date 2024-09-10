@@ -65,9 +65,9 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
                 elif request == "REJECT":
                     isOk = nv.ReturnNote()
                     if isOk:
-                        response.put("RETURN_OK")
+                        response.put("REJECT_OK")
                     else:
-                        response.put("RETURN_FAIL")
+                        response.put("REJECT_FAIL")
                 elif request == "ACCEPT":
                     isOk = nv.AcceptNote()
                     if isOk:
