@@ -188,7 +188,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                             is_active = not (NV_HELD_TH is None)
                             if is_active:
                                 NV_HELD.clear()
-                                NV_HELD.join()
+                                NV_HELD_TH.join()
                             NV_HELD_TH = Thread(target=held, args=(NV_OBJECT, NV_HELD, config['LOOP_DELAY']))
                             NV_HELD_TH.start()
                     else: message = "RECEIVE FAIL"
@@ -201,8 +201,8 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     is_active = not (NV_HELD_TH is None)
                     if is_active:
                         NV_HELD.clear()
-                        NV_HELD.join()        
-                                        
+                        NV_HELD_TH.join()        
+
                     if NV_OBJECT.AcceptNote():
                         while True:
                             isOK, message = NV_OBJECT.DoPoll()
@@ -216,7 +216,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     is_active = not (NV_HELD_TH is None)
                     if is_active:
                         NV_HELD.clear()
-                        NV_HELD.join()
+                        NV_HELD_TH.join()
 
                     if NV_OBJECT.ReturnNote():
                         code = 0
