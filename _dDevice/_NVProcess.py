@@ -148,10 +148,10 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                         while attempt > 0:
                             isOK, message = NV_OBJECT.DoPoll()
                             attempt -= 1
-                        NV_OBJECT.Reset()
-                        NV_OBJECT.ConnectToValidator()
-                        NV_OBJECT.DisableValidator()
-                        code = 0
+
+                        # check last message kalau ada potensi ada error / Lakukan manual reset
+                        if len(message) > 0: code = -1
+                        else: code = 0
                         message = "SET OK"
                     else:
                         message = "SET FAIL"                    
