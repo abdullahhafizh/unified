@@ -163,17 +163,13 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     code, message = get_response(RESPONSE_NV, "ENABLE_OK")
                 elif cmd == config["RECEIVE"]:
                     response_list = []
-                    response = "NONE"
-                    while len(response) > 0:
+                    # response = "NONE"
+                    while not RESPONSE_NV.empty():
                         try:
                             response = RESPONSE_NV.get_nowait()
                             response_list.append(response)
                         except:
                             response = ""
-                            break
-                        if len(response_list)> 100:
-                            #MAX 10 message kemudian balikan agar tidak stay in the loop
-                            break
 
                     code = 0
                     message = str(response_list)
@@ -210,14 +206,13 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
 def get_response(response_nv:Queue, expected_response):
     response = ""
     code = -1
-    attempt = 10
+    # attempt = 10
     response_list = []
-    while attempt > 0:
+    while not response_nv.empty():
         try:
             response = response_nv.get(timeout=1)
         except:
             response = ""
-            attempt -= 1
             continue
 
         if response.__contains__(expected_response):
@@ -227,8 +222,5 @@ def get_response(response_nv:Queue, expected_response):
         else:
             code = -1
             response_list.append(response)
-        attempt -= 1
-    if attempt == 0:
-        response_list.append("TIMEOUT")
 
     return code, str(response_list)
