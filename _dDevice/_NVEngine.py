@@ -226,7 +226,7 @@ class NVEngine():
         if self.m_eSSP.SSPSendCommand(self.m_cmd, self.info) == False:
             self.m_eSSP.CloseComPort()
             # m_Comms.UpdateLog(info,true);
-            LOGGER.error("Kirim CMD gagal -> PORT Status {}".format(self.m_cmd.ResponseStatus.ToString()))
+            LOGGER.error("Kirim CMD gagal -> PORT Status {}".format(self.m_cmd.ResponseStatus))
             return False
         
         return True
