@@ -370,8 +370,10 @@ def wrapper_start_receive_note(trxid):
     start_receive_note(trxid)
 
     if BILL_TYPE == "NV" and NV_LIB_MODE:
-        _response, _result = send_command_to_bill(param=BILL["STOP"]+"|", output=None)
+        # karena kalau di stop akan mengakibatkan uang dikeluarkan paksa setelah timeout dari escrow
         NV_ITL_EVENT.clear()
+        # if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
+        # _response, _result = send_command_to_bill(param=BILL["STOP"]+"|", output=None)
     
 
 def start_receive_note(trxid):
@@ -675,6 +677,7 @@ def stop_receive_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
     # sleep(_Common.BILL_STORE_DELAY)
+    LOGGER.debug(('Try Execute Stop Receive Note'))
     try:
         # Extra Handling Stop Bill Event
         if trxid != _Common.ACTIVE_CASH_TRX_ID:
@@ -740,6 +743,7 @@ def start_bill_store_note(trxid):
 def bill_store_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
+    LOGGER.debug(('Try Execute Store Receive Note'))
     try:
         if not HOLD_NOTES:
             LOGGER.warning((trxid, 'STORE_NOTES', BILL['TYPE'], 'HOLD_NOTES', HOLD_NOTES))
@@ -793,6 +797,7 @@ def start_bill_reject_note(trxid):
 def bill_reject_note(trxid):
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING, CASH_TIME_HISTORY
     IS_RECEIVING = False
+    LOGGER.debug(('Try Execute Reject Receive Note'))
     try:
         if not HOLD_NOTES:
             return
