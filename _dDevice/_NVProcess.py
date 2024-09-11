@@ -151,7 +151,9 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
 
                         # check last message kalau ada potensi ada error / Lakukan manual reset
                         if len(message) > 0: code = -1
-                        else: code = 0
+                        else: 
+                            NV_OBJECT.DisableValidator()
+                            code = 0
                         message = "SET OK"
                     else:
                         message = "SET FAIL"                    

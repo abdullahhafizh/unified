@@ -360,6 +360,12 @@ def wrapper_start_receive_note(trxid):
             # kalau sudah set jgn jalankan lagi, berarti ada process/thread yg sedang jalan
             return        
         NV_ITL_EVENT.set()
+        # ENABLE DULU baru bisa terima uang
+        _response, _result = send_command_to_bill(param=BILL["ENABLE"]+"|", output=None)
+        if _response != 0:
+            # ERROR, perlu log?
+            NV_ITL_EVENT.clear()
+            return
 
     start_receive_note(trxid)
 
