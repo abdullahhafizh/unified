@@ -6,6 +6,7 @@ import sys
 from PyQt5.QtCore import QUrl, QObject, pyqtSlot, QTranslator, Qt
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQuick import QQuickView
+from PyQt5 import QtCore
 import logging
 import logging.handlers
 import subprocess
@@ -1275,11 +1276,24 @@ def startup_task():
         print("pyt: Get Kiosk Terminal Status...")
         _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('STARTUP|Get Kiosk Terminal Status...')
         _KioskService.start_get_kiosk_status()
-    
+
+def qt_message_handler(mode, context, message):
+    if mode == QtCore.QtInfoMsg:
+        mode = 'Info'
+    elif mode == QtCore.QtWarningMsg:
+        mode = 'Warning'
+    elif mode == QtCore.QtCriticalMsg:
+        mode = 'critical'
+    elif mode == QtCore.QtFatalMsg:
+        mode = 'fatal'
+    else:
+        mode = 'Debug'
+    LOGGER.debug(("QT", mode, "%s: %s (%s:%d, %s)" % (mode, message, context.file, context.line, context.file)))
 
 if __name__ == '__main__':
     print("pyt: Initiating Config...")
     config_log()
+    QtCore.qInstallMessageHandler(qt_message_handler)
     init_local_setting()
     # sleep(1)
     # print("pyt: Initiating Setting From Host...")
