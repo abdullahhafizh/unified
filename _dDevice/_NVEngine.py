@@ -195,7 +195,7 @@ class NVEngine():
 
             flog.setLevel(logging.DEBUG)
             slog.setLevel(logging.DEBUG)
-            LOGGER.setLevel(logging.INFO)
+            LOGGER.setLevel(logging.DEBUG)
 
             LOGGER.addHandler(flog)
             LOGGER.addHandler(slog)
