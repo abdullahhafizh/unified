@@ -1,7 +1,7 @@
 from . import _NVEngine
 import time
 from multiprocessing import Queue, Process
-from threading import Event
+from threading import Event, Thread
 import traceback
 
 def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
@@ -115,13 +115,31 @@ PROCESS_NV = None
 USER_REQUEST_NV = Queue()
 RESPONSE_NV = Queue()
 MUTEX_HOLDER = Event()
+HELD_EVENT = Event()
 IS_RUNNING = False
 IS_ENABLE = False
 NV_OBJECT = None
+NV_HELD = Event()
+NV_HELD_TH = None
+
+def held(nv:_NVEngine.NVEngine, held:Event, loop_delay):
+    message = ""
+    nv.log_active = False
+    while held.is_set():
+        isOk, new_message = nv.DoPoll()
+        if isOk:
+            if message != new_message:
+                message = new_message
+                _NVEngine.LOGGER.info((message))
+        time.sleep(loop_delay)
+    nv.log_active = True
+
 
 def send_command(param:str=None, config=[], restricted=[], hold_note=False):
     global MUTEX_HOLDER
     global NV_OBJECT
+    global NV_HELD
+    global NV_HELD_TH
 
     if MUTEX_HOLDER.is_set():
         # Change to false positif
@@ -166,6 +184,13 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     isOK, message = NV_OBJECT.DoPoll()
                     if isOK: 
                         code = 0
+                        if config['KEY_RECEIVED'] in message:
+                            is_active = not (NV_HELD_TH is None)
+                            if is_active:
+                                NV_HELD.clear()
+                                NV_HELD.join()
+                            NV_HELD_TH = Thread(target=held, args=(NV_OBJECT, NV_HELD, config['LOOP_DELAY']))
+                            NV_HELD_TH.start()
                     else: message = "RECEIVE FAIL"
                 elif cmd == config["STOP"]:
                     if NV_OBJECT.DisableValidator(): 
@@ -173,11 +198,26 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                         message = "STOP OK"
                     else: message = "STOP FAIL"
                 elif cmd == config["STORE"]:
+                    is_active = not (NV_HELD_TH is None)
+                    if is_active:
+                        NV_HELD.clear()
+                        NV_HELD.join()        
+                                        
                     if NV_OBJECT.AcceptNote():
-                        code = 0
-                        message = "STORE OK"
+                        while True:
+                            isOK, message = NV_OBJECT.DoPoll()
+                            if config['KEY_STORED'] in message:
+                                code = 0
+                                message = "STORE OK"
+                                break
+                            time.sleep(config['LOOP_DELAY'])
                     else: message = "STORE FAIL"
                 elif cmd == config["REJECT"]:
+                    is_active = not (NV_HELD_TH is None)
+                    if is_active:
+                        NV_HELD.clear()
+                        NV_HELD.join()
+
                     if NV_OBJECT.ReturnNote():
                         code = 0
                         message = "REJECT OK"

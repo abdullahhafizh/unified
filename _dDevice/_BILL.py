@@ -748,9 +748,6 @@ def stop_receive_note(trxid):
 
 
 def start_bill_store_note(trxid):
-    if BILL_TYPE == "NV" and NV_LIB_MODE:
-        #bill store diluar loop akan membahayakan logic sistem ketika membaca note di fungsi receive.
-        return
     _Helper.get_thread().apply_async(bill_store_note, (trxid,))
 
 
@@ -802,9 +799,6 @@ def bill_store_note(trxid):
 
 
 def start_bill_reject_note(trxid):
-    if BILL_TYPE == "NV" and NV_LIB_MODE:
-        #reject diluar loop akan membahayakan logic sistem ketika membaca note di fungsi receive.
-        return
     _Helper.get_thread().apply_async(bill_reject_note, (trxid,))
 
 
