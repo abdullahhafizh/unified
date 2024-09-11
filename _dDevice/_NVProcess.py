@@ -117,14 +117,11 @@ RESPONSE_NV = Queue()
 MUTEX_HOLDER = Event()
 IS_RUNNING = False
 IS_ENABLE = False
+NV_OBJECT = None
 
 def send_command(param:str=None, config=[], restricted=[], hold_note=False):
-    global PROCESS_NV
-    global USER_REQUEST_NV
-    global RESPONSE_NV
     global MUTEX_HOLDER
-    global IS_RUNNING
-    global IS_ENABLE
+    global NV_OBJECT
 
     if MUTEX_HOLDER.is_set():
         # Change to false positif
@@ -140,75 +137,76 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
             param_split = param.split("|")
             cmd = param_split[0]
             if len(param_split) > 1:
+                if type(NV_OBJECT) is None:
+                    NV_OBJECT = init(config["ENGINE_LIB"], param_split[1])
+    
                 if cmd == config["SET"]:
-                    is_started = False
-                    if PROCESS_NV:
-                        is_started = PROCESS_NV.is_alive()
-
-                    if is_started:
-                        USER_REQUEST_NV.put("EXIT")
-                        response = RESPONSE_NV.get()
-                        if response == "EXIT_OK":
-                            PROCESS_NV.join()
-
-                    PROCESS_NV = Process(target=main_loop, args=(config["ENGINE_LIB"], param_split[1], USER_REQUEST_NV, RESPONSE_NV))
-                    PROCESS_NV.start()
-                    IS_RUNNING = True
-                    code = 0
-                    message = "SET OK"
-                elif not IS_RUNNING:
-                    return -1, "PROCESS NOT STARTED/SET"                
+                    isOK = NV_OBJECT.ConnectToValidator()
+                    if isOK:
+                        #check for 10 error/last_message:
+                        attempt = 10
+                        while attempt > 0:
+                            isOK, message = NV_OBJECT.DoPoll()
+                            attempt -= 0
+                        NV_OBJECT.Reset()                        
+                        NV_OBJECT.DisableValidator()
+                        code = 0
+                        message = "SET OK"
+                    else:
+                        message = "SET FAIL"                    
                 elif cmd == config["ENABLE"]:
-                    USER_REQUEST_NV.put("ENABLE")
-                    code, message = get_response(RESPONSE_NV, "ENABLE_OK")
+                    if NV_OBJECT.EnableValidator(): 
+                        code = 0
+                        message = "ENABLE OK"
+                    else: message = "ENABLE FAIL"
                 elif cmd == config["RECEIVE"]:
-                    response_list = []
-                    # response = "NONE"
-                    while not RESPONSE_NV.empty():
-                        try:
-                            response = RESPONSE_NV.get_nowait()
-                            response_list.append(response)
-                        except:
-                            response = ""
-
-                    code = 0
-                    message = str(response_list)
+                    isOK, message = NV_OBJECT.DoPoll()
+                    if isOK: 
+                        code = 0
+                        message = "RECEIVE OK"
+                    else: message = "RECEIVE FAIL"
                 elif cmd == config["STOP"]:
-                    USER_REQUEST_NV.put("DISABLE")
-                    code, message = get_response(RESPONSE_NV, "DISABLE_OK")
+                    if NV_OBJECT.DisableValidator(): 
+                        code = 0
+                        message = "STOP OK"
+                    else: message = "STOP FAIL"
                 elif cmd == config["STORE"]:
-                    USER_REQUEST_NV.put("ACCEPT")
-                    code, message = get_response(RESPONSE_NV, "ACCEPT_OK")
-                    if code == 0:
-                        code, message = get_response(RESPONSE_NV, config["KEY_STORED"])
+                    if NV_OBJECT.AcceptNote():
+                        code = 0
+                        message = "STORE OK"
+                    else: message = "STORE FAIL"
                 elif cmd == config["REJECT"]:
-                    USER_REQUEST_NV.put("REJECT")
-                    code, message = get_response(RESPONSE_NV, "REJECT_OK")
+                    if NV_OBJECT.ReturnNote():
+                        code = 0
+                        message = "REJECT OK"
+                    else: message = "REJECT FAIL"
                 elif cmd == config["RESET"]:
-                    USER_REQUEST_NV.put("RESET")
-                    code, message = get_response(RESPONSE_NV, "RESET_OK")
+                    if NV_OBJECT.Reset(): 
+                        code = 0
+                        message = "RESET OK"
+                    else: message = "RESET FAIL"
             else:
                 message = "PLEASE ADD | after cmd in param"
-
-            MUTEX_HOLDER.clear()
-            return code, message
         else:
-            MUTEX_HOLDER.clear()
-            return -1, "PARAM NOT SUPPORTED / PARAM KOSONG"
-        
+            message = "PARAM NOT SUPPORTED / PARAM KOSONG"        
     except Exception as e:
         error_string = traceback.format_exc()
         _NVEngine.LOGGER.warning((e))
         _NVEngine.LOGGER.debug(error_string)
         MUTEX_HOLDER.clear()
-        return -99, str(e)
+        code = -99
+        message = str(e)
+    finally:
+        MUTEX_HOLDER.clear()
+        return code, message
 
 def get_response(response_nv:Queue, expected_response):
     response = ""
     code = -1
-    # attempt = 10
+    attempt = 100
     response_list = []
-    while not response_nv.empty():
+    is_empty = False
+    while not is_empty:
         try:
             response = response_nv.get(timeout=1)
         except:
@@ -222,5 +220,7 @@ def get_response(response_nv:Queue, expected_response):
         else:
             code = -1
             response_list.append(response)
+        
+        is_empty = response_nv.empty()
 
     return code, str(response_list)

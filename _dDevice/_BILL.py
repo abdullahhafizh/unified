@@ -361,15 +361,14 @@ def wrapper_start_receive_note(trxid):
             return        
         NV_ITL_EVENT.set()
 
-        _response, _result = send_command_to_bill(param=BILL["ENABLE"]+"|", output=None)
-        if _response != 0:
-            # ERROR, perlu log?
-            NV_ITL_EVENT.clear()
-            return
-    
     start_receive_note(trxid)
 
     if BILL_TYPE == "NV" and NV_LIB_MODE:
+        #Check if held notes:
+        if _NVProcess.NV_OBJECT.m_NoteHeld:
+            #TODO: start_held_bill or reject them?
+            pass
+
         # karena kalau di stop akan mengakibatkan uang dikeluarkan paksa setelah timeout dari escrow
         NV_ITL_EVENT.clear()
         # if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
@@ -514,7 +513,13 @@ def start_receive_note(trxid):
                     # Call API To Force Update Into Server
                     _Common.upload_device_state('mei', _Common.BILL_ERROR)
                     break
-                if attempt == BILL["RECEIVE_ATTEMPT"]:
+
+                if BILL_TYPE == "NV" and NV_LIB_MODE:
+                    max_attempt = BILL['MAX_EXECUTION_TIME'] / BILL['LOOP_DELAY']
+                else:
+                    max_attempt = BILL['RECEIVE_ATTEMPT']
+
+                if attempt == max_attempt:
                     LOGGER.warning(('Stop Bill Acceptor Acceptance By MAX_EXECUTION_TIME', str(attempt), str(BILL['MAX_EXECUTION_TIME'])))
                     BILL_SIGNDLER.SIGNAL_BILL_RECEIVE.emit('RECEIVE_BILL|TIMEOUT')
                     break
@@ -536,7 +541,10 @@ def start_receive_note(trxid):
                             _Common.log_to_config('BILL', 'last^money^inserted', str(cash_in))
                 pass
             # sleep(_Common.BILL_STORE_DELAY)
-            sleep(1)
+            if BILL_TYPE == "NV" and NV_LIB_MODE:
+                sleep(BILL['LOOP_DELAY'])
+            else:
+                sleep(1)
     except OSError as o:
         LOGGER.warning(('ANOMALY_FOUND_HERE', o))
         # Do you need recall same function ???
