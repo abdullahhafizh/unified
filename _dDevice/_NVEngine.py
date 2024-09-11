@@ -23,7 +23,7 @@ class ChannelData():
         self.Recycling = False
 
 class CCommands(Enum):
-    SSP_CMD_RESET = b"0x01"
+    SSP_CMD_RESET = 0x01
     SSP_CMD_SET_CHANNEL_INHIBITS = 0x02
     SSP_CMD_DISPLAY_ON = 0x03
     SSP_CMD_DISPLAY_OFF = 0x04
