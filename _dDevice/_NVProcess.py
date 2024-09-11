@@ -148,7 +148,8 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                         while attempt > 0:
                             isOK, message = NV_OBJECT.DoPoll()
                             attempt -= 1
-                        NV_OBJECT.Reset()                        
+                        NV_OBJECT.Reset()
+                        NV_OBJECT.ConnectToValidator()
                         NV_OBJECT.DisableValidator()
                         code = 0
                         message = "SET OK"
@@ -163,7 +164,6 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     isOK, message = NV_OBJECT.DoPoll()
                     if isOK: 
                         code = 0
-                        message = "RECEIVE OK"
                     else: message = "RECEIVE FAIL"
                 elif cmd == config["STOP"]:
                     if NV_OBJECT.DisableValidator(): 
