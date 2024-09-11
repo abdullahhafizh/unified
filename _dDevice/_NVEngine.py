@@ -193,8 +193,8 @@ class NVEngine():
             flog.setFormatter(formatter)
             slog.setFormatter(formatter)
 
-            flog.setLevel(logging.INFO)
-            slog.setLevel(logging.INFO)
+            flog.setLevel(logging.DEBUG)
+            slog.setLevel(logging.DEBUG)
             LOGGER.setLevel(logging.INFO)
 
             LOGGER.addHandler(flog)
