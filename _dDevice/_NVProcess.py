@@ -137,7 +137,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
             param_split = param.split("|")
             cmd = param_split[0]
             if len(param_split) > 1:
-                if type(NV_OBJECT) is None:
+                if NV_OBJECT is None:
                     NV_OBJECT = init(config["ENGINE_LIB"], param_split[1])
     
                 if cmd == config["SET"]:
