@@ -176,10 +176,10 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     else:
                         message = "SET FAIL"                    
                 elif cmd == config["ENABLE"]:
-                    if NV_OBJECT.EnableValidator(): 
+                    isOK, message = NV_OBJECT.EnableValidator()
+                    if isOK: 
                         code = 0
                         message = "ENABLE OK"
-                    else: message = "ENABLE FAIL"
                 elif cmd == config["RECEIVE"]:
                     isOK, message = NV_OBJECT.DoPoll()
                     if isOK: 
@@ -217,16 +217,19 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     if is_active:
                         NV_HELD.clear()
                         NV_HELD_TH.join()
-
-                    if NV_OBJECT.ReturnNote():
+                    isOK, message = NV_OBJECT.ReturnNote()
+                    if isOK:
                         code = 0
                         message = "REJECT OK"
-                    else: message = "REJECT FAIL"
                 elif cmd == config["RESET"]:
-                    if NV_OBJECT.Reset(): 
-                        code = 0
-                        message = "RESET OK"
-                    else: message = "RESET FAIL"
+                    isOK, message = NV_OBJECT.Reset()
+                    if isOK: 
+                        isOK = NV_OBJECT.ConnectToValidator()
+                        if isOK:
+                            isOK = NV_OBJECT.DisableValidator()
+                            if isOK:
+                                code = 0
+                                message = "RESET OK"
             else:
                 message = "PLEASE ADD | after cmd in param"
         else:

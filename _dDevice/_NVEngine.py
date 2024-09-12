@@ -263,15 +263,15 @@ class NVEngine():
         self.m_cmd.CommandDataLength = 1
 
         if not self.SendCommand():
-            return False
+            return False, "ERROR SEND COMMAND ENABLE"
         
         isOk, message = self.CheckGenericResponses()        
         
         if isOk and self.log_active:
             LOGGER.info("Unit enabled")
-            return True
+            return True, message
         
-        return True
+        return isOk, message
     
     def DisableValidator(self):
         self.m_cmd.CommandData[0] = CCommands.SSP_CMD_DISABLE.value
@@ -297,9 +297,10 @@ class NVEngine():
     def ReturnNote(self):
         self.m_cmd.CommandData[0] = CCommands.SSP_CMD_REJECT_BANKNOTE.value
         self.m_cmd.CommandDataLength = 1
+        message = "ERROR"
 
         if not self.SendCommand():
-            return False
+            return False, "ERROR SEND COMMAND RETURN"
         
         isOk, message = self.CheckGenericResponses()
 
@@ -309,24 +310,25 @@ class NVEngine():
                 pass
             self.m_HoldCount = 0            
         
-            return True
+            return True, message
         
-        return False
+        return False, message
     
     def Reset(self):
         self.m_cmd.CommandData[0] = CCommands.SSP_CMD_RESET.value
         self.m_cmd.CommandDataLength = 1
+        message = "ERROR"
 
         if not self.SendCommand():
-            return False
+            return False, "ERROR SEND COMMAND RESET"
         
         isOk, message = self.CheckGenericResponses()        
 
         if isOk and self.log_active:
             LOGGER.info("Resetting unit")
-            return True
+            return True, message
         
-        return True
+        return isOk, message
     
     def SendSync(self):
         self.m_cmd.CommandData[0] = CCommands.SSP_CMD_SYNC.value
@@ -593,7 +595,8 @@ class NVEngine():
             self.ValidatorSetupRequest()
             self.GetSerialNumber()
             self.SetInhibits()
-            return self.EnableValidator()
+            isOK, message = self.EnableValidator()
+            return isOK
         return False
 
     def QueryRejection(self):
