@@ -370,11 +370,6 @@ def wrapper_start_receive_note(trxid):
     start_receive_note(trxid)
 
     if BILL_TYPE == "NV" and NV_LIB_MODE:
-        #Check if held notes:
-        if _NVProcess.NV_OBJECT.m_NoteHeld:
-            #TODO: start_held_bill or reject them?
-            pass
-
         # karena kalau di stop akan mengakibatkan uang dikeluarkan paksa setelah timeout dari escrow
         NV_ITL_EVENT.clear()
         # if COLLECTED_CASH >= TARGET_CASH_AMOUNT:
