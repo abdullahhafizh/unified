@@ -2681,7 +2681,6 @@ def check_topup_procedure(bank='mandiri', trxid='', amount=0):
 
 REBOOT_TIME = 0
 
-
 def remark_transaction_by_date(selected_date):
     start_time = _Helper.convert_string_to_epoch(selected_date + ' 00:00:00')
     end_time = _Helper.convert_string_to_epoch(selected_date + ' 23:59:59')
@@ -2690,3 +2689,39 @@ def remark_transaction_by_date(selected_date):
     final_count_data = _DAO.custom_query('SELECT count(*) AS __ FROM TransactionsNew WHERE syncFlag=0 AND createdAt > '+str(start_time)+' AND createdAt < '+str(end_time))[0]['__']
     message = 'UPDATE TransactionsNew SET syncFlag=0 WHERE createdAt > '+str(start_time)+' AND createdAt < '+str(end_time)+ ' :  Updated ' + str(final_count_data)
     return message, count_data, final_count_data
+
+
+def sync_parking_transaction(payload):
+    try:
+        payload = json.loads(json.dumps(payload))
+        payload['paid_at'] = _Helper.time_string()
+        payload['site_id'] = PARKOUR_SITE_ID
+        url = BACKEND_URL + 'sync/transaction-parking'
+        s, r = _HTTPAccess.post_to_url(url=url, param=payload)
+        if s != 200 or r.get('result') != 'OK':
+            payload['endpoint'] = 'sync/transaction-parking'
+            store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+        return True
+    except Exception as e:
+        LOGGER.warning(e)
+        return False
+
+
+FREE_ADMIN_START = _ConfigParser.get_set_value('GENERAL', 'free^admin^start', '20240609')
+FREE_ADMIN_END = _ConfigParser.get_set_value('GENERAL', 'free^admin^end', '20240615')
+
+
+def define_free_admin_value():
+    global KIOSK_ADMIN
+    value = 0
+    this_date = _Helper.time_string(f='%Y%m%d')
+    if (int(this_date) >= int(FREE_ADMIN_START)) and (int(this_date) <= int(FREE_ADMIN_END)):
+        value = DEFAULT_KIOSK_ADMIN
+        KIOSK_ADMIN = 0
+        LOGGER.info(('FREE_ADMIN', value))
+        LOGGER.info(('KIOSK_ADMIN', KIOSK_ADMIN))
+    return int(value)
+
+
+VIEW_CONFIG['free_admin_value'] = define_free_admin_value()
+

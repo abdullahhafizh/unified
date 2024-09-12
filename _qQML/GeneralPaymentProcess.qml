@@ -1171,7 +1171,7 @@ Base{
     }
 
     function adjust_topup_value(base_amount){
-        var free_amount = VIEW_CONFIG.free_admin_value;
+        var free_amount = VIEW_CONFIG.free_admin_value ?? '0';
         if (free_amount == undefined) {
             free_amount = 0;
         }
