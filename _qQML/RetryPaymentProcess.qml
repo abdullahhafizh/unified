@@ -983,7 +983,7 @@ Base{
     }
 
     function adjust_topup_value(base_amount){
-        var free_amount = VIEW_CONFIG.free_admin_value ?: '0';
+        var free_amount = (VIEW_CONFIG.free_admin_value!==undefined) ? VIEW_CONFIG.free_admin_value : '0';
         var final_amount = parseInt(base_amount) + parseInt(free_amount);
         return final_amount.toString();
     }
