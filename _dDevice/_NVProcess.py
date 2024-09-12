@@ -124,9 +124,9 @@ NV_HELD_TH = None
 
 def held(nv:_NVEngine.NVEngine, held:Event, loop_delay):
     message = ""
-    _NVEngine.LOGGER.info("DELAY {}".format(loop_delay))
     held.set()
-    # nv.log_active = False
+    _NVEngine.LOGGER.info("HELD Thread started -> DELAY {}".format(loop_delay))
+    nv.log_active = False
     while held.is_set():
         isOk, new_message = nv.DoPoll()
         if isOk:
@@ -134,7 +134,8 @@ def held(nv:_NVEngine.NVEngine, held:Event, loop_delay):
                 message = new_message
                 _NVEngine.LOGGER.info((message))
         time.sleep(loop_delay)
-    # nv.log_active = True
+    nv.log_active = True
+    _NVEngine.LOGGER.info("HELD Thread stoped")
 
 
 def send_command(param:str=None, config=[], restricted=[], hold_note=False):
