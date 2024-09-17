@@ -1294,7 +1294,8 @@ def qt_message_handler(mode, context, message):
     LOGGER.debug(("QT", mode, "%s: %s (%s:%d, %s)" % (mode, message, context.file, context.line, context.file)))
 
 if __name__ == '__main__':
-    print("pyt: Initiating Config...")
+    PYTHON_VERSION = f"{sys.python_sys.version_info.major}.{sys.python_sys.version_info.minor}"
+    print("pyt: Initiating Config Python Ver.{}...".format(PYTHON_VERSION))
     config_log()
     QtCore.qInstallMessageHandler(qt_message_handler)
     init_local_setting()
@@ -1311,7 +1312,7 @@ if __name__ == '__main__':
     _Sync.start_sync_machine(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     print("pyt: Setting Up Function(s)/Method(s)...")
     SLOT_HANDLER = SlotHandler()
-    os.environ["QT_DEBUG_PLUGINS"] = "1"
+    # os.environ["QT_DEBUG_PLUGINS"] = "1"
     app = QGuiApplication(sys.argv)
     if os.name == 'nt':
         path = _Common.VIEW_FOLDER+'Main.qml'
@@ -1319,6 +1320,7 @@ if __name__ == '__main__':
         path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'MainLinux.qml'
     view = QQuickView()
     context = view.rootContext()
+    context.setContextProperty('PYTHON_VERSION', int(PYTHON_VERSION))
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
@@ -1335,7 +1337,7 @@ if __name__ == '__main__':
     if view.status() == QQuickView.Error:
         errors = view.errors()
         for error in errors:
-            print("QML Error: ", error.toString())
+            print("qml: [ERROR] ", error.toString())
     set_signal_handler(view)
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)

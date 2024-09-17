@@ -165,19 +165,6 @@ Rectangle {
         CheckPrepaidBalance{}
     }
 
-
-//    Component{id: checkin_success
-//        CheckInSuccess{}
-//    }
-
-//    Component{id: select_seat
-//        SelectSeatView{}
-//    }
-
-//    Component{id: checkin_page
-//        CheckInPage{}
-//    }
-
     Component{id: backdooor_login
         BackDoorLogin{}
     }
@@ -194,8 +181,9 @@ Rectangle {
         HomePageEvent{}
     }
 
-    Component {id: media_page
-        MediaPage{}
+    Loader {
+        id: media_page
+        sourceComponent: (PYTHON_VERSION >= 3.5) ? NoMediaPage{} : MediaPage{}
     }
 
     Component {id: no_media_page
@@ -206,17 +194,6 @@ Rectangle {
         ComingSoon{}
     }
 
-//    Component {id: buy_ticket
-//        BuyTicketWebPage{}
-//    }
-
-//    Component {id: select_ticket
-//        SelectTicketView{}
-//    }
-
-//    Component {id: select_plan
-//        SelectPlanView{}
-//    }
 
     Component {id: input_number
         InputGeneralNumber{}
@@ -234,17 +211,6 @@ Rectangle {
         LoadingView{}
     }
 
-    // Component {id: global_web_view
-    //     GlobalWebView{}
-    // }
-
-//    Component {id: faq_ina
-//        FAQPageINA{}
-//    }
-
-//    Component {id: faq_en
-//        FAQPageEN{}
-//    }
 
     Component {id: test_view
         GeneralTemplate{}
@@ -299,9 +265,6 @@ Rectangle {
         ElectronicReceipt{}
     }
 
-//    Component {id: global_confirm_frame
-//        GlobalConfirmationFrame
-//    }
 
 }
 

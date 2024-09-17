@@ -59,7 +59,7 @@ Base{
         if(Stack.status == Stack.Activating){
             // _SLOT.start_idle_mode();
             console.log('OS & Theme Check L|W|S', IS_LINUX, IS_WINDOWS, uiSimplification, showingTNC);
-            if (IS_LINUX)  mediaOnPlaying = false;
+            if (IS_LINUX || PYTHON_VERSION >= 3.5)  mediaOnPlaying = false;
             resetPopup();
             // Set Idle Mode Here
             _SLOT.user_action_log('[Homepage] Standby Mode');
