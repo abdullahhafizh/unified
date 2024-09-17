@@ -1321,8 +1321,6 @@ if __name__ == '__main__':
         path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'MainLinux.qml'
     view = QQuickView()
     context = view.rootContext()
-    print("pyt: Multimedia Page Enabled {} ".format(str(float(PYTHON_VERSION) < 3.5)))
-    context.setContextProperty('ENABLE_MULTIMEDIA', (float(PYTHON_VERSION) < 3.5))
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
