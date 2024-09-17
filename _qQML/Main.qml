@@ -183,7 +183,7 @@ Rectangle {
 
     Loader {
         id: media_page
-        sourceComponent: (VIEW_CONFIG.support_multimedia) ? MediaPage{} : null
+        sourceComponent: (VIEW_CONFIG.support_multimedia) ? MediaPage : null
     }
 
     Component {id: no_media_page
