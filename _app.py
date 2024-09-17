@@ -1294,7 +1294,7 @@ def qt_message_handler(mode, context, message):
     LOGGER.debug(("QT", mode, "%s: %s (%s:%d, %s)" % (mode, message, context.file, context.line, context.file)))
 
 if __name__ == '__main__':
-    PYTHON_VERSION = f"{sys.python_sys.version_info.major}.{sys.python_sys.version_info.minor}"
+    PYTHON_VERSION = str(sys.python_sys.version_info.major) + "." + str(sys.python_sys.version_info.minor)
     print("pyt: Initiating Config Python Ver.{}...".format(PYTHON_VERSION))
     config_log()
     QtCore.qInstallMessageHandler(qt_message_handler)
