@@ -719,7 +719,7 @@ class SlotHandler(QObject):
 def set_signal_handler(view):
     if view.rootObject() is None:
         print("pyt: [ERROR] view root.Object() is None...")
-        return
+        sys.exit(99)
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
     _KioskService.K_SIGNDLER.SIGNAL_GET_GUI_VERSION.connect(view.rootObject().result_get_gui_version)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.connect(view.rootObject().result_get_kiosk_name)
@@ -1329,8 +1329,13 @@ if __name__ == '__main__':
     # translator.load(path + 'INA.qm')
     # app.installTranslator(translator)
     view.engine().quit.connect(app.quit)
-    print("pyt: Setting Up View {} For {}...".format(path, os.name))
-    view.setSource(QUrl(path))
+    if os.path.exists(path):
+        print("pyt: Setting Up View {} For {}...".format(path, os.name))
+        view.setSource(QUrl(path))
+    if view.status() == QQuickView.Error:
+        errors = view.errors()
+        for error in errors:
+            print("QML Error: ", error.toString())
     set_signal_handler(view)
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
