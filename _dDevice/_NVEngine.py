@@ -217,6 +217,7 @@ class NVEngine():
                 if d.Channel == channelNum:
                     return d.Currency
         return ""
+    
     def SendCommand(self):
         p_backup = bytearray(255)
         backup = Array[Byte](p_backup)
@@ -535,8 +536,6 @@ class NVEngine():
             self.m_UnitDataList.append(loopChannelData)
 
             LOGGER.info("Channel {}: {} {}".format(loopChannelData.Channel, loopChannelData.Value/self.m_ValueMultiplier, loopChannelData.Currency))
-
-
         self.m_UnitDataList.sort(key=lambda d : d.Value)
 
     def GetSerialNumber(self):
@@ -545,7 +544,6 @@ class NVEngine():
 
         if not self.SendCommand():
             return False
-        
         isOk, message = self.CheckGenericResponses()        
         
         if isOk:
@@ -554,11 +552,8 @@ class NVEngine():
 
             if self.log_active:
                 LOGGER.info("Serial Number : {}".format(self.m_SerialNumber))
-
             self.m_HoldCount = 0            
-        
             return True
-        
         return False
     
     def SetInhibits(self):
@@ -569,16 +564,13 @@ class NVEngine():
 
         if not self.SendCommand():
             return False
-        
         isOk, message = self.CheckGenericResponses()        
 
         if isOk:
             if self.log_active:
                 LOGGER.info("Inhibits set")
             self.m_HoldCount = 0            
-        
             return True
-        
         return False
 
     def ConnectToValidator(self):

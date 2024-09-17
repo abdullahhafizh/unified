@@ -716,7 +716,7 @@ class SlotHandler(QObject):
     start_simple_read_scanner = pyqtSlot()(start_simple_read_scanner)
         
 
-def set_signal_handler():
+def set_signal_handler(view):
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
     _KioskService.K_SIGNDLER.SIGNAL_GET_GUI_VERSION.connect(view.rootObject().result_get_gui_version)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.connect(view.rootObject().result_get_kiosk_name)
@@ -1331,7 +1331,8 @@ if __name__ == '__main__':
         view.setSource(QUrl(path + 'Main.qml'))
     else:
         view.setSource(QUrl(path + 'MainLinux.qml'))
-    set_signal_handler()
+    print("view Object: " + str(type(view)))
+    set_signal_handler(view)
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
     view.setFlags(Qt.WindowFullscreenButtonHint)
