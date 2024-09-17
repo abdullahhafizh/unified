@@ -1,5 +1,5 @@
-import QtQuick 2.4
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.5
 import QtWebKit 3.0
 //import "screen.js" as SCREEN
 

@@ -1331,7 +1331,7 @@ if __name__ == '__main__':
         view.setSource(QUrl(path + 'Main.qml'))
     else:
         view.setSource(QUrl(path + 'MainLinux.qml'))
-    print("view Object: " + str(type(view)))
+    # print("view Object: " + str(type(view)))
     set_signal_handler(view)
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)

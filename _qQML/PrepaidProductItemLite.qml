@@ -1,5 +1,5 @@
-import QtQuick 2.4
-import QtQuick.Controls 1.2
+import QtQuick 2.5
+import QtQuick.Controls 1.5
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 //import "config.js" as CONF
