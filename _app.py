@@ -1321,7 +1321,7 @@ if __name__ == '__main__':
         path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'MainLinux.qml'
     view = QQuickView()
     context = view.rootContext()
-    context.setContextProperty('PYTHON_VERSION', int(PYTHON_VERSION))
+    context.setContextProperty('PYTHON_VERSION', float(PYTHON_VERSION))
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     context.setContextProperty('SCREEN_WIDTH', SCREEN_WIDTH)
     context.setContextProperty('SCREEN_HEIGHT', SCREEN_HEIGHT)
