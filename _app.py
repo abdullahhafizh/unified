@@ -717,6 +717,9 @@ class SlotHandler(QObject):
         
 
 def set_signal_handler(view):
+    if view.rootObject() is None:
+        print("pyt: [ERROR] view root.Object() is None...")
+        return
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
     _KioskService.K_SIGNDLER.SIGNAL_GET_GUI_VERSION.connect(view.rootObject().result_get_gui_version)
     _KioskService.K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.connect(view.rootObject().result_get_kiosk_name)
