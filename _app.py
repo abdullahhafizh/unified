@@ -36,6 +36,7 @@ from _sService import _GeneralPaymentService
 from _sService import _AudioService
 # from _mModule import _MainService
 import json
+import sys as python_sys
 
 if _Common.IS_WINDOWS:
     import wmi
@@ -1294,7 +1295,7 @@ def qt_message_handler(mode, context, message):
     LOGGER.debug(("QT", mode, "%s: %s (%s:%d, %s)" % (mode, message, context.file, context.line, context.file)))
 
 if __name__ == '__main__':
-    PYTHON_VERSION = str(sys.python_sys.version_info.major) + "." + str(sys.python_sys.version_info.minor)
+    PYTHON_VERSION = str(python_sys.version_info.major) + "." + str(python_sys.version_info.minor)
     print("pyt: Initiating Config Python Ver.{}...".format(PYTHON_VERSION))
     config_log()
     QtCore.qInstallMessageHandler(qt_message_handler)
