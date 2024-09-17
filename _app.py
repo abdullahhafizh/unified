@@ -1311,9 +1311,9 @@ if __name__ == '__main__':
     # os.environ["QT_DEBUG_PLUGINS"] = "1"
     app = QGuiApplication(sys.argv)
     if os.name == 'nt':
-        path = _Common.VIEW_FOLDER+'/Main.qml'
+        path = _Common.VIEW_FOLDER+'Main.qml'
     else:
-        path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/MainLinux.qml'
+        path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'MainLinux.qml'
     view = QQuickView()
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
