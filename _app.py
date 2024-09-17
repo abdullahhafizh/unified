@@ -1310,11 +1310,10 @@ if __name__ == '__main__':
     SLOT_HANDLER = SlotHandler()
     # os.environ["QT_DEBUG_PLUGINS"] = "1"
     app = QGuiApplication(sys.argv)
-    print("pyt: Setting Up View...")
     if os.name == 'nt':
-        path = _Common.VIEW_FOLDER+'/'
+        path = _Common.VIEW_FOLDER+'/Main.qml'
     else:
-        path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/'
+        path = sys.path[0] + '/'+_Common.VIEW_FOLDER+'/MainLinux.qml'
     view = QQuickView()
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
@@ -1327,11 +1326,8 @@ if __name__ == '__main__':
     # translator.load(path + 'INA.qm')
     # app.installTranslator(translator)
     view.engine().quit.connect(app.quit)
-    if _Common.IS_WINDOWS:
-        view.setSource(QUrl(path + 'Main.qml'))
-    else:
-        view.setSource(QUrl(path + 'MainLinux.qml'))
-    # print("view Object: " + str(type(view)))
+    print("pyt: Setting Up View {} For {}...".format(path, os.name))
+    view.setSource(QUrl(path))
     set_signal_handler(view)
     if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
