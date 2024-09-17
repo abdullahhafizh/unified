@@ -1308,7 +1308,7 @@ if __name__ == '__main__':
     _Sync.start_sync_machine(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     print("pyt: Setting Up Function(s)/Method(s)...")
     SLOT_HANDLER = SlotHandler()
-    # os.environ["QT_DEBUG_PLUGINS"] = "1"
+    os.environ["QT_DEBUG_PLUGINS"] = "1"
     app = QGuiApplication(sys.argv)
     if os.name == 'nt':
         path = _Common.VIEW_FOLDER+'Main.qml'
