@@ -183,7 +183,7 @@ Rectangle {
 
     Loader {
         id: media_page
-        sourceComponent: (PYTHON_VERSION >= 3.5) ? NoMediaPage{} : MediaPage{}
+        sourceComponent: ENABLE_MULTIMEDIA ? NoMediaPage{} : MediaPage{}
     }
 
     Component {id: no_media_page
