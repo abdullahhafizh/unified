@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.5
+import QtQuick 2.2
+import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
 //import "screen.js" as SCREEN
 //import "config.js" as CONF

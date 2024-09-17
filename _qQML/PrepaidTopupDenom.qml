@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.2
 import QtQuick.Controls 1.3
 //import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC

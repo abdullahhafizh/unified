@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.5
+import QtQuick 2.2
+import QtQuick.Controls 1.2
 
 Base{
     id: base_page

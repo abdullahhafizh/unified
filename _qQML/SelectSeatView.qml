@@ -1,5 +1,5 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.5
+import QtQuick 2.2
+import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.3
 //import QtQml.Models 2.1
 import "base_function.js" as FUNC
