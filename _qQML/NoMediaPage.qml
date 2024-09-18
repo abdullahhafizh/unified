@@ -26,10 +26,9 @@ Rectangle{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-//            if(media_files.length == 0){
-//                _SLOT.get_file_list(img_path);
-//            }
             counter = 0;
+            mediaOnPlaying = true;
+            console.log('NoMediaPage onStatusChanged', mediaOnPlaying)
         }
         if(Stack.status==Stack.Deactivating){
 //            player.stop()
@@ -184,8 +183,10 @@ Rectangle{
                 while (media_files.length > 0) {
                     media_files.pop();
                 }
-                my_layer.pop();
                 mediaOnPlaying = false;
+                console.log('media_mode onClicked', mediaOnPlaying)
+                //my_layer.pop();
+                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
             }
             onDoubleClicked: onClicked
         }
