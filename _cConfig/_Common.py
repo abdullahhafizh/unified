@@ -19,6 +19,7 @@ IS_WINDOWS = not IS_LINUX
 
 SYSTEM_VERSION = sys.version_info
 MINIMUM_SYSTEM_VERSION = (3, 8)
+SUPPORT_MULTIMEDIA_VERSION = (3, 4)
 
 LOGGER = logging.getLogger()
 
@@ -56,7 +57,7 @@ def chatbot_feature():
 
 
 def support_multimedia():
-    return SYSTEM_VERSION < MINIMUM_SYSTEM_VERSION and IS_WINDOWS
+    return SYSTEM_VERSION <= SUPPORT_MULTIMEDIA_VERSION and IS_WINDOWS
 
 
 def get_config_value(option='', section='TEMPORARY', digit=False):
