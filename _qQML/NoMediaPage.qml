@@ -132,7 +132,7 @@ Rectangle{
     // Play Multiple Videos
     Rectangle {
         id: media_mode
-        visible: (mode=="mediaPlayer") ? true : false
+        visible: true
         anchors.fill: parent
         color: "black"
 
