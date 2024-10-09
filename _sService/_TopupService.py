@@ -1181,20 +1181,18 @@ def ping_online_topup(mode, payload=None, trigger=True):
 def validate_topup_host_config(bank, conn=False):
     if not conn or not _Common.CARD_TOPUP_FEATURES.get(bank, False):
         return False
-    elif bank == 'BRI':
+    
+    if _Common.TOPUP_ONLINE_FORCE_RECHECK:
+        _QPROX.validate_topup_online_config(bank)
+
+    if bank == 'BRI':
         # Must Have SAM And Host Config
-        if not _Common.BRI_TOPUP_ONLINE and _Common.TOPUP_ONLINE_FORCE_RECHECK:
-            _QPROX.validate_topup_online_config('BRI')
         return _Common.BRI_SAM_ACTIVE is True and _Common.BRI_TOPUP_ONLINE is True
     elif bank == 'BCA':
         # Must Have Host Config
-        if not _Common.BCA_TOPUP_ONLINE and _Common.TOPUP_ONLINE_FORCE_RECHECK:
-            _QPROX.validate_topup_online_config('BCA')
         return _Common.BCA_TOPUP_ONLINE is True
     elif bank == 'DKI':
         # Must Have Host Config
-        if not _Common.DKI_TOPUP_ONLINE and _Common.TOPUP_ONLINE_FORCE_RECHECK:
-            _QPROX.validate_topup_online_config('DKI')
         return _Common.DKI_TOPUP_ONLINE is True
     else:
         return False

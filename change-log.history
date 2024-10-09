@@ -2,6 +2,7 @@
 - Add Remote Command RESYNC_ALL_TRX_BY_DATE|<DATE>,
 - Force Enable sync_data_transaction,
 - Local Resync Transaction Data on Daily Basis,
+- Enhance Topup Online Availability Based on SOF Status,
 - ...
 
 16.6.9-GLOBAL:
