@@ -426,6 +426,8 @@ def execute_topup_config_check(_param={}, _bank=''):
 
 def execute_topup_sof_check(_param={}):
     _url = TOPUP_URL + 'topup-online/sof-check?tid=' + _Common.TID    
+    _url = _url.replace('/v1/', '/enc-kiosk/')
+
     # AES-128-CBC Output in HEX
     encrypt_status, encrypt_result = _Cryptograpy.encrypt_aes(
                 plaintext=json.dumps(_param),
