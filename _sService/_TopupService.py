@@ -1250,7 +1250,7 @@ def get_topup_readiness():
         }
         ADMIN_FEE_INCLUDE = True if ready['admin_include'] == '1' else False
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
-        connection_online = _Common.is_online('get_topup_readiness')
+        # connection_online = _Common.is_online('get_topup_readiness')
         # Assuming always check card balance first before check topup readiness validation
 
         if not _Helper.empty(last_card_check):
@@ -1259,11 +1259,11 @@ def get_topup_readiness():
             if last_card_check['bank_name'] == 'BNI':
                 ready['bni'] = 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS and _Common.CARD_TOPUP_FEATURES['BNI']) is True else 'N/A',
             if last_card_check['bank_name'] == 'BRI':
-                ready['bri'] = 'AVAILABLE' if validate_topup_sof_avalaibility('BRI', conn=connection_online) else 'N/A'
+                ready['bri'] = 'AVAILABLE' if validate_topup_sof_avalaibility('BRI', True) else 'N/A'
             if last_card_check['bank_name'] == 'BCA':
-                ready['bca'] = 'AVAILABLE' if validate_topup_sof_avalaibility('BCA', conn=connection_online) else 'N/A'
+                ready['bca'] = 'AVAILABLE' if validate_topup_sof_avalaibility('BCA', True) else 'N/A'
             if last_card_check['bank_name'] == 'DKI':
-                ready['dki'] = 'AVAILABLE' if validate_topup_sof_avalaibility('DKI', conn=connection_online) else 'N/A'
+                ready['dki'] = 'AVAILABLE' if validate_topup_sof_avalaibility('DKI', True) else 'N/A'
         # if _ConfigParser.get_set_value_temp('TEMPORARY', 'secret^test^code', '0000') == '310587':
         #     ready['balance_mandiri'] = '999001'
         #     ready['balance_bni'] = '999002'
@@ -2482,15 +2482,15 @@ def start_check_topup_readiness():
 
 def check_topup_readiness():
     try:
-        ping_status = _HTTPAccess.is_online_by_ip(source=_Helper.whoami())
+        # ping_status = _HTTPAccess.is_online_by_ip(source=_Helper.whoami())
         ready = {
             'balance_mandiri': str(_Common.MANDIRI_ACTIVE_WALLET),
             'balance_bni': str(_Common.BNI_ACTIVE_WALLET),
             'mandiri': 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0 and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
             'bni': 'AVAILABLE' if (_QPROX.INIT_BNI is True and _Common.BNI_ACTIVE_WALLET > 0 and not BNI_DEPOSIT_UPDATE_BALANCE_PROCESS) is True else 'N/A',
-            'bri': 'AVAILABLE' if validate_topup_sof_avalaibility('BRI', ping_status) else 'N/A',
-            'bca': 'AVAILABLE' if validate_topup_sof_avalaibility('BCA', ping_status) else 'N/A',
-            'dki': 'AVAILABLE' if validate_topup_sof_avalaibility('DKI', ping_status) else 'N/A',
+            'bri': 'AVAILABLE' if validate_topup_sof_avalaibility('BRI', True) else 'N/A',
+            'bca': 'AVAILABLE' if validate_topup_sof_avalaibility('BCA', True) else 'N/A',
+            'dki': 'AVAILABLE' if validate_topup_sof_avalaibility('DKI', True) else 'N/A',
         }
         TP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(ready))
     except Exception as e:
