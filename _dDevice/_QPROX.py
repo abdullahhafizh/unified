@@ -442,10 +442,10 @@ def execute_topup_sof_check(_param={}):
     _header['Kiosk-Partner-ID'] = _Common.CORE_MID
     _header['Kiosk-Terminal-ID'] = _Common.TID
     _header['Kiosk-Timestamp'] = str(_Helper.now())
-    status, response = _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
     _Common.BRI_TOPUP_ONLINE = False       
     _Common.BCA_TOPUP_ONLINE = False
     _Common.DKI_TOPUP_ONLINE = False 
+    status, response = _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
     if status == 200 and response['response']['code'] == 200:
         _Common.BRI_TOPUP_ONLINE = response['data']['BRI']['status']        
         _Common.BCA_TOPUP_ONLINE = response['data']['BCA']['status']        
