@@ -1183,17 +1183,18 @@ def validate_topup_host_config(bank, conn=False):
         return False
     
     if _Common.TOPUP_ONLINE_FORCE_RECHECK:
-        _QPROX.validate_topup_online_config(bank)
+        # _QPROX.validate_topup_online_config(bank)
+        _QPROX.execute_topup_sof_check(_Common.serialize_payload({}))
 
     if bank == 'BRI':
         # Must Have SAM And Host Config
-        return _Common.BRI_SAM_ACTIVE is True and _Common.BRI_TOPUP_ONLINE is True
+        return (_Common.BRI_SAM_ACTIVE is True and _Common.BRI_TOPUP_ONLINE is True)
     elif bank == 'BCA':
         # Must Have Host Config
-        return _Common.BCA_TOPUP_ONLINE is True
+        return (_Common.BCA_TOPUP_ONLINE is True)
     elif bank == 'DKI':
         # Must Have Host Config
-        return _Common.DKI_TOPUP_ONLINE is True
+        return (_Common.DKI_TOPUP_ONLINE is True)
     else:
         return False
 
@@ -1230,6 +1231,7 @@ def get_topup_readiness():
         last_card_check = _Common.load_from_temp_data('last-card-check', 'json')
         connection_online = _Common.is_online('get_topup_readiness')
         # Assuming always check card balance first before check topup readiness validation
+
         if not _Helper.empty(last_card_check):
             if last_card_check['bank_name'] == 'MANDIRI':
                 ready['mandiri'] = 'AVAILABLE' if (_QPROX.INIT_MANDIRI is True and _Common.MANDIRI_ACTIVE_WALLET > 0 and not MDR_DEPOSIT_UPDATE_BALANCE_PROCESS and _Common.CARD_TOPUP_FEATURES['MANDIRI']) is True else 'N/A'

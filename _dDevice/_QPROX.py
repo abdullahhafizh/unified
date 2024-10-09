@@ -424,6 +424,34 @@ def execute_topup_config_check(_param={}, _bank=''):
     return _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
 
 
+def execute_topup_sof_check(_param={}):
+    _url = TOPUP_URL + 'topup-online/sof-check?tid=' + _Common.TID    
+    # AES-128-CBC Output in HEX
+    encrypt_status, encrypt_result = _Cryptograpy.encrypt_aes(
+                plaintext=json.dumps(_param),
+                key=_Common.CORE_MID
+            )
+    if not _Common.LIVE_MODE:
+        LOGGER.debug(('Encypt Result', str(encrypt_result)))
+    if not encrypt_status:
+        return
+    _payload = {
+            'data': encrypt_result
+        }
+    _header = _HTTPAccess.HEADER 
+    _header['Kiosk-Partner-ID'] = _Common.CORE_MID
+    _header['Kiosk-Terminal-ID'] = _Common.TID
+    _header['Kiosk-Timestamp'] = str(_Helper.now())
+    status, response = _HTTPAccess.post_to_url(url=_url, param=_payload, header=_header)
+    _Common.BRI_TOPUP_ONLINE = False       
+    _Common.BCA_TOPUP_ONLINE = False
+    _Common.DKI_TOPUP_ONLINE = False 
+    if status == 200 and response['response']['code'] == 200:
+        _Common.BRI_TOPUP_ONLINE = response['data']['BRI']['status']        
+        _Common.BCA_TOPUP_ONLINE = response['data']['BCA']['status']        
+        _Common.DKI_TOPUP_ONLINE = response['data']['DKI']['status']        
+
+
 def validate_topup_online_config(bank=None):
     if bank is None: return
     param = _Common.serialize_payload({})
@@ -433,20 +461,17 @@ def validate_topup_online_config(bank=None):
             param['card_no'] = '6013' + ('0'*12)            
             status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
-            if status == 200 and response['response']['code'] == 200:
-                _Common.BRI_TOPUP_ONLINE = True
+            _Common.BRI_TOPUP_ONLINE = (status == 200 and response['response']['code'] == 200)
         elif bank == 'BCA':
             param['card_no'] = '0145' + ('0'*12)
             status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
-            if status == 200 and response['response']['code'] == 200:
-                _Common.BCA_TOPUP_ONLINE = True
+            _Common.BCA_TOPUP_ONLINE = (status == 200 and response['response']['code'] == 200)
         elif bank == 'DKI':
             param['card_no'] = '9360' + ('0'*12)
             status, response = execute_topup_config_check(_param=param, _bank=bank)
             LOGGER.info((response, str(param)))
-            if status == 200 and response['response']['code'] == 200:
-                _Common.DKI_TOPUP_ONLINE = True
+            _Common.DKI_TOPUP_ONLINE = (status == 200 and response['response']['code'] == 200)
     except Exception as e:
         LOGGER.warning((e))
 
