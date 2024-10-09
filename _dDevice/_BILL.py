@@ -26,7 +26,7 @@ TEST_MODE = _Common.TEST_MODE
 
 CONFIG_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'BILLDTATM_CommCfg.ini')
 EXEC_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'bill.exe')
-NV_LIB_MODE = True
+NV_LIB_MODE = False
 NV_ENGINE_LIB = os.path.join(sys.path[0], '_lLib', 'nv_itl')
 LOG_BILL = os.path.join(sys.path[0], 'log')
 BILL_TYPE = _Common.BILL_TYPE

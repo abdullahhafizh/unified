@@ -97,19 +97,22 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
     print("MAIN_LOOP EXIT")
 
 def init(lib_path:str, com_port:str):
-    nv = _NVEngine.NVEngine(lib_path, True)
-    nv.m_cmd.ComPort = com_port
-    nv.m_cmd.SSPAddress = 0
-    nv.m_cmd.Timeout = 3000
+    try:
+        nv = _NVEngine.NVEngine(lib_path, True)
+        nv.m_cmd.ComPort = com_port
+        nv.m_cmd.SSPAddress = 0
+        nv.m_cmd.Timeout = 3000
 
-    #Setting tahan note tanpa batas
-    nv.m_HoldNumber = 1
-    nv.m_HeldNoteByCount = False
+        #Setting tahan note tanpa batas
+        nv.m_HoldNumber = 1
+        nv.m_HeldNoteByCount = False
 
-    #Setting tahan note dengan batas counter
-    # nv.m_HoldNumber = 10
-    # nv.m_HeldNoteByCount = True
-    return nv
+        #Setting tahan note dengan batas counter
+        # nv.m_HoldNumber = 10
+        # nv.m_HeldNoteByCount = True
+        return nv
+    except:
+        return None
 
 PROCESS_NV = None
 USER_REQUEST_NV = Queue()

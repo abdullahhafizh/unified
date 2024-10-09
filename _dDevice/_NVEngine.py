@@ -6,9 +6,11 @@ from enum import Enum
 
 LOGGER = logging.getLogger("NV200")
 
-clr.AddReference("System")
-
-from System import Byte, Array, BitConverter
+try:
+    clr.AddReference("System")
+    from System import Byte, Array, BitConverter
+except:
+    pass
 
 def FormatToCurrency(unformattedNumber, valueMultiplier):
     f = unformattedNumber / valueMultiplier
@@ -158,9 +160,11 @@ class NVEngine():
 
     def __init__(self, path_to_library:str, is_log_active:bool):
         sys.path.append(path_to_library)
-        clr.AddReference("ITLlib")
-
-        import ITLlib
+        try:
+            clr.AddReference("ITLlib")
+            import ITLlib
+        except:
+            pass
 
         self.m_eSSP = ITLlib.SSPComms()
         self.m_cmd = ITLlib.SSP_COMMAND()
