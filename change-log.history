@@ -1,3 +1,7 @@
+16.7.1-GLOBAL:
+- Add Success Cash Transaction on Cash Collection Event,
+- ...
+
 16.7.0-GLOBAL:
 - Add Remote Command RESYNC_ALL_TRX_BY_DATE|<DATE>,
 - Force Enable sync_data_transaction,

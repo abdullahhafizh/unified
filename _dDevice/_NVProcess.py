@@ -93,8 +93,8 @@ def main_loop(lib_path:str, com_port:str, user_request:Queue, response:Queue):
             break
 
         time.sleep(0.25)
-
     print("MAIN_LOOP EXIT")
+
 
 def init(lib_path:str, com_port:str):
     try:
@@ -149,14 +149,14 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
 
     if MUTEX_HOLDER.is_set():
         # Change to false positif
-        return 0, "OTHER INSTANCE RUNNING"
+        return 0, "OTHER_INSTANCE_RUNNING"
     
     MUTEX_HOLDER.set()
 
     try:
         if param:
             code = -1
-            message = "UNKNOWN ERROR"
+            message = "UNKNOWN_ERROR"
 
             param_split = param.split("|")
             cmd = param_split[0]
@@ -178,14 +178,14 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                         else: 
                             NV_OBJECT.DisableValidator()
                             code = 0
-                        message = "SET OK"
+                        message = "SET_OK"
                     else:
-                        message = "SET FAIL"                    
+                        message = "SET_FAIL"                    
                 elif cmd == config["ENABLE"]:
                     isOK, message = NV_OBJECT.EnableValidator()
                     if isOK: 
                         code = 0
-                        message = "ENABLE OK"
+                        message = "ENABLE_OK"
                 elif cmd == config["RECEIVE"]:
                     isOK, message = NV_OBJECT.DoPoll()
                     if isOK: 
@@ -197,12 +197,12 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                                 NV_HELD_TH.join()
                             NV_HELD_TH = Thread(target=held, args=(NV_OBJECT, NV_HELD, config['LOOP_DELAY']))
                             NV_HELD_TH.start()
-                    else: message = "RECEIVE FAIL"
+                    else: message = "RECEIVE_FAIL"
                 elif cmd == config["STOP"]:
                     if NV_OBJECT.DisableValidator(): 
                         code = 0
-                        message = "STOP OK"
-                    else: message = "STOP FAIL"
+                        message = "STOP_OK"
+                    else: message = "STOP_FAIL"
                 elif cmd == config["STORE"]:
                     is_active = not (NV_HELD_TH is None)
                     if is_active:
@@ -214,10 +214,10 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                             isOK, message = NV_OBJECT.DoPoll()
                             if config['KEY_STORED'] in message:
                                 code = 0
-                                message = "STORE OK"
+                                message = "STORE_OK"
                                 break
                             time.sleep(config['LOOP_DELAY'])
-                    else: message = "STORE FAIL"
+                    else: message = "STORE_FAIL"
                 elif cmd == config["REJECT"]:
                     is_active = not (NV_HELD_TH is None)
                     if is_active:
@@ -226,7 +226,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                     isOK, message = NV_OBJECT.ReturnNote()
                     if isOK:
                         code = 0
-                        message = "REJECT OK"
+                        message = "REJECT_OK"
                 elif cmd == config["RESET"]:
                     isOK, message = NV_OBJECT.Reset()
                     if isOK: 
@@ -235,7 +235,7 @@ def send_command(param:str=None, config=[], restricted=[], hold_note=False):
                             isOK = NV_OBJECT.DisableValidator()
                             if isOK:
                                 code = 0
-                                message = "RESET OK"
+                                message = "RESET_OK"
             else:
                 message = "PLEASE ADD | after cmd in param"
         else:

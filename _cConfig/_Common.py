@@ -13,6 +13,7 @@ import re
 # from sentry_sdk import capture_exception
 import platform
 import subprocess
+from datetime import datetime
 
 IS_LINUX = platform.system() == 'Linux'
 IS_WINDOWS = not IS_LINUX
@@ -2137,7 +2138,12 @@ def generate_collection_data():
         # __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         # ' current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
 
-        # __['all_cashbox'] = _DAO.cashbox_status()    
+        start_period_time = load_from_temp_config('last^collection', 'N/A')
+        end_period_time = datetime.now() * 1000
+        __['start_period_time'] = end_period_time if start_period_time == 'N/A' else _Helper.convert_string_to_epoch(start_period_time)
+        __['end_period_time'] = end_period_time
+        __['cash_on_sale'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM TransactionsNew WHERE createdAt > '+ str(__['start_period_time']) + ' AND createdAt < ' + str(__['end_period_time']) + ' ')[0]['__']
+
         cash_activity = get_cash_activity(trx_output=True)
         __['all_cash'] = cash_activity['total']
         __['all_cashbox'] = cash_activity['total']
