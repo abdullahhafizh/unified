@@ -948,10 +948,10 @@ def begin_collect_cash(bill_serial_no):
     operator = 'OPERATOR'
     if _UserService.USER is not None:
         operator = _UserService.USER['first_name']
-    _DAO.mark_uncollected_cash({
-            'collectedAt': 19900901,
-            'collectedUser': operator
-    })
+    # _DAO.mark_uncollected_cash({
+    #         'collectedAt': 19900901,
+    #         'collectedUser': operator
+    # })
     # list_collect = _DAO.custom_query(" SELECT csid FROM Cash WHERE collectedAt = 19900901 AND collectedUser = '"+operator+"' ")
     # for cash in list_collect:
         # list_collect.append(cash['csid'])
@@ -1335,9 +1335,21 @@ def reset_db_record():
         time.sleep(1)
         _DAO.flush_table('TopUpRecords', ' syncFlag = 3 AND cardNo LIKE "6032%" ')
         time.sleep(1)
-        _DAO.flush_table('Cash')
-        time.sleep(1)
         _DAO.flush_table('Product')
+        # Initial Last Cash Collection Log IF Not Found
+        if _DAO.custom_query( ' SELECT count(*) AS __ FROM Cash ')[0]['__'] == 0:
+            detect_last_collect_time = _Common.load_from_temp_config('last^collection', 'N/A')
+            detect_last_collect_time = _Helper.now() if detect_last_collect_time == 'N/A' else _Helper.convert_string_to_epoch(detect_last_collect_time, "%d-%m-%Y %H:%M:%S")
+            param = {
+                'csid': 'system_init' + str(_Helper.now()),
+                'pid': 0,
+                'tid': _Common.TID,
+                'amount': 0,
+                'collectedUser': 'system_init',
+                'collectedAt': detect_last_collect_time
+            }
+            LOGGER.info(('INIT EMPTY CASH COLLECTION RECORDS', str(param)))
+            _DAO.insert_cash(param=param)
         time.sleep(1)
         _DAO.flush_table('Transactions')
         LOGGER.info(('FINISH_RESET_DB_RECORDS', _Helper.time_string()))

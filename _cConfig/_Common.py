@@ -2139,9 +2139,10 @@ def generate_collection_data(prev_bill_serial_no=''):
         # __['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE collectedAt = 19900901 ')[0]['__']        
         # ' current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
 
-        start_period_time = load_from_temp_config('last^collection', 'N/A')
+        # start_period_time = load_from_temp_config('last^collection', 'N/A')
+        start_period_time = _DAO.custom_query(' SELECT IFNULL(collectedAt, 0) AS __ FROM Cash ORDER BY collectedAt DESC LIMIT 1 ')[0]['__']
         end_period_time = _Helper.now()
-        __['start_period_time'] = end_period_time if start_period_time == 'N/A' else _Helper.convert_string_to_epoch(start_period_time, "%d-%m-%Y %H:%M:%S")
+        __['start_period_time'] = end_period_time if start_period_time == 0 else _Helper.convert_string_to_epoch(start_period_time, "%d-%m-%Y %H:%M:%S")
         __['end_period_time'] = end_period_time
         __['cash_on_sale'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM TransactionsNew WHERE createdAt > '+ str(__['start_period_time']) + ' AND createdAt < ' + str(__['end_period_time']) + ' ')[0]['__']
         

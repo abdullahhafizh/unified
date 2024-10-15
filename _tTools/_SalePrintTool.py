@@ -2302,7 +2302,7 @@ def eprinter_admin_change_stock(struct_id, ext='.pdf'):
 def mark_sync_collected_data(s):
     try:
         LOGGER.info(('START'))
-        _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
+        # _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
@@ -2313,7 +2313,7 @@ def mark_sync_collected_data(s):
         # '"  WHERE collectedAt = 19900901 '
         # _KioskService.python_dump(str(__update_cash_str))
         # __exec_cash_update = _DAO.custom_update(__update_cash_str)
-        _DAO.flush_table('Cash')
+        # _DAO.flush_table('Cash')
         # Change Data Cash Mark To Deletion
         # _KioskService.python_dump(str(__exec_cash_update))
         # Reset Table Cashbox
@@ -2326,6 +2326,15 @@ def mark_sync_collected_data(s):
             #     filename=collection_code,
             #     default_ext='.cashbox_history'
             # )
+            param = {
+                'csid': collection_code,
+                'pid': 0,
+                'tid': _Common.TID,
+                'amount': s.get('all_cashbox'),
+                'collectedUser': operator,
+                'collectedAt': int(collection_time)
+            }
+            _DAO.insert_cash(param=param)
         # _DAO.flush_table('CashBox')
         LOGGER.info(('FINISHED'))
         return True
