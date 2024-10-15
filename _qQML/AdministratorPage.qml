@@ -1043,7 +1043,7 @@ Base{
                             console.log('Collect Cash Button is Pressed..!')
                             if (userData.isAbleCollect==1){
                                 if (userData.activeCashboxList !== undefined && userData.activeCashboxList.length > 0){
-                                    popup_input_cashbox_no.open('Masukkan Nomor Serial Cashbox Kosong');
+                                    popup_input_cashbox_no.open('Masukkan Nomor Cashbox Baru (Kosong)');
                                     return;
                                 }
                                 do_collect_bill_cash();
@@ -1484,13 +1484,13 @@ Base{
                 onClicked: {
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.user_action_log('Press "LANJUT" Cashbox Number ' + popup_input_cashbox_no.numberInput);
+                    _SLOT.user_action_log('Press "LANJUT" Cashbox Number Kosong ' + popup_input_cashbox_no.numberInput);
                     if (validate_bill_sn(popup_input_cashbox_no.numberInput)){
                         emptyBillSN = VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput;
                         console.log('Cashbox Number Match : ' + emptyBillSN);
                         press = '0';
                         popup_input_cashbox_no.close();
-                        popup_input_cashbox_no_existing.open('Masukkan Nomor Serial Cashbox Terisi');
+                        popup_input_cashbox_no_existing.open('Masukkan Nomor Cashbox Yang Diambil');
                         // Old Treatment
                         // popup_input_cashbox_no.reset_counter();
                         // do_collect_bill_cash();

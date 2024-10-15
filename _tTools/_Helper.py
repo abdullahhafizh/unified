@@ -76,9 +76,9 @@ def convert_epoch(t = None, f=''):
     return datetime.datetime.fromtimestamp(t).strftime(f)
 
 
-def convert_string_to_epoch(date_str):
+def convert_string_to_epoch(date_str, pattern="%Y-%m-%d %H:%M:%S"):
     if date_str is None: return False
-    dt = datetime.datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+    dt = datetime.datetime.strptime(date_str, pattern)
     return int(dt.timestamp()) * 1000
 
 
