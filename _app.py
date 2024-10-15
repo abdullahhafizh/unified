@@ -164,9 +164,9 @@ class SlotHandler(QObject):
         _KioskService.start_get_cash_data()
     start_get_cash_data = pyqtSlot()(start_get_cash_data)
 
-    def start_begin_collect_cash(self):
-        _KioskService.start_begin_collect_cash()
-    start_begin_collect_cash = pyqtSlot()(start_begin_collect_cash)
+    def start_begin_collect_cash(self, bill_serial_no):
+        _KioskService.start_begin_collect_cash(bill_serial_no)
+    start_begin_collect_cash = pyqtSlot(str)(start_begin_collect_cash)
 
     def start_idle_mode(self):
         _Sync.start_idle_mode()

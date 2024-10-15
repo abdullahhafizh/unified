@@ -1,5 +1,6 @@
 16.7.1-GLOBAL:
 - Add Success Cash Transaction on Cash Collection Event,
+- Add Input Existing Cashbox Number on Operator Collection,
 - ...
 
 16.7.0-GLOBAL:

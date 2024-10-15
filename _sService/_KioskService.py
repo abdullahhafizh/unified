@@ -925,11 +925,11 @@ def list_uncollected_cash():
     LOGGER.info(('SUCCESS', json.dumps(response)))
 
 
-def start_begin_collect_cash():
-    _Helper.get_thread().apply_async(begin_collect_cash)
+def start_begin_collect_cash(bill_serial_no):
+    _Helper.get_thread().apply_async(begin_collect_cash, (bill_serial_no, ))
 
 
-def begin_collect_cash():
+def begin_collect_cash(bill_serial_no):
     # Add BILL Device Reset Function
     # if _Common.BILL['status'] is True:
     #     LOGGER.info(('begin_collect_cash', 'call init_bill'))
@@ -958,7 +958,7 @@ def begin_collect_cash():
     # Backend Updation Changed Indo Admin Access Report Endpoint
     # post_cash_collection(list_collect, _Helper.now())
     # Generate Admin Data Here
-    collection_data = _Common.generate_collection_data()
+    collection_data = _Common.generate_collection_data(bill_serial_no)
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECTION_DATA|FOUND '+str(len(collection_data)))
     sleep(1)
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|DONE')

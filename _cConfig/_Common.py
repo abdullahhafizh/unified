@@ -2101,10 +2101,11 @@ LAST_UPDATED_STOCK = []
 COLLECTION_DATA = []
 
 
-def generate_collection_data():
+def generate_collection_data(prev_bill_serial_no=''):
     global COLLECTION_DATA, LAST_UPDATED_STOCK
     __ = dict()
     try:
+        __['prev_bill_serial_no'] = prev_bill_serial_no
         # Old Data Query Will be no longer valid after full implementing New TRX Model
         # __['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         # __['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 AND isCollected = 0 AND pid like "topup%" ')[0]['__']
@@ -2143,7 +2144,7 @@ def generate_collection_data():
         __['start_period_time'] = end_period_time if start_period_time == 'N/A' else _Helper.convert_string_to_epoch(start_period_time)
         __['end_period_time'] = end_period_time
         __['cash_on_sale'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM TransactionsNew WHERE createdAt > '+ str(__['start_period_time']) + ' AND createdAt < ' + str(__['end_period_time']) + ' ')[0]['__']
-
+        
         cash_activity = get_cash_activity(trx_output=True)
         __['all_cash'] = cash_activity['total']
         __['all_cashbox'] = cash_activity['total']

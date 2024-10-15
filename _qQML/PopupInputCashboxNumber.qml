@@ -158,7 +158,7 @@ Rectangle{
     }
 
     function open(msg){
-        if (msg!=undefined) caseTitle = msg;
+        if (msg!=undefined) mainTitle = msg;
         popup_input_cashbox_no.visible = true;
         reset_counter();
     }

@@ -24,6 +24,9 @@ Base{
 
     property var operatorName: ''
 
+    property var emptyBillSN: ''
+    property var collectBillSN: ''
+
     isPanelActive: false
     isHeaderActive: true
     logo_vis: false
@@ -39,6 +42,8 @@ Base{
             _SLOT.kiosk_get_product_stock();
             actionList = [];
             actionChangeList = [];
+            emptyBillSN = '';
+            collectBillSN = '';
             printChangeStockButton = false;
             if (userData!=undefined) parse_user_data();
         }
@@ -337,8 +342,8 @@ Base{
 
     }
 
-    function do_collect_bill_cash(){
-        _SLOT.start_begin_collect_cash();
+    function do_collect_bill_cash(bill_serial_no){
+        _SLOT.start_begin_collect_cash(bill_serial_no);
         popup_loading.open();
         _total_cash_available.labelContent = '0';
         if (VIEW_CONFIG.auto_print_collection){
@@ -1038,7 +1043,7 @@ Base{
                             console.log('Collect Cash Button is Pressed..!')
                             if (userData.isAbleCollect==1){
                                 if (userData.activeCashboxList !== undefined && userData.activeCashboxList.length > 0){
-                                    popup_input_cashbox_no.open('');
+                                    popup_input_cashbox_no.open('Masukkan Nomor Serial Cashbox Kosong');
                                     return;
                                 }
                                 do_collect_bill_cash();
@@ -1481,8 +1486,14 @@ Base{
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" Cashbox Number ' + popup_input_cashbox_no.numberInput);
                     if (validate_bill_sn(popup_input_cashbox_no.numberInput)){
-                        console.log('Cashbox Number Match : ' + VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput);
-                        do_collect_bill_cash();
+                        emptyBillSN = VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no.numberInput;
+                        console.log('Cashbox Number Match : ' + emptyBillSN);
+                        press = '0';
+                        popup_input_cashbox_no.close();
+                        popup_input_cashbox_no_existing.open('Masukkan Nomor Serial Cashbox Terisi');
+                        // Old Treatment
+                        // popup_input_cashbox_no.reset_counter();
+                        // do_collect_bill_cash();
                     } else {
                         false_notif('Mohon Maaf|Nomor Serial Cashbox Salah, Silakan Hubungi Administrator');
                         press = '0';
@@ -1494,6 +1505,42 @@ Base{
         }
     }
 
+
+    PopupInputCashboxNumber{
+        id: popup_input_cashbox_no_existing
+//        calledFrom: 'general_payment_process'
+        handleButtonVisibility: next_button_input_number_existing
+        z: 99
+
+        CircleButton{
+            id: next_button_input_number_existing
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 30
+            button_text: 'PROSES'
+            modeReverse: true
+            visible: popup_input_cashbox_no_existing.numberInput.length > 3
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (press != '0') return;
+                    press = '1';
+                    _SLOT.user_action_log('Press "PROSES" Cashbox Number Terisi ' + popup_input_cashbox_no_existing.numberInput);
+                    if (popup_input_cashbox_no_existing.numberInput.length > 3){
+                        collectBillSN = VIEW_CONFIG.bill_cashbox_prefix + popup_input_cashbox_no_existing.numberInput;
+                        press = '0';
+                        do_collect_bill_cash(collectBillSN);
+                    } else {
+                        false_notif('Mohon Maaf|Nomor Serial Cashbox Terisi Salah, Periksa Kembali Dengan Benar');
+                        press = '0';
+                        popup_input_cashbox_no_existing.reset_counter();
+                    }
+                    popup_input_cashbox_no_existing.close();
+                }
+            }
+        }
+    }
 
 
 
