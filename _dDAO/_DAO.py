@@ -164,7 +164,7 @@ def insert_cash(param):
     :return:
     """
     param["createdAt"] = _Helper.now()
-    sql = "INSERT INTO Cash (csid, tid, amount, pid, createdAt) VALUES (:csid, :tid, :amount, :pid, :createdAt)"
+    sql = "INSERT INTO Cash (csid, tid, amount, pid, collectedUser, collectedAt, createdAt) VALUES (:csid, :tid, :amount, :pid, :collectedUser, :collectedAt, :createdAt)"
     return _Database.insert_update(sql=sql, parameter=param)
 
 

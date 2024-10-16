@@ -1337,7 +1337,8 @@ def reset_db_record():
         time.sleep(1)
         _DAO.flush_table('Product')
         # Initial Last Cash Collection Log IF Not Found
-        if _DAO.custom_query( ' SELECT count(*) AS __ FROM Cash ')[0]['__'] == 0:
+        if _DAO.custom_query( ' SELECT count(*) AS __ FROM Cash WHERE collectedAt IS NOT NULL ')[0]['__'] == 0:
+            _DAO.flush_table('Cash')
             detect_last_collect_time = _Common.load_from_temp_config('last^collection', 'N/A')
             detect_last_collect_time = _Helper.now() if detect_last_collect_time == 'N/A' else _Helper.convert_string_to_epoch(detect_last_collect_time, "%d-%m-%Y %H:%M:%S")
             param = {

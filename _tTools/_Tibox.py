@@ -1214,7 +1214,9 @@ def save_cash_local(notes):
         'csid': TRX_ID[::-1],
         'tid': TID,
         'amount': notes,
-        'pid': PID
+        'pid': PID,
+        'collectedUser': 'tibox',
+        'collectedAt': _Helper.now()
     }
     _DAO.insert_cash(param_cash)
 

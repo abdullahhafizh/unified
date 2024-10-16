@@ -858,7 +858,9 @@ def log_book_cash(pid, amount, mode='normal'):
         'csid': pid[::-1],
         'pid': pid,
         'tid': _Common.TID,
-        'amount': amount
+        'amount': amount,
+        'collectedUser': None,
+        'collectedAt': None
     }
     check_cash = _DAO.get_query_from('Cash', 'csid = "{}"'.format(param['csid']))
     if len(check_cash) > 0:
