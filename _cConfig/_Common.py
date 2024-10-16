@@ -2142,7 +2142,7 @@ def generate_collection_data(prev_bill_serial_no=''):
         # start_period_time = load_from_temp_config('last^collection', 'N/A')
         start_period_time = _DAO.custom_query(' SELECT IFNULL(collectedAt, 0) AS __ FROM Cash WHERE collectedAt IS NOT NULL ORDER BY collectedAt DESC LIMIT 1 ')[0]['__']
         end_period_time = _Helper.now()
-        __['start_period_time'] = end_period_time if start_period_time == 0 else _Helper.convert_string_to_epoch(str(start_period_time), "%d-%m-%Y %H:%M:%S")
+        __['start_period_time'] = end_period_time if start_period_time == 0 else start_period_time
         __['end_period_time'] = end_period_time
         __['cash_on_sale'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM TransactionsNew WHERE paymentType = "CASH" AND createdAt > '+ str(__['start_period_time']) + ' AND createdAt < ' + str(__['end_period_time']) + ' ')[0]['__']
         
