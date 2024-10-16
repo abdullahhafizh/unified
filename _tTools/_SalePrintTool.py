@@ -1590,6 +1590,7 @@ def save_receipt_local(__id, __data, __type):
 
 def start_generate_cash_collection_event(struct_id):
     _Helper.get_thread().apply_async(upload_event_cash_collection, (struct_id, None, _Common.COLLECTION_DATA,))
+    sleep(2)
     _Helper.get_thread().apply_async(generate_cash_collection_event, (struct_id,))
 
 
