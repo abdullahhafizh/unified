@@ -1721,8 +1721,12 @@ Base{
                     back_button.visible = false;
                 break;
             }
-            console.log('[WARNING] Transaction Not Allowed Cancellation', VIEW_CONFIG.bill_type);
-            return;
+            showBillDuration = 30;
+            abc.counter = showBillDuration;
+            my_timer.start();
+            console.log('[INFO] Transaction Not Allowed Cancel Button', VIEW_CONFIG.bill_type);
+            console.log('[INFO] Reset Bill Payment To ', showBillDuration);
+            // return;
         }
 
         if (cancel_confirmation.visible) cancel_confirmation.close();
