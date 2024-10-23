@@ -381,7 +381,6 @@ Base{
         // Set Waiting Time To IDLE
 //        my_timer.stop();
         console.log('do_refund_or_print', now, refundMode, refundAmount, message_case_refund);
-
     }
 
     function release_print_with_refund(refund_amount, title, message){
