@@ -1303,7 +1303,7 @@ if __name__ == '__main__':
     # sleep(1)
     # print("pyt: Initiating Setting From Host...")
     # init_local_setting_from_host()
-    update_module(['ntplib', 'keyboard', 'pythonnet'])
+    # update_module(['ntplib', 'keyboard', 'pythonnet'])
     # install_font()
     check_db(INITIAL_SETTING['db'])
     # disable_screensaver()

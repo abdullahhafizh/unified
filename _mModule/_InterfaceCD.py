@@ -284,7 +284,6 @@ def split_track2_data(track2=""):
 
     return cardnumber, expiry
 
-
 def read_track2data_then_move_card_priv(port="COM10", ADDR="00", AID="A0000006021010"):
     ADDR = bytes.fromhex(ADDR)
     AID = bytes.fromhex(AID)
@@ -424,7 +423,6 @@ def fast_eject(param, __output_response__):
     
     return status
 
-
 def fast_eject_priv(port="COM10", ADDR="00"):
     ADDR = bytes.fromhex(ADDR)
 
@@ -493,7 +491,6 @@ def fast_eject_priv(port="COM10", ADDR="00"):
                 ser.close()
 
     return status, message, response
-
 
 def simply_eject_kyt(param, __output_response__):
     Param = param.split('|')
@@ -792,7 +789,6 @@ def simply_eject_kyt_priv(port="COM10"):
 
     return status, message, response
 
-
 def simply_eject_syn(param, __output_response__):
     Param = param.split('|')
 
@@ -836,7 +832,6 @@ def simply_eject_syn(param, __output_response__):
         LOG.cdlog("[SYN]: Gagal", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
     
     return status
-
 
 def send_enq_syn(com, cmd):
     try:
@@ -965,7 +960,6 @@ def set_disable_capture(com):
         LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, SYN_ENQ, show_log=DEBUG_MODE)
     except:
         pass
-
 
 
 @func_set_timeout(30)

@@ -1,12 +1,12 @@
 import logging.handlers
 import sys
-import clr
 import logging
 from enum import Enum
 
 LOGGER = logging.getLogger("NV200")
 
 try:
+    import clr
     clr.AddReference("System")
     from System import Byte, Array, BitConverter
 except:
