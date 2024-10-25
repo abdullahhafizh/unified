@@ -7,8 +7,12 @@ import sys
 from _tTools import _Helper
 import logging
 from serial import Serial
-import keyboard
 
+try:
+    import keyboard
+except:
+    keyboard = None
+    pass
 
 LOGGER = logging.getLogger()
 
@@ -101,7 +105,8 @@ def start_simple_read_scanner():
 
 
 def read_hid_scanner():
-    keyboard.on_press(on_key_event)
+    if keyboard is not None:
+        keyboard.on_press(on_key_event)
     
     
 SCANNER_BAUDRATE = 9600
