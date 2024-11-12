@@ -4,7 +4,7 @@ import traceback
 import _MainCPrepaidLog as LOG
 import _CardDispenserLib as cdLib
 
-from time import sleep
+from time import sleep, time
 from serial import Serial
 from func_timeout import func_timeout, func_set_timeout, FunctionTimedOut
 import sys
@@ -1142,6 +1142,356 @@ def simply_eject_syn_priv(port="COM10"):
     return status, message, response
 
 
+INIT_MTK = False
+
+def simply_eject_mutek(param, __output_response__):
+    Param = param.split('|')
+
+    if len(Param) >= 1:
+        CD_PORT = Param[0]
+    else:
+        LOG.cdlog("[MTK]: Missing/Improper Parameters: ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, param)
+        raise SystemError("ERRO:Missing/Improper Parameters")
+
+    LOG.cdlog("[MTK]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, CD_PORT)
+
+    status, message, response = __simply_eject_mutek(CD_PORT)
+
+    if status == ES_NO_ERROR:
+        __output_response__["code"] = status
+        __output_response__["message"] = "Success"
+        __output_response__["description"] = {
+            "is_stack_empty": response["is_stack_empty"],
+            "is_card_on_sensor": response["is_card_on_sensor"],
+            "is_motor_failed": response["is_motor_failed"],
+            "is_cd_busy": response["is_cd_busy"]
+        }
+
+        LOG.cdlog("[MTK]: Response = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, __output_response__)
+        LOG.cdlog("[MTK]: Result = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_OUT, status)
+        LOG.cdlog("[MTK]: Sukses", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC)
+    else:
+        __output_response__["code"] = status 
+        __output_response__["message"] = message
+        __output_response__["description"] = ""
+        
+        if response:
+            __output_response__["description"] = {
+                "is_stack_empty": response["is_stack_empty"],
+                "is_card_on_sensor": response["is_card_on_sensor"],
+                "is_motor_failed": response["is_motor_failed"],
+                "is_cd_busy": response["is_cd_busy"]
+            }
+
+        LOG.cdlog("[MTK]: Result = ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_OUT, status)
+        LOG.cdlog("[MTK]: Gagal", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+    
+    return status
+
+
+class MutekCD():
+    MTK_STX = b"\xF2"
+    MTX_ETX = b"\x03"
+    MTK_ADDR = b"\x00"
+    MTK_CMT = b"\x43"
+
+    def __init__(self, com:Serial,) -> None:
+        self.com = com
+
+    def encaps_request(self, cm:bytes, pm:bytes, data:bytes):
+        if len(data)>512:
+            raise Exception("LENGTH TO LONG")
+        
+        r_data = self.MTK_STX + self.MTK_ADDR
+        i_data = self.MTK_CMT + cm + pm + data
+        len_data = len(i_data).to_bytes(2, 'big')
+
+        f_data = r_data + len_data + i_data + self.MTX_ETX
+
+        return f_data+self.xor(f_data)
+    
+    def xor(self, data:bytes):
+        bcc = data[0]
+        for x in data[1:-1]:
+            bcc ^= x
+        return bcc.to_bytes(1, "big")
+        
+    def send_command(self, data:bytes, timeout_ms:int):
+        LOG.cdlog("[MTK]: CD SEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, data.hex().upper(), show_log=DEBUG_MODE)
+        self.com.write(data)
+        r_data = b""
+        st_time = round(time() * 1000)
+        nt_time = st_time
+        while True:
+            d = self.com.read(1)
+            if d == 0x06:
+                LOG.cdlog("[MTK]: CD RECV ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                # ACK, next wait for response
+                head = self.com.read_until(self.MTK_STX)
+                head += self.com.read(3)
+                len_data = int.from_bytes(data[2:3], 'big')
+                in_data = self.com.read(len_data+2)
+                LOG.cdlog("[MTK]: CD RECV ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, (head+in_data).hex().upper(), show_log=DEBUG_MODE)
+
+                LOG.cdlog("[MTK]: CD SEND ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                self.com.write(b'\x06')
+                r_data = head+in_data
+                break
+            elif d == 0x15:
+                # NAK, resend command
+                LOG.cdlog("[MTK]: CD RECV NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                self.com.write(data)
+            elif ((time()*1000) - nt_time) > 300:
+                # timeout no response > 300ms
+                LOG.cdlog("[MTK]: CD RECV TIMEOUT, RESEND ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                nt_time = time()*1000
+                self.com.write(data)
+            elif ((time()*1000) - st_time ) > timeout_ms:
+                LOG.cdlog("[MTK]: CD TIMEOUT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+                raise Exception("CD TIMEOUT")
+        
+        return r_data
+    
+    def parse_error(self, e1:bytes, e0:bytes):
+        ec = e1+e0
+        if ec == b"00":
+            return "Undefined Command"
+        elif ec == b"01":
+            return "Command Parameter Error"
+        elif ec == b"02":
+            return "Command Sequence Error"
+        elif ec == b"03":
+            return "Unsupported Command"
+        elif ec == b"04":
+            return "Command Data Error"
+        elif ec == b"05":
+            return "ICC Card Contact Not Released"
+        elif ec == b"10":
+            return "Card Jam"
+        elif ec == b"12":
+            return "Sensor Error"
+        elif ec == b"13":
+            return "Too Long Card"
+        elif ec == b"14":
+            return "Too Short Card"
+        elif ec == b"40":
+            return "Card Removed accidentally when recycling"
+        elif ec == b"41":
+            return "Electro-Magnet Error of ICC Module"
+        elif ec == b"43":
+            return "Unable to Move Card to IC Card Position"
+        elif ec == b"45":
+            return "Card Moved Manually (to a non-standard position)"
+        elif ec == b"50":
+            return "Overflow of Error Card Counter"
+        elif ec == b"51":
+            return "Motor error"
+        elif ec == b"60":
+            return "Short Circuit of IC Card Supply Power"
+        elif ec == b"61":
+            return "Fail to Activate IC Card"
+        elif ec == b"62":
+            return "Command Not Supported by the IC Card"
+        elif ec == b"65":
+            return "IC Card not activated"
+        elif ec == b"66":
+            return "IC Card don’t support command"
+        elif ec == b"67":
+            return "IC Card Data transmission Error"
+        elif ec == b"68":
+            return "IC Card Data transmission Overtime"
+        elif ec == b"69":
+            return "CPU/SAM APDU not complying to EMV"
+        elif ec == b"A0":
+            return "No Card Inside hopper"
+        elif ec == b"A1":
+            return "Error Card Bin is full"
+        elif ec == b"B0":
+            return "Fail to Reset/Initialize"
+        else:
+            return "ERROR {} - UNKNOWN".format(ec.decode(errors='ignore'))
+        
+    def parse_error_to_response(self, e1:bytes, e0:bytes):
+        response = {
+            "is_stack_empty": False,
+            "is_card_on_sensor": False,
+            "is_motor_failed": False,
+            "is_cd_busy": False
+        }
+
+        ec = e1+e0
+
+        if ec == b'A0':
+            response["is_stack_empty"] = True
+        elif ec in [ b'A1', b'43', b'45', b'50', b'51', b'41', b'40', b'10']:
+            response["is_motor_failed"] = True
+
+        return response
+
+    def parse_status(self, response:dict, old_response:dict):
+        old_response['is_stack_empty'] = response['st1'] == b'0'
+        old_response['is_card_on_sensor'] = response['st0'] != b'0'
+        return old_response
+
+    def decaps_response(self, data:bytes):
+        len_data = int.from_bytes(data[2:3], 'big')
+        if len(data) != len_data+6:
+            raise Exception("INVALID LENGTH")
+        etx = data[3+len_data]
+        if etx != 0x03:
+            raise Exception("INVALID ETX")
+        bcc = data[4+len_data].to_bytes(1, 'big')
+        if bcc != self.xor(data[0:(5+len_data)]):
+            raise Exception("BCC NOT MATCH")
+        
+        mt = data[3]
+        cm = data[4]
+        pm = data[5]
+        
+        if mt == 0x50 :
+            st0 = data[6]
+            st1 = data[7]
+            st2 = data[8]
+            r_data = data[9:9+len_data-6]
+            return {
+                "mt": mt,
+                "cm": cm,
+                "pm": pm,
+                "st0": st0,
+                "st1": st1,
+                "st2": st2,
+                "data": r_data
+            }
+        elif mt == 0x4E :
+            e1 = data[6]
+            e0 = data[7]
+            r_data = data[8:8+len_data-5]
+            return {
+                "mt": mt,
+                "cm": cm,
+                "pm": pm,
+                "e1": e1,
+                "e0": e0,
+                "data": r_data
+            }
+        else:
+            raise Exception("INVALID MESSAGE HEADER (MT)")
+        
+    def init_device(self):
+        # CM -> 30H
+
+        # PM
+        # 30H: Move and Hold the card at gate;
+        # 31H: Capture Card to Error Card Bin;
+        # 33H: No Movement, Retain the Card Inside; 
+        # 34H: As 30H, and Error Card Counter increment; 
+        # 35H: As 31H, and Error Card Counter increment; 
+        # 37H: As 33H, and Error Card Counter increment;
+
+        # Init and do nothing if card in channel
+        LOG.cdlog("[MTK]: CD INIT_DEVICE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+        cmd = self.encaps_request(b'\x30', b'\x33', b'')
+        byte_response = self.send_command(cmd, 10000)
+        return self.decaps_response(byte_response)
+
+    def inquire_status(self):
+        # CM -> 31H
+
+        # PM
+        # Pm=30H: Report current card status with st0, st1, st2.
+        # Pm=31H: Report Sensor Status with 10 bytes of data. (Usually used for Debugging and Maintenance)
+
+        # Inquiry status of standard sensor
+        LOG.cdlog("[MTK]: CD INQUIRY_STATUS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+        cmd = self.encaps_request(b'\x31', b'\x30', b'')
+        byte_response = self.send_command(cmd, 10000)
+        return self.decaps_response(byte_response)
+    
+    def move_card(self):
+        # CM -> 32H
+
+        # PM
+        # Pm=30H: Move and hold card at gate position; 
+        # Pm=31H: Move card to contact IC position; 
+        # Pm=32H: Move card to RF Antenna Position; 
+        # Pm=33H: Capture Card to Error Card Bin (Recycle Box); 
+        # Pm=39H: Eject Card out of Machine;
+
+        # Inquiry status of standard sensor
+        LOG.cdlog("[MTK]: CD MOVE_CARD ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+        cmd = self.encaps_request(b'\x32', b'\x30', b'')
+        byte_response = self.send_command(cmd, 10000)
+        return self.decaps_response(byte_response)
+
+
+@func_set_timeout(30)
+def __simply_eject_mutek(port="COM10"):
+    global INIT_MTK
+    message = "General Error"
+    status = ES_UNKNOWN_ERROR
+    com = None
+    response = {
+        "is_stack_empty": False,
+        "is_card_on_sensor": False,
+        "is_motor_failed": False,
+        "is_cd_busy": False
+    }
+    
+    try:
+
+        LOG.cdlog("[MTK]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
+        com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
+        mtk = MutekCD(com)
+
+        if not INIT_MTK:
+            result = mtk.init_device()
+            if result["mt"] == b'N':
+                com.close()
+                return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
+            else:
+                response = mtk.parse_status(result, response)
+                INIT_MTK = True
+        else:
+            result = mtk.inquire_status()
+            if result["mt"] == b'N':
+                com.close()
+                return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
+            else:
+                response = mtk.parse_status(result, response)
+        
+        if result['st1'] == b'0':
+            com.close()
+            return ES_CARDS_EMPTY, "No Card Inside hopper", response
+        
+        result = mtk.move_card()
+        if result["mt"] == b"N":
+            com.close()
+            return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
+        else:
+            status = ES_NO_ERROR
+            message = "SUCCESS"
+            response = mtk.parse_status(result, response)
+        
+    except FunctionTimedOut as ex:
+        message = "Exception: FunctionTimedOut"
+        status = ES_UNKNOWN_ERROR
+    
+        LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+
+    except Exception as ex:
+        message = "Exception: General"
+        status = ES_UNKNOWN_ERROR
+    
+        LOG.cdlog(str(ex), LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+        LOG.cdlog(message, LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC)
+
+    finally:
+        if com:
+            if com.isOpen():
+                com.close()
+
+    return status, message, response
+
 def arg_check():
     global BAUD_RATE_SYN
     print('Check Argument', len(sys.argv), str(sys.argv))
@@ -1189,7 +1539,7 @@ if __name__ == '__main__':
             exit(e)
     
     for i in range(multiply):
-        simply_eject_syn(port, response)
+        simply_eject_mutek(port, response)
         print(str(response))
     exit('Done', 0)
     
