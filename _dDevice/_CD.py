@@ -191,7 +191,7 @@ def trigger_card_dispenser_mtk(port, slot, multiply='1'):
             "message": "N/A",
             "code": "9999"
         }
-        output = CDLibrary.simply_eject_mutek(port, response)
+        output = CDLibrary.simply_eject_mtk(port, response)
         # LOGGER.debug((command, output, type(response), str(response)))
         if response.get('code') is not None:
             # {'cmd': 'SIMPLY_EJECT', 'param': '', 'data': {}, 'message': 'CONTOH: card_dispenser.exe [PORT_CARD_DISPENSER] [BAUD_RATE_CARD_DISPENSER] [JUMLAH_KARTU_YANG_DIINGINKAN] -> card_dispenser.exe COM1 9600 20', 'code': 'EXCP'}

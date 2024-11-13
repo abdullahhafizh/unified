@@ -14,6 +14,7 @@ DEBUG_MODE = True
 BAUD_RATE = 38400
 BAUD_RATE_KYT = 9600
 BAUD_RATE_SYN = 9600
+BAUD_RATE_MTK = 9600
 
 #ERROR STATUS
 ES_NO_ERROR = "0000"
@@ -48,7 +49,7 @@ def send_command(cmd, param):
         elif cmd == "SIMPLY_EJECT_SYN":
             simply_eject_syn(param, __output_response__)
         elif cmd == "SIMPLY_EJECT_MTK":
-            simply_eject_mutek(param, __output_response__)
+            simply_eject_mtk(param, __output_response__)
         elif cmd == "EJECT_READ_CARD":
             read_track2data_then_move_card(param, __output_response__)
         elif cmd == "FAST_EJECT":
@@ -1143,9 +1144,7 @@ def simply_eject_syn_priv(port="COM10"):
 
     return status, message, response
 
-INIT_MTK = False
-
-def simply_eject_mutek(param, __output_response__):
+def simply_eject_mtk(param, __output_response__):
     Param = param.split('|')
 
     if len(Param) >= 1:
@@ -1156,7 +1155,7 @@ def simply_eject_mutek(param, __output_response__):
 
     LOG.cdlog("[MTK]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, CD_PORT)
 
-    status, message, response = __simply_eject_mutek(CD_PORT)
+    status, message, response = __simply_eject_mtk(CD_PORT)
 
     if status == ES_NO_ERROR:
         __output_response__["code"] = status
@@ -1195,6 +1194,9 @@ class MutekCD():
     MTX_ETX = b"\x03"
     MTK_ADDR = b"\x00"
     MTK_CMT = b"\x43"
+    ST0 = { b'0': 'No Card in Card Channel', b'1': 'Card Held at Gate', b'2': 'Card on RF/IC Position' }
+    ST1 = { b'0': 'No Card in Hopper', b'1': 'Not Enough Card in Hopper', b'2': 'Enough Cards in Hopper' }
+    ST2 = { b'0': 'Error card bin not full', b'1': 'Error card bin full' }
 
     def __init__(self, com:Serial,) -> None:
         self.com = com
@@ -1213,8 +1215,10 @@ class MutekCD():
     
     def xor(self, data:bytes):
         bcc = data[0]
-        for x in data[1:-1]:
+        # print(bcc.to_bytes(1,'big').hex(),data[0].to_bytes(1,'big').hex())
+        for x in data[1:]:
             bcc ^= x
+            # print(bcc.to_bytes(1,'big').hex(),x.to_bytes(1,'big').hex())
         return bcc.to_bytes(1, "big")
         
     def send_command(self, data:bytes, timeout_ms:int):
@@ -1225,20 +1229,22 @@ class MutekCD():
         nt_time = st_time
         while True:
             d = self.com.read(1)
-            if d == 0x06:
+            if d == b"\x06":
                 LOG.cdlog("[MTK]: CD RECV ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
                 # ACK, next wait for response
                 head = self.com.read_until(self.MTK_STX)
                 head += self.com.read(3)
-                len_data = int.from_bytes(data[2:3], 'big')
-                in_data = self.com.read(len_data+2)
-                LOG.cdlog("[MTK]: CD RECV ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, (head+in_data).hex().upper(), show_log=DEBUG_MODE)
+                len_data = int.from_bytes(head[2:4], 'big') + 2
+                in_data = self.com.read(len_data)
+                LOG.cdlog("[MTK]: CD RECV "+str(len_data)+" ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, (head+in_data).hex().upper(), show_log=DEBUG_MODE)
+                while len(in_data) < len_data:
+                    in_data += self.read()
 
                 LOG.cdlog("[MTK]: CD SEND ACK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
                 self.com.write(b'\x06')
                 r_data = head+in_data
                 break
-            elif d == 0x15:
+            elif d == b"\x15":
                 # NAK, resend command
                 LOG.cdlog("[MTK]: CD RECV NAK ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
                 self.com.write(data)
@@ -1335,46 +1341,56 @@ class MutekCD():
         return old_response
 
     def decaps_response(self, data:bytes):
-        len_data = int.from_bytes(data[2:3], 'big')
+        len_data = int.from_bytes(data[2:4], 'big')
         if len(data) != len_data+6:
-            raise Exception("INVALID LENGTH")
-        etx = data[3+len_data]
+            raise Exception("INVALID LENGTH; Real {} vs Expected {}".format(len(data), len_data+6))
+        etx = data[4+len_data]
         if etx != 0x03:
-            raise Exception("INVALID ETX")
-        bcc = data[4+len_data].to_bytes(1, 'big')
-        if bcc != self.xor(data[0:(5+len_data)]):
-            raise Exception("BCC NOT MATCH")
+            raise Exception("INVALID ETX Expected 3 vs {}".format(etx))
+        bcc = data[5+len_data].to_bytes(1, 'big')
+        c_bcc = self.xor(data[:(5+len_data)])
+        if bcc != c_bcc:
+            raise Exception("BCC NOT MATCH {} vs CALCULATED {}".format(bcc, c_bcc))
         
-        mt = data[3]
-        cm = data[4]
-        pm = data[5]
+        mt = data[4].to_bytes(1, 'big')
+        cm = data[5].to_bytes(1, 'big')
+        pm = data[6].to_bytes(1, 'big')
         
-        if mt == 0x50 :
-            st0 = data[6]
-            st1 = data[7]
-            st2 = data[8]
-            r_data = data[9:9+len_data-6]
-            return {
+        if mt == b'P':
+            st0 = data[7].to_bytes(1, 'big')
+            st1 = data[8].to_bytes(1, 'big')
+            st2 = data[9].to_bytes(1, 'big')
+            r_data = data[10:10+len_data-6]
+            result = {
                 "mt": mt,
                 "cm": cm,
                 "pm": pm,
                 "st0": st0,
+                "st0_message": self.ST0.get(st0, "UNKNOWN"),
                 "st1": st1,
+                "st1_message": self.ST1.get(st1, "UNKNOWN"),
                 "st2": st2,
+                "st2_message": self.ST2.get(st2, "UNKNOWN"),
                 "data": r_data
             }
-        elif mt == 0x4E :
-            e1 = data[6]
-            e0 = data[7]
-            r_data = data[8:8+len_data-5]
-            return {
+            LOG.cdlog("[MTK]: CD RESPONSE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, result, show_log=DEBUG_MODE)
+            return result
+        elif mt == b'N' :
+            e1 = data[7].to_bytes(1, 'big')
+            e0 = data[8].to_bytes(1, 'big')
+            r_data = data[9:9+len_data-5]
+            result =  {
                 "mt": mt,
                 "cm": cm,
                 "pm": pm,
                 "e1": e1,
                 "e0": e0,
+                "error_message": self.parse_error(e1, e0),
+                "error_response": self.parse_error_to_response(e1, e0),
                 "data": r_data
             }
+            LOG.cdlog("[MTK]: CD RESPONSE ", LOG.INFO_TYPE_ERROR, LOG.FLOW_TYPE_PROC, result, show_log=DEBUG_MODE)
+            return result
         else:
             raise Exception("INVALID MESSAGE HEADER (MT)")
         
@@ -1390,7 +1406,7 @@ class MutekCD():
         # 37H: As 33H, and Error Card Counter increment;
 
         # Init and do nothing if card in channel
-        LOG.cdlog("[MTK]: CD INIT_DEVICE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+        LOG.cdlog("[MTK]: CD REQUEST INIT_DEVICE ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
         cmd = self.encaps_request(b'\x30', b'\x33', b'')
         byte_response = self.send_command(cmd, 10000)
         return self.decaps_response(byte_response)
@@ -1403,12 +1419,18 @@ class MutekCD():
         # Pm=31H: Report Sensor Status with 10 bytes of data. (Usually used for Debugging and Maintenance)
 
         # Inquiry status of standard sensor
-        LOG.cdlog("[MTK]: CD INQUIRY_STATUS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
+        LOG.cdlog("[MTK]: CD REQUEST INQUIRY_STATUS ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
         cmd = self.encaps_request(b'\x31', b'\x30', b'')
         byte_response = self.send_command(cmd, 10000)
         return self.decaps_response(byte_response)
-    
-    def move_card(self):
+
+    MOVE_TO_GATE = b'0'
+    MOVE_TO_IC = b'1'
+    MOVE_TO_RF = b'2'
+    MOVE_TO_ERROR = b'3'
+    MOVE_TO_OUT = b'9'
+
+    def move_card(self, pm:bytes):
         # CM -> 32H
 
         # PM
@@ -1419,15 +1441,15 @@ class MutekCD():
         # Pm=39H: Eject Card out of Machine;
 
         # Inquiry status of standard sensor
-        LOG.cdlog("[MTK]: CD MOVE_CARD ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, "", show_log=DEBUG_MODE)
-        cmd = self.encaps_request(b'\x32', b'\x30', b'')
+        LOG.cdlog("[MTK]: CD REQUEST MOVE_CARD ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, pm, show_log=DEBUG_MODE)
+        cmd = self.encaps_request(b'\x32', pm, b'')
         byte_response = self.send_command(cmd, 10000)
         return self.decaps_response(byte_response)
 
 
 @func_set_timeout(30)
-def __simply_eject_mutek(port="COM10"):
-    global INIT_MTK
+def __simply_eject_mtk(port="COM10"):
+##    global INIT_MTK
     message = "General Error"
     status = ES_UNKNOWN_ERROR
     com = None
@@ -1441,37 +1463,74 @@ def __simply_eject_mutek(port="COM10"):
     try:
 
         LOG.cdlog("[MTK]: CD INIT ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, port, show_log=DEBUG_MODE)
-        com = Serial(port, baudrate=BAUD_RATE_SYN, timeout=10)
+        com = Serial(port, baudrate=BAUD_RATE_MTK, timeout=10)
         mtk = MutekCD(com)
 
-        if not INIT_MTK:
-            result = mtk.init_device()
-            if result["mt"] == b'N':
-                com.close()
-                return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
-            else:
-                response = mtk.parse_status(result, response)
-                INIT_MTK = True
+##        if not INIT_MTK:
+##            result = mtk.init_device()
+##            if result["mt"] == b'N':
+##                com.close()
+##                return ES_INTERNAL_ERROR, result['error_message'], result['error_response']
+##            else:
+##                response = mtk.parse_status(result, response)
+##                INIT_MTK = True
+##        else:
+##            result = mtk.inquire_status()
+##            if result["mt"] == b'N':
+##                com.close()
+##                return ES_INTERNAL_ERROR, result['error_message'], result['error_response']
+##            else:
+##                response = mtk.parse_status(result, response)
+
+        result = mtk.init_device()
+        if result["mt"] == b'N':
+            com.close()
+            return ES_INTERNAL_ERROR, result['error_message'], result['error_response']
         else:
-            result = mtk.inquire_status()
-            if result["mt"] == b'N':
-                com.close()
-                return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
-            else:
-                response = mtk.parse_status(result, response)
-        
+            response = mtk.parse_status(result, response)
+
         if result['st1'] == b'0':
             com.close()
             return ES_CARDS_EMPTY, "No Card Inside hopper", response
-        
-        result = mtk.move_card()
-        if result["mt"] == b"N":
-            com.close()
-            return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
-        else:
-            status = ES_NO_ERROR
-            message = "SUCCESS"
+        elif result['st0'] == b'0':
+            #No card in channel MOVE to bezel(IC/RF) first, if not will error 'Command Sequence Error'
+            result = mtk.move_card(mtk.MOVE_TO_RF)
+            if result["mt"] == b"N":
+                com.close()
+                return ES_INTERNAL_ERROR, result['error_message'], result['error_response']
+            else:
+                #print("SLEEP")
+                #sleep(4)
+                result = mtk.move_card(mtk.MOVE_TO_GATE)            
+                if result["mt"] == b"N":
+                    com.close()
+                    return ES_INTERNAL_ERROR, result['error_message'], result['error_response']
+                else:
+                    status = ES_NO_ERROR
+                    message = "SUCCESS"
+                    response = mtk.parse_status(result, response)
+        elif result['st0'] == b'1':
+            #Card already out and held at gate, customer can get it.
+            status = ES_INTERNAL_ERROR
+            message = "Card on Sensor Gate"
             response = mtk.parse_status(result, response)
+        elif result['st0'] == b'2':
+            #Card already out or held at sensor RF, customer can get it or cannot.
+            status = ES_INTERNAL_ERROR
+            message = "Card on Sensor RF/IC"
+            response = mtk.parse_status(result, response) 
+            
+
+## USE THIS IF EJECT is drop card out of machine
+##        result = mtk.move_card(mtk.MOVE_TO_OUT)            
+##        if result["mt"] == b"N":
+##            com.close()
+##            return ES_INTERNAL_ERROR, mtk.parse_error(result['e1'], result['e0']), mtk.parse_error_to_response(result['e1'], result['e0'])
+##        else:
+##            status = ES_NO_ERROR
+##            message = "SUCCESS"
+##            response = mtk.parse_status(result, response)
+        
         
     except FunctionTimedOut as ex:
         message = "Exception: FunctionTimedOut"
