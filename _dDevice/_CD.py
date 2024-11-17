@@ -192,7 +192,6 @@ def trigger_card_dispenser_mtk(port, slot, multiply='1'):
             "message": "N/A",
             "code": "9999"
         }
-        # TODO: Finalise This MUTEK Integration
         output = CDLibrary.simply_eject_mtk(port, response)
         # LOGGER.debug((command, output, type(response), str(response)))
         if response.get('code') is not None:
