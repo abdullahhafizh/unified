@@ -836,13 +836,6 @@ def simply_eject_syn(param, __output_response__):
     
     return status
 
-def send_enq_syn(com, cmd):
-    try:
-        com.write(cmd)
-        LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd, show_log=DEBUG_MODE)
-    except:
-        pass
-
 
 class SyncotekCD():
     SYN_STX = b"\x02"
@@ -962,6 +955,13 @@ class SyncotekCD():
             sleep(.5)
             self.com.write(self.SYN_ENQ)
             LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, self.SYN_ENQ, show_log=DEBUG_MODE)
+        except:
+            pass
+
+    def send_enq_syn(self, cmd):
+        try:
+            self.com.write(cmd)
+            LOG.cdlog("[SYN]: CD SEND ENQ ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_PROC, cmd, show_log=DEBUG_MODE)
         except:
             pass
 
@@ -1151,7 +1151,7 @@ def simply_eject_mtk(param, __output_response__):
 
     LOG.cdlog("[MTK]: Parameter = ", LOG.INFO_TYPE_INFO, LOG.FLOW_TYPE_IN, CD_PORT)
 
-    status, message, response = __simply_eject_mtk(CD_PORT)
+    status, message, response = simply_eject_mtk_priv(CD_PORT)
 
     if status == ES_NO_ERROR:
         __output_response__["code"] = status
@@ -1444,7 +1444,7 @@ class MutekCD():
 
 
 @func_set_timeout(30)
-def __simply_eject_mtk(port="COM10"):
+def simply_eject_mtk_priv(port="COM10"):
 ##    global INIT_MTK
     message = "General Error"
     status = ES_UNKNOWN_ERROR
