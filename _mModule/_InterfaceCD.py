@@ -1134,6 +1134,7 @@ def simply_eject_syn_priv(port="COM10"):
 
     finally:
         if com:
+            del selectedCD
             if com.isOpen():
                 com.close()
 
@@ -1543,6 +1544,7 @@ def simply_eject_mtk_priv(port="COM10"):
 
     finally:
         if com:
+            del selectedCD
             if com.isOpen():
                 com.close()
 
