@@ -1582,13 +1582,14 @@ def arg_check():
 def welcome():
     print('--- '+__file__+' ---')
     print('Card Dispenser Simulator')
+    print('How To Use: python _SimulatorCD.py [MTK/SYN/KYT/OLD] 9600 COM2 1')
     print('Version 1.1')
     
     
 def exit(msg, code=1):
     print('Message :', msg)
     if code == 1:
-        print('How To Use: python card_dispenser_syn.py [MTK/SYN/KYT/OLD] 9600 COM2 1')
+        print('How To Use: python _SimulatorCD.py [MTK/SYN/KYT/OLD] 9600 COM2 1')
     sys.exit(code)
 
 
