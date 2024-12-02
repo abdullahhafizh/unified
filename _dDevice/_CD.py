@@ -285,7 +285,7 @@ def kiosk_get_cd_readiness():
     _Helper.get_thread().apply_async(get_cd_readiness, )
 
 
-ALLOWED_CD_TYPE = ['OLD', 'NEW', 'KYT', 'SYN']
+ALLOWED_CD_TYPE = ['OLD', 'NEW', 'KYT', 'SYN', 'MTK']
 
 
 def get_cd_readiness():
