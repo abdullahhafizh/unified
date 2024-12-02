@@ -1575,7 +1575,7 @@ def arg_check():
             return arg.upper() if 'com' in arg else arg
         elif 'MTK' in arg.upper() or 'SYN' in arg.upper() or 'KYT' in arg.upper() or 'OLD' in arg.upper():
             DEVICE_TYPE = arg.upper()
-         
+        
     return False
     
 
