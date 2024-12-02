@@ -92,6 +92,7 @@ def trigger_card_dispenser(port, slot, multiply='1'):
     try:
         # Handle Multiply CD Vendor By Type
         cd_type = _Common.CD_TYPES.get(port, False)
+        LOGGER.info(("Detect CD Types", port, str(_Common.CD_TYPES)))
         LOGGER.info(("Start Execute CD", cd_type , port, slot, multiply))
 
         if not cd_type:
