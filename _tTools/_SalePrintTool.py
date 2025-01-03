@@ -2009,6 +2009,9 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         for i in range(product_count):
             slot = str(i+1)
             pdf.set_font(USED_FONT, 'B', line_size)
+            pdf.cell(padding_left, 0, ':: '+s.get('pname_stock_'+slot)+' : ', 0, 0, 'L') 
+            pdf.ln(tiny_space)
+            pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0, 'SLOT '+slot+ ' - '+s.get('pid_stock_'+slot)+' : ', 0, 0, 'L') 
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
@@ -2111,6 +2114,7 @@ def eprinter_admin_preload(struct_id, ext='.pdf'):
 
         for i in range(product_count):
             slot = str(i+1)
+            printer.text((' '*padding_left)+ ':: '+s.get('pname_stock_'+slot)+' : ' + "\n") 
             printer.text((' '*padding_left)+ 'SLOT '+slot+ ' - '+s.get('pid_stock_'+slot)+' : ' + "\n") 
             printer.text((' '*padding_left)+
                     '- Stok Awal        : ' + str(s.get('init_stock_'+slot, '-')) + "\n")

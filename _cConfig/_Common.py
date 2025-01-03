@@ -2520,6 +2520,7 @@ def generate_card_preload_data(operator, struct_id):
     if len(products) > 0:
         for p in products:
             slot = str(p['status']).replace('10', '')
+            data['pname_stock_'+slot] = p['name']
             data['id_stock_'+slot] = p['stid']
             data['pid_stock_'+slot] = p['pid']
             data['init_stock_'+slot] = 0
