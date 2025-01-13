@@ -563,6 +563,7 @@ def get_machine_summary():
 
 def machine_summary():
     global COMP
+    currect_cash_activity = _Common.get_cash_activity()
     summary = {
         'c_space': '10000',
         'd_space': '10000',
@@ -603,7 +604,8 @@ def machine_summary():
         'mandiri_sam_threshold': str(_Common.MANDIRI_THRESHOLD),
         'bni_sam_threshold': str(_Common.BNI_THRESHOLD),
         # 'current_cash': _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash WHERE collectedAt is null ')[0]['__'],
-        'current_cash': _Common.get_cash_activity()['total'],
+        'current_cash': currect_cash_activity['total'],
+        'current_cash_details': currect_cash_activity['summary'],
         # 'bni_sam1_no': str(_Common.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Common.BNI_SAM_2_NO),
         'last_reboot': _Common.REBOOT_TIME,
