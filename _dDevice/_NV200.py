@@ -14,6 +14,8 @@ ERROR_COUNT = 0
 ERROR_FILE = "error_print_nv200_event_"
 SOCKET_TIMEOUT = _Common.BILL_SOCKET_TIMEOUT
 
+
+# COMMAND_MODE as state for async hold trigger
 COMMAND_MODE = ''
 
 
@@ -507,9 +509,9 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     time.sleep(LOOP_INTERVAL)
         #===
         elif command == config['STORE']:
-            # What the fuck is this ???
-            # Disabled on 20250113
-            # if COMMAND_MODE != '':
+            # Enhanced on 20250113
+            # Stop The Trigger By change the state
+            if COMMAND_MODE == 'hold': COMMAND_MODE = 'accept'
             #     NV200.accept()
             #     time.sleep(1)
             
