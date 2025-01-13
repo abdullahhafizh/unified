@@ -2009,10 +2009,7 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
         for i in range(product_count):
             slot = str(i+1)
             pdf.set_font(USED_FONT, 'B', line_size)
-            pdf.cell(padding_left, 0, ':: '+s.get('pname_stock_'+slot)+' : ', 0, 0, 'L') 
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, 'B', line_size)
-            pdf.cell(padding_left, 0, 'SLOT '+slot+ ' - '+s.get('pid_stock_'+slot)+' : ', 0, 0, 'L') 
+            pdf.cell(padding_left, 0, 'SLOT '+slot+ ' ('+s.get('pid_stock_'+slot)+') :: '+s.get('pname_stock_'+slot), 0, 0, 'L') 
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
@@ -2021,10 +2018,10 @@ def admin_card_preload_update(struct_id, ext='.pdf'):
             pdf.set_font(USED_FONT, 'B', line_size)
             pdf.cell(padding_left, 0,
                     '- Penjualan        : ' + str(s.get('sale_stock_'+slot, '-')), 0, 0, 'L')
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, 'B', line_size)
-            pdf.cell(padding_left, 0,
-                    '- WA Redeem        : ' + str(s.get('wa_redeem_'+slot, '-')), 0, 0, 'L')
+            # pdf.ln(tiny_space)
+            # pdf.set_font(USED_FONT, 'B', line_size)
+            # pdf.cell(padding_left, 0,
+            #         '- WA Redeem        : ' + str(s.get('wa_redeem_'+slot, '-')), 0, 0, 'L')
             pdf.ln(1)
             pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
             pdf.ln(tiny_space)
@@ -2114,14 +2111,13 @@ def eprinter_admin_preload(struct_id, ext='.pdf'):
 
         for i in range(product_count):
             slot = str(i+1)
-            printer.text((' '*padding_left)+ ':: '+s.get('pname_stock_'+slot)+' : ' + "\n") 
-            printer.text((' '*padding_left)+ 'SLOT '+slot+ ' - '+s.get('pid_stock_'+slot)+' : ' + "\n") 
+            printer.text((' '*padding_left)+ 'SLOT '+slot+ ' ('+s.get('pid_stock_'+slot)+') :: ' + s.get('pname_stock_'+slot) + "\n") 
             printer.text((' '*padding_left)+
                     '- Stok Awal        : ' + str(s.get('init_stock_'+slot, '-')) + "\n")
             printer.text((' '*padding_left)+
                     '- Penjualan        : ' + str(s.get('sale_stock_'+slot, '-')) + "\n")
-            printer.text((' '*padding_left)+
-                    '- WA Redeem        : ' + str(s.get('wa_redeem_'+slot, '-')) + "\n")
+            # printer.text((' '*padding_left)+
+            #         '- WA Redeem        : ' + str(s.get('wa_redeem_'+slot, '-')) + "\n")
             printer.text((' '*padding_left)+ '_' * max_chars +"\n")
             printer.text((' '*padding_left)+
                     '- Stok Seharusnya  : ' + str(s.get('last_stock_'+slot, '-')) + "\n")
