@@ -352,36 +352,37 @@ class NV200_BILL_ACCEPTOR(object):
 
         # ('[NV200] Poll Event', '', '603', "['0xf0', '0xeb', '0xe8']", "[['0xf0', '0xeb', '0xe8'], 'Disabled', 0, '']")
         # ('[NV200] Poll Event', '', '602', "['0xf0', ['0xef', 4], '0x4']", "[['0xf0', ['0xef', 4], '0x4'], 'Reading Note', 0, '']")
-                
         event = []
-        if len(poll[1]) == 2:
-            # On Reading Notes
-            if poll[1][0] == '0xef':
-                # This Cause Notes On Reject Will be treated as Normal Reading Notes
-                # Must be validated with caller/COMMAND MODE
-                # Extra Handling NV For Reject Activity
-                if COMMAND_MODE == 'reject' or caller == '604':
-                    if _Common.BILL_LIBRARY_DEBUG is True:
-                        # print('pyt: [NV200] Anomaly Response Reading Note After Reject Activity', str(poll))
-                        LOGGER.debug(('[NV200] Anomaly Response Reading Note After Reject Activity', str(poll)))
-                    return event
-                elif 0 < poll[1][1] < len(self.known_notes):
+        
+        if len(poll) > 1:
+            if len(poll[1]) == 2:
+                # On Reading Notes
+                if poll[1][0] == '0xef':
+                    # This Cause Notes On Reject Will be treated as Normal Reading Notes
+                    # Must be validated with caller/COMMAND MODE
+                    # Extra Handling NV For Reject Activity
+                    if COMMAND_MODE == 'reject' or caller == '604':
+                        if _Common.BILL_LIBRARY_DEBUG is True:
+                            # print('pyt: [NV200] Anomaly Response Reading Note After Reject Activity', str(poll))
+                            LOGGER.debug(('[NV200] Anomaly Response Reading Note After Reject Activity', str(poll)))
+                        return event
+                    elif 0 < poll[1][1] < len(self.known_notes):
+                        event = self.parse_event(poll)
+                        # if COMMAND_MODE == 'hold':
+                        #     self.async_hold()
+                # On Stacking Notes
+                elif poll[1][0] == '0xee':
                     event = self.parse_event(poll)
-                    # if COMMAND_MODE == 'hold':
-                    #     self.async_hold()
-            # On Stacking Notes
-            elif poll[1][0] == '0xee':
+                    # return event
+            else:
+                # 602 - Trigger Receiving Notes
+                # Ask NV To Give Poll Status Which Containg Event Notes in poll data
+                # 604 - Trigger Reject Notes
+                # if caller != '602' or str(COMMAND_MODE) == 'accept':
                 event = self.parse_event(poll)
-                # return event
-        else:
-            # 602 - Trigger Receiving Notes
-            # Ask NV To Give Poll Status Which Containg Event Notes in poll data
-            # 604 - Trigger Reject Notes
-            # if caller != '602' or str(COMMAND_MODE) == 'accept':
-            event = self.parse_event(poll)
-            if poll[1] == '0xed' or poll[1] == '0xec':
-                last_reject = self.nv200.last_reject()
-                event.append(self.parse_reject_code(last_reject))
+                if poll[1] == '0xed' or poll[1] == '0xec':
+                    last_reject = self.nv200.last_reject()
+                    event.append(self.parse_reject_code(last_reject))
 
         event.append('')
         # 602 Will assumpt empty event so it will be retriggered
