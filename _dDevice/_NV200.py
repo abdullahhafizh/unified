@@ -251,6 +251,10 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][0])
             event.append(poll_data[1][1])
         else:
+            # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
+            if len(poll_data) ==3 and poll_data == ['0xf0', '0xeb', '0xe8']:
+                event.append(poll_data[0])
+                event.append(poll_data[1])
             # ReCheck Pattern Loop Response
             for p in poll_data:
                 if type(p) != list:
@@ -261,11 +265,7 @@ class NV200_BILL_ACCEPTOR(object):
                     if len(p) == 2:
                         event.append('0xff')
                         event.append(p[0])
-                        event.append(p[1])
-                    elif len(p) > 2:
-                        # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
-                        event.append(p[0])
-                        event.append(p[1])
+                        event.append(p[1])                        
             if len(event) == 0:
                 event.append(poll_data[0])
                 event.append(poll_data[-1])
@@ -372,7 +372,7 @@ class NV200_BILL_ACCEPTOR(object):
                 # 602 - Trigger Receiving Notes
                 # Ask NV To Give Poll Status Which Containg Event Notes in poll data
                 # 604 - Trigger Reject Notes
-                if caller != '602':
+                if caller != '602' or str(COMMAND_MODE) == 'accept':
                     event = self.parse_event(poll)
                     if poll[1] == '0xed' or poll[1] == '0xec':
                         last_reject = self.nv200.last_reject()
