@@ -273,14 +273,15 @@ class NV200_BILL_ACCEPTOR(object):
         if event[1] == '0xf1':
             event_data.append("Slave reset")
         elif  event[1] == '0xef':
-            if not (COMMAND_MODE == 'hold'):
+            if event[2] == '0x0':
                 event_data.append("Reading Note")
             else:
                 # Do Return The Bite Value And Trigger Hold in Other Thread
                 note_value = self.parse_value(event[2])
                 event_data.append("Note in escrow, amount: " + str(note_value) + ".00  IDR")
                 event_data.append(note_value)
-                self.async_hold()
+                # Trigger Async Hold Here
+                if COMMAND_MODE == 'hold': self.async_hold()
                 return event_data
         elif  event[1] == '0xee':
             # Note in escrow, amount: 2000.00  IDR
