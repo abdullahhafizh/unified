@@ -245,6 +245,9 @@ class NV200_BILL_ACCEPTOR(object):
         event_data = []
         event_data.append(poll_data)
         
+        #Sample Anomaly
+        # ['0xf0', '0xed', '0xec', ['0xef', 0], '0x0', '0xed', '0xec', '0xe8'] 
+        
         # Serializing Poll Event
         if len(poll_data[1]) == 2:
             event.append('0xff')
@@ -252,14 +255,14 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][1])
         else:
             # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
-            if len(poll_data) ==3 and poll_data == ['0xf0', '0xeb', '0xe8']:
+            if len(poll_data) == 3 and poll_data == ['0xf0', '0xeb', '0xe8']:
                 event.append(poll_data[0])
                 event.append(poll_data[1])
             # ReCheck Pattern Loop Response
             for p in poll_data:
                 if type(p) != list:
-                    if len(p) < 4:
-                        poll_data.remove(p)
+                    # Why must less than 4, just remove all the things
+                    poll_data.remove(p)
                     continue
                 else:
                     if len(p) == 2:
