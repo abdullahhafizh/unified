@@ -262,6 +262,10 @@ class NV200_BILL_ACCEPTOR(object):
                         event.append('0xff')
                         event.append(p[0])
                         event.append(p[1])
+                    elif len(p) > 2:
+                        # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
+                        event.append(p[0])
+                        event.append(p[1])
             if len(event) == 0:
                 event.append(poll_data[0])
                 event.append(poll_data[-1])
@@ -339,6 +343,9 @@ class NV200_BILL_ACCEPTOR(object):
     def get_event(self, caller):
         
         poll = self.nv200.poll() 
+
+        # ('[NV200] Poll Event', '', '603', "['0xf0', '0xeb', '0xe8']", "[['0xf0', '0xeb', '0xe8'], 'Disabled', 0, '']")
+        # ('[NV200] Poll Event', '', '602', "['0xf0', ['0xef', 4], '0x4']", "[['0xf0', ['0xef', 4], '0x4'], 'Reading Note', 0, '']")
                 
         event = []
         if len(poll) > 1:     
@@ -511,7 +518,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['STORE']:
             # Enhanced on 20250113
             # Stop The Trigger By change the state
-            if COMMAND_MODE == 'hold': COMMAND_MODE = 'accept'
+            COMMAND_MODE = 'accept'
             #     NV200.accept()
             #     time.sleep(1)
             
