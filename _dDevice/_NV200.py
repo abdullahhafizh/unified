@@ -507,9 +507,11 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                     time.sleep(LOOP_INTERVAL)
         #===
         elif command == config['STORE']:
-            if COMMAND_MODE != '':
-                NV200.accept()
-                time.sleep(1)
+            # What the fuck is this ???
+            # Disabled on 20250113
+            # if COMMAND_MODE != '':
+            #     NV200.accept()
+            #     time.sleep(1)
             
             # Anomaly Handled Here
             if NV200 is None:
