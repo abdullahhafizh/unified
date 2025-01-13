@@ -166,7 +166,8 @@ class eSSP(object):  # noqa
                     poll_data.append(result[i])
         except Exception as e:
             # print(e, str(result))
-            poll_data.append('0xERROR')
+            # poll_data.append('0xERROR')
+            pass
 
         return poll_data
 
