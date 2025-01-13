@@ -393,7 +393,7 @@ class NV200_BILL_ACCEPTOR(object):
                 self.nv200.hold()
             else:
                 break
-            time.sleep(3)    
+            time.sleep(LOOP_INTERVAL)    
     
     def accept(self):
         global COMMAND_MODE
