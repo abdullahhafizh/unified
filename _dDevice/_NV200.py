@@ -405,12 +405,11 @@ class NV200_BILL_ACCEPTOR(object):
             time.sleep(LOOP_INTERVAL)    
     
     def accept(self):
-        global COMMAND_MODE
-        # Accept First Then Set Command Mode Flag
         self.nv200.accept_note()
-        COMMAND_MODE = 'accept'
     
-    
+    def poll(self):
+        self.nv200.poll()
+
     def poll_once(self):
         poll = self.nv200.poll()
         event = self.parse_event(poll)
@@ -509,10 +508,13 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                         # Pass the Reject Event, Just Continue
                         continue
                     if config['KEY_RECEIVED'] in event[1]:
+                        time.sleep(LOOP_INTERVAL)
                         if COMMAND_MODE == 'hold':
                             # Trigger Async Hold Here
-                            time.sleep(LOOP_INTERVAL)
                             NV200.async_hold()
+                        elif COMMAND_MODE == 'receive':
+                            NV200.accept()
+                            # NV200.poll()
                         return 0, event[1]
                     if config['KEY_BOX_FULL'] in event[1]:
                         NV200.disable()
