@@ -92,14 +92,12 @@ class NV200_BILL_ACCEPTOR(object):
             return False
 
     def reject(self):
-        global COMMAND_MODE
         try:
             result = self.nv200.reject_note()
             result = self.nv200.bulb_off()
             if _Common.BILL_LIBRARY_DEBUG is True:
                 # print('pyt: [NV200] Rejecting', str(result))   
                 LOGGER.debug(('[NV200] Rejecting', str(result)))
-            COMMAND_MODE = 'reject'
             return True
         except Exception as e:
             LOGGER.warning(('[NV200', e))
@@ -348,14 +346,14 @@ class NV200_BILL_ACCEPTOR(object):
         
         poll = []
         while len(poll) == 0:
-            poll = self.nv200.poll() 
+            poll = self.nv200.poll()
 
         # ('[NV200] Poll Event', '', '603', "['0xf0', '0xeb', '0xe8']", "[['0xf0', '0xeb', '0xe8'], 'Disabled', 0, '']")
         # ('[NV200] Poll Event', '', '602', "['0xf0', ['0xef', 4], '0x4']", "[['0xf0', ['0xef', 4], '0x4'], 'Reading Note', 0, '']")
         event = []
         
         if len(poll) > 1:
-            if len(poll[1]) == 2:
+            if len(poll[1]) == 2 and type(poll[1]) == list:
                 # On Reading Notes
                 if poll[1][0] == '0xef':
                     # This Cause Notes On Reject Will be treated as Normal Reading Notes
@@ -375,16 +373,12 @@ class NV200_BILL_ACCEPTOR(object):
                     event = self.parse_event(poll)
                     # return event
             else:
-                # 602 - Trigger Receiving Notes
-                # Ask NV To Give Poll Status Which Containg Event Notes in poll data
-                # 604 - Trigger Reject Notes
-                # if caller != '602' or str(COMMAND_MODE) == 'accept':
                 event = self.parse_event(poll)
-                if poll[1] == '0xed' or poll[1] == '0xec':
+                if poll[1] in ['0xed', '0xec']:
                     last_reject = self.nv200.last_reject()
                     event.append(self.parse_reject_code(last_reject))
 
-        event.append('')
+        event.append(COMMAND_MODE)
         # 602 Will assumpt empty event so it will be retriggered
             
         if _Common.BILL_LIBRARY_DEBUG is True:
@@ -395,7 +389,6 @@ class NV200_BILL_ACCEPTOR(object):
                 traceback.format_exc()
             # Ensure This Will Break Here
         return event
-            
             
     def hold(self):
         while True:
@@ -497,7 +490,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             LOOP_ATTEMPT = 0
             action = NV200.check_active()
             if action is True:
-                COMMAND_MODE = ''
+                COMMAND_MODE = 'receive'
                 if hold_note: COMMAND_MODE = 'hold'
                 NV200.enable()
                 while True:
@@ -529,10 +522,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
         elif command == config['STORE']:
             # Enhanced on 20250113
             # Stop The Trigger By change the state
-            COMMAND_MODE = 'accept'
-            #     NV200.accept()
-            #     time.sleep(1)
-            
+            COMMAND_MODE = 'store'
             # Anomaly Handled Here
             if NV200 is None:
                 return -1, "Bill already stoped"
@@ -557,8 +547,9 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             return 0, "Noted stacked"
         #===
         elif command == config['REJECT']:
-            NV200.reject()
             LOOP_ATTEMPT = 0
+            COMMAND_MODE = 'reject'
+            NV200.reject()
             while True:
                 event = NV200.get_event(command)
                 LOOP_ATTEMPT += 1
@@ -589,6 +580,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
             # return 0, "Note Rejected"
         #===
         elif command == config['RESET']:
+            COMMAND_MODE = 'reset'
             action = NV200.reset_bill()
             if action is True:
                 # Add Open to Re-enable Bill
@@ -596,6 +588,7 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 return 0, "Bill Reset"
         #===
         elif command == config['STOP']:
+            COMMAND_MODE = 'stop'
             action = NV200.disable()
             if action is True:
                 # Must Do Get Poll To Reset Cashbox Status
