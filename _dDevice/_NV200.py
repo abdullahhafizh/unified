@@ -245,13 +245,15 @@ class NV200_BILL_ACCEPTOR(object):
         event_data.append(poll_data)
 
         # Serializing Poll Event
-        if len(poll_data[1]) == 2 and type(poll_data[1]) == list:
+        if len(poll_data[1]) == 2 and type(poll_data[1]) == list and len(poll_data) == 3:
             # ['0xf0', ['0xef', 4], '0x4']
+            # Length 3 For Normal Notes Detection
             event.append('0xff')
             event.append(poll_data[1][0])
             event.append(poll_data[1][1])
         else:
             #Sample Anomaly
+            # ['0xf0', ['0xef', 4], '0x4', '0xed', '0xec', '0xe8']"
             # ['0xf0', '0xed', '0xec', ['0xef', 0], '0x0', '0xed', '0xec', '0xe8'] 
             # ['0xf0', '0xed', '0xec', ['0xef', 0], '0x0', ['0xef', 4], '0x4', '0xed']
             # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
@@ -268,6 +270,12 @@ class NV200_BILL_ACCEPTOR(object):
             #                 event.append(p[0])
             #                 event.append(p[1])
             #                 break     
+
+            # If Receive Notes, But Its Rejected and Disabled
+            if COMMAND_MODE == 'receive':
+                if poll_data[-2] in ['0xed', '0xec']:
+                    event.append(poll_data[0])
+                    event.append(poll_data[-2])
 
             # Last Parsing, Get Last Poll as Status Event
             if len(event) == 0:
