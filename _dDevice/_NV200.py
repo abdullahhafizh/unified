@@ -242,33 +242,31 @@ class NV200_BILL_ACCEPTOR(object):
         event = []
         event_data = []
         event_data.append(poll_data)
-        
-        #Sample Anomaly
-        # ['0xf0', '0xed', '0xec', ['0xef', 0], '0x0', '0xed', '0xec', '0xe8'] 
-        
+
         # Serializing Poll Event
-        if len(poll_data[1]) == 2:
+        if len(poll_data[1]) == 2 and type(poll_data[1]) == list:
+            # ['0xf0', ['0xef', 4], '0x4']
             event.append('0xff')
             event.append(poll_data[1][0])
             event.append(poll_data[1][1])
         else:
+            #Sample Anomaly
+            # ['0xf0', '0xed', '0xec', ['0xef', 0], '0x0', '0xed', '0xec', '0xe8'] 
+            # ['0xf0', '0xed', '0xec', ['0xef', 0], '0x0', ['0xef', 4], '0x4', '0xed']
             # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
-            if len(poll_data) == 3 and poll_data[1] == ['0xeb', '0xec', '0xed']:
-                event.append(poll_data[0])
-                event.append(poll_data[1])
-
             # ReCheck Pattern Loop Response
-            if len(event) == 0:
-                for p in poll_data:
-                    if type(p) != list:
-                        # Why must less than 4, just remove all the things
-                        poll_data.remove(p)
-                        continue
-                    else:
-                        if len(p) == 2:
-                            event.append('0xff')
-                            event.append(p[0])
-                            event.append(p[1])     
+            # if len(event) == 0:
+            #     for p in poll_data:
+            #         if type(p) != list:
+            #             # Why must less than 4, just remove all the things
+            #             poll_data.remove(p)
+            #             continue
+            #         else:
+            #             if len(p) == 2:
+            #                 event.append('0xff')
+            #                 event.append(p[0])
+            #                 event.append(p[1])
+            #                 break     
 
             # Last Parsing, Get Last Poll as Status Event
             if len(event) == 0:
@@ -353,12 +351,6 @@ class NV200_BILL_ACCEPTOR(object):
         while len(poll) == 0:
             poll = self.nv200.poll()
 
-        if _Common.BILL_LIBRARY_DEBUG is True:
-            try:
-                LOGGER.debug(('[NV200] Poll Raw', str(COMMAND_MODE), str(caller), str(poll)))
-            except Exception as e:
-                traceback.format_exc()
-
         # ('[NV200] Poll Event', '', '603', "['0xf0', '0xeb', '0xe8']", "[['0xf0', '0xeb', '0xe8'], 'Disabled', 0, '']")
         # ('[NV200] Poll Event', '', '602', "['0xf0', ['0xef', 4], '0x4']", "[['0xf0', ['0xef', 4], '0x4'], 'Reading Note', 0, '']")
         event = []
@@ -395,7 +387,7 @@ class NV200_BILL_ACCEPTOR(object):
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event)))
+                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event)))
             except Exception as e:
                 traceback.format_exc()
             # Ensure This Will Break Here
