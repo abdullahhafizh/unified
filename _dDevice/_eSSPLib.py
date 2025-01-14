@@ -156,7 +156,7 @@ class eSSP(object):  # noqa
         """
         # Experimental On Sending Command Only Without Any Required Response
         # result = self.send([self.getseq(), '0x1', '0x7'], False)
-        result = self.send_only([self.getseq(), '0x1', '0x7'], False)
+        result = self.send_only([self.getseq(), '0x1', '0x7'])
 
         poll_data = []
         try:
