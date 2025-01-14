@@ -574,24 +574,6 @@ def send_command(param=None, config=[], restricted=[], hold_note=False):
                 time.sleep(.25)
             NV200.disable()
             return 0, "Note Rejected"
-            #Below Disabled
-            # LOOP_ATTEMPT = 0
-            # max_reject_attempt = 5 #Seconds To Wait For Confirming Notes Reject
-            # NV200.reject()
-            # while True:
-            #     event = NV200.get_event(command)
-            #     LOOP_ATTEMPT += 1
-            #     if LOOP_ATTEMPT >= max_reject_attempt:
-            #         break
-            #     if len(event) == 1:
-            #         time.sleep(1)
-            #         continue
-            #     if "Rejected" in event[1]:
-            #         break
-            #     # Whats is the Break Point ???
-            #     time.sleep(LOOP_INTERVAL)
-            # NV200.disable()
-            # return 0, "Note Rejected"
         #===
         elif command == config['RESET']:
             COMMAND_MODE = 'reset'
