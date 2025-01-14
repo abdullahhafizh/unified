@@ -154,7 +154,9 @@ class eSSP(object):  # noqa
         0xE3 = Cash Box Removed (Protocol v3)
         0xE4 = Cash Box Replaced (Protocol v3)
         """
-        result = self.send([self.getseq(), '0x1', '0x7'], False)
+        # Experimental On Sending Command Only Without Any Required Response
+        # result = self.send([self.getseq(), '0x1', '0x7'], False)
+        result = self.send_only([self.getseq(), '0x1', '0x7'], False)
 
         poll_data = []
         try:
@@ -166,7 +168,8 @@ class eSSP(object):  # noqa
                     poll_data.append(result[i])
         except Exception as e:
             # print(e, str(result))
-            # poll_data.append('0xERROR')
+            if len(result) > 0:
+                poll_data.append(result[0])
             pass
 
         return poll_data
