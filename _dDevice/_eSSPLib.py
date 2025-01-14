@@ -176,6 +176,11 @@ class eSSP(object):  # noqa
         result = self.send([self.getseq(), '0x1', '0x8'])
         return result
 
+    def reject_note_no_response(self):
+        """Reject the current note."""
+        result = self.send_only([self.getseq(), '0x1', '0x8'])
+        return result
+
     def disable(self):
         """
         Disable the device.

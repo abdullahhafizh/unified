@@ -93,7 +93,8 @@ class NV200_BILL_ACCEPTOR(object):
 
     def reject(self):
         try:
-            result = self.nv200.reject_note()
+            # Switch REJECT without response required
+            result = self.nv200.reject_note_no_response()
             result = self.nv200.bulb_off()
             if _Common.BILL_LIBRARY_DEBUG is True:
                 # print('pyt: [NV200] Rejecting', str(result))   
