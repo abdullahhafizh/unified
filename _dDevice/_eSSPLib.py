@@ -2,6 +2,7 @@ __author__ = 'wahyudi@multidaya.id'
 
 import datetime
 import serial
+import time
 
 class eSSPError(IOError):  # noqa
     """Generic error exception for eSSP problems."""
@@ -154,9 +155,8 @@ class eSSP(object):  # noqa
         0xE3 = Cash Box Removed (Protocol v3)
         0xE4 = Cash Box Replaced (Protocol v3)
         """
-        # Experimental On Sending Command Only Without Any Required Response
-        # result = self.send([self.getseq(), '0x1', '0x7'], False)
-        result = self.send_only([self.getseq(), '0x1', '0x7'])
+        result = self.send([self.getseq(), '0x1', '0x7'], False)
+        # result = self.send_only([self.getseq(), '0x1', '0x7'])
 
         poll_data = []
         try:
@@ -418,7 +418,7 @@ class eSSP(object):  # noqa
 
         self.__ser.write(prepedstring)
         # response = True
-        # if process:
+        time.sleep(.25)
         response = self.read(process)
         # Direct Raw Debug
         # print('pyt: NV200 Debug : ', str(prepedstring), str(response))
