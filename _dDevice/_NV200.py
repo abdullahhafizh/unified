@@ -253,7 +253,7 @@ class NV200_BILL_ACCEPTOR(object):
             event.append(poll_data[1][1])
         else:
             # ['0xf0', '0xeb', '0xe8']" -> Event When Notes Automatically Stack After Received
-            if len(poll_data) == 3 and poll_data[1] in ['0xeb', '0xec', '0xed']:
+            if len(poll_data) == 3 and poll_data[1] == ['0xeb', '0xec', '0xed']:
                 event.append(poll_data[0])
                 event.append(poll_data[1])
 
