@@ -256,21 +256,26 @@ class NV200_BILL_ACCEPTOR(object):
             if len(poll_data) == 3 and poll_data[1] in ['0xeb', '0xec', '0xed']:
                 event.append(poll_data[0])
                 event.append(poll_data[1])
+
             # ReCheck Pattern Loop Response
-            for p in poll_data:
-                if type(p) != list:
-                    # Why must less than 4, just remove all the things
-                    poll_data.remove(p)
-                    continue
-                else:
-                    if len(p) == 2:
-                        event.append('0xff')
-                        event.append(p[0])
-                        event.append(p[1])                        
+            if len(event) == 0:
+                for p in poll_data:
+                    if type(p) != list:
+                        # Why must less than 4, just remove all the things
+                        poll_data.remove(p)
+                        continue
+                    else:
+                        if len(p) == 2:
+                            event.append('0xff')
+                            event.append(p[0])
+                            event.append(p[1])     
+
+            # Last Parsing, Get Last Poll as Status Event
             if len(event) == 0:
                 event.append(poll_data[0])
                 event.append(poll_data[-1])
-            
+
+        # Do Parse Event
         if event[1] == '0xf1':
             event_data.append("Slave reset")
         elif  event[1] == '0xef':
@@ -348,6 +353,12 @@ class NV200_BILL_ACCEPTOR(object):
         while len(poll) == 0:
             poll = self.nv200.poll()
 
+        if _Common.BILL_LIBRARY_DEBUG is True:
+            try:
+                LOGGER.debug(('[NV200] Poll Raw', str(COMMAND_MODE), str(caller), str(poll)))
+            except Exception as e:
+                traceback.format_exc()
+
         # ('[NV200] Poll Event', '', '603', "['0xf0', '0xeb', '0xe8']", "[['0xf0', '0xeb', '0xe8'], 'Disabled', 0, '']")
         # ('[NV200] Poll Event', '', '602', "['0xf0', ['0xef', 4], '0x4']", "[['0xf0', ['0xef', 4], '0x4'], 'Reading Note', 0, '']")
         event = []
@@ -374,17 +385,17 @@ class NV200_BILL_ACCEPTOR(object):
                     # return event
             else:
                 event = self.parse_event(poll)
-                if poll[1] in ['0xed', '0xec']:
-                    last_reject = self.nv200.last_reject()
-                    event.append(self.parse_reject_code(last_reject))
+                if len(poll) > 1:
+                    if poll[1] in ['0xed', '0xec']:
+                        last_reject = self.nv200.last_reject()
+                        event.append(self.parse_reject_code(last_reject))
 
         event.append(COMMAND_MODE)
         # 602 Will assumpt empty event so it will be retriggered
             
         if _Common.BILL_LIBRARY_DEBUG is True:
             try:
-                # print('pyt: [NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event))
-                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(poll), str(event)))
+                LOGGER.debug(('[NV200] Poll Event', str(COMMAND_MODE), str(caller), str(event)))
             except Exception as e:
                 traceback.format_exc()
             # Ensure This Will Break Here
